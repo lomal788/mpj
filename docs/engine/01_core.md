@@ -29,7 +29,7 @@ mg1801 쪽 결론(판정 `elapsed`가 증가 후 값인지 등)은 [analysis/not
 | 엔진 설정 | `extracted/romfs/boot.nbinit` [데이터] |
 | Ghidra 프로젝트 | `ghidra_work/core/jamboree_main`(main.nso), `ghidra_work/core/mg1801/core_mg1801`(mg1801.nro, 디스어셈블 대조용으로 새로 가져옴) |
 | 판독 덤프 | `analysis/decomp/core_b1.c`~`core_b14.c`(명령별 덤프, 머리줄 `// ######## <명령>`), `core_mg1801_dis.c`(mg1801 디스어셈블) |
-| 도구 | `tools/ghidra_scripts/CoreTool.java`(주소 디컴파일·범위·디스어셈블·참조·vtable), `tools/core_rand.py`(난수 재구현) |
+| 도구 | `web/tools/analysis/ghidra_scripts/CoreTool.java`(주소 디컴파일·범위·디스어셈블·참조·vtable), `web/tools/analysis/core_rand.py`(난수 재구현) |
 | 계산 결과 | `analysis/core_rand_vectors.json`(난수 시험 벡터) |
 
 CoreTool 사용 예(한 번에 여러 명령, 약 30초):
@@ -540,7 +540,7 @@ Resume(f):    // 매 프레임
 
 - f32(u)는 `ucvtf`(가까운 짝수)다. 그래서 u ≥ `0xFFFFFF80`이면 RandF/SyncRandF가 **1.0**을 낸다(`[0,1]` 닫힌 구간) [재구현 계산 `edge`].
 - 모든 분포가 MT 출력 하나를 쓴다. 예외는 async `uniform_int`의 기각 재추첨과 위의 "소비 없음" 경우다.
-- 웹에서 fmadd를 그대로 옮기려면 곱(48비트)과 합을 정확히 계산한 뒤 한 번만 f32로 반올림해야 한다. `Math.fround(a*b + c)`는 이중 반올림 위험이 있다. 구현 예는 `tools/core_rand.py` `f32_round_exact`다.
+- 웹에서 fmadd를 그대로 옮기려면 곱(48비트)과 합을 정확히 계산한 뒤 한 번만 f32로 반올림해야 한다. `Math.fround(a*b + c)`는 이중 반올림 위험이 있다. 구현 예는 `web/tools/analysis/core_rand.py` `f32_round_exact`다.
 
 ### 6.7 시드를 넣는 곳 [판독]
 
@@ -683,7 +683,7 @@ function uniformInt(e: MT19937, a: number, b: number): number {
   const mask = w >= 32 ? 0xffffffff : (2 ** w - 1);
   for (;;) { const u = (e.next() & mask) >>> 0; if (u < r) return (a + u) >>> 0; }
 }
-// fmaF32(a,b,c): a·b+c 를 정확히(유리수/BigInt) 계산해 f32 로 한 번 반올림. tools/core_rand.py f32_round_exact 와 같은 결과여야 한다.
+// fmaF32(a,b,c): a·b+c 를 정확히(유리수/BigInt) 계산해 f32 로 한 번 반올림. web/tools/analysis/core_rand.py f32_round_exact 와 같은 결과여야 한다.
 ```
 
 시드 운용:
@@ -825,7 +825,7 @@ step(pads) {
 |---|---|---|
 | 원본 명령 판독 | 위 주소 전부(덤프 `analysis/decomp/core_b*.c`) | 이 문서 |
 | 디스어셈블리 확인 | GetDeltaTime(`ldr s0,[x8,#8]`), 프레임 스텝 f32 연산(`scvtf s0`, `fdiv s0,s0,s1(60.0)`, `fmul`), nnMain `str w8(=1),[x0,#0x18]`, 난수 분포 전부, mg1801 `SyncRandMod`·`RandMod` 인자(`mov w1,w21`/`w26` = 남은 개수) | 6절과 일치 |
-| 재구현 계산 | `tools/core_rand.py`: MT19937을 numpy `MT19937._legacy_seeding`(init_genrand) 출력과 시드 5개 × 1,000개 비교 | **전부 일치**. MT19937(5489) 첫 출력 3499211612(표준값) |
+| 재구현 계산 | `web/tools/analysis/core_rand.py`: MT19937을 numpy `MT19937._legacy_seeding`(init_genrand) 출력과 시드 5개 × 1,000개 비교 | **전부 일치**. MT19937(5489) 첫 출력 3499211612(표준값) |
 | 재구현 계산 | 분포 벡터(시드 0, 1, 5489, 0x12345678, 0xFFFFFFFF) → `analysis/core_rand_vectors.json` | 아래 표 |
 | 재구현 계산 | 프레임 스텝·서브스텝(6.1·6.2 표) | f32(1/60) = `0x3C888889`, 고정 n=1·acc=0 유지 |
 | 원본 실행 | 없음 | — |

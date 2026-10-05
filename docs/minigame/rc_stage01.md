@@ -3,7 +3,7 @@
 2026-10-02 작성. 상태:
 - **분석**: 모드 선택·코스 생성(노멀·롱·하드·리믹스)·게임 연속 실행·BPM 전환·코스 결과 합산·셰프 등급·보상·세이브 갱신·장면 상태기계를 판독했다. 무대 연출(카메라 패턴 번호별 내용, 관객·호스트 모션, UI 레이아웃 애니메이션)은 흐름만 적었다. 남은 미확정은 11절.
 - **웹 구현**: 없음(이 문서는 명세만). 웹 구조 제안은 9절.
-- **동작 검증**: 원본 실행 대조 없음. 재구현 계산만 했다(`tools/rcF_calc.py`, 10절).
+- **동작 검증**: 원본 실행 대조 없음. 재구현 계산만 했다(`web/tools/analysis/rcF_calc.py`, 10절).
 
 확정 수준 표기([../../../../web/분석.txt](../../../../web/분석.txt)): **[실행]**(이 문서에는 원본 실행이 없고, `[실행: …]`은 도구 실행), **[판독]** 원본 명령 판독, **[데이터]** 데이터 확인, **[재구현 계산]**, **[추정]**, **[미확정]**.
 
@@ -46,9 +46,9 @@
 | 리듬 공용 | main NSO `ca::rm::RmGameWork`, `RmSaveWork`, `RmMgSceneBase`, `RmSoundMan` |
 | 디컴파일(기존) | `analysis/decomp/rhythm_rc_stage01_all.c`(rc_stage01 전체), `rhythm_rc1.c`(SettingBpm·SyncedSetupGame 디스어셈블리·Params), `main_ca_rm.c` |
 | 디스어셈블리(이번) | `rcF_main_dis1.c`(main: 리믹스 목록 FUN_710042b780, GenerateModeMgList, std::sort 2벌, RmSaveWork 접근자, 결과 기록 FUN_710042ca10), `rcF_main_dis2.c`(코스 평균 등급 꼬리, GetStarAchieveRate), `rcF_main_dec3.c`(모드워크 기본값 FUN_7100428720 전체), `rcF_main_vt.c`(RmGameWork 소멸자), `rcF_main_refs.c`, `rcF_rc_dis1.c`(RefillInit·EndStageWait·Impl::Setup), `rcF_rc_dis2.c`(AddArchiveFileSetting·PreGameWaitFunc), `rcF_rc_dis3.c`(PlayEncoreBGM·StartClapSound) |
-| Ghidra | `ghidra_work/rcF/`(rhythm 프로젝트 복사본: jamboree_main, rc_stage01), 실행기 `ghidra_work/rcF/run.sh` + `tools/ghidra_scripts/CoreTool.java` |
+| Ghidra | `ghidra_work/rcF/`(rhythm 프로젝트 복사본: jamboree_main, rc_stage01), 실행기 `ghidra_work/rcF/run.sh` + `web/tools/analysis/ghidra_scripts/CoreTool.java` |
 | 데이터 | `extracted/bea/rc~rc_stage01.nx.bea/`, `rc~rc_result.nx.bea/`(접시 30개), `mg~mg18NN.nx.bea/mg/mg18NN/data/mg18NN_rm_chart*.json`(35개), `extracted/message/*/rc00.json`·`im_rc.json` |
-| 재구현 계산 | `tools/rcF_calc.py` → `analysis/rcF_calc.json` |
+| 재구현 계산 | `web/tools/analysis/rcF_calc.py` → `analysis/rcF_calc.json` |
 
 주소는 SwitchLoader 기본 베이스 0x7100000000 기준이고 모듈 이름을 함께 쓴다(예: `rc_stage01 PreGameWaitFunc @0x7100034ad0`, `main GenerateModeMgList @0x710042a7a0`).
 
@@ -391,7 +391,7 @@ if (idx != 0 || RmFileMan::IsCompleted()) {
 
 ### 6.5 셔플·정렬의 정확한 순서 [판독]
 
-- `syncShuffle(a)`: `for (k = n; k >= 2; k--) { r = SyncRandMod(k); swap(a[k-1], a[r]); }` (n ≤ 1이면 소비 없음). `SyncRandMod(k) = (u32 * k) >> 32` (core 담당, `tools/core_rand.py`).
+- `syncShuffle(a)`: `for (k = n; k >= 2; k--) { r = SyncRandMod(k); swap(a[k-1], a[r]); }` (n ≤ 1이면 소비 없음). `SyncRandMod(k) = (u32 * k) >> 32` (core 담당, `web/tools/analysis/core_rand.py`).
 - `libcxxSort`: libc++ `std::sort`, 비교 `a.save < b.save`(MgListWork+4, signed). 길이 2~5는 분기형 `__sort2~5`, 6~30은 `__insertion_sort_3`(앞 3개 `__sort3` 후 삽입 정렬), 31 이상 introsort(여기서는 최대 10이라 안 씀) [판독 FUN_710042e320·FUN_710042f0c0: `case 2..5`, `len*8 < 0xF8`]. **같은 키 사이 순서가 이 알고리즘에 달려 있어서 웹은 같은 정렬을 그대로 옮겨야 한다.**
 - 시드: 코스 생성은 rc_stage01 장면 안에서 sync 난수를 쓴다. 오프라인 sync 시드는 장면마다 `SetSyncRandSeed(async.Rand())`(core 담당). 실제 시드 값은 [미확정](원본 실행 필요).
 
@@ -617,9 +617,9 @@ class RhythmCookingScene {
 | 저장 명령 스캔 | main 0x7100425000..0x7100450000 과 rc_stage01 Scene/Sequence 함수에서 `str w,#0x2c`·`stp`·`str x,#0x28` 등 | RmGameWork+0x2C 쓰기 = PreGameWaitFunc 두 곳(+Restart 복원)만. 다른 후보는 스택·다른 객체 [판독] |
 | 데이터 확인 | main.decomp.bin 평면 이미지에서 표 읽기: 리믹스 D @0x71015d8e3c, 박자 표 @0x71015d8dc4·@0x71015d8eb0(기존 판독값과 일치로 이미지 오프셋 확인) | D = {1802,1804,1806,1808,1809}×0 |
 | 데이터 확인 | rc_stage01.nro `@0x7100080cc4` = {2,2,1}, `@0x710007dc60/f858/fd2a` = 'b','a','c' | 7.2 |
-| 재구현 계산 | `.venv/Scripts/python tools/rcF_calc.py` → `analysis/rcF_calc.json` | 아래 |
+| 재구현 계산 | `.venv/Scripts/python web/tools/analysis/rcF_calc.py` → `analysis/rcF_calc.json` | 아래 |
 
-`tools/rcF_calc.py` 결과 [재구현 계산, 원본 실행 대조 없음]:
+`web/tools/analysis/rcF_calc.py` 결과 [재구현 계산, 원본 실행 대조 없음]:
 - 채보 줄 수(1P 길이) 35개. 리믹스 `s` 채보 15개가 풀 A~D 원소와 1:1 (`remix_files_all_covered: true`).
 - 리믹스: 모든 직전 상태에서 D 후보 ≥ 3, 빈 C 없음, 서로 다른 코스 456가지, 코스 총 줄 302~314(8분 × 줄 = 75.5~78.5 s @120).
 - 노멀(chart00) 3게임 총 줄 438~618, 하드(chart01) 436~618, 롱 876~1236(8분×줄 182.5~257.5 s, 뒤 절반 @180). "8분 × 줄"은 채보 길이일 뿐 실제 경과 시간(카운트인·결과 연출 제외/포함)이 아니다.

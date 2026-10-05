@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\tools\oss\BfresLibrary\BfresLibrary\BfresLibrary.csproj" />
+    <Reference Include="Syroot.BinaryData"><HintPath>..\..\..\..\tools\oss\BfresLibrary\Libraries\Syroot.BinaryData.dll</HintPath></Reference>
+    <Reference Include="Syroot.Maths"><HintPath>..\..\..\..\tools\oss\BfresLibrary\Libraries\Syroot.Maths.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

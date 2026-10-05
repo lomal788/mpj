@@ -13,7 +13,7 @@
 |---|---|
 | 프레임 타이밍, GetDeltaTime(리듬 장면 고정 1/60), 파이버 순서 | [01_core.md](01_core.md) |
 | 엔딩·결과 단계(`OnGameEnding`·`OnGameExit`)의 장면 흐름, 별 판정 | [02_rhythm.md](02_rhythm.md) |
-| FRES·BNTX 변환(IBL 큐브맵 png/hdr 포함), 뼈 회전 규약, 재질 근사 | [03_graphics.md](03_graphics.md), 변환기 `tools/graphics_bfres2gltf`, `tools/graphics_bntx.py` |
+| FRES·BNTX 변환(IBL 큐브맵 png/hdr 포함), 뼈 회전 규약, 재질 근사 | [03_graphics.md](03_graphics.md), 변환기 `web/tools/analysis/graphics_bfres2gltf`, `web/tools/analysis/graphics_bntx.py` |
 | 모션 슬롯(재생·속도·프레임 진행·전이), MotionArg | [09_character.md §4.3~§6.6](09_character.md) |
 | 파티클(VFXB)·`env_effect_color` 를 쓰는 쪽 | [08_effects.md](08_effects.md) |
 | mg1801 상태 알림(채널·값), 무대 모델 | [../minigame/mg1801.md §3.4·§7](../minigame/mg1801.md) |
@@ -45,7 +45,7 @@ mg1801에서는 한 게임 내내 카메라가 고정이다. 엔딩 연출(채�
 | 디컴파일 | `analysis/decomp/camera_core.c`(Camera·ComCamera·흔들림), `camera_callers_anim.c`(적용기·종횡비 설정), `camera_apply.c`(LookAt·Euler·정사영), `camera_gfx_components.c`(bex::gfx 컴포넌트), `camera_dirlight*.c`, 기존 `mg1801.nro.c`, `main_ca_rm.c` |
 | 에셋 | `extracted/bea/mg~mg1801.nx.bea/mg/mg1801/env/` — `mg1801_cam00/01/02.fsnb`, `mg1801_cam_capture00.fsnb`, `mg1801_env.fmdb`, `mg1801_dir_light.fmdb`, `mg1801_post.fmdb`, `mg1801_post_result00.fmdb`, `textures/mg1801_{bg00,cha}_{irr,rad}.bntx` |
 | 셰이더 정의 | `libbex~libbexgfx~libexgfx_resident.nx.bea/libbex/libbexgfx/resident/shader/container/container.bfsha`(파라미터 이름만 있는 "컨테이너" 셰이더), 같은 폴더 `gfxshader/posteffect_*.bnsh`(실제 포스트 셰이더, 바이너리만) |
-| 도구 | `tools/camera_probe`(.NET 7, BfresLibrary), `tools/camera_verify.mjs`(노드, three.js), `tools/ghidra_scripts/CameraRefs.java` |
+| 도구 | `web/tools/analysis/camera_probe`(.NET 7, BfresLibrary), `web/tools/analysis/camera_verify.mjs`(노드, three.js), `web/tools/analysis/ghidra_scripts/CameraRefs.java` |
 | 덤프 | `extracted/converted/camera/` — `mg1801_cameras.json`(카메라 원자료·커브·three.js 값), `mg1801_env.json`(라이트·환경·포스트 재질 파라미터), `fsnb_scan.json`(fsnb 899개 요약), `sincos_table.json`(sdk 사인 표) |
 
 ## 3. 진입점과 전체 호출 흐름
@@ -291,7 +291,7 @@ step/baked: v = k0·scale + offset
 frame ≤ f[0] → 첫 키, frame ≥ 마지막 키 → 마지막 키의 k0
 ```
 
-- 구현은 `tools/camera_probe/Program.cs`의 `Eval`. 키의 pre/post wrap 모드는 덤프에 남기지만 평가에는 쓰지 않았다(전 fsnb에서 영향 여부 **[미확정]**).
+- 구현은 `web/tools/analysis/camera_probe/Program.cs`의 `Eval`. 키의 pre/post wrap 모드는 덤프에 남기지만 평가에는 쓰지 않았다(전 fsnb에서 영향 여부 **[미확정]**).
 
 ### 6.5 사인·코사인 표 [판독 + 데이터]
 
@@ -323,7 +323,7 @@ cos  = e.cos + frac * e.dcos;  sin = e.sin + frac * e.dsin
 
 ## 7. 애니메이션·이펙트·소리·카메라·에셋 연결
 
-### 7.1 mg1801 카메라 값 [데이터 — `tools/camera_probe cam` 덤프 실행 확인]
+### 7.1 mg1801 카메라 값 [데이터 — `web/tools/analysis/camera_probe cam` 덤프 실행 확인]
 
 전부 Aim 모드, Perspective, FrameCount 0(정적), 커브 0, twist 0, 루프 아님. 덤프: `extracted/converted/camera/mg1801_cameras.json`.
 
@@ -345,7 +345,7 @@ camera.updateProjectionMatrix();
 // 캡처(2,2) "capture": position (0, 14.531198, 23.946115), lookAt (0, 0, 3.74), fov 15 (리듬 쿠킹 등 캡처 모드만)
 ```
 
-화면 위치 검산(16:9, three.js 투영, NDC y는 위가 +1) [재구현 계산 `tools/camera_verify.mjs`]:
+화면 위치 검산(16:9, three.js 투영, NDC y는 위가 +1) [재구현 계산 `web/tools/analysis/camera_verify.mjs`]:
 
 | 점(mg1801.md 4.5·4.6 로직 좌표) | `loop` NDC | `result` NDC |
 |---|---|---|
@@ -356,7 +356,7 @@ camera.updateProjectionMatrix();
 
 - 엔딩에서는 플레이어가 결과 위치로 옮겨 가므로(`GetResultPlayerPosRots`) 위 `result` 열의 플레이어 값은 참고용이다.
 
-### 7.2 fsnb 전체 통계 [데이터 — `tools/camera_probe scan`, 899개, 실패 0]
+### 7.2 fsnb 전체 통계 [데이터 — `web/tools/analysis/camera_probe scan`, 899개, 실패 0]
 
 | 항목 | 값 |
 |---|---|
@@ -586,11 +586,11 @@ RenderPass(HalfFloat 렌더 타깃, HDR 유지)
 
 | 대상 | 명령 | 결과 |
 |---|---|---|
-| 카메라 | `tools/camera_probe/bin/Release/net7.0/camera_probe.exe cam <out.json> <x.fsnb>...` | base·커브·`bakedPerFrame`·`threeAtFrame0` |
+| 카메라 | `web/tools/analysis/camera_probe/bin/Release/net7.0/camera_probe.exe cam <out.json> <x.fsnb>...` | base·커브·`bakedPerFrame`·`threeAtFrame0` |
 | 조명·포스트 | `camera_probe.exe env <out.json> <x.fmdb>...` | 셰이더 할당·재질 파라미터·renderInfo·뼈·작은 메시 정점 |
 | fsnb 전수 | `camera_probe.exe scan extracted/bea <out.json>` | 요약 |
-| IBL 큐브맵 | graphics 담당 `tools/graphics_bntx.py`(이미 `extracted/converted/graphics/mg1801/tex/`) | 면별 png/hdr 6장 |
-| 빌드 | `cd tools/camera_probe && dotnet build -c Release` | |
+| IBL 큐브맵 | graphics 담당 `web/tools/analysis/graphics_bntx.py`(이미 `extracted/converted/graphics/mg1801/tex/`) | 면별 png/hdr 6장 |
+| 빌드 | `cd web/tools/analysis/camera_probe && dotnet build -c Release` | |
 
 웹 manifest에 넣을 형식(권장): `assets/mg1801/camera.json = { clips: { loop: CamClip, result: CamClip, capture: CamClip }, light: DirLightParams, env: EnvParams, post: { post: PostParams, post_result00: PostParams } }`. 손으로 고치지 않고 위 덤프에서 만든다.
 
@@ -609,7 +609,7 @@ RenderPass(HalfFloat 렌더 타깃, HDR 유지)
 | `camera_probe scan` fsnb 899개 로드 | [실행: 덤프] | 실패 0, 카메라 899, 라이트 0, 포그 0 |
 | `camera_probe cam` mg1801 4개 | [실행: 덤프] | §7.1 표 값 |
 | `camera_probe env` mg1801 4개 | [실행: 덤프] | §7.3~7.5 값, dir_light 메시 꼭짓점 z = −1 |
-| `node tools/camera_verify.mjs` — 원본 뷰 행렬식(§6.2, 정확한 삼각함수) vs three.js 동치식 | [재구현 계산] | mg1801 4개 + 무작위 Aim 200·Euler 200 = 404건, 축 최대 오차 8.9e-16, 이동 최대 2.8e-14, 종료 코드 0 |
+| `node web/tools/analysis/camera_verify.mjs` — 원본 뷰 행렬식(§6.2, 정확한 삼각함수) vs three.js 동치식 | [재구현 계산] | mg1801 4개 + 무작위 Aim 200·Euler 200 = 404건, 축 최대 오차 8.9e-16, 이동 최대 2.8e-14, 종료 코드 0 |
 | 같은 비교에 sdk 표 사인·코사인 사용 | [재구현 계산] | 축 최대 8.7e-5, 이동 최대 2.9e-3(위치 크기 30 기준) |
 | mg1801 주요 점의 NDC(§7.1 표) | [재구현 계산] | 채소 등장 y 1.128(화면 밖 위), 판정 높이 −0.342, 플레이어 발 −0.674 |
 
@@ -636,6 +636,6 @@ RenderPass(HalfFloat 렌더 타깃, HDR 유지)
 
 | 도구 | 사용 |
 |---|---|
-| `tools/camera_probe` | `dotnet build -c Release` 뒤 `camera_probe.exe scan|cam|env …`(§9.7). 커브 식은 §6.4 |
-| `tools/camera_verify.mjs` | `node tools/camera_verify.mjs`(작업 폴더 `c:/dev/mpj`, three는 `web/node_modules`) |
-| `tools/ghidra_scripts/CameraRefs.java` | 인자 `d:<주소>`(함수 디컴파일), `r:<주소>`(참조 + 참조 함수 디컴파일), `x:<주소>:<n>`(디스어셈블), `f:<주소>`(메모리에서 함수 만들고 디컴파일), `m:<주소>:<n>`(qword 덤프 + 심볼). 예: `analyzeHeadless.bat c:/dev/mpj/ghidra_work/camera jamboree_main -process main.nso -noanalysis -readOnly -scriptPath c:/dev/mpj/tools/ghidra_scripts -postScript CameraRefs.java C:/out.c d:71006c1120 x:7100775b90:40` (출력 경로는 `C:/…` 형식) |
+| `web/tools/analysis/camera_probe` | `dotnet build -c Release` 뒤 `camera_probe.exe scan|cam|env …`(§9.7). 커브 식은 §6.4 |
+| `web/tools/analysis/camera_verify.mjs` | `node web/tools/analysis/camera_verify.mjs`(작업 폴더 `c:/dev/mpj`, three는 `web/node_modules`) |
+| `web/tools/analysis/ghidra_scripts/CameraRefs.java` | 인자 `d:<주소>`(함수 디컴파일), `r:<주소>`(참조 + 참조 함수 디컴파일), `x:<주소>:<n>`(디스어셈블), `f:<주소>`(메모리에서 함수 만들고 디컴파일), `m:<주소>:<n>`(qword 덤프 + 심볼). 예: `analyzeHeadless.bat c:/dev/mpj/ghidra_work/camera jamboree_main -process main.nso -noanalysis -readOnly -scriptPath c:/dev/mpj/tools/ghidra_scripts -postScript CameraRefs.java C:/out.c d:71006c1120 x:7100775b90:40` (출력 경로는 `C:/…` 형식) |

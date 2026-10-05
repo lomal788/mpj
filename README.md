@@ -1,6 +1,6 @@
 # 슈퍼 마리오 파티 잼버리 웹 포팅
 
-Super Mario Party Jamboree(Switch) 미니게임을 원본 동작 그대로 웹으로 옮기는 프로젝트다. 원본 분석은 상위 폴더 [../README.md](../README.md)와 `../docs/`에 있다.
+Super Mario Party Jamboree(Switch) 미니게임을 원본 동작 그대로 웹으로 옮기는 프로젝트다. 원본 분석은 상위 폴더 [../README.md](../README.md)와 [docs/analysis/](docs/analysis/)에 있다.
 구조는 미니게임천국 웹(`E:/programming/python/analysis/web`)의 mp4_new 설계를 따르고, 번들러는 vite 대신 **esbuild**를 쓴다.
 
 | 항목 | 상태 (2026-10-02) |
@@ -59,7 +59,9 @@ web/
     golden.ts           골든 형식 (f32 비트 보존 + JSON Merge Patch jsonl.gz)
     browser.ts          크로미움 찾기, 시험용 esbuild 서버
     smoke.ts            스모크 시험
+    analysis/           원본 추출·분석 도구 (python·Ghidra 스크립트·C# 변환기, 루트 기준 실행)
   assets/               변환한 에셋 (게임별 manifest.json) — assets/README.md
+  docs/analysis/        공용 원본 분석 (추출·패키지·코드 모듈)
   docs/minigame/        미니게임별 원본 분석·포팅 명세
   test/                 골든·스크린샷 — test/README.md
 ```

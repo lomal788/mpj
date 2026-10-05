@@ -20,7 +20,7 @@
   - 리듬 장면(mg1801~mg1810)과 온라인에서는 원본도 고정 f32(1/60)이다 [판독].
   - 그 밖의 오프라인 미니게임은 원본이 실측 프레임 시간(최대 0.05 s)을 쓴다. 그런 게임은 고정 1/60으로 근사한다고 게임 문서에 적는다(docs/engine/01_core.md).
 - 원본이 float로 저장하는 값은 저장할 때마다 `F()`(Math.fround)로 자른다. 원본의 `(int)(f * 60.0)` 같은 변환은 식 그대로 옮긴다(`toInt`).
-- 난수는 원본 `bex::RandModule`(MT19937 두 개: 비동기·동기) 식과 소비 순서를 따른다(`core/rng.ts`, 재구현 `tools/core_rand.py`와 벡터 일치). 동기 난수는 장면 시작 때 `setSyncRandSeed(rand())`로 다시 시드한다.
+- 난수는 원본 `bex::RandModule`(MT19937 두 개: 비동기·동기) 식과 소비 순서를 따른다(`core/rng.ts`, 재구현 `web/tools/analysis/core_rand.py`와 벡터 일치). 동기 난수는 장면 시작 때 `setSyncRandSeed(rand())`로 다시 시드한다.
 - 한 프레임 순서: 제품 파이버(등록 순, 같은 우선순위) → 장면 흐름 파이버. 새로 만든 파이버는 다음 프레임부터 돈다(docs/engine/01_core.md).
 - 로직에는 DOM, three.js, `Date`, `performance`가 없다. 노드(tsx)에서 그대로 돈다.
 

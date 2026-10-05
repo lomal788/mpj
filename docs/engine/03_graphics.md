@@ -32,12 +32,12 @@
 
 | 항목 | 위치 |
 |---|---|
-| 원본 | Super Mario Party Jamboree US v0, RomFS `Archive/*.bea` → `extracted/bea/<아카이브>/…` ([docs/00](../../../docs/00_extraction_pipeline.md)) |
+| 원본 | Super Mario Party Jamboree US v0, RomFS `Archive/*.bea` → `extracted/bea/<아카이브>/…` ([docs/00](../analysis/00_extraction_pipeline.md)) |
 | mg1801 에셋 | `extracted/bea/mg~mg1801.nx.bea/mg/mg1801/{model,env}/…`, 이펙트 `_Vfx/mg/mg1801/ConvertList.xml` |
 | 캐릭터 | `chara~pc01.nx.bea/chara/pc/pc01_mario/model/…`, 모션 `chara~pcMot_<그룹>.nx.bea/chara/pc/pc01_mario/motion/pc01_<그룹>_*.{fskb,fshb,fvbb,ftsb.fmab}` |
 | 엔진 공용 | `_SystemLighting`, `_SystemBuiltinPostFx`, `libbex~libbexgfx~libexgfx_resident`(셰이더 `forward_plus.bfsha` 경로는 main 문자열) |
 | FRES 리더 | [BfresLibrary](../../../tools/oss/BfresLibrary)(수정 안 함) |
-| 도구(이 문서) | `tools/graphics_bfres2gltf/`(C#, [README](../../../tools/graphics_bfres2gltf/README.md)), `tools/graphics_bntx.py`, `tools/graphics_convert.py`, `tools/graphics_verify/` |
+| 도구(이 문서) | `web/tools/analysis/graphics_bfres2gltf/`(C#, [README](../../tools/analysis/graphics_bfres2gltf/README.md)), `web/tools/analysis/graphics_bntx.py`, `web/tools/analysis/graphics_convert.py`, `web/tools/analysis/graphics_verify/` |
 | 변환 결과 | `extracted/converted/graphics/{mg1801,pc01}/{model,tex,anim,meta}/`, `manifest.json`, `verify_three.json`, 통계 `stats/{fres_stats,bntx_stats}.json`, 스크린샷 `shots/` |
 
 ---
@@ -406,7 +406,7 @@ VertexShapeAnim(0x30 B): `+0 이름(셰이프 전체 이름, 예 mario_face__bod
 
 - 3D LUT 확인: `LutColorFilterNeutral16`를 풀면 슬라이스 z, 행 y, 열 x의 값이 정확히 (16x, 16y, 16z)다(0..240) — 항등 LUT로 맞는다 [실행]. 웹에는 가로로 슬라이스를 이어 붙인 256×16 png로 낸다.
 
-### 5.5 디스위즐 (Tegra X1 블록 리니어) [실행: 자체 구현 `tools/graphics_bntx.py`]
+### 5.5 디스위즐 (Tegra X1 블록 리니어) [실행: 자체 구현 `web/tools/analysis/graphics_bntx.py`]
 
 ```
 GOB = 64 B × 8 행 (512 B). 블록 = 1 GOB 너비 × gobH GOB 높이 (× gobD 깊이)
@@ -452,7 +452,7 @@ mip0: gobH = 1 << (layout & 7) 그대로. 작은 밉: 블록 행 수 ≤ gobH/2�
 
 ## 7. glTF 변환 규칙 (웹 명세)
 
-변환기 사용법은 [tools/graphics_bfres2gltf/README.md](../../../tools/graphics_bfres2gltf/README.md). 여기서는 웹 코드가 기대할 규칙만 적는다.
+변환기 사용법은 [web/tools/analysis/graphics_bfres2gltf/README.md](../../tools/analysis/graphics_bfres2gltf/README.md). 여기서는 웹 코드가 기대할 규칙만 적는다.
 
 ### 7.1 노드·메시
 
@@ -592,7 +592,7 @@ mixer.update(0);
 | BNTX 전수 헤더 | `graphics_bntx.py stats` | 17,583개, 플래그 0x09 전부, 레이어 간격 나누어떨어짐 전부 [실행] |
 | 텍스처 참조 해석 | stats `tex.resolve`, ftxb 경로 검사 | 49,489개 같은 아카이브, ftxb 17,583개 같은 폴더 bntx [실행] |
 | 회전 규약 | 바인드 월드 × 파일 역바인드 | 오차 3.3e-7(반대 순서 2.0) [실행] |
-| glb 독립 로드 | three.js `GLTFLoader`(노드, 텍스처 스텁) `tools/graphics_verify/check.ts` | mg1801 43개·pc01 2개: 메시 수·정점 수·삼각형 수 = 변환 메타, 뼈 이름 누락 0, 클립 길이 = 프레임/60, 바인드 자세 스키닝 오차 ≤ 1.02e-6, 오류 0 [실행] (`verify_three.json`) |
+| glb 독립 로드 | three.js `GLTFLoader`(노드, 텍스처 스텁) `web/tools/analysis/graphics_verify/check.ts` | mg1801 43개·pc01 2개: 메시 수·정점 수·삼각형 수 = 변환 메타, 뼈 이름 누락 0, 클립 길이 = 프레임/60, 바인드 자세 스키닝 오차 ≤ 1.02e-6, 오류 0 [실행] (`verify_three.json`) |
 | 커브 베이크 대조 | 파이썬으로 원커브(`dump --keys`) 재평가 vs three `AnimationMixer` 샘플(프레임 0, 중간, 끝−1) `curve_check.py` | 마리오 idle/swing 66건 최대 차 T 2.8e-8, Q 1.8e-7, S 0 / 채소 `move`·물·화살표 전부 ≤ 1e-7 [실행] |
 | 키셰이프 클립 | 자체 FSHA 파서 | idle 30프레임 루프(채널 2, 상수), `apj_apl_damage00` 44프레임 커브 6개 [실행] |
 | 텍스처 디코드 | 접촉 시트 육안 | BC1·BC5 SNORM·BC6H 큐브·BC7 배열·ASTC 8×8/12×12·R8G8 SNORM 정상, 3D LUT 항등 정확 [실행] |

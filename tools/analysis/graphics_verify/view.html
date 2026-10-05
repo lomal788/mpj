@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>graphics verify view</title>
+<style>html,body{margin:0;background:#202428;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">
+{ "imports": {
+  "three": "/web/node_modules/three/build/three.module.js",
+  "three/addons/": "/web/node_modules/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<script type="module">
+// Headless check view for converted glb (tools/graphics_verify/shot.ts drives it).
+// ?scene=mario|mg1801  — original textures as is; lighting is a plain approximation (not the original shader).
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const params = new URLSearchParams(location.search);
+const W = 1280, H = 720;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x30343a);
+const loader = new GLTFLoader();
+const G = '/extracted/converted/graphics/';
+const load = (u) => new Promise((res, rej) => loader.load(u, res, undefined, rej));
+
+function cube(dir, name) {
+  const faces = [0, 1, 2, 3, 4, 5].map((i) => `${dir}${name}_0${i}.png`);
+  return new Promise((res) => new THREE.CubeTextureLoader().load(faces, (t) => { t.colorSpace = THREE.SRGBColorSpace; res(t); }));
+}
+
+function hideCutVariants(root) {
+  root.traverse((o) => { if (/_(fast|just|slow)\d\d$/.test(o.name)) o.visible = false; });
+}
+
+function pose(gltf, clipName, frame) {
+  const clip = gltf.animations.find((c) => c.name === clipName);
+  if (!clip) return null;
+  const mixer = new THREE.AnimationMixer(gltf.scene);
+  const a = mixer.clipAction(clip); a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; a.play();
+  mixer.setTime(frame / 60);
+  return mixer;
+}
+
+async function mario() {
+  const env = await cube(G + 'mg1801/tex/', 'mg1801_cha_rad');
+  const pm = new THREE.PMREMGenerator(renderer);
+  scene.environment = pm.fromCubemap(env).texture;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.6));
+  const dl = new THREE.DirectionalLight(0xffffff, 1.6); dl.position.set(2, 4, 5); scene.add(dl);
+  const poses = [[null, 0], ['pc01_rhy_knife_idle00', 15], ['pc01_rhy_knife_swing00', 8]];
+  // ?uvfix=1 : body/hair base color sampled at v' = 0.5 + 0.5 v (observed fit, see 03_graphics.md) [추정]
+  const uvfix = params.get('uvfix') === '1';
+  for (let i = 0; i < poses.length; i++) {
+    const g = await load(G + 'pc01/model/pc01_mario.glb');
+    g.scene.position.x = (i - 1) * 1.6;
+    if (poses[i][0]) pose(g, poses[i][0], poses[i][1]);
+    scene.add(g.scene);
+    g.scene.traverse((o) => {
+      if (!o.isSkinnedMesh) return;
+      o.frustumCulled = false;
+      if (uvfix && !o.name.startsWith('mario_face')) {
+        o.material = o.material.clone();
+        for (const k of ['map', 'normalMap', 'roughnessMap', 'metalnessMap']) {
+          if (!o.material[k]) continue;
+          const t = o.material[k].clone(); t.repeat.set(1, 0.5); t.offset.set(0, 0.5); t.needsUpdate = true; o.material[k] = t;
+        }
+      }
+    });
+    const knife = await load(G + 'mg1801/model/mg1801_knife00.glb');
+    const hook = g.scene.getObjectByName('attach_R_hand');
+    if (hook) hook.add(knife.scene);
+  }
+  const cam = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+  cam.position.set(0, 1.0, 6.2); cam.lookAt(0, 0.8, 0);
+  return cam;
+}
+
+async function mg1801() {
+  const env = await cube(G + 'mg1801/tex/', 'mg1801_bg00_rad');
+  const pm = new THREE.PMREMGenerator(renderer);
+  scene.environment = pm.fromCubemap(env).texture;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.5));
+  // mg1801_dir_light: directional_light_color 0.8, bone rotation (-70deg, 0, -10deg) [see 03_graphics.md]
+  const dl = new THREE.DirectionalLight(0xffffff, 0.8 * 2.0);
+  const dir = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(-1.221731, 0, -0.174533, 'ZYX'));
+  dl.position.copy(dir.clone().multiplyScalar(-10)); scene.add(dl);
+  for (const n of ['bg00', 'floor00', 'water00', 'line00', 'line01']) {
+    const g = await load(G + `mg1801/model/mg1801_${n}.glb`);
+    scene.add(g.scene);
+  }
+  // 4 players on stools at (lane*2-3, *, -2)  (mg1801.md 4.6); stool top y = 1.0 (stool00 bbox) — illustration only
+  for (let lane = 0; lane < 4; lane++) {
+    const st = await load(G + 'mg1801/model/mg1801_stool00.glb');
+    st.scene.position.set(lane * 2 - 3, 0, -2); scene.add(st.scene);
+    const m = await load(G + 'pc01/model/pc01_mario.glb');
+    m.scene.position.set(lane * 2 - 3, 1.0, -2);
+    pose(m, 'pc01_rhy_knife_idle00', 0);
+    m.scene.traverse((o) => { if (o.isSkinnedMesh) o.frustumCulled = false; });
+    const knife = await load(G + 'mg1801/model/mg1801_knife00.glb');
+    m.scene.getObjectByName('attach_R_hand')?.add(knife.scene);
+    scene.add(m.scene);
+  }
+  // vegetables: body (obj0N, attach hooks) + pieces obj0N_i on attach%02d; pos = (lane*2-3+offsetX[type], y, 0)
+  const offsetX = [0, 1, 2, 3, 0];
+  const cuts = [1, 2, 3, 4, 1];
+  const place = [[0, 0, 1.5], [1, 2, 3.5], [3, 0, 5.5], [4, 3, 1.5]]; // [type, lane, y]
+  for (const [type, lane, y] of place) {
+    const body = await load(G + `mg1801/model/mg1801_obj0${type}.glb`);
+    body.scene.position.set(lane * 2 - 3 + offsetX[type], y, 0);
+    if (type === 4) body.scene.rotation.set(0, 0, 0);
+    scene.add(body.scene);
+    body.scene.updateMatrixWorld(true);
+    for (let i = 0; i <= cuts[type]; i++) {
+      const p = await load(G + `mg1801/model/mg1801_obj0${type}_${i}.glb`);
+      hideCutVariants(p.scene);
+      const hook = body.scene.getObjectByName(`attach${String(i).padStart(2, '0')}`) ?? body.scene;
+      hook.add(p.scene);
+    }
+    if (type === 3) {
+      const ol = await load(G + `mg1801/model/mg1801_obj0${type}_outline00.glb`);
+      body.scene.add(ol.scene);
+    }
+  }
+  // camera mg1801_cam00.fsnb: Aim mode, pos (0,2,23) aim (0,3,-3), fovy 0.349066 rad (20 deg), near 0.1 far 10000
+  const cam = new THREE.PerspectiveCamera(20, 1920 / 1080, 0.1, 10000);
+  cam.position.set(0, 2, 23); cam.lookAt(0, 3, -3);
+  return cam;
+}
+
+const which = params.get('scene') || 'mario';
+const cam = await (which === 'mg1801' ? mg1801() : mario());
+renderer.render(scene, cam);
+window.__done = true;
+</script>
+</body>
+</html>

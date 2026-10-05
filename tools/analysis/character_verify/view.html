@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>character verify view</title>
+<style>html,body{margin:0;background:#202428;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">
+{ "imports": {
+  "three": "/web/node_modules/three/build/three.module.js",
+  "three/addons/": "/web/node_modules/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<script type="module">
+// Headless filmstrip of extracted/converted/character/<pc>/<model>.glb (driven by tools/character_verify/shot.ts).
+// Original textures as converted (no UV fix, no tint). Lighting is a plain approximation, not the original shader.
+// Row: idle f0 | swing f0 4 8 12 16 20 | co_idle00 f60 ; knife = mg1801_knife00 on attach_R_hand (as mg1801 Player ctor).
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
+const params = new URLSearchParams(location.search);
+const pc = params.get('pc') || 'pc01';
+const W = 1600, H = 520;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x30343a);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 0.7));
+const dl = new THREE.DirectionalLight(0xffffff, 1.6); dl.position.set(2, 4, 5); scene.add(dl);
+const loader = new GLTFLoader();
+const load = (u) => new Promise((res, rej) => loader.load(u, res, undefined, rej));
+const meta = await (await fetch(`/extracted/converted/character/${pc}/meta.json`)).json();
+const glbName = meta.character.model.split('/').pop().replace('.fmdb', '.glb');
+const g = await load(`/extracted/converted/character/${pc}/${glbName}`);
+const knife = await load('/extracted/converted/graphics/mg1801/model/mg1801_knife00.glb');
+const shots = [['rhy_knife_idle00', 0], ['rhy_knife_swing00', 0], ['rhy_knife_swing00', 4], ['rhy_knife_swing00', 8], ['rhy_knife_swing00', 12], ['rhy_knife_swing00', 16], ['rhy_knife_swing00', 20], ['co_idle00', 60]];
+const mixers = [];
+shots.forEach(([clipName, frame], i) => {
+  const inst = SkeletonUtils.clone(g.scene);
+  inst.position.set((i - (shots.length - 1) / 2) * 1.25, 0, 0);
+  scene.add(inst);
+  if (clipName.startsWith('rhy_')) inst.getObjectByName('attach_R_hand')?.add(knife.scene.clone(true));
+  const clip = g.animations.find((c) => c.name === clipName);
+  const mixer = new THREE.AnimationMixer(inst);
+  const a = mixer.clipAction(clip); a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; a.play();
+  mixer.setTime(frame / 60);
+  mixers.push(mixer);
+});
+const cam = new THREE.PerspectiveCamera(20, W / H, 0.1, 100);
+cam.position.set(0, 1.0, 16); cam.lookAt(0, 0.75, 0);
+renderer.render(scene, cam);
+window.__labels = shots.map(([c, f]) => `${c}@${f}`);
+window.__done = true;
+</script>
+</body>
+</html>

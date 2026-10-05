@@ -14,7 +14,7 @@
 관련 문서:
 - 게임 로직의 이펙트 호출 시점 — [../minigame/mg1801.md](../minigame/mg1801.md) 6.5·6.9·3.4
 - FX 트리거(.ftrg) 형식 — [05_ui_input.md](05_ui_input.md)
-- BNTX 디코드 — [03_graphics.md](03_graphics.md) (도구 `tools/graphics_bntx.py`)
+- BNTX 디코드 — [03_graphics.md](03_graphics.md) (도구 `web/tools/analysis/graphics_bntx.py`)
 - 아카이브 로딩 — [06_scene_data.md](06_scene_data.md)
 - 프레임 타이밍 — [01_core.md](01_core.md)
 
@@ -45,10 +45,10 @@ mg1801(싹둑싹둑 수프)에서 보이는 파티클은 네 가지다.
 | 리듬 공용 | `extracted/bea/mg~mg1800.nx.bea/_Vfx/mg/mg1800/ConvertList.xml` (`mg1800_success00/01`) |
 | 미니게임 공용 | `extracted/bea/libca~mg_common.nx.bea/_Vfx/libca/mg_common/ConvertList.xml` (`mg_common_pt_effect_00`) |
 | 상주(bq) | `extracted/bea/bq.nx.bea/_Vfx/bq/ConvertList.xml` (48 MB, `fx_*` 공용 이펙트) |
-| 파서 | `tools/effect_vfxb.py` (tree / dump / check / find) |
+| 파서 | `web/tools/analysis/effect_vfxb.py` (tree / dump / check / find) |
 | 덤프 | `extracted/converted/effect/{mg1801,mg1800,mg_common}/vfxb.json`, `tex/*.png`, `textures.bntx`, `primitives.bfres`. 미리보기는 `extracted/converted/effect/contact_sheet.png`, mg1801 메시 프리미티브는 `mg1801/prim/primitives.glb` |
 | 디컴파일 | `analysis/decomp/effect_bex.c`(bex::Effect 전체), `effect_main2.c`(RmStarEffectMan·이름 해석), `effect_vfx2_calc.c`(vfx2 이미터 계산), `effect_mg1801_dis.c`·`effect_mg1801_dis2.c`·`effect_mg1801_steam_dis.c`(mg1801 호출부 디스어셈블) |
-| Ghidra 스크립트 | `tools/ghidra_scripts/EffectTool.java` (CoreTool 사본, 명령 dec/dis/disf/refs/srch/ptrs) |
+| Ghidra 스크립트 | `web/tools/analysis/ghidra_scripts/EffectTool.java` (CoreTool 사본, 명령 dec/dis/disf/refs/srch/ptrs) |
 | 참고 오픈소스 | `tools/oss/EffectLibrary`(KillzXGaming, EFT2 PtclFile·Emitter.cs), `tools/oss/Switch-Toolbox`(PCTL.cs). 이 게임의 버전 53 배치는 EffectLibrary v50 배치와 다르다. 다른 부분은 4.3에서 원본 코드로 맞췄다 |
 
 주소는 SwitchLoader 기본 베이스 0x7100000000 기준이고 모듈 이름과 함께 쓴다.
@@ -507,7 +507,7 @@ final = texSample(tex0) * color0 (컴바이너 0번 = 텍스처×색0) [추정],
 ### 9.1 에셋 변환
 
 ```
-tools/effect_vfxb.py dump <ConvertList.xml> <out> --png
+web/tools/analysis/effect_vfxb.py dump <ConvertList.xml> <out> --png
   → vfxb.json(이미터셋·이미터 summary + raw), tex/*.png (graphics_bntx), primitives.bfres
 graphics_bfres2gltf gltf primitives.bfres prim/primitives.glb --all
 ```
@@ -589,7 +589,7 @@ for (const fx of effects) {
 
 | 검사 | 명령 | 결과 | 수준 |
 |---|---|---|---|
-| 전 파일 구조 | `python tools/effect_vfxb.py check extracted/bea` | 149 파일, 이미터셋 2,062, 이미터 9,642(자식 943). EmitterData 크기 0x1100 전부 일치(불일치 0). 샘플러 텍스처 ID 11,057개 전부 GTNT 에 있음(실패 0). 입자 프리미티브 ID 1,484개 전부 G3NT 에 있음(실패 0). 이름 깨짐 0 | [실행: 파서] |
+| 전 파일 구조 | `python web/tools/analysis/effect_vfxb.py check extracted/bea` | 149 파일, 이미터셋 2,062, 이미터 9,642(자식 943). EmitterData 크기 0x1100 전부 일치(불일치 0). 샘플러 텍스처 ID 11,057개 전부 GTNT 에 있음(실패 0). 입자 프리미티브 ID 1,484개 전부 G3NT 에 있음(실패 0). 이름 깨짐 0 | [실행: 파서] |
 | 키 개수 ↔ 키표 | `keys.py`(scratch) mg1801 17 이미터 | numColor0/Alpha0/Color1/Alpha1/Scale 키 수 = 키표의 유효 키 수, 모두 일치 | [데이터] |
 | 오프셋 ↔ 코드 | Ghidra `srch` + 디컴파일 | 0xD68·0xD6A·0xD6C·0xD70·0xD74·0xD78·0xD7C·0xD80·0xDAC·0xDB0·0xDE0~0xDE8·0xDF8·0xE00·0xE18·0xE28·0xF34·0x10C 를 같은 의미로 읽음 | [판독] |
 | 텍스처 디코드 | `dump --png` (graphics_bntx) | mg1801 14, mg1800 5, mg_common 3 → 22장 전부 성공, 육안 확인(contact_sheet.png) | [실행] |

@@ -46,18 +46,18 @@ mg1801 쪽 근거 메모와 기존 문서 정정 목록은 [analysis/notes/mg180
 | 사운드 | `Archive/sound~subarc_rc_cmn.nx.bea`(공용: 마스터 박자·OP·카운트·JUST SE), `sound~subarc_mg18NN.nx.bea`(게임 BGM·SE) → `extracted/bea/…/*.fsst`(FSAR) |
 | 채보 | `Archive/mg~mg18NN.nx.bea` 안 `mg/mg18NN/data/mg18NN_rm_chartNN(s).json` (6.4 표) |
 | 메시지 | `extracted/message/koKR/im_rc.json`(`im_rc_mode00~03` 노멀/롱/하드/리믹스, `im_rc_rank00~05`), `mgm01.json`(`mgm01_ui_rule_RhythmSetting00/01` 노멀/하드) |
-| 도구 | `tools/rhythm_vtable.py`(NRO vtable), `tools/rhythm_fseq.py`(FSEQ 디스어셈블·변수 명령 검색), `tools/rhythm_seqsim.py`(박자 시퀀스 변수 시뮬레이터), `tools/ghidra_scripts/RhythmTool.java`(명령 파일로 disasm/decomp/refs/callsite/grepins) |
+| 도구 | `web/tools/analysis/rhythm_vtable.py`(NRO vtable), `web/tools/analysis/rhythm_fseq.py`(FSEQ 디스어셈블·변수 명령 검색), `web/tools/analysis/rhythm_seqsim.py`(박자 시퀀스 변수 시뮬레이터), `web/tools/analysis/ghidra_scripts/RhythmTool.java`(명령 파일로 disasm/decomp/refs/callsite/grepins) |
 | Ghidra | `ghidra_work/rhythm/` 프로젝트 `jamboree_main`, `mg1801`, `mg18xx`(mg1802~1810), `rc_stage01`, `mgm01`. 명령 파일 `analysis/notes/cmds/*.txt` |
 
 재현 예:
 
 ```sh
 # 게임 BGM 이 언제 마디에 붙어 시작하는지(박자 변수 시뮬레이션)
-.venv/Scripts/python tools/rhythm_seqsim.py mg1801 SMF_MID_BGM_MG1801_Begin 1000 4000
+.venv/Scripts/python web/tools/analysis/rhythm_seqsim.py mg1801 SMF_MID_BGM_MG1801_Begin 1000 4000
 # 시퀀스 디스어셈블
-.venv/Scripts/python tools/rhythm_fseq.py extracted/bea/sound~subarc_rc_cmn.nx.bea/audio/sounddata/subarc_rc_cmn/subarc_rc_cmn.fsst dis SEQ_BGM_RC_RHYTHM
+.venv/Scripts/python web/tools/analysis/rhythm_fseq.py extracted/bea/sound~subarc_rc_cmn.nx.bea/audio/sounddata/subarc_rc_cmn/subarc_rc_cmn.fsst dis SEQ_BGM_RC_RHYTHM
 # Scene vtable
-.venv/Scripts/python tools/rhythm_vtable.py extracted/romfs/nro/NX_Release/mg1801.nro _ZTVN6mg18015SceneE
+.venv/Scripts/python web/tools/analysis/rhythm_vtable.py extracted/romfs/nro/NX_Release/mg1801.nro _ZTVN6mg18015SceneE
 ```
 
 ## 3. 구성 요소 [판독]
@@ -253,7 +253,7 @@ GetBPM()           = RmGameWork::GetBpm()                                       
 게임 BGM 트랙 1: 0틱 L0=0 … 192틱(2박) L0=1   ← 코드 FUN_7100426c2c 가 BGM 로컬 변수 0 을 읽는다
 ```
 
-`tools/rhythm_seqsim.py` 결과(마스터·OP 틱 0 시작): 요청 틱 1000 → 시작 1153(마디 3), 요청 1152/1154 → 시작 1537(마디 4). L0=1 은 언제나 시작 +192틱. mg1801~1810 의 A·C 20곡 모두 같다 [재구현 계산]. sound 담당 렌더 대조: `SM_BGM_MG1801_DH`(감상용 녹음) = A 0~40.000 s + MG_ENDING → 아래 7.3 계산(종료 BGM 이 BGM 시작 20마디 = 40 s 뒤)과 맞는다.
+`web/tools/analysis/rhythm_seqsim.py` 결과(마스터·OP 틱 0 시작): 요청 틱 1000 → 시작 1153(마디 3), 요청 1152/1154 → 시작 1537(마디 4). L0=1 은 언제나 시작 +192틱. mg1801~1810 의 A·C 20곡 모두 같다 [재구현 계산]. sound 담당 렌더 대조: `SM_BGM_MG1801_DH`(감상용 녹음) = A 0~40.000 s + MG_ENDING → 아래 7.3 계산(종료 BGM 이 BGM 시작 20마디 = 40 s 뒤)과 맞는다.
 
 ## 6. 채보 (RmChartDataMan) [판독][데이터]
 
@@ -570,7 +570,7 @@ onGameMain(): boolean {
 
 | 원본 | 웹 | 동등성 |
 |---|---|---|
-| 마스터 박자 시퀀스(소리: rhythmdrumTrack 드럼, 필인) | sound 담당 시퀀스 렌더(`tools/sound_seq.py`) 또는 생략 | 박자 계산은 BeatClock 이 하므로 소리가 없어도 로직 동일 |
+| 마스터 박자 시퀀스(소리: rhythmdrumTrack 드럼, 필인) | sound 담당 시퀀스 렌더(`web/tools/analysis/sound_seq.py`) 또는 생략 | 박자 계산은 BeatClock 이 하므로 소리가 없어도 로직 동일 |
 | 게임 BGM 시퀀스 `SQ_BGM_MG18NN_A/C` | 렌더한 오디오를 `startTick` 시각에 재생 | 감상용 스트림(예 `SM_BGM_MG1801_DH`)이 A+종료 녹음이라 BPM 120 에서는 그대로 써도 된다(sound 담당 대조) |
 | `_B`(BPM>120) | A 렌더를 재생 속도 BPM/120 로 | 시퀀스는 같은 데이터, 템포만 다름 |
 | `SQ_SE_RC_JUST` 로컬 변수 0 | 겹침 수에 따른 변형(시퀀스 판독 필요) | sound 담당 |

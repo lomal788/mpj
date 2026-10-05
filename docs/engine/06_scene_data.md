@@ -41,7 +41,7 @@
 
 ### 1.2 BEA 헤더 refs — 쓰이지 않음 [데이터]
 
-BEA 헤더에는 다른 아카이브를 가리키는 ref 목록 자리가 있다(+0x24 개수, +0x50 오프셋). 하지만 949개 아카이브 **전부 개수 0**이다. 확인 도구는 `tools/scene_bea_index.py`이고, 결과는 `extracted/converted/scene/bea_refs.tsv`와 `bea_index.json`(아카이브별 파일·타입·플래그)이다.
+BEA 헤더에는 다른 아카이브를 가리키는 ref 목록 자리가 있다(+0x24 개수, +0x50 오프셋). 하지만 949개 아카이브 **전부 개수 0**이다. 확인 도구는 `web/tools/analysis/scene_bea_index.py`이고, 결과는 `extracted/converted/scene/bea_refs.tsv`와 `bea_index.json`(아카이브별 파일·타입·플래그)이다.
 
 - 결론: 아카이브 사이의 의존은 파일에 없다. **코드가 정한다**(1.4~1.6).
 - 6개는 파일 0개짜리 빈 아카이브다: `_ResidentFont`, `_ResidentGuiLayout`, `_ResidentLocalizeMessage`, `_SystemAudio`, `_SystemGuiLayout`, `_SystemPhysics`. 그래서 `extracted/bea`에는 943개만 있다.
@@ -349,7 +349,7 @@ ASST 항목의 `unk`/`unk2` 필드(+0x10, +0x12)는 에셋 분류와 일대일�
 
 `bq.nx.bea`에 111개가 있다. 예: `mg1801_pc.mpat`, `sys_pc.mpat`, `mg0101_npc002.mpat`, `sys_npc103.mpat`.
 
-**형식** (`tools/scene_mpat.py`, 111개 전부 파싱, 남는 바이트 0)
+**형식** (`web/tools/analysis/scene_mpat.py`, 111개 전부 파싱, 남는 바이트 0)
 
 | 오프셋 | 타입 | 내용 |
 |---|---|---|
@@ -470,7 +470,7 @@ CollisionLabel·PhysicsAttribute(5.2)와의 대응은 **[미확정]**이다.
 
 ### 3.4 덤프 [실행]
 
-`python tools/scene_nbmap.py --all` → `extracted/converted/scene/nbmap/<아카이브>__<이름>.json`(전체 트리), `.txt`(한 줄 요약).
+`python web/tools/analysis/scene_nbmap.py --all` → `extracted/converted/scene/nbmap/<아카이브>__<이름>.json`(전체 트리), `.txt`(한 줄 요약).
 
 mg0101 (12개). 모두 루트 `NoName` 아래 `*_col` 엔티티 하나가 트랜스폼 항등과 충돌 컴포넌트(`attr (0,4,3,0)`)를 갖는다.
 
@@ -488,7 +488,7 @@ mg1801: nbmap 없음(1.7).
 
 ### 4.1 개수와 읽는 방식 [데이터 + 판독]
 
-`python tools/scene_data_catalog.py --summary` → `extracted/converted/scene/data_catalog.tsv`. 열은 아카이브, 경로, 종류, 크기, 최상위 키, 모양이다.
+`python web/tools/analysis/scene_data_catalog.py --summary` → `extracted/converted/scene/data_catalog.tsv`. 열은 아카이브, 경로, 종류, 크기, 최상위 키, 모양이다.
 
 | 형식 | 수 | 읽는 방식 |
 |---|---|---|
@@ -558,7 +558,7 @@ mg1801: nbmap 없음(1.7).
   - 포인터 자리에는 표지값 `0x12345678`이 들어 있다(NULL은 0).
   - 객체 참조는 `0x80000000|n` 값이고, 내부 참조 표로 객체 인덱스에 연결된다.
 
-**파일 순서**(`tools/scene_apx.py`가 이 순서로 읽는다)
+**파일 순서**(`web/tools/analysis/scene_apx.py`가 이 순서로 읽는다)
 
 | 순서 | 내용 |
 |---|---|
@@ -661,7 +661,7 @@ mg1801: nbmap 없음(1.7).
 |---|---|---|
 | 얻는 경로 | `mg1801::Scene::GetSceneParam` = vtable +0x88 = `bex::SceneBase::GetSceneParams` @0x71001a2cc8. 장면 모듈 등록부에서 장면 이름 `HashedString`으로 항목을 찾아 +0x30의 Params 인스턴스를 돌려준다(`FUN_71001a3c20`) | [판독] |
 | 인스턴스 | `rtti::Typeinfo("mg1801::Params", "mg1801::Scene::Params", getPropertyList, createInstance, deleteInstance, 0x48, …, checkGuiProperty, createGuiProperty)`. 기본값은 `createInstance` @0x710000e7e4(mg1801.md 4.3) | [판독] |
-| 파일 덮어쓰기 | **없다.** 근거 세 가지:<br>① mg1801 아카이브에 param 류 파일 없음 [데이터]<br>② mg1801.nro가 `DataBaseJsonReader`를 import하지 않음 [데이터]<br>③ Params 속성 이름 19개 + 타입 이름 3개의 해시를 CRC32·FNV-1/1a 32·FNV-1a 64·Murmur3·djb2·xxHash32/64로 구해 데이터 파일 3,004개(텍스처·모델·애니·사운드 본체 제외)와 mg1801.nro에서 찾았다. 0건이다(`chartNo` xxh32가 폰트 파일 글리프 영역에서 1건 우연히 맞음) [실행: tools/scene_hash_search.py] | [판독][데이터] |
+| 파일 덮어쓰기 | **없다.** 근거 세 가지:<br>① mg1801 아카이브에 param 류 파일 없음 [데이터]<br>② mg1801.nro가 `DataBaseJsonReader`를 import하지 않음 [데이터]<br>③ Params 속성 이름 19개 + 타입 이름 3개의 해시를 CRC32·FNV-1/1a 32·FNV-1a 64·Murmur3·djb2·xxHash32/64로 구해 데이터 파일 3,004개(텍스처·모델·애니·사운드 본체 제외)와 mg1801.nro에서 찾았다. 0건이다(`chartNo` xxh32가 폰트 파일 글리프 영역에서 1건 우연히 맞음) [실행: web/tools/analysis/scene_hash_search.py] | [판독][데이터] |
 | GUI 편집 | `checkGuiProperty`·`createGuiProperty`와 `LockParams`·`UnlockParams`(vtable +0x90/+0x98)는 개발용 실시간 편집 경로로 보인다 | [추정] |
 | 다른 게임 | 파라미터 파일을 게임 코드가 따로 읽는다. 예 mg1802 `mg1802_param.json`(일본어 키), mg1804·1809 `*_param.csv`(`key,type,values`). rtti Params와는 별개다 | [데이터] |
 
@@ -675,15 +675,15 @@ mg1801: nbmap 없음(1.7).
 
 | 도구 | 입력 → 출력 | 실행 결과 |
 |---|---|---|
-| `tools/scene_bea_index.py` | `romfs/Archive/*.bea` → `extracted/converted/scene/bea_index.json`, `bea_refs.tsv` | 949개, refs 전부 0 |
-| `tools/scene_mpat.py` | `bq.nx.bea chara/mpat/*.mpat` → `scene/mpat.json` | 111개, 남는 바이트 0 |
-| `tools/scene_nbmap.py --all` | `*.nbmap` → `scene/nbmap/*.json`, `*.txt` | 250개, 엔티티 5,853 |
-| `tools/scene_apx.py --all` | `*.apx` → `scene/apx/*.obj`, `index.json` | 1,493개, 삼각 메시 3,098·볼록체 38 추출 검사 통과 |
-| `tools/scene_data_catalog.py --summary` | `extracted/bea/**/*.{json,csv,msgpack}` → `scene/data_catalog.tsv` | 825개 |
-| `tools/scene_hash_search.py` | 이름 → 해시 검색 | 3,004 파일, 176 패턴 |
-| `tools/scene_strings.py <bin> <정규식>` | 바이너리 ASCII 문자열 + 오프셋 | main 경로 문자열 조사 |
-| `tools/ghidra_scripts/SceneXrefDecomp.java` | 데이터 주소 → 참조 함수 디컴파일 | `scene_xref_*.c` |
-| `tools/ghidra_scripts/SceneCallersOfExternal.java` | 이름 패턴(외부·썽크 포함) → 호출자 디컴파일 | `scene_boot.c` |
+| `web/tools/analysis/scene_bea_index.py` | `romfs/Archive/*.bea` → `extracted/converted/scene/bea_index.json`, `bea_refs.tsv` | 949개, refs 전부 0 |
+| `web/tools/analysis/scene_mpat.py` | `bq.nx.bea chara/mpat/*.mpat` → `scene/mpat.json` | 111개, 남는 바이트 0 |
+| `web/tools/analysis/scene_nbmap.py --all` | `*.nbmap` → `scene/nbmap/*.json`, `*.txt` | 250개, 엔티티 5,853 |
+| `web/tools/analysis/scene_apx.py --all` | `*.apx` → `scene/apx/*.obj`, `index.json` | 1,493개, 삼각 메시 3,098·볼록체 38 추출 검사 통과 |
+| `web/tools/analysis/scene_data_catalog.py --summary` | `extracted/bea/**/*.{json,csv,msgpack}` → `scene/data_catalog.tsv` | 825개 |
+| `web/tools/analysis/scene_hash_search.py` | 이름 → 해시 검색 | 3,004 파일, 176 패턴 |
+| `web/tools/analysis/scene_strings.py <bin> <정규식>` | 바이너리 ASCII 문자열 + 오프셋 | main 경로 문자열 조사 |
+| `web/tools/analysis/ghidra_scripts/SceneXrefDecomp.java` | 데이터 주소 → 참조 함수 디컴파일 | `scene_xref_*.c` |
+| `web/tools/analysis/ghidra_scripts/SceneCallersOfExternal.java` | 이름 패턴(외부·썽크 포함) → 호출자 디컴파일 | `scene_boot.c` |
 
 디컴파일 덤프 (`analysis/decomp/`):
 
@@ -704,13 +704,13 @@ mg1801: nbmap 없음(1.7).
 
 ```sh
 cd c:/dev/mpj
-.venv/Scripts/python tools/scene_bea_index.py
-.venv/Scripts/python tools/scene_mpat.py
-.venv/Scripts/python tools/scene_nbmap.py --all
-.venv/Scripts/python tools/scene_apx.py --all
-.venv/Scripts/python tools/scene_apx.py "extracted/bea/mg~mg0101.nx.bea/mg/mg0101/map/86517d7dcb956427fccc1bc484ee67d4.apx" --obj out.obj
-.venv/Scripts/python tools/scene_data_catalog.py --summary
-.venv/Scripts/python tools/scene_hash_search.py
+.venv/Scripts/python web/tools/analysis/scene_bea_index.py
+.venv/Scripts/python web/tools/analysis/scene_mpat.py
+.venv/Scripts/python web/tools/analysis/scene_nbmap.py --all
+.venv/Scripts/python web/tools/analysis/scene_apx.py --all
+.venv/Scripts/python web/tools/analysis/scene_apx.py "extracted/bea/mg~mg0101.nx.bea/mg/mg0101/map/86517d7dcb956427fccc1bc484ee67d4.apx" --obj out.obj
+.venv/Scripts/python web/tools/analysis/scene_data_catalog.py --summary
+.venv/Scripts/python web/tools/analysis/scene_hash_search.py
 ```
 
 PhysX 4.1 참고 소스 받기:

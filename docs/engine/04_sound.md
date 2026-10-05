@@ -37,7 +37,7 @@
 | 오디오 설정 | `extracted/bea/audio.nx.bea/audio/{data,debug,jump_setting,settingpreset,sound_space,soundevent,supervision,userproc}` |
 | 엔진 초기화 | `extracted/romfs/boot.nbinit` `bezel_audio_init`, `bezel_fx_trigger_init` |
 | 디컴파일 | `analysis/decomp/sound_bex.c`(bex::sound 171개, 깊이 1), `sound_3d_calc.c`, `sound_3d_callers.c`, `sound_powf_callers.c`, `sound_fade_gvar.c`. 리듬 쪽 `main_ca_rm.c`(rhythm 담당 산출) |
-| 도구 | `tools/sound_fsar.py`(FSAR), `tools/sound_seq.py`(FSEQ 역어셈블·FBNK·FWAR·FWAV·DSP 디코드·시퀀스 렌더), `tools/sound_bfstm.py`(BFSTM 헤더·리전·점프 설정·vgmstream 디코드), `tools/sound_preset.py`(세팅 프리셋), `tools/sound_extract_mg1801.py`(mg1801 일괄 추출) |
+| 도구 | `web/tools/analysis/sound_fsar.py`(FSAR), `web/tools/analysis/sound_seq.py`(FSEQ 역어셈블·FBNK·FWAR·FWAV·DSP 디코드·시퀀스 렌더), `web/tools/analysis/sound_bfstm.py`(BFSTM 헤더·리전·점프 설정·vgmstream 디코드), `web/tools/analysis/sound_preset.py`(세팅 프리셋), `web/tools/analysis/sound_extract_mg1801.py`(mg1801 일괄 추출) |
 | 추출 결과 | `extracted/audio/mg1801/` — `manifest.json`, `seq/`, `stream/`, `wave/`, `events/`, `just_sound_table.json` |
 | 외부 도구 | `tools/vgmstream/vgmstream-cli.exe` r2117 (BFSTM 디코드) |
 
@@ -91,7 +91,7 @@
 
 모든 nn::atk 바이너리는 리틀 엔디언, 공통 헤더 `magic[4], u16 BOM(FEFF), u16 headerSize, u32 version, u32 fileSize, u16 blockCount, u16 pad, {u16 type, u16 pad, s32 offset, u32 size}×n`. **참조(Reference)** = `{u16 type, u16 pad, s32 offset}`(offset −1 = 없음), 크기 참조 = 참조 + u32 size, 참조 표 = `u32 count + 참조×n`. offset의 기준은 **그 참조를 담은 구조체(표)의 시작**이다. [데이터: 아래 모든 표본에서 일관]
 
-### 4.1 FSAR (.fspj / .fsst) [데이터, 파서 `tools/sound_fsar.py`]
+### 4.1 FSAR (.fspj / .fsst) [데이터, 파서 `web/tools/analysis/sound_fsar.py`]
 
 헤더 version `0x00020600`, 블록 3개.
 
@@ -134,7 +134,7 @@ itemId 상위 8비트: 1 사운드, 2 사운드 그룹, 3 뱅크, 4 플레이어
 | subarc_mg1801.fsst | 25 (시퀀스 22 / 스트림 3) | 3 | 3 (파형 54·27·13) | 7 | 17 (2) |
 | subarc_rc_cmn.fsst | 30 (전부 시퀀스) | 7 | 7 | 5 | 26 (0) |
 
-### 4.2 FSEQ (시퀀스) [데이터, `tools/sound_seq.py disasm`]
+### 4.2 FSEQ (시퀀스) [데이터, `web/tools/analysis/sound_seq.py disasm`]
 
 블록 DATA(0x5000) = 명령 바이트열, LABL(0x5001) = 레이블 표(`{ref 0x1F00 데이터 offset, u32 길이, char[]}`). **사운드 정보의 startOffset 은 DATA 본문 기준 offset**이고, 레이블이 그대로 남아 있다(`MG1801_JUST`, `SMF_MID_BGM_MG1801_Track_3_LoopStart`, `TEMPO_CHECK` 등). BGM 레이블 `SMF_MID_*`로 보아 **MIDI(SMF)에서 변환한 시퀀스**다.
 
@@ -172,7 +172,7 @@ INFO(0x5800): `ref 파형 id 표 {u32 웨이브아카이브 itemId, u32 파형 �
 FWAR: INFO(0x6800) 크기 참조 표(FILE+8 기준) → FWAV 들. FWAV: INFO(0x7000) `u8 encoding(0 PCM8, 1 PCM16, 2 DSP-ADPCM, 3 IMA), u8 loop, u32 sampleRate, u32 loopStart, u32 frameCount, u32 originalLoopStart, 채널 정보 표(ref 샘플(DATA+8 기준), ref ADPCM 정보 = coef[16] s16, ps, yn1, yn2, loop ps/yn1/yn2)`.
 mg1801 SE 파형은 모노 DSP-ADPCM, 48 kHz 와 44.1 kHz 가 섞여 있다. 자체 DSP 디코더(`dsp_decode`)로 풀었다 [실행].
 
-### 4.5 BFSTM (스트림) [데이터, `tools/sound_bfstm.py`]
+### 4.5 BFSTM (스트림) [데이터, `web/tools/analysis/sound_bfstm.py`]
 
 version 0x00060400, 블록 INFO(0x4000)·SEEK(0x4001)·DATA(0x4002)·REGN(0x4003, 있을 때만). StreamInfo: `u8 encoding, u8 loop, u8 channels, u8 regionCount, u32 sampleRate, u32 loopStart, u32 frameCount(=루프 끝), 블록 정보 8×u32, ref 샘플, u16 regionInfoSize(0x100), ref 리전 데이터, u32 originalLoopStart, u32 originalLoopEnd, u32 crc`.
 REGN 엔트리 0x100 B: `u32 start, u32 end, DSP 문맥(u16 ps, s16 yn1, s16 yn2)×16, +0x68 u32 사용(1), +0xC0 char[0x40] 이름`.
@@ -196,7 +196,7 @@ REGN 엔트리 0x100 B: `u32 start, u32 end, DSP 문맥(u16 ps, s16 yn1, s16 yn2
 
 `bq.nx.bea common/data/musicBgmList.json` — 음악 감상 메뉴 곡 목록. `keyId 200`(리듬) 에 `SM_BGM_MG1801_DH` 등 `_DH` 스트림이 있다. **`SM_BGM_MG1801_DH`는 게임 중 BGM이 아니라 음악 감상용 녹음이다.** [데이터] → mg1801.md 7절의 "SQ_BGM_MG1801_A → SM_BGM_MG1801_DH [추정 연결]"은 틀렸다(그 문서는 수정 금지라 여기와 SHARED.md 에 정정을 남긴다).
 
-### 4.7 세팅 프리셋 (.bspp `BSPP`) [데이터, `tools/sound_preset.py`]
+### 4.7 세팅 프리셋 (.bspp `BSPP`) [데이터, `web/tools/analysis/sound_preset.py`]
 
 헤더 `BSPP, u32 프리셋 수(366), u32 아카이브 이름 수(395), u32 1, u32 공간 수`, 이어서 표 3개(항목 0x28 B = char[0x20] 이름, u32 해시(이름의 FNV-1a 32비트 — scene 담당 확인), u32 offset). 데이터 기준 = 셋째 표 끝(0x8678). 프리셋 = `BSSP, u32 레코드 수, u32 문자열 수, 레코드(12×u32)…, NUL 구분 문자열`.
 
@@ -366,7 +366,7 @@ mg1801 SE(FSEQ 파일 7) 공통 서두: `cmp_ge L5 2 → [if] call volume_offset
 
 ### 6.6 볼륨·팬 (렌더러 근사) [추정]
 
-렌더러(`tools/sound_seq.py SeqRenderer`)가 쓰는 식. **원본 계산을 판독한 것이 아니다.** 10절 대조에서 BGM 은 원본 녹음과 잘 맞았다.
+렌더러(`web/tools/analysis/sound_seq.py SeqRenderer`)가 쓰는 식. **원본 계산을 판독한 것이 아니다.** 10절 대조에서 BGM 은 원본 녹음과 잘 맞았다.
 
 ```
 진폭 = (velocity/127)² × (영역 volume/127)² × (트랙 volume/127)² × (volume2/127)² × (main_volume/127)² × 엔벌로프 × (사운드 volume/127)
@@ -449,7 +449,7 @@ mg1801 SE 의 3D 플래그 [데이터]:
 | 시퀀스 SE(단음) | 렌더 wav 또는 원본 파형 + 재생 속성 | 무작위(물보라)는 파형 + `playbackRate`·`gain` 무작위로 재현 |
 | JUST_SOUND | **파형 + 노트표 소형 시퀀서** | 코드(G8)·콤보(L0)·재생 중 연장이 있어 미리 렌더로는 다 못 담는다 |
 
-BPM 이 120 이 아니면 BGM 을 그 BPM 으로 다시 렌더한다: `python tools/sound_extract_mg1801.py --bpm <BPM>`. (`AudioBufferSourceNode.playbackRate` 로 늘리면 음정이 바뀌므로 쓰지 않는다. 원본은 템포만 바뀐다.)
+BPM 이 120 이 아니면 BGM 을 그 BPM 으로 다시 렌더한다: `python web/tools/analysis/sound_extract_mg1801.py --bpm <BPM>`. (`AudioBufferSourceNode.playbackRate` 로 늘리면 음정이 바뀌므로 쓰지 않는다. 원본은 템포만 바뀐다.)
 
 ### 9.2 매니페스트 (웹 `assets/mg1801/manifest.json` 의 sound 절 제안)
 
@@ -588,10 +588,10 @@ function onJust(now: number) {
 
 재현:
 ```sh
-.venv/Scripts/python tools/sound_extract_mg1801.py --bpm 120           # extracted/audio/mg1801/ 생성(약 3분)
-.venv/Scripts/python tools/sound_seq.py disasm <fsst> SQ_BGM_MG1801_A   # 명령 목록
-.venv/Scripts/python tools/sound_preset.py show mg1801 mg1801_result mg1800_cmn
-.venv/Scripts/python tools/sound_bfstm.py info extracted/romfs/stream/SM_BGM_MG1801_DH.dspadpcm.bfstm
+.venv/Scripts/python web/tools/analysis/sound_extract_mg1801.py --bpm 120           # extracted/audio/mg1801/ 생성(약 3분)
+.venv/Scripts/python web/tools/analysis/sound_seq.py disasm <fsst> SQ_BGM_MG1801_A   # 명령 목록
+.venv/Scripts/python web/tools/analysis/sound_preset.py show mg1801 mg1801_result mg1800_cmn
+.venv/Scripts/python web/tools/analysis/sound_bfstm.py info extracted/romfs/stream/SM_BGM_MG1801_DH.dspadpcm.bfstm
 ```
 
 ## 11. 미확정 사항과 추가 분석에 필요한 근거

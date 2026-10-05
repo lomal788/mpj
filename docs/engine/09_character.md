@@ -14,7 +14,7 @@
 | 아카이브 로딩, PlayerCharacterID 전체 표, `characterlist.json` 필드, mpat 포맷 | [06_scene_data.md §1·§2](06_scene_data.md) |
 | FX 트리거(모션 프레임 이벤트 → SE·보이스·진동) | [05_ui_input.md §7](05_ui_input.md) |
 | 프레임 타이밍·파이버 순서·GetDeltaTime | [01_core.md](01_core.md) |
-| FRES·BNTX 변환, 회전 규약, 재질 근사 | [03_graphics.md](03_graphics.md), 변환기 `tools/graphics_bfres2gltf` |
+| FRES·BNTX 변환, 회전 규약, 재질 근사 | [03_graphics.md](03_graphics.md), 변환기 `web/tools/analysis/graphics_bfres2gltf` |
 | mg1801 Player 로직 | [../minigame/mg1801.md §4.6·§5.2·§6.5](../minigame/mg1801.md) |
 
 ---
@@ -45,9 +45,9 @@ mg1801에서는 4명이 칼을 들고 `rhy_knife_idle00`을 박자에 맞춰 반
 | 물리 애니 | main `nn::bezel::ComPhysicalAnimation` @0x71004f33a0~ |
 | mg1801 Player | mg1801.nro `Player::Player` @0x710000b130, `MyUpdate` @0x710000c9c0, `UpdateHeadControl` @0x710000d130, `Finish` @0x710000d580, `Ending` @0x710000d680, `ObjectManImpl::GetHeadTarget` @0x71000047e0 |
 | 디컴파일 | `analysis/decomp/character_motion.c`(main 157함수), `character_anim2.c`·`character_anim3.c`·`character_anim4.c`(bezel 재생 내부), `character_anim_listener_dis.c`(리스너 디스어셈블), `character_mg1801_player_dis.c`(mg1801 Player 디스어셈블) |
-| Ghidra | `ghidra_work/character`(jamboree_main, mg1801). 스크립트 `tools/ghidra_scripts/CharacterDisasm.java`(함수 디스어셈블+호출 이름), `CharacterDecompAddr.java`(주소·이름·vtable 포인터 표 디컴파일) |
+| Ghidra | `ghidra_work/character`(jamboree_main, mg1801). 스크립트 `web/tools/analysis/ghidra_scripts/CharacterDisasm.java`(함수 디스어셈블+호출 이름), `CharacterDecompAddr.java`(주소·이름·vtable 포인터 표 디컴파일) |
 | 에셋 | `extracted/bea/chara~pcNN.nx.bea`(22), `chara~pcMot_<key>.nx.bea`(85), `bq.nx.bea/common/data/{characterlist,pcMotionArcList,face_param}.json`, `bq.nx.bea/chara/mpat/*.mpat`(111) |
-| 도구 | `tools/character_motion_index.py`, `tools/character_glb.py`, `tools/character_verify/{run.mjs,check.ts,shot.ts,view.html,motion_ref.ts}` |
+| 도구 | `web/tools/analysis/character_motion_index.py`, `web/tools/analysis/character_glb.py`, `web/tools/analysis/character_verify/{run.mjs,check.ts,shot.ts,view.html,motion_ref.ts}` |
 | 산출물 | `extracted/converted/character/motion_index.json`, `extracted/converted/character/pc01/{pc01_mario.glb, tex/, meta.json, verify_three.json, filmstrip.png}` |
 
 ## 3. 진입점과 전체 호출 흐름
@@ -159,7 +159,7 @@ PlayerCharacterID는 `characterlist.json`의 `PlayerCharacterData` 배열 인덱
 | `pc01_wet_mask` | 2D | 젖음 마스크(`actor::ComWetExpression`) |
 | `_Materials/cha_{body,foot}_{hgt,vlc}`, `common_decal_shadow00` | 2D | 공용 |
 
-- 배열 텍스처는 그래픽 담당 `tools/graphics_bntx.py`가 레이어별 png(`_00`, `_01`)로 푼다 [실행].
+- 배열 텍스처는 그래픽 담당 `web/tools/analysis/graphics_bntx.py`가 레이어별 png(`_00`, `_01`)로 푼다 [실행].
 - **정정(전 캐릭터 규칙, 웹 22명 렌더 관측):** body_m UV를 "텍스처 가로 = 1" 단위로 본다. 알베도 1:2(1024×2048·512×1024) → v′ = 0.5 + 0.5v, 2:1(쿠파) → u′ = 0.5u, 정사각·캐서린(1024×1280) → 그대로. **얼굴(눈꺼풀) 셰이프에도 같은 규칙을 건다** — 아래 '얼굴은 보정하지 않는다'는 틀렸다(걸지 않으면 피치·데이지·폴린 눈가가 어긋나고, 걸면 마리오 포함 모두 맞는다) [실행: 렌더 관측][추정: 원본 그래프 `pcNN.bnbshpk` 미해독]. 눈동자 좌표 = (TEXCOORD_1.u − p.x, TEXCOORD_1.v + p.y), p = utility_parameter0/1(Maya srt 부호; 피치 p.y = 8.19로 확인), 덮는 곳 = 몸 알베도 알파 0 칸(흰자 모양과 같음) [데이터]. 쿠파주니어(pc56)는 알베도 오른쪽 띠 패턴을 고르는 그래프라 미재현.
 - 몸 UV는 TEXCOORD_0을 그대로 쓰면 색이 어긋난다. `v' = 0.5 + 0.5·v`로 맞는다는 관측이 있다(그래픽 담당, `extracted/converted/graphics/shots/mario_uvfix_1.png`). 원본 셰이더 그래프 식은 **[미확정]**이다. 이 문서의 렌더(§10)는 UV를 고치지 않았다. 그래서 색이 어긋나 보인다.
 - 셰이프별 UV 범위 [데이터, pc01 glb 계산]:
@@ -465,14 +465,14 @@ isFinished = !loop && (speed >= 0 ? frame >= FrameMax : frame <= 0);
 
 ### 6.7 mg1801 칼 모션 길이 [데이터 + 재구현 계산]
 
-`tools/bfres_probe`로 22명 모두의 `chara~pcMot_rhy/…/pcNN_rhy_knife_*.fskb`를 읽었다.
+`web/tools/analysis/bfres_probe`로 22명 모두의 `chara~pcMot_rhy/…/pcNN_rhy_knife_*.fskb`를 읽었다.
 
 | 모션 | FrameCount | Loop | 22명 공통 | 속도 BPM/120일 때 |
 |---|---|---|---|---|
 | `rhy_knife_idle00` | **30** | **루프** | 예 | 한 바퀴 = 30·120/BPM 프레임 = **정확히 1박** |
 | `rhy_knife_swing00` | **20** | **비루프** | 예 | 끝까지 ≈ 20·120/BPM 프레임 = 2/3박 |
 
-swing 길이(요청 프레임부터 idle을 다시 요청하는 프레임까지)는 `tools/character_verify/motion_ref.ts`로 계산했다. 프레임을 f32로 누적하고, IsFinished는 다음 프레임 MyUpdate에서 본다.
+swing 길이(요청 프레임부터 idle을 다시 요청하는 프레임까지)는 `web/tools/analysis/character_verify/motion_ref.ts`로 계산했다. 프레임을 f32로 누적하고, IsFinished는 다음 프레임 MyUpdate에서 본다.
 
 | BPM | 속도(f32) | swing 프레임 | 초 |
 |---|---|---|---|
@@ -573,7 +573,7 @@ FX 트리거의 애니 프레임 이벤트는 "프레임 f를 지나는 순간" 
 | `core/chara.ts` | 로직 | PlayerCharacterID 표(§4.1), 의자 분류, 시선 예외(14·18·19), `characterlist` 값 |
 | `view/chara_library.ts` | 화면 | 캐릭터 모델 glb 로드·캐시, 클립 지연 로드, `SkeletonUtils.clone`으로 4인 인스턴스 |
 | `view/chara_actor.ts` | 화면 | state의 `{clip, frame}`을 `mixer.setTime(frame/60)`로 적용(누적 시간 쓰지 않음), 전이 크로스페이드, 소품 부착, 시선 근사, 눈 UV |
-| 도구 `tools/character_glb.py` | 변환 | 모델 glb + 클립(이미 있음). 다음 단계로 "클립만 든 glb" 출력 옵션 추가 |
+| 도구 `web/tools/analysis/character_glb.py` | 변환 | 모델 glb + 클립(이미 있음). 다음 단계로 "클립만 든 glb" 출력 옵션 추가 |
 
 로직 → 화면 계약(state)에 플레이어마다 다음을 넣는다. DESIGN §4: 골든 대조용.
 
@@ -599,7 +599,7 @@ interface CharaState { charId: number; motion: CharaMotionState; headTarget: [nu
 
 ### 9.3 MotionSlot 의사코드 (로직)
 
-`tools/character_verify/motion_ref.ts`가 실행 가능한 기준 구현이다. 웹 `core/motion.ts`는 이것을 옮긴다.
+`web/tools/analysis/character_verify/motion_ref.ts`가 실행 가능한 기준 구현이다. 웹 `core/motion.ts`는 이것을 옮긴다.
 
 ```ts
 class MotionSlot {
@@ -632,7 +632,7 @@ mg1801 Player는 mg1801.md §6.5와 이 문서 §5.2·§4.3의 MotionArg 값으�
 
 ### 9.5 클립 이름 규칙과 지연 로드
 
-- 클립 이름 = 원본 모션 이름(접두 `pcNN_` 없음, `rhy_knife_idle00`). glb `animations[i].extras`에 `{frames, loop, fps:60, archive, nameHash}`를 둔다(`tools/character_glb.py`가 이미 한다).
+- 클립 이름 = 원본 모션 이름(접두 `pcNN_` 없음, `rhy_knife_idle00`). glb `animations[i].extras`에 `{frames, loop, fps:60, archive, nameHash}`를 둔다(`web/tools/analysis/character_glb.py`가 이미 한다).
 - 모델과 클립을 나눈다.
   - `assets/chara/pcNN/model.glb`: 클립 없음, 텍스처 png 별도
   - `assets/chara/pcNN/motion/<archive key>/<motion>.glb`: 뼈 노드 + 클립 하나. three.js는 트랙 이름(`뼈이름.quaternion`)으로 묶으므로 모델에 그대로 쓴다.
@@ -659,7 +659,7 @@ mg1801 Player는 mg1801.md §6.5와 이 문서 §5.2·§4.3의 MotionArg 값으�
 
 1. `core/motion.ts`를 `motion_ref.ts`에서 옮긴다. 노드 시험: §6.7 표와 같은 swing 프레임 수, idle 루프, 같은 이름 재요청 무시.
 2. mg1801 Player 로직에 연결한다(회색 박스 0.3초 → 20프레임 상당). `npm run check` 결정성을 확인한다.
-3. 변환: `tools/character_glb.py`를 22명에 돌린다. 클립만 든 glb 출력을 추가한다.
+3. 변환: `web/tools/analysis/character_glb.py`를 22명에 돌린다. 클립만 든 glb 출력을 추가한다.
 4. 화면: 모델 + 클립 적용(frame 직접 지정), 칼 부착, 의자 높이.
 5. FX 트리거 프레임 이벤트(SE 프레임 2). 보이스는 프리셋상 MUTE다.
 6. 시선 근사, 눈 UV, 깜빡임.
@@ -680,12 +680,12 @@ mg1801 Player는 mg1801.md §6.5와 이 문서 §5.2·§4.3의 MotionArg 값으�
 |---|---|---|
 | 원본 명령 판독 | Ghidra 디컴파일·디스어셈블(§2 파일) | 이 문서 §4~§6 |
 | 데이터 확인 | `bfres_probe`로 22명 `rhy_knife_*` | 전원 idle 30·루프, swing 20·비루프 |
-| 데이터 확인 | `tools/character_motion_index.py` | 85 아카이브, 이름 1,027개, fskb 18,910개 프로브 오류 0, 캐릭터마다 길이가 다른 이름 302개 → `extracted/converted/character/motion_index.json` |
+| 데이터 확인 | `web/tools/analysis/character_motion_index.py` | 85 아카이브, 이름 1,027개, fskb 18,910개 프로브 오류 0, 캐릭터마다 길이가 다른 이름 302개 → `extracted/converted/character/motion_index.json` |
 | 데이터 확인 | FNV-1a 64 계산 vs mg1801 상수 2개 | 일치 |
-| 변환 실행 | `python tools/character_glb.py`(기본 pc01 + rhy_knife_idle00·swing00·co_idle00·fcl_blink00) | `pc01_mario.glb` 3,055,120 B, 노드 98, 메시 3, 정점 13,013, 삼각형 6,975, bindErr 3.3e−7, 누락 텍스처 0 |
-| 독립 로드 | `node tools/character_verify/run.mjs tools/character_verify/check.ts pc01` (three GLTFLoader, 텍스처 스텁) | `ok: true`. 스켈레톤 뼈 94 = FRES 94. 클립 4개의 길이×60 = FSKA FrameCount(30/20/120/380), loop 일치. 정수 프레임 믹서 포즈 = 저장 키(오차 ≤ 1e−6). swing 0→8프레임 `attach_R_hand` 이동 0.963. idle 0↔30프레임 손 위치 차 0(루프 이음매) → `verify_three.json` |
+| 변환 실행 | `python web/tools/analysis/character_glb.py`(기본 pc01 + rhy_knife_idle00·swing00·co_idle00·fcl_blink00) | `pc01_mario.glb` 3,055,120 B, 노드 98, 메시 3, 정점 13,013, 삼각형 6,975, bindErr 3.3e−7, 누락 텍스처 0 |
+| 독립 로드 | `node web/tools/analysis/character_verify/run.mjs web/tools/analysis/character_verify/check.ts pc01` (three GLTFLoader, 텍스처 스텁) | `ok: true`. 스켈레톤 뼈 94 = FRES 94. 클립 4개의 길이×60 = FSKA FrameCount(30/20/120/380), loop 일치. 정수 프레임 믹서 포즈 = 저장 키(오차 ≤ 1e−6). swing 0→8프레임 `attach_R_hand` 이동 0.963. idle 0↔30프레임 손 위치 차 0(루프 이음매) → `verify_three.json` |
 | 재구현 계산 | 같은 check의 `motion_ref.ts` + mg1801 MyUpdate 흉내 | §6.7 표(120 BPM 20프레임) |
-| 헤드리스 렌더 | `node tools/character_verify/run.mjs tools/character_verify/shot.ts pc01` (chromium swiftshader) | `extracted/converted/character/pc01/filmstrip.png`: idle f0 \| swing f0·4·8·12·16·20 \| co_idle f60, 칼 부착. 포즈 변화 확인. 몸 색은 UV 미보정이라 어긋남(§4.2). 콘솔 오류는 404 1건(favicon 추정)뿐 |
+| 헤드리스 렌더 | `node web/tools/analysis/character_verify/run.mjs web/tools/analysis/character_verify/shot.ts pc01` (chromium swiftshader) | `extracted/converted/character/pc01/filmstrip.png`: idle f0 \| swing f0·4·8·12·16·20 \| co_idle f60, 칼 부착. 포즈 변화 확인. 몸 색은 UV 미보정이라 어긋남(§4.2). 콘솔 오류는 404 1건(favicon 추정)뿐 |
 | 원본 실행 | 없음 | — |
 
 함수·변환 시험 통과는 원본 동작 재현 확인이 아니다. 다음은 검증하지 않았다.
@@ -719,12 +719,12 @@ mg1801 Player는 mg1801.md §6.5와 이 문서 §5.2·§4.3의 MotionArg 값으�
 
 ```sh
 # 모션 색인 (약 40초)
-.venv/Scripts/python tools/character_motion_index.py
-# 캐릭터 glb (기본 pc01 + 4클립). 다른 캐릭터·모션: tools/character_glb.py pc03 rhy_knife_idle00 rhy_knife_swing00
-.venv/Scripts/python tools/character_glb.py
+.venv/Scripts/python web/tools/analysis/character_motion_index.py
+# 캐릭터 glb (기본 pc01 + 4클립). 다른 캐릭터·모션: web/tools/analysis/character_glb.py pc03 rhy_knife_idle00 rhy_knife_swing00
+.venv/Scripts/python web/tools/analysis/character_glb.py
 # 독립 검증·렌더 (web/node_modules 의 three·esbuild·playwright-core 사용, 설치 없음)
-node tools/character_verify/run.mjs tools/character_verify/check.ts pc01
-node tools/character_verify/run.mjs tools/character_verify/shot.ts pc01
+node web/tools/analysis/character_verify/run.mjs web/tools/analysis/character_verify/check.ts pc01
+node web/tools/analysis/character_verify/run.mjs web/tools/analysis/character_verify/shot.ts pc01
 # Ghidra (캐릭터 전용 사본)
 MSYS_NO_PATHCONV=1 ./tools/ghidra_12.1.2_PUBLIC/support/analyzeHeadless.bat c:/dev/mpj/ghidra_work/character jamboree_main \
   -process main.nso -noanalysis -readOnly -scriptPath c:/dev/mpj/tools/ghidra_scripts \

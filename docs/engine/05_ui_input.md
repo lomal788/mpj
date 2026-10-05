@@ -257,7 +257,7 @@ msbt 변환본의 `[g:t:hex]` = 그룹 g, 태그 t, 파라미터 바이트(리�
 | [3:0] | control.Wait_Scale(scale:f32) | f32 | 38 (8.0, 1.0) | 글자 출력 속도 배율(대화창) |
 
 색 표(CLR1/CLB1): 0 `text_mw_important` #fa1e04, 1 `text_mw_white` #ffffff, 2 `text_mw_black` #070203, 3 `ms_grid_dark` #a0a0a0, 4 `symbol_white`, 6 `text_orange` #ff3502, 그 밖은 시험색.
-속성(ATI2/ALB1/ALI2, 메시지마다 붙는 메타): VoiceKey, OffsetX/Y, ProperNoun, WindowType(WT_Empty…WT_Subtitle), Character(CH_*), Position(9방향), Emotion, WindowInfo, Motion, TextCheck*(번역 검수 상태). 메시지별 속성 값은 msbt ATR1 에 있다 — `tools/msbt.py` 는 읽지 않는다 [미확정: 값 해석].
+속성(ATI2/ALB1/ALI2, 메시지마다 붙는 메타): VoiceKey, OffsetX/Y, ProperNoun, WindowType(WT_Empty…WT_Subtitle), Character(CH_*), Position(9방향), Emotion, WindowInfo, Motion, TextCheck*(번역 검수 상태). 메시지별 속성 값은 msbt ATR1 에 있다 — `web/tools/analysis/msbt.py` 는 읽지 않는다 [미확정: 값 해석].
 
 ### 5.3 스타일 (SYL3·SLB1·style.mstl) [데이터]
 
@@ -389,7 +389,7 @@ MinPlayer 1, MaxPlayer 1, Style `GameControllerStyle_FullKey`, 컨트롤러 지�
 4. 애니 프레임 이벤트는 모션 재생 중 해당 프레임에 엔진이 같은 키를 발생시킨다 [추정: 7.2 +0x40 데이터].
 - 용량(boot.nbinit `bezel_fx_trigger_init`): 사운드 512, 파티클 256, 진동 64, 애니 이벤트 384/플레이어 192/트리거 1,024, 플레이어 256.
 
-### 7.6 BNVIB [데이터 `tools/ui_bnvib.py`, 463개]
+### 7.6 BNVIB [데이터 `web/tools/analysis/ui_bnvib.py`, 463개]
 
 u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32 loopStart, loopEnd, [loopInterval]), u32 데이터 크기, 샘플 4 B. 바이트 0·2 = 진폭(감쇠하는 쪽), 1·3 = 주파수 코드. `nn::hid::VibrationValue` 순서 {ampLow, freqLow, ampHigh, freqHigh} 로 본다 [추정]. `vibration.msgpack` 의 `vib_setting`(값 지정형)은 저역 160 Hz·고역 320 Hz 를 쓴다. 주파수 코드 → Hz 식 [미확정]. 진동 시퀀스(`vib/seq/*.msgpack`)는 {play 라벨·gain, wait 초, loop_start/end} 명령 목록.
 
@@ -439,7 +439,7 @@ u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32
 | `ctl1` 의미, 재질 bit19 블록 필드, `FLCT`·`FLIM`, `ali1`·`scr1` 추가 바이트 | 일부 레이아웃 표시 | ui2d 런타임(nn::ui2d) 판독 또는 다른 v9 게임 자료 |
 | 원점·회전·알파·컴바이너 규칙의 원본 일치 | HUD 위치·색 | 원본 화면 캡처와 렌더 비교 |
 | FFNT 크기 배율(fontSize/높이), fcpx 대체 범위 표 | 글자 크기·대체 | ui2d 텍스트 렌더 판독, FCPX 구조 |
-| msbt ATR1 속성 값, Font 태그 u16 의미 | 대화창 | `tools/msbt.py` 확장(수정 금지라 별도 도구), 대화창 코드 판독 |
+| msbt ATR1 속성 값, Font 태그 u16 의미 | 대화창 | `web/tools/analysis/msbt.py` 확장(수정 금지라 별도 도구), 대화창 코드 판독 |
 | mstl 필드 +0x0C·+0x20·+0x34 의미 | 로캘별 글자 배율 | 메시지 스타일 적용 코드 판독 |
 | FTRG 0x0400/0x0403 블록, 0x9101 앞부분 u32/f32 의미, 자원 f32 50.0 | 트리거 세부 | `nn::bezel::ComFxTrigger` 내부(@0x71005f0cec 이후) 판독 |
 | bnvib 주파수 코드 → Hz | 진동 음색(웹에서 표현 불가라 영향 작음) | nn::hid 진동 파일 파서 판독 |

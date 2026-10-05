@@ -1,0 +1,11255 @@
+{
+ "tool": "tools/mg1801_web_effects.py",
+ "source": {
+  "mg1801": "extracted/bea/mg~mg1801.nx.bea/_Vfx/mg/mg1801/ConvertList.xml",
+  "mg1800": "extracted/bea/mg~mg1800.nx.bea/_Vfx/mg/mg1800/ConvertList.xml",
+  "mg_common": "extracted/bea/libca~mg_common.nx.bea/_Vfx/libca/mg_common/ConvertList.xml"
+ },
+ "note": "값은 effect_vfxb.py 덤프의 raw 그대로(프레임·월드 단위·라디안). 의미는 web/docs/engine/08_effects.md 4절",
+ "aliases": {
+  "ca::rm::util::ShowCommonEffect#0": "mg1800_success01",
+  "ca::rm::util::ShowCommonEffect#1": "mg1800_success00"
+ },
+ "textures": {
+  "mg1800_ring02": {
+   "file": "tex/mg1800_ring02.png",
+   "width": 128,
+   "height": 128,
+   "format": "BC7_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg1800_success00_ring00": {
+   "file": "tex/mg1800_success00_ring00.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC1_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg1800_success00_ring01": {
+   "file": "tex/mg1800_success00_ring01.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC4_UNORM",
+   "srgb": false,
+   "alpha": true
+  },
+  "mg1800_success00_twinkle00": {
+   "file": "tex/mg1800_success00_twinkle00.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC1_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg1800_success00_twinkle01": {
+   "file": "tex/mg1800_success00_twinkle01.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC1_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg1801_bubble00": {
+   "file": "tex/mg1801_bubble00.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC3_SRGB",
+   "srgb": true,
+   "alpha": true
+  },
+  "mg1801_bubble00_nml": {
+   "file": "tex/mg1801_bubble00_nml.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC5_SNORM",
+   "srgb": false,
+   "alpha": false
+  },
+  "mg1801_bubble1": {
+   "file": "tex/mg1801_bubble1.png",
+   "width": 128,
+   "height": 128,
+   "format": "BC5_UNORM",
+   "srgb": false,
+   "alpha": true
+  },
+  "mg1801_crown00": {
+   "file": "tex/mg1801_crown00.png",
+   "width": 128,
+   "height": 64,
+   "format": "BC1_SRGB",
+   "srgb": true,
+   "alpha": true
+  },
+  "mg1801_crown00_nml": {
+   "file": "tex/mg1801_crown00_nml.png",
+   "width": 128,
+   "height": 64,
+   "format": "BC5_SNORM",
+   "srgb": false,
+   "alpha": false
+  },
+  "mg1801_fall_side_splash00": {
+   "file": "tex/mg1801_fall_side_splash00.png",
+   "width": 256,
+   "height": 256,
+   "format": "BC5_UNORM",
+   "srgb": false,
+   "alpha": true
+  },
+  "mg1801_flowmap00": {
+   "file": "tex/mg1801_flowmap00.png",
+   "width": 256,
+   "height": 256,
+   "format": "R8G8B8A8_UNORM",
+   "srgb": false,
+   "alpha": false
+  },
+  "mg1801_ring00": {
+   "file": "tex/mg1801_ring00.png",
+   "width": 256,
+   "height": 256,
+   "format": "BC3_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg1801_shave01": {
+   "file": "tex/mg1801_shave01.png",
+   "width": 128,
+   "height": 128,
+   "format": "BC3_SRGB",
+   "srgb": true,
+   "alpha": true
+  },
+  "mg1801_smoke00": {
+   "file": "tex/mg1801_smoke00.png",
+   "width": 128,
+   "height": 128,
+   "format": "BC3_SRGB",
+   "srgb": true,
+   "alpha": true
+  },
+  "mg1801_splash_alb": {
+   "file": "tex/mg1801_splash_alb.png",
+   "width": 512,
+   "height": 512,
+   "format": "BC4_UNORM",
+   "srgb": false,
+   "alpha": true
+  },
+  "mg1801_splash_nml": {
+   "file": "tex/mg1801_splash_nml.png",
+   "width": 512,
+   "height": 512,
+   "format": "BC5_SNORM",
+   "srgb": false,
+   "alpha": false
+  },
+  "mg1801_water_land00_01": {
+   "file": "tex/mg1801_water_land00_01.png",
+   "width": 64,
+   "height": 64,
+   "format": "BC1_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg1801_wave00": {
+   "file": "tex/mg1801_wave00.png",
+   "width": 128,
+   "height": 128,
+   "format": "BC3_SRGB",
+   "srgb": true,
+   "alpha": true
+  },
+  "mg_common_ring_00": {
+   "file": "tex/mg_common_ring_00.png",
+   "width": 128,
+   "height": 128,
+   "format": "R8G8B8A8_SRGB",
+   "srgb": true,
+   "alpha": false
+  },
+  "mg_common_star_00": {
+   "file": "tex/mg_common_star_00.png",
+   "width": 32,
+   "height": 64,
+   "format": "R8G8B8A8_SRGB",
+   "srgb": true,
+   "alpha": true
+  },
+  "mg_common_star_01": {
+   "file": "tex/mg_common_star_01.png",
+   "width": 64,
+   "height": 128,
+   "format": "BC5_UNORM",
+   "srgb": false,
+   "alpha": true
+  }
+ },
+ "primitives": {
+  "0x000000005832afa7": "mg1801_bubble00",
+  "0x00000000e5d7b000": "mg1801_crown00",
+  "0x00000000fd58ff47": "mg1801_circle00",
+  "0x00000000cb1b9b6f": "mg1801_plane00"
+ },
+ "sets": {
+  "mg1801_steam00": {
+   "source": "mg1801",
+   "emitters": [
+    {
+     "name": "steam00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": false,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 6.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 10,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 5.0,
+      "radius": [
+       5.0,
+       0.0,
+       0.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.75,
+       2.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 120,
+      "lifeRandom": 30,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.001,
+      "designatedDirScale": 0.01,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       3.141593
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.008726646
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.553,
+       0.483,
+       0.323
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.075,
+        0.075,
+        0.075,
+        0.22
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [
+       [
+        0.508,
+        0.282,
+        0.058,
+        0.0
+       ],
+       [
+        0.848,
+        0.578,
+        0.193,
+        1.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.5,
+       3.5,
+       3.5
+      ],
+      "random": [
+       50.0,
+       50.0,
+       50.0
+      ],
+      "keys": [
+       [
+        0.407,
+        0.407,
+        0.407,
+        0.0
+       ],
+       [
+        1.5,
+        1.5,
+        1.5,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_smoke00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_smoke00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 1,
+       "patternAnimType": 0,
+       "isScroll": 1,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.001,
+        0.005
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "FRND": [
+       0.0,
+       0.005,
+       0.0,
+       0.005,
+       0.0,
+       0.0,
+       0.0,
+       4.0,
+       3.0,
+       2.0,
+       1.5,
+       0.6,
+       0.42,
+       0.23,
+       0.15,
+       0.0
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "bubble00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": false,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 2.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 3,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       5.0,
+       5.0,
+       5.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.8,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 30,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 3,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": "mg1801_bubble00"
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       3.141593,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       0.926,
+       0.765
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.379,
+       0.237,
+       0.034
+      ],
+      "alpha1": 1.0,
+      "colorScale": 0.125,
+      "color0Keys": [
+       [
+        0.864,
+        0.661,
+        0.373,
+        0.0
+       ],
+       [
+        1.0,
+        0.928,
+        0.803,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.55
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       2.5,
+       1.8334,
+       2.5
+      ],
+      "random": [
+       40.0,
+       40.0,
+       40.0
+      ],
+      "keys": [
+       [
+        0.186,
+        0.186,
+        0.186,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_bubble00_nml",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 1,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_water_land00_01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 2,
+       "texture": "mg1801_bubble00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 1,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        -0.04
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": [
+      {
+       "name": "crown00",
+       "flag": 0,
+       "calcType": 0,
+       "followType": 0,
+       "emit": {
+        "oneTime": true,
+        "start": 0,
+        "timing": 85,
+        "duration": 1,
+        "rate": 1.0,
+        "rateRandom": 0,
+        "interval": 9,
+        "intervalRandom": 0,
+        "positionRandom": 0.0,
+        "worldGravity": false,
+        "emitDist": false
+       },
+       "shape": {
+        "type": 0,
+        "sweepStartRandom": 0,
+        "arcType": 0,
+        "sweepLongitude": 6.283185,
+        "sweepLatitude": 3.141593,
+        "sweepStart": 0.0,
+        "surfacePosRandom": 0.0,
+        "caliberRatio": 1.0,
+        "lineCenter": 0.0,
+        "lineLength": 1.0,
+        "radius": [
+         1.0,
+         1.0,
+         1.0
+        ],
+        "formScale": [
+         1.0,
+         1.0,
+         1.0
+        ],
+        "primEmitType": 0,
+        "numDivideCircle": 1,
+        "numDivideCircleRandom": 0,
+        "numDivideLine": 1,
+        "numDivideLineRandom": 0
+       },
+       "trs": {
+        "trans": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "transRand": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "rotate": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "rotateRand": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "scale": [
+         1.0,
+         1.0,
+         1.0
+        ]
+       },
+       "emitterColor0": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ],
+       "emitterColor1": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ],
+       "fade": {
+        "isFadeEmit": 0,
+        "alphaFadeTime": 10,
+        "isAlphaFadeIn": 0,
+        "isScaleFadeIn": 0,
+        "fadeInTime": 10
+       },
+       "particle": {
+        "life": 15,
+        "lifeRandom": 0,
+        "infiniteLife": false,
+        "billboardType": 3,
+        "rotType": 4,
+        "momentumRandom": 0.0,
+        "isRotate": [
+         false,
+         true,
+         0
+        ],
+        "rotRevRand": [
+         true,
+         true,
+         true
+        ],
+        "primitive": "mg1801_crown00"
+       },
+       "velocity": {
+        "allDirection": 0.0,
+        "designatedDirScale": 0.0,
+        "designatedDir": [
+         0.0,
+         1.0,
+         0.0
+        ],
+        "diffusionDirAngle": 0.0,
+        "xzDiffusion": 0.0,
+        "diffusion": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "velRandom": 0.0,
+        "emVelInherit": 0.0
+       },
+       "gravity": [
+        0.0,
+        -0.0,
+        0.0
+       ],
+       "airRes": 1.0,
+       "rotate": {
+        "init": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "initRand": [
+         0.0,
+         3.141593,
+         0.0
+        ],
+        "add": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "addRand": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "regist": 1.0
+       },
+       "color": {
+        "color0Type": 0,
+        "alpha0Type": 2,
+        "color1Type": 0,
+        "alpha1Type": 0,
+        "color0": [
+         0.97,
+         0.749,
+         0.272
+        ],
+        "alpha0": 1.0,
+        "color1": [
+         0.439,
+         0.343,
+         0.087
+        ],
+        "alpha1": 1.0,
+        "colorScale": 0.125,
+        "color0Keys": [],
+        "alpha0Keys": [
+         [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.6,
+          0.6,
+          0.6,
+          0.25
+         ],
+         [
+          0.6,
+          0.6,
+          0.6,
+          0.75
+         ],
+         [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+         ]
+        ],
+        "color1Keys": [],
+        "alpha1Keys": [
+         [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+         ]
+        ]
+       },
+       "scale": {
+        "base": [
+         1.3,
+         1.3,
+         1.3
+        ],
+        "random": [
+         0.0,
+         0.0,
+         0.0
+        ],
+        "keys": [
+         [
+          1.0,
+          1.0,
+          1.0,
+          0.0
+         ],
+         [
+          1.16225,
+          5.0,
+          1.16225,
+          0.46
+         ],
+         [
+          1.5,
+          2.0,
+          1.5,
+          1.0
+         ]
+        ]
+       },
+       "render": {
+        "blendType": 1,
+        "isBlendEnable": true,
+        "isDepthTest": true,
+        "isDepthMask": false,
+        "displaySide": 0,
+        "isAlphaTest": true,
+        "alphaThreshold": 0.0
+       },
+       "samplers": [
+        {
+         "slot": 0,
+         "texture": "mg1801_crown00_nml",
+         "wrapU": 1,
+         "wrapV": 1,
+         "filter": 0,
+         "repeat": 0,
+         "invRandU": 0,
+         "invRandV": 0,
+         "patternAnimType": 0,
+         "isScroll": 0,
+         "isRotate": 0,
+         "isScale": 1,
+         "scroll": [
+          0.0,
+          0.0
+         ],
+         "scrollAdd": [
+          0.0,
+          0.0
+         ],
+         "scrollRandom": [
+          0.0,
+          0.0
+         ],
+         "scale": [
+          0.375,
+          1.0
+         ],
+         "scaleAdd": [
+          0.0,
+          0.0
+         ],
+         "rotation": 0.0,
+         "rotationAdd": 0.0
+        },
+        {
+         "slot": 1,
+         "texture": "mg1801_water_land00_01",
+         "wrapU": 1,
+         "wrapV": 1,
+         "filter": 0,
+         "repeat": 0,
+         "invRandU": 0,
+         "invRandV": 0,
+         "patternAnimType": 0,
+         "isScroll": 0,
+         "isRotate": 0,
+         "isScale": 0,
+         "scroll": [
+          0.0,
+          0.0
+         ],
+         "scrollAdd": [
+          0.0,
+          0.0
+         ],
+         "scrollRandom": [
+          0.0,
+          0.0
+         ],
+         "scale": [
+          1.0,
+          1.0
+         ],
+         "scaleAdd": [
+          0.0,
+          0.0
+         ],
+         "rotation": 0.0,
+         "rotationAdd": 0.0
+        },
+        {
+         "slot": 2,
+         "texture": "mg1801_crown00",
+         "wrapU": 1,
+         "wrapV": 1,
+         "filter": 0,
+         "repeat": 0,
+         "invRandU": 0,
+         "invRandV": 0,
+         "patternAnimType": 0,
+         "isScroll": 0,
+         "isRotate": 0,
+         "isScale": 1,
+         "scroll": [
+          0.0,
+          0.0
+         ],
+         "scrollAdd": [
+          0.0,
+          0.0
+         ],
+         "scrollRandom": [
+          0.0,
+          0.0
+         ],
+         "scale": [
+          0.375,
+          1.0
+         ],
+         "scaleAdd": [
+          0.0,
+          0.0
+         ],
+         "rotation": 0.0,
+         "rotationAdd": 0.0
+        }
+       ],
+       "fields": {
+        "CSDP": [
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         1.0,
+         0.1,
+         0.5
+        ]
+       },
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  "mg1801_steam01": {
+   "source": "mg1801",
+   "emitters": [
+    {
+     "name": "steam00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": false,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 4.0,
+      "rateRandom": 0,
+      "interval": 29,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 1,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 5.0,
+      "radius": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       1.0,
+       5.17
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 90,
+      "lifeRandom": 30,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.001,
+      "designatedDirScale": 0.025,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       3.141593
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.008726646
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.553,
+       0.483,
+       0.323
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.1,
+        0.1,
+        0.1,
+        0.22
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.0,
+       3.0,
+       3.0
+      ],
+      "random": [
+       50.0,
+       50.0,
+       50.0
+      ],
+      "keys": [
+       [
+        0.407,
+        0.407,
+        0.407,
+        0.0
+       ],
+       [
+        1.5,
+        1.5,
+        1.5,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_smoke00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_smoke00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 1,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.001,
+        0.005
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.01745329
+      }
+     ],
+     "fields": {
+      "FRND": [
+       0.0,
+       0.005,
+       0.0,
+       0.005,
+       0.0,
+       0.0,
+       0.0,
+       4.0,
+       3.0,
+       2.0,
+       1.5,
+       0.6,
+       0.42,
+       0.23,
+       0.15,
+       0.0
+      ]
+     },
+     "children": []
+    }
+   ]
+  },
+  "mg1801_water_entry00": {
+   "source": "mg1801",
+   "emitters": [
+    {
+     "name": "shader00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 5.0,
+      "rateRandom": 0,
+      "interval": 59,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 3,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       0.1,
+       0.2
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 6,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.75,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 0,
+      "isAlphaFadeIn": 1,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 40,
+      "lifeRandom": 50,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.1,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.02,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.006,
+      0.0
+     ],
+     "airRes": 0.98,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       1.047198,
+       1.047198,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.681,
+       0.917,
+       0.871
+      ],
+      "alpha0": 0.47,
+      "color1": [
+       0.385,
+       0.148,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 3.0,
+      "color0Keys": [
+       [
+        2.5,
+        2.5,
+        2.5,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.5
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.0
+       ],
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.59
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.0,
+       3.0,
+       0.0
+      ],
+      "random": [
+       50.0,
+       50.0,
+       50.0
+      ],
+      "keys": [
+       [
+        0.2,
+        0.2,
+        0.2,
+        0.0
+       ],
+       [
+        1.25,
+        1.25,
+        1.25,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_splash_nml",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_water_land00_01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 2,
+       "texture": "mg1801_splash_alb",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       0.254,
+       0.15,
+       0.065,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "splash01",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 15.0,
+      "rateRandom": 0,
+      "interval": 0,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 1,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.2,
+       0.2,
+       0.2
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -1.05,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 30,
+      "lifeRandom": 25,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.04,
+      "designatedDirScale": 0.13,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.007,
+      0.0
+     ],
+     "airRes": 0.98,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       3.141593,
+       3.141593
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.644,
+       0.35,
+       0.059
+      ],
+      "alpha0": 0.47,
+      "color1": [
+       0.311,
+       0.175,
+       0.012
+      ],
+      "alpha1": 1.0,
+      "colorScale": 2.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.3,
+       1.3,
+       1.3
+      ],
+      "random": [
+       50.0,
+       50.0,
+       50.0
+      ],
+      "keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.5,
+        1.5,
+        1.5,
+        0.99
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_splash_nml",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_water_land00_01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 2,
+       "texture": "mg1801_splash_alb",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       0.013,
+       0.033,
+       0.053,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "splash02",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 12.0,
+      "rateRandom": 0,
+      "interval": 0,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 3,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.1,
+       0.1,
+       0.1
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -1.3,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 2,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 35,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.05,
+      "designatedDirScale": 0.07,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0016,
+      0.0
+     ],
+     "airRes": 0.97,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.818,
+       0.633,
+       0.31
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.523,
+       0.238,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 0.75,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.61
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.0,
+       3.0,
+       3.0
+      ],
+      "random": [
+       30.0,
+       30.0,
+       30.0
+      ],
+      "keys": [
+       [
+        0.4,
+        0.4,
+        0.4,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.99
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_shave01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_shave01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 1,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.01
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       0.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "bubble00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 120.0,
+      "rateRandom": 0,
+      "interval": 59,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 1,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.25,
+       0.25,
+       0.25
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 40,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.8,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 60,
+      "lifeRandom": 75,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.5,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": "mg1801_circle00"
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.25,
+      "designatedDir": [
+       0.0,
+       0.8,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 50.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.008,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       1.047198
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.01745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       0.932,
+       0.732,
+       0.565
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.1984127,
+       0.7063492,
+       1.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.5,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.58
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [
+       [
+        0.417,
+        0.17,
+        0.0,
+        0.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.25,
+       0.25,
+       0.25
+      ],
+      "random": [
+       75.0,
+       75.0,
+       75.0
+      ],
+      "keys": [
+       [
+        0.59,
+        0.59,
+        0.59,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_bubble1",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ],
+      "FSPN": [
+       0.0,
+       0.0,
+       0.05,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "wave00",
+     "flag": 0,
+     "calcType": 2,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 24,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 7,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.32,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 45,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 4,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       6.283185,
+       0.8726646
+      ],
+      "add": [
+       0.0,
+       0.008726646,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       0.878,
+       0.705
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 2.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.0
+       ],
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.24
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        4.0,
+        4.0,
+        4.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_wave00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_flowmap00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ],
+      "FRN1": [
+       0.0003,
+       0.0,
+       0.0003,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "wave01",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 30,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 4,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.32,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 45,
+      "lifeRandom": 50,
+      "infiniteLife": false,
+      "billboardType": 4,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       0.0,
+       -1.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       6.283185,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.909,
+       0.779,
+       0.592
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 0.4,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.5
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.25,
+       1.25,
+       1.25
+      ],
+      "random": [
+       25.0,
+       25.0,
+       25.0
+      ],
+      "keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        2.5,
+        2.5,
+        2.5,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_ring00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_flowmap00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "white_wave00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 60,
+      "duration": 10,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 1,
+      "intervalRandom": 0,
+      "positionRandom": 0.1,
+      "worldGravity": true,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 3.141593,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.5,
+       0.1,
+       0.5
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.32,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       1.570796,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 2,
+      "alphaFadeTime": 0,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 0
+     },
+     "particle": {
+      "life": 60,
+      "lifeRandom": 50,
+      "infiniteLife": false,
+      "billboardType": 4,
+      "rotType": 6,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": "mg1801_plane00"
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       1.570796,
+       6.283185,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.008726646,
+       0.01745329
+      ],
+      "addRand": [
+       0.0,
+       0.008726646,
+       0.008726646
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.007936537,
+       0.007936537,
+       0.007936537
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.515,
+       0.515,
+       0.515
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.5,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.25
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.0,
+       3.0,
+       3.0
+      ],
+      "random": [
+       25.0,
+       25.0,
+       25.0
+      ],
+      "keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_fall_side_splash00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 1,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_fall_side_splash00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 1,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    }
+   ]
+  },
+  "mg1801_water_entry01": {
+   "source": "mg1801",
+   "emitters": [
+    {
+     "name": "shader00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 3.0,
+      "rateRandom": 0,
+      "interval": 59,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 3,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.5,
+       0.1,
+       0.2
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 6,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.75,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 0,
+      "isAlphaFadeIn": 1,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 40,
+      "lifeRandom": 50,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.1,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.02,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.006,
+      0.0
+     ],
+     "airRes": 0.98,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       1.047198,
+       1.047198,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.681,
+       0.917,
+       0.871
+      ],
+      "alpha0": 0.47,
+      "color1": [
+       0.385,
+       0.148,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 3.0,
+      "color0Keys": [
+       [
+        2.5,
+        2.5,
+        2.5,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.5
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.0
+       ],
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.59
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       2.0,
+       2.0,
+       0.0
+      ],
+      "random": [
+       50.0,
+       50.0,
+       50.0
+      ],
+      "keys": [
+       [
+        0.2,
+        0.2,
+        0.2,
+        0.0
+       ],
+       [
+        1.25,
+        1.25,
+        1.25,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_splash_nml",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_water_land00_01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 2,
+       "texture": "mg1801_splash_alb",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       0.254,
+       0.15,
+       0.065,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "splash01",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 15.0,
+      "rateRandom": 0,
+      "interval": 0,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 1,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.2,
+       0.2,
+       0.2
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -1.05,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 30,
+      "lifeRandom": 25,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.04,
+      "designatedDirScale": 0.13,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.007,
+      0.0
+     ],
+     "airRes": 0.98,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       3.141593,
+       3.141593
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.644,
+       0.35,
+       0.059
+      ],
+      "alpha0": 0.47,
+      "color1": [
+       0.311,
+       0.175,
+       0.012
+      ],
+      "alpha1": 1.0,
+      "colorScale": 2.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.8,
+       0.8,
+       0.8
+      ],
+      "random": [
+       50.0,
+       50.0,
+       50.0
+      ],
+      "keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.5,
+        1.5,
+        1.5,
+        0.99
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_splash_nml",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_water_land00_01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 2,
+       "texture": "mg1801_splash_alb",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       0.013,
+       0.033,
+       0.053,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "splash02",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 12.0,
+      "rateRandom": 0,
+      "interval": 0,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 3,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.1,
+       0.1,
+       0.1
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -1.3,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 2,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 35,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.05,
+      "designatedDirScale": 0.07,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0016,
+      0.0
+     ],
+     "airRes": 0.97,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.818,
+       0.633,
+       0.31
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.523,
+       0.238,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 0.75,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.61
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "random": [
+       30.0,
+       30.0,
+       30.0
+      ],
+      "keys": [
+       [
+        0.4,
+        0.4,
+        0.4,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.99
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_shave01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_shave01",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 1,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.01
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       0.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "bubble00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 120.0,
+      "rateRandom": 0,
+      "interval": 29,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 1,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.25,
+       0.25,
+       0.25
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 40,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.8,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 60,
+      "lifeRandom": 75,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.5,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": "mg1801_circle00"
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.2,
+      "designatedDir": [
+       0.0,
+       0.8,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 50.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.008,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       1.047198
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.01745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       0.932,
+       0.732,
+       0.565
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.1984127,
+       0.7063492,
+       1.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.5,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.58
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [
+       [
+        0.417,
+        0.17,
+        0.0,
+        0.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.25,
+       0.25,
+       0.25
+      ],
+      "random": [
+       75.0,
+       75.0,
+       75.0
+      ],
+      "keys": [
+       [
+        0.59,
+        0.59,
+        0.59,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_bubble1",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ],
+      "FSPN": [
+       0.0,
+       0.0,
+       0.05,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "wave00",
+     "flag": 0,
+     "calcType": 2,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 24,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 7,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.32,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 45,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 4,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       6.283185,
+       0.8726646
+      ],
+      "add": [
+       0.0,
+       0.008726646,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       0.878,
+       0.705
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 2.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.0
+       ],
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.24
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.5,
+       0.5,
+       0.5
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        4.0,
+        4.0,
+        4.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_wave00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_flowmap00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ],
+      "FRN1": [
+       0.0003,
+       0.0,
+       0.0003,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "wave01",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 1,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 30,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 4,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.32,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 45,
+      "lifeRandom": 50,
+      "infiniteLife": false,
+      "billboardType": 4,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       0.0,
+       -1.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       6.283185,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.909,
+       0.779,
+       0.592
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 0.4,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.5
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "random": [
+       25.0,
+       25.0,
+       25.0
+      ],
+      "keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        2.5,
+        2.5,
+        2.5,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_ring00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_flowmap00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    },
+    {
+     "name": "white_wave00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 60,
+      "duration": 10,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 1,
+      "intervalRandom": 0,
+      "positionRandom": 0.1,
+      "worldGravity": true,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 3.141593,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.5,
+       0.1,
+       0.5
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       -0.32,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       1.570796,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 2,
+      "alphaFadeTime": 0,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 0
+     },
+     "particle": {
+      "life": 60,
+      "lifeRandom": 50,
+      "infiniteLife": false,
+      "billboardType": 4,
+      "rotType": 6,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       true,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": "mg1801_plane00"
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 20.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       1.570796,
+       6.283185,
+       6.283185
+      ],
+      "add": [
+       0.0,
+       0.008726646,
+       0.01745329
+      ],
+      "addRand": [
+       0.0,
+       0.008726646,
+       0.008726646
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       0.007936537,
+       0.007936537,
+       0.007936537
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.515,
+       0.515,
+       0.515
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.5,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.3,
+        0.3,
+        0.3,
+        0.25
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.0,
+       3.0,
+       3.0
+      ],
+      "random": [
+       25.0,
+       25.0,
+       25.0
+      ],
+      "keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": true,
+      "isDepthMask": false,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1801_fall_side_splash00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 1,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      },
+      {
+       "slot": 1,
+       "texture": "mg1801_fall_side_splash00",
+       "wrapU": 1,
+       "wrapV": 1,
+       "filter": 0,
+       "repeat": 0,
+       "invRandU": 1,
+       "invRandV": 1,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {
+      "CSDP": [
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       0.1,
+       0.5
+      ]
+     },
+     "children": []
+    }
+   ]
+  },
+  "mg1800_success00": {
+   "source": "mg1800",
+   "emitters": [
+    {
+     "name": "ring00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.5
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.1
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.75
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.05,
+       1.05,
+       1.05
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.202,
+        0.202,
+        0.202,
+        0.0
+       ],
+       [
+        1.653,
+        1.653,
+        1.653,
+        0.34
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_ring00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "ring01",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.25
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.75,
+        0.75,
+        0.75,
+        0.1
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.8,
+       0.8,
+       0.8
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.506,
+        0.506,
+        0.506,
+        0.0
+       ],
+       [
+        1.754,
+        1.754,
+        1.754,
+        0.27
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_ring01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "twinkle00",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 10.0,
+      "rateRandom": 0,
+      "interval": 10,
+      "intervalRandom": 1,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       2.0,
+       2.0,
+       2.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 6,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       1.570796,
+       0.0,
+       0.5235988
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       0.05,
+       0.05,
+       0.05
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 1.5,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.1,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.1745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.4603175,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 7.5,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.8174603,
+        0.8174603,
+        0.8174603,
+        0.3
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.64
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.9
+       ]
+      ],
+      "color1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.172,
+        0.738,
+        0.918,
+        0.5
+       ],
+       [
+        0.0,
+        0.025,
+        1.0,
+        1.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.84,
+       0.84,
+       0.84
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.0
+       ],
+       [
+        1.4,
+        1.4,
+        1.4,
+        0.24
+       ],
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.91
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_twinkle00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "ring01_Copy1",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        1.0,
+        0.25
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.75,
+        0.75,
+        0.75,
+        0.1
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.8,
+       0.8,
+       0.8
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.506,
+        0.506,
+        0.506,
+        0.0
+       ],
+       [
+        1.754,
+        1.754,
+        1.754,
+        0.27
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_ring01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "ring01_Copy2",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        1.0,
+        0.25
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.75,
+        0.75,
+        0.75,
+        0.1
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.85,
+       0.85,
+       0.85
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.506,
+        0.506,
+        0.506,
+        0.0
+       ],
+       [
+        1.754,
+        1.754,
+        1.754,
+        0.27
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_ring01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "ring01_Copy3",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.648,
+        1.0,
+        0.25
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.75,
+        0.75,
+        0.75,
+        0.1
+       ],
+       [
+        0.861,
+        0.861,
+        0.861,
+        0.13
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.88,
+       0.88,
+       0.88
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.506,
+        0.506,
+        0.506,
+        0.0
+       ],
+       [
+        1.754,
+        1.754,
+        1.754,
+        0.27
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_ring01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "twinkle02",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 10.0,
+      "rateRandom": 0,
+      "interval": 10,
+      "intervalRandom": 1,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 1.047198,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       5.0,
+       5.0,
+       5.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 8,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       1.570796,
+       0.0,
+       0.2617994
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       0.05,
+       0.05,
+       0.05
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 20,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 1.5,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.1745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.4603175,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 10.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.8174603,
+        0.8174603,
+        0.8174603,
+        0.3
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.64
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.9
+       ]
+      ],
+      "color1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.484127,
+        1.0,
+        0.5
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.6,
+       0.6,
+       0.6
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.0
+       ],
+       [
+        1.4,
+        1.4,
+        1.4,
+        0.24
+       ],
+       [
+        0.42,
+        0.42,
+        0.42,
+        0.54
+       ],
+       [
+        0.01,
+        0.01,
+        0.01,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_twinkle01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    }
+   ]
+  },
+  "mg1800_success01": {
+   "source": "mg1800",
+   "emitters": [
+    {
+     "name": "ring00",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 3.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.92,
+        0.439,
+        0.29
+       ],
+       [
+        1.0,
+        0.439,
+        0.439,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.1
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.88
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.2,
+       1.2,
+       1.2
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.021,
+        0.021,
+        0.021,
+        0.0
+       ],
+       [
+        1.653,
+        1.653,
+        1.653,
+        0.34
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_ring01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "ring01",
+     "flag": 0,
+     "calcType": 0,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       -0.05
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 20,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 2,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.2777778
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 3.0,
+      "color0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        0.0,
+        0.25
+       ],
+       [
+        1.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.75,
+        0.75,
+        0.75,
+        0.1
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.506,
+        0.506,
+        0.506,
+        0.0
+       ],
+       [
+        1.754,
+        1.754,
+        1.754,
+        0.27
+       ],
+       [
+        2.6,
+        2.6,
+        2.6,
+        0.75
+       ],
+       [
+        2.8,
+        2.8,
+        2.8,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_ring02",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "twinkle00",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 10.0,
+      "rateRandom": 0,
+      "interval": 10,
+      "intervalRandom": 1,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 6,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       1.570796,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       0.05,
+       0.05,
+       0.05
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 1.5,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.1,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.1745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.4603175,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 7.5,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.8174603,
+        0.8174603,
+        0.8174603,
+        0.3
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.64
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.9
+       ]
+      ],
+      "color1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.47,
+        0.0,
+        0.5
+       ],
+       [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.0
+       ],
+       [
+        1.4,
+        1.4,
+        1.4,
+        0.24
+       ],
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.91
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_twinkle00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "twinkle01",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 10.0,
+      "rateRandom": 0,
+      "interval": 10,
+      "intervalRandom": 1,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       5.0,
+       5.0,
+       5.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 6,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       1.570796,
+       0.0,
+       0.5235988
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       0.05,
+       0.05,
+       0.05
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 20,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 1.5,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.1,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.1745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.4603175,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 7.5,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.8174603,
+        0.8174603,
+        0.8174603,
+        0.3
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.64
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.9
+       ]
+      ],
+      "color1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.484127,
+        0.0,
+        0.5
+       ],
+       [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.0
+       ],
+       [
+        1.4,
+        1.4,
+        1.4,
+        0.24
+       ],
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.91
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_twinkle00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "twinkle02",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 5,
+      "rate": 10.0,
+      "rateRandom": 0,
+      "interval": 10,
+      "intervalRandom": 1,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 2,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 1.047198,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       5.0,
+       5.0,
+       5.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 8,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       1.570796,
+       0.0,
+       0.2617994
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       0.05,
+       0.05,
+       0.05
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 30,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       1
+      ],
+      "rotRevRand": [
+       false,
+       false,
+       false
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 1.5,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "airRes": 0.95,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.1745329
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 2,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.4603175,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 10.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.8174603,
+        0.8174603,
+        0.8174603,
+        0.3
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.64
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        0.9
+       ]
+      ],
+      "color1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        0.484127,
+        0.0,
+        0.5
+       ],
+       [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.6,
+       0.6,
+       0.6
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.01,
+        0.01,
+        0.01,
+        0.0
+       ],
+       [
+        1.4,
+        1.4,
+        1.4,
+        0.24
+       ],
+       [
+        0.42,
+        0.42,
+        0.42,
+        0.54
+       ],
+       [
+        0.01,
+        0.01,
+        0.01,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 1,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg1800_success00_twinkle01",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 0,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    }
+   ]
+  },
+  "mg_common_pt_effect_00": {
+   "source": "mg_common",
+   "emitters": [
+    {
+     "name": "ring",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 1.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 0,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 0,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 10,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.0,
+      "designatedDirScale": 0.0,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.0,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 2,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       3.0,
+       3.0,
+       3.0
+      ],
+      "random": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "keys": [
+       [
+        0.5,
+        0.5,
+        0.5,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 1,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg_common_ring_00",
+       "wrapU": 0,
+       "wrapV": 0,
+       "filter": 1,
+       "repeat": 3,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "Emitter1",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 3.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 4,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.5,
+       0.5,
+       0.5
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 2,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.05,
+      "designatedDirScale": 0.05,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.01,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 0,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.773
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.656,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.25,
+       0.25,
+       0.25
+      ],
+      "random": [
+       30.0,
+       30.0,
+       30.0
+      ],
+      "keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.65
+       ],
+       [
+        0.08400001,
+        0.08400001,
+        0.08400001,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg_common_star_00",
+       "wrapU": 0,
+       "wrapV": 1,
+       "filter": 1,
+       "repeat": 1,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    },
+    {
+     "name": "Emitter1_Copy1",
+     "flag": 0,
+     "calcType": 1,
+     "followType": 0,
+     "emit": {
+      "oneTime": true,
+      "start": 0,
+      "timing": 0,
+      "duration": 1,
+      "rate": 3.0,
+      "rateRandom": 0,
+      "interval": 9,
+      "intervalRandom": 0,
+      "positionRandom": 0.0,
+      "worldGravity": false,
+      "emitDist": false
+     },
+     "shape": {
+      "type": 4,
+      "sweepStartRandom": 0,
+      "arcType": 0,
+      "sweepLongitude": 6.283185,
+      "sweepLatitude": 3.141593,
+      "sweepStart": 0.0,
+      "surfacePosRandom": 0.0,
+      "caliberRatio": 1.0,
+      "lineCenter": 0.0,
+      "lineLength": 1.0,
+      "radius": [
+       0.5,
+       0.5,
+       0.5
+      ],
+      "formScale": [
+       1.0,
+       1.0,
+       1.0
+      ],
+      "primEmitType": 0,
+      "numDivideCircle": 1,
+      "numDivideCircleRandom": 0,
+      "numDivideLine": 1,
+      "numDivideLineRandom": 0
+     },
+     "trs": {
+      "trans": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "transRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotate": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rotateRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "scale": [
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "emitterColor0": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "emitterColor1": [
+      1.0,
+      1.0,
+      1.0,
+      1.0
+     ],
+     "fade": {
+      "isFadeEmit": 2,
+      "alphaFadeTime": 10,
+      "isAlphaFadeIn": 0,
+      "isScaleFadeIn": 0,
+      "fadeInTime": 10
+     },
+     "particle": {
+      "life": 15,
+      "lifeRandom": 0,
+      "infiniteLife": false,
+      "billboardType": 0,
+      "rotType": 4,
+      "momentumRandom": 0.0,
+      "isRotate": [
+       false,
+       false,
+       0
+      ],
+      "rotRevRand": [
+       true,
+       true,
+       true
+      ],
+      "primitive": null
+     },
+     "velocity": {
+      "allDirection": 0.05,
+      "designatedDirScale": 0.05,
+      "designatedDir": [
+       0.0,
+       1.0,
+       0.0
+      ],
+      "diffusionDirAngle": 0.0,
+      "xzDiffusion": 0.0,
+      "diffusion": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "velRandom": 0.0,
+      "emVelInherit": 0.0
+     },
+     "gravity": [
+      0.0,
+      -0.01,
+      0.0
+     ],
+     "airRes": 1.0,
+     "rotate": {
+      "init": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "initRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "add": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "addRand": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "regist": 1.0
+     },
+     "color": {
+      "color0Type": 0,
+      "alpha0Type": 0,
+      "color1Type": 0,
+      "alpha1Type": 0,
+      "color0": [
+       1.0,
+       1.0,
+       0.773
+      ],
+      "alpha0": 1.0,
+      "color1": [
+       1.0,
+       0.656,
+       0.0
+      ],
+      "alpha1": 1.0,
+      "colorScale": 1.0,
+      "color0Keys": [],
+      "alpha0Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ],
+      "color1Keys": [],
+      "alpha1Keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ]
+      ]
+     },
+     "scale": {
+      "base": [
+       0.25,
+       0.25,
+       0.25
+      ],
+      "random": [
+       30.0,
+       30.0,
+       30.0
+      ],
+      "keys": [
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.0
+       ],
+       [
+        1.0,
+        1.0,
+        1.0,
+        0.65
+       ],
+       [
+        0.08400001,
+        0.08400001,
+        0.08400001,
+        1.0
+       ]
+      ]
+     },
+     "render": {
+      "blendType": 0,
+      "isBlendEnable": true,
+      "isDepthTest": false,
+      "isDepthMask": true,
+      "displaySide": 0,
+      "isAlphaTest": true,
+      "alphaThreshold": 0.0
+     },
+     "samplers": [
+      {
+       "slot": 0,
+       "texture": "mg_common_star_01",
+       "wrapU": 0,
+       "wrapV": 1,
+       "filter": 1,
+       "repeat": 1,
+       "invRandU": 0,
+       "invRandV": 0,
+       "patternAnimType": 0,
+       "isScroll": 0,
+       "isRotate": 0,
+       "isScale": 0,
+       "scroll": [
+        0.0,
+        0.0
+       ],
+       "scrollAdd": [
+        0.0,
+        0.0
+       ],
+       "scrollRandom": [
+        0.0,
+        0.0
+       ],
+       "scale": [
+        1.0,
+        1.0
+       ],
+       "scaleAdd": [
+        0.0,
+        0.0
+       ],
+       "rotation": 0.0,
+       "rotationAdd": 0.0
+      }
+     ],
+     "fields": {},
+     "children": []
+    }
+   ]
+  }
+ }
+}

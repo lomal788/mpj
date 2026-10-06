@@ -1,0 +1,175 @@
+/**
+ * UI 시험 페이지(ui.html) — 셸 화면(shell/*)을 게임 없이 단독으로 띄워 시험한다.
+ * URL: ?ui=charselect  화면 id(UIS)
+ *      ?com=0001       플레이어별 COM(1) / 사람(0)
+ *      ?mute=1         소리 끔
+ *      ?auto=1         열자마자 시작
+ */
+import './style.css';
+import { runCharSelect, type CharSelectRun } from './charselect_page';
+import { KeyboardPad, padSourcesFor } from './view/input';
+
+interface UiRun {
+  stop(): void;
+  debug(): string;
+}
+
+interface UiDef {
+  id: string;
+  name: string;
+  run(stage: HTMLElement, cfg: { com: boolean[]; muted: boolean; onDone(result: string): void }): Promise<UiRun>;
+}
+
+const keyboard = new KeyboardPad();
+
+const PHASE = ['0', '1', '2', '3', '4', '5'];
+
+const UIS: UiDef[] = [
+  {
+    id: 'charselect',
+    name: '캐릭터 선택',
+    async run(stage, cfg) {
+      const r: CharSelectRun = await runCharSelect(stage, {
+        com: cfg.com,
+        pads: padSourcesFor(cfg.com, keyboard),
+        muted: cfg.muted,
+        onDone: (chars) => cfg.onDone(chars ? chars.map((c, i) => `${i + 1}P ${c}`).join('  ') : '취소'),
+      });
+      (window as unknown as { __charselect?: CharSelectRun }).__charselect = r;
+      return {
+        stop: () => r.stop(),
+        debug() {
+          const s = r.handle.state;
+          const lines = [`phase ${PHASE[s.phase] ?? s.phase}  operator ${s.operator}`];
+          for (const p of s.players) lines.push(`${p.pid + 1}P ${p.type ? 'COM' : '사람'} cursor ${p.cursor} slot ${p.slot}${p.decided ? ' 결정' : ''}`);
+          const ls = r.handle.loadStats.slice(-3);
+          for (const l of ls) lines.push(`load ${l.pc}${l.cached ? ' (캐시)' : ''} ${l.loadMs.toFixed(0)} ms`);
+          return lines.join('\n');
+        },
+      };
+    },
+  },
+];
+
+const q = new URLSearchParams(location.search);
+const app = document.getElementById('app')!;
+app.className = 'jw';
+app.innerHTML = `
+  <div class="jw-stage"><div class="jw-msg" hidden></div><pre class="jw-ui-debug"></pre></div>
+  <div class="jw-panel">
+    <h1>UI 시험</h1>
+    <label>화면 <select class="jw-ui-sel"></select></label>
+    <div class="jw-ui-com"></div>
+    <label>소리 끔 <input type="checkbox" class="jw-ui-mute" /></label>
+    <label>디버그 <input type="checkbox" class="jw-ui-dbg" checked /></label>
+    <button class="jw-ui-start">시작</button>
+    <button class="jw-ui-stop">그만</button>
+    <div>결과</div>
+    <pre class="jw-ui-result"></pre>
+    <div class="jw-ui-help">J = A(결정), K = B(취소), 방향키·WASD = 이동, 게임패드 지원</div>
+    <a href="./index.html">게임 페이지로</a>
+  </div>`;
+const stage = app.querySelector<HTMLElement>('.jw-stage')!;
+const msg = app.querySelector<HTMLElement>('.jw-msg')!;
+const dbg = app.querySelector<HTMLElement>('.jw-ui-debug')!;
+const sel = app.querySelector<HTMLSelectElement>('.jw-ui-sel')!;
+const comBox = app.querySelector<HTMLElement>('.jw-ui-com')!;
+const muteIn = app.querySelector<HTMLInputElement>('.jw-ui-mute')!;
+const dbgIn = app.querySelector<HTMLInputElement>('.jw-ui-dbg')!;
+const startBtn = app.querySelector<HTMLButtonElement>('.jw-ui-start')!;
+const stopBtn = app.querySelector<HTMLButtonElement>('.jw-ui-stop')!;
+const resultBox = app.querySelector<HTMLElement>('.jw-ui-result')!;
+
+Object.assign(dbg.style, {
+  position: 'absolute',
+  left: '8px',
+  top: '8px',
+  margin: '0',
+  padding: '6px 8px',
+  background: 'rgba(0,0,0,0.55)',
+  font: '12px/1.4 monospace',
+  pointerEvents: 'none',
+  zIndex: '2',
+});
+
+for (const u of UIS) sel.append(new Option(u.name, u.id));
+sel.value = UIS.some((u) => u.id === q.get('ui')) ? q.get('ui')! : UIS[0].id;
+
+const comParam = q.get('com') ?? '0111';
+const comIns = [0, 1, 2, 3].map((i) => {
+  const l = document.createElement('label');
+  l.textContent = `${i + 1}P COM`;
+  const c = document.createElement('input');
+  c.type = 'checkbox';
+  c.checked = comParam[i] === '1';
+  l.append(c);
+  comBox.append(l);
+  return c;
+});
+muteIn.checked = q.get('mute') === '1';
+
+const setMsg = (s: string): void => {
+  msg.textContent = s;
+  msg.hidden = s === '';
+};
+
+let cur: UiRun | null = null;
+let token = 0;
+
+const stop = (): void => {
+  token++;
+  cur?.stop();
+  cur = null;
+  dbg.textContent = '';
+};
+
+async function start(): Promise<void> {
+  stop();
+  const my = token;
+  const def = UIS.find((u) => u.id === sel.value) ?? UIS[0];
+  resultBox.textContent = '';
+  setMsg('읽는 중…');
+  try {
+    const r = await def.run(stage, {
+      com: comIns.map((c) => c.checked),
+      muted: muteIn.checked,
+      onDone(result) {
+        if (cur === r) cur = null;
+        resultBox.textContent = result;
+        dbg.textContent = '';
+      },
+    });
+    if (my !== token) {
+      r.stop();
+      return;
+    }
+    cur = r;
+    setMsg('');
+  } catch (e) {
+    console.error(e);
+    setMsg(`시작 실패: ${(e as Error).message}`);
+  }
+}
+
+let frames = 0;
+let fpsT = performance.now();
+let fps = 0;
+const tick = (now: number): void => {
+  frames++;
+  if (now - fpsT >= 500) {
+    fps = (frames * 1000) / (now - fpsT);
+    frames = 0;
+    fpsT = now;
+  }
+  dbg.hidden = !dbgIn.checked || !cur;
+  if (cur && dbgIn.checked) dbg.textContent = `${fps.toFixed(0)} fps\n${cur.debug()}`;
+  requestAnimationFrame(tick);
+};
+requestAnimationFrame(tick);
+
+startBtn.addEventListener('click', () => void start());
+stopBtn.addEventListener('click', () => {
+  stop();
+  setMsg('그만뒀다');
+});
+if (q.get('auto') === '1') void start();

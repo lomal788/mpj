@@ -8,6 +8,7 @@ Super Mario Party Jamboree(Switch) 미니게임을 원본 동작 그대로 웹�
 | 뼈대(페이지·루프·계약·도구) | 완료 — 타입 검사·빌드·스모크 통과 |
 | 게임 | mg1801 싹둑싹둑 수프 — 회색 박스(로직 원본 판독, 화면 상자, BGM). `?game=mg1801` |
 | 게임 분석 문서 | [docs/minigame/](docs/minigame/README.md) |
+| 캐릭터 선택 화면 | 독립 모듈 `script/shell/charselect`(엔진층 미의존) — `?charselect=1`(시작 → 선택 → 고른 캐릭터로 게임). 분석·명세 [docs/shell/charselect.md](docs/shell/charselect.md) |
 
 설계 규칙은 [DESIGN.md](DESIGN.md), 진행 상황은 [PROGRESS.md](PROGRESS.md).
 
@@ -24,7 +25,11 @@ npm run smoke        # 헤드리스 크로미움으로 페이지·게임 실행,
 
 조작(첫 사람): WASD/방향키 = 왼쪽 스틱, J = A, K = B, U = X, I = Y, Q = L, E = R, Enter = +, Backspace = −. 게임패드는 표준 매핑을 닌텐도 배치로 읽는다([script/view/input.ts](script/view/input.ts)).
 
-URL 옵션: `?game=<id>` `?seed=<n>` `?com=0111` `?debug=1` `?fast=N` `?mute=1` `?auto=1`. 시험 훅은 `window.__mpj`(stage, frame, seed, result, error, hold).
+URL 옵션: `?game=<id>` `?seed=<n>` `?com=0111` `?debug=1` `?fast=N` `?mute=1` `?auto=1` `?charselect=1`(시작 전 캐릭터 선택). 시험 훅은 `window.__mpj`(stage, frame, seed, result, error, hold, charselect), `window.__charselect`.
+
+캐릭터 선택 모듈: 에셋 변환 `c:/dev/mpj/.venv/Scripts/python web/tools/analysis/charsel_web_assets.py [ui] [sound] [chara]`, 시험 `npx tsx tools/test_charselect.ts`(상태기계)·`npx tsx tools/check_charselect.ts`(원본 데이터 대조·import 검사)·`npx tsx tools/shot_charselect.ts`(헤드리스).
+
+UI 시험 페이지: http://localhost:51811/ui.html — 셸 화면을 게임 없이 단독으로 띄운다. 화면 선택·1~4P COM·소리 끔·디버그(fps·상태기계·카드 3D 로딩 ms)·결과 표시. URL `?ui=charselect` `?com=0001` `?mute=1` `?auto=1`. 키 J = A, K = B, 방향키·WASD. 스모크 `npx tsx tools/smoke_ui.ts`. 화면 추가는 `script/ui_main.ts` 의 `UIS` 에 등록.
 
 ## 구조
 
@@ -45,6 +50,9 @@ web/
       pad.ts            Switch Npad 입력 형식, 누름/뗌
       rng.ts            bex::RandModule 계약 (알고리즘 미확정, 구현 없음)
       events.ts         로직 → 화면 사건 유니온
+    shell/charselect/   캐릭터 선택 독립 모듈(state 순수 상태기계·scene2d/render2d 자체 명세 2D·preview3d 카드 3D·screen 컨트롤러, three 만 import)
+    charselect_page.ts  페이지 ↔ 캐릭터 선택 모듈 어댑터(입력 비트·SE·루프)
+    ui_main.ts          UI 시험 페이지(ui.html) — 셸 화면 목록(UIS)·옵션·디버그
     view/               화면 부품 (브라우저 전용)
       renderer.ts       three.js WebGLRenderer, 기준 1920×1080
       assets.ts         manifest·json·glTF 읽기 (assets/<게임>/)

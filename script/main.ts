@@ -10,7 +10,8 @@
  *           ?fast=N rAF 마다 N 스텝(시험용, 사운드 관측 없음), ?mute=1, ?auto=1 페이지를 열자마자 시작,
  *           ?<key>=<value> 게임별 설정(GameDef.options, 예: mg1801 ?mode=2&cpuMiss=1),
  *           ?avlat=raw|<ms> 출력 지연 보정(raw = 보정 없이 currentTime, 원본처럼 / ms = 측정값에 더 늦출 양),
- *           ?synclog=1 스텝·소리 시각 기록(window.__mpj.sync, tools/sync_measure.ts)
+ *           ?synclog=1 스텝·소리 시각 기록(window.__mpj.sync, tools/sync_measure.ts),
+ *           ?charselect=1 시작 전에 캐릭터 선택 화면(독립 모듈 shell/charselect, script/charselect_page.ts)을 띄우고 고른 캐릭터로 시작
  * 시험 훅: window.__mpj (stage, frame, result, error, hold(frame), dropped, sync)
  */
 import './style.css';
@@ -23,6 +24,7 @@ import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from './view/input';
 import { Renderer } from './view/renderer';
+import { runCharSelect, type CharSelectRun } from './charselect_page';
 
 type Stage = 'idle' | 'loading' | 'running' | 'done' | 'error';
 
@@ -42,6 +44,8 @@ interface Hook {
    * frames: rAF 마다 [들리는 오디오 시각, 마지막 스텝 시각], audio: 소리 쪽(view/sound.ts)
    */
   sync: { steps: unknown[]; frames: unknown[]; audio: unknown[] } | null;
+  /** ?charselect=1 결과(pcNN 목록, 취소 null) */
+  charselect?: string[] | null;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -230,6 +234,9 @@ let view: GameView | null = null;
 let pads: (PadSource | null)[] = [];
 let audio: AudioOut | null = null;
 let token = 0;
+/** ?charselect=1 에서 고른 캐릭터(pcNN, 플레이어 순) */
+let chosenChars: string[] | null = null;
+let charRun: CharSelectRun | null = null;
 /** 스텝 시계 종류(판마다 시작 때 정한다)와 스텝 0 의 시계 시각(초, NaN = 첫 그리기 뒤 정함). 스텝 n = base + n/FPS, n = hook.frame */
 let clockKind: 'audio' | 'wall' = 'wall';
 let base = 0;
@@ -248,7 +255,7 @@ const finish = (stage: Stage): void => {
 };
 
 const readSetup = (): GameSetup => {
-  const players: PlayerSetup[] = comIns.map((c, i) => ({ char: `pc0${i + 1}`, isCom: c.checked, comLevel: 0 }));
+  const players: PlayerSetup[] = comIns.map((c, i) => ({ char: chosenChars?.[i] ?? `pc0${i + 1}`, isCom: c.checked, comLevel: 0 }));
   return { players, seed: parseSeed(seedIn.value) ?? randomSeed(), practice: false, options: readGameOptions() };
 };
 
@@ -309,7 +316,37 @@ async function start(d: GameDef, setup: GameSetup): Promise<void> {
 
 startBtn.addEventListener('click', () => {
   const d = GAMES.find((g) => g.id === gameSel.value) ?? GAMES[0];
-  if (d) void start(d, readSetup());
+  if (!d) return;
+  if (q.get('charselect') !== '1') {
+    void start(d, readSetup());
+    return;
+  }
+  // 캐릭터 선택 → 고른 캐릭터(PlayerSetup.char)로 시작. 게임 로직은 바꾸지 않는다
+  charRun?.stop();
+  chosenChars = null;
+  startBtn.disabled = true;
+  glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
+  const com = comIns.map((c) => c.checked);
+  void runCharSelect(stageBox, {
+    com,
+    pads: padSourcesFor(com, keyboard),
+    muted: muteIn.checked,
+    onDone(chars) {
+      charRun = null;
+      glCanvas.style.visibility = hudCanvas.style.visibility = '';
+      startBtn.disabled = false;
+      hook.charselect = chars;
+      if (!chars) {
+        setMsg('캐릭터 선택 취소');
+        return;
+      }
+      chosenChars = chars;
+      void start(d, readSetup());
+    },
+  }).then((r) => {
+    charRun = r;
+    (window as unknown as { __charselect?: CharSelectRun }).__charselect = r;
+  });
 });
 stopBtn.addEventListener('click', () => {
   token++;

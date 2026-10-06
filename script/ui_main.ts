@@ -7,6 +7,7 @@
  */
 import './style.css';
 import { runCharSelect, type CharSelectRun } from './charselect_page';
+import { runModeSelect, type ModeSelectRun } from './modeselect_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 
 interface UiRun {
@@ -45,6 +46,25 @@ const UIS: UiDef[] = [
           const ls = r.handle.loadStats.slice(-3);
           for (const l of ls) lines.push(`load ${l.pc}${l.cached ? ' (캐시)' : ''} ${l.loadMs.toFixed(0)} ms`);
           return lines.join('\n');
+        },
+      };
+    },
+  },
+  {
+    id: 'modeselect',
+    name: '모드 선택(맵 메뉴)',
+    async run(stage, cfg) {
+      const r: ModeSelectRun = await runModeSelect(stage, {
+        pad: padSourcesFor([false], keyboard)[0],
+        muted: cfg.muted,
+        onDone: (m) => cfg.onDone(m ? `${m.key} (${m.name}, 버튼 ${m.button}, 다음 ${m.next})` : '취소'),
+      });
+      (window as unknown as { __modeselect?: ModeSelectRun }).__modeselect = r;
+      return {
+        stop: () => r.stop(),
+        debug() {
+          const s = r.handle.state;
+          return `phase ${s.phase}  cursor ${s.cursor}  result ${s.result}\nshown ${s.shown.map((v) => (v ? 1 : 0)).join('')}  enabled ${s.enabled.map((v) => (v ? 1 : 0)).join('')}`;
         },
       };
     },

@@ -9,6 +9,7 @@ Super Mario Party Jamboree(Switch) 미니게임을 원본 동작 그대로 웹�
 | 게임 | mg1801 싹둑싹둑 수프 — 회색 박스(로직 원본 판독, 화면 상자, BGM). `?game=mg1801` |
 | 게임 분석 문서 | [docs/minigame/](docs/minigame/README.md) |
 | 캐릭터 선택 화면 | 독립 모듈 `script/shell/charselect`(엔진층 미의존) — `?charselect=1`(시작 → 선택 → 고른 캐릭터로 게임). 분석·명세 [docs/shell/charselect.md](docs/shell/charselect.md) |
+| 모드 선택(맵 메뉴) 화면 | 독립 모듈 `script/shell/modeselect`(charselect 2D 렌더러 import) — `ui.html?ui=modeselect`. 에셋 `tools/analysis/modesel_web_assets.py`, 시험 `tools/test_modeselect.ts`·`check_modeselect.ts`·`shot_modeselect.ts`. 분석·명세 [docs/shell/modeselect.md](docs/shell/modeselect.md) |
 
 설계 규칙은 [DESIGN.md](DESIGN.md), 진행 상황은 [PROGRESS.md](PROGRESS.md).
 

@@ -3,13 +3,22 @@
  * 근거: docs/shell/message_window.md 3~7·9절. 공개 API = mgm_common.md 9.2 MessageWindowAdapter + 9.4 추가 함수.
  */
 import type { LayoutInst } from '../../charselect/scene2d';
+import { alignPanes, type AlignParams } from '../alignment';
 import type { Mat3 } from '../itemLayout';
 import type { MgmSound } from '../sound';
 import { measure, parseMessage, plainText, RichTextPane, type Inserts } from '../text';
 import type { MgmSpec } from '../types';
 import type { MgmDrawHost } from '../window';
 import { pageLayout, setPlace, WINDOW_TYPE, type PageLayout } from './layout';
-import { MsgWinState, type MsgEvent, type MsgPage, type ResolvedPage } from './state';
+import { MsgWinState, type ChoiceItem, type MsgEvent, type MsgPage, type ResolvedPage } from './state';
+
+/** 선택지 칸 정렬(ali1 추가 바이트, partyrule.md 6.2). 표에 없는 선택지 레이아웃은 정렬하지 않는다 [미확정] */
+const CHOICE_ALIGN: Readonly<Record<string, AlignParams>> = {
+  sys_meswin_model_choices_00: { horizontal: false, kind: 1, gap: -3, stretch: false },
+};
+/** FUN_710031e360: 칸 창 폭 = min(원래 폭, 최대 글자 폭 + 130), 232 이상. 나눈 창 조각은 창 원점(왼쪽 가운데) 기준으로 다시 놓는다(partyrule.md 9.3) */
+const CHOICE_PAD = 130;
+const CHOICE_MIN_W = 232;
 
 export interface MessageWindowAdapter {
   setMessageLabel(label: string): void;
@@ -60,16 +69,16 @@ export class MessageWindow implements MessageWindowAdapter {
     private readonly sound?: MgmSound,
   ) {
     this.spec = host.spec;
-    this.st = new MsgWinState((p, off) => this.resolvePage(p, off));
+    this.st = new MsgWinState((p, off, ch) => this.resolvePage(p, off, ch));
   }
 
   private pageIndex(p: MsgPage): number {
     return this.st.pages.indexOf(p);
   }
 
-  private resolvePage(p: MsgPage, userOffset: [number, number, number]): ResolvedPage {
+  private resolvePage(p: MsgPage, userOffset: [number, number, number], choice: boolean): ResolvedPage {
     const attr = this.spec.msgAttr[p.label];
-    const layout = pageLayout(this.spec.meswin, attr, userOffset);
+    const layout = pageLayout(this.spec.meswin, attr, userOffset, choice);
     const ins = this.inserts.get(this.pageIndex(p)) ?? {};
     const rt = parseMessage(this.spec.texts[p.label] ?? p.label, this.spec.texts, ins);
     const wi = this.spec.meswin.attrLists.WindowInfo[attr?.wi ?? 0];
@@ -103,6 +112,7 @@ export class MessageWindow implements MessageWindowAdapter {
     const isIcon = pl.type === WINDOW_TYPE.Normal || pl.type === WINDOW_TYPE.NormalSmall;
     inst.setVisible('x_name', isName);
     inst.setVisible('x_icon', isIcon);
+    if (pl.type === WINDOW_TYPE.Model) inst.setVisible('x_model', false);
     if (!isName) return;
     const nameLabel = pl.chara?.name ?? '';
     const s = plainText(this.spec.texts.sys_mw_name ?? '[1:1:00cd]', this.spec.texts, { Text0: nameLabel });
@@ -115,6 +125,60 @@ export class MessageWindow implements MessageWindowAdapter {
     const bn = bf[0].nodes[bf[1]];
     bn.z = [wpx + 60, ts.fs[1]];
     tf[0].nodes[tf[1]].z = [wpx, ts.fs[1]];
+  }
+
+  /** 선택지 칸 글자·폭(FUN_710031a480 의 선택지 준비 + FUN_710031e360) — 칸은 숨긴 채 */
+  private choiceSetup(items: ChoiceItem[]): void {
+    const inst = this.cur?.inst;
+    if (!inst) return;
+    let maxW = 0;
+    const origW = new Map<number, number>();
+    for (let i = 0; i < 4; i++) inst.setVisible(`x_parts_0${i}`, false);
+    items.forEach((it, i) => {
+      const s = plainText(this.spec.texts[it.label] ?? it.label, this.spec.texts);
+      inst.setText(`x_parts_0${i}/x_text_dialog`, s);
+      inst.setText(`x_parts_0${i}/x_text_dialog_shadow`, s);
+      const tf = inst.find(`x_parts_0${i}/x_text_dialog`);
+      const ts = tf?.[0].nodes[tf[1]].spec.txt;
+      if (ts) maxW = Math.max(maxW, measure(this.spec.fonts[ts.font], ts.fs, ts.cs, s));
+      const wf = inst.find(`x_parts_0${i}/x_window`);
+      if (wf) origW.set(i, wf[0].nodes[wf[1]].spec.z[0]);
+    });
+    items.forEach((_, i) => {
+      const ow = origW.get(i);
+      if (ow === undefined) return;
+      const w = Math.max(Math.min(ow, maxW + CHOICE_PAD), CHOICE_MIN_W);
+      for (const pane of ['x_window', 'x_window_blur']) {
+        const f = inst.find(`x_parts_0${i}/${pane}`);
+        if (!f) continue;
+        const [li, ni] = f;
+        li.nodes[ni].z[0] = w;
+        const ox = (-li.nodes[ni].spec.o[0] * w) / 2;
+        for (const ci of li.nodes[ni].children) {
+          const c = li.nodes[ci];
+          const side = c.spec.n.slice(pane.length + 1);
+          const cw = c.spec.z[0];
+          if (side === 'LT' || side === 'L' || side === 'LB') c.t[0] = ox - (w / 2 - cw / 2);
+          else if (side === 'RT' || side === 'R' || side === 'RB') c.t[0] = ox + w / 2 - cw / 2;
+          else if (side === 'T' || side === 'C' || side === 'B') {
+            c.z[0] = c.spec.z[0] + (w - ow);
+            c.t[0] = ox;
+          }
+        }
+      }
+    });
+  }
+
+  /** FUN_71003175d0: 칸 보이기·애니(disable / cursor / normal)·정렬 */
+  private choiceOpen(cursor: number, items: ChoiceItem[]): void {
+    const inst = this.cur?.inst;
+    if (!inst) return;
+    items.forEach((it, i) => {
+      inst.setVisible(`x_parts_0${i}`, true);
+      inst.part(`x_parts_0${i}`)?.play(it.disabled ? 'disable' : i === cursor ? 'cursor' : 'normal');
+    });
+    const al = CHOICE_ALIGN[inst.name];
+    if (al) alignPanes(inst, 'x_alignment_00', al);
   }
 
   private apply(ev: MsgEvent[]): void {
@@ -160,6 +224,21 @@ export class MessageWindow implements MessageWindowAdapter {
           break;
         case 'duck':
           this.sound?.duck(e.group, e.on);
+          break;
+        case 'choiceSetup':
+          this.choiceSetup(e.items);
+          break;
+        case 'choiceOpen':
+          this.choiceOpen(e.cursor, e.items);
+          break;
+        case 'choiceSelect':
+          for (let i = 0; i < e.count; i++) {
+            if (this.st.choices[i]?.disabled) continue;
+            this.cur?.inst.part(`x_parts_0${i}`)?.play(i === e.cursor ? 'on' : 'off', i === e.cursor ? 'cursor' : 'normal');
+          }
+          break;
+        case 'choiceDecide':
+          this.cur?.inst.part(`x_parts_0${e.index}`)?.play('press');
           break;
       }
     }
@@ -262,8 +341,42 @@ export class MessageWindow implements MessageWindowAdapter {
     this.st.requestNext(b);
   }
 
+  /** GetChoiceResult(+0x438): 선택지에서 결정한 칸, 아니면 −1 */
   choiceResult(): number {
-    return -1;
+    return this.st.choiceResult;
+  }
+
+  /** SetChoiceCount(2..4) */
+  setChoiceCount(n: number): void {
+    this.st.setChoiceCount(n);
+  }
+
+  /** SetChoiceMessageLabel(칸, 라벨) */
+  setChoiceLabel(i: number, label: string): void {
+    this.st.setChoiceLabel(i, label);
+  }
+
+  setChoiceDeciSe(i: number, se: string): void {
+    this.st.setChoiceDeciSe(i, se);
+  }
+
+  setChoiceDeciVib(i: number, vib: string): void {
+    this.st.setChoiceDeciVib(i, vib);
+  }
+
+  /** SetCancelEnable(+0x515): 선택지에서 B 를 받는다(결과 −1) */
+  setCancelEnable(b: boolean): void {
+    this.st.cancelEnable = b;
+  }
+
+  /** 초기 커서 +0x43c(부르는 쪽이 직접 대입, 레이아웃 고를 때 쓰고 0 으로) */
+  setInitialChoice(i: number): void {
+    this.st.choiceInit = i;
+  }
+
+  /** IsWorking: 상태가 −1·2·≥4 가 아님 */
+  isWorking(): boolean {
+    return !this.st.isEnd();
   }
 
   /** 한 틱: 상태기계 + 글자 → 레이아웃 애니 진행 */

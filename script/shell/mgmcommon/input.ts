@@ -5,12 +5,14 @@
 import { RepeatGen } from '../charselect/state';
 import type { MgmPadSource } from './types';
 
-/** bex 비트(6.10 쓰임; 0x4·0x8·0x10~0x80 의 버튼 이름은 [추정]) */
+/** bex 비트(6.10 쓰임; 0x4 = X·0x8 = Y 는 online.md 4.9 정정 [판독: 안내 글리프 위치 ↔ 입력 비트], 0x10~0x80 의 버튼 이름은 [추정]) */
 export const PAD = {
   A: 0x1,
   B: 0x2,
   BTN4: 0x4,
   BTN8: 0x8,
+  X: 0x4,
+  Y: 0x8,
   L: 0x10,
   R: 0x20,
   ZL: 0x40,

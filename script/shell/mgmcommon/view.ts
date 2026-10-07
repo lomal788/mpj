@@ -20,6 +20,7 @@ export function mergeSpec(base: MgmSpec, part: MgmSpecPart): MgmSpec {
     split: { ...base.split, ...part.split },
     zabuton: { ...base.zabuton, ...part.zabuton },
     lineSpace: { ...base.lineSpace, ...part.lineSpace },
+    fonts: { ...base.fonts, ...(part.fonts ?? {}) },
   };
 }
 

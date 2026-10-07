@@ -56,8 +56,8 @@ export interface PageLayout {
 
 const EMPTY_ATTR: MsgAttr = { wt: 0, ch: 0, pos: 0, ox: 0, oy: 0, emo: 0, wi: 0 };
 
-/** FUN_710031a480 + FUN_7100315fe0 의 배치 고르기(선택형 아님) */
-export function pageLayout(meswin: MeswinData, attr: MsgAttr | undefined, userOffset: [number, number, number]): PageLayout {
+/** FUN_710031a480 + FUN_7100315fe0 의 배치 고르기. 선택형이면 WindowData Layout01(partyrule.md 6.2) */
+export function pageLayout(meswin: MeswinData, attr: MsgAttr | undefined, userOffset: [number, number, number], choice = false): PageLayout {
   const a = attr ?? EMPTY_ATTR;
   const w = meswin.window[a.wt] ?? meswin.window[0];
   const type = WINDOW_TYPE[w.type] ?? 0;
@@ -66,5 +66,5 @@ export function pageLayout(meswin: MeswinData, attr: MsgAttr | undefined, userOf
   if (place === 9 && type !== WINDOW_TYPE.Talking) place = PLACE[w.pos] ?? 1;
   const chara = a.ch > 0 ? (meswin.chara[a.ch] ?? null) : null;
   const offset: [number, number] = userOffset[0] !== 0 || userOffset[1] !== 0 ? [userOffset[0], userOffset[1]] : [a.ox, a.oy];
-  return { wt: a.wt, type, layout: w.layout, place, chara, offset };
+  return { wt: a.wt, type, layout: choice && w.layoutChoice ? w.layoutChoice : w.layout, place, chara, offset };
 }

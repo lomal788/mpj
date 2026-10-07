@@ -20,8 +20,8 @@ function toBex(p: PadInput | null): number {
   let b = 0;
   if (p.buttons & NPAD.A) b |= 0x1;
   if (p.buttons & NPAD.B) b |= 0x2;
-  if (p.buttons & NPAD.Y) b |= 0x4;
-  if (p.buttons & NPAD.X) b |= 0x8;
+  if (p.buttons & NPAD.X) b |= 0x4;
+  if (p.buttons & NPAD.Y) b |= 0x8;
   if (p.buttons & NPAD.LEFT) b |= 0x100;
   if (p.buttons & NPAD.RIGHT) b |= 0x200;
   if (p.buttons & NPAD.DOWN) b |= 0x400;

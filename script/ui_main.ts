@@ -12,6 +12,9 @@ import { runMgmCommonDemo, type MgmCommonRun } from './mgmcommon_page';
 import { runMgmScreen, type MgmScreenRun } from './mgmscreens_page';
 import { runMgm01Filter, runMgm01Setting, type Mgm01Run } from './mgm01_page';
 import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
+import { partyRuleTestValues, runPartyRule, type PartyRuleRun } from './partyrule_page';
+import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
+import { onlineTestValues, runOnline, type OnlineRun } from './online_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 
 interface UiRun {
@@ -133,6 +136,33 @@ const UIS: UiDef[] = [
       },
     }),
   ),
+  {
+    id: 'partyrule',
+    name: '마리오 파티: 파티 규칙 설정',
+    async run(stage, cfg) {
+      const r: PartyRuleRun = await runPartyRule(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, test: partyRuleTestValues(), onDone: cfg.onDone });
+      (window as unknown as { __partyrule?: PartyRuleRun }).__partyrule = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'setplayer',
+    name: '로컬 멀티: 플레이어 설정 → 캐릭터 선택',
+    async run(stage, cfg) {
+      const r: SetPlayerRun = await runSetPlayer(stage, { com: cfg.com, keyboard, muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __setplayer?: SetPlayerRun }).__setplayer = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'online',
+    name: '온라인: 프렌드 매치 방·대기실 / 전 세계 매칭',
+    async run(stage, cfg) {
+      const r: OnlineRun = await runOnline(stage, { pads: padSourcesFor([false, true, true, true], keyboard), muted: cfg.muted, test: onlineTestValues(), onDone: cfg.onDone });
+      (window as unknown as { __online?: OnlineRun }).__online = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
 ];
 
 const q = new URLSearchParams(location.search);

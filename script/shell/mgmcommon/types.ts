@@ -37,6 +37,8 @@ export interface MgmSpecPart {
   /** BexZabutonBlurred 창(modeselect.md 6.2) */
   zabuton: Record<string, { pane: string; slots: number[]; w: number; h: number }[]>;
   lineSpace: Record<string, Record<string, number>>;
+  /** 화면별 글꼴(같은 이름의 공용 글꼴을 덮어씀, partyrule.md 9.2). 없으면 공용 그대로 */
+  fonts?: Record<string, FontSpec>;
 }
 
 export interface MgmSpec extends MgmSpecPart {

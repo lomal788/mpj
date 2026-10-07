@@ -306,6 +306,14 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
 | 보이스·진동 | 사건만(`voice`·`vibrate`) — 어댑터가 없으면 무시 | 6.5 변형 고르기 [미확정] |
 | 흐림 창(blur, BexZabutonBlurred) | modeselect.md 6.2 와 같은 규칙(뒤 그림이 있으면 흐린 사본, 없으면 원래 텍스처) | 뒤 3D 장면 없음 |
 
+정정·보충(2026-10-07, 파티 규칙 화면 구현 — 근거·판독 위치는 [partyrule.md](partyrule.md) 6.2·6.3):
+- **선택지 구현**: 위 표의 "선택지 웹 1단계 미구현"은 이제 `setChoiceCount(2..4)`·`setChoiceLabel(칸, 라벨)`·`setChoiceDeciSe/DeciVib`·`setCancelEnable`·`setInitialChoice(+0x43c)`·`choiceResult()(+0x438)` 로 구현했다(FUN_71003175d0 열기·FUN_71003197d0 사람 입력·SetDecideChoice·SetSelectChoice·FUN_710031e360 폭). 위/아래는 끝에서 멈추고(순환 없음) B 는 취소 가능일 때 SQ_SE_SYS_CANCEL 만 내고 결과 −1. 선택형 페이지는 넘김 SQ_SE_SYS_MES_PROC 없음. 칸 정렬 매개변수는 `sys_meswin_model_choices_00`(수직 가운데 gap −3)만 표에 넣었다 [설계: 다른 선택지 레이아웃 미확인]. COM owner 선택(FUN_7100319a80)은 0.6667 s 뒤 현재 칸 결정으로 줄였다 [설계, 목표 칸 +0x440 writer 미확정]. 기존 `setChoices(a, b)`(경고만)는 다른 화면 동작을 바꾸지 않으려 그대로 둔다.
+- **Model 창 형식**: 화자 3D 모델 `x_model` 은 숨긴다 [설계, 3D 범위 밖].
+- **SetMessageLabel**(@0x710031f2d0)은 넘김 요청 +0x506·하위 단계 +0x2c 를 0 으로 한다 — 웹이 빠뜨렸던 것을 더함. 하위 0 의 글자는 그때의 페이지 라벨로 다시 푼다(레이아웃 유지).
+- **글자 객체 수명**: 매 프레임 FUN_7100315328 은 상태와 무관하게 글자 객체(+0x130)를 갱신하고 끝 처리 FUN_7100318340 은 글자 객체를 지우지 않는다 → 웹도 상태 2·3·−1 에서 글자 진행을 계속하고 끝 처리에서 지우지 않는다(지우는 것은 Start). 위 9.4 표의 "페이지 넘김 때 글자 객체를 비운다"(하위 3)는 그대로.
+- **끝 처리**는 넘김 요청 +0x506 도 0 으로 지운다(웹이 빠뜨렸던 것).
+- **상태 2 에서 Start** 할 때 레이아웃이 바뀌면 FUN_710031a480 이 "normal"·보이기를 한다(page ≠ 0 갈래와 같은 조건 `page != 0 || 상태 == 2`).
+
 ## 10. 검증 코드·실행 결과·기대값
 
 한 것: 디컴파일·어셈블리 판독(2절 목록), 데이터 덤프 실행 — `python web/tools/analysis/msgwin_atr.py koKR mgm mg_common system`(ATR1 1,137레코드: WT_Empty 932·WT_Name 205), `python web/tools/analysis/sound_preset.py json analysis/msgwin_sound_presets.json global mgm01 … mgmet`, `sound_fsar.py dump`(fspj 라벨·볼륨·사용자 파라미터, scratchpad), `ui_lyt.py dump`(mgm01~06·mgmet layout.lyt, scratchpad — 커서 부품 참조 검색용). 원본 실행·웹 실행·합성 시험 없음.

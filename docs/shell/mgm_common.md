@@ -633,3 +633,5 @@ interface MessageWindowAdapter {          // ComUiMessageWindow 인터페이스 
 | `x_text_NN_shadow` 짝 채우기 | [미확정] | GuiLayoutText/ComUiBase::GetText 판독 |
 | BottomRightNextMessage Mode 별 라벨 | [미확정] | mgmet @0x71000706b4 std::string 원천 어셈블리 |
 | ContinueMessageFlow(n) 반환 시점 해석(페이지 n 표시 프레임) | [추정] (판독 규칙에서 해석) | 원본 실행 또는 메시지 창 상태 갱신 판독 |
+
+정정(2026-10-07, online.md 4.9): 버튼 비트 이름 — bex 0x4 = X, 0x8 = Y [판독: menu00 방 목록·방 정보의 입력 비트와 안내 글리프 대조; 글리프 E001(왼쪽 점 = Y 위치)↔0x8, E002(위 점 = X 위치)↔0x4, 데이터]. 안내 글리프 E000~E003 은 원본 확장 글꼴의 버튼 위치 다이아몬드 그대로이며(글자 단추 E004~E007 은 게임 문구에서 안 씀, main 에 치환 즉시값 없음) 웹 그리기는 바꾸지 않는다. 페이지 어댑터 toBex 는 NPAD.X → 0x4, NPAD.Y → 0x8 로 통일, `PAD.X`/`PAD.Y` 별칭을 input.ts 에 더한다(BTN4/BTN8 유지).

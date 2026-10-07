@@ -62,6 +62,31 @@ def need_closure(roots, sources, have):
     return found
 
 
+def split_origin_fix(b):
+    """나눈 창(modesel split_windows) 조각은 창 노드 '가운데'에 붙여 만들어져 있다. 창 원점이 가운데가 아니면(rc·ct 등) 조각이 원점 점에
+    붙어 반 폭/반 높이만큼 어긋난다 → 조각 위치에 (−o·w/2, −o·h/2) 를 더한다(partyrule.md 9.3 [설계 보정], 정점색이 고른 창만)"""
+    out = []
+    for name, sws in b.split.items():
+        lay = b.layouts[name]
+        for sw in sws:
+            pi = next((i for i, n in enumerate(lay["nodes"]) if n["n"] == sw["n"]), None)
+            if pi is None:
+                continue
+            o = lay["nodes"][pi]["o"]
+            if o == [0, 0]:
+                continue
+            vc = lay["nodes"][pi].get("vc")
+            if vc and any(c != vc[0] for c in vc):
+                print("  정점색이 고르지 않아 건너뜀", name, sw["n"])
+                continue
+            dx, dy = -o[0] * sw["w"] / 2, -o[1] * sw["h"] / 2
+            for n in lay["nodes"]:
+                if n["p"] == pi and n["n"].startswith(sw["n"] + "#"):
+                    n["t"] = [n["t"][0] + dx, n["t"][1] + dy]
+            out.append(f"{name}/{sw['n']}({dx:+g},{dy:+g})")
+    return out
+
+
 def main():
     tmp = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp())
     tmp.mkdir(parents=True, exist_ok=True)
@@ -82,6 +107,8 @@ def main():
         if found.get(key):
             b.convert(src, sorted(found[key]))
     print("layouts", {k: len(v) for k, v in found.items()})
+    shifted = split_origin_fix(b)
+    print("split origin fix", shifted)
 
     common_dst = mc.DST
     mc.DST = DST

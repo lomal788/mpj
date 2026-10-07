@@ -2,7 +2,8 @@
  * 미니게임 모드 공용 UI 명세 검사 — (1) assets/mgmcommon/{spec,mgmet,mgm01}.json 레이아웃 노드·애니 길이를 원본 덤프
  * (extracted/converted/ui/mgm00·bq_Parts, analysis/mgmet_layout·mgm01_layout)와 대조, (2) 문서 표 값(mgm_common.md 7.1·7.3, message_window.md 4.2·4.3·6.1,
  * mgmet_flow.md 7.1, mgm01_freeplay.md 7절), (3) 메시지 문구·속성(koKR json, analysis/msgwin_atr_koKR.txt), (4) 글꼴·텍스처·소리 파일,
- * (5) 모듈 import 그래프(mgm_common.md 9.1 경계)를 확인한다.
+ * (5) 모듈 import 그래프(mgm_common.md 9.1 경계)를 확인한다. assets/partyrule/partyrule.json(파티 규칙 화면, partyrule.md)도 (1)·(4)·(5)의 범위에 넣는다
+ * (원본 덤프가 없는 menu_common 레이아웃 mncom_* 는 건너뛴다).
  *
  *   npx tsx tools/check_mgmcommon.ts
  */
@@ -17,13 +18,16 @@ import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } fro
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
 const A = join(WEB, 'assets/mgmcommon');
-const DUMPS = [join(ROOT, 'extracted/converted/ui/mgm00'), join(ROOT, 'extracted/converted/ui/bq_Parts'), join(ROOT, 'analysis/mgmet_layout'), join(ROOT, 'analysis/mgm01_layout')];
+const DUMPS = [join(ROOT, 'extracted/converted/ui/mgm00'), join(ROOT, 'extracted/converted/ui/bq_Parts'), join(ROOT, 'analysis/mgmet_layout'), join(ROOT, 'analysis/mgm01_layout'), join(ROOT, 'extracted/converted/ui/menu01')];
 const spec = JSON.parse(readFileSync(join(A, 'spec.json'), 'utf8')) as MgmSpec;
 const parts: Record<string, MgmSpecPart> = {
   mgmet: JSON.parse(readFileSync(join(A, 'mgmet.json'), 'utf8')) as MgmSpecPart,
   mgm01: JSON.parse(readFileSync(join(A, 'mgm01.json'), 'utf8')) as MgmSpecPart,
+  partyrule: JSON.parse(readFileSync(join(WEB, 'assets/partyrule/partyrule.json'), 'utf8')) as MgmSpecPart,
 };
-const merged = mergeSpec(mergeSpec(spec, parts.mgmet), parts.mgm01);
+const merged = mergeSpec(mergeSpec(mergeSpec(spec, parts.mgmet), parts.mgm01), parts.partyrule);
+const NO_DUMP = (name: string): boolean => name.startsWith('mncom_') && name in parts.partyrule.layouts;
+let noDump = 0;
 
 let fails = 0;
 let count = 0;
@@ -56,6 +60,10 @@ let nodesChecked = 0;
 let layoutsChecked = 0;
 for (const [name, lay] of Object.entries(merged.layouts)) {
   const f = dumpFile(`${name}.bflyt.json`);
+  if (!f && NO_DUMP(name)) {
+    noDump++;
+    continue;
+  }
   if (!f) {
     ok(false, `${name} 덤프 없음`);
     continue;
@@ -90,13 +98,14 @@ for (const [name, lay] of Object.entries(merged.layouts)) {
     ok(pieces.length === 9 && near(w, sw.w) && near(h, sw.h), `${name}/${sw.n} 창 9조각 크기 합`);
   }
 }
-console.log(`   레이아웃 ${layoutsChecked}개, 노드 ${nodesChecked}개`);
+console.log(`   레이아웃 ${layoutsChecked}개, 노드 ${nodesChecked}개, 덤프 없어 건너뜀 ${noDump}개`);
 
 console.log('2. 애니 길이·반복 (원본 bflan 덤프)');
 let animsChecked = 0;
 for (const [name, lay] of Object.entries(merged.layouts)) {
   for (const [tag, an] of Object.entries(lay.anims)) {
     const f = dumpFile(`${name}_${tag}.bflan.json`) ?? dumpFile(`${name}.bflan.json`);
+    if (!f && NO_DUMP(name)) continue;
     if (!f) {
       ok(false, `${name} ${tag} 애니 덤프 없음`);
       continue;
@@ -230,7 +239,7 @@ console.log('5. 글꼴·텍스처·소리');
   ok(!!spec.fonts.bqfont_large?.glyphs['프'] && !!spec.fonts.bqfont_large?.glyphs['항'], '큰 글꼴: 프리 플레이·미니게임 항구');
   ok(!!spec.fonts.bqfont_small.glyphs['']?.color, '안내 아이콘 U+E003 = 컬러 글리프');
   let tex = 0;
-  for (const s of [spec as MgmSpecPart, parts.mgmet, parts.mgm01])
+  for (const s of [spec as MgmSpecPart, parts.mgmet, parts.mgm01, parts.partyrule])
     for (const [k, p] of Object.entries(s.textures)) {
       ok(existsSync(join(A, p)), `텍스처 ${k}`);
       tex++;
@@ -242,6 +251,18 @@ console.log('5. 글꼴·텍스처·소리');
     ok(!!s && existsSync(join(A, s.file)) && statSync(join(A, s.file)).size > 1000 && near(s.gain, v / 127, 1e-3), `소리 ${l} 볼륨 ${v}`);
   }
   ok(spec.soundNotes?.SQ_VOI_SYS_MES_PUT?.volume === 30 && !spec.sounds.SQ_VOI_SYS_MES_PUT, 'SQ_VOI_SYS_MES_PUT 볼륨 30, 무음이라 파일 없음');
+  const pr = parts.partyrule as MgmSpecPart & { texts: Record<string, string>; sounds: Record<string, { file: string; gain: number }>; missingTextures: string[] };
+  const prNeed = new Set([...Object.values({ ...spec.texts, ...pr.texts }).join('').replace(TAG, '')].filter((c) => c !== '\r' && c !== '\n'));
+  for (const [fam, f] of Object.entries(pr.fonts ?? {})) {
+    ok(existsSync(join(A, f.image)), `partyrule ${fam} 아틀라스`);
+    const miss = [...prNeed].filter((c) => !f.glyphs[c]);
+    ok(miss.length <= 8, `partyrule ${fam} 빠진 글자 ${miss.length} (${miss.join('')}) — 원본 글꼴에 없는 글자만`);
+  }
+  ok(pr.missingTextures.length === 0, `partyrule 없는 텍스처 ${pr.missingTextures.join(',')}`);
+  for (const [l, v] of Object.entries({ SQ_SE_SYS_CURSOR_S: 76, SQ_SE_SYS_DECI_L: 52 })) {
+    const s = pr.sounds[l];
+    ok(!!s && existsSync(join(A, s.file)) && statSync(join(A, s.file)).size > 1000 && near(s.gain, v / 127, 1e-3), `partyrule 소리 ${l} 볼륨 ${v}`);
+  }
   console.log(`   텍스처 ${tex}개`);
 }
 
@@ -297,6 +318,20 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
       }
     }
     console.log(`   mgm01 파일 ${m01.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
+  }
+  const prDir = join(WEB, 'script/shell/partyrule');
+  if (existsSync(prDir)) {
+    const prf = readdirSync(prDir).filter((f) => f.endsWith('.ts'));
+    for (const f of prf) {
+      const src = readFileSync(join(prDir, f), 'utf8');
+      for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+        const s = m[1] ?? m[2];
+        const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
+        const shared = SHARED.some((x) => s === `../${x}`);
+        ok(inside || shared || s === 'three', `partyrule/${f}: 금지 import '${s}'`);
+      }
+    }
+    console.log(`   partyrule 파일 ${prf.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
   }
 }
 

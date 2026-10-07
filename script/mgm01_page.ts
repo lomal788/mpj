@@ -2,7 +2,7 @@
  * 페이지 ↔ 프리 플레이(shell/mgm01) 화면 연결 — 어댑터(입력·소리·에셋·저장)와 60Hz 고정 스텝 루프, ui.html 시험값 패널. mgmcommon_page.ts 와 같은 방식.
  * 화면: 개별 설정(runMgm01Setting)·필터(runMgm01Filter). 공용 환경 createMgm01Env 는 다른 mgm01 화면도 쓸 수 있다.
  * 시험값(URL 또는 화면 오른쪽 위 패널): mg=게임 이름, filter=enum, cpu·team·rhythm=값, endless=1, resume=1, connected=1, boss=1(보스 개방), fav=이름,이름
- * bex 비트: A 0x1, B 0x2, Y 0x4, X 0x8, L 0x10, R 0x20, ZL 0x40, ZR 0x80, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10, mgm01_freeplay.md 6.2)
+ * bex 비트: A 0x1, B 0x2, X 0x4, Y 0x8 (online.md 4.9 정정), L 0x10, R 0x20, ZL 0x40, ZR 0x80, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10, mgm01_freeplay.md 6.2)
  * 시험 배치(패널·저장 키·기본 기록 = gamerecord 초기값)는 docs/shell/mgm01_freeplay.md 9절 [설계].
  */
 import { ASSETS } from './env';
@@ -30,8 +30,8 @@ function toBex(p: PadInput | null): number {
   let b = 0;
   if (p.buttons & NPAD.A) b |= 0x1;
   if (p.buttons & NPAD.B) b |= 0x2;
-  if (p.buttons & NPAD.Y) b |= 0x4;
-  if (p.buttons & NPAD.X) b |= 0x8;
+  if (p.buttons & NPAD.X) b |= 0x4;
+  if (p.buttons & NPAD.Y) b |= 0x8;
   if (p.buttons & NPAD.L) b |= 0x10;
   if (p.buttons & NPAD.R) b |= 0x20;
   if (p.buttons & NPAD.ZL) b |= 0x40;

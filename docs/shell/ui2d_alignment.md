@@ -179,6 +179,10 @@ if kind == 1:
 
 [추정] 첫 구현은 이번에 쓰는 fixed size 경로를 보존하되, API에는 변환된 bounds와 bias를 넣는다. 모든 Parts의 측정 폭을 저장 width로 영구 대체하지 않는다. `core/games/view/game.ts/env.ts` 의존 금지와 `three`, 같은 shell 모듈, charselect 공용 state/types/RepeatGen 허용 경계는 기존 §9와 같다.
 
+### 9.1 구현 (2026-10-07)
+
+`web/script/shell/mgmcommon/alignment.ts`: `computeAlignment(params, axisSize, children)` = 6.2 고정 경로 + 6.3 stretch(kind 1 의 원점 가운데가 아닌 경우 보정량은 원점 비율로 일반화 [추정]), center 두 번째 순회는 visible·ignore 만 다시 본다(측정 실패 자식도 보정, 6.2 끝). `alignPanes(inst, path, params)` = 레이아웃 노드에 적용 — extent = 축 크기 × |배율|, bias = −원점 × extent/2(무회전·부모 원점 가운데 [근사]). ali1 의 kind/gap 은 웹 레이아웃 명세에 없어 부르는 쪽 상수(`mgmet/tables.ts` RULE_ALIGNMENT)로 준다. 시험: `tools/test_mgmet.ts` 2절(6.4 좌표·여섯 열 저장 x·숨김 폭·kind 0/1·세로 own gap/bias·stretch).
+
 ## 10. 검증 방법·실행 결과
 
 [실행: 변환] `C:/dev/mpj/.venv/Scripts/python.exe web/tools/analysis/mgm01_verify_stage3.py`는 다음을 검사하며 결과를 `analysis/ui2dalign_evidence.json`과 `mgm01_validation.json`에 쓴다.

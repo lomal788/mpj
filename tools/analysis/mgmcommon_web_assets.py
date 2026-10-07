@@ -12,6 +12,7 @@
   meswin    {window[9]: {type, pos, layout, layoutChoice}, chara[]: {id, type, voice, icon, name 라벨}, positions[10], emotion[]: {normal, choices}}  — messageWindowList.json
             화자 이름 라벨 = im_npc%03d_name / im_pc%02d_name (VoiceID 번호) [설계, message_window.md 9.4]
   글꼴      작은·중간 글꼴 = 모든 문구 글자, 큰 글꼴(bqfont_large*) = 레이아웃 기본 문구 + _tlp_·im_modeNN_name·mgmet_ui_act* 문구만 [설계: 아틀라스 크기]
+            + GLYPH_ONLY(mgm02~06 *_ent_mw_guide00) 글자 — 문구 자체는 texts 에 넣지 않는다(mgmet 화면이 assets/mgmet/extra.json 으로 더함)
   창 내용    windowFlags bit4 창은 나눈 가운데 조각(#C)을 숨긴다(내용 안 그림 [추정], no_content)
   lineSpace {레이아웃: {글자 페인: 값}}  (0 이 아닌 것만)
   missingTextures {묶음: [이름]}  — 묶음 BNTX 에 없는 텍스처(UiSharedTexture 등). 화면에서는 흰 1×1 이 된다
@@ -61,6 +62,7 @@ SE = {
 SILENT = {"SQ_VOI_SYS_MES_PUT": "시퀀스가 전역 변수 15 에 240·245 를 쓰는 명령만 있고 음표가 없다 → 렌더 무음(0.005 s, peak 0) [실행: 변환 sound_seq.py]. 실제 글자 소리 원천 [미확정]"}
 TAG = re.compile(r"\[\d+:\d+:[0-9a-f]*\]")
 LARGE_LABELS = re.compile(r"_tlp_|^im_mode\d+_name$|^mgmet_ui_act")
+GLYPH_ONLY = {f"mgm0{n}": [f"mgm0{n}_ent_mw_guide00"] for n in range(2, 7)}
 
 
 def anim_tags(files, names):
@@ -274,6 +276,9 @@ def main():
     all_layouts = [common.layouts] + [b.layouts for b in modes.values()]
     fams = set()
     text_set = "".join(TAG.sub("", v) for v in texts.values()) + "0123456789/:-+.,!? ()%"
+    for stem, keys in GLYPH_ONLY.items():
+        src = json.loads((cw.MSG_DIR / f"{stem}.json").read_text(encoding="utf-8"))
+        text_set += "".join(TAG.sub("", src.get(k, "")) for k in keys)
     default_texts = ""
     for lays in all_layouts:
         for lay in lays.values():

@@ -317,6 +317,41 @@ freePlay:
 
 [추정] 검증용 입력/출력 계약은 `{dt,trig,rep,completionSignals}` → `{layoutAnimation,message,SE,saveRequest,sceneRequest}` 사건이다. save commit은 취소에서도 수행하고, 첫 설명 저장은 owner 프로필 단위로 둔다. UI 구현 전에 CPU 유무·첫/재방문·직접 진입·복귀·나가기 취소의 추적 fixture를 고정하는 것이 좋다.
 
+### 9.1 구현 계약 (2026-10-07, 웹 구현 — 액티비티 선택·첫 설명)
+
+코드 = `web/script/shell/mgmet/`(`index.ts`). 공용 부품은 `../mgmcommon`(mgm_common.md 9.6)을 그대로 쓰고, import 경계는 같은 폴더·mgmcommon·charselect 공용(scene2d/render2d/state/types)·three(`tools/check_mgmcommon.ts` 6절이 함께 검사). 플레이 방법 화면(`howto.ts`, 조정자 작성)은 `types.ts` 의 `MgmetHowto` 인터페이스로 허브에 주입한다.
+
+| 파일 | 원본 대응 | 내용 |
+|---|---|---|
+| `tables.ts` | 4.2·7.2 표, ruleconfig 4.3·7.2 | 액티비티 6칸(제목·다음 모드·시작 지점·앞 안내), `idFromStartPoint`·`adjustStartPoint`(GetAndResetStartMode 보정), `inputVec`(GetInputVec), 설명 종류 표, 규칙 열·값·문구, 정렬 값 |
+| `hub.ts` `MgmetHub` | Scene +0x328~+0x340, MinigameModeFlow·SeqUpdate 상태 0~10 | 파이버 = `FiberRunner` 제너레이터(한 틱 = 입력 → 흐름 → UI). 결과 `{kind:'mgm01'|'exit'|'activity'|'rule'}`, `router.call('mgm01')`/`ret()` |
+| `activityTitle.ts` | ActivityTitle API 전체(7.1) | `MgmWindow`(mgmet_act_title_00) 레이아웃에 태그 → 다음 태그 직접 재생 |
+| `freePlayInfo.ts` | FreePlayInfo | 이름(빈 값 = im_guest00_name)·플레이 수·/112, In/Out = 공용 창 생애 |
+| `fade.ts` | FadeOut/IsFinishedFadeOut | 검은 막 알파(순수) + Render2D 사각형 |
+| `types.ts` | 5.2 | `MgmetHowto`, `MgmetSignals`(3D 완료 신호), `IMMEDIATE_SIGNALS` |
+| `extra.ts` | — | `assets/mgmet/extra.json`(← `tools/analysis/mgmet_web_assets.py`: 설명 그림 22장·mgm02~06 앞 안내 문구·속성·SE 2종)을 공용 명세에 더함 |
+
+웹에서 정한 것 **[설계]**·해석 **[추정]**:
+
+| 항목 | 웹 | 근거 한계 |
+|---|---|---|
+| 3D 대기(5.2 표 전부) | `MgmetSignals` 로 받고 기본은 모두 즉시 참(다음 틱 진행). 1.0 s 출발 대기·0.3 s 복귀 대기·1.0 s 페이드는 원본 시간 그대로(Wait 뒤 f32 dt 누적) [설계] | 클립 길이 [미확정] — UI 애니 길이를 카메라 길이로 쓰지 않음 |
+| 오프닝(상태 1·2) | 3D 연출·스킵 입력 생략, `openingDone` 신호 하나 뒤 상태 4 [설계]. BGM 0 은 InitOp 에서 재생 | actor frame·fade 순서는 3D 범위 |
+| 보스 해제 안내(상태 3) | 없음(상태 4 로) [설계] | 내부 범위 밖 |
+| 3D 항구 | 고정 배경 그림 `assets/modeselect/backdrop_temp.png`(흐림 창 뒤 그림) [설계] | — |
+| 인사 메시지 흐름 | `MessageFlow.flow(0)`(조작 플레이어를 매 프레임 owner 로) [추정] | StartEventFlow 의 n 값 미기록 |
+| 앞 안내 표시 조건 +0x33c | 상태 7 준비(제목·화살표·Back)마다 1 → NPC 준비면 안내 → 0 [추정: 5.1 "제목·화살표·안내 준비"] | 이동 뒤에도 새 ID 안내가 나와야 하므로 |
+| 상태 7 제목 In | +0x340 = −1 → InTitle, 0(ID 증가 = 왼쪽) → InLeftArrow, 1 → InRightArrow. 이동 때 "반대쪽 Out" = 왼쪽 누름 → OutRightArrow, 오른쪽 → OutLeftArrow [추정] | 방향 ↔ 태그 대응 미기록. +0x340 은 상태 5 에서 −1 로 [추정] |
+| 나가기 확인(B) | 공용 DialogBox(예/아니요) 미구현 → 앞 안내 Out·끝 대기 뒤 '예'(SQ_SE_SYS_DECI_L) 로 처리 → ReturnScene [설계] | ComUiDialogBox [미확정] |
+| 다른 액티비티 결정 | `ModeStartFlow` 에서 modeZoomDone 뒤 결과 `{kind:'activity', id, nextMode}` 로 끝(진입 미구현) [설계] | 각 모드 흐름 범위 밖 |
+| 취소 뒤 복귀 | FadeOutWait 1.0 s → 상태 5 복원 분기에서 `fadeIn(1.0)` [설계] | 원본 페이드 인 위치 미기록 |
+| 설명 종류 kind | 프리 플레이 1 [판독]. 나머지 = 다음 MinigameModeID 번호와 라벨 접두(cmgb 2·dt 3·tm 4·sb 5·bm 6)·그림 수 대응 [추정] | HowtoPlay +0x58 표 미기록 |
+| HowtoPlay 반환 | bit0 = 1: 마지막 페이지 A 로 끝, 0: 다시 보기 페이지 0 B [추정] | UpdateManual 지역 반환값 |
+| 진동 | 이름만 사건으로(`VB_MGMET_SELECT_CUR/DECI`) | FX 자원 [미확정] |
+| 플레이 수 | `playedCount(save, 0..151)` [근사: available 집합 = mgm01_freeplay.md 6.1] | — |
+
+검증(2026-10-07): `npx tsx tools/test_mgmet.ts` 198/198 — 표 대응·GetInputVec·시작 지점 보정, Alignment 고정 경로(6.4 좌표), 규칙 상태(입력·경계·결과·commit), 실제 명세 규칙 화면(열 x·배경 x·글자·아이콘), 허브 흐름(첫 방문 인사·BGM 0→1·좌우 이동·앞 안내·첫 설명 저장 flag 8·규칙 취소 commit·두 번째 진입 첫 설명 생략·출발 StopBgm(2)·mgm01 호출, 시작 지점 4·2·7, 보스 미개방 막힘, 나가기). 원본 실행 대조는 없다.
+
 ## 10. 검증 방법·실행 결과
 
 [실행: 변환] 새 디컴파일은 `decomp_index.py <함수>` 조회와 기존 C 헤더 대조 후 누락된 비-thunk 함수만 대상으로 했다. Ghidra 사본에 `-noanalysis -readOnly`를 사용했으며 기존 C를 다시 디컴파일하지 않았다. 범위 밖 함수가 공통 초기화/캐시 표의 일괄 조사에 포함돼도 문서에서는 해당 내부 흐름을 분석하지 않았다.
@@ -388,3 +423,7 @@ freePlay:
 - [05_ui_input.md](../engine/05_ui_input.md) §6·7, [04_sound.md](../engine/04_sound.md) §6: 입력 비트·FX/진동·사운드 API.
 - `E:/programming/python/ddalkkakrider_work/web/docs/파티_미니게임_모음_분석.md` §2: 모드 표/공통 흐름의 배경 자료(읽기만).
 - `F:/dev/mps/web/docs/분석.txt`: 11절 문서 형식(읽기만).
+
+### 9.x 구현 기록 — 플레이 방법 단독 화면 (2026-10-07)
+
+[설계] `script/shell/mgmet/howto.ts` `MgmetHowtoView`(types.ts `MgmetHowto` 구현): 설명 그림 창 `mgmet_act_img_00`(x_img_00 칸 1 = `<pict>_NN^o`, 페이지별 정보 페인) + 독립 메시지 창. UpdateManual 지역 변수 세부가 문서에 없어 페이지들을 한 메시지 묶음으로 열고 현재 페이지 번호로 그림을 바꾼다. 다시 보기에서 페이지 0 넘김 대기 중 B = CANCEL·반환 0, 마지막 페이지 A = 반환 1, 이전 페이지 돌아가기 없음. 확인 `ui.html?ui=mgmet-howto&first=1|0&howto=1~6`. 남은 문제: 2페이지 정보 글자(`x_free_00` "2 vs 2 미니게임")가 헤드리스 화면에 보이지 않는다(글꼴·표시 플래그는 정상, 원인 미확인).

@@ -498,6 +498,32 @@ for latest up to100 valid ID rows:
 
 [추정] 다음 MinigameScene 단계로 넘길 최소 입력은 ID/Scene route, GameRule·TeamID/IsGamePlay·PlayerID/char/base type/order, ComLevel, flag1/4/6/0x3c 관련 값, rhythm mode, 두 랜덤 후보 목록, ModeData, Round와 raw 결과 ring, fade/pause/SaveRequest 계약이다. 반환은 Round/result commit·child 종료와 부모 복귀 신호로 정의하고 엔진 Scene 인스턴스 보존 방식은 외부 어댑터에서 결정한다.
 
+### 9.1 구현 계약 — 개별 설정·필터(장르) (2026-10-07)
+
+코드 `web/script/shell/mgm01/`(공개 진입점 `index.ts`), 데이터 `web/assets/mgm01/catalog.json` ← `web/tools/analysis/mgm01_web_assets.py`, 페이지 `web/script/mgm01_page.ts`(ui.html `mgm01-setting`·`mgm01-filter`), 시험 `web/tools/test_mgm01.ts`. 공용 부품은 [mgm_common.md](mgm_common.md) 9.6 그대로 쓴다(MgmWindow·MenuGrid·MgmInput·MgmSound·FiberRunner·MgmWork/MgmSave). 위 표의 제안 이름과의 대응: `catalog.ts`(그대로), `settingView.ts`(순수)+`settingScreen.ts`(창), `listFilter.ts`(listView 의 필터 부분, 순수)+`filterScreen.ts`(머리 줄만), `types.ts`(호출 계약 `Mgm01PlayRequest`). `state.ts`(DecideMinigameFlow)·`listView.ts` 본체·`sessionAdapter.ts` 는 아직 없다.
+
+| 항목 | 웹 결정 | 근거 수준 |
+|---|---|---|
+| MGList ID | `mgListND` 의 Extra 아닌 79개 → 0..78, `mgListCA` 38개 → 79..116, ND Extra(pp01~04·mf01) → 117..121(나머지 ~151 은 목록 밖) | [추정] 문서 수치 4건 일치: 모드 ID {4,5,9,11,21}=ND Endless 전부, 리듬 0x6B~0x74([02_rhythm.md](../engine/02_rhythm.md)), PataPata 0x75~0x78([minigame_result.md](minigame_result.md)), 기록 kind ID ↔ gamerecord Mode/Format 20행 |
+| GameRule 문자열 → 번호 | VS4 0·2VS2 1·1VS3 2·1VS1 3·Boss 9·Rhythm 10 | [판독](minigame_result.md 규칙 이름 표, 6.5) |
+| 〃 나머지 | Chara 8·Busters 11·AthlonSP 12·Athlon 13, Item·Extra·None = 없음(기본 갈래: 팀 표 0, CPU 는 CPU 있으면 조정) | [추정] 8/12 = 한 명 고르기 표 10, 11 = 8인·13 = 20인 Normalize(8.1) 와 모드 성격에서 짐작. 원본 열거 표 확인 필요(§11) |
+| 장르 문구 `x_mggenre` | rule → `mgm01_ui_mgRuleTypeFpNN`(VS4 00, 2VS2 01, 1VS3 02, 1VS1 03, Chara 04, Boss 06, Rhythm 07, Busters 08, AthlonSP 09, Athlon 10, Item 11), 없으면 숨김 | [추정] 문구 내용으로 대응. 애슬론 09/10(코인/서바이벌) 배정은 근거 없음 |
+| 필터 | 표시 순서 = SortIdx, 입력 exact rep 0x10/0x40 이전·0x20/0x80 다음, `left/right_select_00` 끝 → 재구성(`applied` 사건) → `_01` 끝 → 창 `normal` 재생 | 6.1·6.2·7 [판독], 끝난 뒤 normal 과 select 중 입력 무시는 [설계] |
+| 필터 단독 화면 | 머리 줄(문구·L/R·x_guide)만, `thum_all` 숨김, 빈 즐겨찾기면 `x_no_favorite`(`mgm01_mw_favoriteNone`), B = 닫고 마지막 필터 반환 | [설계] — 원본 목록에서 B 는 취소(상태 7) |
+| 설정 항목 | 논리 커서 0..4 → 창 메뉴 1행×4열(`x_rule/x_team_00`, `x_rule/x_rule_option_00/01`, `x_rule/x_play_00`), 보이는 CPU/모드/리듬을 rule pane 0 부터 | 6.5 [판독] |
+| 항목 애니 세트 | rule·team = [normal, off, on, off, null, null, lock×4, null, null], Play = [normal, off, on, off, press, null, on_ng, off_ng, on_ng, off_ng, press_ng, null] | [설계] 레이아웃 태그 이름으로 고름(원본 세트 미확정). Play 결정 뒤 next = null 이라 press 끝 = 애니 끝(6.6 isCursorItemAnimating 로 기다림) |
+| 설정 입력 | 6.2 표 그대로(A·B·Y·X exact, 항목 이동 trig 0x100/0x10000·0x200/0x40000 비트, 게임 이동 exact rep 0x10/0x40·0x20/0x80, 값 trig 0x400/0x80000 −1·0x800/0x20000 +1, 끝에서 무음 clamp). 한 프레임 한 갈래(else-if) | [판독] / 한 갈래는 [설계] |
+| 설정 SE | 값·항목 이동·게임 이동 `SQ_SE_MGM01_CUR`, 랜덤 `_DECI_S`, 즐겨찾기 `_LIKE_ADD/_LIKE_DIS`, Play 결정 `_DEC`, 첫 항목 B `_CANCEL` | 값·랜덤·즐겨찾기 = 7 의 이름과 라벨 일치 [데이터], 나머지 [설계] |
+| 랜덤 | 후보 = 현재 필터 unlocked, 0 이면 DECI_S 만, 성공 → 창 out → 새 ID 로 다시 진입(4→4) | 6.3·5.2 [판독], 창 out/in 반복은 [설계] |
+| 진입 | 후보 비면 현재 ID 하나, resume 이면 Play 커서 아니면 첫 valid, 게임이 바뀌면 값은 새 범위로 clamp | 5.1 [판독] / clamp [설계] |
+| 문구 배정 | `x_mgname` = `mgm01_ui_mgNameFp`(Text0 = im 이름), CPU = `mgm01_ui_rule_CpuSetting00/01`(Text0 = `im_comLevel0N`, 아이콘 재질 t = index×0.25 를 v 방향), 모드·리듬 = `…Setting02` 제목 + `…Setting00/01` 값, 팀 얼굴 글자 = 사람 `mgm01_ui_player0N`·CPU `mgm01_ui_cpu`, 기록 `x_record_00` = 하이 스코어(kind −1·kind3 노멀은 숨김), `x_record_01` = 플레이 횟수(save 선두 u16) | [설계](6.5 기록 형식·7 라벨은 [판독]) |
+| 기록 값 | 웹에는 MGRecorder 가 없어 페이지가 gamerecord `InitialRecord` 를 준다(kind2/3 = 1/100 s 로 분·초·소수) | [설계] / 단위 [추정] |
+| heart | 켬 `on`→`normal`, 끔 `out`→`off`, 처음 normal/off | [설계] |
+| 게임 넘김 창 애니 | `left_select`/`right_select`(8f) → `normal` | [설계] |
+| 호출 계약 `Mgm01PlayRequest` | {id, name, rule, ruleNo, filter{enumNo, index, fromFavorite}, team{table, choice, format, teamIdByPid[4], gamePlayByPid[4]}, cpu, endless(모드 게임만), rhythm(rule10 만, 아니면 0), useGyro(Gyro ≠ −1), callInst, favoriteDirty} | 8.3 [판독]을 PlayerID 기준으로 풀어 둠. Work/Sync 쓰기·자이로 확인(상태 5)은 부르는 흐름(D) 몫 |
+| 즐겨찾기 저장 | `MgmWork.mg.favorite` + save MG+4 bit2, requestSave 없음 | 8.4 [판독]; 페이지는 끝날 때 localStorage 에 둔다 [설계] |
+| 그리지 않은 것 | 7장 미리보기·썸네일 그림(런타임 텍스처, 에셋 없음), `x_text_rule`(`im_inst_*_rule` 문구가 공용 글꼴 범위 밖), 플레이어별 얼굴(기본 그림), mginfo `press` 창 애니 | [미구현] |
+
 ## 10. 검증 방법·실행 결과
 
 ### 10.1 신규 C와 재사용 범위
@@ -557,3 +583,12 @@ for latest up to100 valid ID rows:
 - 1번(한 판 종료 commit): MinigameScene·MGResult 는 결과 ring 을 쓰지 않는다. `MinigameModeWork::SetMinigameResult` 는 main 내부 호출이 없고 가져다 쓰는 NRO 는 mg0704·mg1602·mg1604·mgm03·mgm06 뿐(mgm01 없음). `SetRound` 의 main 호출자는 `FUN_71002c4b50` 하나 [판독, minigame_result §6.5]. 프리 플레이 ring writer 는 여전히 미확정.
 - 승패 값 열거: 1=승, 0=패, 2=무, 시작 −1 [판독, minigame_result §6.1].
 - 설명 장면 이후: 미니게임 장면은 flag 4 를 생성자 자이로 조건에만 쓰고, 설명 화면 안 실행은 flag 0 경로다 [판독, minigame_scene §4.4·§5.3].
+
+보충(2026-10-07, 9.1 구현에서 남은 것):
+- 7. GameRule 열거(문자열 → 번호) 중 Chara·Item·Athlon·AthlonSP·Busters·Extra·None — 9.1 은 [추정]. 필요한 근거: MGList 로더의 GameRule 문자열 표(main) 또는 IsComLevelAdjustable·Mgm01GetTeamOrderDataFromGameRule 호출 실측.
+- 8. MGList ID 배정(ND/CA 이어 붙이는 순서와 117~151) — 9.1 은 문서 수치 일치로 [추정]. 필요한 근거: MGList 생성 순서 판독.
+- 9. 설정 화면 항목 애니 세트·SE·문구 페인 배정 — 9.1 [설계]. 필요한 근거: InitializeMgSetting @0x7100008664 의 SetupAddAnimeMenu 인자, MgSettingFlow SE 라벨.
+
+### 9.x 구현 기록 — 승패 표·잠금 안내 단독 화면 (2026-10-07)
+
+[설계] `script/shell/mgm01/historyScreen.ts`(HistoryState → `mgm01_history_title_00`·`mgm01_history_00` 공용 창, 열 `x_parts_NN/x_history_PP` 에 win_normal/normal, 얼굴 `x_face_0P/x_face_pc128` 칸 1 = `face_128_pcNN^u`, 승리 수 `num/x_text_0P` = `mgm01_ui_countWin` Number0, 기록 0 이면 `x_no_history` 표시)·`announceScreen.ts`(AnnounceState → `mgm01_mes_announce_00`). 얼굴 텍스처는 charselect 변환물을 가리키는 조각 `assets/mgm01/faces.json`(`web/tools/analysis/mgm01_faces_part.py`). 미니게임 썸네일(`x_thumbnail`)은 아직 변환하지 않아 원래 텍스처, 스크롤바 `x_scr_mgm` 은 노드가 비어 위치만 계산. 시험 `tools/test_mgmscreens.ts`, 확인 `ui.html?ui=mgm01-history&rounds=N` · `ui=mgm01-announce`.

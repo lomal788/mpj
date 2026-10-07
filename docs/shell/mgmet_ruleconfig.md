@@ -359,6 +359,28 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 
 [추정] 구현 전 비교 fixture: CPU0명/3명, 기본·캐시 valid, 숨김 열 값 유지, 설명 왕복 후 커서 유지, 첫 열 B commit, 플레이 A commit, 반복 방향+동시 A/B, locked Round/Explain의 위치, Round+Star 처리 순서, 값 경계 무음. 실제 렌더 비교는 원본 캡처를 확보한 후 별도 검증한다.
 
+### 9.1 구현 계약 (2026-10-07, 웹 구현)
+
+코드: `web/script/shell/mgmet/ruleConfig.ts`(순수 `RuleConfigState`·`loadWorkData`·`freePlayConfig`·`commitFreePlay`), `ruleConfigView.ts`(`RuleConfigView` = 공용 창 `MgmWindow`(mgmet_base_rule_00) + 열 부품 태그 재생 + Alignment + SetupBaseBg), 허브의 `Mgm01SetRuleFlow`(mgmet_flow.md 9.1 `hub.ts`). 정렬 계산은 공용 `mgmcommon/alignment.ts`(ui2d_alignment.md 9.1).
+
+| 항목 | 웹 | 수준 |
+|---|---|---|
+| 상태·입력·반환값·PlayMove·SE·GetResult·commit | 5·6·7.3·8.2 그대로(사건 `drain()`) | [판독] 재구현 |
+| 열 배치 | SetupMgm 끝 Alignment 요청 → 다음 UI 갱신(`tick`)에서 `alignPanes(A_alignment_00, kind 2·gap −75·수평)` | [판독] ui2d_alignment.md 6.4 |
+| 배경 | Update 마다 SetupBaseBg: null_01.x = P + A − C(N < 5), 아니면 −850. P = 마지막으로 센 열의 Alignment 뒤 x | [판독] 6.3 |
+| 플레이 글자 | 생성 때 `x_play_00/x_text_00` = `mgmet_rule_ui_play` | [추정: 7.2 라벨만 판독, 쓰는 함수 미기록] |
+| 열 제목 페인 | 각 부품의 y +76 글자(`x_vs_00`·`x_text_round_01`·`x_text_win_01`·`x_text_cpu_00`·`x_text_explain_00`·`x_text_mg_01`) | [추정: 레이아웃 위치, 값 페인만 판독] |
+| 아이콘 | CPU·설명 아이콘 재질 텍스처 SRT 이동 (0, index × 0.25) — 그림 4칸 세로(80×320·128×512), 페인 UV 1/4 | [추정] 7.2 vt+0x128 |
+| 즉시 PlayMove | 태그를 재생하고 그 길이만큼 바로 진행 | [설계] vt+0x198/0x188 내부 미기록 |
+| 플레이 선택 | `on` 요청 직후 SetBody 의 `normal` 요청이 덮는다(레이아웃 하나에 재생 하나) | [근사] 같은 레이아웃 동시 태그 재생 [미확정] |
+| In/Out | `MgmWindow.in/out`(공용 창 생애) + +0xa0 검사는 상태에서 | [판독] Impl::In = in → normal |
+| VS 얼굴 | 슬롯 글자(P1~P4/CPU)만, 얼굴 PlayerID 그림은 미구현 | [설계] 프리 플레이에서 안 씀 |
+| 설명 다시 보기(Update2) | 규칙·정보·안내 Out → HowToPlayFlow(Setup(1, false)) → 규칙·정보·안내 In, 커서·값 유지 | [판독] + 정보·안내 다시 In 은 mgm_common.md 5.4 쓰임 예 |
+| 진동 | 사건 `vib` → `MgmSound.vibrate(조작 플레이어, 'rule')` | 이름 [미확정] |
+| 단독 시험 진입 `entry: 'rule'` | 제목 ActIn·정보·안내 In → Mgm01SetRuleFlow → Out, 결과 `{kind:'rule'}` | [설계] ui.html 시험용 |
+
+검증: `tools/test_mgmet.ts` 3·4절(상태 경계·잠금 열·Round+Star 첫 열 2·숨긴 열 index·commit/flag4·LoadWorkData, 실제 명세에서 CPU (158)·설명 (529)·배경 96/507).
+
 ## 10. 검증 방법·실행 결과
 
 [실행: 변환] 기존 `Impl::Setup`/CPU본문/호출자 C를 재사용했고 누락 함수는 색인 조회와 헤더 대조 후에만 Ghidra 사본에서 디컴파일했다. 신규 C 총 **197함수/10파일**의 전체 내역은 flow §10에 한 번만 싣는다. 이 문서의 핵심 C는 `mgmet_stage2.c`(111함수 중 규칙 함수군), `mgmet_stage2_destructors.c`/`mgmet_stage2_cleanup.c`, main 캐시/Alignment, mgm01 소비자다.

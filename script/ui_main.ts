@@ -9,6 +9,9 @@ import './style.css';
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { runModeSelect, type ModeSelectRun } from './modeselect_page';
 import { runMgmCommonDemo, type MgmCommonRun } from './mgmcommon_page';
+import { runMgmScreen, type MgmScreenRun } from './mgmscreens_page';
+import { runMgm01Filter, runMgm01Setting, type Mgm01Run } from './mgm01_page';
+import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 
 interface UiRun {
@@ -79,6 +82,57 @@ const UIS: UiDef[] = [
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },
+  ...(
+    [
+      ['mgm01-history', '프리 플레이: 승패 표', 'history'],
+      ['mgm01-announce', '프리 플레이: 잠금 안내', 'announce'],
+      ['mgmet-howto', '항구: 플레이 방법', 'howto'],
+    ] as const
+  ).map(
+    ([id, name, kind]): UiDef => ({
+      id,
+      name,
+      async run(stage, cfg) {
+        const r: MgmScreenRun = await runMgmScreen(kind, stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+        (window as unknown as { __mgmscreen?: MgmScreenRun }).__mgmscreen = r;
+        return { stop: () => r.stop(), debug: () => r.debug() };
+      },
+    }),
+  ),
+  {
+    id: 'mgm01-setting',
+    name: '프리 플레이: 개별 설정',
+    async run(stage, cfg) {
+      const r: Mgm01Run = await runMgm01Setting(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __mgm01?: Mgm01Run }).__mgm01 = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'mgm01-filter',
+    name: '프리 플레이: 필터(장르)',
+    async run(stage, cfg) {
+      const r: Mgm01Run = await runMgm01Filter(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __mgm01?: Mgm01Run }).__mgm01 = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  ...(
+    [
+      ['mgmet', '항구: 액티비티 선택·첫 설명', 'hub'],
+      ['mgmet-rule', '항구: 규칙 설정', 'rule'],
+    ] as const
+  ).map(
+    ([id, name, entry]): UiDef => ({
+      id,
+      name,
+      async run(stage, cfg) {
+        const r: MgmetRun = await runMgmet(entry, stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, test: mgmetTestValues(), onDone: cfg.onDone });
+        (window as unknown as { __mgmet?: MgmetRun }).__mgmet = r;
+        return { stop: () => r.stop(), debug: () => r.debug() };
+      },
+    }),
+  ),
 ];
 
 const q = new URLSearchParams(location.search);

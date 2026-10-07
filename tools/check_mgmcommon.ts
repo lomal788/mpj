@@ -270,6 +270,34 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
     }
   }
   console.log(`   파일 ${files.length}개`);
+  const metDir = join(WEB, 'script/shell/mgmet');
+  if (existsSync(metDir)) {
+    const met = readdirSync(metDir).filter((f) => f.endsWith('.ts'));
+    for (const f of met) {
+      const src = readFileSync(join(metDir, f), 'utf8');
+      for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+        const s = m[1] ?? m[2];
+        const inside = s.startsWith('./') || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
+        const shared = SHARED.some((x) => s === `../${x}`);
+        ok(inside || shared || s === 'three', `mgmet/${f}: 금지 import '${s}'`);
+      }
+    }
+    console.log(`   mgmet 파일 ${met.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
+  }
+  const m01Dir = join(WEB, 'script/shell/mgm01');
+  if (existsSync(m01Dir)) {
+    const m01 = readdirSync(m01Dir).filter((f) => f.endsWith('.ts'));
+    for (const f of m01) {
+      const src = readFileSync(join(m01Dir, f), 'utf8');
+      for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
+        const s = m[1] ?? m[2];
+        const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
+        const shared = SHARED.some((x) => s === `../${x}`);
+        ok(inside || shared || s === 'three', `mgm01/${f}: 금지 import '${s}'`);
+      }
+    }
+    console.log(`   mgm01 파일 ${m01.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
+  }
 }
 
 console.log(`${count - fails}/${count} 통과`);

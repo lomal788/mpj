@@ -3,7 +3,7 @@
  * 레이아웃 조립·그리기 순서·문구는 docs/shell/charselect.md 3.1·5·6·7 [판독·데이터]. 엔진층(script/core·games·view)을 쓰지 않는다.
  */
 import * as THREE from 'three';
-import { Preview3D, type LoadStat } from './preview3d';
+import { Preview3D, type LoadStat, type PrepStat } from './preview3d';
 import { nodeMatrix, Render2D } from './render2d';
 import { LayoutInst } from './scene2d';
 import { CharSelectState, RANDOM, RepeatGen, type CharSelectEvent, type PadFrame } from './state';
@@ -25,6 +25,8 @@ export interface CharSelectHandle {
   readonly layouts: Record<'bg' | 'title' | 'cards' | 'grid' | 'ok' | 'guide', LayoutInst>;
   /** 카드 3D 로딩 구간 시간(docs 12.7 측정) */
   readonly loadStats: readonly LoadStat[];
+  /** 카드 3D 미리 준비 구간별 메인 스레드 시간(docs 12.10) */
+  readonly prepStats: readonly PrepStat[];
 }
 
 export async function createCharSelect(opts: CharSelectOptions & { controller?: string[] }): Promise<CharSelectHandle> {
@@ -140,7 +142,28 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     return m ? [1, 0, m[2], 0, 1, m[5]] : [1, 0, 0, 0, 1, -296];
   };
 
+  // 3D 미리 준비 순서(docs 12.10): 지금 커서 칸(랜덤 칸 포함)에 가까운 캐릭터부터, 잠긴 캐릭터 제외
+  const btnXY = new Map<number, [number, number]>();
+  for (const c of [...chars.map((x) => x.index), RANDOM]) {
+    const m = nodeMatrix(layouts.grid, btnPath(c));
+    if (m) btnXY.set(c, [m[2], m[5]]);
+  }
+  const prefetch = (): void => {
+    const cur = state.players.map((p) => btnXY.get(p.cursor)).filter((v): v is [number, number] => !!v);
+    const d = (c: number): number => {
+      const q = btnXY.get(c);
+      return q && cur.length ? Math.min(...cur.map(([x, y]) => (x - q[0]) ** 2 + (y - q[1]) ** 2)) : 0;
+    };
+    p3d.prefetch(
+      chars
+        .map((c) => c.index)
+        .filter((c) => !isLocked(c))
+        .sort((a, b) => d(a) - d(b)),
+    );
+  };
+
   const handle = (ev: CharSelectEvent[]): void => {
+    if (ev.some((e) => e.type === 'card')) prefetch();
     for (const e of ev) {
       switch (e.type) {
         case 'btn': {
@@ -242,6 +265,12 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     }
   };
 
+  // 소리 버퍼 미리 받기(docs 12.10): SE·보이스 변형 전부·BGM — 결정 순간 디코드 지연으로 보이스가 늦거나 빠지지 않게
+  opts.sound?.preload?.([
+    ...Object.values(spec.sounds ?? {}).map((x) => url(x.file)),
+    ...Object.values(spec.voices ?? {}).flatMap((v) => v.files.map(url)),
+    ...(spec.bgm ? [url(spec.bgm.file)] : []),
+  ]);
   // 배경음악: 장면(menu01) 시작부터 돌던 SM_BGM_MENU_MAP 을 이어서 튼다(어댑터가 이미 돌고 있으면 무시, docs 12.3)
   if (spec.bgm) opts.sound?.bgm?.(spec.bgm.label, url(spec.bgm.file), spec.bgm.gain, spec.bgm.loopStart, spec.bgm.loopEnd);
   handle(state.start(false));
@@ -279,6 +308,7 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     spec,
     layouts,
     loadStats: p3d.stats,
+    prepStats: p3d.prepStats,
     dispose(): void {
       p3d.dispose();
       r2d.dispose();

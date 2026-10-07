@@ -148,6 +148,8 @@ export interface CharSelectSoundAdapter {
   /** 배경음악 정지(페이드 초) */
   bgmStop?(fade: number): void;
   vibrate?(player: number, name: string): void;
+  /** 화면 진입 때 미리 받아 디코드할 소리 URL(SE·보이스·BGM, docs 12.10) */
+  preload?(urls: string[]): void;
 }
 
 export interface CharSelectAssetAdapter {

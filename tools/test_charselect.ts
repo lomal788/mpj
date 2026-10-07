@@ -4,7 +4,11 @@
  *
  *   npx tsx tools/test_charselect.ts
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { motionStart, Preview3D } from '../script/shell/charselect/preview3d';
 import { CharSelectState, PAD, RANDOM, RepeatGen, type CharSelectEvent, type PadFrame } from '../script/shell/charselect/state';
+import type { Spec } from '../script/shell/charselect/types';
 
 // selectCharacterList.json BtnNo (표 번호 순) [데이터]
 const BTN = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 10, 13, 14, 15, 16, 17, 18, 19, 20, 21];
@@ -153,6 +157,14 @@ console.log('7. 랜덤 결정: 점유·잠김 제외 풀에서 rand');
   // 풀 = 0..21 − {1(2P)} − {12, 21 잠김} − {RANDOM 아닌 자기} ... 마지막 = 20
   eq(s.players[0].cursor, 20, '풀 마지막 = 20(가봉)');
   ok(s.players[0].decided, '결정');
+  // 사건 순서(docs 12.10 H): 고른 칸 카드 → 선택 모션 → 보이스(같은 프레임)
+  const r = make([0], { rand: (n) => n - 1 });
+  r.players[0].cursor = RANDOM;
+  const ev = press(r, 0, PAD.A);
+  const at = (t: string): number => ev.findIndex((e) => e.type === t);
+  const card = ev.find((e) => e.type === 'card');
+  ok(!!card && card.type === 'card' && card.chara === r.players[0].cursor && card.shown, '랜덤 결정 카드 = 고른 캐릭터·보임');
+  ok(at('card') >= 0 && at('card') < at('motion') && at('motion') < at('voice'), `사건 순서 card → motion → voice: ${ev.map((e) => e.type).join(',')}`);
 }
 
 console.log('8. 결정 취소(B)·결정 뒤 이동 안 함');
@@ -223,6 +235,34 @@ console.log('12. 키 반복 생성(근사 24f/6f)');
   const out: number[] = [];
   for (let f = 0; f < 40; f++) out.push(r.next(PAD.RIGHT & 0x200, f === 0 ? 0x200 : 0) ? f : -1);
   eq(out.filter((x) => x >= 0), [0, 24, 30, 36], '첫 프레임, 24, 30, 36');
+}
+
+console.log('13. 3D 모션 시간축(docs 12.10 B·E·F): 모델 없이도 흐르고, 시작 프레임 규칙');
+{
+  const spec = JSON.parse(readFileSync(join(import.meta.dirname, '../assets/charselect/spec.json'), 'utf8')) as Spec;
+  eq(motionStart(null, 'co_idle00', 120, (n) => n - 1), { frame: 119, blend: 0 }, '노드 없음 → idle 난수, 블렌드 0');
+  eq(motionStart(true, 'co_chr_slct00a', 63, (n) => n - 1), { frame: 0, blend: 0.1 }, 'idle → slct00a = 0, 블렌드 0.1');
+  eq(motionStart(false, 'co_chr_slct00b', 58, (n) => n - 1), { frame: 0, blend: 0.1 }, 'a(비루프) → b = startFrame 0');
+  eq(motionStart(true, 'co_chr_idle00', 180, (n) => n - 1), { frame: 179, blend: 0.1 }, 'b(루프) → idle = 난수');
+  const p = new Preview3D(spec, (u) => u, (n) => n - 1);
+  p.setup([[100, 100]]);
+  const s0 = p.slots[0];
+  p.setChara(0, 0, true);
+  eq([s0.current, s0.frame, s0.root], ['co_idle00', 119, null], '마리오 카드: 준비 전에도 대기 시간축(난수 시작), 모델 없음');
+  p.setChara(0, 6, true);
+  eq([s0.current, s0.frame], ['co_chr_idle00', 179], '요시 대기 = co_chr_idle00');
+  p.setChara(0, 0, true);
+  p.play(0, 'co_chr_slct00a', 'co_chr_slct00b');
+  const a = spec.chars[0].clips!.co_chr_slct00a.frames;
+  for (let i = 0; i < a - 1; i++) p.update();
+  eq([s0.current, s0.frame], ['co_chr_slct00a', a - 1], '모델 없이 결정 모션 진행');
+  p.update();
+  eq([s0.current, s0.frame, s0.next], ['co_chr_slct00b', 0, null], 'a 끝 → b(EnqueuePlay)');
+  p.play(0, 'co_idle00');
+  eq([s0.current, s0.frame], ['co_idle00', 119], '결정 취소 → 대기 난수 시작');
+  p.setChara(0, RANDOM, false);
+  p.play(0, 'co_chr_slct00a');
+  eq([s0.current, s0.shown], ['', false], '숨김 카드는 모션 무시');
 }
 
 console.log(`${count - fails}/${count} 통과`);

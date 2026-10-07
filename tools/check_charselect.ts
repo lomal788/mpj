@@ -230,6 +230,10 @@ console.log('5c. 22명 눈 회귀 검사 (docs 12.8)');
   // 12.2 회귀 방지: 눈동자 합성에 _C1 마스크를 곱하지 않는다(마리오 등은 _C1 이 흰자 일부만 표시)
   const pv = readFileSync(join(WEB, 'script/shell/charselect/preview3d.ts'), 'utf8');
   ok(!/sclera \* vEyeMask/.test(pv) && /e0\.a \* eyeInside\(e0uv\) \* sclera\)/.test(pv), '눈동자 마스크 = 알베도 규칙만(_C1 미사용)');
+  // 12.10 회귀 방지: 미리 준비(compileAsync·initTexture), 로드 완료가 대기 모션으로 덮지 않음, 붙일 때 첫 자세 뒤 그리기
+  ok(/compileAsync\(/.test(pv) && /initTexture\(/.test(pv), '미리 준비 = compileAsync + initTexture');
+  ok(!/\.then\([^)]*\)\s*=>\s*\{[^}]*this\.play\(/.test(pv), '로드 완료 콜백에서 play 로 모션을 덮지 않음');
+  ok(/this\.applyPlay\(s, 0\);\s*this\.pose\(s, 0\);/.test(pv), '붙일 때 지금 모션을 건 뒤 첫 자세(mixer.update 0)');
 }
 
 console.log('6. import 그래프 (독립성)');

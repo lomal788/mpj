@@ -50,6 +50,16 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
       ctx = null;
     }
   }
+  // 입력 전에 만든 AudioContext 는 suspended 로 남을 수 있다 → 재생마다·사용자 입력마다 resume(docs 12.10)
+  const live = (c: AudioContext): AudioContext => {
+    if (c.state === 'suspended') void c.resume().catch(() => undefined);
+    return c;
+  };
+  const wake = (): void => {
+    if (ctx) live(ctx);
+  };
+  const wakeEvents = ['keydown', 'pointerdown', 'touchstart'] as const;
+  for (const t of wakeEvents) window.addEventListener(t, wake, { capture: true });
   const buffer = (c: AudioContext, url: string): Promise<AudioBuffer | null> => {
     let b = buffers.get(url);
     if (!b) {
@@ -62,14 +72,23 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     return b;
   };
   // 보이스(카드 슬롯마다 하나, 취소·Out 때 정지)와 배경음악(루프 구간, 결정 때 페이드 정지)
+  // 슬롯 요청 번호: 정지·새 요청 뒤 늦게 끝난 디코드는 재생하지 않는다(docs 12.10)
   const voices = new Map<number, AudioBufferSourceNode>();
+  const voiceToken = new Map<number, number>();
+  const stopVoice = (slot: number): number => {
+    voices.get(slot)?.stop();
+    voices.delete(slot);
+    const t = (voiceToken.get(slot) ?? 0) + 1;
+    voiceToken.set(slot, t);
+    return t;
+  };
   let bgm: { label: string; src: AudioBufferSourceNode | null; gain: GainNode | null } | null = null;
   const playVoice = (url: string, gain: number, slot: number): void => {
     if (!ctx) return;
-    const c = ctx;
+    const c = live(ctx);
+    const token = stopVoice(slot);
     void buffer(c, url).then((buf) => {
-      if (!buf) return;
-      voices.get(slot)?.stop();
+      if (!buf || voiceToken.get(slot) !== token) return;
       const src = c.createBufferSource();
       src.buffer = buf;
       const g = c.createGain();
@@ -81,7 +100,7 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
   };
   const playBgm = (label: string, url: string, gain: number, loopStart: number, loopEnd: number): void => {
     if (!ctx || bgm?.label === label) return;
-    const c = ctx;
+    const c = live(ctx);
     const me: { label: string; src: AudioBufferSourceNode | null; gain: GainNode | null } = { label, src: null, gain: null };
     bgm = me;
     void buffer(c, url).then((buf) => {
@@ -112,7 +131,7 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
   };
   const playSe = (url: string, gain: number, x?: number): void => {
     if (!ctx) return;
-    const c = ctx;
+    const c = live(ctx);
     void buffer(c, url).then((buf) => {
       if (!buf) return;
       const src = c.createBufferSource();
@@ -143,12 +162,12 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     sound: {
       play: (_label, url, gain, x) => playSe(url, gain, x),
       voice: (_label, url, gain, slot) => playVoice(url, gain, slot),
-      voiceStop: (slot) => {
-        voices.get(slot)?.stop();
-        voices.delete(slot);
-      },
+      voiceStop: (slot) => void stopVoice(slot),
       bgm: playBgm,
       bgmStop: stopBgm,
+      preload: (urls) => {
+        if (ctx) for (const u of urls) void buffer(ctx, u);
+      },
     },
     onDecided(result) {
       chosen = result.map((c) => handle.spec.chars[c]?.pc ?? 'pc01');
@@ -186,6 +205,7 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     stop() {
       cancelAnimationFrame(raf);
       done = true;
+      for (const t of wakeEvents) window.removeEventListener(t, wake, { capture: true });
       handle.dispose();
       canvas.remove();
       // 결정 때 BGM 페이드(0.5 s)가 끝난 뒤 닫는다

@@ -11,6 +11,12 @@
  * - 눈꺼풀(셰이더 그래프, 동키콩·가봉) [추정]: eyelid 텍스처를 (frac(t2.x), t2.y − s) 에서 샘플해 덮는다.
  *   s = y + c·(아래 끝 − (가장자리 + y)), c = clamp((x기본 − x)/(x기본 − x최소), 0, 1), (x, y) = material_utility_parameter2/3.
  * stats: 로딩 구간 시간(ms) 기록(docs 12.7 측정).
+ * docs 12.10:
+ * - 미리 준비: 커서에 가까운 캐릭터부터 읽기(동시 2개) → 숨은 무대에서 조립 → compileAsync → 텍스처 initTexture(프레임마다 하나) → 한 번 그리기.
+ *   GPU 단계는 한 프레임에 하나. 준비 안 된 캐릭터의 카드는 비워 둔다(원본 FUN_7100340180 아카이브 미적재 규칙).
+ * - 슬롯마다 요청 번호: 최신 요청만 붙이고, 모션 시간축(지금 모션·다음·노드 프레임)은 모델 없이도 흘려 붙일 때 그대로 재생한다.
+ * - 시작 프레임: 이전 노드가 없거나 루프면 이름에 "_idle" 이 든 모션은 난수(0..frames−1), 아니면 0(09 §6.4). 블렌드: 노드가 있으면 0.1 s [추정].
+ * - 깜빡임 프레임 = 본 모션 노드 프레임(AnimationNodeBundle), 묶음 없는 모션에서는 멈춰 기본값으로.
  */
 import * as THREE from 'three';
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -56,28 +62,65 @@ interface Slot {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   chara: number;
+  shown: boolean;
   root: THREE.Object3D | null;
   mixer: THREE.AnimationMixer | null;
   blink: THREE.AnimationMixer | null;
+  blinkOn: boolean;
+  acts: THREE.AnimationAction[];
   clips: Map<string, THREE.AnimationClip>;
   current: string;
   next: string | null;
+  /** 본 모션 노드 프레임(모델이 없어도 흐른다) */
   frame: number;
-  blinkFrame: number;
   eye: EyeUniforms | null;
   motions: MotionTable;
   matDefaults: Record<string, number[]>;
   visMeshes: Map<string, THREE.Object3D[]>;
   boneDefault: Map<string, boolean>;
   token: number;
+  /** 요청 시각·준비 여부(stats) */
+  reqAt: number;
+  reqReady: boolean;
   /** 첫 그리기 측정 대기 중인 stats 항목 */
   pendingStat: LoadStat | null;
+}
+
+type PrepState = 'queued' | 'loading' | 'loaded' | 'compiling' | 'textures' | 'warm' | 'ready' | 'failed';
+
+interface Prep {
+  c: CharaSpec;
+  state: PrepState;
+  loaded: Loaded | null;
+  warm: THREE.Object3D | null;
+  textures: THREE.Texture[];
+  stat: PrepStat;
+}
+
+/** 미리 준비 구간별 메인 스레드 시간(ms) — docs 12.10 */
+export interface PrepStat {
+  pc: string;
+  /** 요청부터 glb·motions·눈 텍스처 도착까지(비동기, 막지 않음) */
+  fetchMs: number;
+  /** 숨은 무대 조립(복제·재질) */
+  buildMs: number;
+  /** compileAsync 호출의 동기 부분 */
+  compileMs: number;
+  /** 컴파일 완료 대기(비동기) */
+  compileWaitMs: number;
+  texCount: number;
+  texMs: number;
+  texMaxMs: number;
+  /** 한 번 그리기(남은 링크·정점 버퍼·뼈 텍스처) */
+  warmMs: number;
+  /** 화면 시작부터 준비 끝까지 */
+  doneAt: number;
 }
 
 /** 로딩 구간 시간(ms) — docs 12.7 */
 export interface LoadStat {
   pc: string;
-  /** 캐시에 있었는가 */
+  /** 요청 때 이미 준비(읽기·컴파일·텍스처)가 끝나 있었는가 */
   cached: boolean;
   /** glb fetch + 파싱 + 텍스처(눈·눈꺼풀) + motions.json */
   loadMs: number;
@@ -87,6 +130,26 @@ export interface LoadStat {
   buildMs: number;
   /** 첫 그리기(셰이더 컴파일·텍스처 올리기 포함, CPU 쪽) */
   firstRenderMs: number;
+}
+
+/** 시작 프레임(09 §6.4): 이전 노드가 없거나 루프면 "_idle" 모션은 난수, 아니면 0. 블렌드 = 노드가 있으면 0.1 s [추정] */
+export function motionStart(prevLoop: boolean | null, clip: string, frames: number, rand: (n: number) => number): { frame: number; blend: number } {
+  const loopPrev = prevLoop === null ? true : prevLoop;
+  const frame = loopPrev && clip.includes('_idle') && frames >= 1 ? rand(Math.floor(frames)) : 0;
+  return { frame, blend: prevLoop === null ? 0 : 0.1 };
+}
+
+function makeScene(env: Spec['env']): THREE.Scene {
+  const scene = new THREE.Scene();
+  const lc = env.lightColor;
+  const dir = new THREE.DirectionalLight(new THREE.Color(lc[0], lc[1], lc[2]), Math.PI);
+  const e = new THREE.Euler((env.lightRotDeg[0] * Math.PI) / 180, (env.lightRotDeg[1] * Math.PI) / 180, (env.lightRotDeg[2] * Math.PI) / 180, 'XYZ');
+  const d = new THREE.Vector3(0, 0, -1).applyEuler(e);
+  dir.position.copy(d.clone().multiplyScalar(-10));
+  dir.target.position.set(0, 0, 0);
+  scene.add(dir, dir.target);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 1.6));
+  return scene;
 }
 
 const BODY_MAPS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'] as const;
@@ -118,86 +181,196 @@ async function loadTex(url: string): Promise<THREE.Texture> {
 
 export class Preview3D {
   private readonly loader = new GLTFLoader();
-  private readonly cache = new Map<string, Promise<Loaded | null>>();
+  private readonly preps = new Map<string, Prep>();
+  private order: number[] = [];
+  private loading = 0;
+  private readonly warmScene: THREE.Scene;
+  private readonly warmCam = new THREE.PerspectiveCamera(30, 1, 0.1, 1000);
+  private readonly warmRt = new THREE.WebGLRenderTarget(8, 8);
+  private readonly t0 = performance.now();
   readonly slots: Slot[] = [];
   readonly stats: LoadStat[] = [];
+  readonly prepStats: PrepStat[] = [];
 
   constructor(
     private readonly spec: Spec,
     private readonly url: (p: string) => string,
-  ) {}
+    /** 시작 프레임 난수(원본 오프라인 = 비동기 RandModule, 09 §6.4) */
+    private readonly rand: (n: number) => number = (n) => Math.floor(Math.random() * n),
+  ) {
+    this.warmScene = makeScene(spec.env);
+    this.warmCam.position.set(0, 50, 300);
+    this.warmCam.lookAt(0, 50, 0);
+  }
 
   /** 슬롯 n 개를 (폭, 높이) 렌더 타깃으로 만든다 */
   setup(sizes: [number, number][]): void {
-    this.dispose();
+    this.disposeSlots();
     const env = this.spec.env;
     for (const [w, h] of sizes) {
       const rt = new THREE.WebGLRenderTarget(Math.max(1, Math.round(w * env.rtScale)), Math.max(1, Math.round(h * env.rtScale)), { samples: 4 });
       // 렌더 타깃 = 선형 색(2D 렌더러도 선형으로 합성), 아래가 v = 0 이라 뒤집는다(userData.flipV)
       rt.texture.userData.flipV = true;
       rt.texture.userData.linear = true;
-      const scene = new THREE.Scene();
-      const lc = env.lightColor;
-      const dir = new THREE.DirectionalLight(new THREE.Color(lc[0], lc[1], lc[2]), Math.PI);
-      const e = new THREE.Euler((env.lightRotDeg[0] * Math.PI) / 180, (env.lightRotDeg[1] * Math.PI) / 180, (env.lightRotDeg[2] * Math.PI) / 180, 'XYZ');
-      const d = new THREE.Vector3(0, 0, -1).applyEuler(e);
-      dir.position.copy(d.clone().multiplyScalar(-10));
-      dir.target.position.set(0, 0, 0);
-      scene.add(dir, dir.target);
-      scene.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, 1.6));
+      const scene = makeScene(env);
       const camera = new THREE.PerspectiveCamera(30, w / h, env.near, env.far);
       this.slots.push({
         rt,
         scene,
         camera,
         chara: -1,
+        shown: false,
         root: null,
         mixer: null,
         blink: null,
+        blinkOn: false,
+        acts: [],
         clips: new Map(),
         current: '',
         next: null,
         frame: 0,
-        blinkFrame: 0,
         eye: null,
         motions: {},
         matDefaults: {},
         visMeshes: new Map(),
         boneDefault: new Map(),
         token: 0,
+        reqAt: 0,
+        reqReady: false,
         pendingStat: null,
       });
     }
   }
 
-  private load(c: CharaSpec): Promise<Loaded | null> {
-    if (!c.glb) return Promise.resolve(null);
-    let p = this.cache.get(c.pc);
+  private prep(chara: number): Prep | null {
+    const c = this.spec.chars[chara];
+    if (!c?.glb) return null;
+    let p = this.preps.get(c.pc);
     if (!p) {
-      p = (async () => {
-        const t0 = performance.now();
-        const [gltf, motions, eyeMap, lidMap] = await Promise.all([
-          this.loader.loadAsync(this.url(c.glb!)),
-          c.motions ? fetch(this.url(c.motions)).then((r) => r.json() as Promise<MotionTable>) : Promise.resolve({} as MotionTable),
-          c.eye?.tex ? loadTex(this.url(c.eye.tex)) : Promise.resolve(null),
-          c.eye?.lid ? loadTex(this.url(c.eye.lid.tex)) : Promise.resolve(null),
-        ]);
-        return { gltf, motions, eyeMap, lidMap, ms: performance.now() - t0 };
-      })().catch((e) => {
-        console.warn(`charselect: 캐릭터를 읽지 못했다 ${c.pc}`, e);
-        return null;
-      });
-      this.cache.set(c.pc, p);
+      p = {
+        c,
+        state: 'queued',
+        loaded: null,
+        warm: null,
+        textures: [],
+        stat: { pc: c.pc, fetchMs: 0, buildMs: 0, compileMs: 0, compileWaitMs: 0, texCount: 0, texMs: 0, texMaxMs: 0, warmMs: 0, doneAt: 0 },
+      };
+      this.preps.set(c.pc, p);
     }
     return p;
   }
 
-  /** 미리 읽기(전부) */
-  preload(): Promise<unknown> {
-    return Promise.all(this.spec.chars.map((c) => this.load(c)));
+  /** 미리 준비 순서(캐릭터 표 번호, 앞일수록 먼저). 화면이 커서에 가까운 순으로 넘긴다 */
+  prefetch(order: number[]): void {
+    this.order = order.slice();
+    for (const i of order) this.prep(i);
   }
 
-  /** 슬롯 캐릭터 바꾸기(5.5): 숨김이면 모델을 지운다 */
+  private startLoad(p: Prep): void {
+    const c = p.c;
+    p.state = 'loading';
+    this.loading++;
+    const t0 = performance.now();
+    void (async () => {
+      const [gltf, motions, eyeMap, lidMap] = await Promise.all([
+        this.loader.loadAsync(this.url(c.glb!)),
+        c.motions ? fetch(this.url(c.motions)).then((r) => r.json() as Promise<MotionTable>) : Promise.resolve({} as MotionTable),
+        c.eye?.tex ? loadTex(this.url(c.eye.tex)) : Promise.resolve(null),
+        c.eye?.lid ? loadTex(this.url(c.eye.lid.tex)) : Promise.resolve(null),
+      ]);
+      return { gltf, motions, eyeMap, lidMap, ms: performance.now() - t0 };
+    })()
+      .then((l) => {
+        p.loaded = l;
+        p.stat.fetchMs = l.ms;
+        p.state = 'loaded';
+      })
+      .catch((e) => {
+        console.warn(`charselect: 캐릭터를 읽지 못했다 ${c.pc}`, e);
+        p.state = 'failed';
+      })
+      .finally(() => this.loading--);
+  }
+
+  /** 준비 작업(한 프레임에 GPU 단계 하나). render 앞에서 부른다. 지금 슬롯이 원하는 캐릭터가 먼저, 그다음 미리 준비 순서 */
+  private pump(gl: THREE.WebGLRenderer): void {
+    const want = this.slots.filter((s) => s.shown && !s.root).map((s) => s.chara);
+    const seq = [...want, ...this.order];
+    for (const i of seq) {
+      if (this.loading >= 2) break;
+      const p = this.prep(i);
+      if (p?.state === 'queued') this.startLoad(p);
+    }
+    for (const i of seq) {
+      const p = this.prep(i);
+      if (!p) continue;
+      if (p.state === 'loaded') return this.prepCompile(gl, p);
+      if (p.state === 'textures') return this.prepTexture(gl, p);
+      if (p.state === 'warm') return this.prepWarm(gl, p);
+    }
+  }
+
+  private prepCompile(gl: THREE.WebGLRenderer, p: Prep): void {
+    const l = p.loaded!;
+    let t = performance.now();
+    const root = this.buildRoot(p.c, l).root;
+    root.traverse((o) => (o.visible = true));
+    this.warmScene.add(root);
+    p.warm = root;
+    p.stat.buildMs = performance.now() - t;
+    const prev = gl.getRenderTarget();
+    gl.setRenderTarget(this.warmRt);
+    t = performance.now();
+    const done = gl.compileAsync(this.warmScene, this.warmCam);
+    p.stat.compileMs = performance.now() - t;
+    gl.setRenderTarget(prev);
+    p.state = 'compiling';
+    const t1 = performance.now();
+    void done.then(() => {
+      p.stat.compileWaitMs = performance.now() - t1;
+      const set = new Set<THREE.Texture>();
+      root.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.Material | undefined;
+        if (!m || Array.isArray(m)) return;
+        for (const v of Object.values(m)) if ((v as THREE.Texture | null)?.isTexture) set.add(v as THREE.Texture);
+      });
+      if (l.eyeMap) set.add(l.eyeMap);
+      if (l.lidMap) set.add(l.lidMap);
+      const seen = new Set<unknown>();
+      p.textures = [...set].filter((x) => (seen.has(x.source) ? false : (seen.add(x.source), true)));
+      p.state = 'textures';
+    });
+  }
+
+  private prepTexture(gl: THREE.WebGLRenderer, p: Prep): void {
+    const tex = p.textures.shift();
+    if (tex) {
+      const t = performance.now();
+      gl.initTexture(tex);
+      const ms = performance.now() - t;
+      p.stat.texCount++;
+      p.stat.texMs += ms;
+      p.stat.texMaxMs = Math.max(p.stat.texMaxMs, ms);
+    }
+    if (!p.textures.length) p.state = 'warm';
+  }
+
+  private prepWarm(gl: THREE.WebGLRenderer, p: Prep): void {
+    const prev = gl.getRenderTarget();
+    gl.setRenderTarget(this.warmRt);
+    const t = performance.now();
+    gl.render(this.warmScene, this.warmCam);
+    p.stat.warmMs = performance.now() - t;
+    gl.setRenderTarget(prev);
+    if (p.warm) this.warmScene.remove(p.warm);
+    p.warm = null;
+    p.state = 'ready';
+    p.stat.doneAt = performance.now() - this.t0;
+    this.prepStats.push(p.stat);
+    for (const s of this.slots) if (s.shown && !s.root && this.spec.chars[s.chara]?.pc === p.c.pc) this.attach(s);
+  }
+
+  /** 슬롯 캐릭터 바꾸기(5.5): 숨김이면 모델을 지운다. 새 모델은 대기 모션(노드 없음 → "_idle" 이면 난수 시작) */
   setChara(slot: number, chara: number, shown: boolean): void {
     const s = this.slots[slot];
     if (!s) return;
@@ -205,29 +378,43 @@ export class Preview3D {
     if (s.root) s.scene.remove(s.root);
     s.root = null;
     s.mixer = s.blink = null;
+    s.blinkOn = false;
+    s.acts = [];
     s.eye = null;
     s.chara = chara;
+    s.shown = shown;
+    s.current = '';
+    s.next = null;
+    s.frame = 0;
+    s.pendingStat = null;
     if (!shown) return;
     const c = this.spec.chars[chara];
     s.camera.fov = c.fov;
     s.camera.position.set(c.cam[0], c.cam[1], c.cam[2]);
     s.camera.lookAt(c.cam[0], c.cam[1], 0);
     s.camera.updateProjectionMatrix();
-    const token = s.token;
-    const cached = this.cache.has(c.pc);
-    const t0 = performance.now();
-    void this.load(c).then((l) => {
-      if (!l || s.token !== token) return;
-      const t1 = performance.now();
-      this.build(s, c, l);
-      const stat: LoadStat = { pc: c.pc, cached, loadMs: cached ? 0 : l.ms, waitMs: t1 - t0, buildMs: performance.now() - t1, firstRenderMs: -1 };
-      this.stats.push(stat);
-      s.pendingStat = stat;
-      this.play(slot, c.idle);
-    });
+    this.play(slot, c.idle);
+    const p = this.prep(chara);
+    s.reqAt = performance.now();
+    s.reqReady = p?.state === 'ready';
+    if (p?.state === 'ready') this.attach(s);
   }
 
-  private build(s: Slot, c: CharaSpec, l: Loaded): void {
+  /** 준비된 캐릭터를 슬롯에 붙인다: 지금 모션 시간축 그대로 걸고 첫 자세를 만든 뒤 그린다(T 포즈 방지) */
+  private attach(s: Slot): void {
+    const c = this.spec.chars[s.chara];
+    const p = this.prep(s.chara);
+    if (!p?.loaded || p.state !== 'ready') return;
+    const t1 = performance.now();
+    this.build(s, c, p.loaded);
+    this.applyPlay(s, 0);
+    this.pose(s, 0);
+    const stat: LoadStat = { pc: c.pc, cached: s.reqReady, loadMs: p.stat.fetchMs, waitMs: t1 - s.reqAt, buildMs: performance.now() - t1, firstRenderMs: -1 };
+    this.stats.push(stat);
+    s.pendingStat = stat;
+  }
+
+  private buildRoot(c: CharaSpec, l: Loaded): { root: THREE.Object3D; eye: EyeUniforms | null } {
     const root = cloneSkinned(l.gltf.scene);
     root.scale.setScalar(c.scale);
     const eye: EyeUniforms | null = l.eyeMap
@@ -244,17 +431,6 @@ export class Preview3D {
         }
       : null;
     const cache = new Map<string, THREE.Material>();
-    s.visMeshes = new Map();
-    s.boneDefault = new Map();
-    root.traverse((o) => {
-      if (o.userData.visible === false) s.boneDefault.set(o.name, false);
-      const vb = o.userData.visBone as string | undefined;
-      if (vb && (o as THREE.Mesh).isMesh) {
-        let list = s.visMeshes.get(vb);
-        if (!list) s.visMeshes.set(vb, (list = []));
-        list.push(o);
-      }
-    });
     root.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh || Array.isArray(mesh.material)) return;
@@ -281,17 +457,29 @@ export class Preview3D {
         if (!g.getAttribute('eyeT2')) g.setAttribute('eyeT2', g.getAttribute('uv2') ?? new THREE.BufferAttribute(new Float32Array(n * 2).fill(-1), 2));
       }
     });
+    return { root, eye };
+  }
+
+  private build(s: Slot, c: CharaSpec, l: Loaded): void {
+    const { root, eye } = this.buildRoot(c, l);
+    s.visMeshes = new Map();
+    s.boneDefault = new Map();
+    root.traverse((o) => {
+      if (o.userData.visible === false) s.boneDefault.set(o.name, false);
+      const vb = o.userData.visBone as string | undefined;
+      if (vb && (o as THREE.Mesh).isMesh) {
+        let list = s.visMeshes.get(vb);
+        if (!list) s.visMeshes.set(vb, (list = []));
+        list.push(o);
+      }
+    });
     s.scene.add(root);
     s.root = root;
     s.mixer = new THREE.AnimationMixer(root);
+    s.acts = [];
     s.clips = new Map(l.gltf.animations.map((a) => [a.name, a]));
-    const blinkClips = l.gltf.animations.filter((a) => a.name === 'fcl_blink00' || a.name === 'fcl_blink00_shape');
-    s.blink = null;
-    if (blinkClips.length) {
-      s.blink = new THREE.AnimationMixer(root);
-      for (const b of blinkClips) s.blink.clipAction(b).play();
-    }
-    s.blinkFrame = 0;
+    s.blink = l.gltf.animations.some((a) => a.name === 'fcl_blink00' || a.name === 'fcl_blink00_shape') ? new THREE.AnimationMixer(root) : null;
+    s.blinkOn = false;
     s.eye = eye;
     s.motions = l.motions;
     const mats = (l.gltf.parser.json.materials ?? []) as { name: string; extras?: { fres?: { params?: Record<string, { value: number[] }> } } }[];
@@ -301,66 +489,92 @@ export class Preview3D {
     s.matDefaults = defs;
   }
 
-  /** 모션 재생(next = 끝나면 이어서, 원본 EnqueuePlay) */
+  /** 모션 재생(next = 끝나면 이어서, 원본 EnqueuePlay). 모델이 없어도 시간축은 바뀐다 */
   play(slot: number, clip: string, next?: string): void {
     const s = this.slots[slot];
-    if (!s || !s.mixer) {
-      if (s) {
-        s.current = clip;
-        s.next = next ?? null;
-      }
-      return;
-    }
-    const a = s.clips.get(clip);
-    if (!a) return;
-    s.mixer.stopAllAction();
-    const info = this.spec.chars[s.chara]?.clips?.[clip];
-    const act = s.mixer.clipAction(a);
-    act.reset();
-    act.setLoop(info && !info.loop ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
-    act.clampWhenFinished = true;
-    act.play();
-    const shape = s.clips.get(`${clip}_shape`);
-    if (shape) {
-      const sa = s.mixer.clipAction(shape);
-      sa.reset();
-      sa.setLoop(info && !info.loop ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
-      sa.clampWhenFinished = true;
-      sa.play();
-    }
+    if (!s || !s.shown) return;
+    const clips = this.spec.chars[s.chara]?.clips;
+    const prev = s.current ? (clips?.[s.current]?.loop ?? true) : null;
+    const st = motionStart(prev, clip, clips?.[clip]?.frames ?? 0, this.rand);
     s.current = clip;
     s.next = next ?? null;
-    s.frame = 0;
+    s.frame = st.frame;
+    if (s.mixer) this.applyPlay(s, st.blend);
   }
 
-  /** 1틱(1/60 s) */
+  /** 믹서에 지금 모션을 노드 프레임 s.frame 으로 건다(blend 초 크로스페이드) */
+  private applyPlay(s: Slot, blend: number): void {
+    const mixer = s.mixer!;
+    const info = this.spec.chars[s.chara]?.clips?.[s.current];
+    const once = !!info && !info.loop;
+    const acts: THREE.AnimationAction[] = [];
+    for (const name of [s.current, `${s.current}_shape`]) {
+      const clip = s.clips.get(name);
+      if (!clip) continue;
+      const a = mixer.clipAction(clip);
+      a.reset();
+      a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
+      a.clampWhenFinished = true;
+      a.time = (once ? Math.min(s.frame, info!.frames) : wrap(s.frame, info?.frames)) / 60;
+      a.play();
+      if (blend > 0 && s.acts.length) a.fadeIn(blend);
+      acts.push(a);
+    }
+    for (const clip of s.clips.values()) {
+      const a = mixer.existingAction(clip);
+      if (!a || acts.includes(a)) continue;
+      if (blend > 0 && s.acts.includes(a)) a.fadeOut(blend);
+      else a.stop();
+    }
+    s.acts = acts;
+  }
+
+  /** 믹서를 dt 초 진행하고 깜빡임(프레임 = 본 모션 노드 프레임)·보임·눈을 지금 프레임으로 맞춘다 */
+  private pose(s: Slot, dt: number): void {
+    const cur = s.motions[s.current];
+    const blink = cur?.blinkName ? s.motions[cur.blinkName] : undefined;
+    if (!blink && s.blinkOn) {
+      s.blink?.stopAllAction();
+      s.blinkOn = false;
+    }
+    s.mixer!.update(dt);
+    if (blink && s.blink) {
+      for (const name of ['fcl_blink00', 'fcl_blink00_shape']) {
+        const clip = s.clips.get(name);
+        if (!clip) continue;
+        const a = s.blink.clipAction(clip);
+        if (!s.blinkOn) a.reset().play();
+        a.time = wrap(s.frame, blink.frames) / 60;
+      }
+      s.blinkOn = true;
+      s.blink.update(0);
+    }
+    const f = cur?.loop ? wrap(s.frame, cur.visFrames ?? cur.frames) : s.frame;
+    const bf = blink ? wrap(s.frame, blink.visFrames ?? blink.frames) : 0;
+    // 뼈 보임 → 메시 보임 (docs 12.1)
+    for (const [bone, meshes] of s.visMeshes) {
+      let v: number | undefined;
+      if (blink?.vis?.[bone]) v = stepAt(blink.vis[bone], bf);
+      else if (cur?.vis?.[bone]) v = stepAt(cur.vis[bone], f);
+      const on = v === undefined ? s.boneDefault.get(bone) !== false : v !== 0;
+      for (const m of meshes) m.visible = on;
+    }
+    if (s.eye) this.applyEyes(s, cur, blink, wrap(s.frame, blink?.frames));
+  }
+
+  /** 1틱(1/60 s): 시간축은 모델이 없어도 흐른다(붙을 때 그 프레임부터) */
   update(): void {
     const dt = 1 / 60;
     this.slots.forEach((s, i) => {
-      if (!s.mixer) return;
-      const mt = s.motions[s.current];
-      const bundled = !!mt?.blinkName;
-      s.mixer.update(dt);
-      if (bundled) {
-        s.blink?.update(dt);
-        s.blinkFrame++;
-      }
+      if (!s.shown || !s.current) return;
       s.frame++;
       const info = this.spec.chars[s.chara]?.clips?.[s.current];
-      if (s.next && info && !info.loop && s.frame >= info.frames) this.play(i, s.next);
-      const cur = s.motions[s.current];
-      const blink = cur?.blinkName ? s.motions[cur.blinkName] : undefined;
-      const f = cur?.loop ? wrap(s.frame, cur.visFrames ?? cur.frames) : s.frame;
-      const bf = blink ? wrap(s.blinkFrame, blink.visFrames ?? blink.frames) : 0;
-      // 뼈 보임 → 메시 보임 (docs 12.1)
-      for (const [bone, meshes] of s.visMeshes) {
-        let v: number | undefined;
-        if (blink?.vis?.[bone]) v = stepAt(blink.vis[bone], bf);
-        else if (cur?.vis?.[bone]) v = stepAt(cur.vis[bone], f);
-        const on = v === undefined ? s.boneDefault.get(bone) !== false : v !== 0;
-        for (const m of meshes) m.visible = on;
+      if (s.next && info && !info.loop && s.frame >= info.frames) {
+        this.play(i, s.next);
+        if (s.mixer) this.pose(s, 0);
+        return;
       }
-      if (s.eye) this.applyEyes(s, cur, blink, bf);
+      if (s.mixer) this.pose(s, dt);
     });
   }
 
@@ -392,6 +606,7 @@ export class Preview3D {
   }
 
   render(gl: THREE.WebGLRenderer): void {
+    this.pump(gl);
     const prev = gl.getRenderTarget();
     const clear = gl.getClearColor(new THREE.Color());
     const ca = gl.getClearAlpha();
@@ -399,22 +614,25 @@ export class Preview3D {
       gl.setRenderTarget(s.rt);
       gl.setClearColor(0xffffff, 0);
       gl.clear();
-      if (s.root) {
-        const t0 = performance.now();
-        gl.render(s.scene, s.camera);
-        if (s.pendingStat) {
-          s.pendingStat.firstRenderMs = performance.now() - t0;
-          s.pendingStat = null;
-        }
+      const t0 = performance.now();
+      gl.render(s.scene, s.camera);
+      if (s.root && s.pendingStat) {
+        s.pendingStat.firstRenderMs = performance.now() - t0;
+        s.pendingStat = null;
       }
     }
     gl.setRenderTarget(prev);
     gl.setClearColor(clear, ca);
   }
 
-  dispose(): void {
+  private disposeSlots(): void {
     for (const s of this.slots) s.rt.dispose();
     this.slots.length = 0;
+  }
+
+  dispose(): void {
+    this.disposeSlots();
+    this.warmRt.dispose();
   }
 }
 

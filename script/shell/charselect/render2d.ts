@@ -306,10 +306,10 @@ export class Render2D {
     this.used = 0;
   }
 
-  draw(inst: LayoutInst, base: Mat3 = [1, 0, 0, 0, 1, 0]): void {
+  draw(inst: LayoutInst, base: Mat3 = [1, 0, 0, 0, 1, 0], alpha = 255): void {
     if (!inst.visible) return;
     const root = inst.nodes.findIndex((n) => n.spec.p < 0);
-    this.node(inst, root, base, null, 255);
+    this.node(inst, root, base, null, alpha);
   }
 
   render(gl: THREE.WebGLRenderer): void {

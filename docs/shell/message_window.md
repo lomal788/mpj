@@ -1,6 +1,7 @@
 # 메시지 창 (bq::ComUiMessageWindow) — 원본 분석
 
 2026-10-07. 상태: **분석 완료(판독·데이터). 웹 구현 없음, 원본·웹 실행 대조 없음.**
+2차(2026-10-07, 구현): `web/script/shell/mgmcommon/messageWindow/` 구현, 웹이 정한 것은 9.4, 시험으로 드러난 계산 착오는 6.3·10절 정정 줄.
 형식은 `F:/dev/mps/web/docs/분석.txt` 11절 구성. 모드 화면이 이 창을 여는 흐름(MessageFlow/AutoMessageFlow)은 [mgm_common.md](mgm_common.md) 5.3절, 레이아웃 재생·그리기 규칙은 [charselect.md](charselect.md) 6.4·6.5·12절과 [modeselect.md](modeselect.md) 6.1·6.2절, 메시지 태그·폰트·입력 비트는 [../engine/05_ui_input.md](../engine/05_ui_input.md), 소리 재생·FSAR·프리셋은 [../engine/04_sound.md](../engine/04_sound.md) 를 그대로 쓴다. 이 문서는 **이 창 고유 동작만** 적는다.
 
 확정 수준: **[판독]** 디컴파일 C, **[판독: 어셈블리]** C 가 반환·덮어쓰기를 잘못 보인 두 곳(넘김 판정 FUN_7100318030, 글자 속도 FUN_7100322e40)만 명령 확인, **[데이터]**, **[추정]**, **[미확정]**, **[실행: 변환]** 자체 도구 실행.
@@ -215,6 +216,7 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
    스킵 플레이어(owner 또는 목록의 사람)가 IsTrigger(+0x5c = nextMask) → count = 0x201 (남은 글자 즉시)
 ```
 - **timer 는 더하지 않고 다시 대입한다** → 남은 소수 시간이 버려진다. 60 fps 에서 0.05 s 는 대략 3프레임마다 1글자(f32 경계에서 3 또는 4), 0.1 s 는 6프레임마다 [판독 + 계산, 원본 실행 확인 없음].
+  - **정정(2026-10-07, 구현 단계 — 근거: 위 의사코드 그대로 돌린 `web/tools/test_msgwin.ts` 1절)**: 글자를 낸 틱에도 루프가 다시 돌아 `timer −= dt` 를 한 번 더 한다(대입 직후 같은 틱). 그래서 dt = f32(1/60) 에서 0.05 s 는 **첫 글자 3번째 틱, 이후 2틱마다**(f32: 0.05 − 3·dt ≈ −1.8e−9 < 0), 0.1 s 는 첫 글자 7번째 틱·이후 6틱마다, Wait_Scale 8.0(0.4 s)은 23틱. 위 "3 또는 4프레임"은 이 같은-틱 감산을 빼먹은 계산 착오다. 의사코드(판독)는 그대로이고 원본 실행 확인은 여전히 없다.
 - 같은 프레임에 글자가 여러 개 나오려면 interval × scale < dt 여야 한다(Wait_Scale 이 작을 때).
 - 설정 값 0/1/2 의 메뉴 이름(보통/빠름/느림)은 [추정].
 - 줄 나눔·색·루비·아이콘 글리프·삽입 태그 처리는 GuiLayoutText(엔진, 05_ui_input.md 5절). 이 창이 직접 해석하는 태그는 **Wait_Scale(글자 속도 배율)** 과 내부용 숨김 태그뿐이다 [판독].
@@ -246,6 +248,8 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
 | 창 열림 | DuckingGroup(0x13, 0x13, 켬) | 그룹·더킹 뜻은 mgm_common.md 6.9 (0x13 = 소리 0 으로 0.3 s) |
 | 선택지 열림 | DuckingGroup(0x0d, 0x0d, 켬) | BGM 을 0.6 배로 0.3 s |
 | 닫힘(Out·끝) | 0x0d·0x13 해제 | 1.0 으로 0.3 s |
+
+보충(2026-10-07, 구현 단계): `SQ_VOI_SYS_MES_PUT`(AddonAudioProject.fspj, 볼륨 30) 시퀀스는 전역 변수 15 에 240·245 를 쓰는 명령만 있고 음표가 없어 `sound_seq.py render` 결과가 무음(0.005 s, peak 0)이다 [실행: 변환 `web/tools/analysis/mgmcommon_web_assets.py` → spec.json soundNotes]. 실제 글자 소리가 무엇으로 나는지(변수 15 를 읽는 다른 시퀀스 등) [미확정] — 웹은 사건만 내고 파일을 두지 않는다.
 
 진동 `bv_vib_sys_deci`·`bv_vib_sys_cursor` 는 owner 대상.
 
@@ -280,14 +284,38 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
 | 보이스 | vo_message.ftrg 트리거 | 사건만 내보냄(재생은 어댑터) — 변형 고르기 [미확정] |
 | 메시지 속도 설정 | 저장 데이터 SystemData+0x74 | 옵션 `speed`(0·1·2, 기본 0 = 0.05 s) |
 
+### 9.4 구현 계약 (2026-10-07, mgm_common.md 9.6 의 메시지 부분)
+
+파일: `web/script/shell/mgmcommon/messageWindow/{state,typer,layout,index}.ts`. `state.ts`·`typer.ts`·`layout.ts` 는 순수(입력·dt·애니 끝 신호 → 사건), `index.ts` 의 `MessageWindow` 가 명세 레이아웃(sys_meswin_00·arrowicon_00)에 사건을 옮긴다. 공개 API = mgm_common.md 9.2 `MessageWindowAdapter` + `addMessageLabel(label)`·`setInsert(index, value)`·`setNextMask(mask)`·`setSpeed(0|1|2)`·`setOnline(b)`·`update(dt)`·`draw()`.
+
+원본에서 정해지지 않아 웹이 정한 것 **[설계]**:
+
+| 항목 | 웹 결정 | 이유·근거 한계 |
+|---|---|---|
+| 하위 단계 진행 | 한 틱에 하위 단계 하나만(같은 틱에 다음 단계로 넘어가지 않음). 글자 진행(typer)은 상태 처리 뒤 같은 틱 | 3절 순서(상태 처리 → 위치 → 글자 객체 갱신)만 판독, switch 낙하 여부 [미확정] |
+| 글자 세기 단위 | 태그를 뺀, **삽입을 펼친** 글자(UTF-16 단위, 줄바꿈 `\r`·`\n` 포함)를 하나씩 센다. 태그는 시간을 쓰지 않는다. Wait_Scale 은 "그 태그 앞 글자 수" 위치에 걸린다 | 원본 버퍼(0x200)는 태그 제어 코드도 담지만 FUN_7100322d40 의 태그 건너뛰기 [미확정] |
+| 글자 소리 | 센 글자마다(본문 진행기만) 한 번. 즉시 표시(설정 1·온라인·스킵)는 소리 없음 | 6.3 루프 그대로, 단위만 위 결정 |
+| 페이지 넘김 때 글자 객체 | 하위 3 에서 다음 페이지로 갈 때 이전 페이지 글자 객체를 바로 비운다(다음 틱 하위 0 에서 새로 만듦) | 비우지 않으면 넘어간 틱에 `IsAllTalkEnd`(마지막 페이지 && 글자 완료)가 이전 글자 객체로 참이 되어 Continue(Auto)MessageFlow 가 일찍 WaitEnd 로 빠진다(시험으로 확인). Start 의 FUN_7100318244(글자 객체 비움)와 같은 취지 [추정] |
+| 스킵 켬(+0x60) | 늘 켬(패드 막음이 아니고 owner 가 사람일 때 A 로 남은 글자 즉시) | +0x60 을 쓰는 곳 [미확정], 1절 요약(글자 중 A = 즉시) 기준 |
+| 줄 배치 | 페이지 문구 전체로 줄 폭·세로 가운데를 먼저 정하고(textAlign 가운데·가운데, 줄 간격 = 글자 높이 + lineSpace 0), 아직 안 나온 글자는 그리지 않는다 → 글이 나오는 동안 글줄이 움직이지 않는다 | "숨김 태그" 방식(6.3)의 결과로 [추정] |
+| 색 태그 [0:3] | 본문 글자 정점색을 그 색으로 바꿈(다음 색 태그까지). 그림자(x_text_shadow)는 자기 색 유지 | GuiLayoutText 색 적용 방식 [미확정, 05_ui_input.md 5.2] |
+| 컬러 글리프(U+E0xx) | 정점색 흰색으로 따로 그림 | modeselect.md 6.1 규칙 재사용 |
+| 화자 이름 | `im_npc%03d_name`(VoiceID 의 NPC 번호, 예 CH_NPC022_GREEN → im_npc022_name "키노피오"), PC 는 `im_pc%02d_name` | CharacterData 이름 라벨 고르는 함수 [미확정] |
+| 이름표 높이 | 글자 높이 = 글꼴 크기(fs[1]) | 6.5 "글자 높이" 의 측정 방식 [미확정] |
+| 선택지 | 웹 1단계 미구현(`setChoices` 는 경고만). 프리 플레이 경로의 확인 대화는 mgmet DialogBox(ComUiDialogBox, B 범위) | — |
+| 보이스·진동 | 사건만(`voice`·`vibrate`) — 어댑터가 없으면 무시 | 6.5 변형 고르기 [미확정] |
+| 흐림 창(blur, BexZabutonBlurred) | modeselect.md 6.2 와 같은 규칙(뒤 그림이 있으면 흐린 사본, 없으면 원래 텍스처) | 뒤 3D 장면 없음 |
+
 ## 10. 검증 코드·실행 결과·기대값
 
 한 것: 디컴파일·어셈블리 판독(2절 목록), 데이터 덤프 실행 — `python web/tools/analysis/msgwin_atr.py koKR mgm mg_common system`(ATR1 1,137레코드: WT_Empty 932·WT_Name 205), `python web/tools/analysis/sound_preset.py json analysis/msgwin_sound_presets.json global mgm01 … mgmet`, `sound_fsar.py dump`(fspj 라벨·볼륨·사용자 파라미터, scratchpad), `ui_lyt.py dump`(mgm01~06·mgmet layout.lyt, scratchpad — 커서 부품 참조 검색용). 원본 실행·웹 실행·합성 시험 없음.
 
 구현 단계 기대값(합성):
 - 문구 10글자, Wait_Scale 없음, 설정 0, dt = 1/60(f32): 글자 나오는 프레임 간격 3 또는 4, 10번째 글자 뒤 typing = 0.
+  - 정정(2026-10-07): 6.3 정정대로 첫 글자 3번째 틱·이후 간격 2 (시험 `web/tools/test_msgwin.ts`).
 - 설정 1 또는 온라인: 페이지 시작 프레임에 전부 표시, 글자 소리 없음(count 0x201 로 루프 안 돎).
 - 사람 소유자: 완료 프레임 F, F+11 까지의 A 무시(0.2 s = 12프레임째 dt 누적 ≥ 0.2 [f32 확인 필요]), 그 뒤 A → 하위 3.
+  - 정정(2026-10-07, f32 확인): `f32(0.2)` 에서 `f32(1/60)` 을 차례로 빼면 12번째 뒤에도 아주 작은 양수라 **13번째 하위 2 틱**에 처음 ≤ 0 → 대기 시작(IsNextInputWait 1) 뒤 12틱 동안의 A 는 버려지고 13번째 틱의 A 로 넘어간다. 그 틱에는 화살표 표시 검사가 넘김 판정보다 먼저라 화살표가 아직 안 보여 `SQ_SE_SYS_MES_PROC` 가 나지 않는다(화살표가 보인 뒤 누르면 난다) — 5절 순서 그대로의 결과.
 - AutoMessageFlow: 완료 F → F + 약 180~181프레임(f32 누적, 장면 파이버와 창 갱신 순서에 따라 ±1)에 RequestNextMessage → 다음 창 갱신에서 하위 3.
 
 ## 11. 미확정 사항과 추가 분석에 필요한 근거

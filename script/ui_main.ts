@@ -8,6 +8,7 @@
 import './style.css';
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { runModeSelect, type ModeSelectRun } from './modeselect_page';
+import { runMgmCommonDemo, type MgmCommonRun } from './mgmcommon_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 
 interface UiRun {
@@ -67,6 +68,15 @@ const UIS: UiDef[] = [
           return `phase ${s.phase}  cursor ${s.cursor}  result ${s.result}\nshown ${s.shown.map((v) => (v ? 1 : 0)).join('')}  enabled ${s.enabled.map((v) => (v ? 1 : 0)).join('')}`;
         },
       };
+    },
+  },
+  {
+    id: 'mgmcommon',
+    name: '공용 UI·메시지 창',
+    async run(stage, cfg) {
+      const r: MgmCommonRun = await runMgmCommonDemo(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __mgmcommon?: MgmCommonRun }).__mgmcommon = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },
 ];

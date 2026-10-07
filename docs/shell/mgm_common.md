@@ -1,6 +1,7 @@
 # 미니게임 모드 화면 공용 UI 틀 (bq::mgm 공용 창·레이아웃·메시지 흐름·입력) — 원본 분석
 
 2026-10-07. 상태: **분석 완료(판독·데이터). 웹 구현 없음, 원본·웹 실행 대조 없음.** 2차(같은 날): 메시지 창 내부를 [message_window.md](message_window.md) 로 분석하고, 1차 미확정 4건(메시지 창 내부·MESSSAGE_WINDOW_OFFSET·소리 그룹/프리셋 이름·mgm00 커서 사용처)을 이 문서에 반영했다(4.3·6.9·7.1·7.4·8·9.4·11절). 이 문서는 1단계(공용 틀)만 다룬다. 각 모드 화면(mgm01~06·mgmet)의 개별 흐름은 다루지 않고, 공용 부품을 어떻게 부르는지 보여 주는 호출 예만 적는다.
+3차(2026-10-07, 구현 1단계 + A): 공용 계약을 9.6 에 고정하고 `web/script/shell/mgmcommon/` 에 구현(메뉴 격자·창 생애·항목 제약·글자·입력·소리·안내·메시지 창·메시지 흐름·장면 전환·저장소 기본 구현). 검증은 10절 끝.
 형식은 `F:/dev/mps/web/docs/분석.txt` 의 11절 구성. 레이아웃 재생·그리기 규칙(색 공간·부모 기준점·블렌드·부품 덮어쓰기·창 정점색·흐림)·폰트·메시지 태그·입력 모듈·소리 재생 방식은 다시 분석하지 않고
 [charselect.md](charselect.md) 6.4·6.5·12절, [modeselect.md](modeselect.md) 6.1·6.2절, [../engine/05_ui_input.md](../engine/05_ui_input.md), [../engine/04_sound.md](../engine/04_sound.md) 를 그대로 따른다.
 
@@ -557,6 +558,31 @@ interface MessageWindowAdapter {          // ComUiMessageWindow 인터페이스 
 4. `text.ts`, `input.ts`, `sound.ts`, `guides.ts`.
 5. 메시지 창 분석(후속) 뒤 `messageFlow.ts` 어댑터 연결.
 
+### 9.6 구현 계약 (2026-10-07 고정 — 미니게임 항구 프리 플레이 1단계)
+
+프리 플레이 한 바퀴(항구 허브 B·규칙 설정 B·프리 플레이 목록 C·미니게임 틀 D)가 함께 쓰는 공용 계약이다. 코드 = `web/script/shell/mgmcommon/`(공개 진입점 `index.ts`). 원본 근거는 위 1~8절·[message_window.md](message_window.md), 원본에 없는 웹 쪽 결정은 **[설계]** 로 적는다. B/C/D 는 이 계약을 import 해서 쓰고, 계약을 바꿀 일이 생기면 이 절을 먼저 고친다.
+
+**프레임 순서 [설계]** (원본 파이버·엔티티 갱신 순서는 [미확정]): 한 틱(1/60 s, dt = `Math.fround(1/60)`) = ① `MgmInput.update()`(조작 플레이어·누름·반복 비트) → ② `FiberRunner.step()`(장면 흐름 제너레이터, 시작 순서대로 한 번씩) → ③ UI 갱신(`MgmWindow.update()`·`MgmLayout.update()`·`MessageWindow.update(dt)` — 창 상태기계 다음 글자 진행, 3절) → ④ 그리기. 메시지 창이 장면 흐름보다 뒤에 갱신되므로 흐름이 이번 틱에 건 요청(Start·RequestNext)은 같은 틱 ③ 에서 처리된다.
+
+| 계약 | 파일 | 요약 (원본 대응) |
+|---|---|---|
+| 흐름 | `fiber.ts` | `type Flow<T> = Generator<void, T, void>` — `yield` 한 번 = `Fiber::Wait()` 1프레임. `waitFrames(n)`·`waitUntil(pred)`·`waitTime(sec, dt)`(Wait 뒤 dt 를 f32 로 더해 비교, 5.3 의 3.0 s 와 같은 방식). `FiberRunner.start(flow) → FiberHandle{done, result}`, `step()`. 흐름 안에서 다른 흐름은 `yield*` 로 부른다(원본 함수 호출) |
+| 입력 | `input.ts` | `PAD`(A 0x1·B 0x2·0x4·0x8·0x10~0x80·십자 0x100~0x800·스틱 0x10000~0x80000, 6.10). `operationPlayerId(players, {remembered, localOnly, includeOther})` = 6.10 묶음 규칙. `MgmInput`: `update()` 뒤 `operator`·`trig()`·`rep()`(= 누름 OR 반복, 반복 = charselect RepeatGen 24/6f [근사])·`hold()`·`trigOf(pid)`·`isCom(pid)`. 화면별 "마스크 전체 같음" 비교는 부르는 쪽 |
+| 공용 창 | `menuGrid.ts`·`windowLife.ts`·`window.ts` | 순수 `MenuGrid`(4.1·6.1~6.6, 사건 `drain()`), 순수 `WindowLife`(5.1), 그리기 묶음 `MgmWindow`(9.3 이름표 그대로: `setAnimeWindow`·`in/out(imm)`·`isVisible`·`setupMenu(rows, cols, {wrap, checkEnable})`·`addAnimeSet`·`setupItem`·`hookItem/unhookItem`·`setupFinish`·`setCursor/moveX/moveY/decide`·`setItemEnable/Visible`·`isCursorItemAnimating`). 페인 항목의 애니 = 그 페인 부품(prt1) 인스턴스의 태그 재생, 부품이 아니면 무시 [설계: 원본 PlayPaneAnimation 의 부품 아닌 페인 동작 미확정] |
+| 항목 레이아웃 | `itemLayout.ts` | `MgmLayout`(LayoutCommon) — `setConstraint(win, pane)` 이면 그릴 때 루트 = 페인 전역 행렬 × 자기 SRT, 알파 × 페인 전역 알파/255, 창 레이아웃이 숨으면 안 그림(6.7) |
+| 글자 | `text.ts` | `parseMessage(raw, {texts, inserts, numbers})` → 글자 단위(색·컬러 글리프)·줄·Wait_Scale 위치. `insertValue(value, texts)` = 라벨이면 문구, 아니면 문자열 64자(6.8). `MgmWindow.setText(pane, label, inserts?)`·`insert(pane, 'Text0'|'Number0', value)` |
+| 소리 | `sound.ts` | `MGM_BGM_KIND`(7.3, 41칸·33 = null), `FADE_TIME_PRESET`(6.9), `MgmSound`: `playSe`·`playSe2D(label, x)`·`playSe2DPane(label, win, pane)`·`playBgm(kind)`(같은 핸들 즉시 끊기)·`stopBgm(preset)`·`isPlayBgm`·`fadeAndEntryCancel()`(그룹 0x22·1·0x25·0x29 를 프리셋 6 = 0.5 s 로 정지 + 새 재생 막기, 소속 = 6.9 표의 라벨 규칙)·`releaseEntryCancel()` [설계: 원본 해제 위치는 이 범위 밖]. 모드 장면 프리셋 치환 `SQ_SE_SYS_MES_PUT → SQ_VOI_SYS_MES_PUT`(message_window.md 7절) |
+| 안내 | `guides.ts` | `MgmGuide`(ComUiGuide00 1개 = sys_guide_03, 위치 번호 11 왼쪽·12/17 오른쪽, `in(checkIdle)`/`out()`), `createMgmetGuides()` = 5.4 의 HowTo(11)·Back(17)·Skip(12, Idle 검사 없음)·Next(17, `out(false)` = PROCEED + 진동) |
+| 메시지 | `messageWindow/`·`messageFlow.ts` | `MessageWindowAdapter`(9.2 + `addMessageLabel`·`setInsert`·`update(dt)`), `MessageFlow`: `initialize()`·`prepare(label 또는 라벨 배열 [설계: 배열 = AddMessageLabel 로 여러 페이지], choice0?, choice1?)`·`open/openAuto(offset)`·`*flow(n)`·`*continueFlow(n)`·`*autoFlow(n)`·`*continueAuto(n)`·`*waitEnd()`·`disablePadInput(a, b)`·`finalize()` = 5.3 그대로. `MESSSAGE_WINDOW_OFFSET` = (0,0,0) |
+| 장면 전환 | `contracts.ts` | `SceneRouter{ call(name, args?), ret(result?), current, depth }`, `MgmSceneInstance{ step(), render(), dispose() }`, 공장 `(name, ctx, args, returned?) → Promise<MgmSceneInstance>`, 기본 구현 `SceneStack`. **[설계]** call = 부모를 버리고(원본: 부모 파이버 `Sleep(-1)`) 자식을 만든다, ret = 자식을 버리고 부모를 **새로 만든다**(원본 mgmet 은 `InitFromMgm01`·시작 지점 7 로 재구성 — mgmet_flow.md 3절, 인스턴스 보존 여부 [미확정]). 부모가 복귀 뒤 알아야 하는 값은 `MgmWork`(시작 지점 등)로 넘긴다. 요청은 다음 `step()` 경계에서 처리 |
+| 저장소 | `contracts.ts` | 영구 `MgmSave`: `modeFlags`(u32, `MODE_FLAG.OP_SKIP` 1·`MGM01_SETUP` 4·`FIRST_HOWTO_MGM01` 8 — mgmet_flow.md 8절), `minigame(id) → {head(u16, 0 이 아니면 플레이함으로 셈), flags(MG+4: `MG_FLAG.NEW` 1·`FAVORITE` 4)}`·`setMinigame`·`requestSave()`(요청만, 디스크 기록 시점 [미확정] — mgm01_freeplay.md 8.4). 세션 `MgmWork`: `entranceStartPoint`(Work +0x4bc), `rule: RuleCache{valid, cpu, vs, star, round, explain, experience}`(Work +0x764~, mgmet_ruleconfig.md 8.1), `flags`(flag::Set 번호 집합: 1·4·6·0x3c), `round`·`results`(100칸 고리, mgm01_freeplay.md 6.6), `mg`(ID → Work new/unlock/favorite). 기본 구현 `MemorySave`(JSON 직렬화 — 페이지가 localStorage 등에 둔다 [설계])·`createWork()`. 헬퍼 `playedCount(save, ids)`(mgmet @0x710005b0d0 규칙) |
+
+- 셸 모듈은 `script/core·games·view·game.ts·env.ts` 를 import 하지 않는다(9.1). 에셋 URL·패드·소리 출력·저장 매체는 페이지 어댑터가 넣는다(charselect_page.ts·modeselect_page.ts 방식).
+- 명세 [설계]: `web/assets/mgmcommon/spec.json` = mgm00 20 레이아웃 + bq Parts 메시지 창·안내 레이아웃 + 공용 글꼴(mgm00·mgmet·mgm01·im 문구 전체 글리프) + 문구·메시지 속성·소리. `mgmet.json`·`mgm01.json` = 각 모드 lyt 레이아웃·텍스처만(글꼴은 공용 것). `loadMgmSpec(url, ['mgmet.json'])` 가 합친다 = 원본의 (자기 lyt, mgm00 lyt) 묶음(3.2). 같은 이름은 모드 쪽이 이긴다.
+- 글꼴 범위 [설계]: 작은·중간 글꼴(bqfont_small·middle 과 _shadow) = texts 전체 글자, 큰 글꼴(bqfont_large·_shadow) = 레이아웃 기본 문구 + `_tlp_`·`im_modeNN_name`·`mgmet_ui_act*` 문구만(아틀라스 3072×6048 → 3072×1134). 새 문구가 큰 글꼴 페인에 들어가야 하면 변환기 `LARGE_LABELS` 를 넓힌다. bqfont_telop·nintendo_udsg-r_std_003 은 FcpxSet 에 글꼴 파일이 없어 render2d 시스템 글꼴 대체 [근사].
+- 그리기 [설계]: 나눈 창 정점색·흐림 창 처리는 modeselect 화면 코드와 같은 규칙을 `view.ts` 에 둔다(9.1 경계상 modeselect import 불가). 여러 줄·색 태그 글자는 `RichTextPane`(글자마다 txt 노드)으로 원래 글자 페인 자리에 그리고, 그 레이아웃 노드보다 뒤에 그린다 [근사: 원본은 페인 순서대로]. `Render2D.draw(inst, base, alpha = 255)` 에 알파 인자를 더했다(기본값 = 기존 동작, 제약 항목의 페인 전역 알파용). 붙인 항목 레이아웃은 창 다음에, 커서 항목을 마지막에 그린다(같은 그리기 순위 엔티티 사이 순서 [미확정]).
+- 창 windowFlags bit4 = **내용 안 그림** [추정: nn::ui2d 창 플래그 이름; 데이터 정황 = mgm00·mgmet·mgm01·Parts 묶음의 bit4 창 61개가 전부 `flame`·`frame`·`shadow`·`cursor` 이고 내용 재질에 텍스처가 없어, 내용을 그리면 커서 테두리가 꽉 찬 노란 사각형이 된다(헤드리스 1회차에서 발견)]. 변환기가 나눈 창의 가운데 조각을 숨긴다. bit2·3(창 종류 7·11) 뜻은 [미확정] — 이 묶음에서는 mgm00_mgmstat_00 `win_balloon`(7), mgmet 결과·태그 결과 창(7·11)만 해당.
+
 ## 10. 검증 코드·실행 결과·기대값
 
 실제로 한 것:
@@ -579,6 +605,16 @@ interface MessageWindowAdapter {          // ComUiMessageWindow 인터페이스 
 - 3×3, (1,1) 숨김, 커서 (0,1): moveY(+1) → (1,0) (왼쪽 우선), (1,0)도 숨김이면 → (1,2).
 - 기본 세트 + setCursor 이동 → 옛 칸 "off"→next "normal", 새 칸 "on"→next "cursor". mgm01 세트 → 새 칸 "on"(전환 없음), 옛 칸 "off"→next null.
 - autoFlow: 페이지 2개, 각 페이지 완료 프레임 F 다음 Wait 부터 dt(1/60, f32) 를 더해 3.0 이상이 된 프레임(180 또는 f32 누적 오차로 181번째)에 넘김 요청 — 구현은 원본처럼 f32 누적으로 비교.
+  - 구현 확인(2026-10-07, `web/tools/test_mgmcommon.ts` 5절·`test_msgwin.ts` 5절): f32(1/60) 누적이 3.0 이상이 되는 것은 **181번째 Wait**. 기대값 표의 나머지(격자 이동 4건·애니 세트·SetupFinish·비대칭)는 `test_mgmcommon.ts` 1·2절에서 그대로 통과.
+
+구현 단계 검증(2026-10-07, 웹 실행 — 원본 실행 대조는 여전히 없음):
+
+| 검증 | 명령 | 결과 |
+|---|---|---|
+| 순수 상태(격자 이동·애니 세트·창 생애·조작 플레이어·반복·흐름·소리·글자·장면 스택·저장소) + 실제 명세 공용 창·항목 제약 | `npx tsx tools/test_mgmcommon.ts` | 99/99 |
+| 메시지 창·메시지 흐름 | `npx tsx tools/test_msgwin.ts` | 52/52 |
+| 명세 ↔ 원본 덤프(레이아웃 85·노드 1,531·애니 249), 문서 표 값, 문구 381·ATR 183, 글꼴·텍스처 134·소리, import 경계 | `npx tsx tools/check_mgmcommon.ts` | 10,935/10,935 |
+| 헤드리스 1회차 → 창 bit4 발견(9.6) → 2회차 | `npx tsx tools/shot_mgmcommon.ts` → `web/test/out/mgmcommon/*.png` | 콘솔 오류 0, 메시지 창 (0,−270)·이름표·삽입어 색·화살표, 텔롭 좌판, 메뉴 3×5·커서 테두리·툴팁 |
 
 ## 11. 미확정 사항과 추가 분석에 필요한 근거
 

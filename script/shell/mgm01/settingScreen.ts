@@ -29,7 +29,20 @@ export interface SettingScreenDeps extends SettingDeps {
   input(): { trig: number; rep: number };
   record(id: number, endless: boolean): number | null;
   playCount(id: number): number;
+  thumb?(id: number): string | null;
+  onShow?(id: number): void;
 }
+
+const PREVIEW_SLOT: readonly (readonly [number, string])[] = [
+  [-3, '06'],
+  [-2, '05'],
+  [-1, '04'],
+  [0, '00'],
+  [1, '01'],
+  [2, '02'],
+  [3, '03'],
+  [4, '07'],
+];
 
 export class SettingScreen {
   readonly win: MgmWindow;
@@ -69,6 +82,9 @@ export class SettingScreen {
     if (genre) w.setText('x_mggenre', genre);
     w.setText('x_mgname', 'mgm01_ui_mgNameFp', { Text0: g.nameLabel });
     w.inst.part('x_heart_00')?.play(this.deps.isFavorite(g.id) ? 'normal' : 'off');
+    const tk = this.deps.thumb?.(g.id);
+    if (tk) w.inst.setTexture('x_thum_00', 1, tk);
+    this.deps.onShow?.(g.id);
     this.bindRecord();
     w.inst.setVisible('x_cursor_LR', s.ids.length > 1);
     w.setItemVisible(0, 0, s.valid[SETTING_ITEM.TEAM]);
@@ -83,13 +99,22 @@ export class SettingScreen {
     const endless = g.mode && s.values[SETTING_ITEM.MODE] === 1;
     const rec = this.deps.record(g.id, endless);
     const rv = rec === null ? null : recordView(g.recordKind, endless, rec);
-    this.win.inst.setVisible('x_record_00', !!rv);
+    this.win.inst.setVisible('x_record_01', !!rv);
     if (rv) {
-      this.win.setText('x_record_00/x_text_00', 'mgm01_pt_highscore00');
-      this.win.setText('x_record_00/x_text_01', rv.label, rv.inserts);
+      this.win.setText('x_record_01/x_text_00', 'mgm01_pt_highscore00');
+      this.win.setText('x_record_01/x_text_01', rv.label, rv.inserts);
     }
-    this.win.setText('x_record_01/x_text_00', 'mgm01_ui_playCount00');
-    this.win.setText('x_record_01/x_text_01', 'mgm01_pt_playCount01', { Number0: this.deps.playCount(g.id) });
+    this.win.setText('x_record_00/x_text_00', 'mgm01_ui_playCount00');
+    this.win.setText('x_record_00/x_text_01', 'mgm01_pt_playCount01', { Number0: this.deps.playCount(g.id) });
+  }
+
+  private bindPreview(): void {
+    const s = this.state!;
+    const n = s.ids.length;
+    for (const [o, k] of PREVIEW_SLOT) {
+      const key = this.deps.thumb?.(s.ids[(((s.pos + o) % n) + n) % n]);
+      if (key) this.win.inst.setTexture(`x_preview/x_preview_${k}`, 1, key);
+    }
   }
 
   private bindTeam(): void {
@@ -137,6 +162,8 @@ export class SettingScreen {
       const s = new SettingState(this.deps, cur);
       this.state = s;
       this.bindGame();
+      this.bindPreview();
+      let previewWait = false;
       this.win.setupFinish();
       this.win.setCursor(0, this.colOf(s.cursor), true);
       this.win.in(false);
@@ -147,6 +174,12 @@ export class SettingScreen {
           const i = this.deps.input();
           s.input(i.trig, i.rep);
         } else if (s.phase === 'press' && !this.win.isCursorItemAnimating()) s.pressDone();
+        const pv = this.win.inst.part('x_preview');
+        if (previewWait && (!pv || pv.done)) {
+          previewWait = false;
+          this.bindPreview();
+          pv?.play('normal');
+        }
         for (const e of s.drain()) {
           this.flushSound(e);
           if (e.type === 'cursor') this.win.setCursor(0, this.colOf(e.to));
@@ -155,7 +188,11 @@ export class SettingScreen {
             else this.bindRule(e.item);
             if (e.item === SETTING_ITEM.MODE) this.bindRecord();
           } else if (e.type === 'game') {
-            this.win.inst.play(e.dir < 0 ? 'left_select' : 'right_select', 'normal');
+            const side = e.dir < 0 ? 'left_select' : 'right_select';
+            this.win.inst.play(side, 'normal');
+            this.win.inst.part('x_preview')?.play(side);
+            this.win.inst.part('x_cursor_LR')?.play(side);
+            previewWait = true;
             this.bindGame();
             this.win.setCursor(0, this.colOf(s.cursor));
           } else if (e.type === 'favorite') this.win.inst.part('x_heart_00')?.play(e.on ? 'on' : 'out', e.on ? 'normal' : 'off');

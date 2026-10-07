@@ -19,7 +19,7 @@ export const SETTING_ITEM = { TEAM: 0, CPU: 1, MODE: 2, RHYTHM: 3, PLAY: 4 } as 
 export const SETTING_SE = {
   value: 'SQ_SE_MGM01_CUR',
   cursor: 'SQ_SE_MGM01_CUR',
-  game: 'SQ_SE_MGM01_CUR',
+  game: 'SQ_SE_MGM01_DECI_LR',
   random: 'SQ_SE_MGM01_DECI_S',
   play: 'SQ_SE_MGM01_DEC',
   back: 'SQ_SE_MGM01_CANCEL',

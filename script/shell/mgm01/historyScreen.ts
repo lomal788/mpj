@@ -1,7 +1,7 @@
 /**
  * 승패 표 화면 — HistoryState(historyView.ts)를 mgm01_history_title_00·mgm01_history_00 공용 창에 옮긴다 (docs/shell/mgm01_freeplay.md 6.2·6.6·7).
  * 열 8개 = x_parts_NN(mgm01_history_01), 칸 = x_history_PP(mgm01_history_02: 일치면 win_normal, 아니면 normal), 왼쪽 = 플레이어 얼굴·승리 수.
- * [설계] 썸네일 칸은 미니게임 그림을 아직 변환하지 않아 원래 텍스처 그대로. 스크롤바(x_scr_mgm)는 노드가 비어 위치만 계산.
+ * 썸네일 칸 x_thumbnail 재질 칸1 = thumb(id)(mgm01_freeplay.md 6.7·7.1, 없으면 원래 텍스처). [설계] 스크롤바(x_scr_mgm)는 노드가 비어 위치만 계산.
  */
 import type { Flow } from '../mgmcommon/fiber';
 import type { MgmInput } from '../mgmcommon/input';
@@ -21,6 +21,7 @@ export class HistoryScreen {
     private readonly sound: MgmSound,
     src: HistorySource,
     faces: readonly string[],
+    private readonly thumb?: (id: number) => string | null,
   ) {
     this.state = new HistoryState(src);
     this.title = new MgmWindow(view, 'mgm01_history_title_00');
@@ -44,6 +45,8 @@ export class HistoryScreen {
       const col = `x_parts_0${row.slot}`;
       this.table.inst.setVisible(col, !!row.entry);
       if (!row.entry) continue;
+      const tk = this.thumb?.(row.entry.id);
+      if (tk) this.table.inst.setTexture(`${col}/x_thumbnail`, 1, tk);
       for (let p = 0; p < 4; p++) this.table.inst.part(`${col}/x_history_0${p}`)?.play(row.win[p] ? 'win_normal' : 'normal');
     }
   }

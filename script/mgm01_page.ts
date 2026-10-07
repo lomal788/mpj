@@ -1,18 +1,22 @@
 /**
  * 페이지 ↔ 프리 플레이(shell/mgm01) 화면 연결 — 어댑터(입력·소리·에셋·저장)와 60Hz 고정 스텝 루프, ui.html 시험값 패널. mgmcommon_page.ts 와 같은 방식.
- * 화면: 개별 설정(runMgm01Setting)·필터(runMgm01Filter). 공용 환경 createMgm01Env 는 다른 mgm01 화면도 쓸 수 있다.
- * 시험값(URL 또는 화면 오른쪽 위 패널): mg=게임 이름, filter=enum, cpu·team·rhythm=값, endless=1, resume=1, connected=1, boss=1(보스 개방), fav=이름,이름
+ * 화면: 개별 설정(runMgm01Setting)·필터(runMgm01Filter)·목록 전체 흐름(runMgm01List). 공용 환경 createMgm01Env 는 다른 mgm01 화면도 쓸 수 있다.
+ * 시험값(URL 또는 화면 오른쪽 위 패널): mg=게임 이름, filter=enum, cpu·team·rhythm=값, endless=1, resume=1, connected=1, boss=1(보스 개방), fav=이름,이름, save=0(저장 무시)
+ * 목록 흐름 시험값: new=all|이름,이름(NEW 켬), played=이름:횟수,…(플레이 횟수), rounds=N(승패 기록 미리 넣기), filter=enum(처음 필터)
  * bex 비트: A 0x1, B 0x2, X 0x4, Y 0x8 (online.md 4.9 정정), L 0x10, R 0x20, ZL 0x40, ZR 0x80, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10, mgm01_freeplay.md 6.2)
  * 시험 배치(패널·저장 키·기본 기록 = gamerecord 초기값)는 docs/shell/mgm01_freeplay.md 9절 [설계].
  */
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, type Flow, type MgmPlayer, type MgmWork } from './shell/mgmcommon';
+import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, pushResult, SceneStack, type Flow, type MgmPlayer, type MgmSceneInstance, type MgResultEntry, type MgmWork } from './shell/mgmcommon';
 import {
   FilterScreen,
   FILTER,
   Mgm01Catalog,
+  Mgm01Scene,
   SettingScreen,
+  type Mgm01Carry,
+  type Mgm01PlayRequest,
   type FilterApplied,
   type LockEnv,
   type Mgm01CatalogJson,
@@ -134,7 +138,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
       console.warn(`mgm01: 배경 이미지를 읽지 못했다 ${bgUrl}`);
     }
   }
-  const view = await MgmView.create({ canvas, assets: { url: (p) => `${ASSETS}mgmcommon/${p}` }, parts: ['mgm01.json'], backdrop });
+  const view = await MgmView.create({ canvas, assets: { url: (p) => `${ASSETS}mgmcommon/${p}` }, parts: ['mgm01.json', '../mgm01/faces.json', '../mgm01/thumbs.json'], backdrop });
   const cr = await fetch(`${ASSETS}mgm01/catalog.json`);
   if (!cr.ok) throw new Error(`mgm01: catalog.json 을 읽지 못했다 (${cr.status})`);
   const catalog = new Mgm01Catalog((await cr.json()) as Mgm01CatalogJson);
@@ -145,7 +149,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
 
   let stored: string | null = null;
   try {
-    stored = localStorage.getItem(SAVE_KEY);
+    stored = params.get('save') === '0' ? null : localStorage.getItem(SAVE_KEY);
   } catch {
     stored = null;
   }
@@ -484,6 +488,155 @@ export async function runMgm01Filter(stage: HTMLElement, cfg: Mgm01Cfg): Promise
     debug() {
       const s = screen.state;
       return `phase ${phase}  필터 상태 ${s.phase}  enum ${s.applied.enumNo} ${s.applied.name}  N ${s.applied.ids.length} type${s.applied.type}\n창 애니 ${screen.win.inst.current ?? '-'}`;
+    },
+  };
+}
+
+export interface Mgm01ListRun {
+  readonly phase: string;
+  readonly env: Mgm01Env;
+  readonly scene: Mgm01Scene | null;
+  readonly calls: Mgm01PlayRequest[];
+  press(bits: number): void;
+  stop(): void;
+  debug(): string;
+}
+
+/** ui.html 가짜 한 판(9.2 [설계]): 참가자 중 무작위 승자(팀이면 그 팀 전부) 1·나머지 0·불참 255, judge 1, 플레이 횟수 +1(최대 999) */
+function fakeResult(env: Mgm01Env, req: Mgm01PlayRequest): MgResultEntry {
+  const play = req.team.gamePlayByPid;
+  const pids = [0, 1, 2, 3].filter((p) => play[p]);
+  const w = pids.length ? pids[Math.floor(Math.random() * pids.length)] : 0;
+  const team = req.team.teamIdByPid[w];
+  const results = [0, 1, 2, 3].map((p) => (!play[p] ? 255 : p === w || (team >= 0 && req.team.teamIdByPid[p] === team && req.team.format !== 0 && req.team.format !== 3) ? 1 : 0)) as [number, number, number, number];
+  const e = env.save.minigame(req.id);
+  env.save.setMinigame(req.id, { head: Math.min(999, e.head + 1), flags: e.flags });
+  return { id: req.id, judge: 1, results };
+}
+
+export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<Mgm01ListRun> {
+  const env = await createMgm01Env(stage, cfg);
+  const { catalog, params, work, save } = env;
+  const byName = (n: string): number | undefined => catalog.gameByName(n.trim())?.id;
+  const newArg = params.get('new') ?? '';
+  for (const g of catalog.games) {
+    const on = newArg === 'all' || newArg.split(',').some((n) => byName(n) === g.id);
+    if (!on) continue;
+    work.mg.get(g.id)!.isNew = true;
+    const e = save.minigame(g.id);
+    save.setMinigame(g.id, { head: e.head, flags: e.flags | MG_FLAG.NEW });
+  }
+  for (const kv of (params.get('played') ?? '').split(',').filter(Boolean)) {
+    const [n, c] = kv.split(':');
+    const id = byName(n);
+    if (id === undefined) continue;
+    const e = save.minigame(id);
+    save.setMinigame(id, { head: Math.max(0, Math.min(999, Number(c) || 0)), flags: e.flags });
+  }
+  const rounds = Math.max(0, Math.min(250, Number(params.get('rounds') ?? 0) || 0));
+  for (let r = 1; r <= rounds; r++) {
+    const w = (r * 7) % 5;
+    const results: [number, number, number, number] = [0, 0, 0, 0];
+    if (w < 4) results[w] = 1;
+    else results.fill(2);
+    work.round = r;
+    pushResult(work, { id: catalog.games[(r * 13) % catalog.games.length].id, judge: 1, results });
+  }
+  const startEnum = params.has('filter') ? Number(params.get('filter')) : undefined;
+  const carry: Mgm01Carry = { values: { team: 0, cpu: Math.max(0, Math.min(3, Number(params.get('cpu') ?? 0) || 0)), endless: params.get('endless') === '1', rhythm: 0 } };
+  const faces = env.players.map((p) => `pc${String(p.pid + 1).padStart(2, '0')}`);
+  const calls: Mgm01PlayRequest[] = [];
+  let scene: Mgm01Scene | null = null;
+  let phase = '시작';
+  let stack: SceneStack;
+  const factory = async (name: string, _ctx: unknown, args: unknown, returned?: unknown): Promise<MgmSceneInstance> => {
+    if (name === 'minigame') {
+      const req = args as Mgm01PlayRequest;
+      scene = null;
+      phase = `한 판(가짜) ${req.name}`;
+      let done = false;
+      return {
+        step() {
+          if (done) return;
+          done = true;
+          stack.ret(fakeResult(env, req));
+        },
+        render() {},
+        dispose() {},
+      };
+    }
+    const sc = new Mgm01Scene(
+      {
+        view: env.view,
+        input: env.input,
+        sound: env.sound,
+        catalog,
+        work,
+        save,
+        players: () => env.players,
+        lockEnv: env.lockEnv,
+        online: params.get('connected') === '1',
+        rand: (n) => Math.floor(Math.random() * n),
+        record: (id) => catalog.defaultRecord(catalog.game(id)?.name ?? ''),
+        faces,
+        carry,
+        call: (req) => {
+          calls.push(req);
+          env.persist();
+          stack.call('minigame', req);
+        },
+        exit: () => stack.ret(),
+        dt: MGM01_DT,
+        startEnum,
+      },
+      (returned as MgResultEntry | undefined) ?? null,
+    );
+    scene = sc;
+    phase = '프리 플레이';
+    return { step: () => sc.step(), render: () => sc.draw(), dispose: () => {} };
+  };
+  stack = new SceneStack(factory, save, work, () => {
+    phase = '끝';
+    env.persist();
+    const texts = env.view.spec.texts;
+    cfg.onDone(
+      [`항구로 돌아감(목록 B) — 한 판 ${calls.length}회, Round ${work.round}`, ...calls.map((c) => `${c.id} ${plainText(texts[`im_${c.name}_name`] ?? '', texts)} cpu ${c.cpu} 팀 ${c.team.teamIdByPid.join(',')}`)].join('\n'),
+    );
+  });
+  await stack.start('mgm01');
+  env.loop(
+    () => stack.step(),
+    () => stack.render(),
+  );
+  return {
+    get phase() {
+      return phase;
+    },
+    env,
+    get scene() {
+      return scene;
+    },
+    calls,
+    press: (b) => env.press(b),
+    stop: () => {
+      env.persist();
+      stack.dispose();
+      env.stop();
+    },
+    debug() {
+      const sc = scene;
+      if (!sc) return `phase ${phase}`;
+      const l = sc.list.state;
+      const id = l.ids[l.cursor];
+      const g = id === undefined ? undefined : catalog.game(id);
+      return [
+        `phase ${phase}  상태 ${sc.state}(이전 ${sc.prev})  Round ${work.round}  조작 ${env.input.operator + 1}P`,
+        `목록 필터 enum ${l.enumNo} ${l.filter.applied.name}  N ${l.ids.length} type${l.type}  커서 ${l.cursor} ${g ? `${g.id} ${g.name} reason ${sc.reason(g.id)}` : '-'}  ${l.phase}`,
+        `NEW 관찰 ${l.observer.running ? `${l.observer.id} ${l.observer.accumulated}` : '-'}  안내 ${sc.list.announce.state.phase}`,
+        sc.setting?.state ? `설정 ${sc.setting.state.id} 커서 ${sc.setting.state.cursor} 값 ${sc.setting.state.values.join(',')}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
     },
   };
 }

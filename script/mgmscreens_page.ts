@@ -109,12 +109,14 @@ export async function runMgmScreen(
       console.warn(`mgmscreens: 배경 이미지를 읽지 못했다 ${bgUrl}`);
     }
   }
-  const parts = kind === 'howto' ? ['mgmet.json', '../mgmet/extra.json'] : ['mgm01.json', '../mgm01/faces.json'];
+  const parts = kind === 'howto' ? ['mgmet.json', '../mgmet/extra.json'] : ['mgm01.json', '../mgm01/faces.json', '../mgm01/thumbs.json'];
   const view = await MgmView.create({ canvas, assets: { url: (p) => `${ASSETS}mgmcommon/${p}` }, parts, backdrop });
   const sounds = { ...view.spec.sounds };
+  const mgName = new Map<number, string>();
   try {
-    const cat = (await (await fetch(`${ASSETS}mgm01/catalog.json`)).json()) as { sounds?: Record<string, { file: string; gain: number }> };
+    const cat = (await (await fetch(`${ASSETS}mgm01/catalog.json`)).json()) as { sounds?: Record<string, { file: string; gain: number }>; mgList?: { id: number; name: string }[] };
     for (const [k, v] of Object.entries(cat.sounds ?? {})) sounds[k] = { ...v, file: `../${v.file}` };
+    for (const m of cat.mgList ?? []) mgName.set(m.id, m.name);
   } catch {
     console.warn('mgmscreens: mgm01 소리 표를 읽지 못했다');
   }
@@ -150,7 +152,7 @@ export async function runMgmScreen(
   if (kind === 'history') {
     const rounds = Math.max(0, Math.min(250, Number(q.get('rounds') ?? 12) || 0));
     const { ring, round } = sampleRing(rounds);
-    const scr = new HistoryScreen(view, input, sound, historyFromRing(ring, round), FACES);
+    const scr = new HistoryScreen(view, input, sound, historyFromRing(ring, round), FACES, (id) => (view.spec.textures[`${mgName.get(id)}^o`] ? `${mgName.get(id)}^o` : null));
     tick = () => scr.update();
     draw = () => scr.draw();
     dbg = () => {

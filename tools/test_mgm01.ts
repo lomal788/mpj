@@ -5,21 +5,30 @@
  *
  *   npx tsx tools/test_mgm01.ts
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
-import { FiberRunner, mergeSpec, MgmSound, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
+import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '../script/shell/mgmcommon';
 import {
   FILTER,
   filterNextIndex,
   FilterScreen,
   isComLevelAdjustable,
+  LIST_FORMAT,
+  LIST_PANE_TABLE,
+  LIST_SE,
+  ListScreen,
+  listMoveTarget,
+  listPane,
+  ListState,
   ListFilterState,
   listType,
   Mgm01Catalog,
+  Mgm01Scene,
+  PLACEHOLDER_THUMB,
   positionOrder,
   recordView,
   SETTING_ITEM,
@@ -28,8 +37,11 @@ import {
   teamIdsByPosition,
   teamTableIndex,
   TEAM_TABLE,
+  thumbKey,
   type LockEnv,
+  type Mgm01Carry,
   type Mgm01CatalogJson,
+  type Mgm01PlayRequest,
   type Mgm01Player,
   type SettingDeps,
   type SettingOutcome,
@@ -350,8 +362,8 @@ const sound = new MgmSound({ ...spec.sounds, ...json.sounds }, (p) => p);
   eq(w.textOf('x_mgname'), spec.texts.im_mg0106_name, '이름 = im_mg0106_name');
   eq(w.textOf('x_rule/x_rule_option_00/x_text_cpu_00'), spec.texts.im_comLevel00, 'CPU 문구 = im_comLevel00');
   eq(w.textOf('x_rule/x_rule_option_01/x_text_00'), spec.texts.mgm01_ui_rule_EndlessSetting00, '모드 문구 노멀');
-  eq(w.inst.find('x_record_00')![0].nodes[w.inst.find('x_record_00')![1]].v, false, 'kind3 노멀 = 하이 스코어 숨김');
-  eq(w.textOf('x_record_01/x_text_01'), '3회', '플레이 횟수 삽입');
+  eq(w.inst.find('x_record_01')![0].nodes[w.inst.find('x_record_01')![1]].v, false, 'kind3 노멀 = 하이 스코어(x_record_01, 6.7 정정) 숨김');
+  eq(w.textOf('x_record_00/x_text_01'), '3회', '플레이 횟수 삽입(x_record_00, 6.7 정정)');
   eq([w.inst.part('x_rule/x_rule_option_00')?.current, w.inst.part('x_rule/x_rule_option_01')?.current], ['normal', 'off'], '커서 항목 on→normal, 나머지 off');
   press(0x800);
   tick(2);
@@ -362,8 +374,8 @@ const sound = new MgmSound({ ...spec.sounds, ...json.sounds }, (p) => p);
   press(0x800);
   tick(2);
   eq(w.textOf('x_rule/x_rule_option_01/x_text_00'), spec.texts.mgm01_ui_rule_EndlessSetting01, '모드 엔드리스');
-  ok(w.inst.find('x_record_00')![0].nodes[w.inst.find('x_record_00')![1]].v, '엔드리스 = 하이 스코어 보임');
-  eq(w.textOf('x_record_00/x_text_01'), '0:30.00', '엔드리스 기본 기록 3000 = 0:30.00');
+  ok(w.inst.find('x_record_01')![0].nodes[w.inst.find('x_record_01')![1]].v, '엔드리스 = 하이 스코어 보임');
+  eq(w.textOf('x_record_01/x_text_01'), '0:30.00', '엔드리스 기본 기록 3000 = 0:30.00');
   press(0x1);
   tick(2);
   eq(w.cursor.col, 3, 'Play 커서');
@@ -421,6 +433,359 @@ console.log('7. 실제 명세: 필터 화면 흐름 (freeplay header)');
   pending = { trig: 0x2, rep: 0x2 };
   tick(20);
   eq((res as unknown as { enumNo: number } | null)?.enumNo, 13, 'B = 닫고 마지막 필터 반환 [설계]');
+}
+
+console.log('8. 목록 본체 순수 상태 (6.3·6.7·5.5)');
+const facesPart = JSON.parse(readFileSync(join(WEB, 'assets/mgm01/faces.json'), 'utf8')) as MgmSpecPart;
+const thumbsPart = JSON.parse(readFileSync(join(WEB, 'assets/mgm01/thumbs.json'), 'utf8')) as MgmSpecPart;
+const merged2 = mergeSpec(mergeSpec(merged, facesPart), thumbsPart);
+const all2 = merged2 as unknown as Spec;
+const view2 = {
+  all: all2,
+  spec: merged2,
+  r2d: null as unknown as Render2D,
+  layout: (n: string) => new LayoutInst(n, merged2.layouts[n], all2),
+  draw: () => {},
+  text: (l: string) => merged2.texts[l] ?? '',
+} as unknown as MgmView;
+const allIds = cat.filterList(FILTER.MgAll);
+const bossIds = cat.filterList(FILTER.MgBoss);
+{
+  LIST_PANE_TABLE.forEach((t, type) => {
+    const n = LIST_FORMAT[type].cols * LIST_FORMAT[type].rows;
+    eq([...t].sort((a, b) => a - b), [...Array(n).keys()], `위치→페인 표 ${type} = 0..${n - 1} 순열`);
+    const lay = merged2.layouts.mgm01_base_freeplay_00;
+    const pos = t.map((_, i) => lay.nodes.find((nd) => nd.n === listPane(type, i))?.t ?? null);
+    ok(pos.every((p) => p !== null), `형식 ${type} 페인 전부 레이아웃에 있음`);
+    const W = LIST_FORMAT[type].cols;
+    let rowMajor = true;
+    for (let i = 1; i < n; i++) {
+      const a = pos[i - 1]!;
+      const b = pos[i]!;
+      if (i % W === 0 ? !(b[1] < a[1]) : !(b[0] > a[0] && b[1] === a[1])) rowMajor = false;
+    }
+    ok(rowMajor, `형식 ${type} 위치 i = 행 우선 화면 순서(열 ${W})`);
+  });
+  eq(listPane(0, 14), 'x_thum_00_101', '형식0 위치 14 = x_thum_00_101 (표 데이터)');
+  eq([listMoveTarget(0, 112, 14, 0, -1, false), listMoveTarget(0, 112, 14, 0, -1, true)], [0, 98], '맨 위 위: 반복 = 막힘, 새로 누름 = 아래 끝 같은 열');
+  eq([listMoveTarget(13, 112, 14, 1, 0, false), listMoveTarget(13, 112, 14, 1, 0, true)], [13, 14], '행 끝 오른쪽: 반복 막힘, 새로 = 다음 위치');
+  eq([listMoveTarget(1, 7, 5, 0, -1, true), listMoveTarget(5, 7, 5, 0, 1, true), listMoveTarget(6, 7, 5, 0, 1, true), listMoveTarget(3, 7, 5, 0, -1, true)], [6, 0, 1, 3], 'N=7·W=5 끝 행 Q 보정(6.3)');
+  eq([listMoveTarget(6, 7, 5, 1, 0, false), listMoveTarget(5, 7, 5, -1, 0, false), listMoveTarget(5, 7, 5, 0, 1, false)], [6, 5, 5], 'N−1 오른쪽·열0 왼쪽·끝 행 아래 반복 = 막힘');
+
+  const reason = (id: number): number => cat.lockReason(id, { bossOpen: false, playCount: () => 0, connected: false, players: players([0, 1, 1, 1]) });
+  const news = new Set<number>([allIds[1]]);
+  let rnd = 0;
+  const deps = { catalog: cat, reason, favorite: () => false, isNew: (id: number) => news.has(id), rand: () => rnd };
+  const ls = new ListState(deps);
+  ls.prepare();
+  const ev0 = ls.drain();
+  eq([ev0[0].type, ev0[1]], ['apply', { type: 'cursor', index: 0, imm: true }], '처음 = 목록 구성 + 커서 0');
+  eq([ls.ids.length, ls.type, ls.cols], [112, 0, 14], 'MgAll = 112·형식0·14열');
+  ls.input(0x200, 0x200);
+  eq(ls.drain(), [{ type: 'se', label: LIST_SE.cursor, at: 'cursor' }, { type: 'fx' }, { type: 'cursor', index: 1, imm: true }, { type: 'skip' }], '오른쪽 = CUR(2D)·FX·커서 1, trig>1 skip');
+  eq([ls.observer.running, ls.observer.id], [true, allIds[1]], 'NEW 칸 = 관찰 시작');
+  for (let i = 0; i < 12; i++) ls.stepNew(1);
+  eq(ls.drain(), [], '누적 12 = 아직(wait < 누적)');
+  ls.stepNew(1);
+  eq(ls.drain(), [{ type: 'newConsume', id: allIds[1], index: 1 }], '13 = NEW 소비');
+  ls.input(0x1, 0x1);
+  eq(
+    ls.drain().map((e) => (e.type === 'se' ? e.label : e.type)),
+    ['decide', LIST_SE.decide, 'fx', 'exit'],
+    'A = Decide·SQ_SE_MGM01_DEC·FX → 4',
+  );
+  eq([ls.phase, ls.exitResult, ls.selectedId], ['exit', 4, allIds[1]], '나감 4 = 결정 ID');
+
+  const bossPos = allIds.indexOf(bossIds[0]);
+  ls.selectedId = bossIds[0];
+  ls.resume = true;
+  ls.prepare();
+  ls.drain();
+  eq(ls.cursor, bossPos, 'resume = 저장 ID 칸으로 커서');
+  ls.opened();
+  ls.input(0x1, 0x1);
+  eq(
+    ls.drain(),
+    [{ type: 'decide', index: bossPos }, { type: 'se', label: 'SQ_SE_SYS_ERROR' }, { type: 'vibrate' }, { type: 'announce', reason: 0 }],
+    '잠긴 보스 A = press_ng·ERROR·진동·안내(reason0)',
+  );
+  eq(ls.phase, 'idle', '잠금 = 목록 계속');
+  rnd = 2;
+  ls.input(0x8, 0x8);
+  const unl = cat.mgIdList(FILTER.MgAll, false, reason);
+  const re = ls.drain();
+  eq(re.slice(0, 2), [{ type: 'se', label: LIST_SE.random }, { type: 'fx' }], 'Y = 랜덤 DECI_S·FX');
+  eq([ls.exitResult, ls.selectedId, ls.cursor], [4, unl[2], allIds.indexOf(unl[2])], '랜덤 = unlocked 후보[rand] 로 커서·결정 → 4');
+  ok(re.some((e) => e.type === 'skip'), 'trig>1 = 안내 skip');
+  ls.resume = false;
+  ls.prepare(0);
+  ls.drain();
+  ls.input(0x4, 0x4);
+  eq([ls.drain()[0], ls.exitResult], [{ type: 'se', label: LIST_SE.history }, 3], 'X = 승패 표 DECI_S → 3');
+  ls.prepare(0);
+  ls.drain();
+  ls.input(0x2, 0x2);
+  eq([ls.drain()[0], ls.exitResult], [{ type: 'se', label: LIST_SE.cancel }, 7], 'B = CANCEL → 7');
+  ls.prepare(0);
+  ls.drain();
+  ls.input(0x20, 0x20);
+  eq(
+    ls.drain(),
+    [{ type: 'se', label: 'SQ_SE_MGM01_DECI_LR', at: 'filterR' }, { type: 'fx' }, { type: 'filterAnim', name: 'right_select_00', dir: 1 }, { type: 'skip' }],
+    'R = DECI_LR(2D)·right_select_00, trig>1 skip',
+  );
+  ls.input(0x1, 0x1);
+  eq(ls.drain(), [], '필터 애니 중 입력 없음');
+  ls.stepFilter(false);
+  eq(ls.drain(), [], 'select_00 진행 중');
+  ls.stepFilter(true);
+  eq(
+    ls.drain().map((e) => e.type),
+    ['reset', 'apply', 'cursor', 'filterAnim'],
+    'select_00 끝 = ResetMgItem → 재구성 → 커서 0 → select_01',
+  );
+  eq([ls.enumNo, ls.ids.length, ls.type, ls.cursor], [1, 29, 1, 0], '4인 대전 29개 = 형식1, 커서 0');
+  ls.stepFilter(true);
+  eq(ls.phase, 'idle', 'select_01 끝 = idle');
+  const lf = new ListState(deps, FILTER.MgFavorite);
+  lf.prepare();
+  eq([lf.ids.length, lf.type, lf.filter.applied.emptyFavorite], [0, 2, true], '빈 즐겨찾기 = N0·형식2');
+  lf.drain();
+  lf.input(0x1, 0x1);
+  lf.input(0x8, 0x8);
+  lf.input(0x800, 0x800);
+  eq([lf.phase, lf.drain().filter((e) => e.type !== 'skip')], ['idle', []], '빈 목록: A·Y·방향 무시');
+  lf.input(0x4, 0x4);
+  eq([lf.exitResult, lf.selectedId], [3, -1], '빈 목록 X = 승패 표');
+}
+
+console.log('9. 실제 명세: 목록 화면 (3형식·썸네일·라벨·필터)');
+{
+  let pending = { trig: 0, rep: 0 };
+  const press = (b: number): void => {
+    pending = { trig: b, rep: b };
+  };
+  const consumed: number[] = [];
+  const news = new Set<number>([allIds[0]]);
+  const reason = (id: number): number => cat.lockReason(id, { bossOpen: false, playCount: () => 0, connected: false, players: players([0, 1, 1, 1]) });
+  const ls = new ListScreen(view2, {
+    catalog: cat,
+    reason,
+    favorite: (id) => id === allIds[2],
+    isNew: (id) => news.has(id),
+    rand: () => 0,
+    sound,
+    input: () => {
+      const p = pending;
+      pending = { trig: 0, rep: 0 };
+      return p;
+    },
+    operator: () => 0,
+    consumeNew: (id) => {
+      news.delete(id);
+      consumed.push(id);
+    },
+  });
+  const fr = new FiberRunner();
+  let out: { result: number } | null = null;
+  fr.start(ls.flow({ resume: false, selectedId: -1 }), (r) => (out = r));
+  const tick = (n = 1): void => {
+    for (let i = 0; i < n; i++) {
+      fr.step();
+      ls.update(Math.fround(1 / 60));
+    }
+  };
+  const vis = (inst: LayoutInst, p: string): boolean | undefined => {
+    const f = inst.find(p);
+    return f ? f[0].nodes[f[1]].v : undefined;
+  };
+  const txt = (inst: LayoutInst, p: string): string | undefined => {
+    const f = inst.find(p);
+    return f ? f[0].texts.get(f[1]) : undefined;
+  };
+  const tex = (inst: LayoutInst, p: string): string | undefined => {
+    const f = inst.find(p);
+    if (!f) return undefined;
+    const m = f[0].nodes[f[1]].spec.m;
+    return m === undefined ? undefined : f[0].texOverride.get(m)?.get(1);
+  };
+  tick(2);
+  eq(ls.win.life.opening, true, '첫 진입 = in 애니(resume0)');
+  tick(14);
+  ok(ls.win.isVisible() && !ls.win.life.opening, '목록 창 열림');
+  eq([vis(ls.win.inst, 'x_filter_00'), vis(ls.win.inst, 'x_filter_01'), vis(ls.win.inst, 'x_filter_02')], [true, false, false], '112개 = x_filter_00');
+  eq(ls.win.textOf('x_text_00'), '전부', '머리 줄 = 필터 라벨');
+  eq([ls.win.textOf('x_guide_00'), ls.win.textOf('x_guide_01')], [plainText(spec.texts.mgm01_ctrl_mgChoiceFp00, spec.texts), plainText(spec.texts.mgm01_ctrl_mgChoiceFp01, spec.texts)], '안내 문구 Fp00/01');
+  const g0 = cat.game(allIds[0])!;
+  const it0 = ls.items[0].inst;
+  eq([tex(it0, 'x_game_2_0'), tex(it0, 'x_game_2_1')], [thumbKey(g0.name), thumbKey(g0.name)], '항목 0 썸네일 칸1 = mg0101^o (크기 2)');
+  eq([vis(it0, 'x_win_00'), vis(it0, 'x_win_01'), vis(it0, 'x_win_02')], [false, false, true], '형식0 = x_win_02');
+  eq(
+    txt(it0, 'x_mes_02/x_text_00'),
+    plainText(merged2.texts.mgm01_ui_mgNameBig, merged2.texts, { Text0: g0.nameLabel }),
+    '말풍선 = mgm01_ui_mgNameBig(이름)',
+  );
+  eq([vis(it0, 'x_new_02'), it0.part('x_new_02')?.current], [true, 'normal'], 'NEW 보임');
+  eq(ls.items[2].inst.part('x_heart_02')?.current, 'normal', '즐겨찾기 = heart normal');
+  eq(ls.items[1].inst.part('x_heart_02')?.current, 'off', '아님 = heart off');
+  eq(it0.current, 'on', '커서 항목 = on');
+  const bp = allIds.indexOf(bossIds[0]);
+  const ib = ls.items[bp].inst;
+  eq([tex(ib, 'x_game_2_0'), vis(ib, 'x_gray_2_0'), ls.win.grid.item(0, bp)?.enabled], [PLACEHOLDER_THUMB, false, false], '잠긴 보스 = mgboss^o·회색 숨김·선택 불가');
+  eq(txt(ib, 'x_mes_02/x_text_00'), plainText(spec.texts.mgm01_ui_mgNameNone, spec.texts), '잠긴 보스 이름 = mgm01_ui_mgNameNone');
+  const keys = Object.keys(thumbsPart.textures);
+  eq(keys.length, 113, '썸네일 113장(112 + mgboss)');
+  eq(cat.games.filter((g) => !thumbsPart.textures[thumbKey(g.name)]).map((g) => g.name), [], '112 게임 썸네일 전부 있음');
+  ok(keys.every((k) => (thumbsPart.srgb ?? []).includes(k)), '썸네일 sRGB');
+  ok(keys.every((k) => existsSync(join(WEB, 'assets/mgmcommon', thumbsPart.textures[k]))), '썸네일 PNG 파일 있음');
+  const font = merged2.fonts.bqfont_small;
+  const lack = new Set<string>();
+  for (const g of cat.games) for (const ch of plainText(merged2.texts[g.nameLabel] ?? '', merged2.texts)) if (ch !== ' ' && !font.glyphs[ch]) lack.add(ch);
+  eq([...lack], [], '말풍선 글꼴(bqfont_small)에 112 이름 글자 전부');
+  tick(14);
+  eq(consumed, [allIds[0]], '커서 칸 NEW 소비');
+  eq(vis(it0, 'x_new_02'), false, '소비 = x_new 숨김');
+  sound.log.length = 0;
+  press(0x200);
+  tick(1);
+  eq([ls.state.cursor, ls.win.cursor.col], [1, 1], '오른쪽 = 커서 1');
+  ok(sound.log.some((l) => l.type === 'se' && l.label === 'SQ_SE_MGM01_CUR'), 'CUR SE');
+  press(0x20);
+  tick(1);
+  eq(ls.win.inst.current, 'right_select_00', '필터 R = right_select_00');
+  tick(12);
+  eq([ls.state.enumNo, ls.state.type, vis(ls.win.inst, 'x_filter_01')], [1, 1, true], '4인 대전 → x_filter_01');
+  const g1 = cat.game(ls.state.ids[0])!;
+  eq([tex(ls.items[0].inst, 'x_game_1_0'), vis(ls.items[0].inst, 'x_win_01'), ls.win.isItemVisible(1, 29)], [thumbKey(g1.name), true, false], '형식1 썸네일·x_win_01, 29번 칸 숨김');
+  eq(ls.items[40].visible, false, '형식1 칸 수(32) 밖 항목 숨김');
+  for (let k = 0; k < 6; k++) {
+    press(0x20);
+    tick(16);
+  }
+  eq([ls.state.enumNo, ls.state.type, ls.state.ids.length, vis(ls.win.inst, 'x_filter_02')], [7, 2, 5, true], '보스 5개 → 형식2');
+  eq(tex(ls.items[0].inst, 'x_game_0_0'), PLACEHOLDER_THUMB, '형식2 = 크기0, 보스 자리');
+  press(0x2);
+  tick(30);
+  eq((out as { result: number } | null)?.result, 7, 'B = 7');
+  ok(!ls.win.isVisible(), '창 닫힘');
+}
+
+console.log('10. 상태기계: 목록 ↔ 설정 ↔ 승패 표 ↔ 한 판 호출 ↔ 복귀 ↔ 취소 (5.2·5.5·8.3)');
+{
+  let bits = 0;
+  const ps: Mgm01Player[] = players([0, 1, 1, 1]);
+  const input = new MgmInput(
+    {
+      poll: (pid: number) => {
+        const b = pid === 0 ? bits : 0;
+        if (pid === 0) bits = 0;
+        return { hold: b, trig: b };
+      },
+    },
+    () => ps,
+  );
+  const save = new MemorySave();
+  const work = createWork();
+  for (const g of cat.games) work.mg.set(g.id, { isNew: false, unlock: true, favorite: false });
+  work.mg.get(allIds[3])!.isNew = true;
+  const calls: Mgm01PlayRequest[] = [];
+  let exited = 0;
+  const carry: Mgm01Carry = { values: { team: 0, cpu: 2, endless: false, rhythm: 0 } };
+  const mk = (returned?: MgResultEntry): Mgm01Scene =>
+    new Mgm01Scene(
+      {
+        view: view2,
+        input,
+        sound,
+        catalog: cat,
+        work,
+        save,
+        players: () => ps,
+        lockEnv: () => ({ bossOpen: false, playCount: (id) => save.minigame(id).head, connected: false, players: ps }),
+        rand: () => 0,
+        record: () => null,
+        faces: ['pc01', 'pc02', 'pc03', 'pc04'],
+        carry,
+        call: (r) => calls.push(r),
+        exit: () => exited++,
+      },
+      returned ?? null,
+    );
+  let sc = mk();
+  const run = (n = 1, b = 0): void => {
+    for (let i = 0; i < n; i++) {
+      if (i === 0 && b) bits = b;
+      input.update();
+      sc.step();
+    }
+  };
+  const states = (): number[] => sc.log.filter((e) => e.type === 'state').map((e) => (e as { to: number }).to);
+  run(20);
+  eq([sc.state, states()], [2, [0, 2]], '처음 0 → 2');
+  run(1, 0x200);
+  run(1, 0x200);
+  run(1, 0x200);
+  eq(sc.list.state.cursor, 3, '커서 3');
+  run(1, 0x1);
+  run(40);
+  eq(sc.state, 4, 'A → 설정 4');
+  const st = sc.setting!.state!;
+  eq(st.id, allIds[3], '설정 게임 = 결정 ID');
+  eq(st.values[1], 2, 'CPU 초기 = carry 2');
+  eq(work.mg.get(allIds[3])!.isNew, false, '설정 표시 = NEW 소비(ApplyListMgSetting)');
+  const tx = (p: string): string | undefined => {
+    const f = sc.setting!.win.inst.find(p);
+    const m = f ? f[0].nodes[f[1]].spec.m : undefined;
+    return f && m !== undefined ? f[0].texOverride.get(m)?.get(1) : undefined;
+  };
+  const unl = cat.mgIdList(FILTER.MgAll, false, (id) => sc.reason(id));
+  const pos = unl.indexOf(allIds[3]);
+  const nm = (k: number): string => thumbKey(cat.game(unl[(((pos + k) % unl.length) + unl.length) % unl.length])!.name);
+  eq(
+    [tx('x_thum_00'), tx('x_preview/x_preview_00'), tx('x_preview/x_preview_06'), tx('x_preview/x_preview_03'), tx('x_preview/x_preview_07')],
+    [nm(0), nm(0), nm(-3), nm(3), nm(4)],
+    '설정 큰 그림·미리보기 오프셋 → 페인(6.7)',
+  );
+  run(1, 0x2);
+  run(40);
+  eq([sc.state, sc.list.state.cursor, sc.list.win.inst.current], [2, 3, 'normal'], '첫 항목 B → 목록, 커서 복원, in 애니 없이(resume)');
+  run(1, 0x4);
+  run(40);
+  eq(sc.state, 3, 'X → 승패 표 3');
+  run(1, 0x2);
+  run(40);
+  eq([sc.state, sc.list.state.cursor], [2, 3], '승패 표 B → 목록, 커서 복원');
+  run(1, 0x1);
+  run(40);
+  eq(sc.state, 4, '다시 설정');
+  for (let k = 0; k < 4 && sc.setting?.state?.cursor !== 4; k++) {
+    run(1, 0x1);
+    run(4);
+  }
+  run(1, 0x1);
+  run(120);
+  eq(states().slice(-4), [4, 5, 6, 8], 'Play → 5 → 6 → 8');
+  eq([sc.state, calls.length], [8, 1], '1.0 s 뒤 한 판 호출');
+  const req = calls[0];
+  eq([req.id, req.cpu, req.filter.enumNo], [allIds[3], 2, 0], '호출 계약 = ID·CPU·필터');
+  eq(work.freeplaySelect, { filter: 0, index: 0, id: allIds[3], fromFavorite: false }, 'ModeData 선택 저장');
+  sc = mk({ id: req.id, judge: 1, results: [1, 0, 0, 0] });
+  eq([work.round, work.results.length, work.results[0].id], [1, 1, req.id], '복귀 = Round 1·결과 기록');
+  run(3);
+  eq([sc.state, sc.list.state.cursor, sc.list.win.inst.current], [2, 3, 'normal'], 'ContinueFlow = 목록, 같은 칸, in 애니 없음');
+  run(30);
+  run(1, 0x4);
+  run(40);
+  const hs = sc.history!;
+  const f = hs.table.inst.find('x_parts_00/x_thumbnail');
+  const m = f ? f[0].nodes[f[1]].spec.m : undefined;
+  eq(f && m !== undefined ? f[0].texOverride.get(m)?.get(1) : undefined, thumbKey(cat.game(req.id)!.name), '승패 표 열 썸네일 = 그 게임');
+  run(1, 0x2);
+  run(40);
+  run(1, 0x2);
+  run(60);
+  eq([states().slice(-2), exited], [[7, 9], 1], '목록 B → 7 → 9 → 항구로');
+  ok(!sc.guide.shown, 'Back 안내 Out');
 }
 
 console.log(fails ? `실패 ${fails}/${count}` : `통과 ${count}/${count}`);

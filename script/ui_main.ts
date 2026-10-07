@@ -10,7 +10,7 @@ import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { runModeSelect, type ModeSelectRun } from './modeselect_page';
 import { runMgmCommonDemo, type MgmCommonRun } from './mgmcommon_page';
 import { runMgmScreen, type MgmScreenRun } from './mgmscreens_page';
-import { runMgm01Filter, runMgm01Setting, type Mgm01Run } from './mgm01_page';
+import { runMgm01Filter, runMgm01List, runMgm01Setting, type Mgm01ListRun, type Mgm01Run } from './mgm01_page';
 import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
 import { partyRuleTestValues, runPartyRule, type PartyRuleRun } from './partyrule_page';
 import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
@@ -160,6 +160,15 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: OnlineRun = await runOnline(stage, { pads: padSourcesFor([false, true, true, true], keyboard), muted: cfg.muted, test: onlineTestValues(), onDone: cfg.onDone });
       (window as unknown as { __online?: OnlineRun }).__online = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'mgm01-list',
+    name: '프리 플레이: 목록(전체 흐름)',
+    async run(stage, cfg) {
+      const r: Mgm01ListRun = await runMgm01List(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __mgm01list?: Mgm01ListRun }).__mgm01list = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

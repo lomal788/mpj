@@ -21,6 +21,7 @@
 | 새 Scene C | `analysis/decomp/mgm01_stage3.c`, `mgmrs_stage3.c`, `mgm01_callbacks.c`, `mgm01_wait_callback.c`, `mgm01_helpers.c`, `mgm01_data_helpers.c` |
 | main/메뉴/boot 연결 | `mgm01_main_contract.c`, `mgm01_main_more.c`, `mgm01_main_round.c`, `mgm01_result_writer.c`, `mgm01_menu_player.c`, `mgm01_boot_initial.c`, `mgm01_team_expand.c`, `mgm01_team_sort.c`, `mgm01_player_base.c`; 타입/Normalize는 `ui2dalign_main.c` |
 | 새 어셈블리 예외 | `mgm01_dis_stage3.c`, `mgm01_main_dis1.c`, `mgm01_dis_boot.c`, `mgm01_dis_boot_reset.c`, `mgm01_dis_record.c` (§10.2) |
+| 목록 본체 보강(2026-10-07) | main 썸네일 9함수 `analysis/decomp/mgm01_list_thumb_main.c`(GetThumbnail·GetTextureInfo 등, ghidra_work/setplayer 사본); mgm01 데이터 표·페인 문자열은 capstone 으로 읽음(§6.7·7.1) |
 | 목록 JSON | `extracted/bea/mgm~mgm01.nx.bea/mgm/mgm01/data/mgm01_freeplay_mgList.json` |
 | 기본 기록 JSON | `extracted/bea/bq.nx.bea/common/data/gamerecord.json` |
 | 메시지 | `extracted/message/koKR/{mgm01,im_common,system}.json` |
@@ -202,6 +203,28 @@
 
 [판독] mgmrs는 Scene17개와 Params7개의24개 함수를 모두 읽었다. 빈 override·RTTI·생성/삭제 함수까지의 정확한 열거는 §10.1의 inventory다. DummySymbolLink는 별도 linker 함수로 집계한다.
 
+### 5.5 DecideMinigameFlow 전이·연출 (보강 2026-10-07)
+
+[판독] 기존 C(`MgListFlow` — mgm01 @0x7100010560, `MgResultListFlow` — mgm01 @0x71000109b0, `MgSettingFlow` — mgm01 @0x71000110b0, `PrepareMgListFlow` — mgm01 @0x71000160b0, `DecideMinigameFlow` — mgm01 @0x710000df80)를 다시 읽어 전이마다 창·안내·소리를 모았다. "목록 창" = `mgm01_base_freeplay_00`(공용 창), "Back 안내" = `UIBackGuide`(ComUiGuide00 위치 0x11=17, `sys_ctrl_back`), "랜덤 안내" = `UIOmakaseGuide`(위치 0xb=11, 2칸 `mgm01_ctrl_buttonGuide00/01`) — 둘 다 `SyncedSetupGame`에서 만든다(`mgmet_mgm01_consume.c`).
+
+| 전이 | 조건·입력 | 창·안내·소리 [판독] |
+|---|---|---|
+| 0→2 | 처음(resume0) | 필터 index0(MgAll) 목록 |
+| 2 진입 | `PrepareMgListFlow(-1, null)` | 목록 구성 → 커서 복원(resume면 저장 ID의 위치, 아니면 0) → 목록 창 `in(imm = resume)`(복귀면 in 애니 없이 바로 normal) → Back 안내가 Idle 아니면 In → 창 active·열림 끝까지 대기 → resume0 |
+| 2→4 | 결정(A) 성공 또는 랜덤(Y) 성공 | 커서 항목 press(목록 결정은 `SQ_SE_MGM01_DEC`+FX, 랜덤은 `SQ_SE_MGM01_DECI_S`+FX) → `isCursorItemAnimating` 대기(항목 레이아웃 갈래라 사실상 즉시, mgm_common 6.6) → 목록 창 out → 다 닫힐 때까지 → `ResetMgItem` |
+| 2→3 | X(0x4) | `SQ_SE_MGM01_DECI_S`+FX, 선택 ID = 커서 칸 ID → 목록 창 out → ResetMgItem |
+| 2→7 | B | `SQ_SE_MGM01_CANCEL` → Back 안내 Out → 목록 창 out → ResetMgItem |
+| 3 | 승패 표 | 제목·표 창 in → 입력(§6.2) → B면 `SQ_SE_MGM01_CANCEL` → 두 창 out·닫힘 대기 → **resume1** →2 |
+| 4 진입 | 설정 | resume면 커서 Play(4)·resume0·Back 안내 In, 아니면 첫 valid. **직전 상태가 4가 아니면** 랜덤 안내 In. 설정 창 in(0) |
+| 4→2 | 첫 항목에서 B | 랜덤 안내 Out → 설정 창 out → resume1 (§6.2) |
+| 4→4 | 랜덤(Y) | 안내 그대로 → 설정 창 out → 다시 4(직전=4 이므로 랜덤 안내 In 생략) |
+| 4→5 | Play 결정 | 랜덤 안내·Back 안내 Out → 설정 창 out |
+| 5→6 | `UseGyro`가 아니거나 `SetGyroFlow` 성공 | (5→4: 자이로 설정 실패면 resume1) |
+| 6→8, 7→9 | 연출 정리 | ARP4/5 ClearLook·IdlePlane; 7은 모션·NEW Fiber 삭제 |
+| 8 | `MgStartFlow` | §3.2·5.3(1.0초 → FadeOut 1.0초 → 한 판 호출, 돌아오지 않음) |
+
+[판독] 목록이 비었을 때(빈 즐겨찾기) `MgListFlow`는 X·B만 받는다(Y·A·방향 없음, 필터 L/R은 받음). X/A 처리 뒤에도 같은 프레임에 필터 L/R 검사를 하고, trig>1 이면 잠금 안내 skip(+0x638)을 세운다. 목록 루프는 창이 active·열림/닫힘 중 아님일 때만 입력을 읽는다.
+
 ## 6. 계산식·조건·의사코드
 
 ### 6.1 목록·필터·순서·배치
@@ -258,6 +281,9 @@
 | 결과 | trig2 B | 아니오 | CANCEL, 닫기→목록2 | mgm01 @0x71000109b0 |
 
 [판독] 목록은 X/A를 먼저 처리하고 그 외 방향→Y/B→필터를 검사한다. 잠금 안내가 떠 있을 때 trig>1은 Scene+0x638 skip도 세운다. 설정은 A→B→Y→X→방향/게임 이동/값 이동 순으로 분기한다. 결과 이동에는 SE 호출이 없고 닫기에 CANCEL이 있다. 동시입력은 각 원본 조건 그대로 적용한다.
+
+정정(2026-10-07, 목록 본체 구현): 위 표의 버튼 **이름** X/Y 가 뒤바뀌었다. 비트는 그대로이고 bex 0x8 = **Y**, 0x4 = **X**다([online.md](online.md) 4.9 정정). 목록 안내 문구도 맞는다: `mgm01_ctrl_mgChoiceFp00` = U+E001(Y) 랜덤, `…Fp01` = U+E002(X) 승패 표, 설정 `mgm01_ctrl_buttonGuide00` = E001(Y) 랜덤·`…01` = E002(X) 즐겨찾기 [데이터: 문구 글리프]. 따라서 목록 trig 0x8 = Y 랜덤, trig 0x4 = X 승패 표, 설정 trig 0x4 = X 즐겨찾기, trig 0x8 = Y 랜덤 [판독].
+정정(2026-10-07): 목록 SE — 결정 성공 `SQ_SE_MGM01_DEC`(§7 표의 "DECI" 아님), 잠금 결정 `SQ_SE_SYS_ERROR`+진동+`PlayAnnounce(reason)`(항목 press_ng 는 Decide 가 먼저 재생), 승패 표 `SQ_SE_MGM01_DECI_S`+FX, 취소 `SQ_SE_MGM01_CANCEL`, 랜덤 성공 `SQ_SE_MGM01_DECI_S`+FX(그 칸으로 MoveCursor 후 Decide=press), 랜덤 후보 0 `SQ_SE_SYS_ERROR`+진동, 커서 이동 `SQ_SE_MGM01_CUR`(PlaySe2D, 새 커서 항목 페인 위치)+FX, 필터 `SQ_SE_MGM01_DECI_LR`(PlaySe2D, `x_cursor_LR/x_text_L`·`_R`)+FX [판독: `MgListFlow_*` mgm01 @0x7100016378~0x71000169a0].
 
 ### 6.3 끝 행과 래핑·랜덤
 
@@ -364,6 +390,56 @@ for latest up to100 valid ID rows:
 
 [판독: 어셈블리] `ApplyMgResultList` — mgm01 @0x7100016cc0의 C는 Earliest index 인자가 빠지고 raw byte가 bool로 변환된 것처럼 보였다. 덤프 mgm01 @0x7100016e54에서 `scroll+i`, mgm01 @0x7100016ef0에서 raw byte와 `(judge!=0)`의 비교를 확인했다. 일치면 `win_normal`, 그 외 `normal`이다. scrollbar는 count>8일 때 표시하고 정규 위치는 `scroll/(count−8)`이다.
 
+### 6.7 목록 본체 — 3형식·배치·항목 표시·커서 (보강 2026-10-07)
+
+[판독] 목록은 공용 창 하나에 **3행 × 112열** 메뉴다: `InitializeMgList` vt+0x268(3, 0x70, wrap=1, check=0), 애니 세트 `MgListMenuAnime`(mgm_common 4.1), `InitializeMgFilter` — mgm01 @0x7100014330 가 `SetupItemMenu(행 = type, 열 = i, "x_thum_0{type}_{표[type][i]:02}")`. 커서 = (type, i), 창 +0x7c(cursorCol) = 목록 위치 i. 목록 위치 i 는 **행 우선 화면 순서**(행 = i / W, 열 = i % W)이고, 표는 그것을 레이아웃 페인 번호로 바꾼다(레이아웃 페인 번호가 열 우선·불규칙이라서). 항목 레이아웃 `MinigameListItem%03d`(112개, `mgm01_thum_00`)의 k번째를 현재 type 의 k번째 칸에 Hook 한다(목록 위치 = 항목 레이아웃 번호).
+
+| type | N 범위 | 창 페인 [판독: 어셈블리 `null_all/%s`] | 칸 수 | 열 W × 행 [데이터 mgm01 @0x710004f668 +8/+0x10/+0x14] | 썸네일 크기 S (+0x18) | 칸 간격·기준 [데이터: 레이아웃] | 항목 그림 `win_S_0` / 커서 `win_S_1` |
+|---|---|---|---|---|---|---|---|
+|0|33..112|`x_filter_00`|112|14 × 8|2|130 × 89, x −845..845, y +135|162×108 ×0.75 / 200×114|
+|1|16..32|`x_filter_01`|32|8 × 4|1|227 × 139, x −794..794, y +160|216×128 / 288×166|
+|2|0..15|`x_filter_02`|15|5 × 3|0|354 × 212, x −708..708, y +120|342×200 / 400×228|
+
+[데이터] 위치→페인 표: type0 = mgm01 @0x71000466d8(u32 112개: 0,8,16,24,31,38,45,52,59,66,73,80,87,94 / 101,1,9,17,… / … / 7,15,23,108,109,110,111), type1 = mgm01 @0x7100046898(u32 32개 = 열×4+행), type2 = 인라인 15개(0,3,6,9,12,1,4,7,10,13,2,5,8,11,14 = 열×3+행). 표 전체는 웹 `listView.ts` 상수로 그대로 옮겼다.
+
+[판독] 목록 구성은 페이징·스크롤이 없다(112 = 14×8 한 장). 형식은 N 으로만 고른다(§6.1).
+
+`ApplyChangeMgList` — mgm01 @0x71000148f0 항목 표시 [판독, 페인 이름은 판독: 어셈블리 `x_game_%d_0` @0x7100014c38 등]:
+
+```text
+NEW 관찰 중지(+0x2a0 = {0,1}, ID −1)
+이전 type 의 칸에서 항목 레이아웃 Remove; type = N≥33?0 : N≥16?1 : 2; 새 type 의 칸 0..count−1 에 항목 k Hook
+for i < N:  id = 목록[i]; d = MgData(id)
+  tex  = d.reason==0 ? GetTextureInfo("mgboss^o") : GetThumbnail(id,0)      // §7.1
+  name = d.reason==0 ? "mgm01_ui_mgNameNone"     : "im_<MGList 이름>_name"
+  항목.x_game_S_0·x_game_S_1 재질 텍스처 칸1 = tex
+  항목.x_mes_0S/x_text_00 = mgm01_ui_mgNameBig, Text0 = name
+  항목.x_heart_0S 부품 = favorite ? "normal" : "off"
+  항목.x_win_00/01/02 보임 = (type==2 / ==1 / ==0)
+  창.setItemVisible(type,i,1)
+  if d.reason != -1: (reason==0 이면 항목.x_gray_S_0·_1 숨김) 창.setItemEnable(type,i,0)
+for N ≤ i < count: 창.setItemVisible(type,i,0)
+for count ≤ k < 112: 항목 레이아웃 k 숨김
+null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0);  창 x_text_00 = 필터 LabelName
+```
+
+[판독] `ApplyChangeMgList2` — mgm01 @0x7100015550: 1 프레임 Wait 뒤 i < N 마다 이름 말풍선 너비 = 글자 폭+40(`x_mes_0S/x_base_00` 창 크기), `x_bd_00` = 그것+32, 칸의 전역 X(창 ComUiBase vt+0xb8, [추정: 페인 전역 X]) 에서 bd/2 를 빼고 더해 화면 −960..960 을 넘는 만큼 `x_mes_0S/x_00` 를 반대로 옮긴다(넘지 않으면 원래 위치); 이어 `UpdateNewIcon(id,i,0)`(NEW 보임 → `x_new_%02d`(S) 보이고 `normal`, 아니면 숨김). 마지막에 커서 칸 ID 로 NEW 관찰을 시작(IsNew && reason≠0, 아니면 관찰 중지).
+
+[판독] 커서·정리:
+- `MoveCursor(i, imm)` — mgm01 @0x7100015f5c: 창.setCursor(type,i,imm), 새 커서 항목 레이아웃 우선순위 101, 옛 커서 100(커서 항목이 위에 그려짐).
+- `ResetMgItem` — mgm01 @0x7100015ca0: 창.setCursor(type,−1,1), 옛 커서 100; 112개 항목 모두: 보임 → setItemEnable(type,i,1) → 우선순위 100 → `x_gray_S_0/_1` 보임 → 숨김. (회색 페인은 평소 보이고 알파는 `*_ng` 애니가 움직인다 — reason0 자리 그림만 숨겨 회색을 덮지 않는다.)
+- `PrepareMgListFlow(index, anim)` — 필터 index(−1 이면 현재) 목록 구성 → resume 이면 저장 ID(+0x278)의 위치, 없거나 resume0 이면 0 → ApplyChangeMgList → N>0 이면 MoveCursor(위치, imm=1) → ApplyChangeMgList2 → `x_cursor_LR` 부품 "normal" → anim 이 null 이면 창 in(imm=resume) 과 Back 안내 In·열림 대기, 아니면 창 PlayAnimation(anim)·끝까지 대기.
+- 필터 L/R(`MgListFlow_MoveFilter` — mgm01 @0x71000169a0): SE·FX → 창 `left/right_select_00` + `x_cursor_LR` `left/right_select` → 창 애니 끝까지 대기 → ResetMgItem → index ±1(양수 modulo, 방향 표 mgm01 @0x710004f6c8 {−1, +1}) → `PrepareMgListFlow(index, "left/right_select_01")`. **필터를 바꾸면 resume 이 0 이므로 커서는 0번**이다.
+- 이동(`MgListFlow_MoveCursor`) 은 §6.3 그대로이고 W = 형식 표의 열 수(+0x10)다. 바뀌면 CUR·FX·MoveCursor(i,1)·새 칸 NEW 관찰.
+- 목록에서 승패 표(3)로 나갈 때 커서 칸 ID 를 +0x278 에 둔다 → 승패 표가 resume1 → 돌아오면 그 칸에 커서. 설정(4)은 +0x278 = 결정한 ID 이고 설정 안에서 게임을 넘기면 +0x278 도 바뀐다 → 설정에서 B 로 오면 마지막에 본 게임 칸. 한 판 뒤에는 ContinueFlow 가 ModeData 의 filter·ID 를 되돌리고 resume1.
+
+[판독] 개별 설정 화면의 썸네일·문구 페인(보강, 판독: 어셈블리 `ApplySettingMgSetting` mgm01 @0x7100017180, `ApplySettingMgSetting_HighScore` @0x7100017ba8, `ApplyListMgSetting` @0x7100018230):
+- 큰 그림 = `x_thum_00` 재질 칸1 ← GetThumbnail(ID,0). 장르 `x_mggenre` = `mgm01_ui_InsertRuleType`(Text0 = GameRule 별 라벨 표 PTR_GameRule), `x_text_rule` = `mgm01_ui_mgRuleFp`(Text0 = `im_inst_<이름>_rule`).
+- **정정**: 플레이 횟수 = `x_record_00`(`x_text_00` = `mgm01_ui_playCount00`, `x_text_01` = `mgm01_pt_playCount01` Number0), 하이 스코어 = `x_record_01`(`x_text_00` = `mgm01_pt_highscore00`, `x_text_01` = 기록). 9.1 표의 배정(00 = 하이 스코어, 01 = 횟수)은 반대였다.
+- 미리보기 `x_preview/x_preview_0K` 재질 칸1 ← 후보 목록[(pos+오프셋) mod N] 의 썸네일, 오프셋 → K: −3→06, −2→05, −1→04, 0→00, +1→01, +2→02, +3→03, +4→07(알파0 슬라이드용).
+- `ApplyListMgSetting` 끝에서 `UpdateNewIcon(선택 ID, pos, consume=1)` — **설정에 들어가거나 게임을 넘기면 그 게임의 NEW 를 바로 소비**(Work SetNew(false)·save MG+4 bit0 clear) [판독].
+- 승패 표 열 썸네일 = `x_all/x_parts_%02d/x_thumbnail` 재질 칸1 ← GetThumbnail(행 ID,0) [판독 mgm01 @0x7100016ea4].
+
 ## 7. 애니·소리·레이아웃·메시지 연결
 
 | 대상 | 고유 연결 [판독][데이터] |
@@ -392,6 +468,14 @@ for latest up to100 valid ID rows:
 | 화면 시작/복귀 | Start/Continue BGM4; MgStart StopBGM3·PlayBGM5; flag4와 MGTransSound는 old §8.2 |
 
 [판독] enum→실제 사운드 label, 텍스트 삽입 메커니즘, 공용 창 애니 완료 판정은 기존 mgm_common §6.8·6.9·7 참조다. 모든 애니 frameSize가 같은 UI tick/실제 초라는 원본 실행 주장은 하지 않는다.
+
+정정(2026-10-07): 위 SE 표 "목록 이동/결정/잠금"의 결정은 `SQ_SE_MGM01_DEC` 이고 잠금은 `SQ_SE_SYS_ERROR` 다(§6.2 정정 줄). 승패 표 열기 `SQ_SE_MGM01_DECI_S`+FX 를 더한다.
+
+### 7.1 미니게임 썸네일 원천 (보강 2026-10-07)
+
+[판독] `bq::UiSharedTextureModule::GetThumbnail(id, n)` — main @0x7100297290(C `analysis/decomp/mgm01_list_thumb_main.c`): 이름 = `MGList::GetName(id)`; n≠0 이면 먼저 `"%s_%d^o"` 를 찾고, 없거나 n==0 이면 `"%s^o"`, 그것도 없으면 `"mg0101^o"`; 결과를 `GetTextureInfo(이름)`(main @0x7100296b10, 공용 UI 텍스처 레이아웃의 텍스처 표에서 찾기)로 돌려준다. mgm01 의 모든 호출은 n = 0 이다(목록·설정·미리보기·승패 표). 잠금(reason0) 자리 그림은 `GetTextureInfo("mgboss^o")` [판독: 어셈블리 mgm01 @0x7100014c04, mgm01 안의 유일한 `^o` 문자열 @0x7100044eaa].
+
+[데이터][실행: 변환] 텍스처는 `extracted/bea/bq.nx.bea/Parts.lyt` 의 `timg/__Combined.bntx` 에 있다: 목록 112개 이름 그대로 `mgXXXX^o` 112장 + `mgboss^o` 1장, 모두 **640×360 BC1_SRGB** 한 크기(크기별 변형 `_N^o` 없음). 형식별 크기 차이는 텍스처가 아니라 항목 레이아웃의 그림 페인 크기다(§6.7 표: 342×200·216×128·162×108×0.75, 커서 확대판 400×228·288×166·200×114; 설정 큰 그림 640×360, 미리보기 134×82×0.84, 승패 표 `x_thumbnail`). 재질 칸0 은 모양(마스크) 텍스처 `mgm01_win_thum_0N^s`·`mgm01_base_mgthum_0N^s`·`mgm01_base_mgpreview_00^s`, 칸1 이 그림 자리(`mgm01_white_00^s` 등)이고 코드는 칸1 을 바꾼다. 변환 `web/tools/analysis/mgm01_thumb_assets.py` → `web/assets/mgm01/thumb/<이름>_o.png`(113장, 원본 그대로 디코드, 가공 없음) + 명세 조각 `web/assets/mgm01/thumbs.json`(텍스처 키 = 원본 이름 `mgXXXX^o`, sRGB 목록).
 
 ## 8. 다른 기능과의 상호작용·저장되는 값
 
@@ -523,6 +607,32 @@ for latest up to100 valid ID rows:
 | 호출 계약 `Mgm01PlayRequest` | {id, name, rule, ruleNo, filter{enumNo, index, fromFavorite}, team{table, choice, format, teamIdByPid[4], gamePlayByPid[4]}, cpu, endless(모드 게임만), rhythm(rule10 만, 아니면 0), useGyro(Gyro ≠ −1), callInst, favoriteDirty} | 8.3 [판독]을 PlayerID 기준으로 풀어 둠. Work/Sync 쓰기·자이로 확인(상태 5)은 부르는 흐름(D) 몫 |
 | 즐겨찾기 저장 | `MgmWork.mg.favorite` + save MG+4 bit2, requestSave 없음 | 8.4 [판독]; 페이지는 끝날 때 localStorage 에 둔다 [설계] |
 | 그리지 않은 것 | 7장 미리보기·썸네일 그림(런타임 텍스처, 에셋 없음), `x_text_rule`(`im_inst_*_rule` 문구가 공용 글꼴 범위 밖), 플레이어별 얼굴(기본 그림), mginfo `press` 창 애니 | [미구현] |
+
+### 9.2 구현 계약 — 목록 본체·DecideMinigameFlow 상태기계·썸네일 (2026-10-07)
+
+코드 `web/script/shell/mgm01/{listView,listScreen,scene}.ts`(index export), 썸네일 `web/assets/mgm01/thumbs.json`·`thumb/`(§7.1), 페이지 `web/script/mgm01_page.ts` `runMgm01List`(ui.html `mgm01-list`), 시험 `web/tools/test_mgm01.ts` 8~10절. 위 9.1 의 "그리지 않은 것" 중 미리보기·썸네일은 이번에 넣었다(설정 화면 작은 수정).
+
+| 항목 | 웹 결정 | 근거 수준 |
+|---|---|---|
+| 순수 상태 `ListState` | 목록 구성(§6.7 Prepare)·커서 이동(§6.3, W = 형식 열 수)·결정/잠금/랜덤/승패 표/취소·필터(9.1 `ListFilterState` 그대로 끼움)·NEW 관찰(announce.ts `NewObserver`)을 입력 비트 → 사건 목록으로. 입력 순서·exact 비교·빈 목록 갈래·trig>1 skip 은 §5.5·6.2 그대로 | [판독] |
+| 그리기 `ListScreen` | 공용 창 `mgm01_base_freeplay_00` 에 3×112 메뉴, 항목 `mgm01_thum_00` 112개 Hook/Remove, 항목 표시 §6.7 의사코드 그대로, 썸네일 = 재질 칸1 `setTexture` | [판독] / 칸1 은 [데이터: 재질] |
+| 형식 바뀔 때 | 이전 type 칸에서 Remove → ResetMgItem → 새 type 칸에 Hook(§6.7 순서) | [판독] |
+| 이름 말풍선 | 글자 폭(`measure`)+40 = `x_base_00`, +32 = `x_bd_00`, 칸 전역 X ± bd/2 가 ±960 을 넘는 만큼 `x_00` 이동. 나눈 창 조각 늘이기는 online `resizeWindow` 와 같은 규칙을 목록 화면 안에 둠(import 경계) | [판독] / 조각 재배치 [설계] |
+| 항목 우선순위 101/100 | 공용 창 `draw` 가 커서 항목을 마지막에 그리는 것으로 대신 | [설계] |
+| NEW 관찰 | 틱마다 rate 1(60 Hz 의 GetDeltaRate = 1 로 봄), wait 12 < 누적이면 소비(Work·save bit0, 항목 `x_new_0S` 숨김) | rate 단위 [추정] |
+| FX(`PlayFxTriggerOperationPlayer`) | 웹에 대응 없음 → 사건만 남기고 아무것도 안 함, 진동은 `MgmSound.vibrate(조작, 'error')` | [설계] |
+| 상태기계 `Mgm01Scene` | §5.2·5.5 의 0·2·3·4·5·6·7·8·9 를 한 Fiber 로. 3 = `HistoryScreen`(work 결과 고리 `historyFromWork`), 4 = `SettingScreen`(4→4 랜덤은 그 안에서 반복), 2 = `ListScreen`. 잠금 안내 `AnnounceScreen` 은 목록 화면이 갖고 상태와 상관없이 매 틱 갱신(원본 별도 Fiber) | [판독] / 묶는 방식 [설계] |
+| 상태 5 자이로 | `SetGyroFlow`(체감 설정 장면) 없음 → 항상 허용(→6) | [설계] |
+| 상태 8 MgStartFlow | 1.0 s 기다림 → 바깥 `call(Mgm01PlayRequest)`; ModeData 저장 = `work.freeplaySelect {filter, index, id, fromFavorite}`, flag1(엔드리스) 켬/끔. 3D 대기·FadeOut 1.0 s·Work/Sync/PlayerWork 쓰기는 부르는 쪽(D) 몫 | 시간 [판독 5.3] / 생략 [설계] |
+| 한 판 복귀 | 장면이 새로 만들어질 때 `returned`(MgResultEntry) 가 있으면 `round += 1`·`pushResult`(원본 ring writer 미확정 §11-1) → ContinueFlow: `freeplaySelect` 로 필터·ID 복원, resume1 → 상태 2(목록 창 in 애니 없이) | 기록 위치 [설계] / 복원 [판독] |
+| Back 안내 | `MgmGuide(17, 'sys_ctrl_back')` 를 장면이 갖고 목록 진입 때 In, 7·5 에서 Out | [판독 5.5] |
+| 랜덤 안내(UIOmakaseGuide 2칸) | 공용 `MgmGuide` 가 1칸 판이라 그리지 않음 | [미구현] |
+| 설정 화면 수정(작게) | 큰 그림 `x_thum_00`·미리보기 8칸(§6.7 오프셋 표) 썸네일, 게임 넘김 때 `x_preview`·`x_cursor_LR` 부품 left/right_select 와 그 끝에 미리보기 다시 넣기, 게임 넘김 SE `SQ_SE_MGM01_DECI_LR`(PlaySe2D 위치는 생략), 기록 페인 정정(00 = 횟수·01 = 하이 스코어), 보일 때 NEW 소비 훅 `onShow(id)` | [판독: 어셈블리 §6.7] / 입력 막지 않음은 [설계] |
+| 승패 표 수정(작게) | 열 `x_parts_NN/x_thumbnail` 칸1 = 썸네일(생성자 선택 인자 `thumb(id)`) | [판독 §6.7] |
+| ui.html 한 판 | 가짜 자식 장면: 즉시 결과(승패 무작위, judge 1, 사람 아닌 칸 포함 4바이트 0/1) + save 선두 u16 +1(최대 999) 후 ret | [설계] — 실제 연결은 D 파트(mg1801) |
+| 시험값 시작 필터 | `startEnum`(ui.html `filter=`) 이 있으면 상태 0 의 MgAll 대신 그 필터 | [설계: 시험용] |
+
+[실행: 시험] 검증(2026-10-07): `npx tsx tools/test_mgm01.ts` 271/271(8절 순수 상태: 위치→페인 표가 레이아웃 좌표상 행 우선 순서인지, 끝 행 Q 보정·반복 막힘, 결정/잠금/랜덤/승패 표/취소/필터/빈 즐겨찾기/NEW 13틱 소비; 9절 실제 명세: 3형식 창 페인·x_win_0S·썸네일 칸1 키·mgboss 자리·말풍선 문구·112 이름 글자가 `bqfont_small` 에 전부·썸네일 113장 파일/sRGB; 10절 상태기계: 0→2→4→2(커서 복원·in 애니 없음)→3→2→4→5→6→8→호출, 복귀 Round·결과 기록·ContinueFlow 같은 칸, 승패 표 열 썸네일, B→7→9). 6절 기대값 2줄은 위 6.7 정정(기록 페인)으로 고쳤다. 기존 시험 전체·check_mgmcommon(mgm01 import 경계 포함) 통과, tsc 기존 serve.ts 2개만, 빌드 통과. 헤드리스 `npx tsx tools/shot_mgm01.ts list` 콘솔 오류 0(`test/out/mgm01/11~18_*.png`: 112칸·접속 중 리듬 잠금 안내·보스 잠금 자리·4인 대전 32칸 형식·보스 15칸 형식·설정 진입(큰 그림·미리보기)·설정 B 복귀·승패 표·가짜 한 판 뒤 복귀). reason0(보스 자리) 결정은 안내 문구가 없어(§7 표 reason0 = null) 안내 창이 뜨지 않는 것이 원본 그대로다.
 
 ## 10. 검증 방법·실행 결과
 

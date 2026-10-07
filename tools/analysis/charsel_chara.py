@@ -23,10 +23,24 @@ SRC = ROOT / "extracted" / "converted" / "charsel"
 CHARLIST = ROOT / "extracted" / "bea" / "bq.nx.bea" / "common" / "data" / "characterlist.json"
 
 
-KEEP_ATTR = {"_C1", "TEXCOORD_2"}
+KEEP_ATTR = {"_C1", "_C2", "TEXCOORD_2"}
+# 몸 재질 셰이더 그래프 판독 표(docs 12.11, charsel_body_graph.py 출력)
+GRAPH = ROOT / "analysis" / "mat" / "charsel_body_graph.json"
 
 
-def eye_info(js, rest, src, alb, aw, ah, mot):
+def body_rule(key, fr):
+    """알베도 좌표 S·O·_C1/_C2 오프셋 항과 기본색 섞기(docs 12.11) [판독]"""
+    g = json.loads(GRAPH.read_text(encoding="utf-8")).get(key)
+    if not g:
+        return None
+    out = {"uv": g["uv"]}
+    if "tint" in g:
+        c1 = fr.get("params", {}).get("material_utility_color1", {}).get("value", [0, 0, 0, 1])[:3]
+        out["tint"] = {"mask": g["tint"]["mask"], "f": g["tint"]["f"], "color": [round(v, 6) for v in c1]}
+    return out
+
+
+def eye_info(js, rest, src, alb, aw, ah, mot, uvso=None):
     """눈알 마스크·눈꺼풀 데이터(docs 12.2). 반환: {albedoMask, lid}"""
     im = np.array(Image.open(src / "tex" / alb).convert("RGBA")) if alb else None
     low_alpha = 0
@@ -47,7 +61,9 @@ def eye_info(js, rest, src, alb, aw, ah, mot):
                 continue
             u0 = mwc.acc_array(js, rest, a["TEXCOORD_0"])[sel].astype(np.float64)
             H, W = im.shape[:2]
-            if ah == 2 * aw:
+            if uvso:
+                u0 = u0 * np.array(uvso[0]) + np.array(uvso[1])
+            elif ah == 2 * aw:
                 u0[:, 1] = 0.5 + 0.5 * u0[:, 1]
             elif aw == 2 * ah:
                 u0[:, 0] = 0.5 * u0[:, 0]
@@ -58,12 +74,7 @@ def eye_info(js, rest, src, alb, aw, ah, mot):
                 body_cols.append(im[y, x, :3].astype(float))
     out = {"albedoMask": low_alpha > 0}
     fr = js["materials"][0].get("extras", {}).get("fres", {}) if js["materials"] else {}
-    # 흰자 칠하기(docs 12.8) [추정]: 알베도 흰자 규칙이 없고 몸 메시 눈알 알베도가 채도 높은 색이면 셰이더 그래프가 utility_color1 로 칠한다고 본다
-    has_eye = any(("_eye_alb" in sm["texture"] or "_eye_arr_alb" in sm["texture"]) for sm in fr.get("samplers", []))
-    if has_eye and body_cols and not out["albedoMask"]:
-        mean = np.concatenate(body_cols).mean(0)
-        if float(mean.max() - mean.min()) > 80:
-            out["sclera"] = [round(v, 6) for v in fr.get("params", {}).get("material_utility_color1", {}).get("value", [1, 1, 1, 1])[:3]]
+    # 흰자 칠하기(12.8 [추정])는 셰이더 그래프 판독으로 틀린 것이 확인돼 없앴다(docs 12.11): 캐서린 흰자는 알베도(v·0.8 + 0.2)가 준다
     lid = next((sm for sm in fr.get("samplers", []) if "eyelid" in sm["texture"] and sm["texture"].endswith(("_alb", "_arr_alb")) and sm.get("png")), None)
     if lid and t2y:
         a = np.array(Image.open(src / "tex" / lid["png"]).convert("RGBA"))[..., 3]
@@ -112,7 +123,9 @@ def convert(key, clips, dst_root, reuse=False):
 
     mot = json.loads((src / "motions.json").read_text(encoding="utf-8"))
     keep = list(clips) + sorted({b for m in clips for b in (mot.get(m, {}).get("blink") or {}).values()})
-    eyes = eye_info(js, rest, src, alb, aw, ah, mot)
+    body_fr = next((m.get("extras", {}).get("fres", {}) for m in js["materials"] if m["name"] == "body_m"), {})
+    body = body_rule(key, body_fr)
+    eyes = eye_info(js, rest, src, alb, aw, ah, mot, (body["uv"]["s"], body["uv"]["o"]) if body else None)
     drop = mwc.DROP_ATTR
     mwc.DROP_ATTR = drop - KEEP_ATTR
     try:
@@ -147,6 +160,5 @@ def convert(key, clips, dst_root, reuse=False):
     return {"glb": f"chara/{key}/{glb_name}", "motions": f"chara/{key}/motions.json", "clips": clip_info,
             "eye": {"tex": "chara/" + tex_map[eye] if eye else None, "material": eye_mat,
                     "params": [cd["eye0_shaderparam"], cd["eye1_shaderparam"]], "albedoMask": eyes["albedoMask"],
-                    **({"sclera": eyes["sclera"]} if "sclera" in eyes else {}),
                     **({"lid": {**{k: v for k, v in eyes["lid"].items() if k != "png"}, "tex": "chara/" + tex_map[eyes["lid"]["png"]]}} if "lid" in eyes else {})},
-            "albedo": [aw, ah]}
+            "albedo": [aw, ah], **({"body": body} if body else {})}

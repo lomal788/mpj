@@ -613,3 +613,38 @@ createCharSelect(opts): Promise<{ step(): void; render(): void; dispose(): void;
 - 보이스·SE·BGM 은 헤드리스에서 mute=1 이라 재생 확인은 못 했다(어댑터 코드만 바뀜).
 
 - 정정(2026-10-07, 사용자 지적 "동키콩 → 랜덤/잠긴 칸이면 캐릭터가 멈춰 버림"): 카드 렌더 타깃이 `samples: 4`(MSAA)라 three 가 멀티샘플 → 텍스처 resolve 를 `render()` 안에서만 한다. 모델이 없을 때 `clear()` 만 하고 `render()` 를 건너뛰어 텍스처에 이전 캐릭터 마지막 프레임이 남았다. 원본 규칙(5.5: 랜덤·잠김 = 모델 지우고 비움)대로 비우려면 빈 장면도 매 프레임 `render()` 한다(`preview3d.ts` render). [실행: 코드 분석, three r180 동작]
+
+### 12.11 몸 재질 셰이더 그래프 판독 — 캐서린 "배까지 전부 분홍"·22명 _C1/_C2 규칙 (2026-10-07, 코드 수정 전에 기록)
+
+**판독 방법(새로 연 경로)** [판독]: 캐릭터 셰이더 팩 `extracted/bea/chara~pcNN.nx.bea/_chara/pcNN.bnbshpk` → `bnbshpk_split.py`(FSHA: fluid·forward_plus·container) → `bfsha_dump model/match`(재질 옵션 = glb `extras.fres.shader.options`, 입력 `analysis/mat/charsel_mats_in.json`) → 몸 재질 프로그램 고르기(`analysis/mat/prog/match.json`) → envydis gm107 디스어셈블 + 이름 주석 `sass_dis.py` → `analysis/mat/sass/pcNN__forward_plus__pK.{vs,fs}.txt`(24 프로그램). 도구는 F:/dev/mps 판(hsmg402 판독 때 만든 것)을 `web/tools/analysis/`·`tools/envydis_build/` 로 복사해 썼다. mpj 판은 텍스처가 **바인드리스**(`tex b`, 핸들 = Material UBO 앞 0x10 + 0x10 × 샘플러 위치)라 `sass_dis.py` 에 `Material.@샘플러` 주석을 더했다(pc13: 0x210 = `sg_utility_texture2darray0` 이 `array t2d` 로 읽히는 것으로 위치 규칙 확인).
+- 정점 입력 위치 = bfsha 속성 위치: `_u0`(uv0·uv1) 8, `_u2` 9, `_c0` 10, `_c1` 11, `_c2` 12. VS 출력 v10 = 몸 알베도 좌표 — FS 가 몸 알베도 슬롯(`_a0` 과 같은 텍스처의 `sg_utility_*`) 핸들로 `tex` 하는 좌표가 22명 모두 `ipa v10.xy` 다.
+- 규칙 표 생성: `web/tools/analysis/charsel_body_graph.py`(VS 를 다항식으로 풀어 v10 = S·(uv0 + Σ k·정점색·파라미터) + O, FS utility_color 사용처는 손 판독 표) → `analysis/mat/charsel_body_graph.json`.
+
+**캐서린(pc13, 프로그램 p0) 몸 기본색** [판독 VS 802~808, FS 33~40·244~330]:
+1. 알베도 좌표 = **(u, 0.8·v + 0.2)** (`fmul32i 0x3f4ccccd`, `fadd32i 0x3e4ccccd`). 알베도 1024×1280 의 위 256 px(v < 0.2)는 눈꺼풀 그림 8칸이고 몸은 아래 80 % 다. 웹은 가로세로 비 규칙(1:2 → v2, 2:1 → u2, 그 밖 그대로)이라 캐서린을 **v 그대로** 읽어 몸 전체가 위로 밀린 자리(분홍)를 칠했다 = 사용자 지적 "배도 흰색인데 전부 분홍"의 원인이다. 몸 메시 눈알 정점(_C1 r/b)의 알베도 평균이 옛 좌표 (203, 59, 144) 분홍 → 새 좌표 (175, 190, 194) 흰색이고, 거의 흰 정점 수도 199 → 297 로 는다 [데이터].
+2. 기본색 = 알베도 → 눈 그림자 `eyeshadow_alb`(v13, 칸 안일 때 α 로 섞기) → 눈동자 `eye_alb`(v11 = uv1 − c1.r·P1 − c1.b·P0, 칸 안일 때) — 웹 눈 합성과 같다.
+3. **utility_color 는 캐서린 FS 에 한 번도 나오지 않는다**. 12.8 의 "흰자 = utility_color1 로 칠하기" [추정]은 틀렸다 — 흰자는 올바른 좌표의 알베도가 준다. 웹의 흰자 칠하기(sclera)를 없앤다.
+4. **_C1 각 성분**: r·b = 눈 0·1 표시(눈 좌표 오프셋 가중, 모델 어둡게 `Model[0x2a4]` 에서 눈알 제외), **g = 노멀 배열 층 번호**(`f2i u16` → `sg_utility_texture2darray0` = `body_arr_nml` 층 — 색이 아니다. 조정자가 본 "G = 1 이 1993 정점"은 노멀 2층을 쓰는 영역), a = 반사(큐브맵) 세기 곱. 정점색 _C0 은 `Model[0x2ac]`(실행 중 모델 값, 색 변형 번호로 봄 [추정]) 와 함께 조명 뒤쪽에서만 쓰인다 — 기본 0 [미확정].
+5. 그 밖의 모델 값 `Model[0x2a4]`(어둡게)·`Model[0x280]`(젖음 섞기, `wet_mask`)는 실행 중 값이라 캐릭터 선택에서는 0 으로 둔다 [추정].
+
+**22명 전수(`charsel_body_graph.json`)** [판독]:
+
+| 규칙 | 해당 | 웹(수정 전) | 수정 |
+|---|---|---|---|
+| 알베도 좌표 기본 변환 S·O | v·0.5 + 0.5: pc01~06·08·09·11·14·51·54·58, u·0.5: pc50, 그대로: pc07·12·52·53·56·61·62, **v·0.8 + 0.2: pc13** | 가로세로 비 규칙 — pc13 만 다름 | 셰이더 판독 값(S, O)을 그대로 쓴다 |
+| 알베도 좌표 오프셋 = _C1 r/b(눈 영역) × 파라미터 | P2: pc01·02·06·51, P4: pc03·04·11·14 (u += c1.b·P.x + c1.r·P.z, v += c1.r·P.w + c1.b·P.y), P0/P1: pc08·09(u += c1.b·P0.x + c1.r·P1.x, v 같은 꼴), pc54(u 부호 −), pc58(c1.b·P0) | **없음** | 정점 셰이더에서 더한다. 깜빡임 fcl_blink00 과 결정 co_chr_slct00a 가 이 값을 0 → 0.5/0.25 로 움직여(예 마리오 P2) 눈 영역 알베도를 눈꺼풀 그림 칸으로 옮긴다 = 원본 깜빡임·표정 [데이터: motions.json] |
+| 알베도 좌표 오프셋 = _C2 | pc56: v += c2.r·P2.x + c2.b·P0.x(깜빡임 0 → 0.2), pc08·09: v += 0.01·(c2.b·P2.y + c2.r·P3.y)(움직이지 않음) | 없음(변환기가 _C2 를 버림) | 변환기가 _C2 를 남기고 정점 셰이더에서 더한다 |
+| 기본색 섞기(utility_color) | pc08·09: base = mix(base, alb·(sat(P2.x)·c2.b + sat(P3.x)·c2.r) + C1, max(c2.r, c2.b)) — 깜빡임·결정에서 P2.x/P3.x 가 1 → 0 이면 눈 영역이 C1(0.025, 0.02, 0.015, 짙은 갈색)이 된다. pc58: base = mix(base, alb·P2.y + C1, c2.b) — 결정·깜빡임에서 P2.y 1 → 0.44/0 | 없음 | 조각 셰이더에서 같은 식 |
+| 기본색 섞기 — 효과 없음 | pc56: x = mix(C1, C2, 모델 색 변형) + max(alb·c1.r·P3.x, alb·c1.b·P1.x), 기본 P1.x = P3.x = 1·C1 ≈ 0.002 이고 모션이 P1/P3 를 안 움직임 | — | 적용 안 함(차이 없음) [데이터] |
+| utility_color 를 쓰는 다른 캐릭터 | 없음(24 프로그램 grep) | 캐서린 흰자 칠하기(12.8) | 제거 |
+
+- 파라미터 값 = 재질 기본값, 모션 재질 표(지금 모션, 깜빡임 묶음이 있으면 깜빡임 표가 먼저 — 눈 오프셋과 같은 규칙)를 프레임마다 읽는다.
+- 노멀·거칠기 맵도 같은 v10 으로 읽는 것으로 본다(FS 의 노멀 배열 좌표 = v10.x, 층 = c1.g) — 웹은 같은 오프셋을 노멀·거칠기·금속 맵 좌표에도 더한다 [판독 일부].
+- 남은 [미확정]: c1.g 노멀 층 2개를 웹이 0 층만 쓰는 것(색 아님), `Model[0x2ac]`·`Model[0x2a4]`·`Model[0x280]` 실행 중 값, pc08·09 의 c1.g 보조 표본(`P4.x` 로 섞음, 모션에서 P4.x = 1 이라 영향 없음).
+
+**12.11 구현·검증 결과 (2026-10-07)**
+- 변환기 `charsel_chara.py`: `_C2` 를 남기고, `charsel_body_graph.json` 규칙을 spec `chars[].body`(uv S·O·항, pc08·09·58 tint 색 = utility_color1)로 넣는다. 눈 정보의 알베도 좌표도 이 S·O 로 계산하고, 흰자 칠하기(`eye.sclera`)는 없앴다. 변환 결과 spec 차이 = 22명 `body` 추가 + pc13 `eye.sclera` 삭제뿐(다른 값 그대로).
+- `preview3d.ts`: 알베도·노멀·거칠기·금속 맵 좌표 = 판독 S·O(텍스처 repeat/offset) + 정점 셰이더 `bodyD`(_C1/_C2 × `bodyP[8]`), 조각 셰이더 tint, 파라미터는 프레임마다 깜빡임 표 → 모션 표 → 기본값. 흰자 칠하기 셰이더 코드 삭제.
+- 검사: `check_charselect` 5d(22명: 규칙 = 판독 표, pc13 만 S·O 가 가로세로 비 규칙과 다름, tint 유무·색, _C1/_C2 남김, 오프셋 파라미터 기본 0, 셰이더 흰자 칠하기 없음) — 2403/2403. `test_charselect` 67/67, tsc 신규 오류 0, `check_logic` 통과.
+- 헤드리스(1회): 캐서린 확대(`05_body_pc13_catherine.png`)·결정 화면(`03_all_decided_ok.png`)에서 배·흰자가 흰색, 콧구멍·반지 위치 정상. 부끄부끄(tint 셰이더, 경합 페이지 랜덤 결정)가 결정 모션에서 표정이 바뀌어(P0 오프셋) 그려짐(`04_race_random.png`) = tint 셰이더 컴파일 확인. 요시 이후 확대 촬영은 촬영 스크립트 버그(목표 칸이 점유되면 그 캐릭터를 끝없이 기다림)로 시간 초과 — 스크립트는 고쳤고 재촬영은 하지 않았다.
+- 12.8 의 "캐서린 흰자 = utility_color1" [추정]은 이 판독으로 철회한다.

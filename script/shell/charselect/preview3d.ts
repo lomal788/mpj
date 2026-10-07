@@ -7,7 +7,9 @@
  * docs 12.1~12.2:
  * - 메시 보임 = 메시 노드 visBone 뼈의 보임. 뼈 보임 = (지금 모션에 깜빡임 묶음이 있으면 깜빡임 vis) → 지금 모션 vis → 뼈 기본값(extras.visible).
  * - 눈동자 마스크 = albedoMask 면 (1 − 알베도 알파), 아니면 1(docs 12.8 — 12.2 의 _C1 마스크는 회귀라 되돌림).
- * - 정점색 _C1(r/b)은 몸 메시(*_body__*)에서만 눈알 표시로 쓴다: 흰자 칠하기(sclera, 캐서린)·눈꺼풀.
+ * - 정점색 _C1(r/b)은 몸 메시(*_body__*)에서만 눈알 표시로 쓴다: 눈꺼풀. (흰자 칠하기는 docs 12.11 판독으로 없앰)
+ * - 몸 재질 셰이더 그래프(docs 12.11) [판독]: 알베도 좌표 = S·(uv0 + Σ k·정점색(_C1/_C2)·파라미터) + O, pc08·09·58 기본색 섞기.
+ *   파라미터 = 깜빡임 표 → 지금 모션 표 → 재질 기본값.
  * - 눈꺼풀(셰이더 그래프, 동키콩·가봉) [추정]: eyelid 텍스처를 (frac(t2.x), t2.y − s) 에서 샘플해 덮는다.
  *   s = y + c·(아래 끝 − (가장자리 + y)), c = clamp((x기본 − x)/(x기본 − x최소), 0, 1), (x, y) = material_utility_parameter2/3.
  * stats: 로딩 구간 시간(ms) 기록(docs 12.7 측정).
@@ -21,7 +23,7 @@
 import * as THREE from 'three';
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
-import type { CharaSpec, Spec } from './types';
+import type { BodyGraph, CharaSpec, Spec } from './types';
 
 type MatTable = Record<string, Record<string, Record<string, number | number[]>>>;
 
@@ -53,8 +55,11 @@ interface EyeUniforms {
   lidMap: { value: THREE.Texture | null };
   lidOn: { value: number };
   lidShift: { value: THREE.Vector2 };
-  scleraOn: { value: number };
-  scleraColor: { value: THREE.Color };
+}
+
+interface BodyUniforms {
+  bodyP: { value: THREE.Vector4[] };
+  tintColor: { value: THREE.Color };
 }
 
 interface Slot {
@@ -74,6 +79,7 @@ interface Slot {
   /** 본 모션 노드 프레임(모델이 없어도 흐른다) */
   frame: number;
   eye: EyeUniforms | null;
+  body: BodyUniforms | null;
   motions: MotionTable;
   matDefaults: Record<string, number[]>;
   visMeshes: Map<string, THREE.Object3D[]>;
@@ -154,6 +160,8 @@ function makeScene(env: Spec['env']): THREE.Scene {
 
 const BODY_MAPS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'] as const;
 const PARAM_LID = ['material_utility_parameter2', 'material_utility_parameter3'];
+const PARAM_ALL = Array.from({ length: 8 }, (_, i) => `material_utility_parameter${i}`);
+const COMP_KEY = ['0x00', '0x04', '0x08', '0x0C'];
 
 function paramAt(v: number | number[] | undefined, f: number): number | undefined {
   if (v === undefined) return undefined;
@@ -230,6 +238,7 @@ export class Preview3D {
         next: null,
         frame: 0,
         eye: null,
+        body: null,
         motions: {},
         matDefaults: {},
         visMeshes: new Map(),
@@ -381,6 +390,7 @@ export class Preview3D {
     s.blinkOn = false;
     s.acts = [];
     s.eye = null;
+    s.body = null;
     s.chara = chara;
     s.shown = shown;
     s.current = '';
@@ -414,7 +424,7 @@ export class Preview3D {
     s.pendingStat = stat;
   }
 
-  private buildRoot(c: CharaSpec, l: Loaded): { root: THREE.Object3D; eye: EyeUniforms | null } {
+  private buildRoot(c: CharaSpec, l: Loaded): { root: THREE.Object3D; eye: EyeUniforms | null; body: BodyUniforms | null } {
     const root = cloneSkinned(l.gltf.scene);
     root.scale.setScalar(c.scale);
     const eye: EyeUniforms | null = l.eyeMap
@@ -426,9 +436,11 @@ export class Preview3D {
           lidMap: { value: l.lidMap },
           lidOn: { value: l.lidMap ? 1 : 0 },
           lidShift: { value: new THREE.Vector2() },
-          scleraOn: { value: c.eye?.sclera ? 1 : 0 },
-          scleraColor: { value: new THREE.Color(...(c.eye?.sclera ?? [1, 1, 1])) },
         }
+      : null;
+    const bg = c.body && (c.body.uv.terms.length || c.body.tint) ? c.body : null;
+    const body: BodyUniforms | null = bg
+      ? { bodyP: { value: Array.from({ length: 8 }, () => new THREE.Vector4()) }, tintColor: { value: new THREE.Color(...(bg.tint?.color ?? [0, 0, 0])) } }
       : null;
     const cache = new Map<string, THREE.Material>();
     root.traverse((o) => {
@@ -437,16 +449,28 @@ export class Preview3D {
       if ((o as THREE.SkinnedMesh).isSkinnedMesh) o.frustumCulled = false;
       const src = mesh.material as THREE.MeshStandardMaterial;
       if (src.name !== 'body_m' || !src.isMeshStandardMaterial) return;
-      const rule = o.userData.mpjUv as string | undefined;
+      // 알베도 좌표 기본 변환 = 셰이더 판독 S·O(docs 12.11), 표가 없으면 가로세로 비 규칙(mpjUv)
+      const so: UvSO | null = c.body
+        ? [c.body.uv.s, c.body.uv.o]
+        : o.userData.mpjUv === 'v2'
+          ? [[1, 0.5], [0, 0.5]]
+          : o.userData.mpjUv === 'u2'
+            ? [[0.5, 1], [0, 0]]
+            : null;
       const g = mesh.geometry;
       const useEye = !!eye && src.name === (c.eye?.material ?? 'body_m') && !!g.getAttribute('uv1');
-      const key = `${rule ?? ''}|${useEye}`;
+      const key = `${so ? so.flat().join(',') : ''}|${useEye}`;
       let m = cache.get(key);
       if (!m) {
-        m = bodyMaterial(src, rule, useEye ? eye : null);
+        m = bodyMaterial(src, so, useEye ? eye : null, bg, body, c.pc);
         cache.set(key, m);
       }
       mesh.material = m;
+      if (bg) {
+        const n = g.getAttribute('position').count;
+        for (const [name, from] of [['bodyC1', '_c1'], ['bodyC2', '_c2']] as const)
+          if (!g.getAttribute(name)) g.setAttribute(name, g.getAttribute(from) ?? new THREE.BufferAttribute(new Float32Array(n * 4), 4));
+      }
       if (useEye) {
         const n = g.getAttribute('position').count;
         if (!g.getAttribute('eyeUv')) g.setAttribute('eyeUv', g.getAttribute('uv1'));
@@ -457,11 +481,11 @@ export class Preview3D {
         if (!g.getAttribute('eyeT2')) g.setAttribute('eyeT2', g.getAttribute('uv2') ?? new THREE.BufferAttribute(new Float32Array(n * 2).fill(-1), 2));
       }
     });
-    return { root, eye };
+    return { root, eye, body };
   }
 
   private build(s: Slot, c: CharaSpec, l: Loaded): void {
-    const { root, eye } = this.buildRoot(c, l);
+    const { root, eye, body } = this.buildRoot(c, l);
     s.visMeshes = new Map();
     s.boneDefault = new Map();
     root.traverse((o) => {
@@ -481,11 +505,12 @@ export class Preview3D {
     s.blink = l.gltf.animations.some((a) => a.name === 'fcl_blink00' || a.name === 'fcl_blink00_shape') ? new THREE.AnimationMixer(root) : null;
     s.blinkOn = false;
     s.eye = eye;
+    s.body = body;
     s.motions = l.motions;
     const mats = (l.gltf.parser.json.materials ?? []) as { name: string; extras?: { fres?: { params?: Record<string, { value: number[] }> } } }[];
-    const body = mats.find((mm) => mm.name === (c.eye?.material ?? 'body_m'));
+    const bodyMat = mats.find((mm) => mm.name === (c.eye?.material ?? 'body_m'));
     const defs: Record<string, number[]> = {};
-    for (const p of [...(c.eye?.params ?? []), ...PARAM_LID]) if (body?.extras?.fres?.params?.[p]) defs[p] = body.extras.fres.params[p].value;
+    for (const p of [...(c.eye?.params ?? []), ...PARAM_ALL]) if (bodyMat?.extras?.fres?.params?.[p]) defs[p] = bodyMat.extras.fres.params[p].value;
     s.matDefaults = defs;
   }
 
@@ -560,6 +585,20 @@ export class Preview3D {
       for (const m of meshes) m.visible = on;
     }
     if (s.eye) this.applyEyes(s, cur, blink, wrap(s.frame, blink?.frames));
+    if (s.body) this.applyBody(s, cur, blink, wrap(s.frame, blink?.frames));
+  }
+
+  /** 몸 셰이더 그래프 파라미터(docs 12.11): 깜빡임 표 → 지금 모션 표 → 재질 기본값 [순서 추정, 눈꺼풀과 같은 규칙] */
+  private applyBody(s: Slot, cur: MotionInfo | undefined, blink: MotionInfo | undefined, bf: number): void {
+    const mat = cur?.mat?.body_m;
+    const f = cur?.loop ? wrap(s.frame, cur.matFrames ?? cur.frames) : s.frame;
+    const bmat = blink?.mat?.body_m;
+    const bfm = blink ? wrap(bf, blink.matFrames ?? blink.frames) : 0;
+    PARAM_ALL.forEach((p, i) => {
+      const d = s.matDefaults[p] ?? [0, 0, 0, 0];
+      const v = COMP_KEY.map((k, j) => paramAt(bmat?.[p]?.[k], bfm) ?? paramAt(mat?.[p]?.[k], f) ?? d[j] ?? 0);
+      s.body!.bodyP.value[i].set(v[0], v[1], v[2], v[3]);
+    });
   }
 
   /** 1틱(1/60 s): 시간축은 모델이 없어도 흐른다(붙을 때 그 프레임부터) */
@@ -636,31 +675,57 @@ export class Preview3D {
   }
 }
 
-function uvTransform(t: THREE.Texture, rule: string | undefined): THREE.Texture {
+type UvSO = [[number, number], [number, number]];
+
+function uvTransform(t: THREE.Texture, so: UvSO): THREE.Texture {
   const c = t.clone();
-  if (rule === 'v2') {
-    c.repeat.set(1, 0.5);
-    c.offset.set(0, 0.5);
-  } else if (rule === 'u2') {
-    c.repeat.set(0.5, 1);
-    c.offset.set(0, 0);
-  }
+  c.repeat.set(so[0][0], so[0][1]);
+  c.offset.set(so[1][0], so[1][1]);
   c.needsUpdate = true;
   return c;
 }
 
-/** body_m 재질: UV 규칙 + 흰자 칠하기(캐서린) + 눈동자 합성(TEXCOORD_1 − 오프셋, 마스크 = albedoMask 면 1 − 알베도 알파) + 눈꺼풀(docs 12.2·12.8) */
-function bodyMaterial(src: THREE.MeshStandardMaterial, rule: string | undefined, eye: EyeUniforms | null): THREE.MeshStandardMaterial {
+const glslRef = (e: string): string => e.replace(/\bP(\d)\.([xyzw])/g, 'bodyP[$1].$2').replace(/\bc([12])\.([xyzw])/g, 'vBodyC$1.$2');
+
+/** 몸 셰이더 그래프 정점 코드(docs 12.11): bodyD = Σ k·정점색·파라미터 를 알베도·노멀·거칠기·금속 좌표에 더한다(텍스처 변환 S·O 앞) */
+function bodyVertex(bg: BodyGraph): string {
+  const d = bg.uv.terms.map((t) => `bodyD.${'xy'[t.axis]} += ${t.k.toFixed(6)} * bodyC${t.color[1]}.${t.color[3]} * bodyP[${t.param.slice(-1)}].${t.comp};`).join('\n');
+  const maps = [
+    ['USE_MAP', 'vMapUv', 'mapTransform', 'MAP_UV'],
+    ['USE_NORMALMAP', 'vNormalMapUv', 'normalMapTransform', 'NORMALMAP_UV'],
+    ['USE_ROUGHNESSMAP', 'vRoughnessMapUv', 'roughnessMapTransform', 'ROUGHNESSMAP_UV'],
+    ['USE_METALNESSMAP', 'vMetalnessMapUv', 'metalnessMapTransform', 'METALNESSMAP_UV'],
+  ]
+    .map(([def, v, m, uv]) => `#ifdef ${def}\n${v} = ( ${m} * vec3( ${uv} + bodyD, 1 ) ).xy;\n#endif`)
+    .join('\n');
+  return `{\nvec2 bodyD = vec2(0.0);\n${d}\n${maps}\n}\nvBodyC1 = bodyC1;\nvBodyC2 = bodyC2;`;
+}
+
+/** body_m 재질: UV 규칙(S·O + 정점색 오프셋) + 기본색 섞기(docs 12.11) + 눈동자 합성(TEXCOORD_1 − 오프셋, 마스크 = albedoMask 면 1 − 알베도 알파) + 눈꺼풀(docs 12.2·12.8) */
+function bodyMaterial(src: THREE.MeshStandardMaterial, so: UvSO | null, eye: EyeUniforms | null, bg: BodyGraph | null, body: BodyUniforms | null, pc: string): THREE.MeshStandardMaterial {
   const m = src.clone();
-  if (rule) {
+  if (so) {
     for (const k of BODY_MAPS) {
       const t = m[k];
-      if (t) m[k] = uvTransform(t, rule);
+      if (t) m[k] = uvTransform(t, so);
     }
   }
-  if (!eye) return m;
-  m.customProgramCacheKey = () => 'charselect-body-eye3';
+  if (!eye && !bg) return m;
+  m.customProgramCacheKey = () => `charselect-body4|${eye ? 'eye' : ''}|${bg ? pc : ''}`;
   m.onBeforeCompile = (sh) => {
+    if (bg && body) {
+      Object.assign(sh.uniforms, body);
+      sh.vertexShader = sh.vertexShader
+        .replace('#include <common>', '#include <common>\nattribute vec4 bodyC1;\nattribute vec4 bodyC2;\nuniform vec4 bodyP[8];\nvarying vec4 vBodyC1;\nvarying vec4 vBodyC2;')
+        .replace('#include <uv_vertex>', `#include <uv_vertex>\n${bodyVertex(bg)}`);
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec4 bodyP[8];\nuniform vec3 tintColor;\nvarying vec4 vBodyC1;\nvarying vec4 vBodyC2;');
+      if (bg.tint)
+        sh.fragmentShader = sh.fragmentShader.replace(
+          '#include <map_fragment>',
+          `#include <map_fragment>\n{\n  float tintM = ${glslRef(bg.tint.mask)};\n  float tintF = ${glslRef(bg.tint.f)};\n  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * tintF + tintColor, tintM);\n}`,
+        );
+    }
+    if (!eye) return;
     Object.assign(sh.uniforms, eye);
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nattribute vec2 eyeUv;\nattribute vec4 eyeMask;\nattribute vec2 eyeT2;\nvarying vec2 vEyeUv;\nvarying vec4 vEyeMask;\nvarying vec2 vEyeT2;')
@@ -676,8 +741,6 @@ uniform vec2 eyeOffset1;
 uniform float eyeMaskAlpha;
 uniform float lidOn;
 uniform vec2 lidShift;
-uniform float scleraOn;
-uniform vec3 scleraColor;
 varying vec2 vEyeUv;
 varying vec4 vEyeMask;
 varying vec2 vEyeT2;
@@ -688,7 +751,6 @@ float eyeInside(vec2 uv) { return step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, 
         `#include <map_fragment>
 {
   float eyeball = max(vEyeMask.r, vEyeMask.b);
-  if (scleraOn > 0.5) diffuseColor.rgb = mix(diffuseColor.rgb, scleraColor, eyeball);
   float sclera = mix(1.0, 1.0 - diffuseColor.a, eyeMaskAlpha);
   vec2 e0uv = vec2(vEyeUv.x - eyeOffset0.x, vEyeUv.y + eyeOffset0.y);
   vec2 e1uv = vec2(vEyeUv.x - eyeOffset1.x, vEyeUv.y + eyeOffset1.y);

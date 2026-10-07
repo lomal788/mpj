@@ -108,10 +108,21 @@ export interface CharaSpec {
     albedoMask?: boolean;
     /** 셰이더 그래프 눈꺼풀(동키콩·가봉) [추정 식, docs 12.2] */
     lid?: { tex: string; edge: number; x0: [number, number]; y0: [number, number]; xmin: [number, number]; bottom: number };
-    /** 셰이더 그래프 흰자색(utility_color1, 캐서린) [추정, docs 12.8] */
-    sclera?: [number, number, number];
   };
   albedo?: [number, number];
+  /** 몸 재질 셰이더 그래프 규칙(docs 12.11) [판독]: 알베도 좌표 = S·(uv0 + Σ k·정점색·파라미터) + O, 기본색 섞기 */
+  body?: BodyGraph;
+}
+
+export interface BodyGraph {
+  uv: {
+    s: [number, number];
+    o: [number, number];
+    /** axis 0 = u, 1 = v. color = 'c1.x' 꼴(정점색 _C1/_C2 성분), param = material_utility_parameterN, comp = x/y/z/w */
+    terms: { axis: 0 | 1; color: string; param: string; comp: string; k: number }[];
+  };
+  /** base = mix(base, base·f + color, mask) — mask·f 는 GLSL 식(c1·c2·PN.x 이름) */
+  tint?: { mask: string; f: string; color: [number, number, number] };
 }
 
 export interface Spec {

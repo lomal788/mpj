@@ -16,6 +16,7 @@ const B = 0x2;
 const LEFT = 0x100;
 const RIGHT = 0x200;
 const DOWN = 0x400;
+const UP = 0x800;
 
 const server = await startServer(5198);
 const browser = await chromium.launch({ executablePath: findChromium(), args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
@@ -129,7 +130,46 @@ try {
   await page2.locator('canvas.jw-gl').last().screenshot({ path: path.join(OUT, '04_race_random.png') });
   console.log('경합 붙이기(ms)', JSON.stringify(await page2.evaluate(() => (window as unknown as { __charselect: { handle: { loadStats: Record<string, number | string | boolean>[] } } }).__charselect.handle.loadStats.map((x) => ({ pc: x.pc, ready: x.cached, wait: Math.round(x.waitMs as number), build: Math.round(x.buildMs as number), first: Math.round(x.firstRenderMs as number) })))));
   console.log('경합 페이지 미리 준비(ms)', JSON.stringify(await prepAll(page2)));
-  void B;
+  await page2.close();
+  // 몸 셰이더 그래프(docs 12.11) 확대: 1P 카드를 영향 캐릭터로 옮겨 찍는다(캐서린·요시·키노피코·키노피오·부끄부끄·쿠파주니어·마리오)
+  const page3 = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  page3.on('pageerror', (e) => errors.push(String(e)));
+  await page3.goto(`${server.url}?charselect=1&com=0001&mute=1&auto=1`);
+  await page3.waitForFunction(() => !!(window as unknown as W).__charselect, null, { timeout: 60000 });
+  await wait(page3, 8);
+  type W3 = { __charselect: { handle: { state: { players: { cursor: number }[]; btnOf(c: number): number }; spec: { chars: { pc: string }[] }; loadStats: { pc: string }[] } } };
+  const cv3 = page3.locator('canvas.jw-gl').last();
+  const box = (await cv3.boundingBox())!;
+  const clip = { x: box.x + box.width * 0.02, y: box.y, width: box.width * 0.3, height: box.height * 0.58 };
+  for (const [target, tag] of [[11, 'pc13_catherine'], [6, 'pc07_yoshi'], [7, 'pc08_toadette'], [8, 'pc09_toad'], [19, 'pc58_boo'], [18, 'pc56_bowserjr'], [0, 'pc01_mario']] as const) {
+    for (let i = 0; i < 40; i++) {
+      const [cur, bc, bt] = await page3.evaluate((t) => {
+        const st = (window as unknown as W3).__charselect.handle.state;
+        return [st.players[0].cursor, st.btnOf(st.players[0].cursor), st.btnOf(t)];
+      }, target);
+      if (cur === target) break;
+      const rowC = bc >= 11 ? 1 : 0;
+      const rowT = bt >= 11 ? 1 : 0;
+      await press(page3, 0, rowC < rowT ? DOWN : rowC > rowT ? UP : bc % 11 < bt % 11 ? RIGHT : LEFT);
+    }
+    // 목표 칸이 다른 플레이어·COM 에 점유돼 못 가면 지금 커서 캐릭터를 기다린다(그 캐릭터는 건너뛴 것으로 적는다)
+    const pc = await page3.evaluate(() => {
+      const h = (window as unknown as W3).__charselect.handle;
+      return h.spec.chars[h.state.players[0].cursor]?.pc ?? '';
+    });
+    await page3.waitForFunction((x) => (window as unknown as W3).__charselect.handle.loadStats.some((l) => l.pc === x), pc, { timeout: 600000, polling: 200 });
+    await wait(page3, 30);
+    const at = await page3.evaluate(() => (window as unknown as W3).__charselect.handle.state.players[0].cursor);
+    console.log('확대', tag, '커서', at, at === target ? '' : '(목표 칸 점유 — 건너뜀)');
+    await page3.screenshot({ path: path.join(OUT, `05_body_${tag}.png`), clip });
+    if (target === 7 || target === 19) {
+      await press(page3, 0, A);
+      await wait(page3, 150);
+      await page3.screenshot({ path: path.join(OUT, `05_body_${tag}_select.png`), clip });
+      await press(page3, 0, B);
+      await wait(page3, 10);
+    }
+  }
 } finally {
   await browser.close();
   await server.close();

@@ -197,10 +197,8 @@ console.log('5c. 22명 눈 회귀 검사 (docs 12.8)');
     const hasEye = (fr?.samplers ?? []).some((x) => /_eye_(arr_)?alb$/.test(x.texture));
     ok(hasEye === !!c.eye?.tex, `${c.pc} 눈 텍스처 유무`);
     ok(!!c.eye?.albedoMask === ALBEDO_MASK.has(c.pc), `${c.pc} 눈동자 알베도 마스크 = 데이터(눈알 알파 0)`);
-    if (c.eye?.sclera) {
-      const c1 = fr?.params?.material_utility_color1?.value ?? [];
-      ok(c.eye.sclera.every((v, i) => near(v, c1[i], 1e-5)), `${c.pc} 흰자색 = utility_color1`);
-    }
+    // 12.11: 흰자 칠하기(utility_color1)는 셰이더 그래프에 없다 — 캐서린 흰자는 알베도(v·0.8 + 0.2)
+    ok(!('sclera' in (c.eye ?? {})), `${c.pc} 흰자 칠하기 없음(docs 12.11)`);
     if (c.eye?.lid) {
       for (const [i, pn] of ['material_utility_parameter2', 'material_utility_parameter3'].entries()) {
         const v = fr?.params?.[pn]?.value ?? [];
@@ -234,6 +232,52 @@ console.log('5c. 22명 눈 회귀 검사 (docs 12.8)');
   ok(/compileAsync\(/.test(pv) && /initTexture\(/.test(pv), '미리 준비 = compileAsync + initTexture');
   ok(!/\.then\([^)]*\)\s*=>\s*\{[^}]*this\.play\(/.test(pv), '로드 완료 콜백에서 play 로 모션을 덮지 않음');
   ok(/this\.applyPlay\(s, 0\);\s*this\.pose\(s, 0\);/.test(pv), '붙일 때 지금 모션을 건 뒤 첫 자세(mixer.update 0)');
+}
+
+console.log('5d. 22명 몸 셰이더 그래프 규칙 (docs 12.11: 알베도 좌표 S·O·_C1/_C2 오프셋·기본색 섞기)');
+{
+  type Glb = {
+    meshes: { name: string; primitives: { material: number; attributes: Record<string, number> }[] }[];
+    materials: { name: string; extras?: { fres?: { params?: Record<string, { value: number[] }> } } }[];
+  };
+  const gp = resolve(WEB, '..', 'analysis/mat/charsel_body_graph.json');
+  const graph = existsSync(gp) ? (JSON.parse(readFileSync(gp, 'utf8')) as Record<string, { uv: unknown; tint?: { mask: string; f: string } }>) : null;
+  ok(!!graph, '판독 표 analysis/mat/charsel_body_graph.json');
+  const TINT = new Set(['pc08', 'pc09', 'pc58']);
+  let terms = 0;
+  for (const c of spec.chars) {
+    const b = c.body;
+    ok(!!b, `${c.pc} 몸 규칙 있음`);
+    if (!b) continue;
+    if (graph) ok(JSON.stringify(b.uv) === JSON.stringify(graph[c.pc]?.uv), `${c.pc} 몸 규칙 = 셰이더 판독 표`);
+    // 기본 변환: 캐서린만 가로세로 비 규칙과 다르다(v·0.8 + 0.2)
+    const [aw, ah] = c.albedo ?? [1, 1];
+    const aspect = ah === 2 * aw ? [1, 0.5, 0, 0.5] : aw === 2 * ah ? [0.5, 1, 0, 0] : [1, 1, 0, 0];
+    const so = [...b.uv.s, ...b.uv.o];
+    if (c.pc === 'pc13') ok(near(so[0], 1) && near(so[1], 0.8) && near(so[2], 0) && near(so[3], 0.2), 'pc13 알베도 좌표 (u, 0.8v + 0.2)');
+    else ok(so.every((v, i) => near(v, aspect[i])), `${c.pc} 알베도 S·O = 가로세로 비 규칙과 같음`);
+    ok(TINT.has(c.pc) === !!b.tint, `${c.pc} 기본색 섞기 유무`);
+    const buf = readFileSync(join(WEB, 'assets/charselect', c.glb!));
+    const js = JSON.parse(buf.subarray(20, 20 + buf.readUInt32LE(12)).toString('utf8')) as Glb;
+    const prims = js.meshes.flatMap((m) => m.primitives).filter((pr) => js.materials[pr.material].name === 'body_m');
+    const needC2 = b.uv.terms.some((t) => t.color.startsWith('c2')) || /c2\./.test(`${b.tint?.mask ?? ''}${b.tint?.f ?? ''}`);
+    if (needC2) ok(prims.every((pr) => '_C2' in pr.attributes), `${c.pc} 몸 정점색 _C2 남김`);
+    ok(prims.every((pr) => '_C1' in pr.attributes), `${c.pc} 몸 정점색 _C1 남김`);
+    if (b.tint) {
+      const c1 = js.materials.find((m) => m.name === 'body_m')?.extras?.fres?.params?.material_utility_color1?.value ?? [];
+      ok(b.tint.color.every((v, i) => near(v, c1[i], 1e-5)), `${c.pc} 섞기 색 = utility_color1`);
+    }
+    // 오프셋 파라미터는 모두 기본 0(정지 화면은 그대로), 깜빡임·결정 모션이 움직인다
+    for (const t of b.uv.terms) {
+      terms++;
+      const v = js.materials.find((m) => m.name === 'body_m')?.extras?.fres?.params?.[t.param]?.value ?? [0, 0, 0, 0];
+      ok(near(v['xyzw'.indexOf(t.comp)] ?? 0, 0), `${c.pc} ${t.param}.${t.comp} 기본 0`);
+    }
+  }
+  console.log(`   오프셋 항 ${terms}개`);
+  const pv = readFileSync(join(WEB, 'script/shell/charselect/preview3d.ts'), 'utf8');
+  ok(!/scleraColor|scleraOn/.test(pv), '셰이더에 흰자 칠하기 없음');
+  ok(/bodyD \+ |MAP_UV \} \+ bodyD|\+ bodyD, 1/.test(pv) && /tintColor/.test(pv) && /applyBody\(/.test(pv), '몸 좌표 오프셋·기본색 섞기·프레임마다 파라미터');
 }
 
 console.log('6. import 그래프 (독립성)');

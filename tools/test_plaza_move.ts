@@ -180,6 +180,26 @@ console.log('7. 모션 전이(sys_pc.mpat)');
   ok(transitBlend(spec.transit, 'co_idle00', 'mn_bnclr_get00') === undefined, 'bnclr 전이는 sys_pc.mpat 에 없음 → MotionArg 기본');
 }
 
+console.log('7c. LookAt(기구 선택: 입력 끔 → balloon_pos 쪽으로 선회 규칙 그대로)');
+{
+  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  m.place(new THREE.Vector3(0, 0, 22.316), 0);
+  m.inputEnabled = false;
+  m.lookAt(new THREE.Vector3(0, 0, 0));
+  near(Math.abs(m.targetYaw), 180, 1e-9, '목표 회전 = balloon_pos 쪽 180°');
+  let n = 0;
+  while (Math.abs(wrapDeg(m.yaw - m.targetYaw)) > 1e-9 && n < 100) {
+    ok(m.tick(leverFromStick(0, 1, cam)) === 'Idle', '입력 꺼짐 → Idle 유지');
+    n++;
+  }
+  ok(n === 18, `180° = 1100°/s 6f + 360°/s 12f = 18f: ${n}`);
+  near(m.pos.z, 22.316, 1e-9, 'LookAt 중 이동 없음');
+  const m2 = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  m2.place(new THREE.Vector3(3, 0, 3), 0);
+  m2.lookAt(new THREE.Vector3(0, 5, 0), true);
+  near(m2.yaw, -135, 1e-9, 'immediate(SetRotateLookAt) = 바로, y 무시');
+}
+
 console.log('7b. 시작 소켓 사람 수(COM 제외)');
 {
   const P = (local: boolean, isCom: boolean) => ({ local, isCom });

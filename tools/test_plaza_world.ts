@@ -9,11 +9,12 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
+import { FixedClock } from '../script/shell/plaza/scene';
 import { DECO_ITEMS, DECO_TYPE, decoVisible, defaultDecoState, isDefaultDeco, parseDecoParam, setDecoDisplay } from '../script/shell/plaza/deco';
 import type { PlazaLayoutEntry } from '../script/shell/plaza/types';
 import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '../script/shell/stage3d/meshCollider';
 import { graphSource, type GraphDef, type GraphSource } from '../script/shell/stage3d/graph';
-import { patchRefraction, patchSss, patchUnlit } from '../script/shell/stage3d/material';
+import { patchRefraction, patchSss, patchUnlit, patchVertexColor, patchWater } from '../script/shell/stage3d/material';
 import { initParams, patchSrt0, srtMatrix } from '../script/shell/stage3d/params';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -230,6 +231,8 @@ console.log('6. 셰이더 그래프 정의 → GLSL ES 3.00 컴파일(three 표�
     patched('(SSS shading_type 2)', (m) => patchSss(m, dummy, dummy, 1)),
     patched('(srt0)', (m) => patchSrt0(m, initParams(m, { shader: { options: {} } }))),
     patched('(굴절 refraction)', (m) => patchRefraction(m, 0, 0.5, 1, true)),
+    patched('(물 합성 water)', (m) => patchWater(m, 0.2, [0.28, 0.43, 0.38], 0.33)),
+    patched('(정점색 곱)', (m) => patchVertexColor(m, 0)),
 ...graphs.flatMap((g) => [false, true].map((t) => ({ name: `${g.material}/${g.program}${t ? '+tangent' : ''}`, ...build(graphSource(g), t) })))];
   const py = `
 import json, sys
@@ -258,7 +261,22 @@ print(json.dumps(out))
   }
 }
 
-console.log('7. import 경계(mgm_common.md §9.1)');
+console.log('7. 원본 60 fps 시간(FixedClock — 화면 주사율과 무관)');
+for (const hz of [30, 60, 75, 120, 144, 240]) {
+  const c = new FixedClock();
+  let n = 0;
+  for (let i = 0; i < hz * 10; i++) n += c.advance(1000 / hz);
+  ok(Math.abs(n - 600) <= 1, `${hz} Hz 로 10 초 → 원본 ${n} 프레임(600)`);
+}
+{
+  const c = new FixedClock();
+  const stall = c.advance(3000);
+  let after = 0;
+  for (let i = 0; i < 144; i++) after += c.advance(1000 / 144);
+  ok(stall === FixedClock.MAX_STEPS && Math.abs(after - 60) <= 1, `3 초 멈춤 뒤: 그 프레임 ${stall} 스텝(넘친 밀림 버림), 다음 1 초 ${after} 프레임(빨리 감기 없음)`);
+}
+
+console.log('8. import 경계(mgm_common.md §9.1)');
 const SHELL = join(WEB, 'script', 'shell');
 const scan = (dir: string, allowed: string[]): void => {
   for (const f of readdirSync(dir)) {

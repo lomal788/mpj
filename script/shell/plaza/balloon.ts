@@ -26,8 +26,10 @@ export const TAKEOFF = {
   fadeInSec: 1,
   fadeOutEndSec: 0.5,
   fadeOutSkipSec: 1,
-  /** SelectedBalloon FadeOut(1) 의 시간은 C 에서 빠짐 [추정: 끝 페이드와 같게] */
-  fadeOutSelectSec: 0.5,
+  /** SelectedBalloonImpl FadeOut: fmov s0, #1.0 @0x710005ee90 [판독] */
+  fadeOutSelectSec: 1,
+  /** [근사] fsnb near 0.01 → 웹 24비트 깊이 z 싸움 방지 하한(plaza_3d.md §8) */
+  minNear: 0.3,
   /** TakeOffPass/Get 람다 Sleep(0.25) 뒤 쌍안경 보임 바꿈 */
   binocularSec: 0.25,
   takeoffClip: 'pos_balloon_takeoff',
@@ -80,7 +82,7 @@ export class FsnbCamera implements CameraDriver {
       camera.rotateZ(c.twist[i] ?? 0);
     }
     camera.fov = THREE.MathUtils.radToDeg(c.fovyRad[i]);
-    camera.near = c.near[i];
+    camera.near = Math.max(c.near[i], TAKEOFF.minNear);
     camera.far = c.far[i];
     camera.updateProjectionMatrix();
   }
@@ -183,6 +185,8 @@ export class BalloonSystem {
     if (this.phase !== 'idle') return;
     this.log('selected');
     this.ctx.emit('camera:follow', false);
+    this.ctx.emit('player:input', false);
+    this.ctx.emit('player:lookAt', { target: this.ctx.world.socket('balloon_pos')?.pos ?? new THREE.Vector3() });
     this.phase = 'selectFade';
     this.fade.start(1, TAKEOFF.fadeOutSelectSec);
   }

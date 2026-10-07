@@ -9,6 +9,7 @@ import { createFollow } from './follow';
 import { createNpcs } from './npc';
 import { createInteract } from './interact';
 import { createBalloon } from './balloon';
+import { createOverview } from './overview';
 
 export const PLAZA_PARTS: { name: string; create: PlazaPartFactory }[] = [
   { name: 'player', create: createPlayer },
@@ -18,4 +19,5 @@ export const PLAZA_PARTS: { name: string; create: PlazaPartFactory }[] = [
   { name: 'interact', create: createInteract },
   { name: 'balloon', create: createBalloon },
   { name: 'ui', create: createPlazaUi },
+  { name: 'overview', create: createOverview },
 ];

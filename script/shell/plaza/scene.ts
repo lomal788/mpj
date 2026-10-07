@@ -9,6 +9,23 @@ import type { PlazaActor, PlazaContext, PlazaExit, PlazaPad, PlazaPart, PlazaPla
 import { createPlazaWorld } from './world';
 import type { PlazaDecoState } from './types';
 
+/**
+ * 원본 60 fps 고정 스텝 시계 — 지난 실시간(ms)을 원본 프레임 수로 바꾼다. 한 번에 최대 MAX_STEPS 까지만 따라잡고 넘친 밀림은 버린다
+ * (긴 멈춤 뒤 여러 프레임 동안 빨리 감기처럼 도는 것을 막음 — main.ts 의 MAX_BACKLOG 와 같은 규칙) [설계].
+ */
+export class FixedClock {
+  static readonly STEP_MS = 1000 / 60;
+  static readonly MAX_STEPS = 4;
+  acc = 0;
+  advance(elapsedMs: number): number {
+    this.acc += Math.max(0, elapsedMs);
+    let n = Math.floor((this.acc + 1e-6) / FixedClock.STEP_MS);
+    this.acc -= n * FixedClock.STEP_MS;
+    if (n > FixedClock.MAX_STEPS) n = FixedClock.MAX_STEPS;
+    return n;
+  }
+}
+
 export interface PlazaRunOptions {
   canvas: HTMLCanvasElement;
   overlay: HTMLElement;
@@ -69,6 +86,7 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
   };
   const parts: PlazaPart[] = [];
   for (const p of PLAZA_PARTS) parts.push(await p.create(ctx));
+  const warm = o.params.get('nowarm') === '1' ? null : await stage.warmup();
   const start = world.socket('char_start_pos');
   const look = start ? start.pos.clone() : new THREE.Vector3(0, -2.4, 22.3);
   const cp = world.cameraParam;
@@ -106,6 +124,7 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
         frame: stage.frame,
         models: stage.loadedModels().length,
         stats: stage.stats,
+        warmup: warm,
         graphs: { applied: stage.materials.graphStats.applied.length, missing: stage.materials.graphStats.missing },
         camera: { pos: stage.camera.position.toArray(), fov: stage.camera.fov, driven: stage.cameraDriven },
         actors: actors.map((x) => ({ slot: x.slot, kind: x.kind, chara: x.chara, pos: x.pos.toArray(), yaw: x.yaw, motion: x.motion })),

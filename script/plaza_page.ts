@@ -4,7 +4,7 @@
  */
 import { STICK_MAX, type PadInput } from './core/pad';
 import { ASSETS } from './env';
-import { startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from './shell/plaza';
+import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from './shell/plaza';
 import { parseDecoParam } from './shell/plaza/deco';
 import type { PadSource } from './view/input';
 
@@ -150,7 +150,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
   const fast = Math.max(0, Number(cfg.params.get('fast') ?? 0) || 0);
   let raf = 0;
   let last = performance.now();
-  let acc = 0;
+  const clock = new FixedClock();
   let stopped = false;
   const readPads = (): void => {
     cfg.com.forEach((_, i) => {
@@ -175,13 +175,8 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     let steps: number;
     if (fast > 0) steps = fast;
     else {
-      acc += Math.min(250, now - last);
+      steps = clock.advance(now - last);
       last = now;
-      steps = 0;
-      while (acc >= 1000 / 60 && steps < 4) {
-        acc -= 1000 / 60;
-        steps++;
-      }
     }
     for (let i = 0; i < steps && !exited; i++) {
       readPads();

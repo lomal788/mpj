@@ -25,7 +25,7 @@ export interface StageEnv {
   light?: { dir: [number, number, number]; color: [number, number, number] };
   fog?: { start: number; end: number; color: [number, number, number]; intensity?: number; cube?: string } | null;
   ibl?: { common: [string, string]; chara: [string, string] | null };
-  shadow?: { near: number; far: number; offset: number };
+  shadow?: { near: number; far: number; offset: number; cascades?: number; lambda?: number };
   clear?: [number, number, number];
   post?: PostParams;
   sky?: { model: string; texture: string | null; params: Record<string, unknown>; graph?: string; position: number[] };
@@ -81,7 +81,7 @@ class Model implements StageModel {
   }
 }
 
-const SHADOW_MAP = 2048;
+const SHADOW_MAP = 4096;
 /**
  * 하늘(container/skybox p0) [판독 sg1]: 무조명, r = 카메라→하늘 시선 방향(월드), u = (atan(r.x, −r.z) + π)/2π + P0.y, v = P0.x + acos(r.y)·2/π,
  * 출력 = 텍스처 rgba 그대로(조명·안개 없음, V 는 Mirror 감싸기). P0 = skybox_utility_parameter0.
@@ -101,8 +101,6 @@ void main() {
   gl_FragColor = texture2D(mpjSky, uv);
   #include <colorspace_fragment>
 }`;
-/** menu00_sky 상자 반 길이(_p0 범위 ±0.005) [데이터] */
-const SKY_HALF = 0.005;
 
 function setEnvParam(mp: MatParams, name: string, i: number, v: number): void {
   const m = /^env_utility_parameter(\d)$/.exec(name);
@@ -178,7 +176,11 @@ export class Stage3D {
     }
     if (e.fog) this.scene.fog = new THREE.Fog(new THREE.Color(...e.fog.color), e.fog.start, e.fog.start + (e.fog.end - e.fog.start) / (e.fog.intensity ?? 1));
     if (e.shadow) {
-      this.shadowFar = e.shadow.far;
+      const n = Math.max(1, e.shadow.cascades ?? 1);
+      const k = Math.max(1, n - 1);
+      const lam = e.shadow.lambda ?? 0.5;
+      const near = Math.max(1e-3, e.shadow.near);
+      this.shadowFar = n > 1 ? lam * near * (e.shadow.far / near) ** (k / n) + (1 - lam) * (near + ((e.shadow.far - near) * k) / n) : e.shadow.far;
       this.shadowOffset = e.shadow.offset;
     }
     if (e.clear) this.renderer.setClearColor(new THREE.Color(...e.clear));
@@ -208,36 +210,29 @@ export class Stage3D {
       }
       this.post = new PostChain(this.renderer, e.post, lut);
     }
-    if (e.sky && this.manifest.models[e.sky.model]) {
-      const gltf = await this.loader.loadAsync(this.opts.assets.url(this.manifest.models[e.sky.model].url));
+    if (e.sky) {
       const tex = e.sky.texture ? await this.materials.texture(e.sky.texture) : null;
       if (tex) {
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.MirroredRepeatWrapping;
         tex.needsUpdate = true;
       }
-      const root = gltf.scene;
-      root.traverse((o) => {
-        const mesh = o as THREE.Mesh;
-        if (!mesh.isMesh) return;
-        const p0 = (e.sky!.params.skybox_utility_parameter0 as number[] | undefined) ?? [0, 0, 1, 1];
-        const m = new THREE.ShaderMaterial({
-          uniforms: { mpjSky: { value: tex }, mpjSkyP0: { value: new THREE.Vector4(...(p0 as [number, number, number, number])) } },
-          vertexShader: SKY_VS,
-          fragmentShader: SKY_FS,
-          side: THREE.DoubleSide,
-          fog: false,
-          depthWrite: false,
-          depthTest: false,
-        });
-        m.userData.fres = fresOf(mesh.material as THREE.Material);
-        mesh.material = m;
-        mesh.renderOrder = -1000;
-        mesh.frustumCulled = false;
+      const p0 = (e.sky.params.skybox_utility_parameter0 as number[] | undefined) ?? [0, 0, 1, 1];
+      const m = new THREE.ShaderMaterial({
+        uniforms: { mpjSky: { value: tex }, mpjSkyP0: { value: new THREE.Vector4(...(p0 as [number, number, number, number])) } },
+        vertexShader: SKY_VS,
+        fragmentShader: SKY_FS,
+        side: THREE.DoubleSide,
+        fog: false,
+        depthWrite: false,
+        depthTest: false,
       });
-      root.name = e.sky.model;
-      this.sky = root;
-      this.scene.add(root);
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), m);
+      mesh.name = e.sky.model;
+      mesh.renderOrder = -1000;
+      mesh.frustumCulled = false;
+      this.sky = mesh;
+      this.scene.add(mesh);
     }
   }
 
@@ -444,7 +439,7 @@ export class Stage3D {
     this.fitShadow();
     if (this.sky) {
       this.sky.position.copy(this.camera.position);
-      this.sky.scale.setScalar(this.camera.far * 0.4 / SKY_HALF);
+      this.sky.scale.setScalar(this.camera.far * 0.4);
     }
   }
 
@@ -486,6 +481,47 @@ export class Stage3D {
     sc.updateProjectionMatrix();
     this.sun.shadow.bias = -SHADOW_BIAS_WORLD / (sc.far - sc.near);
     this.sun.shadow.normalBias = SHADOW_BIAS_WORLD;
+  }
+
+  /**
+   * 첫 그리기 렉 없애기 [설계]: 숨은 모델·화면 밖 메시까지 잠깐 보이게 해 모든 재질을 compileAsync(장면 전체)하고, 재질 텍스처를 initTexture 로
+   * 올린 뒤 한 번 그린다(그림자 맵·후처리 패스 변형 포함). 끝나면 보임·컬링을 되돌리고 다시 그린다. charselect 준비 순서와 같다.
+   */
+  async warmup(): Promise<{ ms: number; textures: number; programs: number }> {
+    const t0 = performance.now();
+    const shown: THREE.Object3D[] = [];
+    const culled: THREE.Object3D[] = [];
+    this.scene.traverse((o) => {
+      if (!o.visible) {
+        shown.push(o);
+        o.visible = true;
+      }
+      if ((o as THREE.Mesh).isMesh && o.frustumCulled) {
+        culled.push(o);
+        o.frustumCulled = false;
+      }
+    });
+    const texs = new Set<THREE.Texture>();
+    this.scene.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        for (const v of Object.values(m)) if ((v as THREE.Texture)?.isTexture) texs.add(v as THREE.Texture);
+        const u = (m as THREE.ShaderMaterial).uniforms;
+        if (u) for (const x of Object.values(u)) if ((x?.value as THREE.Texture)?.isTexture) texs.add(x.value as THREE.Texture);
+      }
+    });
+    try {
+      await this.renderer.compileAsync(this.scene, this.camera);
+      for (const t of texs) this.renderer.initTexture(t);
+      this.render();
+    } finally {
+      for (const o of shown) o.visible = false;
+      for (const o of culled) o.frustumCulled = true;
+    }
+    this.render();
+    const programs = (this.renderer.info.programs ?? []).length;
+    return { ms: Math.round(performance.now() - t0), textures: texs.size, programs };
   }
 
   render(): void {

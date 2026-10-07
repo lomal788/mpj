@@ -244,7 +244,8 @@ def main():
     env = {
         "light": {"dir": euler_dir(*rot), "color": lp["directional_light_color"]},
         "shadow": {"near": lp["directional_light_shadowmap_camera_near"], "far": lp["directional_light_shadowmap_camera_far"],
-                   "offset": lp["directional_light_shadowmap_camera_offset"], "cascades": lp["directional_light_shadowmap_array_length"]},
+                   "offset": lp["directional_light_shadowmap_camera_offset"], "cascades": lp["directional_light_shadowmap_array_length"],
+                   "lambda": lp["directional_light_shadowmap_lambda"]},
         "ibl": {"common": [es["env_common_specular_texturecube"], es["env_common_diffuse_texturecube"]],
                 "chara": [es["env_char_specular_texturecube"], es["env_char_diffuse_texturecube"]]},
         "fog": {"start": ep["env_mip_fog_start_distance"], "end": ep["env_mip_fog_end_distance"], "intensity": ep["env_mip_fog_intensity"],

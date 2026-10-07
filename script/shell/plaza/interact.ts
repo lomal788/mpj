@@ -248,10 +248,8 @@ export class InteractSystem {
     this.staff('StampShopStaff', j.area === AREA.STAMP, p);
     this.staff('CardShopStaff', j.area === AREA.CARD, p);
     this.staff('DataHouseStaff', j.area === AREA.DATAHOUSE, p);
-    if (j.area !== this.lastArea) {
-      this.lastArea = j.area;
-      this.ctx.emit('interact:telop', { area: j.area, visible: true, detail: true });
-    }
+    this.lastArea = j.area;
+    this.ctx.emit('interact:telop', { area: j.area, visible: !this.online, detail: true });
   }
 
   update(df: number): void {

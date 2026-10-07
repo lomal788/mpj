@@ -17,6 +17,8 @@ const OUT = path.join(WEB, 'test', 'out', 'plaza');
 fs.mkdirSync(OUT, { recursive: true });
 const A = 1 << 0;
 const Y = 1 << 3;
+const B = 1 << 1;
+const X = 1 << 2;
 const LOAD_ONLY = process.argv.includes('--load');
 
 type Dbg = { frame: number; models: number; stats: { loadMs: number; models: number; bytes: number }; camera: { pos: number[]; fov: number; driven: boolean }; actors: { slot: number; kind: string; pos: number[]; motion: string }[]; parts: Record<string, unknown> };
@@ -159,6 +161,20 @@ try {
     await shot('02b_run');
     await page.waitForTimeout(1500);
     await shot('03_follow');
+    // 비교 ① 원본 캡처 6.png(기구 계단 앞 근경)와 같은 자리: 1번을 계단 앞(0, 18.6)으로
+    if (await walkTo('계단 앞', { x: 0, z: 18.6, stop: 0.6 }, 90000)) {
+      await page.waitForTimeout(1500);
+      await shot('c1_stairs');
+    }
+    // 비교 ② 광장 보기(OverView): X → 카메라 표 16 deco_all_cam 프레임 0, B 로 돌아옴
+    await tap(X, 300);
+    if (await wait('광장 보기', 'd && d.parts && d.parts.overview && d.parts.overview.active && d.camera.driven', 15000)) {
+      await page.waitForTimeout(2000);
+      await shot('c2_overview');
+      await tap(B, 300);
+      await wait('광장 보기 끝', 'd && d.parts && d.parts.overview && !d.parts.overview.active', 15000);
+      await page.waitForTimeout(800);
+    }
     if (await walkTo('스탬프 상점', { socket: 'attach_shop_stamp', stop: 6.5, done: 'd.parts && d.parts.interact && d.parts.interact.show && d.parts.interact.result === 8' }, 120000)) {
       await page.waitForTimeout(800);
       await shot('04_shop_popguide');
@@ -185,15 +201,20 @@ try {
       await page.waitForTimeout(1200);
       await shot('05_online_join');
     }
+    // 비교 ③ 원본 캡처 8.png(대기실 4/4)
+    if (await wait('대기실 4/4', 'd && d.parts && d.parts.ui && d.parts.ui.online && d.parts.ui.online.room && d.parts.ui.online.room.members.length >= 4', 240000)) {
+      await page.waitForTimeout(2500);
+      await shot('c3_lobby');
+    }
     if (await walkTo('기구 앞', { x: 0, z: 15, stop: 1.5, done: 'd.parts && d.parts.interact && d.parts.interact.show && d.parts.interact.result === 6' }, 120000)) {
       await page.waitForTimeout(500);
       await shot('06a_balloon_near');
       await tap(A, 300);
-      if (await wait('⑥ 출발 컷', 'd && d.parts && d.parts.balloon && d.parts.balloon.cam && d.camera && d.camera.driven', 20000)) {
+      if (await wait('⑥ 출발 컷', "(d && d.parts && d.parts.balloon && d.parts.balloon.cam && d.camera && d.camera.driven) || (m && m.flow !== 'plaza')", 30000) && (await flow()) === 'plaza') {
         await page.waitForTimeout(2500);
         await shot('06b_takeoff_cut');
       }
-      if (await wait('⑥ 모드 메뉴', "m && m.flow === 'modeselect'", 60000)) {
+      if (await wait('⑥ 모드 메뉴', "m && m.flow === 'modeselect'", 180000)) {
         await page.waitForTimeout(1500);
         await page.locator('.jw-stage').screenshot({ path: path.join(OUT, '06c_modeselect.png') });
       }

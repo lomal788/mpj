@@ -204,6 +204,12 @@ console.log('3. 영역·다가가기(§6.10 ①)');
     ['char_start_pos', AREA.GUIDE],
   ];
   for (const [n, a] of expect) ok(getArea(at(n), pts.center) === a, `${n} → 영역 ${a} (실제 ${getArea(at(n), pts.center)})`);
+  for (const n of ['pc_plaza_balloon_pos_p1_pc00', 'pc_plaza_balloon_pos_p2_pc00', 'pc_plaza_balloon_pos_p3_pc00', 'pc_plaza_balloon_pos_p4_pc00', 'pc_plaza_balloon_pos_p4_pc01'])
+    ok(getArea(at(n), pts.center) === AREA.GUIDE, `시작 ${n} (x ${at(n).x.toFixed(6)}) → 1 가이드 (실제 ${getArea(at(n), pts.center)})`);
+  for (const n of ['pc_plaza_balloon_pos_p2_pc01', 'pc_plaza_balloon_pos_p4_pc02', 'pc_plaza_balloon_pos_p4_pc03'])
+    ok(getArea(at(n), pts.center) === AREA.FRIEND, `시작 ${n} (x > 0) → 7 친구 매치(원본 atan2f(d.x, d.z) 330~360°)`);
+  ok(getArea({ x: -1.05, z: 22.3 }, pts.center) === AREA.GUIDE && getArea({ x: 1.05, z: 22.3 }, pts.center) === AREA.FRIEND, '계단 앞 x<0 가이드 / x>0 친구 매치');
+  near(calcTurnDegY(pts.center.x + 1.05, pts.center.z - 22.3), 5.6, 0.05, '(−1.05, 22.3) → 5.6°');
   const res = (p: THREE.Vector3, humans = 1, online = false): number => judge(p, pts, humans, online).result;
   ok(res(new THREE.Vector3(0, -2.4, 5)) === RESULT.BALLOON, '기구 앞 → 6');
   ok(res(pts.mc.clone().add(new THREE.Vector3(2.9, 0, 0))) === RESULT.GUIDE, 'MC 2.9 m → 5');
@@ -275,6 +281,11 @@ console.log('4. 결정 → 기구 출발 사건(§6.10 ④)');
   ok(it.judge.area === AREA.BALLOON && it.judge.show, '기구 앞: 영역 0·안내 보임');
   ok(events.some(([n, v]) => n === 'interact:telop' && (v as { area: number }).area === 0), "텔롭 'interact:telop' area 0");
   ok(events.some(([n, v]) => n === 'interact:pop' && (v as { visible: boolean }).visible), "'interact:pop' visible");
+  it.update(1);
+  it.update(1);
+  const telops = events.filter(([n, v]) => n === 'interact:telop' && (v as { area: number; visible: boolean }).area === 0 && (v as { visible: boolean }).visible).length;
+  ok(telops === 3, `텔롭은 영역이 그대로여도 매 프레임 SetArea+In(원본 MainImpl): ${telops}/3 프레임`);
+  ok(TAKEOFF.fadeOutSelectSec === 1, '기구 선택 페이드 아웃 1.0 s(어셈블리)');
   const bs = new BalloonSystem(ctx);
   ctx.on('interact:decide', (v) => {
     if ((v as { result: number }).result === RESULT.BALLOON) bs.begin();

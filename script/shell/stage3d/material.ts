@@ -125,7 +125,7 @@ export function patchSss(m: StdMat, curv: THREE.Texture, diff: THREE.Texture, bl
 /**
  * static_opt_refraction_enable 1 (굴절) [근사]: 원본은 뒤 장면색을 굴절(uv 오프셋 0.03)해 읽고, 불투명도 = refraction_opacity, refraction_rim 이면 가장자리에서
  * rim_opacity·(1−N·V)^rim_power 쪽으로 섞어 표면색과 합성한다 [판독 sg1: jet_fountain01 p386 "표준 굴절(opacity·rim) 합성, 그 위에 emissive 가산" + 재질 값].
- * 웹은 굴절 왜곡을 빼고 뒤 장면을 그대로 비치게 한다: 확산 × α + 반사·발광(가산), 미리 곱한 알파 블렌드.
+ * 웹은 굴절 왜곡을 빼고 뒤 장면을 그대로 비치게 한다: (확산 + 반사) × α + 발광(가산), 미리 곱한 알파 블렌드(판독 순서: 굴절 합성 → 그 위에 발광).
  */
 export function patchRefraction(m: StdMat, opacity: number, rimOpacity: number, rimPower: number, rim: boolean): void {
   const prev = m.onBeforeCompile;
@@ -144,10 +144,57 @@ export function patchRefraction(m: StdMat, opacity: number, rimOpacity: number, 
       : opacity.toFixed(5);
     sh.fragmentShader = sh.fragmentShader.replace(
       '#include <opaque_fragment>',
-      `{ float mpjA = ${a}; outgoingLight = totalDiffuse * mpjA + totalSpecular + totalEmissiveRadiance; diffuseColor.a = mpjA; }\n#include <opaque_fragment>`,
+      `{ float mpjA = ${a}; outgoingLight = ( totalDiffuse + totalSpecular ) * mpjA + totalEmissiveRadiance; diffuseColor.a = mpjA; }\n#include <opaque_fragment>`,
     );
   };
   m.customProgramCacheKey = () => `${prevKey.call(m)}|mpj-refr:${opacity}:${rimOpacity}:${rimPower}:${rim}`;
+}
+
+/** static_opt_mul_vertex_base_color 1: 기본색(rgba)에 정점색 _c{index} 를 곱한다 [데이터: 옵션 이름·forward_plus 표준 경로, 판독 sg2 lambert1 "base_color·mul_base_color·c0.rgb, α = c0.a·mul_opacity"] */
+export function patchVertexColor(m: StdMat, index: number): void {
+  const prev = m.onBeforeCompile;
+  const prevKey = m.customProgramCacheKey;
+  const a = `_c${index}`;
+  m.onBeforeCompile = (sh, r) => {
+    prev.call(m, sh, r);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', `#include <common>
+attribute vec4 ${a};
+varying vec4 vMpjVc;`).replace('#include <begin_vertex>', `#include <begin_vertex>
+vMpjVc = ${a};`);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>
+varying vec4 vMpjVc;`).replace('#include <map_fragment>', `#include <map_fragment>
+diffuseColor *= vMpjVc;`);
+  };
+  m.customProgramCacheKey = () => `${prevKey.call(m)}|mpj-vc${index}`;
+}
+
+/**
+ * static_opt_water_enable 1(물 합성) [근사]: 원본은 수면 색과 물속 장면(read_under_water)을 water_opacity 로 섞고, 물속은 깊이/water_muddy_range 만큼
+ * water_muddy_color 로 탁해진다 [데이터: 재질 옵션·파라미터 이름, 판독 sg1 "물 합성(수중 장면·muddy·water_opacity)·표준"].
+ * 웹은 물 깊이를 모르므로 탁함 k 를 상수로 둔다: muddy_range ≥ 10(바다 12)이면 1, 아니면 1/muddy_range(분수 3·무대 물 5).
+ * out = op·수면 + (1 − op)·k·muddy, 뒤 장면 비침 = (1 − op)(1 − k) 로 미리 곱한 알파 블렌드.
+ */
+export function patchWater(m: StdMat, opacity: number, muddy: [number, number, number], k: number): void {
+  const prev = m.onBeforeCompile;
+  const prevKey = m.customProgramCacheKey;
+  const through = (1 - opacity) * (1 - k);
+  if (through > 1e-3) {
+    m.transparent = true;
+    m.depthWrite = false;
+    m.blending = THREE.CustomBlending;
+    m.blendEquation = THREE.AddEquation;
+    m.blendSrc = THREE.OneFactor;
+    m.blendDst = THREE.OneMinusSrcAlphaFactor;
+  }
+  const f = (v: number): string => v.toFixed(6);
+  m.onBeforeCompile = (sh, r) => {
+    prev.call(m, sh, r);
+    sh.fragmentShader = sh.fragmentShader.replace(
+      '#include <opaque_fragment>',
+      `outgoingLight = outgoingLight * ${f(opacity)} + vec3(${f(muddy[0])}, ${f(muddy[1])}, ${f(muddy[2])}) * ${f((1 - opacity) * k)};\ndiffuseColor.a = ${f(1 - through)};\n#include <opaque_fragment>`,
+    );
+  };
+  m.customProgramCacheKey = () => `${prevKey.call(m)}|mpj-water:${opacity}:${k}`;
 }
 
 export class MaterialSetup {
@@ -323,7 +370,15 @@ export class MaterialSetup {
       if (t) m.envMap = t;
     }
     this.patch(m, noDirect, irr, sdw, uv);
-    this.blend(m, opt(f, 'state_type'));
+    if (opt(f, 'mul_vertex_base_color') === '1' && opt(f, 'shader_graph') !== '1') patchVertexColor(m, Number(opt(f, 'mul_vertex_base_color_index') ?? 0));
+    m.fog = opt(f, 'fog') === '1';
+    this.blend(m, opt(f, 'state_type'), f);
+    if (opt(f, 'water_enable') === '1' && opt(f, 'state_type') !== '2' && opt(f, 'refraction_enable') !== '1') {
+      const range = (p.material_water_muddy_range?.value as number | undefined) ?? 1;
+      const muddy = opt(f, 'water_muddy_enable') === '1' ? ((p.material_water_muddy_color?.value as [number, number, number] | undefined) ?? [0, 0, 0]) : ([0, 0, 0] as [number, number, number]);
+      const k = opt(f, 'water_muddy_enable') === '1' ? Math.min(1, range >= 10 ? 1 : 1 / Math.max(range, 1)) : 0;
+      patchWater(m, (p.material_water_opacity?.value as number | undefined) ?? 1, muddy, k);
+    }
     if (opt(f, 'refraction_enable') === '1')
       patchRefraction(
         m,
@@ -344,11 +399,12 @@ export class MaterialSetup {
   }
 
   /** static_opt_state_type: 1 반투명(glb BLEND 그대로), 2 더하기, 4 곱하기 [추정: 판독 sg2 — 광장 lighttube 2·stamp dot/shadow 4] */
-  private blend(m: StdMat, state: string | undefined): void {
+  private blend(m: StdMat, state: string | undefined, f: Fres): void {
     if (state === '2') {
       m.transparent = true;
       m.blending = THREE.AdditiveBlending;
       m.depthWrite = false;
+      if (opt(f, 'water_enable') === '1') m.opacity *= (f.params?.material_water_opacity?.value as number | undefined) ?? 1;
     } else if (state === '4') {
       m.transparent = true;
       m.blending = THREE.CustomBlending;

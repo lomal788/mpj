@@ -108,6 +108,15 @@ export class PlazaMover {
     this.enter('Idle');
   }
 
+  /** PlayerManager::LookAt → ComPlayerUtil::TurnLookAt(수평 방향 CalcTurnDegY → AutoInterpolation::StartRotateY = 목표 회전, 회전은 rotate() 선회 규칙) / immediate = SetRotateLookAt */
+  lookAt(target: THREE.Vector3, immediate = false): void {
+    const dx = target.x - this.pos.x;
+    const dz = target.z - this.pos.z;
+    if (dx === 0 && dz === 0) return;
+    this.targetYaw = THREE.MathUtils.radToDeg(Math.atan2(dx, dz));
+    if (immediate) this.yaw = this.targetYaw;
+  }
+
   get speed(): number {
     return Math.hypot(this.vel.x, this.vel.z);
   }
@@ -361,6 +370,10 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
     if (!v) lever = NO_LEVER;
     else forced = false;
   });
+  const offLook = ctx.on('player:lookAt', (v) => {
+    const r = v as { target: THREE.Vector3; immediate?: boolean };
+    mover.lookAt(r.target, !!r.immediate);
+  });
   const offPlay = ctx.on('player:play', (v) => {
     const r = v as { clip: string; next?: string };
     forced = true;
@@ -395,6 +408,7 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
     dispose() {
       offInput();
       offPlay();
+      offLook();
       const i = ctx.actors.indexOf(actor);
       if (i >= 0) ctx.actors.splice(i, 1);
       chara.dispose();

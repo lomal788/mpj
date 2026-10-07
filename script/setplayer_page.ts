@@ -97,7 +97,10 @@ const overlayStyle = {
   zIndex: '3',
 } as const;
 
-export async function runSetPlayer(stage: HTMLElement, cfg: { com: boolean[]; keyboard: KeyboardPad; muted: boolean; onDone(result: string): void }): Promise<SetPlayerRun> {
+export async function runSetPlayer(
+  stage: HTMLElement,
+  cfg: { com: boolean[]; keyboard: KeyboardPad; muted: boolean; onResult?(r: SetPlayerResult, chars: string[] | null, pads: (PadSource | null)[]): void; onDone(result: string): void },
+): Promise<SetPlayerRun> {
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
@@ -253,6 +256,7 @@ export async function runSetPlayer(stage: HTMLElement, cfg: { com: boolean[]; ke
     },
     onDone: (r) => {
       finished = true;
+      cfg.onResult?.(r, chosen, r.slots.map((sl) => (sl.type === 'human' && sl.controller ? controllers.source(sl.controller) : null)));
       cfg.onDone(summary(r));
     },
   });

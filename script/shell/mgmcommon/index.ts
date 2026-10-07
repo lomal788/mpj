@@ -4,6 +4,7 @@
  */
 export * from './alignment';
 export * from './contracts';
+export * from './dialogBox';
 export * from './fiber';
 export * from './guides';
 export * from './input';

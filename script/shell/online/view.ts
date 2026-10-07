@@ -6,6 +6,7 @@ import { nodeMatrix } from '../charselect/render2d';
 import type { LayoutInst } from '../charselect/scene2d';
 import type { Mat3 } from '../mgmcommon/itemLayout';
 import { alignPanes } from '../mgmcommon/alignment';
+import { layoutDialogBox } from '../mgmcommon/dialogBox';
 import { measure, parseMessage, plainText, RichTextPane } from '../mgmcommon/text';
 import type { MgmDrawHost } from '../mgmcommon/window';
 import { faceKey, type Lay, type OEv } from './panels';
@@ -216,33 +217,6 @@ export class OnlineView {
     this.onSe?.('SQ_SE_SYS_NOTICE');
   }
 
-  /** 나눈 창(조각 '창#…') 크기 바꾸기: 모서리는 끝에, 변·가운데는 늘인다(원점 가운데 창) [설계: 조각 재배치] */
-  private resizeWindow(inst: LayoutInst, path: string, w: number, h?: number): void {
-    const f = inst.find(path);
-    if (!f) return;
-    const [li, ni] = f;
-    const node = li.nodes[ni];
-    const sw = node.spec.z[0];
-    const sh = node.spec.z[1];
-    const hh = h ?? node.z[1];
-    node.z = [w, hh];
-    for (const ci of node.children) {
-      const c = li.nodes[ci];
-      const name = c.spec.n;
-      if (!name.startsWith(`${node.spec.n}#`)) continue;
-      const side = name.slice(node.spec.n.length + 1);
-      const [cw, ch] = c.spec.z;
-      const left = side.includes('L');
-      const right = side.includes('R');
-      const top = side.includes('T');
-      const bottom = side.includes('B');
-      c.t[0] = left ? -(w / 2 - cw / 2) : right ? w / 2 - cw / 2 : 0;
-      c.z[0] = left || right ? cw : cw + (w - sw);
-      c.t[1] = top ? hh / 2 - ch / 2 : bottom ? -(hh / 2 - ch / 2) : 0;
-      c.z[1] = top || bottom ? ch : ch + (hh - sh);
-    }
-  }
-
   /** 글자 페인의 지금 문구 폭·높이(여러 줄 = 최대 폭, 줄 수 × 글자 높이 + 줄 간격) */
   private textBounds(l: Lay, path: string): [number, number] {
     const inst = this.inst[l];
@@ -258,44 +232,10 @@ export class OnlineView {
     return [w, lines.length * ts.fs[1] + (lines.length - 1) * ls];
   }
 
-  /** bq::ComUiDialogBox 크기 [판독 FUN_7100208240 @0x7100208240, online.md 9.3 정정 1~6] */
+  /** bq::ComUiDialogBox 크기 [판독 FUN_7100208240 @0x7100208240, online.md 9.3 정정 1~7] → 공용 layoutDialogBox(dialog_box.md 9.1) */
   private layoutDialog(l: Lay, n: number): void {
     const inst = this.inst[l];
-    const BTN_W0 = 520;
-    let maxW = 0;
-    for (let i = 0; i < n; i++) maxW = Math.max(maxW, this.textBounds(l, `x_choise_0${i}/x_text_dialog`)[0]);
-    const w = Math.max(Math.min(BTN_W0, maxW + 240), 360);
-    let btnH = 0;
-    for (let i = 0; i < n; i++) {
-      const part = inst.part(`x_choise_0${i}`);
-      if (!part) continue;
-      for (const p of ['x_btn', 'x_btn_shadow', 'x_btn_ef']) this.resizeWindow(part, p, w);
-      const bf = part.find('x_btn');
-      if (bf) btnH = bf[0].nodes[bf[1]].z[1];
-    }
-    const choise = inst.find('x_alignment_choise');
-    if (choise) {
-      const [li, ni] = choise;
-      li.nodes[ni].children.forEach((ci, i) => {
-        const c = li.nodes[ci];
-        if (c.spec.k === 'part') c.z = [i < n ? w : c.spec.z[0], c.z[1]];
-      });
-    }
-    alignPanes(inst, 'x_alignment_choise', { horizontal: true, kind: 1, gap: 20, stretch: false });
-    const [tw, th] = this.textBounds(l, 'x_text');
-    const textW = Math.min(Math.max(tw + 200, 1234), 1794);
-    const winW = n > 0 ? Math.max(n * w + 200, textW) : Math.max(200, textW);
-    const winH = Math.min(Math.max((n > 0 ? btnH : 0) + th + 200, 426), 954);
-    this.resizeWindow(inst, 'x_win_dialog', winW, winH);
-    const y = inst.find('x_alignment_y');
-    if (y) {
-      const [li, ni] = y;
-      for (const ci of li.nodes[ni].children) {
-        const c = li.nodes[ci];
-        if (c.spec.n === 'x_text') c.z = [c.spec.z[0], th];
-      }
-    }
-    alignPanes(inst, 'x_alignment_y', { horizontal: false, kind: 1, gap: 34, stretch: false });
+    layoutDialogBox(inst, n, (path) => this.textBounds(l, path));
     const xt = inst.find('x_text');
     if (xt) {
       const r = this.rich.get(l)?.get('x_text');

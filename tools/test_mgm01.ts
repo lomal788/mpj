@@ -8,7 +8,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Render2D } from '../script/shell/charselect/render2d';
+import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
 import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '../script/shell/mgmcommon';
@@ -358,6 +358,16 @@ const sound = new MgmSound({ ...spec.sounds, ...json.sounds }, (p) => p);
   tick(20);
   const w = scr.win;
   ok(w.isVisible() && !w.life.opening, '창 열림');
+  const span = (p: string): number[] => {
+    const m = nodeMatrix(w.inst, p)!;
+    const f = w.inst.find(p)!;
+    const n = f[0].nodes[f[1]];
+    const [l, , r] = rectOf(n.spec.o, n.z[0], n.z[1]);
+    return [m[0] * l + m[2], m[0] * r + m[2]].map((v) => Math.round(v * 1000) / 1000);
+  };
+  eq(span('x_rule/x_play_00/base'), [586, 1018], '플레이 버튼 판 = 원본 규칙 계산 586..1018(오른쪽 58 px 화면 밖은 원본 데이터, ui2d_alignment.md 12.3)');
+  ok(span('x_rule/x_play_00/cursor')[1] <= 960 && span('x_rule/x_play_00/x_text_00')[1] <= 960, '플레이 아이콘·글자 칸 오른쪽 끝 ≤ 960');
+  eq([span('x_rule/x_rule_option_00'), span('x_rule/x_rule_option_01')], [[-459, 41], [-33, 467]], '규칙 두 칸 화면 x(12.3, 위치는 레이아웃 그대로)');
   eq([w.cursor.col, w.isItemVisible(0, 0), w.isItemVisible(0, 1), w.isItemVisible(0, 2)], [1, false, true, true], '커서 CPU(pane0), 팀 숨김, rule pane 2개 보임');
   eq(w.textOf('x_mgname'), spec.texts.im_mg0106_name, '이름 = im_mg0106_name');
   eq(w.textOf('x_rule/x_rule_option_00/x_text_cpu_00'), spec.texts.im_comLevel00, 'CPU 문구 = im_comLevel00');

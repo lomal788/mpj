@@ -306,6 +306,8 @@ interface OnlineAdapter {
   tick?(dt: number): void;                                     // 가짜 구현용 시간 진행
 }
 ```
+- 정정(2026-10-08, 광장 D 갈래 — plaza_3d.md §5.1 ②⑥): 광장 대기실용 사건 2개와 선택 요청 2개를 **더했다**(기존 사건·요청 무변경). `{ t: 'remoteInfo'; station; slot; chara; pos: [x,y,z]; quat: [x,y,z,w] }`(SendRemotePlayerInfo 수신, 0.2 s 간격) · `{ t: 'stamp'; station; slot; stamp; chara }`(UiStamp NetTransfer 0xf019 수신), `sendPlayerInfo?(slot, chara, pos, quat)` · `sendStamp?(slot, stamp, chara)`. FakeOnline 옵션 `remoteMove`(원격 멤버가 광장을 걷는 흉내)·`stampEvery`(초) — 기본 꺼짐 [설계].
+
 메시지 순서(서버 구현 메모): 참가 = `join(id,pw)` → 서버가 방장에게 요청 전달 → 방장 수락이면 참가자에게 방 상태 + 기존 멤버 데이터, 기존 멤버에게 `memberJoined` → 새 멤버 데이터 도착 시 모두에게 `memberReady`. 이탈·해산·시작은 방 전체 방송. 시간 제한 = 참가 응답 20 s·데이터 20 s(4.8).
 
 ### 9.3 웹이 정한 것 [설계]
@@ -332,6 +334,7 @@ interface OnlineAdapter {
     5. 선택지 칸 보이기 = 번호 < 개수, 나머지 숨김(FUN_7100209ae0), 처음 커서 = +0x4c(SetChoice 기본값), 커서 칸 "cursor"·나머지 "normal"·불가 "disable"(In).
     6. 세로 `x_alignment_y`(ali1: 세로·가운데·gap 34 [데이터]) 정렬 다시 요청 — 본문 글자 extent = 글자 경계 높이 [추정: 창 크기 계산과 같은 vt+0x168 경계를 정렬 측정도 쓴다고 봄], 선택지 줄 = 130.
     7. 문구가 길면 창이 커진다(예: 3칸 = 3w + 200 → 화면 폭까지). 웹은 1~6 그대로, 나눈 창 조각을 새 크기로 다시 놓는다 [설계: 조각 재배치].
+  - 정정(2026-10-08): 위 1~7 크기 규칙과 칸 이동·결정·취소 입력(main FUN_7100208b80·FUN_7100209234 판독)을 공용 `web/script/shell/mgmcommon/dialogBox.ts`(`layoutDialogBox`·`resizeSplitWindow`·`DialogBoxState`)로 옮겼다 — 근거·표는 [dialog_box.md](dialog_box.md) 4~6·9.1. 이 모듈의 `view.ts`·`widgets.ts` 는 그 부품을 부른다. 판독으로 바뀐 것 하나: 선택지 없는 대화상자의 A 소리 = `SQ_SE_SYS_MES_PROC`(이전 웹 `SQ_SE_SYS_DECI`) [판독 FUN_7100209234]. 위 9.3 표의 '대화상자 … 미분석' 칸은 dialog_box.md 로 대체.
 - 정정(2026-10-07): 방 목록 행의 방장 이름은 `x_parts_username` 의 **`x_text_01`** 에 써야 한다 — `mn00_btn_room_01` 의 부품 덮어쓰기가 `x_text_00` 숨김·`x_text_01` 보임(갈색 7,2,3)으로 바꾼다 [데이터 ov]. 원본 `UiControlStatusName` 세터(vt+0xb8)가 두 글자에 다 쓰는지는 [미확정] → 웹은 두 페인 모두에 쓴다(charselect 와 같음). 매칭 참가자 판(`sys_username_00`)도 같은 방식.
 - 정정(2026-10-07): 알림 그리기 [판독 FUN_7100252860 @0x7100252860·FUN_710025366c @0x710025366c·FUN_71002537b0 @0x71002537b0 — C `analysis/decomp/online_main_notice.c`]: `Notice_JoinSession` = `x_text_00` 보임(Text0 = SetJoinPlayerName 문자열 또는 SetJoinPlayer 의 닉네임), `x_text_01` 숨김, **`x_pict` 숨김**. `Notice_GotReward` = `x_text_01`(Text0 = 업적 이름 라벨), `x_pict` 보임(레이아웃 기본 그림, 텍스처 바꾸기 없음). 그 밖의 알림 = `x_text_01`, `x_pict` 숨김. 그다음 `A_alignment_00` 정렬(ali1 전부 0 = 수평·왼쪽·gap 0 [데이터]; 자원 위치 x_pict −343·글자 −311 = 왼쪽 끝 −375 + 64 와 일치) 다시 요청, "in" 재생, `SQ_SE_SYS_NOTICE`(window_00 위치 2D). → 이 화면의 알림(참가·찾는 중·못 찾음·참가 못함·1대당 1명)은 모두 아이콘 없음.
 - 기본 커서: 해산·나가기 확인 = 1(아니요, B = 1), 매칭 취소 확인 = 1(돌아가지 않는다), sys_error_E = 0(찾는다), 참가 확인 = 0(판독: +0x4c = 0), 패스워드 확인 = 1(판독) [그 밖은 설계].

@@ -1,6 +1,6 @@
 """Graphics conversion pipeline prototype: FRES/BNTX -> glb + png + baked anim json + manifest.
 
-usage: graphics_convert.py <set> [<set> ...]      sets: mg1801, pc01
+usage: graphics_convert.py <set> [<set> ...]      sets: mg1801, pc01, mgmet, menu00, menu_common
 output: extracted/converted/graphics/<set>/{model/*.glb, tex/*.png|json, anim/*.json, meta/*.json, manifest.json}
 
 Steps per set
@@ -79,7 +79,89 @@ def pc01():
     }
 
 
-SETS = {"mg1801": mg1801, "pc01": pc01}
+MGMET_ANIMS = {
+    "mgmet_mgm02_vehicle_pos": ["mgmet_mgm02_vehicle_approach_c01", "mgmet_mgm02_vehicle_departure_c01"],
+    "mgmet_mgm03_vehicle_pos": ["mgmet_mgm03_vehicle_approach_c01", "mgmet_mgm03_vehicle_departure_c01"],
+    "mgmet_mgm04_vehicle_pos": ["mgmet_mgm04_vehicle_approach_c01", "mgmet_mgm04_vehicle_approach_c02",
+                                "mgmet_mgm04_vehicle_departure_c01", "mgmet_mgm04_vehicle_departure_c02"],
+    "mgmet_mgm05_vehicle_pos": ["mgmet_mgm05_vehicle_approach_c01", "mgmet_mgm05_vehicle_departure_c01"],
+    "mgmet_mgm06_pos": ["mgmet_mgm06_approach_c01", "mgmet_mgm06_approach_c02", "mgmet_mgm06_approach_c03",
+                        "mgmet_mgm06_course_selection_c01", "mgmet_mgm06_course_selection_c02", "mgmet_mgm06_departure_c01"],
+    "mgmet_mgm06_release_pos": ["mgmet_mgm06_release_c01"],
+    "mgmet_seagul00": ["mgmet_seagul00_idle"],
+}
+
+
+def mgmet():
+    base = os.path.join(BEA, "mgm~mgmet.nx.bea", "mgm", "mgmet")
+    models = []
+    for f in files_under(os.path.join(base, "model"), ".fmdb"):
+        stem = os.path.splitext(os.path.basename(f))[0]
+        names = MGMET_ANIMS.get(stem, [stem])
+        anims = [p for p in (os.path.join(base, "model", n + ".fskb") for n in names) if os.path.exists(p)]
+        models.append({"fmdb": f, "anims": anims, "shapeAnims": []})
+    extra_anims = files_under(os.path.join(base, "model"), ".fmab") + files_under(os.path.join(base, "env"), ".fmab") + files_under(os.path.join(base, "env"), ".fsnb")
+    return {
+        "bea": "mgm~mgmet.nx.bea",
+        "textures": files_under(base, ".bntx"),
+        "models": models,
+        "envModels": files_under(os.path.join(base, "env"), ".fmdb"),
+        "anims": extra_anims,
+    }
+
+
+def prefix_anims(model_dir):
+    stems = sorted(os.path.splitext(os.path.basename(f))[0] for f in files_under(model_dir, ".fmdb"))
+    owner = {}
+    for f in files_under(model_dir, ".fskb"):
+        a = os.path.splitext(os.path.basename(f))[0]
+        best = None
+        for s in stems:
+            if (a == s or a.startswith(s + "_")) and (best is None or len(s) > len(best)):
+                best = s
+        if best is not None:
+            owner.setdefault(best, []).append(f)
+    return owner
+
+
+MENU00_EXTRA_ANIMS = {
+    "menu00_loc_attach00": "pos_balloon_takeoff",
+    "menu00_loc_ev_quest_start": "menu00_ev_quest_start_cut02_cloud00_anim",
+}
+
+
+def menu00():
+    base = os.path.join(BEA, "menu~menu00.nx.bea", "menu", "menu00")
+    owner = prefix_anims(os.path.join(base, "model"))
+    for stem, a in MENU00_EXTRA_ANIMS.items():
+        owner.setdefault(stem, []).append(os.path.join(base, "model", a + ".fskb"))
+    models = [{"fmdb": f, "anims": owner.get(os.path.splitext(os.path.basename(f))[0], []), "shapeAnims": []}
+              for f in files_under(os.path.join(base, "model"), ".fmdb")]
+    extra_anims = files_under(os.path.join(base, "model"), ".fmab") + files_under(os.path.join(base, "env"), ".fmab") + files_under(os.path.join(base, "env"), ".fsnb")
+    return {
+        "bea": "menu~menu00.nx.bea",
+        "textures": files_under(base, ".bntx"),
+        "models": models,
+        "envModels": files_under(os.path.join(base, "env"), ".fmdb"),
+        "anims": extra_anims,
+    }
+
+
+def menu_common():
+    base = os.path.join(BEA, "menu~menu_common.nx.bea", "menu", "menu_common")
+    owner = prefix_anims(os.path.join(base, "model"))
+    models = [{"fmdb": f, "anims": owner.get(os.path.splitext(os.path.basename(f))[0], []), "shapeAnims": []}
+              for f in files_under(os.path.join(base, "model"), ".fmdb")]
+    return {
+        "bea": "menu~menu_common.nx.bea",
+        "textures": files_under(base, ".bntx"),
+        "models": models,
+        "envModels": [],
+        "anims": files_under(os.path.join(base, "model"), ".fmab") + files_under(os.path.join(base, "env"), ".fsnb"),
+    }
+
+
+SETS = {"mg1801": mg1801, "pc01": pc01, "mgmet": mgmet, "menu00": menu00, "menu_common": menu_common}
 
 
 def run(cmd):

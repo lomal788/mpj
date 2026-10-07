@@ -55,6 +55,8 @@ export interface Mgm01Cfg {
   com: boolean[];
   pads: (PadSource | null)[];
   muted: boolean;
+  /** 한 판 요청을 페이지가 실제 게임으로 돌릴 때(index.html ?plaza=1). null·없음 = 가짜 한 판 */
+  play?(req: Mgm01PlayRequest): Promise<MgResultEntry | null>;
   onDone(result: string): void;
 }
 
@@ -555,11 +557,17 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
       scene = null;
       phase = `한 판(가짜) ${req.name}`;
       let done = false;
+      let real: MgResultEntry | null | undefined = cfg.play ? undefined : null;
+      if (cfg.play)
+        void cfg
+          .play(req)
+          .then((r) => (real = r))
+          .catch(() => (real = null));
       return {
         step() {
-          if (done) return;
+          if (done || real === undefined) return;
           done = true;
-          stack.ret(fakeResult(env, req));
+          stack.ret(real ?? fakeResult(env, req));
         },
         render() {},
         dispose() {},

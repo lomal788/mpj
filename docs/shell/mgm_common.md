@@ -237,6 +237,7 @@ FinalizeMessage(): 엔티티 파괴
 쓰임 예 [판독 mgmet Mgm01SettingUiFlow @0x710005de94, FirstHowToPlayFlow @0x710005a75c]: 설정 화면 동안 Back+HowTo 를 켜고, "플레이 방법" 창(HowtoPlay)을 띄울 때 끄고 닫으면 다시 켠다.
 
 `mgmet::DialogBox::Setup(DIALOG_BOX_INFO&)` @0x710006f3f0 [판독]: 형식·속성, owner = 조작 플레이어(로컬만), HidButton 1, 본문 라벨(+삽입 라벨/문자열 2자리), 두 번째 라벨, 선택지 0~3개 라벨·기본 선택(ComUiDialogBox +0x4c), 취소 가능 → `In` = 엔티티 Activate + ComUiDialogBox::In, `IsEnd`·`GetChoiceResult` 그대로. 다이얼로그 그림·입력은 bq::ComUiDialogBox(엔진) [미확정].
+정정(2026-10-08): bq::ComUiDialogBox 의 상태·입력·소리·크기를 판독했다 → [dialog_box.md](dialog_box.md) 4~7(main FUN_7100207c38·FUN_7100208b80·FUN_7100209234·FUN_7100208240), 웹 공용 부품 `mgmcommon/dialogBox.ts`. 항구 나가기 확인(ConfirmReturnSceneFlow)은 이 래퍼가 아니라 메시지 창 선택지다(dialog_box.md 6.3).
 
 ## 6. 계산식·조건·상세 의사코드 [판독]
 
@@ -622,7 +623,7 @@ interface MessageWindowAdapter {          // ComUiMessageWindow 인터페이스 
 |---|---|---|
 | ComUiMessageWindow 내부 | **닫힘(2차)** → [message_window.md](message_window.md). 그 문서 11절에 남은 것(보이스 변형·속도 설정 이름 등) | — |
 | MESSSAGE_WINDOW_OFFSET 값 | **닫힘(2차)**: (0,0,0) [판독, 4.3] | — |
-| ComUiDialogBox·ComUiGuide00 그림/입력 | [미확정] (ComUiGuide00 은 charselect 구현 재사용 가능) | bq 엔진 판독 |
+| ComUiDialogBox·ComUiGuide00 그림/입력 | ComUiDialogBox **닫힘(2026-10-08)** → [dialog_box.md](dialog_box.md) (PlayMode 7 갈래만 미확정). ComUiGuide00 [미확정] (charselect 구현 재사용 가능) | bq 엔진 판독 |
 | 엔진 PlayAnimation/SetNextAnimation(null) 동작 | [미확정] | ComUiBase::PlayAnimation @0x710020d7a0 판독 |
 | 사운드 그룹·프리셋 | **닫힘(2차, 6.9)**: 소속 규칙·값 [판독+데이터]. 열거형 이름 문자열은 바이너리·데이터에 없음 → 이름 자체는 [미확정], FADE_TIME_NN = 칸 NN [추정], 0x26~0x28 종류값 뜻 [추정] | FUN_71000fce40 판독 |
 | BeginScene 의 FUN_71000bfcfc(ENTRANCE BGM 두 개) 뜻 | [추정 미리 준비] | FUN_71000bfcfc 판독 |

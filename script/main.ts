@@ -12,6 +12,7 @@
  *           ?avlat=raw|<ms> 출력 지연 보정(raw = 보정 없이 currentTime, 원본처럼 / ms = 측정값에 더 늦출 양),
  *           ?synclog=1 스텝·소리 시각 기록(window.__mpj.sync, tools/sync_measure.ts),
  *           ?charselect=1 시작 전에 캐릭터 선택 화면(독립 모듈 shell/charselect, script/charselect_page.ts)을 띄우고 고른 캐릭터로 시작
+ *           ?plaza=1 플레이어 설정 → 광장 3D(shell/plaza) → 기구 → 모드 메뉴 → 항구 → 프리 플레이 목록 → 게임(docs/shell/plaza_3d.md §6.9), &skipsetup=1 설정 건너뜀
  * 시험 훅: window.__mpj (stage, frame, result, error, hold(frame), dropped, sync)
  */
 import './style.css';
@@ -25,6 +26,13 @@ import { Hud } from './view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from './view/input';
 import { Renderer } from './view/renderer';
 import { runCharSelect, type CharSelectRun } from './charselect_page';
+import { runMgm01List, type Mgm01ListRun } from './mgm01_page';
+import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
+import { runModeSelect, type ModeSelectRun } from './modeselect_page';
+import { runPlaza, type PlazaPageRun } from './plaza_page';
+import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
+import type { MgResultEntry } from './shell/mgmcommon';
+import type { Mgm01PlayRequest } from './shell/mgm01';
 
 type Stage = 'idle' | 'loading' | 'running' | 'done' | 'error';
 
@@ -46,6 +54,9 @@ interface Hook {
   sync: { steps: unknown[]; frames: unknown[]; audio: unknown[] } | null;
   /** ?charselect=1 결과(pcNN 목록, 취소 null) */
   charselect?: string[] | null;
+  /** ?plaza=1 흐름 단계(setplayer·plaza·modeselect·mgmet·mgm01·game·end)와 광장 실행기 debug */
+  flow?: string;
+  plaza?: () => Record<string, unknown> | null;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -314,7 +325,155 @@ async function start(d: GameDef, setup: GameSetup): Promise<void> {
   base = NaN;
 }
 
+// ---------------------------------------------------------------- ?plaza=1 흐름(docs/shell/plaza_3d.md §6.9)
+interface FlowRun {
+  stop(): void;
+}
+let flowRun: FlowRun | null = null;
+let plazaPage: PlazaPageRun | null = null;
+const flowPlayers = { com: [] as boolean[], chars: [] as string[], names: undefined as string[] | undefined, pads: [] as ReturnType<typeof padSourcesFor> };
+
+const flowStep = (name: string, r: FlowRun | null): void => {
+  flowRun?.stop();
+  flowRun = r;
+  hook.flow = name;
+  (window as unknown as { __flow?: FlowRun | null }).__flow = r;
+};
+
+const endFlow = (text: string): void => {
+  flowStep('end', null);
+  plazaPage = null;
+  glCanvas.style.visibility = hudCanvas.style.visibility = '';
+  startBtn.disabled = false;
+  setMsg(text);
+};
+
+async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null> {
+  const d = GAMES.find((g) => g.id === req.name);
+  if (!d) return null;
+  const others = [...stageBox.children].filter((c) => c !== glCanvas && c !== hudCanvas && c !== msg) as HTMLElement[];
+  for (const c of others) c.style.visibility = 'hidden';
+  glCanvas.style.visibility = hudCanvas.style.visibility = '';
+  hook.flow = 'game';
+  chosenChars = flowPlayers.chars;
+  const setup: GameSetup = { ...readSetup(), players: flowPlayers.com.map((c, i) => ({ char: flowPlayers.chars[i] ?? `pc0${i + 1}`, isCom: c, comLevel: req.cpu ?? 0 })) };
+  await start(d, setup);
+  await new Promise<void>((res) => {
+    const t = setInterval(() => {
+      if (hook.stage === 'done' || hook.stage === 'error' || hook.stage === 'idle') {
+        clearInterval(t);
+        res();
+      }
+    }, 100);
+  });
+  const r = hook.result;
+  const rows = r && def ? def.describeResult(r as never, setup).rows : [];
+  dispose();
+  glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
+  for (const c of others) c.style.visibility = '';
+  hook.flow = 'mgm01';
+  const results = [0, 1, 2, 3].map((p) => (!req.team.gamePlayByPid[p] ? 255 : rows.find((x) => x.player === p)?.rank === 0 ? 1 : 0)) as [number, number, number, number];
+  return { id: req.id, judge: 1, results };
+}
+
+function flowMgm01(): void {
+  flowStep('mgm01-loading', null);
+  void runMgm01List(stageBox, {
+    com: flowPlayers.com,
+    pads: flowPlayers.pads,
+    muted: muteIn.checked,
+    play: playFromList,
+    onDone: () => queueMicrotask(flowMgmet),
+  }).then((r: Mgm01ListRun) => flowStep('mgm01', r));
+}
+
+function flowMgmet(): void {
+  flowStep('mgmet-loading', null);
+  void runMgmet('hub', stageBox, {
+    com: flowPlayers.com,
+    pads: flowPlayers.pads,
+    muted: muteIn.checked,
+    test: mgmetTestValues(),
+    onDone: (text) => queueMicrotask(() => (text.startsWith('프리 플레이 시작') ? flowMgm01() : flowModeSelect())),
+  }).then((r: MgmetRun) => flowStep('mgmet', r));
+}
+
+function flowModeSelect(): void {
+  flowStep('modeselect-loading', null);
+  void runModeSelect(stageBox, {
+    pad: flowPlayers.pads[0] ?? null,
+    muted: muteIn.checked,
+    onDone: (r) => queueMicrotask(() => (r?.key === 'mgm' ? flowMgmet() : flowPlaza())),
+  }).then((r: ModeSelectRun) => flowStep('modeselect', r));
+}
+
+function flowPlaza(): void {
+  flowStep('plaza-loading', null);
+  setMsg('광장 읽는 중…');
+  void runPlaza(stageBox, {
+    com: flowPlayers.com,
+    chars: flowPlayers.chars,
+    names: flowPlayers.names,
+    pads: flowPlayers.pads,
+    muted: muteIn.checked,
+    params: q,
+    onProgress: (n, total, what) => hook.flow === 'plaza-loading' && setMsg(`광장 읽는 중 ${n}/${total}\n${what}`),
+    onExit: (e) =>
+      queueMicrotask(() => {
+        plazaPage = null;
+        if (e.k === 'balloon' || e.k === 'session') flowModeSelect();
+        else endFlow('광장 나감');
+      }),
+  })
+    .then((r) => {
+      setMsg('');
+      plazaPage = r;
+      flowStep('plaza', r);
+      (window as unknown as { __plaza?: PlazaPageRun }).__plaza = r;
+    })
+    .catch((e: unknown) => {
+      console.error(e);
+      hook.error = String((e as Error).stack ?? e);
+      endFlow(`광장 실패: ${(e as Error).message}`);
+    });
+}
+
+function plazaFlow(): void {
+  flowStep('setplayer', null);
+  startBtn.disabled = true;
+  glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
+  const com = comIns.map((c) => c.checked);
+  flowPlayers.com = com;
+  flowPlayers.chars = com.map((_, i) => `pc0${i + 1}`);
+  flowPlayers.names = undefined;
+  flowPlayers.pads = padSourcesFor(com, keyboard);
+  if (q.get('skipsetup') === '1') {
+    flowPlaza();
+    return;
+  }
+  let got = false;
+  void runSetPlayer(stageBox, {
+    com,
+    keyboard,
+    muted: muteIn.checked,
+    onResult: (r, chars, pads) => {
+      if (r.cancelled || !chars) return;
+      got = true;
+      flowPlayers.com = r.slots.map((sl) => sl.type !== 'human');
+      flowPlayers.chars = chars;
+      flowPlayers.names = r.slots.map((sl) => sl.displayName);
+      flowPlayers.pads = pads;
+    },
+    onDone: () => queueMicrotask(() => (got ? flowPlaza() : endFlow('플레이어 설정 취소'))),
+  }).then((r: SetPlayerRun) => flowStep('setplayer', r));
+}
+hook.plaza = () => plazaPage?.debug() ?? null;
+
 startBtn.addEventListener('click', () => {
+  if (q.get('plaza') === '1') {
+    plazaFlow();
+    return;
+  }
   const d = GAMES.find((g) => g.id === gameSel.value) ?? GAMES[0];
   if (!d) return;
   if (q.get('charselect') !== '1') {

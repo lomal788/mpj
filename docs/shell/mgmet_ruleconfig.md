@@ -379,6 +379,8 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 | 진동 | 사건 `vib` → `MgmSound.vibrate(조작 플레이어, 'rule')` | 이름 [미확정] |
 | 단독 시험 진입 `entry: 'rule'` | 제목 ActIn·정보·안내 In → Mgm01SetRuleFlow → Out, 결과 `{kind:'rule'}` | [설계] ui.html 시험용 |
 
+정정 줄(2026-10-08): "플레이 버튼·열이 오른쪽으로 치우쳐 잘린다"는 신고를 원본 규칙으로 다시 계산했다(ui2d_alignment.md 12.2). 웹과 원본이 다른 단계는 없었다. 열은 Alignment 오른쪽 끝 730에 붙고(설명 507·CPU 136), `x_play_00`은 Alignment 밖의 형제로 저장 위치 (910,−87) 그대로다. 버튼 판은 688..1120이어서 원본 데이터에서도 오른쪽 160 px(둥근 끝 전부)가 화면 밖이고, 아이콘(722..746)과 글자 칸(769..949)은 화면 안이다 [판독][데이터]. 원본 캡처 대조는 §11에 남긴다. 회귀 검사: `tools/test_mgmet.ts` 4절.
+
 검증: `tools/test_mgmet.ts` 3·4절(상태 경계·잠금 열·Round+Star 첫 열 2·숨긴 열 index·commit/flag4·LoadWorkData, 실제 명세에서 CPU (158)·설명 (529)·배경 96/507).
 
 ## 10. 검증 방법·실행 결과

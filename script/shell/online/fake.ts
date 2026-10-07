@@ -19,7 +19,16 @@ export interface FakeOptions {
   /** 매칭 걸리는 시간(초) */
   matchSec: number;
   self: OnlineSelf;
+  /** 광장: 데이터 받은 원격 멤버가 원을 그리며 걷고 0.2 s 마다 remoteInfo 를 보낸다 [설계, plaza_3d.md §8] */
+  remoteMove?: boolean;
+  /** 광장: 원격 멤버 하나가 이 간격(초)마다 스탬프를 보낸다(0·없음 = 안 보냄) [설계] */
+  stampEvery?: number;
 }
+
+/** 원격 걷기 흉내 원 중심(광장 char_start_pos 근처, plaza_3d.md §1.1) [설계] */
+export const FAKE_WALK_CENTER: readonly [number, number, number] = [0, -2.4, 16];
+/** 메뉴 단축 스탬프 Number 1000·25·13·9 → StampID(stampList 배열 번호) [데이터] */
+export const FAKE_STAMPS: readonly number[] = [0, 28, 16, 12];
 
 export const FAKE_NAMES = ['Mia', 'Kenta', 'Soyeon', 'Luca', 'Hana', 'Theo', 'Yuna', 'Riku', 'Jisoo', 'Noah', 'Emma', 'Daichi'];
 
@@ -38,7 +47,11 @@ export class FakeOnline implements OnlineAdapter {
   private rnd: number;
   private seq = 0;
   private matching = false;
+  private sendT = 0;
+  private stampT = 0;
   readonly log: string[] = [];
+  /** 이 기기가 보낸 광장 위치·스탬프(시험 확인용) */
+  readonly sent: { t: 'info' | 'stamp'; slot: number; v: number[] }[] = [];
 
   constructor(readonly opt: FakeOptions) {
     this.rnd = opt.seed >>> 0 || 1;
@@ -265,8 +278,46 @@ export class FakeOnline implements OnlineAdapter {
     return o;
   }
 
+  sendPlayerInfo(slot: number, chara: number, pos: [number, number, number], quat: [number, number, number, number]): void {
+    this.sent.push({ t: 'info', slot, v: [chara, ...pos, ...quat] });
+  }
+
+  sendStamp(slot: number, stamp: number, chara: number): void {
+    this.sent.push({ t: 'stamp', slot, v: [stamp, chara] });
+  }
+
+  /** 원격 멤버 걷기·스탬프 흉내(옵션이 켜졌을 때만, 기존 동작·난수 순서 무변경) */
+  private plazaFake(dt: number): void {
+    const room = this.cur;
+    if (!room) return;
+    const remote = room.members.filter((m) => !m.local && m.ready);
+    if (this.opt.remoteMove) {
+      this.sendT -= dt;
+      if (this.sendT <= 0) {
+        this.sendT += 0.2;
+        remote.forEach((m, k) => {
+          const r = 3 + k;
+          const a = (this.time * 2) / r + k * 1.7;
+          const pos: [number, number, number] = [FAKE_WALK_CENTER[0] + Math.cos(a) * r, FAKE_WALK_CENTER[1], FAKE_WALK_CENTER[2] + Math.sin(a) * r];
+          const yaw = -a;
+          this.emit({ t: 'remoteInfo', station: m.station, slot: 0, chara: m.chara, pos, quat: [0, Math.sin(yaw / 2), 0, Math.cos(yaw / 2)] });
+        });
+      }
+    }
+    const every = this.opt.stampEvery ?? 0;
+    if (every > 0 && remote.length > 0) {
+      this.stampT += dt;
+      if (this.stampT >= every) {
+        this.stampT -= every;
+        const m = this.pick(remote);
+        this.emit({ t: 'stamp', station: m.station, slot: 0, stamp: this.pick(FAKE_STAMPS), chara: m.chara });
+      }
+    }
+  }
+
   tick(dt: number): void {
     this.time += dt;
+    if (this.opt.remoteMove || this.opt.stampEvery) this.plazaFake(dt);
     for (;;) {
       this.queue.sort((a, b) => a.at - b.at);
       const p = this.queue[0];

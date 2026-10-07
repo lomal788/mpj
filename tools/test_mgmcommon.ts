@@ -13,6 +13,9 @@ import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
 import {
   createWork,
+  DIALOG_SE,
+  DialogBoxState,
+  dialogBoxSize,
   DEFAULT_MENU_ANIME,
   FiberRunner,
   insertValue,
@@ -417,6 +420,55 @@ console.log('9. 실제 명세: 명세 합치기·공용 창·항목 제약(6.7)'
   eq(w.textOf('x_text_00'), plainText(texts.mgm01_ui_mgNameBig, texts, { Text0: texts.im_mg0101_name }), 'setText + Text0 삽입');
   w.insert('x_text_00', 'Text0', 'im_mg0102_name');
   ok(w.textOf('x_text_00').includes(texts.im_mg0102_name), 'insert 로 Text0 바꿈');
+}
+
+// ── 대화상자 bq::ComUiDialogBox (dialog_box.md 4~6) ──
+{
+  console.log('대화상자(ComUiDialogBox)');
+  const s1 = dialogBoxSize(2, 60, 500, 40, 130);
+  eq([s1.btnW, s1.winW, s1.winH], [360, 1234, 426], '짧은 글자: 버튼 360·창 1234·높이 426');
+  const s2 = dialogBoxSize(3, 400, 1000, 700, 130);
+  eq([s2.btnW, s2.winW, s2.winH], [520, 3 * 520 + 200, 954], '긴 선택지: 버튼 520·창 3w+200·높이 954');
+  eq(dialogBoxSize(1, 400, 2000, 40, 130).winW, 1794, '긴 본문: 창 폭 상한 1794');
+  eq(dialogBoxSize(0, 0, 100, 40, 130).winW, 1234, '선택지 없음: 창 = clamp(글자+200)');
+  const d = new DialogBoxState();
+  d.setChoiceCount(3);
+  d.initial = 1;
+  d.cancelEnable = true;
+  d.disabled[0] = true;
+  d.deciSe[2] = 'SQ_SE_SYS_DECI_L';
+  const ev0 = d.open(false);
+  eq([d.st, d.cursor, d.result], [1, 1, -1], 'In: 상태 1·커서 = 기본·결과 −1');
+  eq(ev0.filter((e) => e.t === 'anim').map((e) => (e.t === 'anim' ? e.tag : '')), ['disable', 'cursor', 'normal'], '칸 disable/cursor/normal');
+  eq(d.input(0x1).close, false, 'in 중 입력 없음');
+  d.inDone();
+  eq(d.st, 2, 'in 끝 → 2');
+  let r = d.input(0x10100);
+  eq([d.cursor, r.close], [1, false], '왼쪽: 불가 칸 0 건너뜀 → 그대로(넘김 없음)');
+  r = d.input(0x40200);
+  eq(d.cursor, 2, '오른쪽 → 2');
+  ok(r.ev.some((e) => e.t === 'se2d' && e.label === DIALOG_SE.CURSOR) && r.ev.some((e) => e.t === 'vib' && e.label === 'bv_vib_sys_cursor'), '이동 SE2D·진동');
+  eq(r.ev.filter((e) => e.t === 'anim').map((e) => (e.t === 'anim' ? `${e.tag}>${e.next}` : '')), ['off>normal', 'on>cursor'], '불가 아닌 칸만 on/off → cursor/normal');
+  d.input(0x40200);
+  eq(d.cursor, 2, '오른쪽 끝 정지');
+  r = d.input(0x1 | 0x2);
+  eq([r.close, d.result], [true, 2], '결정이 B 보다 먼저');
+  ok(r.ev.some((e) => e.t === 'se' && e.label === 'SQ_SE_SYS_DECI_L') && r.ev.some((e) => e.t === 'vib' && e.label === 'bv_vib_sys_deci'), '칸 결정 SE·기본 진동');
+  d.out(false);
+  eq(d.st, 3, 'Out → 3');
+  d.outDone();
+  eq([d.st, d.count, d.result], [0, 0, 2], 'out 끝 → 초기화(결과는 남음)');
+  d.setChoiceCount(2);
+  d.cancelEnable = true;
+  d.open(true);
+  r = d.input(0x2);
+  eq([r.close, d.result, r.ev[0]], [true, -1, { t: 'se', label: DIALOG_SE.CANCEL }], 'B 취소 → −1·CANCEL');
+  d.out(true);
+  d.open(true);
+  r = d.input(0x2);
+  eq(r.close, false, '선택지 없음: B 무시');
+  r = d.input(0x1);
+  eq([r.close, d.result, r.ev[0]], [true, -1, { t: 'se', label: DIALOG_SE.MES_PROC }], '선택지 없음: A → MES_PROC·결과 −1');
 }
 
 console.log(`${count - fails}/${count} 통과`);

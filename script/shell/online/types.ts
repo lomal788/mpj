@@ -61,7 +61,9 @@ export type OnlineEvent =
   | { t: 'started'; room: RoomState }
   | { t: 'matchFound'; members: RoomMember[] }
   | { t: 'matchFailed' }
-  | { t: 'error'; code: ErrorCode };
+  | { t: 'error'; code: ErrorCode }
+  | { t: 'remoteInfo'; station: string; slot: number; chara: number; pos: [number, number, number]; quat: [number, number, number, number] }
+  | { t: 'stamp'; station: string; slot: number; stamp: number; chara: number };
 
 /** online.md 9.2 — 나중에 WebSocket 방 서버로 구현할 인터페이스 [설계] */
 export interface OnlineAdapter {
@@ -81,6 +83,10 @@ export interface OnlineAdapter {
   room(): RoomState | null;
   poll(): OnlineEvent[];
   tick?(dt: number): void;
+  /** 광장 SendRemotePlayerInfo [판독 plaza_3d.md §5.1 ⑥] */
+  sendPlayerInfo?(slot: number, chara: number, pos: [number, number, number], quat: [number, number, number, number]): void;
+  /** 광장 UiStamp 보내기 [판독 plaza_3d.md §5.1 ②] */
+  sendStamp?(slot: number, stamp: number, chara: number): void;
 }
 
 /** PlayerCharacterID → 얼굴 텍스처 이름(characterlist.json 순서, SHARED [scene]) */

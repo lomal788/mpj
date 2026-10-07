@@ -169,7 +169,7 @@
 | 첫 설명 | 각 페이지 Start 후 최소 1회 Wait; trigger만 | A 우선; B 무시 | 다음 페이지; 3페이지 끝에서 종료 |
 | 설명 다시 보기 | 같은 방식 | A 다음 / B 이전; 페이지0의 B | 0에서 u32 underflow로 범위 밖 → 종료; 중간 페이지 B는 이전 페이지 |
 | 규칙 | `RuleConfigView::Impl::Update` 호출마다 | 방향(trigger+repeat) → A → B → mask8 → mask4 | 별도 문서 §6의 정확한 이동/반환값 |
-| 나가기/확인 | 공용 메시지/대화가 owner 입력 처리 | 예/아니요, 기본 선택 1 | 아래 §6.4; 내부 선택 이동은 공용 문서 참조 |
+| 나가기/확인 | 공용 메시지/대화가 owner 입력 처리 | 예/아니요, 기본 선택 1 | 아래 §6.4; 내부 선택 이동은 공용 문서 참조(나가기 = 메시지 창 선택지 위/아래, [dialog_box.md](dialog_box.md) 6.3) |
 
 [판독] ID 0은 오른쪽 화살표 숨김, ID 5는 왼쪽 숨김. ID 4의 왼쪽은 보스 개방 시에만 표시하고 허용한다. 나머지는 양쪽 표시다. ID 5가 미개방 상태에서 직접 들어왔더라도 오른쪽 이동 조건은 ID>0이다. 반복 입력을 선택 화면에 추가하면 원본과 달라진다.
 
@@ -303,6 +303,8 @@ freePlay:
 
 [추정][웹 이름] `web/script/shell/mgmet/`에 허브 순수 상태와 뷰 어댑터를 둔다. import 경계/레이아웃·텍스트·메시지·SE·안내 재사용은 mgm_common §9.1~9.4를 따른다. 기존 엔진층을 끌어오거나 공용 기능을 이 모듈에 다시 구현하지 않는다.
 
+3D 무대(섬·바다·NPC·카메라) 규모 조사와 웹 반영 계획(2026-10-08) → [mgmet_3d.md](mgmet_3d.md).
+
 | 제안 부품 [추정][웹 이름] | 원본 대응/책임 |
 |---|---|
 | `hubState.ts` | 상태 -1/0~10, 선택 ID·시작 지점 보정, nextMode/exit, trigger 우선순위; 3D 완료 신호는 입력으로 받음 |
@@ -342,7 +344,7 @@ freePlay:
 | 인사 메시지 흐름 | `MessageFlow.flow(0)`(조작 플레이어를 매 프레임 owner 로) [추정] | StartEventFlow 의 n 값 미기록 |
 | 앞 안내 표시 조건 +0x33c | 상태 7 준비(제목·화살표·Back)마다 1 → NPC 준비면 안내 → 0 [추정: 5.1 "제목·화살표·안내 준비"] | 이동 뒤에도 새 ID 안내가 나와야 하므로 |
 | 상태 7 제목 In | +0x340 = −1 → InTitle, 0(ID 증가 = 왼쪽) → InLeftArrow, 1 → InRightArrow. 이동 때 "반대쪽 Out" = 왼쪽 누름 → OutRightArrow, 오른쪽 → OutLeftArrow [추정] | 방향 ↔ 태그 대응 미기록. +0x340 은 상태 5 에서 −1 로 [추정] |
-| 나가기 확인(B) | 공용 DialogBox(예/아니요) 미구현 → 앞 안내 Out·끝 대기 뒤 '예'(SQ_SE_SYS_DECI_L) 로 처리 → ReturnScene [설계] | ComUiDialogBox [미확정] |
+| 나가기 확인(B) | ~~공용 DialogBox(예/아니요) 미구현 → 앞 안내 Out·끝 대기 뒤 '예'(SQ_SE_SYS_DECI_L) 로 처리 → ReturnScene [설계]~~ 정정(2026-10-08): 원본은 DialogBox 가 아니라 **메시지 창 선택지** — B 즉시 SQ_SE_SYS_CANCEL → Back Out·제목 ActOut·메시지 Out 끝 대기 → `mgmet_back_mw_guide`(Text0=`im_mode03_name`) 2지(a0 예 DECI_L/bv_vib_sys_deci_l, a1 아니요 CANCEL/bv_vib_sys_deci), 기본 1, B 취소 가능 → 결과 0 만 나가기(ReturnScene), 그 밖은 +0x33c=1 로 상태 7 재진입 [판독 ConfirmReturnSceneFlow @0x7100059fa0·ModeSelectCameraIdle @0x710004d6d0; 판독: 어셈블리 mgmet_stage2_dis1.c]. 웹은 공용 MessageWindow 선택지로 구현 → [dialog_box.md](dialog_box.md) 6.3·9.2 | — |
 | 다른 액티비티 결정 | `ModeStartFlow` 에서 modeZoomDone 뒤 결과 `{kind:'activity', id, nextMode}` 로 끝(진입 미구현) [설계] | 각 모드 흐름 범위 밖 |
 | 취소 뒤 복귀 | FadeOutWait 1.0 s → 상태 5 복원 분기에서 `fadeIn(1.0)` [설계] | 원본 페이드 인 위치 미기록 |
 | 설명 종류 kind | 프리 플레이 1 [판독]. 나머지 = 다음 MinigameModeID 번호와 라벨 접두(cmgb 2·dt 3·tm 4·sb 5·bm 6)·그림 수 대응 [추정] | HowtoPlay +0x58 표 미기록 |

@@ -15,6 +15,7 @@ export const SE_PROC = 'SQ_SE_SYS_MES_PROC';
 export const SE_CHOICE_CURSOR = 'SQ_SE_SYS_CURSOR';
 export const SE_CHOICE_DECI = 'SQ_SE_SYS_DECI';
 export const SE_CHOICE_CANCEL = 'SQ_SE_SYS_CANCEL';
+export const VIB_CHOICE_DECI = 'bv_vib_sys_deci';
 /** 선택지 위·아래 비트(FUN_71003197d0) */
 export const CHOICE_UP = 0x20800;
 export const CHOICE_DOWN = 0x80400;
@@ -58,6 +59,7 @@ export type MsgEvent =
   | { type: 'clearText' }
   | { type: 'reveal'; count: number }
   | { type: 'se'; label: string }
+  | { type: 'vib'; pid: number; label: string }
   | { type: 'voice'; key: string; voiceId: string }
   | { type: 'duck'; group: number; on: boolean }
   | { type: 'nextWait' }
@@ -276,6 +278,7 @@ export class MsgWinState {
     this.choiceResult = i;
     this.emit({ type: 'choiceDecide', index: i });
     this.emit({ type: 'se', label: this.choices[i]?.deciSe || SE_CHOICE_DECI });
+    this.emit({ type: 'vib', pid: this.owner, label: this.choices[i]?.deciVib || VIB_CHOICE_DECI });
   }
 
   /** FUN_71003197d0 사람 선택지 입력: in_choice 끝 뒤 A 결정·B 취소(+0x515)·위/아래 이동(끝에서 멈춤) */

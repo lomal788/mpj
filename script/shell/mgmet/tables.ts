@@ -54,6 +54,8 @@ export function adjustStartPoint(sp: number, flag3d: boolean, bossOpen: boolean)
 export const GREETING_FIRST: readonly string[] = ['mgmet_entFirst_mw_guide00', 'mgmet_entFirst_mw_guide01', 'mgmet_entFirst_mw_guide02'];
 export const GREETING_AGAIN: readonly string[] = ['mgmet_entAgain_mw_guide00'];
 export const HUB_NAME = 'im_mode03_name';
+/** ConfirmReturnSceneFlow 문구 [판독: 어셈블리 mgmet @0x710005a07c·0x710005a0e0·0x710005a120, dialog_box.md 6.3] */
+export const EXIT_CONFIRM = { label: 'mgmet_back_mw_guide', yes: 'mgmet_back_mw_guide_a0', no: 'mgmet_back_mw_guide_a1' } as const;
 
 export interface HowtoKind {
   /** HowtoPlay Setup 첫 인자(Impl+0x58) */

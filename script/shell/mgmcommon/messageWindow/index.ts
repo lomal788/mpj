@@ -15,6 +15,7 @@ import { MsgWinState, type ChoiceItem, type MsgEvent, type MsgPage, type Resolve
 /** 선택지 칸 정렬(ali1 추가 바이트, partyrule.md 6.2). 표에 없는 선택지 레이아웃은 정렬하지 않는다 [미확정] */
 const CHOICE_ALIGN: Readonly<Record<string, AlignParams>> = {
   sys_meswin_model_choices_00: { horizontal: false, kind: 1, gap: -3, stretch: false },
+  sys_meswin_choices_00: { horizontal: false, kind: 1, gap: -3, stretch: false },
 };
 /** FUN_710031e360: 칸 창 폭 = min(원래 폭, 최대 글자 폭 + 130), 232 이상. 나눈 창 조각은 창 원점(왼쪽 가운데) 기준으로 다시 놓는다(partyrule.md 9.3) */
 const CHOICE_PAD = 130;
@@ -218,6 +219,9 @@ export class MessageWindow implements MessageWindowAdapter {
           break;
         case 'se':
           this.sound?.playSe(e.label);
+          break;
+        case 'vib':
+          this.sound?.vibrate(e.pid, e.label);
           break;
         case 'voice':
           this.sound?.voice(e.key, e.voiceId);

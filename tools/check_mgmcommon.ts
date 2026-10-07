@@ -10,7 +10,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nodeMatrix } from '../script/shell/charselect/render2d';
+import { nodeMatrix, rectOf } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
 import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
@@ -196,6 +196,28 @@ console.log('3. 문서 표 값');
   ok(spec.meswin.attrLists.Character[13] === 'CH_NPC022_GREEN', 'ATR Character 목록 13 = CharacterData 13(같은 순서)');
   ok(MGM_BGM_KIND.length === 41 && MGM_BGM_KIND[33] === null && MGM_BGM_KIND[4] === 'SM_BGM_MGM01_FREEPLAY' && MGM_BGM_KIND[40] === 'SM_BGM_MGM06_RES', 'BGM 표 41칸(7.3)');
   ok(spec.meswin.emotion?.[0]?.normal === 'VO_MV_ETC', 'Emotion 0 VoiceKey_Normal = VO_MV_ETC');
+  const odd: string[] = [];
+  for (const [ln, l] of Object.entries(merged.layouts))
+    for (const n of l.nodes) if (n.p >= 0 && (n.po[0] !== 0 || n.po[1] !== 0) && (l.nodes[n.p].o[0] !== 0 || l.nodes[n.p].o[1] !== 0)) odd.push(`${ln}/${n.n}`);
+  ok(odd.length === 0, `부모 원점 ≠ 가운데 + po ≠ 0 노드 0건(render2d anchor 와 원본 FUN_71013fe25c 가 갈리는 경우, ui2d_alignment.md 12.4): ${odd.join(', ')}`);
+  const span = (inst: LayoutInst, p: string): number[] => {
+    const m = nodeMatrix(inst, p)!;
+    const f = inst.find(p)!;
+    const n = f[0].nodes[f[1]];
+    const [l, , r] = rectOf(n.spec.o, n.z[0], n.z[1]);
+    return [m[0] * l + m[2], m[0] * r + m[2]];
+  };
+  const rule = new LayoutInst('mgmet_base_rule_00', merged.layouts.mgmet_base_rule_00, all);
+  const info = new LayoutInst('mgm01_base_mginfo_00', merged.layouts.mgm01_base_mginfo_00, all);
+  for (const [inst, p, x0, x1] of [
+    [rule, 'x_play_00/base', 688, 1120],
+    [rule, 'x_play_00/x_text_00', 769, 949],
+    [info, 'x_rule/x_play_00/base', 586, 1018],
+    [info, 'x_rule/x_play_00/x_text_00', 667, 847],
+  ] as const) {
+    const s = span(inst, p);
+    ok(near(s[0], x0) && near(s[1], x1), `${inst.name} ${p} 화면 x ${x0}..${x1}(ui2d_alignment.md 12.2·12.3) (${s.join('..')})`);
+  }
 }
 
 console.log('4. 메시지 문구·속성 (koKR, ATR 덤프)');

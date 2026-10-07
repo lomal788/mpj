@@ -456,6 +456,8 @@ camera.updateProjectionMatrix();
 - `bex::gfx::ComPosteffect`에 DOF·톤맵·FXAA setter가 있다(main @0x710007773c~) [판독]. mg1801은 부르지 않는다 [데이터].
 - `boot.nbinit` `bezel_render_pipeline_init`: ClearColor (0.25, 0.25, 0.25, 1), 그 밖 렌더 설정 없음 [데이터].
 
+- 정정(2026-10-08, plaza-A-post): posteffect_amalgam0·bloom 셰이더를 SASS 로 판독해 처리 순서·톤맵 종류 0~4 곡선·LUT 입력(t^0.4545898)·블룸 식을 닫았다 → [../shell/plaza_3d.md](../shell/plaza_3d.md) §6.13, `analysis/mat/plaza_post.json`. mg1801 의 종류 1 = 유리식(mps 종류 5 와 같은 상수)이다.
+
 ### 7.6 카메라 흔들림 [판독, mg1801 미사용]
 
 - `wl::util::ComponentCameraShaking::Start(ShakeArg)`(main @0x71004e0e50): 같은 엔티티의 ComCamera를 찾아 Camera+0xB0..0xBF(16 B)를 저장하고, `arg[0] > 0`일 때 시작. +0x54 = arg[0], +0x70 = max(arg[1], 1), +0x74 = max(arg[2], 1), +0x78 = arg[3], +0x7C = arg[4]. 플래그 비트 2·3이면 `SyncRandModF − 1`로 x·y 방향을 정한다(동기 난수 소비).

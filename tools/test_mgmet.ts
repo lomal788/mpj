@@ -7,7 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Render2D } from '../script/shell/charselect/render2d';
+import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
 import {
@@ -222,6 +222,17 @@ console.log('4. 규칙 화면(실제 명세): 열 배치·배경·글자 (ui2d_a
     return g[0].nodes[g[1]].t[0];
   };
   eq([x2('x_rule_04'), x2('null_01')], [529, 529 - 22], 'CPU 없음: 설명 그대로·배경 = 설명 기준');
+  const span = (inst: LayoutInst, p: string): number[] => {
+    const m = nodeMatrix(inst, p)!;
+    const f = inst.find(p)!;
+    const n = f[0].nodes[f[1]];
+    const [l, , r] = rectOf(n.spec.o, n.z[0], n.z[1]);
+    return [m[0] * l + m[2], m[0] * r + m[2]].map((v) => Math.round(v * 1000) / 1000);
+  };
+  eq(span(rv.win.inst, 'x_play_00/base'), [688, 1120], '플레이 버튼 판 = 원본 규칙 계산 688..1120(오른쪽 160 px 화면 밖은 원본 데이터, ui2d_alignment.md 12.2)');
+  ok(span(rv.win.inst, 'x_play_00/cursor')[1] <= 960 && span(rv.win.inst, 'x_play_00/x_text_00')[1] <= 960, '플레이 아이콘·글자 칸 오른쪽 끝 ≤ 960');
+  eq([span(rv.win.inst, 'x_rule_03/x_bd_01'), span(rv.win.inst, 'x_rule_04/x_bd_00')], [[-59, 331], [352, 662]], 'CPU·설명 카드 화면 x(12.2)');
+  eq(span(rv2.win.inst, 'x_rule_04/x_bd_00'), [352, 662], 'CPU 없음: 설명 카드 그대로');
 }
 
 console.log('5. 허브 흐름 (mgmet_flow.md 5·6)');
@@ -374,8 +385,29 @@ function makeHub(o: { com: boolean[]; sp?: number; modeFlags?: number; boss?: bo
   h.until(() => h.msg.isAllTalkEnd());
   h.tap(0x100);
   eq(h.hub.selected, 4, '보스 미개방: ID 4 왼쪽 막힘');
+  const seLabels = (): string[] => h.sound.log.flatMap((e) => (e.type === 'se' ? [e.label] : []));
+  const se0 = seLabels().length;
   h.tap(0x2);
-  ok(h.until(() => h.done() !== null, 50), 'B → 나가기');
+  eq(seLabels()[se0], 'SQ_SE_SYS_CANCEL', 'B → SQ_SE_SYS_CANCEL 먼저');
+  ok(h.until(() => h.hub.phase === '나가기 확인' && h.msg.isNextInputWait(), 300), 'B → 나가기 확인(메시지 창 선택지)');
+  eq(h.msg.st.pages[0]?.label, 'mgmet_back_mw_guide', '문구 mgmet_back_mw_guide');
+  eq(h.msg.layoutInst?.name, 'sys_meswin_choices_00', 'wt 4 선택지 레이아웃');
+  eq([h.msg.st.choiceCount, h.msg.st.choiceCursor, h.msg.st.cancelEnable], [2, 1, true], '2지·기본 아니요·B 취소 가능');
+  eq(h.msg.st.choices.slice(0, 2).map((c) => [c.label, c.deciSe, c.deciVib]), [['mgmet_back_mw_guide_a0', 'SQ_SE_SYS_DECI_L', 'bv_vib_sys_deci_l'], ['mgmet_back_mw_guide_a1', 'SQ_SE_SYS_CANCEL', 'bv_vib_sys_deci']], '칸 문구·SE·진동');
+  h.until(() => false, 60);
+  h.tap(0x2);
+  ok(h.until(() => h.hub.phase === '액티비티 선택(상태 7)', 100), 'B(취소) → 상태 7 재진입');
+  eq([h.done(), h.hub.seq, h.hub.exitRequested, h.msg.choiceResult()], [null, 7, false, -1], '나가지 않음(결과 −1)');
+  ok(h.until(() => h.hub.guideId === h.hub.selected, 300), '앞 안내 다시');
+  h.until(() => h.msg.isAllTalkEnd());
+  h.tap(0x2);
+  ok(h.until(() => h.hub.phase === '나가기 확인' && h.msg.isNextInputWait(), 300), '다시 나가기 확인');
+  h.until(() => false, 60);
+  h.tap(0x800);
+  eq(h.msg.st.choiceCursor, 0, '위 → 예');
+  h.tap(0x1);
+  ok(h.until(() => h.done() !== null, 200), '예 → 나가기');
+  ok(seLabels().includes('SQ_SE_SYS_DECI_L') && h.msg.log.some((e) => e.type === 'vib' && e.label === 'bv_vib_sys_deci_l'), '예 SE DECI_L·진동 deci_l');
   eq(h.calls, ['ret'], 'ReturnScene');
 }
 {

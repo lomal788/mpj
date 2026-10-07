@@ -3,6 +3,7 @@
  * 로딩 텔롭(sys_tlp_loading_00), 타이머(sys_timer_00), 매칭 참가자 판(matching00_base_member_00 + win_member_00).
  * 원본 엔진 동작(ComUiDialogBox·UiNoticeModule·ComUiLoadingTelop·ComUiTimer)은 미분석 → 레이아웃·문구만 원본, 동작은 단순.
  */
+import { DialogBoxState, type DialogEvent } from '../mgmcommon/dialogBox';
 import { BTN, type RoomMember } from './types';
 import { Life, type Ins, type OIO, type Sink } from './panels';
 
@@ -19,10 +20,11 @@ export interface DialogSpec {
   deciSe?: Record<number, string>;
 }
 
-/** 대화상자: in → 대기(좌우·A·B) → out. 결과 = 선택 번호, 선택지 없으면 0 */
+/** 대화상자: in → 대기(좌우·A·B) → out. 칸 이동·결정·취소 = 공용 DialogBoxState(dialog_box.md 6.1·6.2). 결과 = 선택 번호, B = cancel 번호, 선택지 없음 = 0 [설계: 온라인 흐름 약속] */
 export class DialogBox {
   readonly life: Life;
   private spec: DialogSpec | null = null;
+  readonly state = new DialogBoxState();
   cursor = 0;
   result = -1;
 
@@ -50,21 +52,27 @@ export class DialogBox {
       if (i < n) this.ev.push({ t: 'text', l: this.l, path: `${p}/x_text_dialog`, label: s.choices![i] });
     }
     this.ev.push({ t: 'dialogLayout', l: this.l, n });
-    this.paint(true);
+    const st = this.state;
+    st.out(true);
+    if (n > 0) st.setChoiceCount(n);
+    st.initial = s.initial ?? 0;
+    st.cancelEnable = s.cancel !== undefined;
+    for (const [i, se] of Object.entries(s.deciSe ?? {})) st.deciSe[Number(i)] = se;
+    this.emit(st.open(true));
     this.life.out(true);
     this.life.in();
   }
 
-  private paint(imm: boolean): void {
-    const n = this.spec?.choices?.length ?? 0;
-    for (let i = 0; i < n; i++) {
-      const on = i === this.cursor;
-      this.ev.push({ t: 'play', l: this.l, path: `x_choise_0${i}`, tag: imm ? (on ? 'cursor' : 'normal') : on ? 'on' : 'off', next: imm ? undefined : on ? 'cursor' : 'normal' });
+  private emit(ev: DialogEvent[]): void {
+    for (const e of ev) {
+      if (e.t === 'anim') this.ev.push({ t: 'play', l: this.l, path: `x_choise_0${e.choice}`, tag: e.tag, next: e.next });
+      else if (e.t === 'se' || e.t === 'se2d') this.ev.push({ t: 'se', label: e.label });
     }
   }
 
   close(r: number): void {
     this.result = r;
+    this.state.out(true);
     this.life.out();
   }
 
@@ -72,23 +80,10 @@ export class DialogBox {
     this.life.update(io);
     if (!this.life.idle || !this.spec || this.result >= 0) return;
     const n = this.spec.choices?.length ?? 0;
-    const t = io.trig;
-    if (t & BTN.A) {
-      this.ev.push({ t: 'se', label: this.spec.deciSe?.[this.cursor] ?? 'SQ_SE_SYS_DECI' });
-      if (n > 0) this.ev.push({ t: 'play', l: this.l, path: `x_choise_0${this.cursor}`, tag: 'press' });
-      this.close(n > 0 ? this.cursor : 0);
-    } else if (t & BTN.B && this.spec.cancel !== undefined) {
-      this.ev.push({ t: 'se', label: 'SQ_SE_SYS_CANCEL' });
-      this.close(this.spec.cancel);
-    } else if (n > 1 && t & BTN.LEFT && this.cursor > 0) {
-      this.cursor--;
-      this.ev.push({ t: 'se', label: 'SQ_SE_SYS_CURSOR' });
-      this.paint(false);
-    } else if (n > 1 && t & BTN.RIGHT && this.cursor < n - 1) {
-      this.cursor++;
-      this.ev.push({ t: 'se', label: 'SQ_SE_SYS_CURSOR' });
-      this.paint(false);
-    }
+    const r = this.state.input(io.trig);
+    this.emit(r.ev);
+    if (n > 0) this.cursor = this.state.cursor;
+    if (r.close) this.close(n === 0 ? 0 : this.state.result >= 0 ? this.state.result : this.spec.cancel!);
   }
 }
 

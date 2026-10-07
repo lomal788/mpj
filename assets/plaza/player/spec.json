@@ -1,0 +1,2228 @@
+{
+ "version": 1,
+ "source": "plaza_player_assets.py",
+ "clips": [
+  "co_idle00",
+  "co_walk00",
+  "co_run00",
+  "co_look02",
+  "co_nod00",
+  "mn_bnclr_get00",
+  "mn_bnclr_idle00"
+ ],
+ "transit": [
+  {
+   "from": "co_look02",
+   "to": "co_idle00",
+   "a": 48
+  },
+  {
+   "from": "co_run00",
+   "to": "co_idle00",
+   "a": 10
+  },
+  {
+   "from": "co_walk00",
+   "to": "co_idle00",
+   "a": 12
+  },
+  {
+   "from": null,
+   "to": "co_look02",
+   "a": 48
+  },
+  {
+   "from": null,
+   "to": "co_run00",
+   "a": 8
+  },
+  {
+   "from": null,
+   "to": "co_walk00",
+   "a": 12
+  }
+ ],
+ "env": {
+  "lightColor": [
+   0.60382736,
+   0.60382736,
+   0.60382736
+  ],
+  "lightRotDeg": [
+   -30,
+   0,
+   0
+  ],
+  "near": 0.1,
+  "far": 1000.0,
+  "rtScale": 1.0
+ },
+ "chars": [
+  {
+   "index": 0,
+   "btn": 0,
+   "pc": "pc01",
+   "label": "im_pc01_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc01/pc01_mario.glb",
+   "height": 1.54,
+   "bubbleRadius": 0.9,
+   "width": 1,
+   "motions": "pc01/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 278,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc01_eye_arr_alb_00_b864302bfe02.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 1,
+   "btn": 1,
+   "pc": "pc02",
+   "label": "im_pc02_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc02/pc02_luigi.glb",
+   "height": 1.73,
+   "bubbleRadius": 1,
+   "width": 1,
+   "motions": "pc02/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 370,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc02_eye_arr_alb_00_4c1f89ff42cd.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 2,
+   "btn": 2,
+   "pc": "pc03",
+   "label": "im_pc03_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc03/pc03_peach.glb",
+   "height": 1.8,
+   "bubbleRadius": 1.1,
+   "width": 1.1,
+   "motions": "pc03/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 254,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 376,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc03_eye_arr_alb_00_7b331e926551.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 3,
+   "btn": 3,
+   "pc": "pc04",
+   "label": "im_pc04_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc04/pc04_daisy.glb",
+   "height": 1.78,
+   "bubbleRadius": 1.1,
+   "width": 1.1,
+   "motions": "pc04/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 240,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc04_eye_arr_alb_00_a389b64a0e85.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 4,
+   "btn": 4,
+   "pc": "pc05",
+   "label": "im_pc05_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc05/pc05_wario.glb",
+   "height": 1.67,
+   "bubbleRadius": 1.1,
+   "width": 1.7,
+   "motions": "pc05/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 330,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 366,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc05_eye_arr_alb_00_b6d6d46e5e1d.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 5,
+   "btn": 5,
+   "pc": "pc06",
+   "label": "im_pc06_name",
+   "scale": 0.85,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc06/pc06_waluigi.glb",
+   "height": 1.85,
+   "bubbleRadius": 1.1,
+   "width": 1.4,
+   "motions": "pc06/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 386,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc06_eye_arr_alb_00_a25b48ce03b0.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 6,
+   "btn": 6,
+   "pc": "pc07",
+   "label": "im_pc07_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc07/pc07_yoshi.glb",
+   "height": 1.69,
+   "bubbleRadius": 1,
+   "width": 1.1,
+   "motions": "pc07/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 122,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc07_eye_arr_alb_00_809e25084d27.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 7,
+   "btn": 7,
+   "pc": "pc08",
+   "label": "im_pc08_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc08/pc08_kinopico.glb",
+   "height": 1.2,
+   "bubbleRadius": 1,
+   "width": 1,
+   "motions": "pc08/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 86,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 29,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 26,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 160,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c2.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 0.01
+      },
+      {
+       "axis": 1,
+       "color": "c2.x",
+       "param": "material_utility_parameter3",
+       "comp": "y",
+       "k": 0.01
+      }
+     ]
+    },
+    "tint": {
+     "mask": "max(c2.x, c2.z)",
+     "f": "clamp(P2.x, 0.0, 1.0) * c2.z + clamp(P3.x, 0.0, 1.0) * c2.x",
+     "color": [
+      0.025307,
+      0.019837,
+      0.015127
+     ]
+    }
+   }
+  },
+  {
+   "index": 8,
+   "btn": 8,
+   "pc": "pc09",
+   "label": "im_pc09_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc09/pc09_kinopio.glb",
+   "height": 1.2,
+   "bubbleRadius": 1,
+   "width": 1,
+   "motions": "pc09/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 29,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 26,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 160,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c2.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 0.01
+      },
+      {
+       "axis": 1,
+       "color": "c2.x",
+       "param": "material_utility_parameter3",
+       "comp": "y",
+       "k": 0.01
+      }
+     ]
+    },
+    "tint": {
+     "mask": "max(c2.x, c2.z)",
+     "f": "clamp(P2.x, 0.0, 1.0) * c2.z + clamp(P3.x, 0.0, 1.0) * c2.x",
+     "color": [
+      0.025307,
+      0.019837,
+      0.015127
+     ]
+    }
+   }
+  },
+  {
+   "index": 9,
+   "btn": 9,
+   "pc": "pc11",
+   "label": "im_pc11_name",
+   "scale": 0.8,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc11/pc11_rosetta.glb",
+   "height": 2.18,
+   "bubbleRadius": 1.15,
+   "width": 1.4,
+   "motions": "pc11/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 240,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 370,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc11_eye_arr_alb_00_19b126de0922.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 10,
+   "btn": 10,
+   "pc": "pc12",
+   "label": "im_pc12_name",
+   "scale": 0.85,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc12/pc12_dk.glb",
+   "height": 1.65,
+   "bubbleRadius": 1.2,
+   "width": 1.8,
+   "motions": "pc12/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 192,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 240,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 96,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc12_eye_arr_alb_00_faedcd2971d7.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false,
+    "lid": {
+     "edge": 0.5078,
+     "x0": [
+      0.38,
+      0.38
+     ],
+     "y0": [
+      -0.33,
+      -0.33
+     ],
+     "xmin": [
+      -0.05,
+      -0.05
+     ],
+     "bottom": 0.8838,
+     "tex": "tex/pc12_eyelid_arr_alb_00_1c41ba1858c1.png"
+    }
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 11,
+   "btn": 11,
+   "pc": "pc13",
+   "label": "im_pc13_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc13/pc13_catherine.glb",
+   "height": 1.69,
+   "bubbleRadius": 1,
+   "width": 1.1,
+   "motions": "pc13/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 190,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 190,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 300,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc13_eye_alb_d72ac6b1f688.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1280
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.8
+     ],
+     "o": [
+      0.0,
+      0.2
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 12,
+   "btn": 12,
+   "pc": "pc14",
+   "label": "im_pc14_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc14/pc14_pauline.glb",
+   "height": 1.9,
+   "bubbleRadius": 1.1,
+   "width": 1,
+   "motions": "pc14/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 150,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 240,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc14_eye_alb_537e5ab39b59.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 13,
+   "btn": 13,
+   "pc": "pc50",
+   "label": "im_pc50_name",
+   "scale": 0.7,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc50/pc50_koopa.glb",
+   "height": 2.32,
+   "bubbleRadius": 1.4,
+   "width": 2.2,
+   "motions": "pc50/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 400,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 308,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 72,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc50_eye_alb_6e6a19f7a875.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    2048,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      0.5,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 14,
+   "btn": 14,
+   "pc": "pc51",
+   "label": "im_pc51_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc51/pc51_kuribo.glb",
+   "height": 1.02,
+   "bubbleRadius": 1,
+   "width": 0.9,
+   "motions": "pc51/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 24,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 282,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 60,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc51_eye_alb_3b5f22c1a1c4.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    512,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 15,
+   "btn": 15,
+   "pc": "pc52",
+   "label": "im_pc52_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc52/pc52_heyho.glb",
+   "height": 1.22,
+   "bubbleRadius": 1.1,
+   "width": 1.1,
+   "motions": "pc52/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 30,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 26,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 180,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 16,
+   "btn": 16,
+   "pc": "pc53",
+   "label": "im_pc53_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc53/pc53_nokonoko.glb",
+   "height": 1.4,
+   "bubbleRadius": 0.9,
+   "width": 0.85,
+   "motions": "pc53/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 220,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 36,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 24,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 240,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 220,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 366,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc53_eye_alb_891e5d867764.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 17,
+   "btn": 17,
+   "pc": "pc54",
+   "label": "im_pc54_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc54/pc54_choropoo.glb",
+   "height": 1.15,
+   "bubbleRadius": 1,
+   "width": 1.3,
+   "motions": "pc54/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 100,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 34,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 230,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 100,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": -1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "x",
+       "k": -1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 18,
+   "btn": 18,
+   "pc": "pc56",
+   "label": "im_pc56_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc56/pc56_koopa_jr.glb",
+   "height": 1.52,
+   "bubbleRadius": 1,
+   "width": 1.2,
+   "motions": "pc56/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 104,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 24,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 270,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 104,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": [
+      {
+       "axis": 1,
+       "color": "c2.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c2.x",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 19,
+   "btn": 19,
+   "pc": "pc58",
+   "label": "im_pc58_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc58/pc58_teresa.glb",
+   "height": 1.53,
+   "bubbleRadius": 1.2,
+   "width": 1.3,
+   "motions": "pc58/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 96,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    512,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    },
+    "tint": {
+     "mask": "c2.z",
+     "f": "P2.y",
+     "color": [
+      0.004025,
+      0.004025,
+      0.004777
+     ]
+    }
+   }
+  },
+  {
+   "index": 20,
+   "btn": 20,
+   "pc": "pc61",
+   "label": "im_pc61_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc61/pc61_gabon.glb",
+   "height": 1.25,
+   "bubbleRadius": 1,
+   "width": 1,
+   "motions": "pc61/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 28,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 280,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "tex/pc61_eye_alb_4b11a0c3335e.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false,
+    "lid": {
+     "edge": 0.6484,
+     "x0": [
+      0.55,
+      0.55
+     ],
+     "y0": [
+      -0.3,
+      -0.3
+     ],
+     "xmin": [
+      -0.1,
+      -0.1
+     ],
+     "bottom": 0.9692,
+     "tex": "tex/pc61_eyelid_alb_64f2e2ef63c8.png"
+    }
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 21,
+   "btn": 21,
+   "pc": "pc62",
+   "label": "im_pc62_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "pc62/pc62_hakkun.glb",
+   "height": 1.25,
+   "bubbleRadius": 1,
+   "width": 1,
+   "motions": "pc62/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_run00": {
+     "frames": 28,
+     "loop": true
+    },
+    "co_look02": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_nod00": {
+     "frames": 130,
+     "loop": true
+    },
+    "mn_bnclr_get00": {
+     "frames": 40,
+     "loop": false
+    },
+    "mn_bnclr_idle00": {
+     "frames": 120,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  }
+ ]
+}

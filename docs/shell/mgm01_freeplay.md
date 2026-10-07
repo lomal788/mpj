@@ -608,6 +608,8 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 | 즐겨찾기 저장 | `MgmWork.mg.favorite` + save MG+4 bit2, requestSave 없음 | 8.4 [판독]; 페이지는 끝날 때 localStorage 에 둔다 [설계] |
 | 그리지 않은 것 | 7장 미리보기·썸네일 그림(런타임 텍스처, 에셋 없음), `x_text_rule`(`im_inst_*_rule` 문구가 공용 글꼴 범위 밖), 플레이어별 얼굴(기본 그림), mginfo `press` 창 애니 | [미구현] |
 
+정정 줄(2026-10-08): 개별 설정의 플레이 버튼 "오른쪽 잘림"을 원본 규칙으로 다시 계산했다(ui2d_alignment.md 12.3). `x_rule`은 (0,0), `null_all`은 (0,−182), `x_play_00`은 (808,−56)이고 부품 덮어쓰기는 없다. ApplySettingMgSetting은 위치를 쓰지 않으므로 버튼 판은 586..1018이다. 원본 데이터에서도 오른쪽 58 px(둥근 끝 52 px 전부)가 화면 밖이고, 아이콘(619..643)과 글자 칸(667..847)은 화면 안이다. 웹과 다른 단계는 없다 [판독][데이터]. 회귀 검사: `tools/test_mgm01.ts` 6절.
+
 ### 9.2 구현 계약 — 목록 본체·DecideMinigameFlow 상태기계·썸네일 (2026-10-07)
 
 코드 `web/script/shell/mgm01/{listView,listScreen,scene}.ts`(index export), 썸네일 `web/assets/mgm01/thumbs.json`·`thumb/`(§7.1), 페이지 `web/script/mgm01_page.ts` `runMgm01List`(ui.html `mgm01-list`), 시험 `web/tools/test_mgm01.ts` 8~10절. 위 9.1 의 "그리지 않은 것" 중 미리보기·썸네일은 이번에 넣었다(설정 화면 작은 수정).

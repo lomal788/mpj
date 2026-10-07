@@ -8,7 +8,7 @@ import { MODE_FLAG, playedCount, type MgmSave, type MgmWork, type SceneRouter } 
 import { FiberRunner, waitTime, waitUntil, waitFrames, type Flow } from '../mgmcommon/fiber';
 import type { MgmetGuides } from '../mgmcommon/guides';
 import type { MgmInput, MgmPlayer } from '../mgmcommon/input';
-import type { MessageFlow } from '../mgmcommon/messageFlow';
+import { MESSSAGE_WINDOW_OFFSET, type MessageFlow } from '../mgmcommon/messageFlow';
 import type { MessageWindow } from '../mgmcommon/messageWindow';
 import type { MgmSound } from '../mgmcommon/sound';
 import type { MgmDrawHost } from '../mgmcommon/window';
@@ -23,6 +23,7 @@ import {
   adjustStartPoint,
   BIT,
   BOSS_ID,
+  EXIT_CONFIRM,
   FREEPLAY_ID,
   GREETING_AGAIN,
   GREETING_FIRST,
@@ -303,12 +304,14 @@ export class MgmetHub {
           return;
         }
       } else if (trig & BIT.B) {
+        this.o.sound.playSe(SE.CANCEL);
         const yes = yield* this.confirmReturnSceneFlow();
         if (yes) {
-          this.seq = -1;
           this.exitRequested = true;
+          this.seq = -1;
           return;
         }
+        this.pendingGuide = true;
         return;
       } else if (trig & BIT.A) {
         this.o.sound.playSe(SE.DECI);
@@ -342,13 +345,35 @@ export class MgmetHub {
     this.seq = 6;
   }
 
-  /** ConfirmReturnSceneFlow mgmet @0x7100059fa0 — 공용 DialogBox(예/아니요) 미구현 → '예'(선택 0)로 처리 [설계] */
+  /** ConfirmReturnSceneFlow mgmet @0x7100059fa0: 메시지 창 선택지 2지(예 DECI_L / 아니요 CANCEL), 기본 1, B 취소 → 결과 0 만 true (dialog_box.md 6.3) */
   private *confirmReturnSceneFlow(): Flow<boolean> {
-    this.hideGuide();
-    yield* waitUntil(() => this.o.msg.isEnd());
-    this.o.sound.playSe(SE.DECI_L);
-    this.note('나가기 확인(예로 처리)');
-    return true;
+    this.o.guides.back.out();
+    this.title.actOut();
+    const m = this.o.msg;
+    m.out();
+    this.guideId = -1;
+    yield* waitUntil(() => m.isEnd());
+    m.disablePadInput(false, false);
+    m.disableNextKeyWait(false);
+    m.setOffset([MESSSAGE_WINDOW_OFFSET[0], MESSSAGE_WINDOW_OFFSET[1], MESSSAGE_WINDOW_OFFSET[2]]);
+    m.setOwner(this.o.input.operator);
+    m.setChoiceCount(2);
+    m.setMessageLabel(EXIT_CONFIRM.label);
+    m.setInsert('Text0', HUB_NAME);
+    m.setChoiceLabel(0, EXIT_CONFIRM.yes);
+    m.setChoiceDeciSe(0, SE.DECI_L);
+    m.setChoiceDeciVib(0, 'bv_vib_sys_deci_l');
+    m.setChoiceLabel(1, EXIT_CONFIRM.no);
+    m.setChoiceDeciSe(1, SE.CANCEL);
+    m.setChoiceDeciVib(1, 'bv_vib_sys_deci');
+    m.setCancelEnable(true);
+    m.setInitialChoice(1);
+    m.start();
+    this.phase = '나가기 확인';
+    yield* waitUntil(() => m.isEnd());
+    const r = m.choiceResult();
+    this.note(`나가기 확인 결과 ${r}`);
+    return r === 0;
   }
 
   /** ModeStartFlow mgmet @0x710004dfd8 */

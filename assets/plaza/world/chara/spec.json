@@ -1,0 +1,1112 @@
+{
+ "version": 1,
+ "source": "plaza_npc_assets.py",
+ "env": {
+  "lightColor": [
+   0.60382736,
+   0.60382736,
+   0.60382736
+  ],
+  "lightRotDeg": [
+   -30,
+   0,
+   0
+  ],
+  "near": 0.1,
+  "far": 1000.0,
+  "rtScale": 1.0
+ },
+ "chars": [
+  {
+   "pc": "npc022",
+   "label": "im_npc022_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc022/npc022_kinopio.glb",
+   "motions": "npc022/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 160,
+     "loop": true
+    },
+    "bd_welcome00a": {
+     "frames": 45,
+     "loop": false
+    },
+    "bd_welcome00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_bye00": {
+     "frames": 30,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 29,
+     "loop": true
+    },
+    "co_joy03": {
+     "frames": 40,
+     "loop": true
+    },
+    "bd_flag_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "bd_flag_talk00": {
+     "frames": 160,
+     "loop": true
+    },
+    "bd_flag_swing00": {
+     "frames": 30,
+     "loop": true
+    },
+    "bd_flag_walk00": {
+     "frames": 29,
+     "loop": true
+    },
+    "bnclr_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "bnclr_pass00": {
+     "frames": 30,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 360,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc022_body_arr_alb": [
+     "../tex/npc022_body_arr_alb_00_42ad653a9037.png",
+     "../tex/npc022_body_arr_alb_01_9e99ca48d42d.png",
+     "../tex/npc022_body_arr_alb_02_24c0c39f102f.png",
+     "../tex/npc022_body_arr_alb_03_b59f9b83fd42.png",
+     "../tex/npc022_body_arr_alb_04_4f8056dffa1c.png",
+     "../tex/npc022_body_arr_alb_05_a534fa39c935.png"
+    ],
+    "npc022_eyelid_alb": [
+     "../tex/npc022_eyelid_alb_a6dafa8617ee.png"
+    ],
+    "npc022_eyelid_nml": [
+     "../tex/npc022_eyelid_nml_9208543c9a33.png"
+    ],
+    "npc022_eyelid_rgh": [
+     "../tex/npc022_eyelid_rgh_fd275dbfbc03.png"
+    ],
+    "npc022_lut": [
+     "../tex/npc022_lut_332cfc7e56ff.png"
+    ],
+    "npc022_mouth_alb": [
+     "../tex/npc022_mouth_alb_1a5e26d4993f.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 32,
+     "name": "KINOPIO",
+     "height": 1.2,
+     "scale": 1,
+     "head": {
+      "head_min_x": -35,
+      "head_min_y": -50,
+      "head_min_z": -10,
+      "head_max_x": 20,
+      "head_max_y": 50,
+      "head_max_z": 10,
+      "head_offset_x": 0,
+      "head_weight": 1,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 0,
+   "btn": 0
+  },
+  {
+   "pc": "npc051",
+   "label": "im_npc051_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc051/npc051_kameck.glb",
+   "motions": "npc051/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 300,
+     "loop": true
+    },
+    "co_bye01": {
+     "frames": 30,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_busy00": {
+     "frames": 200,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc051_body_alb": [
+     "../tex/npc051_body_alb_7c01a006f9cd.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 55,
+     "name": "KAMECK",
+     "height": 1.6,
+     "scale": 1,
+     "head": {
+      "head_min_x": -10,
+      "head_min_y": -90,
+      "head_min_z": 0,
+      "head_max_x": 10,
+      "head_max_y": 90,
+      "head_max_z": 0,
+      "head_offset_x": 0,
+      "head_weight": 0.75,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 1,
+   "btn": 1
+  },
+  {
+   "pc": "npc003",
+   "label": "im_npc003_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc003/npc003_nokonoko.glb",
+   "motions": "npc003/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 220,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 280,
+     "loop": true
+    },
+    "park_bmt_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "park_bmt_swing00": {
+     "frames": 32,
+     "loop": false
+    },
+    "park_bmt_swing01": {
+     "frames": 36,
+     "loop": false
+    },
+    "sit_idle01": {
+     "frames": 60,
+     "loop": true
+    },
+    "sit_talk00": {
+     "frames": 280,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc003_body_arr_alb": [
+     "../tex/npc003_body_arr_alb_00_0f4bca7d06eb.png",
+     "../tex/npc003_body_arr_alb_01_888e291b432a.png"
+    ],
+    "npc003_body_nml": [
+     "../tex/npc003_body_nml_851a5a9f8751.png"
+    ],
+    "npc003_body_rgh": [
+     "../tex/npc003_body_rgh_6d748b4408a6.png"
+    ],
+    "npc003_eye_alb": [
+     "../tex/npc003_eye_alb_0ccd41e253e8.png"
+    ]
+   },
+   "attach": {
+    "glb": "npc003/npc003it00_hat.glb",
+    "bone": "head_aimcont",
+    "t": [
+     0,
+     0.47,
+     0.09
+    ],
+    "rDeg": [
+     -15,
+     0,
+     0
+    ]
+   },
+   "npc": [
+    {
+     "id": 11,
+     "name": "NOKONOKO",
+     "height": 1.4,
+     "scale": 1,
+     "head": {
+      "head_min_x": -40,
+      "head_min_y": -60,
+      "head_min_z": -5,
+      "head_max_x": 20,
+      "head_max_y": 60,
+      "head_max_z": 5,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.25,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.25,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 2,
+   "btn": 2
+  },
+  {
+   "pc": "npc002",
+   "label": "im_npc002_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc002/npc002_heyho.glb",
+   "motions": "npc002/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "sit_idle01": {
+     "frames": 60,
+     "loop": true
+    },
+    "sit_talk00": {
+     "frames": 340,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc002_body_arr_alb": [
+     "../tex/npc002_body_arr_alb_00_dc5f27fd0b2d.png",
+     "../tex/npc002_body_arr_alb_01_e954f9441e27.png",
+     "../tex/npc002_body_arr_alb_02_7b3fa924d099.png",
+     "../tex/npc002_body_arr_alb_03_1853e532fa6b.png",
+     "../tex/npc002_body_arr_alb_04_2318ac2f15af.png"
+    ],
+    "npc002_body_nml": [
+     "../tex/npc002_body_nml_9b765acf404f.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 5,
+     "name": "HEYHO",
+     "height": 1.22,
+     "scale": 1,
+     "head": {
+      "head_min_x": -10,
+      "head_min_y": -90,
+      "head_min_z": 0,
+      "head_max_x": 10,
+      "head_max_y": 90,
+      "head_max_z": 0,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 3,
+   "btn": 3
+  },
+  {
+   "pc": "npc002st",
+   "label": "im_npc002_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc002st/npc002st_heyho.glb",
+   "motions": "npc002st/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 252,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc002_body_nml": [
+     "../tex/npc002_body_nml_9b765acf404f.png"
+    ],
+    "npc002st_body_alb": [
+     "../tex/npc002st_body_alb_6609acd96b50.png"
+    ],
+    "npc002st_hat_alb": [
+     "../tex/npc002st_hat_alb_13ced35624cb.png"
+    ],
+    "npc002st_hat_arr_nml": [
+     "../tex/npc002st_hat_arr_nml_00_bb632f097d14.png",
+     "../tex/npc002st_hat_arr_nml_01_1e3d6e14c409.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 9,
+     "name": "HEYHO_STATION",
+     "height": 1.22,
+     "scale": 1,
+     "head": {
+      "head_min_x": -10,
+      "head_min_y": -90,
+      "head_min_z": 0,
+      "head_max_x": 10,
+      "head_max_y": 90,
+      "head_max_z": 0,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 4,
+   "btn": 4
+  },
+  {
+   "pc": "npc001",
+   "label": "im_npc001_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc001/npc001_kuribo.glb",
+   "motions": "npc001/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "bd_volley00": {
+     "frames": 240,
+     "loop": true
+    },
+    "bd_volley01": {
+     "frames": 240,
+     "loop": true
+    },
+    "bd_sit_talk00": {
+     "frames": 352,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc001_body_alb": [
+     "../tex/npc001_body_alb_5cd6a6f638e2.png"
+    ],
+    "npc001_body_nml": [
+     "../tex/npc001_body_nml_3443f04815e0.png"
+    ],
+    "npc001_body_rgh": [
+     "../tex/npc001_body_rgh_d304c2fd89c5.png"
+    ],
+    "npc001_eye_alb": [
+     "../tex/npc001_eye_alb_3b5f22c1a1c4.png"
+    ],
+    "npc001_eye_nml": [
+     "../tex/npc001_eye_nml_60cb8a94ce80.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 1,
+     "name": "KURIBO",
+     "height": 1.02,
+     "scale": 1,
+     "head": {
+      "head_min_x": -10,
+      "head_min_y": -90,
+      "head_min_z": 0,
+      "head_max_x": 10,
+      "head_max_y": 90,
+      "head_max_z": 0,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "body_m",
+       "shaderparam": "material_utility_parameter1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.9,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "body_m",
+       "shaderparam": "material_utility_parameter0",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.1,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 5,
+   "btn": 5
+  },
+  {
+   "pc": "npc001bd",
+   "label": "im_npc001_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc001bd/npc001bd_kuribo.glb",
+   "motions": "npc001bd/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 352,
+     "loop": true
+    },
+    "co_talk01": {
+     "frames": 260,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc001_body_alb": [
+     "../tex/npc001_body_alb_5cd6a6f638e2.png"
+    ],
+    "npc001_body_nml": [
+     "../tex/npc001_body_nml_3443f04815e0.png"
+    ],
+    "npc001_body_rgh": [
+     "../tex/npc001_body_rgh_d304c2fd89c5.png"
+    ],
+    "npc001_eye_alb": [
+     "../tex/npc001_eye_alb_3b5f22c1a1c4.png"
+    ],
+    "npc001_eye_nml": [
+     "../tex/npc001_eye_nml_60cb8a94ce80.png"
+    ],
+    "npc001bd_bandanna_alb": [
+     "../tex/npc001bd_bandanna_alb_4e7907319b93.png"
+    ],
+    "npc001bd_bandanna_arr_nml": [
+     "../tex/npc001bd_bandanna_arr_nml_00_19ea99bf5437.png",
+     "../tex/npc001bd_bandanna_arr_nml_01_e322bf166ada.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 4,
+     "name": "KURIBO_BANDANA",
+     "height": 1.02,
+     "scale": 1,
+     "head": {
+      "head_min_x": -10,
+      "head_min_y": -90,
+      "head_min_z": 0,
+      "head_max_x": 10,
+      "head_max_y": 90,
+      "head_max_z": 0,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "body_m",
+       "shaderparam": "material_utility_parameter1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.9,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "body_m",
+       "shaderparam": "material_utility_parameter0",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.5,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.1,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 6,
+   "btn": 6
+  },
+  {
+   "pc": "npc044",
+   "label": "im_npc044_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc044/npc044_hammer_bros.glb",
+   "motions": "npc044/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 280,
+     "loop": true
+    },
+    "park_guitar00": {
+     "frames": 120,
+     "loop": true
+    },
+    "fcl_blink00": {
+     "frames": 400,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc044_body_alb": [
+     "../tex/npc044_body_alb_091305cfe579.png"
+    ],
+    "npc044_eye_alb": [
+     "../tex/npc044_eye_alb_7968ec39a519.png"
+    ],
+    "npc044_eyelid_alb": [
+     "../tex/npc044_eyelid_alb_2e6c35cf9a5a.png"
+    ],
+    "npc044_eyelid_rgh": [
+     "../tex/npc044_eyelid_rgh_b7a1e7b90441.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 46,
+     "name": "HAMMER_BROS",
+     "height": 1.4,
+     "scale": 1,
+     "head": {
+      "head_min_x": -30,
+      "head_min_y": -60,
+      "head_min_z": -5,
+      "head_max_x": 20,
+      "head_max_y": 60,
+      "head_max_z": 5,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.4,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 2,
+       "t_min_y": -0.2,
+       "t_max_x": 2.7,
+       "t_max_y": 0.6
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": -0.2,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 0,
+       "t_min_y": -0.2,
+       "t_max_x": 0.7,
+       "t_max_y": 0.6
+      }
+     ]
+    },
+    {
+     "id": 47,
+     "name": "BOOMERANG_BROS",
+     "height": 1.4,
+     "scale": 1,
+     "head": {
+      "head_min_x": -30,
+      "head_min_y": -60,
+      "head_min_z": -5,
+      "head_max_x": 20,
+      "head_max_y": 60,
+      "head_max_z": 5,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.4,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 2,
+       "t_min_y": -0.2,
+       "t_max_x": 2.7,
+       "t_max_y": 0.6
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": -0.2,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 0,
+       "t_min_y": -0.2,
+       "t_max_x": 0.7,
+       "t_max_y": 0.6
+      }
+     ]
+    }
+   ],
+   "index": 7,
+   "btn": 7
+  },
+  {
+   "pc": "npc029a",
+   "label": "im_npc029_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc029a/npc029a_gabon.glb",
+   "motions": "npc029a/motions.json",
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_talk00": {
+     "frames": 320,
+     "loop": true
+    }
+   },
+   "missing": [],
+   "layers": {
+    "npc029_body_alb": [
+     "../tex/npc029_body_alb_8d7cfb8fc3ce.png"
+    ],
+    "npc029_eye_alb": [
+     "../tex/npc029_eye_alb_cf5f7f32e7cd.png"
+    ],
+    "npc029_eyelid_alb": [
+     "../tex/npc029_eyelid_alb_8252ae8f7518.png"
+    ],
+    "npc029a_strawhat_alb": [
+     "../tex/npc029a_strawhat_alb_273fc0df40d3.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 41,
+     "name": "GABON_STRAWHAT",
+     "height": 1.25,
+     "scale": 1,
+     "head": {
+      "head_min_x": -10,
+      "head_min_y": -20,
+      "head_min_z": -5,
+      "head_max_x": 10,
+      "head_max_y": 20,
+      "head_max_z": 5,
+      "head_offset_x": 0,
+      "head_weight": 0.4,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.25,
+       "t_scale_y": 0.25,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.5,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.25,
+       "t_scale_y": 0.25,
+       "t_rot": 0,
+       "t_min_x": -0.5,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 8,
+   "btn": 8
+  },
+  {
+   "pc": "npc053",
+   "label": "im_npc053_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "npc053/npc053_patapata.glb",
+   "motions": "npc053/motions.json",
+   "clips": {
+    "bd_bubble00": {
+     "frames": 434,
+     "loop": true
+    },
+    "bd_flower00": {
+     "frames": 280,
+     "loop": true
+    }
+   },
+   "missing": [
+    "co_idle00"
+   ],
+   "layers": {
+    "npc053_body_arr_alb": [
+     "../tex/npc053_body_arr_alb_00_0f4bca7d06eb.png",
+     "../tex/npc053_body_arr_alb_01_888e291b432a.png"
+    ],
+    "npc053_body_nml": [
+     "../tex/npc053_body_nml_851a5a9f8751.png"
+    ],
+    "npc053_body_rgh": [
+     "../tex/npc053_body_rgh_6d748b4408a6.png"
+    ],
+    "npc053_eye_alb": [
+     "../tex/npc053_eye_alb_0ccd41e253e8.png"
+    ],
+    "npc053_wing_alb": [
+     "../tex/npc053_wing_alb_9dcadb392ab8.png"
+    ]
+   },
+   "attach": null,
+   "npc": [
+    {
+     "id": 56,
+     "name": "PATAPATA",
+     "height": 1.4,
+     "scale": 1,
+     "head": {
+      "head_min_x": -40,
+      "head_min_y": -60,
+      "head_min_z": -5,
+      "head_max_x": 20,
+      "head_max_y": 60,
+      "head_max_z": 5,
+      "head_offset_x": 0,
+      "head_weight": 0.5,
+      "head_chincoef": 0
+     },
+     "eyes": [
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt1",
+       "t_offset_x": 2,
+       "t_offset_y": 0,
+       "t_scale_x": 0.25,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": 1.8,
+       "t_min_y": -0.2,
+       "t_max_x": 2.4,
+       "t_max_y": 0.4
+      },
+      {
+       "material": "eye_m",
+       "shaderparam": "material_texture_srt2",
+       "t_offset_x": 0,
+       "t_offset_y": 0,
+       "t_scale_x": 0.25,
+       "t_scale_y": 0.5,
+       "t_rot": 0,
+       "t_min_x": -0.4,
+       "t_min_y": -0.2,
+       "t_max_x": 0.2,
+       "t_max_y": 0.4
+      }
+     ]
+    }
+   ],
+   "index": 9,
+   "btn": 9
+  }
+ ]
+}

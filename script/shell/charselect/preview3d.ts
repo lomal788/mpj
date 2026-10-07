@@ -515,7 +515,7 @@ export class Preview3D {
   }
 
   /** 모션 재생(next = 끝나면 이어서, 원본 EnqueuePlay). 모델이 없어도 시간축은 바뀐다 */
-  play(slot: number, clip: string, next?: string): void {
+  play(slot: number, clip: string, next?: string, blendSec?: number): void {
     const s = this.slots[slot];
     if (!s || !s.shown) return;
     const clips = this.spec.chars[s.chara]?.clips;
@@ -524,7 +524,7 @@ export class Preview3D {
     s.current = clip;
     s.next = next ?? null;
     s.frame = st.frame;
-    if (s.mixer) this.applyPlay(s, st.blend);
+    if (s.mixer) this.applyPlay(s, prev === null ? st.blend : (blendSec ?? st.blend));
   }
 
   /** 믹서에 지금 모션을 노드 프레임 s.frame 으로 건다(blend 초 크로스페이드) */

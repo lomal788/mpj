@@ -1,0 +1,559 @@
+# mgm01 프리 플레이 — 목록·설정·한 판 호출·승패 표·복귀
+
+## 1. 기능 개요와 보이는 동작
+
+[판독] `mgm01::Scene`은 항구에서 들어온 뒤 미니게임 목록/장르를 고르고, 개별 설정에서 팀·CPU·일부 게임의 모드·리듬 난이도를 정해 한 판을 호출하는 화면이다. 돌아오면 이전 필터/선택을 읽어 다시 고를 수 있고, 승패 표에서 최근 결과를 본다. 목록의 취소는 항구 복귀 흐름으로 간다.
+
+[데이터] 프리 플레이 JSON의 게임은112개, 필터는14개다. 잠긴 게임도 목록에 남을 수 있지만 결정/랜덤 후보는 구별한다. 112개는 페이지별 누적 수가 아니라 `MgAll` 목록 자체의 수다. 전체 MGList의152개 ID 공간과 동일한 집합이라는 뜻은 아니다.
+
+[판독] `mgmrs::Scene`은 접속 이탈 오류 뒤 세션 재구성을 기다리는 화면이다. 정상 오프라인 한 판→mgm01 사이의 필수 장면이 아니다. 진입을 선택하는 main 오류 갈래와 복구 성공/실패는 §3.3·5.4에 분리한다.
+
+[판독] 공용 창·메시지·메뉴/입력·소리는 [mgm_common.md](mgm_common.md) §3~8, [message_window.md](message_window.md) §5~9, [05_ui_input.md](../engine/05_ui_input.md) §6·7, [04_sound.md](../engine/04_sound.md) §6을 참조한다. 이미 확인한 mgmet 캐시 소비, flag4 writer, 시작 지점1/7, 기본 ExitFlow는 [mgmet_flow.md](mgmet_flow.md) §3·5.2·8 및 [mgmet_ruleconfig.md](mgmet_ruleconfig.md) §8.2를 참조한다. 이번 문서는 그 이후의 고유 처리다.
+
+## 2. 분석 대상·자료 위치
+
+[데이터] 원본 버전은 Super Mario Party Jamboree US v0다. 표의 상대 경로는 `C:/dev/mpj/` 기준이다. 원본·extracted는 읽기만 했으며 키 값을 옮기지 않았다.
+
+| 자료 | 경로·역할 [데이터] |
+|---|---|
+| NRO/함수 목록 | `extracted/romfs/nro/NX_Release/{mgm01,mgmrs}.nro`, `analysis/functions/{mgm01,mgmrs}.nro.tsv`, `main.nso.tsv` |
+| 기존 C 재사용 | `mgmcommon_mgm01_inline.c`, `mgmcommon_mgm01_callers.c`, `mgmcommon_mgm01_input_callers.c`, `mgmcommon_mgm01_dis*.c`, `mgmet_mgm01_consume.c`, `rhythm_mgm1.c`, `logic1801_mgm*.c` |
+| 새 Scene C | `analysis/decomp/mgm01_stage3.c`, `mgmrs_stage3.c`, `mgm01_callbacks.c`, `mgm01_wait_callback.c`, `mgm01_helpers.c`, `mgm01_data_helpers.c` |
+| main/메뉴/boot 연결 | `mgm01_main_contract.c`, `mgm01_main_more.c`, `mgm01_main_round.c`, `mgm01_result_writer.c`, `mgm01_menu_player.c`, `mgm01_boot_initial.c`, `mgm01_team_expand.c`, `mgm01_team_sort.c`, `mgm01_player_base.c`; 타입/Normalize는 `ui2dalign_main.c` |
+| 새 어셈블리 예외 | `mgm01_dis_stage3.c`, `mgm01_main_dis1.c`, `mgm01_dis_boot.c`, `mgm01_dis_boot_reset.c`, `mgm01_dis_record.c` (§10.2) |
+| 목록 JSON | `extracted/bea/mgm~mgm01.nx.bea/mgm/mgm01/data/mgm01_freeplay_mgList.json` |
+| 기본 기록 JSON | `extracted/bea/bq.nx.bea/common/data/gamerecord.json` |
+| 메시지 | `extracted/message/koKR/{mgm01,im_common,system}.json` |
+| 레이아웃 | `extracted/bea/mgm~mgm01.nx.bea/mgm/mgm01/layout.lyt`, 공용 `mgm~mgm00.nx.bea` |
+| 변환 결과 | `analysis/mgm01_layout/`, `mgm01_panes.txt`, `mgm01_anims.json`, `mgm01_evidence.json` |
+| 판독·검증 도구 | `web/tools/analysis/mgm01_research.py`, `mgm01_verify_stage3.py`, `analysis/mgm01_validation.json` |
+
+[판독] 모듈 접두어가 다른 동일 주소는 다른 함수다. 이름 없는 함수는 `FUN_…`, 원본의 `UpdateRhythmDfficultyPane` 등 철자도 그대로 쓴다. 의미 설명용 필드명은 정식 SDK 멤버명이라고 단정하지 않으며 웹 제안 이름은 `[웹 이름]`으로 표시한다.
+
+## 3. 진입점과 호출 흐름
+
+### 3.1 생성·준비·첫 진입
+
+| 순서 | 함수·모듈 주소 [판독] | 처리·다음 |
+|---|---|---|
+| 생성 | `mgm01::Scene::Scene` — mgm01 @0x71000042fc | 크기0x26c8, MinigameModeScene(1); 필드 기본값 §4 |
+| 사전 로드 | `PrepareLoadArchives` — mgm01 @0x7100004d78 | 공용/고유 아카이브 준비 |
+| 준비 | `SetupGame` — mgm01 @0x7100004df0 | pause/전환 준비; 메시지/필드 연결은 다음 동기 준비 |
+| 동기 준비 | `SyncedSetupGame` — mgm01 @0x7100004e50 | Message/Map/Chara/Telop/List/Result/Setting/HumanNum 초기화, PlayerType 복구·retry team 초기화·order reset, JSON deserialize·ID/필터 구성·잠금 계산 |
+| 모드 흐름 | `MinigameModeFlow` — mgm01 @0x710000ad60 | 플레이어 attach → 첫 연출 또는 Continue → detach → 선택 흐름 → attach → Exit |
+| 첫 연출 | `EnterFlow` — mgm01 @0x710000c4a0 → `StartFlow` — mgm01 @0x710000d4c0 | course 텔롭·첫 안내, 연출 완료 신호 §5.3 |
+| 한 판 이후 | `ContinueFlow` — mgm01 @0x710000dad0 | ModeData의 game/filter를 Scene에 복구, resume=1, 선택 흐름 재개 |
+| 화면 선택 | `DecideMinigameFlow` — mgm01 @0x710000df80 | 목록/승패 표/설정/호출 상태기계 §5.2 |
+
+[판독] `GetRound()<1 && !flag0x3c`일 때 Enter→Start, 나머지는 Continue이며 Scene+0x281=1이다. `SyncedSetupGame`에서 Round<1이면 SetRound(0)·flag6 off를 수행한다. save MinigameMode 비트2가 없을 때는 §8의 SetupPlayData를 한 번 적용한다.
+
+[판독: 어셈블리] `SyncedSetupGame`의 C는 `ParseFromAsset` 문자열/옵션 인자를 생략해 신뢰할 수 없었다. mgm01 @0x7100004e50의 덤프에서 x1=`mgm/mgm01/data/mgm01_freeplay_mgList.json`(mgm01 @0x7100044f67), 두 번째 x1=`common/data/gamerecord.json`(mgm01 @0x7100045293), w2=1을 확인했다. 런타임 archive 내부 경로이며 임의 웹 URL이 아니다.
+
+### 3.2 한 판 호출과 돌아온 뒤
+
+[판독] `MgStartFlow` — mgm01 @0x7100011a50는 설정을 Work/Sync/PlayerWork에 반영하고 `CallMinigameScene`을 요청한 뒤 `Fiber::Sleep(-1)`로 중단한다. 한 판 내부에서 결과를 만들고 Scene 스택을 복귀시키는 코드는 다음 `bq::MinigameScene` 분석 범위다. 여기서의 복귀 소비는 Round/ModeData/결과 ring을 읽는 경로까지다.
+
+[판독] `bq::MinigameModeScene::CallMinigameScene` — main @0x71003601ac는 ID<152 검사, GameWork의 ID 쓰기, 다음 Scene 이름 선택을 한다. UseGyro면 `gyroPadChange`, 그 외 flag4와 `MGList::IsCallInst`가 모두 참이면 `mgInst`, 나머지는 `MGList::GetName(id)`다. 자이로 설정/설명 장면 내부는 범위 밖이다.
+
+[판독: 어셈블리] 위 main C에는 Scene 이름 인자가 사라지고 마지막 호출이 tail call로 보였다. `mgm01_main_dis1.c`에서 x1 문자열과 분기 순서를 확인했다. 문자열은 main @0x710159ef04=`gyroPadChange`, main @0x710156fc95=`mgInst`다. flag4를 쓰는 mgmet 경로는 기존 문서 참조만 한다.
+
+[판독] 목록 B로 선택 흐름을 끝내면 기존 ExitFlow가 항구 복귀를 요청한다. 원래 §5.2의 첫 WaitUntil만 이번에 닫았다: vtable mgm01 @0x710004fd80의 +0x30은 `FUN_710001eab8` — mgm01 @0x710001eab8, 조건은 `!WipeModule::IsPlayingFadeAnim()`이다. 그 이후 보상/연출/복귀 기본 처리와 시작 지점은 기존 mgmet 문서대로다.
+
+### 3.3 mgmrs 진입을 고르는 오류 갈래
+
+[판독] main `FUN_71001ec490` — main @0x71001ec490의 네트워크 이벤트 처리에서 메시지+8=0x5f4e4502, 이벤트 종류1(이탈)을 처리한다. 자기 ConstantID 이탈, 예약된 이탈, `FUN_71001eced0`의 배제 결과는 통과시키지 않는다. 남은 flag0x1c 갈래에서 flag0x4b가 있고 `IsLeftError()==false`, flag0x4a가 없을 때 아래 선택이 있다. 온라인 내부의 다른 갈래는 확장하지 않는다.
+
+| 조건·결과 [판독] | 처리 |
+|---|---|
+| 이탈 PlayerID 유효, `FUN_71001f3d98(mode,pid)==false` | 오류4, `sys_error_B6`; 현재 자기 ConstantID로 찾은 로컬 플레이어 수 검사 |
+| 그 수<2 | `Net::SetErrorReturnSceneName("mgmrs")` |
+| 그 수≥2 | `Net::SetErrorReturnSceneName("mgmet")` |
+| 같은 검사 함수가 true인 갈래 | `sys_error_B1`·menu00 복귀 갈래 |
+| flag0x4a가 이미 있음 | `sys_error_B3` 갈래 |
+
+[판독] 이것은 오류 복귀 목적지 문자열의 설정이지 그 자리에서 `RequestCallScene("mgmrs")`하는 코드가 아니다. [미확정] 실제 오류 dispatcher가 Scene history를 어떻게 복원하는지는 §11. 오프라인에는 이 접속 이탈 이벤트를 정상 한 판 복귀로 공급할 이유가 없다.
+
+## 4. 구조체·필드·상수 표
+
+### 4.1 mgm01::Scene
+
+| 상대 오프셋 | 형·초기값 [판독] | writer → reader |
+|---|---|---|
+| +0x210/+0x214 | s32 filter enum/index, -1/-1 | SetupMgListFilter·Continue → 목록·설정·ModeData commit |
+| +0x218 | vector<MgJsonData>, empty | deserialize → ID 목록/조건 |
+| +0x230 | vector<MgData>, empty→152 slots | SetupMinigameIdList·lock → GetMgData |
+| +0x248/+0x260 | 필터 원형/표시용 vector, empty | 목록/즐겨찾기 구성 → GetMgIdList/전환 |
+| +0x278 | s32 selected MinigameID, -1 | 목록·설정 이동·Continue → 호출/표시 |
+| +0x27c | s32 team 선택, 0 | MgSettingFlow 종료 → SetupPlayInfo |
+| +0x280/+0x281 | byte endless/resume, 0/0 | 필터/설정·Continue → 기록/초기 커서/준비 |
+| +0x284 | s32 CPU, 0 | 기존 cache 소비는 old §8.2; 설정 → Work/전체 PlayerWork |
+| +0x288 | s32 rhythm difficulty, 0 | 설정 → RhythmWork mode |
+| +0x290/+0x298 | motion/NEW Fiber*, 0/0 | 선택 흐름/목록 진입 → 삭제/중단 |
+| +0x2a0/+0x2a1 | byte NEW 시작/중지, 0/0 | Start/StopObserve → observer |
+| +0x2a4/+0x2a8 | s32 NEW 관찰 ID/목록 index, -1/0 | StartObserve → UpdateNewIcon |
+| +0x2ac | s32 인원 변화용 cache, 1 | InitializeHumanNum·CheckHumanNumChanged → 팀 UI 재구성 |
+| +0x2b0 | vector<MgRecord shared handle>, empty | DeserializeGameRecord → default record |
+| +0x300 | null 종료 ARP scratch 목록 | GetArpList → 연출 요청·대기 |
+| +0x630/+0x638 | 안내 Fiber*/skip byte, 준비 시 초기화 | PlayAnnounce·입력 → AnnounceUpdate |
+| +0x658 | 112개 UI item handle, stride0x18 | InitializeMgList → 썸네일/NEW/Finalize |
+| +0x10d8 | 잠금 안내 UI handle | InitializeMgList → AnnounceUpdate |
+| +0x25f0 | s32 마지막 목록 type, -1 | ApplyChangeMgList·Cleanup → type 변경 검사 |
+| +0x25f8/+0x2610/+0x2628 | 승패 표/scrollbar/header handles | InitializeMgResultList → history/Finalize |
+| +0x2640 | s32 history scroll offset | flow 진입/반복 입력 → ApplyMgResultList |
+| +0x2660 | TeamOrderData* | ApplySetting·인원 변화 → 팀 표시/값 범위 |
+| +0x2668/+0x266c | s32 설정 cursor / byte favorite dirty | 설정 진입/입력 → cursor·목록 갱신 |
+| +0x2670/+0x2674/+0x2678/+0x267c | s32 team/CPU/mode/rhythm 작업 값 | MgSettingFlow 진입·값 이동 → 종료 commit |
+| +0x2680/+0x2684/+0x2688 | s32 mode/CPU/rhythm 물리 rule pane, 매 구성 -1 | ApplySetting → SearchValidCursorIndex/GetCursorPaneName |
+| +0x26a8 | guide handle | InitializeMgList → 표시/취소 |
+| +0x26c0/+0x26c4 | s32 다음/이전 선택 상태 | DecideMinigameFlow 루프 → 다음 분기 |
+
+[판독] 초기값을 표에 적지 않은 UI/작업 필드는 각 Initialize/Apply 호출이 세운다. 실제 SceneParams가 기본값을 덮는지는 확인되지 않았다. Params 기본 `NewIconUpdateWaitTime`은12, property 범위1..120이다(`Params::createInstance` — mgm01 @0x7100003a64, `getPropertyList` — mgm01 @0x71000039b0).
+
+### 4.2 JSON·목록 런타임 자료
+
+| 구조 | 필드 [판독] | 자료/소비 |
+|---|---|---|
+| MgJsonData 0x48 | +0 MgName pointer, +8..+0x38 장르13개 s32, +0x3c SetLock, +0x40 SoloPlayOnly, +0x44 OfflinePlayOnly | `getPropertyList` — mgm01 @0x7100003ddc |
+| MgFilterJsonData 0x44 | +0 FilterName char[16], +0x10 SortIdx s32, +0x14 LabelName char[48] | `getPropertyList` — mgm01 @0x71000041e0 |
+| MgData 0x20 | +0 available byte, +8 JSON pointer, +0x10 ID s32, +0x14 lock reason s32, +0x18 record kind s32 | 152 slots; 초기 ID/reason/kind=-1, available=0; `FUN_7100020bc0` — mgm01 @0x7100020bc0 |
+| filter row 0x28 | +0 enum, 목록 vector 영역 | SetupMinigameIdList → GetMgIdList |
+| MgRecord 0x34 | +0 MgName char[32], +0x20 Stage, +0x24 Mode, +0x28 Format, +0x2c SortOrder, +0x30 InitialRecord | `getPropertyList` — mgm01 @0x7100003b84 |
+
+[판독][데이터] 범위 밖 ID의 `GetMgData` — mgm01 @0x710001540c는 static default mgm01 @0x71000470d8을 반환한다(available0, ID/reason/kind=-1). `MgRecord`의 Achievement 관련 JSON 값은 이 property 목록에 없으며 여기서는 복원하지 않는다. `GetMgDefaultRecordScore` — mgm01 @0x710001c1f0는 이름이 같은 마지막 항목의 InitialRecord를 돌려주며 Stage/Mode로 추가 필터하지 않는다.
+
+### 4.3 mgmrs::Scene·복구 Fiber
+
+| 소유/오프셋 | 형·초기값 [판독] | writer → reader |
+|---|---|---|
+| mgmrs Scene 크기0x110 | SceneBase 파생 | createInstance/RTTI |
+| Scene+0xe8 | RecreateSessionFiber*, 0 | SyncedSetupGame → GameFlow/CleanupGame |
+| Scene+0xf0/+0xf8/+0x100 | loading UI handle, 0 | SetupGame → GameFlow |
+| Scene+0x108 | s32 timeout, 30 | ctor/property → Fiber constructor |
+| Scene+0x10c | s32 조작자 CharacterID, -1 | SetupGame → CleanupGame 복원 |
+| Fiber+0x30/+0x34 | bool/TeamID, false/0 전달 | main ctor → 복구 흐름 |
+| Fiber+0x40 | s32 failure 값, -1 | ctor/복구 흐름 → mgmrs 성공 검사 |
+| Fiber+0x50 | s32 timeout, 전달 값 | main ctor → 복구 흐름 |
+
+[판독] `RecreateSessionFiber::RecreateSessionFiber` — main @0x71002d30c0는 flag0x4a on, NetTransfer callback 등록, pause level8을 설정한다. 네트워크 재구성 내부와 기존 `StartSync`/`SessionFailedProcess` 상세는 재분석하지 않는다(`mgC_main_uitimer2.c` 재사용).
+
+## 5. 상태 전이와 수명
+
+### 5.1 UI 생성·활성·정리
+
+| 단계 | 동작 [판독] | 완료 조건/다음 |
+|---|---|---|
+| 초기화 | List112 items, 필터3형식, Result3 handles, Setting, Telop, HumanNum | 데이터와 잠금 구성 후 첫 흐름 |
+| 목록 진입 | inclLocked=true 목록, resume면 이전ID 탐색, cursor·크기·NEW 갱신, guide In·RegularIn | 공용 UI active/진입 애니 완료 |
+| 목록 종료 | NEW fiber 삭제, history용ID 기억 또는 cancel guide Out, 창 Out·items reset | 공용 창 종료 애니 완료 |
+| 설정 진입 | 현재 필터의 unlocked 목록 구성, 비면 현재ID fallback, ApplySetting/7 preview | resume면 Play cursor4, 아니면 첫 valid cursor |
+| 설정 종료 | team/CPU/mode/rhythm commit, favorite dirty면 active 목록 재구성 | listback2 / random4 / play5 |
+| 정리 | `CleanupGame` — mgm01 @0x7100009fb0 | Fiber·112 item/공용 UI handles 해제, 마지막 type=-1; FinalizeChara/Map/Message 호출 |
+
+[판독] `FinalizeMgSetting` — mgm01 @0x710000a250, `FinalizeMgResultList` — mgm01 @0x710000a2a0, `FinalizeMgList` — mgm01 @0x710000a3a0, `FinalizeCourseNameTelop` — mgm01 @0x710000a490은 소유 handles의 해제를 담당한다. 3D 초기화/정리의 모델 내용은 다루지 않는다.
+
+### 5.2 DecideMinigameFlow 상태
+
+| 상태 | 진입·반복 동작 [판독] | 전이 조건 → 다음 |
+|---|---|---|
+| 0 | 처음 필터 MgAll 구성 | 준비 →2 |
+| 2 | `MgListFlow` — mgm01 @0x7100010560 | Y→3, A/X 성공→4, B→7; 그 외 목록 계속 |
+| 3 | `MgResultListFlow` — mgm01 @0x71000109b0 | B로 닫기→2 |
+| 4 | `MgSettingFlow` — mgm01 @0x71000110b0 | 랜덤4→4 재구성, 뒤로2→2, Play5→5 |
+| 5 | `CheckConditionGyroMg` 분기만 | 허용→6, 설정 필요/불가→4 및 resume=1 |
+| 6 | motion flow 정리 | →8 |
+| 7 | motion/NEW 흐름 정리 | →9 |
+| 8 | `MgStartFlow` | child Scene 요청 후 Sleep(-1); 이 flow에서 정상 반환하지 않음 |
+| 9 | 선택 flow 종료 | 바깥 MinigameModeFlow의 Exit |
+
+[판독] 처음 상태는 `resume * 2`다. 상태1의 고유 case는 없고 비정상 값은 종료 갈래로 간다. `DecideMinigameMotionFlow` — mgm01 @0x710000f6c0는 별도 배경 Fiber로 움직이며 목록/설정 입력의 독립적인 완료 barrier로 쓰이지 않는다.
+
+### 5.3 3D 대기 지점과 대체 신호
+
+[판독] 다음은 flow가 실제로 기다리는 조건만이다. ARP0..3은 각 플레이어, ARP4는 네 플레이어 묶음, ARP5는 별도 한 actor이며 나머지는 `GetArpList` — mgm01 @0x710000b360의 묶음 번호로 보존한다. 캐릭터/맵 이름을 추정하지 않는다.
+
+| 함수·주소 [판독] | 기다리는 대상/조건 | 3D 없이 필요한 값 [추정][웹 이름] |
+|---|---|---|
+| `EnterFlow` — mgm01 @0x710000c4a0 | course 텔롭 표시 후2.0초, 해당 갈래의 닫힘 완료; ARP7 첫 IsMotion=false | `courseTimer`, `courseTelopClosed`, `arp7MotionDone` |
+| `StartFlow` — mgm01 @0x710000d4c0 | ARP4의 모든 IsAction=false | `allPlayerActionsDone` |
+| 같은 함수 | 안내 MessageFlow 완료, ARP7 첫 IsMotion=false | 기존 메시지 완료 + `arp7MotionDone` |
+| 같은 함수 후반 | ARP8 첫 IsMotion=false | `arp8MotionDone` |
+| `ContinueFlow` — mgm01 @0x710000dad0 | 이어질 motion 요청·idle 설정 후1회 Fiber::Wait | `nextTick`; 긴 actor 완료 기다림은 없음 |
+| `MgStartFlow` — mgm01 @0x7100011a50 | ARP5 첫 IsAction=false, ARP0 첫 IsMotion=false | `guideActionDone`, `player0MotionDone` |
+| 같은 함수 | GetDeltaTime 누적1.0초 → FadeOut1.0초 → fade animation 종료 | `startTimer`, `fadeDone`; 서로 다른 두 단계 |
+| `ExitFlow` — mgm01 @0x710000e2c0 | 기존 연출/보상 대기 표는 old flow §5.2; 이번 첫 callback은 fade 종료 | `fadeDone` 추가; 기존 `motionDone/frameMax/rewardDone` 계약 참조 |
+
+[판독] EnterFlow의 actor frame300/320 등은 SetMotionFrameCallback 등록 값이며 flow의 frame 도달 대기 조건이 아니다. 텔롭 첫 개방 achievement0x3d의 unlock은 닫힘 완료 후 이루어지는 갈래가 있다. `OpenCourseNameTelop` — mgm01 @0x710000f100, `CloseCourseNameTelop` — mgm01 @0x710000f260, `WaitCloseCourseNameTelop` — mgm01 @0x710000f380이 고유 호출이고, 공용 창의 In/Out 구현은 old 공용 문서를 참조한다.
+
+[추정] 포팅에서는 각 신호를 즉시 완료 또는 별도 timer로 제공할 수 있지만 선택은 명세에 표시한다. actor frame300/320을 UI300/320프레임으로 치환하거나 frameMax의 원본 클립 길이를 임의로 확정하지 않는다.
+
+### 5.4 mgmrs 전체 수명
+
+| 상태 | 함수·모듈 주소 [판독] | 완료·다음 |
+|---|---|---|
+| 생성 | `Scene` — mgmrs @0x71000039fc | §4.3 기본값 |
+| 준비 | `SetupGame` — mgmrs @0x7100003ab8 | fade 비활성, Entity `loading_ui`, Parts.lyt의 `sys_tlp_loading_00.bflyt`, order0x9aff; `sys_syncWait_dlg`·icon normal·in; 조작자 char 저장 |
+| 동기 준비 | `SyncedSetupGame` — mgmrs @0x7100003e5c | RecreateSessionFiber(false, TeamID0, Scene timeout) 생성 |
+| 대기 | `GameFlow` — mgmrs @0x7100003f80 | fiber 없으면 반환; StartSync 후 IsCompleted까지 매 tick Wait |
+| 성공 | 같은 함수, fiber+0x40==-1 | UI out, MainModule SetPause/CancelPause(공유 DAT의 상위s32), RequestReturnScene; UI out 완료 기다림은 없음 |
+| 실패 | 같은 함수, 그 외 | SessionFailedProcess 호출 후 계속 Wait |
+| 정리 | `CleanupGame` — mgmrs @0x7100003ec8 | fiber 삭제; 조작자 현재 CharacterID와 BaseCharacterID를 저장한 char로 복원 |
+
+[데이터] `sys_syncWait_dlg`의 고유 문자열은 mgmrs @0x71000136ba, in/out은 mgmrs @0x71000136d7 / mgmrs @0x71000136b6이다. [판독] pause argument는 가변 전역 `DAT_7100019ad0`의 상위32비트에서 읽으므로 파일의 초기0을 항상0인 상수로 대입하지 않는다.
+
+[판독] mgmrs는 Scene17개와 Params7개의24개 함수를 모두 읽었다. 빈 override·RTTI·생성/삭제 함수까지의 정확한 열거는 §10.1의 inventory다. DummySymbolLink는 별도 linker 함수로 집계한다.
+
+## 6. 계산식·조건·의사코드
+
+### 6.1 목록·필터·순서·배치
+
+| enum | FilterName·한국어 [데이터] | 포함 수 | SortIdx |
+|---|---|---|---|
+| 0 | MgAll·전부 |112|1|
+| 1 | Mg4vs·4인 대전 |29|2|
+| 2 | Mg1vs3·1 vs 3 |12|3|
+| 3 | Mg2vs2·2 vs 2 |12|4|
+| 4 | MgDuel·듀얼 |5|5|
+| 5 | MgItem·아이템 |5|6|
+| 6 | MgChallenge·챌린지 |10|7|
+| 7 | MgBoss·보스 |5|8|
+| 8 | MgGyro·체감 |15|9|
+| 9 | MgEndless·엔드리스 |5|10|
+| 10 | MgAthlon·쿠파 애슬론 |14|11|
+| 11 | MgBusters·쿠파 버스터즈 |10|12|
+| 12 | MgRhythm·리듬 쿠킹 |10|13|
+| 13 | MgFavorite·즐겨찾기 |runtime|14|
+
+[판독] 각 게임은 장르 column>0일 때 포함되고 column의 양수 값 오름차순이다(`SetupMinigameIdList` — mgm01 @0x7100008e70, sort `FUN_7100022380` — mgm01 @0x7100022380). 필터는 SortIdx 오름차순이다(`FUN_71000211c0` — mgm01 @0x71000211c0). 즐겨찾기는 available이고 Work favorite인 게임을 모은 뒤 MgAll column으로 정렬한다(`SetupMinigameIdList_Favorite` — mgm01 @0x710001bf40, `FUN_7100023590` — mgm01 @0x7100023590). 즐겨찾기 선택 순서가 저장 순서는 아니다.
+
+[판독] `GetMgIdList` — mgm01 @0x7100011f10는 inclLocked=true면 모든 항목, false면 reason==-1만 반환한다. `GetFilterIndex` — mgm01 @0x7100012170는 enum의 표시 index를 찾고, `GetMgListFilterNextIndex` — mgm01 @0x7100012214는 ±1에 양수 modulo를 적용한다.
+
+| N 목록 크기 | type [판독] | 형식 [데이터: mgm01 @0x710004f668, stride0x20] | cols×rows | thumbnail size index |
+|---|---|---|---|---|
+| 33..112 |0|x_filter_00|14×8|2|
+| 16..32 |1|x_filter_01|8×4|1|
+| 0..15 |2|x_filter_02|5×3|0|
+
+[판독] `ApplyChangeMgList` — mgm01 @0x71000148f0는 이 형식을 고르고112 handles 중 사용하지 않는 것을 숨긴다. 목록은 이 grid 한 장이며 목록 paging/scroll offset은 없다. 결과 표의 스크롤과 혼동하지 않는다. `ApplyChangeMgList2` — mgm01 @0x7100015550는 1회 Wait 뒤 title 측정폭+40, board폭+32, tooltip 화면 경계-960..960 보정과 NEW 관찰을 적용한다. 빈 즐겨찾기 전용 문구는 enum13 && N==0이다.
+
+### 6.2 입력 표와 우선순위
+
+[판독] trig는 trigger, rep는 공용 반복 생성 결과다. 비트의 물리 버튼 정의·owner 선택은 old mgm_common §6.10을 사용한다. 아래 exact는 마스크가 **그 값과 같을 때**이며 여러 비트 동시입력과 단일 버튼을 구별한다. UI active와 진입/종료 상태 검사로 잠긴 프레임에는 다음 처리를 하지 않는다.
+
+| 화면 | 입력 [판독] | 반복 사용 | 동작·우선순위 | 함수 주소 mgm01 |
+|---|---|---|---|---|
+| 목록 | exact trig8 X | 아니오 | unlocked 현재 필터 랜덤→설정4; 후보0이면 ERROR | mgm01 @0x7100010560 / mgm01 @0x71000164c0 |
+| 목록 | exact trig1 A | 아니오 | enabled면 설정4; locked면 ERROR·진동·안내, 계속 목록 | mgm01 @0x7100016378 |
+| 목록 | 방향 rep | 예 | up bit11/17, down10/19, left8/16, right9/18; grid 이동 | mgm01 @0x71000166ec |
+| 목록 | exact trig4 Y | 아니오 | 승패 표3 | mgm01 @0x7100016950 |
+| 목록 | exact trig2 B | 아니오 | 취소7 | mgm01 @0x7100016924 |
+| 필터 | exact rep0x10/0x40, 0x20/0x80 | 예 | 이전/다음; 목록 결정·방향 처리 다음에 검사 | mgm01 @0x71000169a0 |
+| 설정 | exact trig1 A | 아니오 | 다음 valid 항목; Play에서 press 완료 후5 | mgm01 @0x71000110b0 / mgm01 @0x710001ac70 |
+| 설정 | exact trig2 B | 아니오 | 이전 valid 항목; 첫 항목이면2로 목록 복귀·resume1 | mgm01 @0x710001afc0 |
+| 설정 | exact trig4 Y | 아니오 | 현재 게임 favorite toggle | mgm01 @0x710001b560 |
+| 설정 | exact trig8 X | 아니오 | unlocked 게임 랜덤, 성공4로 설정 재구성 | mgm01 @0x710001b2b0 |
+| 설정 | trig 0x100/0x10000, 0x200/0x40000 | 아니오 | 이전/다음 valid 설정 항목; 끝 clamp | mgm01 @0x71000110b0 |
+| 설정 | exact rep0x10/0x40, 0x20/0x80 | 예 | 이전/다음 미니게임; 선택 배열 modulo | mgm01 @0x710001b7a0 |
+| 설정 | trig 0x400/0x80000, 0x800/0x20000 | 아니오 | 현재 항목 값 -1 / +1 (down / up) | 기존 `MgSettingFlow_RuleSetting` mgm01 @0x710001bbf0 |
+| 결과 | exact rep0x100/0x10000, 0x200/0x40000 | 예 | scroll offset -1 / +1, 범위[0,max(count−8,0)] | mgm01 @0x71000109b0 |
+| 결과 | trig2 B | 아니오 | CANCEL, 닫기→목록2 | mgm01 @0x71000109b0 |
+
+[판독] 목록은 X/A를 먼저 처리하고 그 외 방향→Y/B→필터를 검사한다. 잠금 안내가 떠 있을 때 trig>1은 Scene+0x638 skip도 세운다. 설정은 A→B→Y→X→방향/게임 이동/값 이동 순으로 분기한다. 결과 이동에는 SE 호출이 없고 닫기에 CANCEL이 있다. 동시입력은 각 원본 조건 그대로 적용한다.
+
+### 6.3 끝 행과 래핑·랜덤
+
+[판독] 목록 grid는 단순 `mod(cursor + dy*cols + dx,N)`만 사용하지 않는다. `Q=(W−N%W)%W`는 마지막 행의 빈칸 수다. fresh는 `(trig & 0xf0f00)!=0`이다. fresh가 아니면 위/아래 끝과 해당 행의 왼쪽/오른쪽 끝을 넘는 이동을 먼저 차단한다.
+
+```text
+t = cursor + dy*W
+if t < 0:  t = (t < -Q) ? t+Q : t-(N%W)
+if t >= N: t = (t-N < Q) ? t+(N%W) : t-Q
+next = positiveModulo(t+dx, N)
+if changed: CUR_2D, FX, MoveCursor, StartObserveNewIcon
+```
+
+[판독] `MgListFlow_RandomSelect` / `MgSettingFlow_RandomSelect`는 현재 필터의 **unlocked** 후보에서 `SyncRandRange(0,N)`을 호출한다. 후보0이면 -1 반환이다. 목록은 ERROR, 설정은 DECI_S/FX를 먼저 실행하고 후보0 검사를 한다. 랜덤 후보가 full visible 목록에서 어느 index인지 다시 찾아 cursor/관찰을 옮긴다.
+
+[판독: 어셈블리] 두 랜덤 함수 C에는 `SyncRandRange` 상한 인자가 누락됐다. mgm01 @0x71000165bc / mgm01 @0x710001b480의 x2가 `(end−begin)>>2`이고 하한0임을 확인했다. RNG 알고리즘 자체를 다시 판독하거나 웹 Math.random과 동일하다고 가정하지 않는다.
+
+### 6.4 잠금·NEW 조건 표
+
+[판독] lock condition의 순서는 SetLock → OfflinePlayOnly → SoloPlayOnly → MgBusters/접속 인원이다. 잠금 계산 때 Work `SetUnlock`도 갱신한다. 인원은 이 함수가 **직접 type==0**을 센 값이며 §8의 이름이 다른 GetHumanPlayerNum을 대신 넣지 않는다.
+
+| 조건 | reason·표시 [판독] | 근거 데이터 [데이터] | 웹에서 필요한 값 [추정][웹 이름] |
+|---|---|---|---|
+| SetLock && !Mgm06IsOpen && PlayCount==0 |0, placeholder 이름/thumbnail, disabled; NEW 숨김 | boss5개: mg1703/1705/1702/1701/1704 | `bossOpen`, `playCount[id]` |
+| OfflinePlayOnly && session connected |2, 원래 게임 표시+disabled, announce01 | 리듬10개 | `connected` |
+| SoloPlayOnly && 실제 사람 수>1 |1, disabled, announce00 | JSON14개 | `actualHumanCount` |
+| MgBusters>0 && connected && type0 사이 동일 ConstantID 존재 |3, disabled, announce02 | MgBusters10개+PlayerWork ConstantID | `sameAccountPlayers` |
+| 위 조건 없음 |reason=-1, enabled | 초기 reason=-1; SetUnlock(true) | `unlocked[id]` |
+| Work IsNew && reason!=0 | NEW 표시 가능 | Work new + 잠금 reason | `new[id]` |
+| 관찰 타이머 > Params wait | NEW 소비 | GetDeltaRate 누적, 기본wait12 | `deltaRate`, `newWait` |
+| NEW 소비 commit | Work SetNew(false), save MG+4 bit0 clear, pane hide | UpdateNewIcon consume=true | 원래 save flags byte |
+
+[판독] `CheckMinigameLockCondition` — mgm01 @0x7100009990, `IsNewIcon` — mgm01 @0x710001ca70, `IsMinigameLocked` — mgm01 @0x710001cae0가 조건 근거다. 잠금의 후자 getter는 Work IsUnlock의 반전이며 목록 enabled의 reason 검사와 저장 위치가 다르다. 잠긴 게임을 목록에서 지우는 대신 disabled로 남기는 inclLocked 계약을 유지한다.
+
+[판독] `CreateNewIconObserver` — mgm01 @0x71000162a0가 Fiber를 만들고 `FUN_71000247f0` — mgm01 @0x71000247f0가 시작/중지 flags를 소비한 뒤 타이머를 누적한다. `StartObserveNewIcon` — mgm01 @0x7100015be4, `StopObserveNewIcon` — mgm01 @0x7100015160, `UpdateNewIcon` — mgm01 @0x7100015940가 ID/index를 사용한다. 비교는 `wait < accumulatedRate`다. threshold12에 정확히 도달한 순간에는 소비하지 않는다. GetDeltaRate 단위와 원본 실행속도 없이 “12초”로 바꾸지 않는다.
+
+### 6.5 개별 설정·기록
+
+| 논리 cursor | 표시 조건·값 [판독] | 소비 |
+|---|---|---|
+|0 team|TeamOrder 후보 수>1, index0..count−1|SetupPlayInfo 팀 구성|
+|1 CPU|IsComLevelAdjustable, index0..3|PlayerWork ComLevel·Work/Sync CPU|
+|2 mode|ID {4,5,9,11,21}에서 mode item 표시, 0..1|normal/endless flag·record selector|
+|3 rhythm|JSON OfflinePlayOnly && GameRule10, 0..1|RhythmWork mode|
+|4 Play|항상 valid|press 뒤 시작|
+
+[판독] `ApplySettingMgSetting` — mgm01 @0x7100017180는 favorite·장르/이름/설명/thumbnail/횟수를 표시하고, 보이는 CPU/mode/rhythm을 물리 rule pane0부터 차례로 넣는다. hidden 슬롯은 -1이다. `SearchValidCursorIndexMgSetting` — mgm01 @0x710001a740는 요청 값 이상/이하의 가장 가까운 valid index를 고르며 끝에서 clamp한다. `GetCursorPaneNameMgSetting` — mgm01 @0x7100018630는 team=`x_rule/x_team_00`, Play=`x_rule/x_play_00`, 나머지=계산한 rule pane다.
+
+[판독] `IsComLevelAdjustable` — mgm01 @0x71000180a0는 GameRule8/10/11/12/13에서 false, duel3에서 type0 사람≥2면 false, 그 외 type1 CPU가 존재하면 true다. 값 이동이 경계에서 변하지 않으면 SE를 울리지 않는다. CPU pane UV의 t는 `index*0.25`다(`UpdateCpuPane` — mgm01 @0x7100019f00). `UpdateTeamPane` — mgm01 @0x7100018ab0, `UpdateRulePane` — mgm01 @0x710001a240, `UpdateRhythmDfficultyPane` — mgm01 @0x710001a480가 각 표시를 갱신한다.
+
+[판독] `ApplyListMgSetting` — mgm01 @0x7100018230는 현재 후보의 선택 index−3..+3을 modulo로 감아7개 thumbnail을 표시한다. N>1일 때만 미니게임 LR 안내를 표시한다. 이것은 목록112개 grid의 paging이 아니다.
+
+[판독][실행: 변환] 기존 C `mgmet_main_more.c`의 `FUN_71001ee130` — main @0x71001ee130은 TeamOrderData15개를 초기화한다. 이를 다시 디컴파일하지 않고 `web/tools/analysis/mgm01_team_table.py`로 packed int와 vector 초기화문을 변환해 `analysis/mgm01_team_table.json`을 만들었다. 각 row의 +0은 table index, +4는 표시 format, +8부터 후보 vector다. 후보의 숫자는 플레이어 목록의 **위치**이며 PlayerID와 항상 같다고 대입하지 않는다.
+
+| table index | format·표시 [판독] | 후보 수·위치 순서 [실행: 변환] |
+|---|---|---|
+|0|0, x_vs4|1: [0,1,2,3]|
+|1|4, x_1vs3|4: [0,1,2,3], [1,0,2,3], [2,0,1,3], [3,0,1,2]|
+|2|5, x_2vs2|3: [0,1,2,3], [0,2,1,3], [0,3,1,2]|
+|3/4|6, x_1vs1|각1: [0,1]|
+|5|6, x_1vs1|3: [0,1], [0,2], [1,2]|
+|6|6, x_1vs1|6: [0,1], [0,2], [0,3], [1,2], [1,3], [2,3]|
+|7/8/9/10|3, x_vs1|각1/2/3/4: [0]부터 [해당 마지막 위치]까지 각각 한 명 선택|
+|11|3, x_vs1|1: [0]|
+|12|2, x_vs2|1: [0,1]|
+|13|1, x_vs3|1: [0,1,2]|
+|14|0, x_vs4|1: [0,1,2,3]|
+
+[판독] format과 pane 연결은 `UpdateTeamPane` — mgm01 @0x7100018ab0의 visibility 비교다. 실제 초기 네 자리의 사람/CPU 구성에 따라 duel/single 선택 수가 달라지므로 팀 설정에 고정6개를 넣지 않는다.
+
+| record kind | ID [판독] | 표시·숫자 형식 |
+|---|---|---|
+|-1|그 외|highscore 숨김|
+|0|24|Number0 정수, highscore01|
+|1|10|record/100, record%100 → `%01d.%02d`, highscore02|
+|2|3,12,15,16|분/초/소수 문자열 Text0/1/2, highscore03|
+|3|4,5,9,11,21|endless일 때만 같은 시간 형식, highscore03|
+|4|79..83,86..90|Text0 정수 문자열, highscore04|
+
+[판독] kind는 `SetupMinigameData` — mgm01 @0x710001ca20, 표시는 `ApplySettingMgSetting_HighScore` — mgm01 @0x7100017ba8에서 결정한다. kind2/3은59999로 cap 후 MGRecorder의 Minute/Second/Decimal helper를 호출한다. 기본 기록 JSON20항목은 초기값 경로이며 현재 기록 getter와 별개다.
+
+[판독: 어셈블리] 위 C는 GetRecord index와 kind0 SetIntVariable 값 인자를 누락했다. `mgm01_dis_record.c`에서 MGRecorder::GetRecordIdx(id,0,kind==3) 결과가 GetRecord의 w1로 전달되는 것을 mgm01 @0x7100017d2c에서 확인했다. GetRecord 결과는 w20에 보관하고 mgm01 @0x7100017e18에서 w2로 전달해 Number0에 삽입한다. 임의의 기본 기록값을 화면 숫자라고 가정하지 않는다.
+
+### 6.6 승패 표·100판 ring
+
+[판독] Work의 Round는 s32 +0이고 결과는 +0xc부터100개, stride0xc다. `SetMinigameResult` — main @0x71001f0460는 `slot=(Round−1)%100`에 ID(+0), judge(+4), 네 결과 byte(+8..+0xb)를 쓴다. **Round를 증가시키지 않는다.** `SetRound` / `GetRound` — main @0x71001f0440 / main @0x71001f0448가 별도 setter/getter다.
+
+[판독] main `FUN_71001f271c` — main @0x71001f271c에는 Round 증가·GameWork/PlayerWork로 마지막 결과 쓰기가 함께 있다. 다만 이번 xref 자료에는 직접 호출자가 잡히지 않았으므로 이 함수를 한 판 종료의 실제 실행 caller라고 확정하지 않는다. 외부 종료 측에서 Round>=1을 만들고 결과를 쓴다는 boundary 요구와 실행 시점을 구별한다.
+
+```text
+count = min(Round,100)
+earliest(index) = ring[Round>=100 ? (Round+index)%100 : index]
+initialScroll = max(0,count-8)
+for visible slot i=0..7:
+    row = earliest(scroll+i)
+    if row exists: show game and four result animations
+    else: hide
+scores[4] = 0
+for latest up to100 valid ID rows:
+    for player p: if row.byte[p] == (row.judge != 0): scores[p]++
+```
+
+[판독] getter 근거는 `Mgm01GetMinigameResultFromEarliest` — main @0x71001f2a24, `Mgm01GetMinigameResultViewCount` — main @0x71001f2a64, `Mgm01GetMinigameResultScore` — main @0x71001f2a80다. 결과 raw byte2/255는 bool로 바꾸지 않는다. `FUN_71001f271c`에는 일부 GameRule8/10의 비참여 값을 judge에 따라255/2로 채우는 경로도 있다.
+
+[판독: 어셈블리] `ApplyMgResultList` — mgm01 @0x7100016cc0의 C는 Earliest index 인자가 빠지고 raw byte가 bool로 변환된 것처럼 보였다. 덤프 mgm01 @0x7100016e54에서 `scroll+i`, mgm01 @0x7100016ef0에서 raw byte와 `(judge!=0)`의 비교를 확인했다. 일치면 `win_normal`, 그 외 `normal`이다. scrollbar는 count>8일 때 표시하고 정규 위치는 `scroll/(count−8)`이다.
+
+## 7. 애니·소리·레이아웃·메시지 연결
+
+| 대상 | 고유 연결 [판독][데이터] |
+|---|---|
+| 목록 | InitializeMgList — mgm01 @0x7100007af0: 공용 창3형식/112 item, `MinigameListItem%03d`, `mgm01_thum_00` |
+| 목록 본체 | `mgm01_base_freeplay_00`: in/out10, normal30(loop), press6; left/right_select_00=4, _01=5 frame |
+| 설정 | InitializeMgSetting — mgm01 @0x7100008664; `mgm01_base_mginfo_00`: in/out10, normal30, left/right_select8 frame |
+| 결과 | InitializeMgResultList — mgm01 @0x7100008068; `x_all/x_parts_%02d` 최대8개와 header/scrollbar |
+| 잠금 안내 | `mgm01_mes_announce_00`, order200; in→normal→out, 개별 Fiber |
+| 시작 텔롭 | InitializeCourseNameTelop — mgm01 @0x71000079ac; `mgm01_start_tlp_courseName` |
+| 이름/룰 | `im_<MgName>_name`, `im_inst_<MgName>_rule`를 고유 삽입 key로 연결 |
+| 목록 기본/잠금 이름 | `mgm01_ui_mgNameNone`, empty favorite용 문구; reason0 placeholder |
+| 승패 표 | `mgm01_ui_mgTable00`=승패 표, `mgm01_ui_mgTable01`=미니게임을 플레이해서 승패를 겨루자!, `mgm01_ui_countWin` Number0 |
+| 안내 | reason1→`mgm01_ui_announce00`=1인 플레이 전용입니다.; 2→announce01=온라인 접속 중에는 플레이할 수 없습니다.; 3→announce02=현재 접속 인원수로는 플레이할 수 없습니다. |
+| 고유 설정 | `mgm01_ui_rule_EndlessSetting00/01`=노멀/엔드리스; `RhythmSetting00/01`=노멀/하드, CPU label/난이도 삽입 |
+
+[판독][데이터] `PlayAnnounce` — mgm01 @0x7100013ca0의 table mgm01 @0x710004f648은 reason0=null,1=announce00,2=announce01,3=announce02다. reason0에는 안내 문구가 없다. `AnnounceUpdate` — mgm01 @0x7100013f20는 in 완료→normal, normal 완료 및0.75초 또는 입력 skip→out 완료 후 Fiber 정리다. 이 Fiber의 수명을 전체 목록 입력 잠금으로 바꾸지 않는다.
+
+| 지점 | SE/BGM 고유 호출 [판독] |
+|---|---|
+| 목록 이동/결정/잠금 | CUR_2D / DECI / ERROR + FX·진동 |
+| 필터 | DECI_LR + FX, select_00 완료→재구성→select_01 |
+| 설정 값/랜덤 | 변경할 때의 CUR/DECI_S·FX; 범위 밖 값은 무음 |
+| favorite | LIKE_ADD / LIKE_DIS |
+| 승패 표 닫기 | CANCEL; scroll은 SE 호출 없음 |
+| 화면 시작/복귀 | Start/Continue BGM4; MgStart StopBGM3·PlayBGM5; flag4와 MGTransSound는 old §8.2 |
+
+[판독] enum→실제 사운드 label, 텍스트 삽입 메커니즘, 공용 창 애니 완료 판정은 기존 mgm_common §6.8·6.9·7 참조다. 모든 애니 frameSize가 같은 UI tick/실제 초라는 원본 실행 주장은 하지 않는다.
+
+## 8. 다른 기능과의 상호작용·저장되는 값
+
+### 8.1 초기 네 슬롯과 타입·캐릭터
+
+| 순서 | writer·모듈 주소 [판독] | 결과/소비 |
+|---|---|---|
+| boot | `boot::Scene::GameFlow` — boot @0x7100004520 → `PlayerWorkHolder::Initialize` — main @0x710021e5a0 | 네0x100-byte PlayerWork 생성; current/base type0, CharacterID0, BaseCharacterID-1; ID 충돌 시0..3 재배정 |
+| boot 자리 초기화 | `boot::Scene::ResetPlayerWork` — boot @0x7100004430 | 목록의 order/color/PadID를 index로 설정; CPU 생성 함수가 아님 |
+| 사람 수 설정 | 기존 `FUN_71003476a4` — main @0x71003476a4 (`ComUiSettingPlayer`) | H를 min/max로 clamp; ID0..3에 `SetPlayerType(pid>=H ? 1:0)`; 기존 네 칸의 타입 변경 |
+| 타입 writer | `PlayerWork::SetPlayerType` — main @0x710021d734 | +0x4c current와 +0xe0 base를 같이 씀, SetPlayerCom(type==1) |
+| 임시 타입 | `SetPlayerTypeTmp` — main @0x710021d77c | current +0x4c만 변경; base 보존 |
+| 캐릭터 결정 | 기존 charselect 문서 §3.2·5.4 | 사람 결정과 남은 잠금 해제 캐릭터의 CPU 배정 |
+| 메뉴 재초기화 | `menu01::SequenceManager::Initialize` — menu01 @0x710003d0a0 | base type 복구; non-CPU의 유효 base char 복구; 사람 캐릭터를 제외한 pool에서 CPU 현재 char 배정 |
+| 항구 진입 직전 | `SequenceStartMgMode::CallSceneImpl` — menu01 @0x7100059b70 | Sync7 대기 후 전체 PlayerWork ComLevel1; 항구 Scene 호출(기존 modeselect §5 참조) |
+| mgm01 준비 | 이미 검증된 ResetPlayerType 경로 old flow §6.4 | >4일 때 Normalize4, base type 복구; 빈칸 자동CPU 생성 함수가 아님 |
+
+[판독: 어셈블리] boot GameFlow의 C는 Initialize의 개수 인자를 생략했다. boot @0x71000048f4의 `w1=4`, mgm01 @0x71000048f8의 Initialize 호출, 뒤 ResetPlayerWork 호출을 확인했다(`mgm01_dis_boot.c`). boot가 곧바로1인+3CPU를 생성하는 것은 아니며 사람 수 설정이 타입을 확정한다.
+
+[판독: 어셈블리] ResetPlayerWork의 C도 SetOrder 인자를 누락했다. `mgm01_dis_boot_reset.c`에서 index가 x19로0부터 증가하고 boot @0x71000044c8의 w1=w19가 mgm01 @0x71000044cc의 SetOrder에 전달됨을 확인했다. color/PadID와 같은 목록 index다.
+
+[판독] `PlayerWorkHolder::Normalize(int)` — main @0x710021ea90는 크기 조정·ID/Order 정규화·GamePlay 설정·invalid CharacterID를0으로 보정한다. 새 칸 생성 기본값만으로 CPU를 만들지 않는다. `Normalize(GameRule)` — main @0x710021e9f4는 일반4, rule11은8, rule13은20 등으로 분기하며 team/duel/single 인원 제약은 별도 helper를 호출한다. 미니게임 설정의 팀 구성 때 이 경로가 필요하다.
+
+[판독] Initialize/Normalize의 `*(u64*)(player+0xdc)=0xffffffff`는 BaseCharacterID(+0xdc)=-1, BasePlayerType(+0xe0)=0으로 나눠 읽는다. 64비트 전체가 -1인 저장이 아니다. CharacterID(+0x48)/current type(+0x4c)는 `u64=0`으로 초기화된다. `SetBaseCharacterID` / `GetBaseCharacterID` — main @0x710021d71c / main @0x710021d72c의 C로 base char 오프셋을 확인했다. 별도 SetBasePlayerType 심볼은 없으며 타입의 base writer는 SetPlayerType다.
+
+[판독] 별도 main `FUN_71001f07a0` — main @0x71001f07a0에는 인원<4이면 Normalize4→새 자리 type1·남은 유효 캐릭터를 랜덤 배정하는 보충 코드가 있다. 이번 xref에서는 실제 caller를 확인하지 못했으므로 이를 boot/charselect의 필수 순서에 끼워 넣지 않는다.
+
+[판독] `SequenceStartMgMode::CheckStartImpl` — menu01 @0x7100058e50은 CPU 존재 시 시작/멤버 설정/취소 선택, `SettingMemberImpl` — mgm01 @0x7100059500은 `ComUiSettingComCharacter` 완료 후 확인으로 돌아간다. 이 흐름은 기존 PlayerWork 슬롯의 CPU 캐릭터 설정이다. 온라인·친구 매치 초기화 갈래는 조건만 참조한다.
+
+### 8.2 두 인원 getter의 차이
+
+| 함수 | 실제 필드·비교 [판독] | 소비 |
+|---|---|---|
+| `GetPlayerType` — main @0x710021d7c8 | current +0x4c | 두 카운터의 동일 getter |
+| `GetBasePlayerType` — main @0x710021d7d0 | base +0xe0 | 타입 복구·팀 후보 helper |
+| `MinigameModeWork::GetHumanPlayerNum` — main @0x71001f1820 | current type!=0 수; 기존 판독 참조 | InitializeHumanNum — mgm01 @0x710000888c에 cache, CheckHumanNumChanged — main @0x710001ac24가 변화 검사 |
+| `mgmet::PlayerManager::GetHumanPlayerCount` — mgmet @0x71000475b4 | 첫 네 current type==0 수; 기존 판독 참조 | 허브 실제 사람 수 |
+| main `FUN_71001f1b60` — main @0x71001f1b60 | 첫 네 자리 current!=0 **및** base!=0 수를 인자로부터 뺌 | TeamOrderData table index |
+
+[판독] import가 다른 타입 getter로 연결됐다거나 base/current 차이 때문에 반대가 된 것은 아니다. 일반 type0/1 구성에서 main의 이름 `GetHumanPlayerNum`은 실제로 CPU 수, 허브 함수는 사람 수를 돌려준다. mgm01은 그 main 값의 변화 여부로 팀 후보 표·커서 범위를 다시 계산한다. SoloPlayOnly 잠금은 별도로 type0을 세므로 이 값을 사람 수로 바꾸지 않는다. [미확정] 원본 함수 이름이 이렇게 붙은 이유는 코드 의미 판독과 별개다.
+
+### 8.3 미니게임 호출·복귀 계약
+
+| 방향·값 | 출처/writer [판독] | 저장 위치/다음 reader |
+|---|---|---|
+| 호출: MinigameID | Scene+0x278 | SetupPlayInfo→ModeData+8, CallMinigameScene→GameWork ID |
+| 호출: filter enum/index/favorite 기원 | Scene+0x210/+0x214, enum13 여부 | MinigameModeWork+0x780/+0x784/+0x78c; ContinueFlow |
+| 호출: team selection | Scene+0x27c, GameRule별 TeamOrderData | SetupPlayInfo·`FUN_71001f1e20` — main @0x71001f1e20→PlayerWork TeamID/IsGamePlay·Work 마지막 팀 선택 |
+| 호출: CPU | Scene+0x284 | Sync CPU, offline Work CPU, 모든 PlayerWork ComLevel; 기존 캐시 getter 계약 참조 |
+| 호출: normal/endless | Scene+0x280 | flag1, MGRecorder 기록 선택·한 판 소비 |
+| 호출: rhythm | GameRule10이면 Scene+0x288, 아니면0 | RhythmWork::SetMode |
+| 호출: 설명 조건 | 기존 flag4 값 + MGList IsCallInst, UseGyro | main Scene 이름 분기 §3.2; 내부 설명 시작은 다음 단계 |
+| 호출: 랜덤 연속 후보 | unlocked MgAll 및 현재 필터, flag6/실제 사람 수 조건 | Mgm01SetFilterAllMgIdList/Mgm01SetOmakaseMgIdList, 현재ID 제거 |
+| 호출: session/전환 | SaveRequest·ChangePadStyle(id)·pause 비활성·fadeDone | child Scene 요청, 부모 Fiber Sleep(-1) |
+| 복귀: Round | 외부 한 판 종료 writer, SetRound 또는同等경로 | Work+0 s32; 첫/Continue 선택·history count |
+| 복귀: ID/judge/results[4] | 외부 한 판 종료 측의 SetMinigameResult 계약 | Work+0xc+0xc*slot; raw byte 유지, history·score getters |
+| 복귀: 선택 복원 | 호출 전 ModeData 저장 | ContinueFlow→Scene selected/filter, resume1 |
+| 항구 복귀 | 목록 cancel→ExitFlow | old mgmet §3·8의 ReturnScene/시작 지점 계약 |
+
+[판독] `FUN_71001f1e20`은 먼저 타입 복구/Normalize(GameRule), TeamID와 IsGamePlay를 설정한 뒤 rank/WinLose=-1, coin0, advantage=false로 시작 데이터를 초기화한다. >4인 구성에는 추가 CPU의 gameplay/team과 캐릭터 pool 설정이 있다. rank를 프리 플레이 score로 곧장 누적하는 계약이 아니라 결과 ring에 기록한 byte를 비교한다.
+
+[판독] `Mgm01GetTeamOrderDataFromGameRule` — main @0x71001f1ac0는 table main @0x7101c145c8의0x20-stride 항목을 고른다. 기본 index0, rule1→2, rule2→1; duel의 base6, rule8/12의10, rule11/13의 offline10/online14에서 §8.2의 helper로 index를 조정한다. 후보 원형과 수는 §6.5다.
+
+[판독] `FUN_71001f1930` — main @0x71001f1930은 네 TeamID를 -1로 채운 뒤 선택 후보의 각 위치에 팀을 배정한다. format4/6은 첫 위치 team0·나머지 team1, format5는 앞 두 위치 team0·뒤 두 위치 team1, 다른 format은 포함 위치 team0이다. 빠진 위치는 -1이며 SetGamePlay(false)가 된다. 예: 1vs3 후보1은 [1,0,1,1], 2vs2 후보1은 [0,1,0,1]이다.
+
+[판독] GameRule3/8/11/12/13의 시작 구성은 첫 네 handle 목록을 `FUN_71001f4ef0` — main @0x71001f4ef0로 정렬한 뒤 위 TeamID 배열을 순서대로 쓴다. C의 비교 key는 `(current==0 또는 base==0 ? 20 : 0)−PlayerID`의 내림차순으로 사람/임시CPU를 앞쪽에, 같은 그룹은 PlayerID 오름차순으로 놓는다. 따라서 원래 ID가 뒤쪽인 사람도 후보 위치0이 될 수 있다. 호출 계약에는 최종 PlayerID→TeamID/IsGamePlay를 저장해 이 변환을 보존한다.
+
+[판독] `MgStartFlow_SetupOmakaseMgList` — mgm01 @0x710001c2a0는 flag6 off일 때 UseGyro 항목을 제거한다(`FUN_7100020b10` — mgm01 @0x7100020b10). 실제 사람>1이고 filter enum0이면 TeamOrderData+4==3 항목도 제거한다(`FUN_7100020b74` — mgm01 @0x7100020b74). `MgIdList_Erase` — mgm01 @0x710001c8b0가 erase predicate를 적용한다. 체감 설정 흐름의 내부는 분석하지 않는다.
+
+### 8.4 Work·Sync·세이브에 저장되는 값
+
+| 값 | writer [판독] | 저장 위치 | reader/저장 요청 |
+|---|---|---|---|
+| 초기 NEW/unlock | SetupPlayData — mgm01 @0x7100009850 | available IDs Work new/unlock=1, owner save MG+4 bit0 on | IsNew/lock, SaveRequest |
+| 초기 준비 완료 | SetupPlayData | save MinigameMode bit2 OR4 | 다음 SyncedSetupGame의 once 검사 |
+| 잠금 갱신 | CheckMinigameLockCondition | Work unlock, Scene MgData reason | Decide·GetMgIdList·IsMinigameLocked |
+| NEW 소비 | UpdateNewIcon | Work new0, owner save MG+4 bit0 clear | NEW pane; 이 함수 자체 SaveRequest 없음 |
+| favorite | MgSettingFlow_Favorite | Work favorite toggle, owner save MG+4 bit2(4) 변경 | favorite 목록·heart; 이 함수 자체 SaveRequest 없음 |
+| 선택 복원 | MgStartFlow | ModeData enum/index/ID/favorite 기원 | ContinueFlow |
+| CPU | MgStartFlow | Sync/Work CPU + PlayerWork | 다음 준비/게임·허브 표시; SaveRequest에서 반영 |
+| endless/rhythm | MgStartFlow | flag1/RhythmWork mode | 한 판·기록 selector |
+| 팀·순서·초기 결과 | SetupPlayInfo/FUN_71001f1e20 | PlayerWork TeamID·IsGamePlay·rank/coin 등, Work team choice | 한 판의 입력 |
+| Round/결과100개 | SetRound/SetMinigameResult 또는동등writer | §6.6 ring | history view/score |
+| mgmrs 조작자 char 복원 | CleanupGame | PlayerWork CharacterID·BaseCharacterID | 돌아간 화면의 플레이어 |
+
+[판독] favorite/NEW setter 호출과 디스크 저장 요청은 같지 않다. 시작의 SaveRequest나 다른 적절한 요청까지 메모리 save 데이터에 남는다. [미확정] 취소 직후 실제 flush 시점과 앱 종료 persistence는 SaveRequest/SaveData 생명주기 및 원본 실행 자료가 더 필요하다.
+
+## 9. 웹 포팅 구조 — 제안, 코드 없음
+
+[추정][웹 이름] [mgm_common.md](mgm_common.md) §9의 독립 shell 원칙에 따라 `web/script/shell/mgm01/`을 제안한다. 허용 의존은 같은 shell 공용 부품, `three`, charselect의 scene2d/render2d/state/RepeatGen/types다. `core`, `games`, `view`, `game.ts`, `env.ts`는 import하지 않는다. 이번 작업에서는 파일을 구현하지 않았다.
+
+| 제안 파일 [추정][웹 이름] | 책임·주입 계약 |
+|---|---|
+| `types.ts` | game/filter JSON, raw result byte, team 후보, session contract |
+| `state.ts` | §5 상태, trig/rep·UI/3D 완료 신호 입력 → 명시적 event 출력 |
+| `catalog.ts` |152 ID/112 목록의 매핑, filter 순서·locked/unlocked·favorite views |
+| `listView.ts` | 세 grid 형식, 고유 끝 행 cursor, NEW observer |
+| `settingView.ts` | valid 항목·값 범위·7 preview·팀 표시 |
+| `historyView.ts` | ring 순서,8 rows, raw result equality·score |
+| `sessionAdapter.ts` | 시작 입력 snapshot·호출/복귀 이벤트, 게임 구현과 연결하는 외부 어댑터 |
+| `mgmrs/state.ts` | 오류 목적지/복구 대기·성공·실패 event, 실제 network 구현은 주입 |
+
+[추정] 같은 state에 실제 render/사운드/network를 넣지 않고 `requestChild`, `returnHub`, `saveRequested`, `sound`, `fx` 등의 event를 반환한다. RNG는 sync 후보 index를 주입한다. 실제 사람 수와 원본 main의 type!=0 카운터는 별개 값으로 다룬다. “원본 함수 이름 Human”이라는 이유로 같은 값에 합치지 않는다.
+
+[추정] 다음 MinigameScene 단계로 넘길 최소 입력은 ID/Scene route, GameRule·TeamID/IsGamePlay·PlayerID/char/base type/order, ComLevel, flag1/4/6/0x3c 관련 값, rhythm mode, 두 랜덤 후보 목록, ModeData, Round와 raw 결과 ring, fade/pause/SaveRequest 계약이다. 반환은 Round/result commit·child 종료와 부모 복귀 신호로 정의하고 엔진 Scene 인스턴스 보존 방식은 외부 어댑터에서 결정한다.
+
+## 10. 검증 방법·실행 결과
+
+### 10.1 신규 C와 재사용 범위
+
+| 신규 C 파일 | 함수 수 [데이터] | 범위 |
+|---|---|---|
+| mgm01_stage3.c |103|Scene/JSON/MgRecord 수명·계산·조건·RTTI|
+| mgmrs_stage3.c |25|요청된24개+DummySymbolLink1개|
+| ui2dalign_main.c |16|PlayerWork/Normalize6 + Alignment10|
+| ui2dalign_more.c / vertical.c / order.c |7 / 1 / 3|Alignment 측정·목록 연결, 별도 문서|
+| mgm01_main_contract.c |8|팀 getter/시작 구성/ring writer·reader/CallMinigameScene/Fiber ctor|
+| mgm01_callbacks.c / wait_callback.c |3 / 1|motion·fade·NEW callback|
+| mgm01_menu_player.c / boot_initial.c |3 / 1|진입 직전 확인/멤버/호출, boot 자리 초기화|
+| mgm01_main_more.c / main_round.c |6 / 3|오류 목적지·슬롯/인원 구성, Round·팀 counter|
+| mgm01_helpers.c / data_helpers.c |5 / 2|predicate/정렬/목록 초기값|
+| mgm01_result_writer.c |1|SetMinigameResult|
+| mgm01_team_expand.c / team_sort.c |1 / 1|TeamOrder 후보의 TeamID 배정·플레이어 정렬|
+| mgm01_player_base.c |2|BaseCharacterID writer/reader|
+| 합계 |192개,19파일|module/address unique; 기존 C와 중복 집계 없음|
+
+[데이터] mgmrs inventory의 정확한24개는 `Scene::{getStaticTypeinfo,getPropertyList,createInstance,deleteInstance,Scene,~Scene(두 주소),BeginScene,SetupGame,SyncedSetupGame,CleanupGame,GameFlow,getInstanceTypeinfo,GetSymbol,SetupScene,SyncedSetupScene,CleanupScene}` 17개와 `Scene::Params::{getStaticTypeinfo,getPropertyList,createInstance,deleteInstance,~Params,getInstanceTypeinfo,GetSymbol}` 7개다. BeginScene와 세 Scene override는 빈 처리이고 나머지 생성/RTTI 함수도 확보했다. 별도 DummySymbolLink — mgmrs @0x71000036a8는 분석 단계 집계에만 포함한다.
+
+[판독] 기존에 있던 InitializeMgList/Filter/Setting/Result, MgListFlow/MgSettingFlow/MgResultListFlow/MgStartFlow, 공용 인라인, Scene ctor/SyncedSetup/Exit와 main의 기존 helpers는 기존 C를 읽었다. UI/3D·자이로·온라인의 범위 밖 내부를 새로 전개하지 않았다.
+
+### 10.2 어셈블리 예외 전체
+
+| 함수·확인 지점 | C를 못 믿은 이유 [판독: 어셈블리] | 복구·덤프 |
+|---|---|---|
+| SyncedSetupGame — mgm01 @0x7100004e50 | ParseFromAsset 문자열/옵션 인자 누락 | 두 archive 경로·w2=1; mgm01_dis_stage3.c |
+| MgListFlow_RandomSelect — mgm01 @0x71000164c0, 호출 mgm01 @0x71000165bc | SyncRandRange 상한 누락 | unlocked N; mgm01_dis_stage3.c |
+| MgSettingFlow_RandomSelect — mgm01 @0x710001b2b0, 호출 mgm01 @0x710001b480 | SyncRandRange 상한 누락 | unlocked N; mgm01_dis_stage3.c |
+| ApplyMgResultList — mgm01 @0x7100016cc0 | Earliest 인자 누락, raw byte가 bool처럼 출력 | scroll+i / raw equality; mgm01_dis_stage3.c |
+| CallMinigameScene — main @0x71003601ac | Scene 문자열 인자·tail call 불명 | gyroPadChange/mgInst/게임명; mgm01_main_dis1.c |
+| boot GameFlow — boot @0x7100004520, 호출 mgm01 @0x71000048f8 | Initialize count 인자 누락 |4칸; mgm01_dis_boot.c|
+| boot ResetPlayerWork — boot @0x7100004430, 호출 mgm01 @0x71000044cc | SetOrder 값 인자 누락 |목록 index; mgm01_dis_boot_reset.c|
+| ApplySettingMgSetting_HighScore — mgm01 @0x7100017ba8 | GetRecord index·SetIntVariable 값 인자 누락 |MGRecorder index·현재 record; mgm01_dis_record.c|
+
+[실행: 변환] `C:/dev/mpj/.venv/Scripts/python.exe web/tools/analysis/mgm01_verify_stage3.py`로112개 이름의 유일성·14필터·각 장르의 순서1..N, 신규 C의 module/address 유일성·baseline 기존 함수와 중복 없음, 100판 ring의0/1/8/9/99/100/101/237 경계, raw byte2/255 제외, strict NEW threshold를 확인했다. Alignment의 변환 fixture와11절 구성도 같은 도구가 검사한다.
+
+[실행: 변환] baseline906개 파일의 hash 비교로 웹 소스/에셋 무변경을 검사한다. 기존 문서에 삽입한 보충/정정 줄만 제거하면 원래 hash가 복원되는지도 검사한다. JSON/레이아웃 파서와 계산식 실행의 결과이며 원본 게임 실행·미니게임 왕복·입력 캡처 검증은 아니다.
+
+## 11. 미확정 사항과 필요한 근거
+
+| 우선순위·항목 [미확정] | 확인한 범위 | 다음에 필요한 구체적 근거 |
+|---|---|---|
+|1. 한 판 종료 commit와 실제 복귀 순서|SetRound/SetMinigameResult·ring readers, 부모 Continue 조건|bq::MinigameScene 종료/결과 caller에서 Round writer·raw byte 의미·flag0x3c/return 요청 순서; FUN_71001f271c 실제 caller 또는동등inline|
+|2. Scene 스택/인스턴스·mgmrs 오류 dispatcher|child 요청 뒤Sleep, Continue 소비·Net 목적지 writer|SceneBase RequestCall/Return·SceneManager history, Net SetErrorReturnSceneName reader; 원본 정상/오류 왕복|
+|3. Params·원본 입력/3D 완료시간|NEW 기본12 rate단위·반복 소비·대기 predicate|SceneParams 실제 asset override, GetDeltaRate 및 공용 repeat timer; actor 클립 frameMax/재생속도·원본 캡처|
+|4. 저장 flush와 한 판 기록 갱신|favorite/NEW save bit writer, 시작SaveRequest; 현재 record 표시|취소/종료시SaveRequest·save flush reader, MGRecorder 한 판 갱신|
+|5. main Human 이름/희소 슬롯 보충 caller|동일current getter가 반대 비교임을 확인; boot4칸+인원setter 연결|이름의 설계 의도는 원본 개발 자료; FUN_71001f07a0 caller와<4 예외 진입 fixture|
+|6. 112와 전체available/세이브 분모|프리 플레이MgAll=112, MGList ID공간152|MGList의 모드별available 집합·save playcount u16 writer; old mgmet 분모 문제의 나머지|
+
+[판독] old mgmet §11 중 최초 네 슬롯·타입 getter/변화 소비·Exit 첫 WaitUntil은 §8.1·8.2·3.2로 보충한다. 분모112는 목록 JSON 집합까지만 좁혔다. flag4의 실제 한 판 설명 소비와 Scene 인스턴스 수명은 다음 단계에 남긴다.
+
+보충(2026-10-07, [minigame_scene.md](minigame_scene.md)·[minigame_result.md](minigame_result.md)):
+- 6번(세이브 플레이 횟수 u16 writer): `bq::MinigameScene` 단계 11 의 `FUN_71002db9f0` — main @0x71002db9f0 이 참가자 중 PlayerType≠1 마다 `SaveData::GetMinigameData(id)` 선두 u16 을 +1(최대 999) [판독, minigame_scene §6.5].
+- 1번(한 판 종료 commit): MinigameScene·MGResult 는 결과 ring 을 쓰지 않는다. `MinigameModeWork::SetMinigameResult` 는 main 내부 호출이 없고 가져다 쓰는 NRO 는 mg0704·mg1602·mg1604·mgm03·mgm06 뿐(mgm01 없음). `SetRound` 의 main 호출자는 `FUN_71002c4b50` 하나 [판독, minigame_result §6.5]. 프리 플레이 ring writer 는 여전히 미확정.
+- 승패 값 열거: 1=승, 0=패, 2=무, 시작 −1 [판독, minigame_result §6.1].
+- 설명 장면 이후: 미니게임 장면은 flag 4 를 생성자 자이로 조건에만 쓰고, 설명 화면 안 실행은 flag 0 경로다 [판독, minigame_scene §4.4·§5.3].

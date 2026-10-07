@@ -391,6 +391,7 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 | 6. mgm01 설명 실제 진입 소비 | flag4 쓰기와 MGTransSound 조건, CPU cache reader는 확인 | main `bq::MinigameScene` 초기 설명 조건/flag4 readers; 첫 설명 세이브 bit3와 규칙 Explain의 혼동 없이 추적 |
 | 7. 원본 화면 재현 | 데이터·상태 정적 검증만 완료 | CPU 있음/없음·lock·설명 왕복·취소 직후/재진입의 원본 영상과 최종 페인 행렬 대조 |
 
+보충(2026-10-07): → [ui2d_alignment.md](ui2d_alignment.md) §3~6 (항목1의 dirty 소비·kind2/-75·숨김 처리·최종 좌표 계산; 원본 화면 대조는 §11에 유지).
 ### 참조만 한 기존 문서 절
 
 [판독] 공용 구현/판독은 재작성하지 않고 아래 절을 사용한다.

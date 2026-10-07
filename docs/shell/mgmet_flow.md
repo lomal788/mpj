@@ -376,6 +376,7 @@ freePlay:
 | 7. 실제 입력 반복/진동·동시 메시지 키 효과 | 허브 반복 미사용, 규칙 반복 사용; Howto는 메시지 pad허용과 직접 A 처리가 공존 | 공용 bex 반복 간격은 기존 문서의 미확정 유지; Howto 원본 입력 추적/영상; FX 트리거 VB_MGMET_* 자원 |
 | 8. mgm01 복귀 첫 WaitUntil | ExitFlow의 첫 WaitUntil callback vtable은 mgm01 @0x710004fd80 | 해당 vtable의 호출 slot 함수와 predicate 판독; 보상정보 완료 대기와 분리 |
 
+보충(2026-10-07): → [mgm01_freeplay.md](mgm01_freeplay.md) §8.1·8.2·3.2 (항목1·2·8의 슬롯 생성/타입·카운터 소비/fade predicate 보충), §6.1 (항목6의 프리 플레이112개 집합만 보충).
 ### 참조만 한 기존 문서 절
 
 [판독] 공용 기능은 아래 기존 분석을 참조했으며 재분석/중복 명세를 만들지 않았다.

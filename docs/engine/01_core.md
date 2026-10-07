@@ -857,5 +857,6 @@ step(pads) {
 | 가변 모드 실측 간격의 측정 지점(present/vsync와의 관계) | 일반 미니게임 delta 열 | 타이밍 0x1B·페이싱(CS+0x16c0) 판독, 또는 원본 실행 기록 |
 | `Background/Foreground`가 매 프레임 불리는 이유(심볼 이름 불일치) | 없음(bq 구현 비어 있음) | bex 쪽 다른 장면 클래스 판독 |
 | MinigameFlow 단계 0~0x12 의미 | 장면 흐름 | 처리기 표 `0x71019e3250` 판독(장면 문서 범위) |
+| 보충(2026-10-07) | 단계 0~0x13 의미·훅 vtable 칸·텔롭·종료 타이머·엔딩 5단계·설명 화면 반복 → [../shell/minigame_scene.md](../shell/minigame_scene.md) §4·§5·§6 | — |
 | 입력 샘플링 타이밍 | 휘두름 판정 프레임 | InputModule 처리기 타이밍 |
 | actor 난수 모듈(`*0x7101bfc400`) 정체와 쓰는 곳 | 모션 랜덤 프레임 등 | `FUN_7100031b68` 등 호출자 판독 |

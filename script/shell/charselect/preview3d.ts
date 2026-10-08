@@ -22,6 +22,8 @@
  * docs/engine/loader_manager.md §13: assetHooks.broker(앱 로더 관리자)가 있으면 받기·풀기를 관리자에 맡긴다 — prefetch(order, now, near) 의
  *   앞 now 명 = 등급 0(커서), 다음 near 명 = 2(주변 칸), 나머지 = 3(lite 면 안 받음). 커서에서 빠진 캐릭터는 내리고, dispose 때 시작 전 요청은 뺀다.
  *   같은 URL 은 다른 Preview3D(광장 플레이어·NPC)·흐름 예측과 한 번만 받는다. GPU 단계(조립·컴파일·텍스처·한 번 그리기)는 지금처럼 이 인스턴스가 한다.
+ * docs/engine/chara_assets.md: 모델·모션·텍스처는 공용 assets/chara/. 명세 glb = 모델(클립 없음), anims = 모션 glb(모션 하나에 하나) — 클립은
+ *   모델 클립 + 모션 glb 클립을 합쳐 노드 이름으로 건다. anims 가 없으면(옛 명세) 모델 glb 안 클립만.
  */
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -45,6 +47,7 @@ type MotionTable = Record<string, MotionInfo>;
 
 interface Loaded {
   gltf: GLTF;
+  animGltfs: GLTF[];
   motions: MotionTable;
   eyeMap: THREE.Texture | null;
   lidMap: THREE.Texture | null;
@@ -305,6 +308,7 @@ export class Preview3D {
 
   private files(c: CharaSpec): [string, FileKind][] {
     const f: [string, FileKind][] = [[this.url(c.glb!), 'gltf']];
+    for (const a of c.anims ?? []) f.push([this.url(a), 'gltf']);
     if (c.motions) f.push([this.url(c.motions), 'json']);
     if (c.eye?.tex) f.push([this.url(c.eye.tex), 'texture']);
     if (c.eye?.lid) f.push([this.url(c.eye.lid.tex), 'texture']);
@@ -337,14 +341,16 @@ export class Preview3D {
     const b = assetHooks.broker;
     const viaBroker = <T>(url: string, kind: FileKind, direct: () => Promise<T>): Promise<T> => (b?.get(url, kind, pri) as Promise<T> | null) ?? direct();
     const tex = (url: string): Promise<THREE.Texture> => viaBroker<THREE.Texture | null>(url, 'texture', () => Promise.resolve(null)).then((t) => (t ? eyeTex(t.clone()) : loadTex(url)));
+    const gltfOf = (url: string): Promise<GLTF> => viaBroker(url, 'gltf', () => this.loader.loadAsync(url)) as Promise<GLTF>;
     void (async () => {
-      const [gltf, motions, eyeMap, lidMap] = await Promise.all([
-        viaBroker(this.url(c.glb!), 'gltf', () => this.loader.loadAsync(this.url(c.glb!))) as Promise<GLTF>,
+      const [gltf, animGltfs, motions, eyeMap, lidMap] = await Promise.all([
+        gltfOf(this.url(c.glb!)),
+        Promise.all((c.anims ?? []).map((a) => gltfOf(this.url(a)))),
         c.motions ? viaBroker(this.url(c.motions), 'json', () => fetch(this.url(c.motions!)).then((r) => r.json() as Promise<MotionTable>)) : Promise.resolve({} as MotionTable),
         c.eye?.tex ? tex(this.url(c.eye.tex)) : Promise.resolve(null),
         c.eye?.lid ? tex(this.url(c.eye.lid.tex)) : Promise.resolve(null),
       ]);
-      return { gltf, motions, eyeMap, lidMap, ms: performance.now() - t0 };
+      return { gltf, animGltfs, motions, eyeMap, lidMap, ms: performance.now() - t0 };
     })()
       .then((l) => {
         p.loaded = l;
@@ -559,8 +565,9 @@ export class Preview3D {
     s.root = root;
     s.mixer = new THREE.AnimationMixer(root);
     s.acts = [];
-    s.clips = new Map(l.gltf.animations.map((a) => [a.name, a]));
-    s.blink = l.gltf.animations.some((a) => a.name === 'fcl_blink00' || a.name === 'fcl_blink00_shape') ? new THREE.AnimationMixer(root) : null;
+    const anims = [...l.gltf.animations, ...l.animGltfs.flatMap((g) => g.animations)];
+    s.clips = new Map(anims.map((a) => [a.name, a]));
+    s.blink = anims.some((a) => a.name === 'fcl_blink00' || a.name === 'fcl_blink00_shape') ? new THREE.AnimationMixer(root) : null;
     s.blinkOn = false;
     s.eye = eye;
     s.body = body;

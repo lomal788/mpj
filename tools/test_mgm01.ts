@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '../script/shell/mgmcommon';
 import { mkdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
@@ -66,6 +67,7 @@ function eq<T>(a: T, b: T, msg: string): void {
 
 const json = JSON.parse(readFileSync(join(WEB, 'assets/mgm01/catalog.json'), 'utf8')) as Mgm01CatalogJson;
 const spec = JSON.parse(readFileSync(join(WEB, 'assets/mgmcommon/spec.json'), 'utf8')) as MgmSpec;
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
 const cat = new Mgm01Catalog(json);
 const players = (types: (0 | 1)[]): Mgm01Player[] => types.map((type, pid) => ({ pid, type }));
 const byRule = (rule: string): number[] => cat.games.filter((g) => g.rule === rule).map((g) => g.id);

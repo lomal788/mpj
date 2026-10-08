@@ -1,4 +1,4 @@
-"""온라인 멀티 화면(web/script/shell/online) 에셋 → web/assets/online/online.json + tex/ + font/ + sound/.
+"""온라인 멀티 화면(web/script/shell/online) 에셋 → web/assets/online/online.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/online_web_assets.py [임시 폴더]
 
@@ -21,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import font_web_assets as fw  # noqa: E402
 import mgmcommon_web_assets as mc  # noqa: E402
 import partyrule_web_assets as pr  # noqa: E402
 import ui_sarc  # noqa: E402
@@ -54,7 +55,7 @@ SYS_LABEL = re.compile(r"^sys_(error_|notice_|network_|swkbd_|ctrl_back$|rtt_err
 def main():
     tmp = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp())
     tmp.mkdir(parents=True, exist_ok=True)
-    for sub in ("font", "sound"):
+    for sub in ("sound",):
         (DST / sub).mkdir(parents=True, exist_ok=True)
     files = {k: ui_sarc.read_files(str(p)) for k, p in LYT.items()}
     parts = ui_sarc.read_files(str(mc.cw.PARTS))
@@ -109,22 +110,16 @@ def main():
         if not cpx.get(fam):
             print("  글꼴 없음", fam)
             continue
-        img, meta = mc.cw.build_atlas(fam, cpx[fam], text_set)
-        img.save(DST / meta["image"], optimize=True)
-        meta["image"] = "../online/" + meta["image"]
-        fonts[fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        fonts[fam] = fw.font_ref(fam, text_set)
+        print(fam, len(fonts[fam]["chars"]), "chars")
 
     # 큰 글꼴: 공용 큰 글꼴 글자 + 이 화면 큰 글꼴 페인 문구(mn00_friend_base_set_00 x_text_title = 프렌드 매치) — 공용 글꼴을 덮어쓰므로 공용 글자를 모두 넣는다
     large_text = TAG.sub("", texts.get("mn01_friend_ui_start_title", ""))
     for fam in ("bqfont_large",):
         if not cpx.get(fam) or fam not in common["fonts"]:
             continue
-        img, meta = mc.cw.build_atlas(fam, cpx[fam], "".join(common["fonts"][fam]["glyphs"].keys()) + large_text)
-        img.save(DST / meta["image"], optimize=True)
-        meta["image"] = "../online/" + meta["image"]
-        fonts[fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        fonts[fam] = fw.font_ref(fam, common["fonts"][fam]["chars"] + large_text)
+        print(fam, len(fonts[fam]["chars"]), "chars")
 
     from sound_fsar import Fsar
     fs = Fsar(mc.FSPJ)

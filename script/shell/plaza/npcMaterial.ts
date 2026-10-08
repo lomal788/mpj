@@ -6,6 +6,7 @@
  * - 틴트: 쿠리보 반다나 a·mix(1, C[ip], a.a), 해머 mix(a, C[ip], a.a).
  * - 눈 시선: ComHeading 눈 출력을 eyeN_shaderparam(srt1/srt2) 이동으로(FUN_71001c5a58, 09 §6.8) — srt1/2 를 읽는 눈만 보인다.
  * [근사] 림·SSS·노멀 배열은 넣지 않는다.
+ * spec.layers 경로 = 명세 폴더 기준 상대 경로(공용 assets/chara/tex, docs/engine/chara_assets.md §5).
  */
 import * as THREE from 'three';
 import { loadTextureInto } from '../stage3d/assetLoader';
@@ -202,7 +203,7 @@ export class NpcLook {
       tx.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
       tx.matrixAutoUpdate = false;
       tx.wrapS = tx.wrapT = THREE.ClampToEdgeWrapping;
-      void loadTextureInto(this.url(f.replace(/^\.\.\//, '')), tx).catch(() => undefined);
+      void loadTextureInto(this.url(f), tx).catch(() => undefined);
       this.texCache.set(f, tx);
       t = tx;
     }

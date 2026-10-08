@@ -12,12 +12,14 @@ import { fileURLToPath } from 'node:url';
 import { nodeMatrix } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
 import type { ModeSpec } from '../script/shell/modeselect/types';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
 const DUMPS = [join(ROOT, 'extracted/converted/ui/menu01'), join(ROOT, 'extracted/converted/ui/bq_Parts')];
 const spec = JSON.parse(readFileSync(join(WEB, 'assets/modeselect/spec.json'), 'utf8')) as ModeSpec;
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/modeselect'));
 
 let fails = 0;
 let count = 0;
@@ -202,7 +204,7 @@ console.log('6. 글리프·소리');
     const g = spec.fonts[fam].glyphs;
     const miss = [...new Set([...s])].filter((c) => c !== '\r' && c !== '\n' && !g[c]);
     ok(miss.length === 0, `${fam} 글리프 빠짐 ${miss.join('')}`);
-    ok(existsSync(join(WEB, 'assets/modeselect', spec.fonts[fam].image)), `${fam} 아틀라스`);
+    ok(sheetFilesMissing(spec.fonts[fam]).length === 0, `${fam} 공용 글꼴 시트`);
   }
   ok(!!spec.fonts.bqfont_small.glyphs['']?.color, '스타 아이콘 U+E021 = 컬러 글리프');
   for (const l of ['SQ_SE_SYS_CURSOR', 'SQ_SE_SYS_DECI', 'SQ_SE_SYS_ERROR', 'SQ_SE_SYS_CANCEL']) {

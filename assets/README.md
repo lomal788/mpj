@@ -12,6 +12,8 @@ assets/
     tex/*.png         BNTX → png
     sound/*.ogg       bfstm·사운드 아카이브 → ogg
     data/*.json       원본 데이터 그대로(채보 등)
+  chara/              캐릭터·NPC 공용(모든 화면이 같은 파일): tex/*.png, <pcNN|npc키>/<모델>.glb·motions.json·motion/<모션>.glb
+                      화면 명세가 상대 경로(../chara/…)로 가리킨다 — ../docs/engine/chara_assets.md
 ```
 
 ## manifest.json (초안)

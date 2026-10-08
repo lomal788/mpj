@@ -5,11 +5,11 @@ NPC 레코드는 NonPlayerCharacterID(= characterlist.json NPCCharacterData 의 
 그대로 불러 쓰되 레코드·접두만 이 파일에서 정한다(character_glb.py 무수정).
 클립 = 광장 코드가 등록·재생하는 모션 [판독 docs/shell/plaza_3d.md §9] + 각 모션의 깜빡임 묶음. 없는 모션은 원본도 IsAnimExist 로 건너뛰므로 뺀다.
 정리 규칙(정점 속성·상수 채널·텍스처 공유)은 charsel_chara.py 와 같다(_C1·_C2·TEXCOORD_2 유지). 배열 알베도(색 변형)는 모든 층 png 를 싣는다.
-부착 소품(노코노코 모자 등)은 graphics_bfres2gltf gltf 로 같은 폴더에 둔다.
-중간 변환: extracted/converted/plaza_npc/<key>/ (새 폴더). 출력: web/assets/plaza/world/chara/{<key>/<model>.glb, <key>/motions.json, tex/*.png, spec.json}
+부착 소품(노코노코 모자 등)은 graphics_bfres2gltf gltf 로 같은 공용 폴더에 둔다.
+중간 변환: extracted/converted/plaza_npc/<key>/ (새 폴더). 출력: 모델·모션·텍스처·소품 = 공용 web/assets/chara/{<key>/<model>.glb, <key>/motion/*.glb,
+<key>/motions.json, tex/*.png}(chara_shared.py, docs/engine/chara_assets.md), 명세 = web/assets/plaza/world/chara/spec.json(경로는 이 폴더 기준 ../../../chara/…)
 usage: .venv/Scripts/python web/tools/analysis/plaza_npc_assets.py [key ...]
 """
-import hashlib
 import json
 import os
 import sys
@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import character_glb as cg  # noqa: E402
+import chara_shared as cs  # noqa: E402
 import graphics_bntx  # noqa: E402
 import mg1801_web_charas as mwc  # noqa: E402
 from graphics_convert import EXE, combine_mr, run  # noqa: E402
@@ -25,7 +26,6 @@ from graphics_convert import EXE, combine_mr, run  # noqa: E402
 SRC = ROOT / "extracted" / "converted" / "plaza_npc"
 DST = ROOT / "web" / "assets" / "plaza" / "world" / "chara"
 CHARSEL_SPEC = ROOT / "web" / "assets" / "charselect" / "spec.json"
-KEEP_ATTR = {"_C1", "_C2", "TEXCOORD_2"}
 
 NPCS = [
     {"key": "npc022", "ids": [0x20], "clips": ["co_idle00", "co_talk00", "bd_welcome00a", "bd_welcome00b", "co_bye00", "co_walk00", "co_joy03",
@@ -48,7 +48,7 @@ def record(idx):
 
 
 def convert_raw(key, cd, motions):
-    """character_glb.main 과 같은 순서(텍스처 → 모션 표 → gltf → 클립 이름·extras → motions.json). 다른 점: 레코드·모션 접두를 인자로 받는다"""
+    """character_glb.main 과 같은 순서(텍스처 → 모션 표 → gltf → 클립 이름·extras{archive, nameHash} → motions.json). 다른 점: 레코드·모션 접두를 인자로 받는다"""
     base_dir = cd["base directory"]
     prefix = cd["motion filename prefix[p]"].split("/")[-1]
     prefix_dir = prefix.rstrip("_")
@@ -109,10 +109,13 @@ def convert_raw(key, cd, motions):
     js, rest = cg.read_glb(str(glb))
     pre = prefix_dir + "_"
     clips = []
+    arc_of = {os.path.basename(p): t["archives"][ext] for t in table.values() for ext, p in t["files"].items()}
     for a in js.get("animations", []):
         ex = a.setdefault("extras", {})
         name = a["name"][len(pre):] if a["name"].startswith(pre) else a["name"]
         a["name"] = name
+        akey = arc_of.get(ex.get("source"))
+        ex["archive"] = "chara~%s.nx.bea" % akey if akey else None
         ex["nameHash"] = "0x%016x" % cg.fnv1a64(name.removesuffix("_shape"))
         clips.append({"name": name, "frames": ex.get("frames"), "loop": ex.get("loop")})
     cg.write_glb(str(glb), js, rest)
@@ -135,15 +138,6 @@ def convert_raw(key, cd, motions):
         mot[m] = e
     (out / "motions.json").write_text(json.dumps(mot, ensure_ascii=False, indent=1), encoding="utf-8")
     return glb, mot, missing
-
-
-def ship_png(src_tex, pn, tex_root):
-    b = (src_tex / pn).read_bytes()
-    h = hashlib.sha1(b).hexdigest()[:12]
-    name = f"{Path(pn).stem}_{h}.png"
-    if not (tex_root / name).exists():
-        (tex_root / name).write_bytes(b)
-    return "tex/" + name
 
 
 def array_layers(src_tex, js):
@@ -182,11 +176,10 @@ def attach_glb(key, cd, dst):
         combine_mr(str(src / "tex"), c)
     js, rest = cg.read_glb(str(glb))
     for im in js.get("images", []):
-        im["uri"] = "../" + ship_png(src / "tex", im["uri"].split("/")[-1], dst / "tex")
-    (dst / key).mkdir(parents=True, exist_ok=True)
-    cg.write_glb(str(dst / key / (stem + ".glb")), js, rest)
+        im["uri"] = "../" + cs.ship_tex(src / "tex", im["uri"].split("/")[-1])
+    hat = cs.put(f"{key}/{stem}.glb", cs.glb_bytes(js, rest))
     r = lambda k: cd.get(k) or 0  # noqa: E731
-    return {"glb": f"{key}/{stem}.glb", "bone": cd.get("attach bone"),
+    return {"glb": cs.rel(dst, hat), "bone": cd.get("attach bone"),
             "t": [r("attach_offset_trans_x"), r("attach_offset_trans_y"), r("attach_offset_trans_z")],
             "rDeg": [r("attach_offset_rot_x"), r("attach_offset_rot_y"), r("attach_offset_rot_z")]}
 
@@ -199,24 +192,11 @@ def build(n, dst):
     js, rest = cg.read_glb(str(glb))
     keep = [c for c in n["clips"] if c in mot]
     keep += sorted({b for m in keep for b in (mot[m].get("blink") or {}).values()} - set(keep))
-    drop = mwc.DROP_ATTR
-    mwc.DROP_ATTR = drop - KEEP_ATTR
-    try:
-        js, rest, stats = mwc.slim(js, rest, set(keep) | {c + "_shape" for c in keep}, lambda m: None)
-    finally:
-        mwc.DROP_ATTR = drop
-    tex_root = dst / "tex"
-    tex_root.mkdir(parents=True, exist_ok=True)
-    layers = {name: ["../" + ship_png(src / "tex", f, tex_root) for f in files] for name, files in array_layers(src / "tex", js).items()}
-    tex_map = {}
-    for im in js.get("images", []):
-        pn = im["uri"].split("/")[-1]
-        tex_map[pn] = ship_png(src / "tex", pn, tex_root)
-        im["uri"] = "../" + tex_map[pn]
-    (dst / key).mkdir(parents=True, exist_ok=True)
-    out_glb = dst / key / glb.name
-    mwc.write_glb(out_glb, js, rest)
-    (dst / key / "motions.json").write_text(json.dumps(mwc.compact_motions(mot, keep), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    rl = lambda p: cs.rel(dst, p)  # noqa: E731
+    layers = {name: [rl(cs.ship_tex(src / "tex", f)) for f in files] for name, files in array_layers(src / "tex", js).items()}
+    model, _ = cs.write_model(key, glb.name, js, rest, src / "tex", lambda m: None)
+    anims = cs.write_motions(key, js, rest, keep)
+    motions = cs.merge_motions(key, mwc.compact_motions(mot, keep))
     clip_info = {}
     for m in keep:
         e = mot[m]
@@ -230,9 +210,9 @@ def build(n, dst):
                      "head": {k: c.get(k) for k in ("head_min_x", "head_min_y", "head_min_z", "head_max_x", "head_max_y", "head_max_z", "head_offset_x",
                                                     "head_weight", "head_chincoef")},
                      "eyes": [{k[5:]: c.get(k) for k in c if k.startswith("eye%d_" % e)} for e in (0, 1)]})
-    print("%s glb %d B, clips %s, missing %s, layers %s, dropCh %d" % (key, out_glb.stat().st_size, list(clip_info), missing, list(layers), stats["droppedChannels"]))
+    print("%s model %d B, clips %s, motion glb %d, missing %s, layers %s" % (key, (cs.CHARA / model).stat().st_size, list(clip_info), len(anims), missing, list(layers)))
     return {"pc": key, "label": cd.get("text label"), "scale": recs[0]["scale"], "cam": [0, 0, 0], "fov": 30, "idle": "co_idle00", "lock": None,
-            "glb": f"{key}/{glb.name}", "motions": f"{key}/motions.json", "clips": clip_info, "missing": missing, "layers": layers,
+            "glb": rl(model), "motions": rl(motions), "anims": [rl(a) for a in anims], "clips": clip_info, "missing": missing, "layers": layers,
             "attach": attach, "npc": recs}
 
 

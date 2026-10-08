@@ -29,6 +29,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import charsel_web_assets as cw  # noqa: E402
+import font_web_assets as fw  # noqa: E402
 import graphics_bntx  # noqa: E402
 import modesel_web_assets as mw  # noqa: E402
 import msgwin_atr  # noqa: E402
@@ -291,15 +292,12 @@ def main():
         TAG.sub("", v) for k, v in texts.items() if LARGE_LABELS.search(k))
     cpx = cw.fcpx_fonts()
     spec["fonts"] = {}
-    (DST / "font").mkdir(exist_ok=True)
     for fam in sorted(fams):
         if not cpx.get(fam):
             print("  글꼴 없음(시스템 글꼴로 그림)", fam)
             continue
-        img, meta = cw.build_atlas(fam, cpx[fam], large_set if fam.startswith("bqfont_large") else text_set)
-        img.save(DST / meta["image"], optimize=True)
-        spec["fonts"][fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        spec["fonts"][fam] = fw.font_ref(fam, large_set if fam.startswith("bqfont_large") else text_set)
+        print(fam, len(spec["fonts"][fam]["chars"]), "chars")
 
     missing = {}
     tex, srgb, miss = common.write_textures("common")

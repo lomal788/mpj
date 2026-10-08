@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import type { Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import { applyOnlineExtra, BTN, FakeOnline, type OnlineExtra } from '../script/shell/online';
 import {
@@ -49,6 +50,7 @@ const ext = read<PlazaUiExtra>('plaza/ui/plaza_ui.json');
 let spec = mergeSpec(read<MgmSpec>('mgmcommon/spec.json'), onl);
 spec = mergeSpec(spec, read<MgmSpecPart>('mgm01/faces.json'));
 spec = mergeSpec(spec, ext);
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
 applyOnlineExtra(spec, onl);
 applyPlazaUiExtra(spec, ext);
 const all = spec as unknown as Spec;

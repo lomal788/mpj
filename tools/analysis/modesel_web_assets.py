@@ -17,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import charsel_web_assets as cw  # noqa: E402
+import font_web_assets as fw  # noqa: E402
 import ui_lyt  # noqa: E402
 import ui_render  # noqa: E402
 import ui_sarc  # noqa: E402
@@ -191,7 +192,7 @@ def convert(files, names, tags_map, layouts, tex_names, extra=None):
 
 
 def main():
-    for d in ("tex", "font", "sound"):
+    for d in ("tex", "sound"):
         (DST / d).mkdir(parents=True, exist_ok=True)
     spec = {"version": 1, "screen": [1920, 1080],
             "source": "Super Mario Party Jamboree US v0 — web/tools/analysis/modesel_web_assets.py, 명세 web/docs/shell/modeselect.md"}
@@ -258,13 +259,10 @@ def main():
         "bqfont_middle_shadow": texts["mn01_mode_ctrl_close"],
         "bqfont_small": details,
     }
-    cpx = cw.fcpx_fonts()
     spec["fonts"] = {}
     for fam, s in use.items():
-        img, meta = cw.build_atlas(fam, cpx[fam], s)
-        img.save(DST / meta["image"], optimize=True)
-        spec["fonts"][fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        spec["fonts"][fam] = fw.font_ref(fam, s)
+        print(fam, len(spec["fonts"][fam]["chars"]), "chars")
 
     spec["sounds"] = {}
     for label, (vol, ev) in SE.items():

@@ -21,6 +21,8 @@
  *   - FLCT·FLIM·사용자 데이터 애니, 정렬(ali1)·스크롤(scr1) 페인은 다루지 않는다.
  */
 import * as THREE from 'three';
+import { sheetTexture } from '../shell/charselect/fontSheet';
+import type { FontSpec } from '../shell/charselect/types';
 import { textureFromImage, type UiImage } from '../shell/stage3d/assetLoader';
 import { SCREEN_H, SCREEN_W } from './renderer';
 
@@ -105,17 +107,7 @@ export interface Lan {
   entries: { name: string; target: string; tags: { tag: string; tracks: LanTrack[] }[] }[];
 }
 
-/** 비트맵 글자 아틀라스(tools/mg1801_web_ui.py build_atlas) */
-export interface LytFontAtlas {
-  fonts: string[];
-  main: string;
-  height: number;
-  width: number;
-  ascent: number;
-  lineFeed: number;
-  file: string;
-  glyphs: Record<string, { x: number; y: number; w: number; h: number; left: number; adv: number; baseline: number; font: string }>;
-}
+export type LytFontAtlas = FontSpec;
 
 export interface LytTelopFont {
   file: string;
@@ -454,6 +446,7 @@ uniform sampler2D map0;
 uniform sampler2D map1;
 uniform int texCount;
 uniform int alphaMix;
+uniform int red0;
 uniform vec4 black;
 uniform vec4 white;
 uniform mat3 srt0;
@@ -467,6 +460,7 @@ varying vec4 vCol;
 void main() {
   vec4 t = vec4(1.0);
   if (texCount > 0) t = texture2D(map0, (srt0 * vec3(vUv, 1.0)).xy);
+  if (texCount > 0 && red0 == 1) t = vec4(1.0, 1.0, 1.0, t.r);
   if (texCount > 1) t *= texture2D(map1, (srt1 * vec3(vUv, 1.0)).xy);
   vec4 c = alphaMix == 1 ? mix(black, white, t.a) : mix(black, white, t);
   c *= vCol;
@@ -506,8 +500,8 @@ function srtMat(s: LytSrt | undefined): THREE.Matrix3 {
 export interface LytResources {
   /** 텍스처 이름 → 그림 */
   images: Map<string, TexImageSource>;
-  /** fcpx 패밀리 → 아틀라스 메트릭·그림 */
-  fonts: Map<string, { meta: LytFontAtlas; image: TexImageSource }>;
+  /** fcpx 패밀리 → 공용 글꼴 메트릭(resolveSpecFonts 로 채운 것) */
+  fonts: Map<string, { meta: LytFontAtlas }>;
   telop: LytTelopFont | null;
 }
 
@@ -579,6 +573,7 @@ export class LytRenderer {
           map1: { value: this.white },
           texCount: { value: 0 },
           alphaMix: { value: 0 },
+          red0: { value: 0 },
           black: { value: new THREE.Vector4() },
           white: { value: new THREE.Vector4(1, 1, 1, 1) },
           srt0: { value: new THREE.Matrix3() },
@@ -630,6 +625,7 @@ export class LytRenderer {
     (u.white.value as THREE.Vector4).set(white[0] / 255, white[1] / 255, white[2] / 255, white[3] / 255);
     u.alpha.value = alpha / 255;
     u.alphaMix.value = alphaMix ? 1 : 0;
+    u.red0.value = tex0?.userData.red ? 1 : 0;
     u.maskOn.value = mask ? 1 : 0;
     if (mask) {
       u.maskMap.value = this.texture(mask.tex, mask.wrapU, mask.wrapV);
@@ -775,18 +771,13 @@ export class LytRenderer {
     });
     const lineH = meta.height * sy;
     let [pen, yTop] = place(lineW, lineH);
-    const tex = this.texture(`font:${fam}`);
-    const iw = f.image.width;
-    const ih = f.image.height;
     for (const ch of chars) {
       const g = meta.glyphs[ch];
-      if (g) {
+      const tex = g && g.w > 0 ? sheetTexture(g.sheet, g.rgba) : null;
+      if (g && tex) {
         const gx = pen + g.left * sx;
         const gt = yTop - (meta.ascent - g.baseline) * sy;
-        const u0 = g.x / iw;
-        const u1 = (g.x + g.w) / iw;
-        const v0 = g.y / ih;
-        const v1 = (g.y + g.h) / ih;
+        const { u0, v0, u1, v1 } = g;
         this.emit(this.corners(m, gx, gt - g.h * sy, gx + g.w * sx, gt), [u0, v0, u1, v0, u0, v1, u1, v1], [top, top, bottom, bottom], mat, alpha, true, tex);
       }
       pen += (g?.adv ?? meta.width) * sx + cs;
@@ -820,11 +811,6 @@ export class LytRenderer {
     e = { tex, w: c.width, h: c.height, asc };
     this.telopCache.set(key, e);
     return e;
-  }
-
-  /** 글자 아틀라스는 'font:<패밀리>' 이름으로 텍스처 표에 넣는다 */
-  registerFontImages(): void {
-    for (const [fam, f] of this.res.fonts) this.res.images.set(`font:${fam}`, f.image);
   }
 
   dispose(): void {

@@ -13,3 +13,4 @@
 | [07_camera_lighting.md](07_camera_lighting.md) | 카메라 시스템·씬 카메라 애니, mg1801 카메라 값, 조명·IBL, 포스트이펙트 | 작성 중 |
 | [08_effects.md](08_effects.md) | VFXB 파티클 구조, bex::Effect 런타임, mg1801 이펙트, 웹 파티클 설계 | 작성 중 |
 | [09_character.md](09_character.md) | 캐릭터 ID·에셋·뼈, 모션 시스템(재생·블렌드), 시선·흔들림 본, 캐릭터 glb 변환 | 작성 중 |
+| [chara_assets.md](chara_assets.md) | 캐릭터·NPC 공용 에셋 폴더 `assets/chara/`(텍스처·모델·모션 한 벌, 화면 명세가 가리킴) | 구현 |

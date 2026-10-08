@@ -3,7 +3,7 @@
 클립 = 광장 액터가 쓰는 상주 모션 co_idle00·co_walk00·co_run00(액션 Idle/Walk/Run) + Player::Player 가 Sub 슬롯에 넣는 co_look02·co_nod00
 [판독 docs/shell/plaza_3d.md §3.5] + 각 모션의 깜빡임 묶음. 모션 전이 = chara/mpat/sys_pc.mpat(menu00 전용 mpat 없음) 중 이 클립에 걸리는 항목.
 중간 변환은 extracted/converted/plaza_player/<key> (charselect 의 extracted/converted/charsel 은 건드리지 않음).
-출력: web/assets/plaza/player/{pcNN/*.glb, pcNN/motions.json, tex/*.png, spec.json}
+출력: 모델·모션·텍스처 = 공용 web/assets/chara/(chara_shared.py, docs/engine/chara_assets.md), 명세 = web/assets/plaza/player/spec.json(경로는 이 폴더 기준 ../../chara/…)
 usage: .venv/Scripts/python web/tools/analysis/plaza_player_assets.py [pcNN ...]
 """
 import json
@@ -34,15 +34,9 @@ def main():
         e = {"index": i, "btn": i, "pc": key, "label": c["text label"], "scale": c["IndividualScale"], "cam": [0, 0, 0], "fov": 30,
              "idle": "co_idle00", "lock": None, "glb": None, "height": c["height"], "bubbleRadius": c["bubble_radius"], "width": c["width"]}
         if only and key not in only and key in old:
-            e.update({k: v for k, v in old[key].items() if k in ("glb", "motions", "clips", "eye", "albedo", "body")})
+            e.update({k: v for k, v in old[key].items() if k in ("glb", "motions", "anims", "clips", "eye", "albedo", "body")})
         else:
             e.update(charsel_chara.convert(key, CLIPS, DST, reuse=True))
-            e["glb"] = e["glb"].removeprefix("chara/")
-            e["motions"] = e["motions"].removeprefix("chara/")
-            if e.get("eye", {}).get("tex"):
-                e["eye"]["tex"] = e["eye"]["tex"].removeprefix("chara/")
-            if e.get("eye", {}).get("lid"):
-                e["eye"]["lid"]["tex"] = e["eye"]["lid"]["tex"].removeprefix("chara/")
         out.append(e)
     want = set(CLIPS)
     mp = json.loads(MPAT.read_text(encoding="utf-8"))["sys_pc.mpat"]["entries"]

@@ -218,6 +218,8 @@ parentAnchor = 부모 사각형에서 parentOrigin 이 가리키는 점(부모 �
 
 ### 4.4 웹 대체
 
+웹 구현(2026-10-08): 비트맵 글꼴은 모든 화면이 공용 `web/assets/font/`(원본 FFNT 시트 그대로 + 글리프 표, 커버리지 R8)를 쓴다 — [font_assets.md](font_assets.md).
+
 | 용도 | 방법 |
 |---|---|
 | 일반 UI 글자(bqfont_*) | `ui_font.py export` → 시트 PNG(알파 = 커버리지) + 메트릭 JSON. 캔버스에서 셀을 잘라 `globalCompositeOperation` 으로 색 입힘(재질 black/white 보간 × 글자색). 크기 배율 = fontSize.y / FINF.height [추정] |

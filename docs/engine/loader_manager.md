@@ -597,8 +597,8 @@ mgr.stats                                               // 숫자 필드만(요�
 | `char:first` / `char:<pc>` | charselect 캐릭터 glb(`gltf`)·motions(`json`)·눈·눈꺼풀(`texture`) — Preview3D 가 요청하는 키와 같음. first = 1P 처음 커서(state.start 규칙: `initial ?? 0`, 잠김 아님 → 표 0 번) |
 | `plaza:p0` | `plaza/world/manifest.json` + 충돌·`plaza_first.json` + `plazaPlan` 의 P0 모델 glb(+ 압축 모드면 glb 참조 텍스처) — `world.ts plazaP0Paths`(World 와 같은 규칙, 기본 장식) |
 | `plaza:ui` | `mgmcommon/spec.json` + online·faces·plaza_ui·plaza_card 부품 합친 그림(`uiimage`) — 광장 UI(PlazaUiView)와 같은 키 |
-| `plaza:npc` | `plaza/world/chara/spec.json` 중 `NPC_MODEL` 모델의 glb·motions·눈(NPC Preview3D 와 같은 키) |
-| `plaza:player:<pc>` | `plaza/player/spec.json` 그 캐릭터 glb·motions·눈 |
+| `plaza:npc` | `plaza/world/chara/spec.json` 중 `NPC_MODEL` 모델의 glb·모션 glb(`anims`)·motions·눈(NPC Preview3D 와 같은 키, 파일은 공용 `chara/`) |
+| `plaza:player:<pc>` | `plaza/player/spec.json` 그 캐릭터 glb·모션 glb·motions·눈(공용 `chara/` — 캐릭터 선택과 같은 키) |
 | `modeselect`·`mgmet`·`mgm01` | 각 화면 명세(+부품) 그림(`uiimage`) |
 | `game:<이름>` | `GameDef.load()`(코드 청크) + `<assetsDir>manifest.json`. 게임 에셋 목록은 아직 없음(§10 12) |
 
@@ -612,7 +612,7 @@ mgr.stats                                               // 숫자 필드만(요�
 - 커서가 움직이면: 새 커서 캐릭터를 0 으로 **올리고**, 0 에서 빠진 캐릭터는 2 또는 3 으로 **내린다**(코어 `lower` — 아직 시작 전인 요청만 낮은 등급 큐 뒤로; 이미 받는 중이면 그대로 끝냄). → 커서를 빠르게 여러 칸 옮겨도 마지막 커서 캐릭터가 앞 커서들 뒤에서 기다리지 않는다.
 - 화면을 나갈 때(dispose) 등급 2·3 으로 아직 시작 전인 요청은 큐에서 뺀다(코어 `drop`) — 광장 뒤 받기(P3)가 캐릭터 선택 나머지 36 MB 뒤에서 기다리지 않게.
 - GPU 단계(숨은 무대 조립·compileAsync·initTexture·한 번 그리기, 한 프레임에 하나)·슬롯 요청 번호·랜덤·잠김 칸 비움·결정 모션 시간축·보이스 요청 번호(charselect.md §12.10)는 그대로. 받기 전에 커서가 간 칸은 지금처럼 준비되면 바로 붙는다(pump 가 보이는 슬롯 캐릭터를 등급 0 으로).
-- 같은 키 공유: 광장 플레이어(`plaza/player/…`)·NPC(`plaza/world/chara/…`) Preview3D 도 같은 브로커를 지나므로 흐름 예측(`plaza:player:<pc>`·`plaza:npc`)과 한 번만 받는다. 캐릭터 선택 모델(`charselect/chara/…`)과 광장 플레이어 모델은 **다른 파일**이라(변환 출력이 다름) 키를 나눠 쓰지 않는다.
+- 같은 키 공유: 광장 플레이어(`plaza/player/…`)·NPC(`plaza/world/chara/…`) Preview3D 도 같은 브로커를 지나므로 흐름 예측(`plaza:player:<pc>`·`plaza:npc`)과 한 번만 받는다. ~~캐릭터 선택 모델과 광장 플레이어 모델은 다른 파일이라 키를 나눠 쓰지 않는다.~~ → 2026-10-08 캐릭터 공용 폴더([chara_assets.md](chara_assets.md)): 세 화면(캐릭터 선택·광장·mg1801)이 같은 모델·모션·텍스처를 같은 키 `chara/…` 로 읽는다. 캐릭터 선택에서 받은 마리오는 광장 플레이어 묶음의 97 % 를 이미 채운다(mg1801 은 관리자 밖 — 같은 주소라 HTTP·서비스 워커 캐시).
 
 ### 13.5 시작 순서·로딩 문구
 

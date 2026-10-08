@@ -4,10 +4,10 @@
 
 만드는 것 (web/assets/mg1801/ui/):
   ui.json        layouts{이름: bflyt(ui_lyt.parse_bflyt 결과에서 검증용 필드만 뺌)}, anims{이름: {태그: bflan}},
-                 textures{이름: png 경로}, fonts{패밀리: 글리프 아틀라스 메트릭}, telopFont, texts{라벨: koKR 문구}, vib{키: 진동}
+                 textures{이름: png 경로}, fonts{패밀리: 공용 글꼴 참조 {dir, chars}}, telopFont, texts{라벨: koKR 문구}, vib{키: 진동}
   tex/*.png      레이아웃 BNTX 텍스처(compSel 적용, ui_render.LazyTextures). 원본 픽셀 그대로
                  + 캐릭터 얼굴 face_128_pcNN^u(bq Parts.lyt timg/__Combined.bntx, 공유 텍스처). 결과 화면 sys_face_01 의 Face_128 칸에 들어간다
-  font/*.png     FFNT 글리프 셀을 필요한 글자만 모은 아틀라스(알파 = 커버리지, RGB = 흰색). 셀 픽셀은 원본 그대로
+  fonts          비트맵 글꼴 = 공용 assets/font/ 원본 시트 참조 {dir: '../../font/', chars}(font_web_assets.py, docs/engine/font_assets.md)
   font/bqfont_telop.otf  BFOTF 복호화 → 필요한 글자만 서브셋(fontTools). 글리프 윤곽은 원본 그대로
 
 출처와 판독 근거는 web/script/games/mg1801/view/ui.ts 머리 주석과 보고서(레이아웃 선택: main RmUiTelopMan·RmUiStatusMan·RmUiCntWipe).
@@ -26,6 +26,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import font_web_assets as fw  # noqa: E402
 import ui_bnvib  # noqa: E402
 import ui_font  # noqa: E402
 import ui_lyt  # noqa: E402
@@ -179,54 +180,6 @@ def fcpx_fonts():
     return out
 
 
-def build_atlas(family, fonts, text):
-    """fcpx 순서(usen → 본 → extension)로 글자를 가진 첫 폰트의 셀을 쓴다 [추정: 복합 폰트 대체 순서 = 목록 순서]."""
-    loaded = []
-    for fn in fonts:
-        p = FONT_DIR / fn.replace(".bffnt", ".ffnt")
-        b = p.read_bytes()
-        f, cmap, widths = ui_font.parse_ffnt(b)
-        loaded.append((p.stem, f, cmap, widths, b))
-    main = loaded[1] if len(loaded) > 1 else loaded[0]
-    chars = sorted(set(text) - {"\n", "\r"})
-    decoded = {}
-
-    def sheets_of(stem, f, b):
-        # 시트는 글자를 가진 폰트만 푼다(extension 은 BC7 컬러 시트라 ui_font.decode_sheets 가 다루지 않는다)
-        if stem not in decoded:
-            decoded[stem] = ui_font.decode_sheets(b, f)[0]
-        return decoded[stem]
-
-    cw = max(x[1]["tglp"]["cellW"] for x in loaded)
-    ch = max(x[1]["tglp"]["cellH"] for x in loaded)
-    cols = 8
-    rows = (len(chars) + cols - 1) // cols
-    pitch_x, pitch_y = cw + 2, ch + 2
-    atlas = Image.new("L", (max(1, cols * pitch_x), max(1, rows * pitch_y)), 0)
-    glyphs = {}
-    for i, c in enumerate(chars):
-        for stem, f, cmap, widths, b in loaded:
-            gi = cmap.get(ord(c))
-            if gi is None:
-                continue
-            left, gw, adv = widths.get(gi, tuple(f["finf"]["defaultWidth"]))
-            sh, px, py = ui_font.glyph_cell(f, gi)
-            t = f["tglp"]
-            cell = sheets_of(stem, f, b)[sh].crop((px, py, px + t["cellW"], py + t["cellH"]))
-            ax, ay = (i % cols) * pitch_x + 1, (i // cols) * pitch_y + 1
-            atlas.paste(cell, (ax, ay))
-            glyphs[c] = {"x": ax, "y": ay, "w": gw, "h": t["cellH"], "left": left, "adv": adv,
-                         "baseline": t["baseline"], "font": stem}
-            break
-        else:
-            print(f"  {family}: 글자 없음 {c!r} (U+{ord(c):04X})")
-    rgba = Image.merge("RGBA", [Image.new("L", atlas.size, 255)] * 3 + [atlas])
-    fi = main[1]["finf"]
-    meta = {"fonts": [x[0] for x in loaded], "main": main[0], "height": fi["height"], "width": fi["width"],
-            "ascent": fi["ascent"], "lineFeed": fi["lineFeed"], "file": f"font/{family}.png", "glyphs": glyphs}
-    return rgba, meta
-
-
 def telop_font(text, fcpx_raw):
     from fontTools import subset
     from fontTools.ttLib import TTFont
@@ -315,10 +268,8 @@ def main():
     tag = re.compile(r"\[\d+:\d+(?::[0-9a-f]*)?\]")
     for fam in list(FONT_USE) + [f for f in FONT_DIGITS if f not in FONT_USE]:
         text = tag.sub("", "".join(texts[k] for k in FONT_USE.get(fam, []))) + FONT_DIGITS.get(fam, "")
-        img, meta = build_atlas(fam, cpx[fam][0], text)
-        img.save(DST / meta["file"], optimize=True)
-        fonts[fam] = meta
-        print(fam, meta["fonts"], len(meta["glyphs"]), "glyphs", img.size)
+        fonts[fam] = fw.font_ref(fam, text, "../../font/")
+        print(fam, len(fonts[fam]["chars"]), "chars")
     otf, tmeta = telop_font("".join(texts[k] for k in TELOP_LABELS), cpx["bqfont_telop"][1])
     (DST / tmeta["file"]).write_bytes(otf)
     print("telop otf", len(otf), "B", tmeta)

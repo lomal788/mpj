@@ -1,9 +1,12 @@
 /**
  * 흐름 예측 묶음 → 관리자 키 목록(mpj 전용). 설계: docs/engine/loader_manager.md §13.3. 키 = web/assets/ 기준 소스 경로.
- * 화면이 실제로 읽는 키와 같아야 한다: 2D 그림 = Render2D.load(명세 + 부품의 textures·fonts, 기준 폴더 상대) → uiimage,
- * Preview3D(캐릭터 선택·광장 플레이어·NPC) = glb·motions·눈·눈꺼풀, 광장 무대 = world.ts plazaP0Paths(World 와 같은 규칙).
+ * 화면이 실제로 읽는 키와 같아야 한다: 2D 그림 = Render2D.load(명세 + 부품의 textures, 기준 폴더 상대) → uiimage,
+ * 글꼴 = 명세 fonts {dir, chars} → 공용 font/fcpx.json·<FFNT>/glyphs.json(json) + chars 가 든 원본 시트 font/<FFNT>/<n>.png(uiimage, docs/engine/font_assets.md),
+ * Preview3D(캐릭터 선택·광장 플레이어·NPC) = 모델 glb·모션 glb(anims)·motions·눈·눈꺼풀 — 공용 assets/chara/ 라 세 화면이 같은 키(docs/engine/chara_assets.md),
+ * 광장 무대 = world.ts plazaP0Paths(World 와 같은 규칙).
  * 명세 json 은 받은 json 함수(관리자 json, 묶음 등급)로 읽고 고치지 않는다. 동적 import 로만 불러 진입 청크를 키우지 않는다.
  */
+import { FCPX_FILE, sheetsFor, tablePath, type FcpxTable, type FontRef, type FontTable } from '../shell/charselect/fontTable';
 import type { CharaSpec } from '../shell/charselect/types';
 import { NPC_MODEL } from '../shell/plaza/npc';
 import { PLAZA_CARD_PART } from '../shell/plaza/ui/card';
@@ -33,7 +36,7 @@ export function normPath(p: string): string {
 
 interface Spec2d {
   textures?: Record<string, string>;
-  fonts?: Record<string, { image: string }>;
+  fonts?: Record<string, FontRef>;
 }
 
 /** 2D 화면: 기준 폴더의 spec.json + 부품(합치기 = mgmcommon mergeSpec: 같은 이름은 뒤가 이김) → 그림 키 */
@@ -41,28 +44,39 @@ async function screen2d(json: FlowJson, base: string, parts: readonly string[]):
   const files = ['spec.json', ...parts];
   const specs = await Promise.all(files.map((f) => json<Spec2d>(normPath(base + f))));
   const tex: Record<string, string> = {};
-  const fonts: Record<string, { image: string }> = {};
+  const fonts: Record<string, FontRef> = {};
   for (const s of specs) {
     Object.assign(tex, s.textures ?? {});
-    Object.assign(fonts, s.fonts ?? {});
+    for (const [k, f] of Object.entries(s.fonts ?? {})) fonts[k] = fonts[k]?.dir === f.dir ? { dir: f.dir, chars: (fonts[k].chars ?? '') + (f.chars ?? '') } : f;
   }
   const out: [string, string][] = files.map((f) => [normPath(base + f), 'json']);
   const seen = new Set<string>();
-  for (const p of [...Object.values(tex), ...Object.values(fonts).map((f) => f.image)]) {
-    const k = normPath(base + p);
+  const add = (k: string, kind: string): void => {
     if (!seen.has(k)) {
       seen.add(k);
-      out.push([k, 'uiimage']);
+      out.push([k, kind]);
     }
+  };
+  for (const p of Object.values(tex)) add(normPath(base + p), 'uiimage');
+  for (const [family, f] of Object.entries(fonts)) {
+    const dir = `${normPath(base + f.dir)}/`;
+    const fcpx = await json<FcpxTable>(dir + FCPX_FILE);
+    const fam = fcpx[family];
+    if (!fam) continue;
+    add(dir + FCPX_FILE, 'json');
+    const tables = await Promise.all(fam.fonts.map((n) => json<FontTable>(dir + tablePath(n))));
+    for (const n of fam.fonts) add(dir + tablePath(n), 'json');
+    for (const p of sheetsFor(tables, f.chars ?? '')) add(dir + p, 'uiimage');
   }
   return out;
 }
 
 /** Preview3D 가 요청하는 캐릭터 파일(preview3d.ts files 와 같은 순서·종류) */
-function charaFiles(base: string, c: Pick<CharaSpec, 'glb' | 'motions' | 'eye'>): [string, string][] {
+function charaFiles(base: string, c: Pick<CharaSpec, 'glb' | 'anims' | 'motions' | 'eye'>): [string, string][] {
   const out: [string, string][] = [];
   if (!c.glb) return out;
   out.push([normPath(base + c.glb), 'gltf']);
+  for (const a of c.anims ?? []) out.push([normPath(base + a), 'gltf']);
   if (c.motions) out.push([normPath(base + c.motions), 'json']);
   if (c.eye?.tex) out.push([normPath(base + c.eye.tex), 'texture']);
   if (c.eye?.lid) out.push([normPath(base + c.eye.lid.tex), 'texture']);

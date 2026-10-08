@@ -1,24 +1,24 @@
-"""mg1801 웹 캐릭터 에셋 — extracted/converted/character/<key>(tools/character_glb.py 결과) → web/assets/mg1801/chara, npc.
+"""mg1801 웹 캐릭터 에셋 — extracted/converted/character/<key>(tools/character_glb.py 결과) → 공용 web/assets/chara + 명세 web/assets/mg1801/chara/index.json.
 
   c:/dev/mpj/.venv/Scripts/python tools/mg1801_web_charas.py            # 22명 + npc002
   (변환 먼저: tools/character_glb.py pcNN rhy_knife_idle00 rhy_knife_swing00 co_idle00 / npc002 co_idle00 co_joyful00 co_joyful02)
 
 용량을 줄이려고 하는 일(원본 값·텍스처 그림은 바꾸지 않는다):
-- 정점 속성: 화면이 읽지 않는 _C0~_C3(정점 색 4벌, 셰이더 그래프 입력)·TEXCOORD_2/3 을 뺀다. POSITION·NORMAL·TANGENT·TEXCOORD_0/1·
-  JOINTS_0·WEIGHTS_0·모프는 그대로(같은 바이트).
+- 정점 속성: 어느 화면도 읽지 않는 _C0·_C3·TEXCOORD_3 을 뺀다(_C1·_C2·TEXCOORD_2 는 캐릭터 선택·광장이 읽어 공용 모델에 남는다 — mg1801 은
+  읽지 않음). POSITION·NORMAL·TANGENT·TEXCOORD_0/1·JOINTS_0·WEIGHTS_0·모프는 그대로(같은 바이트).
 - 클립 채널: 모든 키가 그 뼈의 바인드 TRS 와 같은 채널(오차 1e−6)은 뺀다(three 는 쓰는 액션이 없으면 원래 값으로 되돌리므로 결과 같음).
   모든 키가 같은 상수 채널은 키 1개로 줄인다. 그 밖의 키는 그대로.
 - 클립: mg1801 이 쓰는 것만 — PC rhy_knife_idle00·swing00(Player ctor AddAnimation), co_idle00(RmMgSceneBase::OnGameEndingBefore 의
   rm_co_idle00 → co_idle00, 속도 1.0 [판독 main FUN_7100447030]), 그 모션들의 blink 묶음(fcl_blink00). NPC co_idle00·co_joyful00·co_joyful02
   (MapImpl::Initialize: joy_mot = [co_joyful02, co_joyful00][Params.RhythmNpcMotNo] 를 이름 co_joyful00 으로 등록).
-- 텍스처: glb 이미지 + 눈동자 알베도(재질 extras 의 *_eye*_alb, 배열이면 0층)만 복사. 바이트 그대로. 같은 내용(sha1)은 한 번만 두고
-  나머지는 index 의 경로로 가리킨다(glb 이미지 uri 를 공용 경로로 바꾼다).
+- 텍스처: glb 이미지 + 눈동자 알베도(재질 extras 의 *_eye*_alb, 배열이면 0층)만 공용 chara/tex/<이름>_<sha1 12>.png 로 복사. 바이트 그대로.
 - 메시 extras.mpjUv: body_m 셰이프이고 몸 알베도 가로세로가 1:2 면 'v2'(v′ = 0.5 + 0.5v), 2:1 이면 'u2'(u′ = 0.5u), 그 밖은 없음(그대로).
   UV 가 "텍스처 가로 = 1" 단위라고 본 관측 규칙이다. 몸·머리카락뿐 아니라 얼굴(눈꺼풀) 셰이프도 같은 규칙에서 맞는다(마리오·피치·데이지·
   폴린 렌더 대조) [실행: 렌더 관측 — 원본 셰이더 그래프 식 미확정, 09_character.md 4.2]
-결과: web/assets/mg1801/chara/index.json(캐릭터 표) + <key>/<model>.glb, <model>_result.glb(결과 승패 클립만), motions.json, 공용 tex/.
+결과: web/assets/mg1801/chara/index.json(캐릭터 표, 경로는 이 폴더 기준 ../../chara/…). 모델·모션·텍스처는 공용 web/assets/chara/(chara_shared.py,
+docs/engine/chara_assets.md): <key>/<model>.glb(클립 없음, 정점 속성은 화면들의 상위 집합이라 _C1·_C2·TEXCOORD_2 가 남는다 — mg1801 은 읽지 않음),
+<key>/motion/<모션>.glb(anims = 대기·칼·깜빡임, resultAnims = 결과 승패 — 뒤에 읽음), <key>/motions.json, tex/<이름>_<sha1 12>.png.
 """
-import hashlib
 import json
 import shutil
 import struct
@@ -238,13 +238,11 @@ def compact_motions(mot, keep):
 
 
 def main():
+    import chara_shared as cs
     data = json.loads(CHARLIST.read_text(encoding="utf-8-sig"))
     out_root = DST / "chara"
-    tex_root = out_root / "tex"
-    tex_root.mkdir(parents=True, exist_ok=True)
-    by_hash = {}
+    out_root.mkdir(parents=True, exist_ok=True)
     index = {}
-    total = 0
     for key in PCS + NPCS:
         kind = "npc" if key.startswith("npc") else "pc"
         src = SRC / key
@@ -267,58 +265,33 @@ def main():
             return None
 
         keep = PC_CLIPS if kind == "pc" else NPC_CLIPS
-        keep_clips = set(keep) | {c + "_shape" for c in keep}
         result_names = [c for c in PC_RESULT_CLIPS if kind == "pc" and any(a["name"] == c for a in js.get("animations", []))]
-        result = clips_only(js, rest, set(result_names) | {c + "_shape" for c in result_names}) if result_names else None
-        js, rest, stats = slim(js, rest, keep_clips, uv_rule)
         eye_mat, eye = eye_png(js)
-        pngs = [im["uri"].split("/")[-1] for im in js.get("images", [])]
-        if eye and eye not in pngs:
-            pngs.append(eye)
         color_png = None
         if key in NPC_COLOR and alb and alb.endswith("_00.png"):
             color_png = alb[:-len("00.png")] + "%02d.png" % NPC_COLOR[key]
-            pngs.append(color_png)
-        tex_map = {}
-        for pn in pngs:
-            b = (src / "tex" / pn).read_bytes()
-            h = hashlib.sha1(b).hexdigest()
-            if h not in by_hash:
-                by_hash[h] = pn
-                (tex_root / pn).write_bytes(b)
-            tex_map[pn] = "tex/" + by_hash[h]
-        up = "../" if kind == "pc" else "../../chara/"
-        for im in js.get("images", []):
-            im["uri"] = up + tex_map[im["uri"].split("/")[-1]]
-        out = out_root / key if kind == "pc" else DST / "npc" / key
-        out.mkdir(parents=True, exist_ok=True)
-        write_glb(out / glb_name, js, rest)
-        result_name = glb_name.replace(".glb", "_result.glb")
-        if result:
-            write_glb(out / result_name, *result)
+        model, tex_map = cs.write_model(key, glb_name, js, rest, src / "tex", uv_rule, [eye, color_png])
+        anims = cs.write_motions(key, js, rest, keep)
+        result = cs.write_motions(key, js, rest, result_names)
         mot = json.loads((src / "motions.json").read_text(encoding="utf-8"))
-        (out / "motions.json").write_text(json.dumps(compact_motions(mot, keep + result_names), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-        size = (out / glb_name).stat().st_size + (out / "motions.json").stat().st_size + ((out / result_name).stat().st_size if result else 0)
-        total += size
+        motions = cs.merge_motions(key, compact_motions(mot, keep + result_names))
         table = data["NPCCharacterData" if kind == "npc" else "PlayerCharacterData"]
         num = int(key[len(kind):])
         cid, cd = next((i, c) for i, c in enumerate(table) if c["Number"] == num)
-        rel = ("" if kind == "pc" else "../npc/") + key
-        entry = {"id": cid, "name": cd["charaname"], "glb": f"{rel}/{glb_name}", "motions": f"{rel}/motions.json",
-                 "resultGlb": f"{rel}/{result_name}" if result else None,
+        r = lambda p: cs.rel(out_root, p)  # noqa: E731
+        entry = {"id": cid, "name": cd["charaname"], "glb": r(model), "motions": r(motions), "anims": [r(a) for a in anims],
+                 "resultAnims": [r(a) for a in result],
                  "height": cd["height"], "head": {k[5:]: cd[k] for k in HEAD_KEYS},
                  "eyes": [{k: cd[f"eye{i}_{k}"] for k in EYE_KEYS} for i in (0, 1)],
-                 "eyeTex": tex_map.get(eye) if eye else None, "eyeMaterial": eye_mat,
+                 "eyeTex": r(tex_map[eye]) if eye else None, "eyeMaterial": eye_mat,
                  "albedoSize": [aw, ah]}
         if color_png:
-            entry["color"] = {"value": NPC_COLOR[key], "albedo": tex_map[color_png]}
+            entry["color"] = {"value": NPC_COLOR[key], "albedo": r(tex_map[color_png])}
         index[key] = entry
-        print("%-6s %-10s glb %8d B  result %7d B  motions %6d B  dropCh %4d constCh %4d  tex %s" % (
-            key, cd["charaname"], (out / glb_name).stat().st_size, (out / result_name).stat().st_size if result else 0, (out / "motions.json").stat().st_size,
-            stats["droppedChannels"], stats["constChannels"], pngs))
+        print("%-6s %-10s model %8d B  motion glb %d + result %d  tex %s" % (
+            key, cd["charaname"], (cs.CHARA / model).stat().st_size, len(anims), len(result), sorted(tex_map)))
     (out_root / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1), encoding="utf-8")
-    texb = sum(p.stat().st_size for p in tex_root.glob("*.png"))
-    print("total glb+motions %d B, tex %d B (%d files), sum %.1f MB" % (total, texb, len(list(tex_root.glob('*.png'))), (total + texb) / 1e6))
+    print("index %d, 공용 파일 경고 %d" % (len(index), len(cs.changed)))
 
 
 if __name__ == "__main__":

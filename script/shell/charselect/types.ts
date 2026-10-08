@@ -1,6 +1,8 @@
 /**
  * 캐릭터 선택 모듈 — 명세 JSON(web/assets/charselect/spec.json, tools/analysis/charsel_web_assets.py)과 어댑터 형식.
  * 명세 필드 뜻: tools/analysis/charsel_web_assets.py 머리 주석, 근거: docs/shell/charselect.md.
+ * fonts: json 에는 공용 글꼴 참조 {dir, chars}(fontTable.ts FontRef)만 있고 Render2D.load(resolveFonts)가 FontSpec 필드를 채운다.
+ *   GlyphSpec.sheet = 원본 시트 URL(앱 텍스처 키), rgba = 컬러 시트(아니면 회색조 → R8), u0..v1 = 시트 안 글리프 사각형(docs/engine/font_assets.md).
  */
 
 export type Rgba = [number, number, number, number];
@@ -75,13 +77,19 @@ export interface GlyphSpec {
   baseline: number;
   /** 컬러 아이콘 글리프(extension 폰트) */
   color: boolean;
+  sheet: string;
+  rgba: boolean;
+  u0: number;
+  v0: number;
+  u1: number;
+  v1: number;
 }
 
 export interface FontSpec {
   height: number;
   width: number;
   ascent: number;
-  image: string;
+  lineFeed?: number;
   glyphs: Record<string, GlyphSpec>;
 }
 
@@ -99,6 +107,7 @@ export interface CharaSpec {
   lock: number | null;
   glb: string | null;
   motions?: string;
+  anims?: string[];
   clips?: Record<string, { frames: number; loop: boolean }>;
   eye?: {
     tex: string | null;

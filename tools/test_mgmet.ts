@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 import { existsSync } from 'node:fs';
 import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';
 import {
@@ -71,6 +72,7 @@ const near = (a: number, b: number, e = 1e-3): boolean => Math.abs(a - b) <= e;
 const read = <T>(p: string): T => JSON.parse(readFileSync(join(WEB, p), 'utf8')) as T;
 const extra = read<MgmetExtra>('assets/mgmet/extra.json');
 const spec = mergeSpec(mergeSpec(read<MgmSpec>('assets/mgmcommon/spec.json'), read<MgmSpecPart>('assets/mgmcommon/mgmet.json')), extra);
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
 applyMgmetExtra(spec, extra);
 const all = spec as unknown as Spec;
 const host: MgmDrawHost = { all, spec, r2d: null as unknown as Render2D, layout: (n) => new LayoutInst(n, spec.layouts[n], all), draw: () => {} };

@@ -1,6 +1,8 @@
 /**
  * 캐릭터 모델 — 캐릭터 담당 변환물(tools/character_glb.py: FRES 모델 + fskb·fshb 클립 → glb, fvbb·ftsb.fmab → motions.json,
  * tools/mg1801_web_charas.py 로 웹용으로 줄임). 클립 이름 = 원본 모션 이름. 22명(PlayerCharacterID 0..21) + NPC(npc.ts) 공용.
+ * 파일은 공용 assets/chara/(docs/engine/chara_assets.md): glb = 모델(클립 없음), anims = 모션 glb(모션 하나에 하나, 노드 이름으로 건다),
+ * resultAnims = 결과 승패 모션 glb(뒤에 읽음). 경로는 index.json 폴더 기준 상대 경로.
  * 로직이 정한 모션과 원본 프레임을 그대로 샘플한다(mixer 를 시간으로 직접 맞춘다, 60fps 베이크).
  *
  * 모션 묶음 [판독 main FUN_7100034aa0·FUN_71000321e0 계열]: 모션 파일(fskb·fshb·ftsb·fvbb)마다 user data "blink" 가 있으면
@@ -92,6 +94,8 @@ export interface CharaInfo {
   eyeTex: string | null;
   eyeMaterial: string | null;
   albedoSize: [number, number];
+  anims?: string[];
+  resultAnims?: string[];
   /** 결과 승패 클립만 든 glb(co_win/joy/lose00a·b). 뒤에 읽는다 */
   resultGlb?: string | null;
   /** NPC 색(ChangeHeyhoColor) — 알베도 배열 층 png */
@@ -132,11 +136,16 @@ export class CharacterTemplate {
     readonly info: CharaInfo,
     readonly gltf: GLTF,
     readonly motions: Record<string, MotionInfo>,
+    readonly clips: THREE.AnimationClip[],
   ) {}
 
   static async load(assets: Assets, key: string, info: CharaInfo): Promise<CharacterTemplate> {
-    const [gltf, motions] = await Promise.all([assets.gltf(`chara/${info.glb}`), assets.json<Record<string, MotionInfo>>(`chara/${info.motions}`)]);
-    const t = new CharacterTemplate(key, info, gltf, motions);
+    const [gltf, motions, anims] = await Promise.all([
+      assets.gltf(`chara/${info.glb}`),
+      assets.json<Record<string, MotionInfo>>(`chara/${info.motions}`),
+      Promise.all((info.anims ?? []).map((a) => assets.gltf(`chara/${a}`))),
+    ]);
+    const t = new CharacterTemplate(key, info, gltf, motions, [...gltf.animations, ...anims.flatMap((g) => g.animations)]);
     if (info.eyeTex) t.eyeMap = await loadTex(assets.url(`chara/${info.eyeTex}`));
     if (info.color) t.colorMap = await loadTex(assets.url(`chara/${info.color.albedo}`));
     return t;
@@ -152,11 +161,11 @@ export class CharacterTemplate {
 
   /** 결과 승패 클립 glb 를 읽는다(한 번). 실패하면 클립 없이 끝낸다 — 화면은 co_idle00 을 그대로 둔다 */
   loadResult(assets: Assets): Promise<void> {
-    if (!this.info.resultGlb) return Promise.resolve();
-    this.resultLoad ??= assets
-      .gltf(`chara/${this.info.resultGlb}`)
-      .then((g) => {
-        this.extraClips.push(...g.animations);
+    const files = this.info.resultAnims ?? (this.info.resultGlb ? [this.info.resultGlb] : []);
+    if (!files.length) return Promise.resolve();
+    this.resultLoad ??= Promise.all(files.map((f) => assets.gltf(`chara/${f}`)))
+      .then((gs) => {
+        for (const g of gs) this.extraClips.push(...g.animations);
       })
       .catch((e) => console.warn(`결과 모션을 읽지 못했다: ${this.key}`, e));
     return this.resultLoad;
@@ -365,7 +374,7 @@ export class CharacterActor {
       if (useEye && !o.geometry.getAttribute('eyeUv')) o.geometry.setAttribute('eyeUv', o.geometry.getAttribute('uv1'));
     });
     this.mixer = new THREE.AnimationMixer(this.root);
-    for (const clip of gltf.animations) {
+    for (const clip of tpl.clips) {
       const a = this.mixer.clipAction(clip);
       a.setLoop(THREE.LoopRepeat, Infinity);
       this.actions.set(clip.name, a);
@@ -390,8 +399,8 @@ export class CharacterActor {
   }
 
   private setupBlink(): void {
-    const blink = this.tpl.gltf.animations.find((c) => c.name === 'fcl_blink00');
-    const blinkShape = this.tpl.gltf.animations.find((c) => c.name === 'fcl_blink00_shape');
+    const blink = this.tpl.clips.find((c) => c.name === 'fcl_blink00');
+    const blinkShape = this.tpl.clips.find((c) => c.name === 'fcl_blink00_shape');
     const bind = (clip: THREE.AnimationClip | undefined, out: Sampled[]): void => {
       if (!clip) return;
       for (const track of clip.tracks) {

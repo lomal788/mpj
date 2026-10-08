@@ -1,4 +1,4 @@
-"""플레이어 설정 흐름(web/script/shell/setplayer) 에셋 → web/assets/setplayer/setplayer.json + tex/ + font/ + sound/.
+"""플레이어 설정 흐름(web/script/shell/setplayer) 에셋 → web/assets/setplayer/setplayer.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/setplayer_web_assets.py [임시 폴더]
 
@@ -21,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import font_web_assets as fw  # noqa: E402
 import mgmcommon_web_assets as mc  # noqa: E402
 import ui_sarc  # noqa: E402
 
@@ -52,7 +53,7 @@ def closure(roots, files, have):
 def main():
     tmp = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp())
     tmp.mkdir(parents=True, exist_ok=True)
-    for sub in ("font", "sound"):
+    for sub in ("sound",):
         (DST / sub).mkdir(parents=True, exist_ok=True)
     parts = ui_sarc.read_files(str(mc.cw.PARTS))
     common = json.loads((mc.DST / "spec.json").read_text(encoding="utf-8"))
@@ -98,11 +99,8 @@ def main():
         ts = text_set
         if fam.startswith("bqfont_large"):
             ts = "".join(TAG.sub("", v) for k, v in texts.items() if k.startswith("mn01_connect_ui_player_number")) + "0123456789"
-        img, meta = mc.cw.build_atlas(fam, cpx[fam], ts)
-        img.save(DST / meta["image"], optimize=True)
-        meta["image"] = "../setplayer/" + meta["image"]
-        fonts[fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        fonts[fam] = fw.font_ref(fam, ts)
+        print(fam, len(fonts[fam]["chars"]), "chars")
 
     from sound_fsar import Fsar
     fs = Fsar(mc.FSPJ)

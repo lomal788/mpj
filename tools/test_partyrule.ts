@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import type { Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, MgmSound, type MgmDrawHost, type MgmPadSource, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
   applyPartyRuleExtra,
@@ -43,6 +44,7 @@ const base = read<MgmSpec>('mgmcommon/spec.json');
 const part = read<MgmSpecPart & PartyRuleExtra>('partyrule/partyrule.json');
 let spec = mergeSpec(base, part);
 spec = mergeSpec(spec, read<MgmSpecPart>('mgm01/faces.json'));
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
 applyPartyRuleExtra(spec, part);
 const all = spec as unknown as Spec;
 const host: MgmDrawHost = { all, spec, r2d: null as unknown as Render2D, layout: (n) => new LayoutInst(n, spec.layouts[n], all), draw: () => {} };
@@ -132,7 +134,7 @@ console.log('1. 표·라벨');
   eq(spec.texts.mn01_bd_mw_member_handi, '핸디캡을 설정합니다.', '핸디캡 메시지 문구');
   eq(spec.meswin.window[spec.msgAttr.mn01_bd_mw_check.wt].type, 'Model', '확인 메시지 창 형식 = Model');
   ok(!!spec.layouts.sys_meswin_model_choices_00 && !!spec.layouts.mn01_base_set_member_03, '레이아웃 있음');
-  ok(spec.fonts.bqfont_small.image.startsWith('../partyrule/'), '화면 글꼴 덮어씀');
+  ok([...((part.fonts?.bqfont_small as { chars?: string } | undefined)?.chars ?? '')].every((c) => !!spec.fonts.bqfont_small.glyphs[c]) && (spec.fonts.bqfont_small as { dir?: string }).dir === '../font/', '화면 글꼴 = 공용 글꼴(화면 글자 전부 있음)');
 }
 
 console.log('2. 멤버 확인 → 멤버 설정(사람 3·CPU 1)');

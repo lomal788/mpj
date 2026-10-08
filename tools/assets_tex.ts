@@ -68,7 +68,7 @@ export interface TexResult {
 }
 
 /** 3D 텍스처가 있는 폴더(나머지는 2D UI). assets/ 기준 */
-export const TEX3D_ROOTS = ['plaza/world/', 'plaza/player/', 'charselect/chara/', 'mg1801/tex/', 'mg1801/chara/', 'mg1801/effect/', 'mg1801/npc/', 'mg1801/model/'];
+export const TEX3D_ROOTS = ['chara/', 'plaza/world/', 'plaza/player/', 'charselect/chara/', 'mg1801/tex/', 'mg1801/chara/', 'mg1801/effect/', 'mg1801/npc/', 'mg1801/model/'];
 /** new Image() 로 2D 캔버스에 직접 그리는 그림(페이지 배경) */
 export const CANVAS_IMAGES = ['modeselect/backdrop_temp.png'];
 

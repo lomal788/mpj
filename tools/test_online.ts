@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import type { Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, type MgmDrawHost, type MgmPadSource, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
   applyOnlineExtra,
@@ -47,6 +48,7 @@ const read = <T>(p: string): T => JSON.parse(readFileSync(join(WEB, 'assets', p)
 const part = read<MgmSpecPart & OnlineExtra>('online/online.json');
 let spec = mergeSpec(read<MgmSpec>('mgmcommon/spec.json'), part);
 spec = mergeSpec(spec, read<MgmSpecPart>('mgm01/faces.json'));
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
 applyOnlineExtra(spec, part);
 const all = spec as unknown as Spec;
 const host: MgmDrawHost = { all, spec, r2d: null as unknown as Render2D, layout: (n) => new LayoutInst(n, spec.layouts[n], all), draw: () => {} };

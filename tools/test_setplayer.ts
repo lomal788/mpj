@@ -10,6 +10,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, PAD, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
   ALL_WINS,
@@ -360,6 +361,8 @@ console.log('9. 실제 명세: 경로·태그·페인·라벨');
 {
   const spec = JSON.parse(readFileSync(join(WEB, 'assets/mgmcommon/spec.json'), 'utf8')) as MgmSpec;
   const part = JSON.parse(readFileSync(join(WEB, 'assets/setplayer/setplayer.json'), 'utf8')) as MgmSpecPart & { texts: Record<string, string>; sounds: Record<string, unknown> };
+  await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
+  await resolveFontsFromDisk(part.fonts as Record<string, unknown> | undefined, join(WEB, 'assets/mgmcommon'));
   const all = mergeSpec(spec, part) as unknown as Spec;
   const texts = { ...spec.texts, ...part.texts };
   const sounds = { ...spec.sounds, ...part.sounds };

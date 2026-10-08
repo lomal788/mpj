@@ -1,11 +1,11 @@
-"""캐릭터 선택 화면 카드용 캐릭터 glb — tools/character_glb.py 변환(출력 폴더만 extracted/converted/charsel 로 따로) → 용량 정리 → web/assets/charselect/chara.
+"""캐릭터 선택 화면 카드용 캐릭터 glb — tools/character_glb.py 변환(출력 폴더만 extracted/converted/charsel 로 따로) → 용량 정리 → 공용 web/assets/chara
+(chara_shared.py: 모델 glb·모션 glb·motions.json·tex, 설계 docs/engine/chara_assets.md). 반환 경로는 spec_dir(명세 폴더) 기준 상대 경로.
 
-charsel_web_assets.py 가 부른다. 클립 = 카드 뷰가 등록하는 co_idle00, co_chr_idle00(pc07·pc13 만 있음), co_chr_slct00a, co_chr_slct00b
+charsel_web_assets.py·plaza_player_assets.py 가 부른다. 클립 = 카드 뷰가 등록하는 co_idle00, co_chr_idle00(pc07·pc13 만 있음), co_chr_slct00a, co_chr_slct00b
 [판독 main FUN_7100340180] + 그 모션들의 blink 묶음. 정리 규칙(정점 속성·상수 채널·텍스처 공유·mpjUv)은 mg1801_web_charas.py 와 같다.
 다른 점(docs/shell/charselect.md 12.2): 눈알 표시 정점색 _C1(r = 눈 0, b = 눈 1)과 눈 국소 좌표 TEXCOORD_2(눈꺼풀 셰이더 그래프용)를 남긴다.
 reuse=True 면 extracted/converted/charsel/<key> 의 기존 변환(클립이 같을 때)을 다시 쓴다.
 """
-import hashlib
 import json
 
 import numpy as np
@@ -17,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import character_glb  # noqa: E402
+import chara_shared as cs  # noqa: E402
 import mg1801_web_charas as mwc  # noqa: E402
 
 SRC = ROOT / "extracted" / "converted" / "charsel"
@@ -93,7 +94,7 @@ def eye_info(js, rest, src, alb, aw, ah, mot, uvso=None):
     return out
 
 
-def convert(key, clips, dst_root, reuse=False):
+def convert(key, clips, spec_dir, reuse=False):
     character_glb.OUT = str(SRC)
     meta_p = SRC / key / "meta.json"
     have = set()
@@ -126,39 +127,17 @@ def convert(key, clips, dst_root, reuse=False):
     body_fr = next((m.get("extras", {}).get("fres", {}) for m in js["materials"] if m["name"] == "body_m"), {})
     body = body_rule(key, body_fr)
     eyes = eye_info(js, rest, src, alb, aw, ah, mot, (body["uv"]["s"], body["uv"]["o"]) if body else None)
-    drop = mwc.DROP_ATTR
-    mwc.DROP_ATTR = drop - KEEP_ATTR
-    try:
-        js, rest, stats = mwc.slim(js, rest, set(keep) | {c + "_shape" for c in keep}, uv_rule)
-    finally:
-        mwc.DROP_ATTR = drop
     eye_mat, eye = mwc.eye_png(js)
-    pngs = [im["uri"].split("/")[-1] for im in js.get("images", [])]
-    if eye and eye not in pngs:
-        pngs.append(eye)
-    if "lid" in eyes and eyes["lid"]["png"] not in pngs:
-        pngs.append(eyes["lid"]["png"])
-    tex_root = dst_root / "tex"
-    tex_root.mkdir(parents=True, exist_ok=True)
-    tex_map = {}
-    for pn in pngs:
-        b = (src / "tex" / pn).read_bytes()
-        h = hashlib.sha1(b).hexdigest()[:12]
-        name = f"{Path(pn).stem}_{h}.png"
-        if not (tex_root / name).exists():
-            (tex_root / name).write_bytes(b)
-        tex_map[pn] = "tex/" + name
-    for im in js.get("images", []):
-        im["uri"] = "../" + tex_map[im["uri"].split("/")[-1]]
-    out = dst_root / key
-    out.mkdir(parents=True, exist_ok=True)
-    mwc.write_glb(out / glb_name, js, rest)
-    (out / "motions.json").write_text(json.dumps(mwc.compact_motions(mot, keep), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    lid_png = eyes["lid"]["png"] if "lid" in eyes else None
+    model, tex_map = cs.write_model(key, glb_name, js, rest, src / "tex", uv_rule, [eye, lid_png])
+    anims = cs.write_motions(key, js, rest, keep)
+    motions = cs.merge_motions(key, mwc.compact_motions(mot, keep))
     cd = next(c for c in json.loads(CHARLIST.read_text(encoding="utf-8-sig"))["PlayerCharacterData"] if c["Number"] == int(key[2:]))
     clip_info = {c["name"]: {"frames": c["frames"], "loop": c["loop"]} for c in meta["clipTable"] if not c["name"].endswith("_shape")}
-    print("%s glb %d B, clips %s, dropCh %d, tex %s" % (key, (out / glb_name).stat().st_size, clip_info, stats["droppedChannels"], pngs))
-    return {"glb": f"chara/{key}/{glb_name}", "motions": f"chara/{key}/motions.json", "clips": clip_info,
-            "eye": {"tex": "chara/" + tex_map[eye] if eye else None, "material": eye_mat,
+    print("%s model %d B, motions %s, tex %s" % (key, (cs.CHARA / model).stat().st_size, [Path(a).stem for a in anims], sorted(tex_map)))
+    r = lambda p: cs.rel(spec_dir, p)  # noqa: E731
+    return {"glb": r(model), "motions": r(motions), "anims": [r(a) for a in anims], "clips": clip_info,
+            "eye": {"tex": r(tex_map[eye]) if eye else None, "material": eye_mat,
                     "params": [cd["eye0_shaderparam"], cd["eye1_shaderparam"]], "albedoMask": eyes["albedoMask"],
-                    **({"lid": {**{k: v for k, v in eyes["lid"].items() if k != "png"}, "tex": "chara/" + tex_map[eyes["lid"]["png"]]}} if "lid" in eyes else {})},
+                    **({"lid": {**{k: v for k, v in eyes["lid"].items() if k != "png"}, "tex": r(tex_map[lid_png])}} if "lid" in eyes else {})},
             "albedo": [aw, ah], **({"body": body} if body else {})}

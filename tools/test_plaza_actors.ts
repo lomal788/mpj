@@ -354,7 +354,7 @@ console.log('5. NPC 셰이더 그래프(§6.11)');
     for (const [mat, r] of Object.entries(mats)) {
       for (const t of [r.arr?.tex, r.eye?.tex].filter((x): x is string => !!x)) {
         const files = c?.layers[t] ?? [];
-        ok(files.length > 0 && files.every((f) => existsSync(join(WORLD, 'chara', f.replace(/^\.\.\//, '')))), `${pc}/${mat} 텍스처 ${t} 실림(${files.length})`);
+        ok(files.length > 0 && files.every((f) => existsSync(join(WORLD, 'chara', f))), `${pc}/${mat} 텍스처 ${t} 실림(${files.length})`);
       }
     }
   }

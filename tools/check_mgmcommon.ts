@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { nodeMatrix, rectOf } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
 import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,7 +26,9 @@ const parts: Record<string, MgmSpecPart> = {
   mgm01: JSON.parse(readFileSync(join(A, 'mgm01.json'), 'utf8')) as MgmSpecPart,
   partyrule: JSON.parse(readFileSync(join(WEB, 'assets/partyrule/partyrule.json'), 'utf8')) as MgmSpecPart,
 };
+for (const s of [spec, ...Object.values(parts)]) await resolveFontsFromDisk(s.fonts as Record<string, unknown> | undefined, A);
 const merged = mergeSpec(mergeSpec(mergeSpec(spec, parts.mgmet), parts.mgm01), parts.partyrule);
+await resolveFontsFromDisk(merged.fonts as Record<string, unknown>, A);
 const NO_DUMP = (name: string): boolean => name.startsWith('mncom_') && name in parts.partyrule.layouts;
 let noDump = 0;
 
@@ -254,7 +257,7 @@ console.log('5. 글꼴·텍스처·소리');
   const need = new Set([...Object.values(spec.texts).join('').replace(TAG, '')].filter((c) => c !== '\r' && c !== '\n'));
   for (const fam of ['bqfont_small', 'bqfont_small_shadow', 'bqfont_middle', 'bqfont_middle_shadow']) {
     const f = spec.fonts[fam];
-    ok(!!f && existsSync(join(A, f.image)), `${fam} 아틀라스`);
+    ok(!!f && sheetFilesMissing(f).length === 0, `${fam} 공용 글꼴 시트`);
     const miss = [...need].filter((c) => !f.glyphs[c]);
     ok(miss.length <= 3, `${fam} 빠진 글자 ${miss.length} (${miss.join('')}) — 원본 글꼴에 없는 글자만`);
   }
@@ -276,7 +279,7 @@ console.log('5. 글꼴·텍스처·소리');
   const pr = parts.partyrule as MgmSpecPart & { texts: Record<string, string>; sounds: Record<string, { file: string; gain: number }>; missingTextures: string[] };
   const prNeed = new Set([...Object.values({ ...spec.texts, ...pr.texts }).join('').replace(TAG, '')].filter((c) => c !== '\r' && c !== '\n'));
   for (const [fam, f] of Object.entries(pr.fonts ?? {})) {
-    ok(existsSync(join(A, f.image)), `partyrule ${fam} 아틀라스`);
+    ok(sheetFilesMissing(f).length === 0, `partyrule ${fam} 공용 글꼴 시트`);
     const miss = [...prNeed].filter((c) => !f.glyphs[c]);
     ok(miss.length <= 8, `partyrule ${fam} 빠진 글자 ${miss.length} (${miss.join('')}) — 원본 글꼴에 없는 글자만`);
   }

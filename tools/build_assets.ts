@@ -17,7 +17,8 @@
  *   assets-dist/index.json          런타임 표 { v: 2, ktx2[], lossy[], flac[], names{압축본 이름 → 해시 이름} } (shell/stage3d/assetLoader.ts 가 읽음,
  *                                   형식: docs/engine/loader_manager.md §5.8.2)
  *   assets-dist/report.json         파일별 형식·크기·PSNR·GPU 추정, 폴더별 합
- *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과)
+ *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과). 텍스처는 경로만 바뀐 같은 내용(키 = 경로 뺀 내용·설정)이면 옛 결과를 복사한다
+ *                                   (캐릭터 공용 폴더 assets/chara/ 로 옮긴 것 — docs/engine/chara_assets.md)
  *   web/vendor/basis/               three 의 Basis 트랜스코더(js·wasm) 정적 복사 — 외부 CDN 금지
  */
 import crypto from 'node:crypto';
@@ -186,6 +187,21 @@ async function main(): Promise<void> {
     }
     return false;
   };
+  const byKey = new Map<string, Entry>();
+  for (const e of Object.values(prev.entries)) if (e.kind === 'tex' && !byKey.has(e.key) && Object.keys(e.outs).every((o) => fs.existsSync(path.join(DIST, o)))) byKey.set(e.key, e);
+  const stem = (r: string): string => r.replace(/\.[^./]+$/, '');
+  const moved = (rel: string, key: string): Entry | null => {
+    const e = force ? undefined : byKey.get(key);
+    if (!e) return null;
+    const outs: Record<string, number> = {};
+    for (const [o, n] of Object.entries(e.outs)) {
+      const to = stem(rel) + o.slice(stem(e.rel).length);
+      fs.mkdirSync(path.dirname(path.join(DIST, to)), { recursive: true });
+      fs.copyFileSync(path.join(DIST, o), path.join(DIST, to));
+      outs[to] = n;
+    }
+    return { rel, kind: e.kind, key, srcBytes: e.srcBytes, outs, br: e.br, tex: e.tex };
+  };
   const copyAs = (src: string, rel: string, key: string, kind: Kind): Entry => {
     const d = path.join(DIST, rel);
     fs.mkdirSync(path.dirname(d), { recursive: true });
@@ -213,6 +229,7 @@ async function main(): Promise<void> {
   let done = 0;
   let encoded = 0;
   let deduped = 0;
+  let movedN = 0;
   const same = new Map<string, Promise<{ r: TexResult; outRel: string }>>();
   let lastSave = performance.now();
   const texList = groups.tex;
@@ -230,8 +247,12 @@ async function main(): Promise<void> {
       return;
     }
     const old = reuse(rel, key);
+    const mv = old ? null : moved(rel, key);
     if (old) {
       state.entries[rel] = old;
+    } else if (mv) {
+      state.entries[rel] = mv;
+      movedN++;
     } else {
       const dupKey = `${hashOf(rel)}|${plan.cls}|${plan.srgb}|${plan.mips}`;
       const first = same.get(dupKey);
@@ -260,7 +281,7 @@ async function main(): Promise<void> {
       }
     }
     done++;
-    if (done % 50 === 0 || done === texList.length) console.log(`  텍스처 ${done}/${texList.length} (새로 ${encoded}, 같은 내용 복사 ${deduped}) ${((performance.now() - t0) / 1000).toFixed(0)} s`);
+    if (done % 50 === 0 || done === texList.length) console.log(`  텍스처 ${done}/${texList.length} (새로 ${encoded}, 같은 내용 복사 ${deduped}, 옮긴 경로 옛 결과 복사 ${movedN}) ${((performance.now() - t0) / 1000).toFixed(0)} s`);
   });
   const texOut = (rel: string): 'ktx2' | 'png' | null => {
     const e = state.entries[rel];

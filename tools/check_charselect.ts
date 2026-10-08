@@ -11,11 +11,13 @@ import { fileURLToPath } from 'node:url';
 import { nodeMatrix } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { resolveFontsFromDisk } from './fontSpecNode';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
 const DUMP = join(ROOT, 'extracted/converted/ui/bq_Parts');
 const spec = JSON.parse(readFileSync(join(WEB, 'assets/charselect/spec.json'), 'utf8')) as Spec;
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/charselect'));
 
 let fails = 0;
 let count = 0;
@@ -176,7 +178,7 @@ console.log('5b. 2차 데이터(docs 12): BGM·보이스·눈·컨트롤러 덮�
   ok(!!ov('x_icon_hard_01')?.z && near(ov('x_icon_hard_01')!.z![0], 90) && near(ov('x_icon_hard_01')!.t![1], -7), '카드 아이콘 크기 90·ty −7');
   const lamp = spec.layouts.sys_icon_hard_01.mats.find((m) => m.name === 'x_pict_lamp_00')!;
   ok(near(lamp.srt[0].t[1], 0.5), '램프 기본 SRT t.y 0.5(켜짐)');
-  const glb = readFileSync(join(WEB, 'assets/charselect/chara/pc12/pc12_dk.glb'));
+  const glb = readFileSync(join(WEB, 'assets/chara/pc12/pc12_dk.glb'));
   const js = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString('utf8')) as { meshes: { primitives: { attributes: Record<string, number> }[] }[] };
   ok('_C1' in js.meshes[0].primitives[0].attributes && 'TEXCOORD_2' in js.meshes[0].primitives[0].attributes, '동키콩 glb 정점색 _C1·TEXCOORD_2');
 }

@@ -1,10 +1,10 @@
 import { createRequire as __cr } from 'module'; const require = __cr(import.meta.url);
 
-// tools/character_verify/web_same.ts
+// tools/analysis/character_verify/web_same.ts
 import fs from "node:fs";
 import path from "node:path";
 
-// web/node_modules/three/build/three.core.js
+// node_modules/three/build/three.core.js
 var REVISION = "180";
 var FrontSide = 0;
 var BackSide = 1;
@@ -17615,7 +17615,7 @@ if (typeof window !== "undefined") {
   }
 }
 
-// web/node_modules/three/build/three.module.js
+// node_modules/three/build/three.module.js
 var alphahash_fragment = "#ifdef USE_ALPHAHASH\n	if ( diffuseColor.a < getAlphaHashThreshold( vPosition ) ) discard;\n#endif";
 var alphahash_pars_fragment = "#ifdef USE_ALPHAHASH\n	const float ALPHA_HASH_SCALE = 0.05;\n	float hash2D( vec2 value ) {\n		return fract( 1.0e4 * sin( 17.0 * value.x + 0.1 * value.y ) * ( 0.1 + abs( sin( 13.0 * value.y + value.x ) ) ) );\n	}\n	float hash3D( vec3 value ) {\n		return hash2D( vec2( hash2D( value.xy ), value.z ) );\n	}\n	float getAlphaHashThreshold( vec3 position ) {\n		float maxDeriv = max(\n			length( dFdx( position.xyz ) ),\n			length( dFdy( position.xyz ) )\n		);\n		float pixScale = 1.0 / ( ALPHA_HASH_SCALE * maxDeriv );\n		vec2 pixScales = vec2(\n			exp2( floor( log2( pixScale ) ) ),\n			exp2( ceil( log2( pixScale ) ) )\n		);\n		vec2 alpha = vec2(\n			hash3D( floor( pixScales.x * position.xyz ) ),\n			hash3D( floor( pixScales.y * position.xyz ) )\n		);\n		float lerpFactor = fract( log2( pixScale ) );\n		float x = ( 1.0 - lerpFactor ) * alpha.x + lerpFactor * alpha.y;\n		float a = min( lerpFactor, 1.0 - lerpFactor );\n		vec3 cases = vec3(\n			x * x / ( 2.0 * a * ( 1.0 - a ) ),\n			( x - 0.5 * a ) / ( 1.0 - a ),\n			1.0 - ( ( 1.0 - x ) * ( 1.0 - x ) / ( 2.0 * a * ( 1.0 - a ) ) )\n		);\n		float threshold = ( x < ( 1.0 - a ) )\n			? ( ( x < a ) ? cases.x : cases.y )\n			: cases.z;\n		return clamp( threshold , 1.0e-6, 1.0 );\n	}\n#endif";
 var alphamap_fragment = "#ifdef USE_ALPHAMAP\n	diffuseColor.a *= texture2D( alphaMap, vAlphaMapUv ).g;\n#endif";
@@ -18367,7 +18367,7 @@ var reversedFuncs = {
   [GreaterEqualDepth]: LessEqualDepth
 };
 
-// web/node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
+// node_modules/three/examples/jsm/utils/BufferGeometryUtils.js
 function toTrianglesDrawMode(geometry, drawMode) {
   if (drawMode === TrianglesDrawMode) {
     console.warn("THREE.BufferGeometryUtils.toTrianglesDrawMode(): Geometry already defined as triangles.");
@@ -18423,7 +18423,7 @@ function toTrianglesDrawMode(geometry, drawMode) {
   }
 }
 
-// web/node_modules/three/examples/jsm/loaders/GLTFLoader.js
+// node_modules/three/examples/jsm/loaders/GLTFLoader.js
 var GLTFLoader = class extends Loader {
   /**
    * Constructs a new glTF loader.
@@ -20990,8 +20990,8 @@ function addPrimitiveAttributes(geometry, primitiveDef, parser) {
   });
 }
 
-// tools/character_verify/web_same.ts
-var ROOT = path.resolve(path.dirname(process.argv[1]), "../..");
+// tools/analysis/character_verify/web_same.ts
+var ROOT = path.resolve(path.dirname(process.argv[1]), "../../../..");
 var index = JSON.parse(fs.readFileSync(path.join(ROOT, "web/assets/mg1801/chara/index.json"), "utf8"));
 var keys = process.argv.slice(2);
 if (!keys.length || keys[0] === "all") keys = Object.keys(index);
@@ -21015,7 +21015,8 @@ var bad = 0;
 for (const key of keys) {
   const e = index[key];
   const web = await parse(fs.readFileSync(path.join(ROOT, "web/assets/mg1801/chara", e.glb)));
-  if (e.resultGlb) web.animations.push(...(await parse(fs.readFileSync(path.join(ROOT, "web/assets/mg1801/chara", e.resultGlb)))).animations);
+  for (const f of [...e.anims ?? [], ...e.resultAnims ?? [], ...e.resultGlb ? [e.resultGlb] : []])
+    web.animations.push(...(await parse(fs.readFileSync(path.join(ROOT, "web/assets/mg1801/chara", f)))).animations);
   const meta = JSON.parse(fs.readFileSync(path.join(ROOT, "extracted/converted/character", key, "meta.json"), "utf8"));
   const src = await parse(fs.readFileSync(path.join(ROOT, "extracted/converted/character", key, meta.glb)));
   const mixers = [new AnimationMixer(web.scene), new AnimationMixer(src.scene)];

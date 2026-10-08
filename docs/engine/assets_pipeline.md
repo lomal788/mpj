@@ -36,7 +36,7 @@ web/assets-dist/       배포: 같은 경로 구조. png→.ktx2(또는 png 그�
 web/vendor/basis/      three r180 의 basis_transcoder.js·wasm 복사(외부 CDN 안 씀)
 ```
 
-- **증분**: 소스 내용 sha1·분류·인코더 설정(`TEX_RECIPE`·`MESH_RECIPE`·`AUDIO_RECIPE`)이 같고 산출물이 있으면 건너뛴다. glb 는 참조 텍스처의 결과(ktx2/png)도 키에 넣는다(텍스처 형식이 바뀌면 glb 의 이미지 URI 를 다시 씀). 내용이 같은 PNG(캐릭터 텍스처는 charselect·plaza/player·mg1801/chara 에 같은 것이 있음)는 한 번만 인코딩해 복사한다. 30 s 마다 캐시를 저장해 중간에 끊겨도 이어서 한다.
+- **증분**: 소스 내용 sha1·분류·인코더 설정(`TEX_RECIPE`·`MESH_RECIPE`·`AUDIO_RECIPE`)이 같고 산출물이 있으면 건너뛴다. glb 는 참조 텍스처의 결과(ktx2/png)도 키에 넣는다(텍스처 형식이 바뀌면 glb 의 이미지 URI 를 다시 씀). 내용이 같은 PNG 는 한 번만 인코딩해 복사한다. 경로만 바뀐 같은 텍스처(분류·설정까지 같은 키)는 옛 결과를 복사한다(캐릭터 공용 폴더 `chara/` 로 옮길 때 162장 재인코딩 0 — [chara_assets.md](chara_assets.md)). 30 s 마다 캐시를 저장해 중간에 끊겨도 이어서 한다.
 - `--only plaza/world/` 처럼 일부만 다시 만들 수 있다(나머지는 이전 결과 유지). 변환기가 소스를 다시 쓰면 `npm run assets` 한 번이면 바뀐 것만 다시 압축된다.
 - 소스에서 사라진 파일의 옛 산출물은 지우지 않고 개수만 알린다(`--prune` 을 주면 지움 — 사용자가 직접).
 - 배포 빌드(`npm run build`)는 `assets-dist/`(캐시·보고서 제외)와 `vendor/` 를 `dist/` 에 싣고, 압축본이 소스보다 오래됐으면 경고한다. `npx tsx tools/build.ts --src-assets` 는 소스도 싣고 기본 모드를 src 로 한다(개발 페이지 배포용).
@@ -61,13 +61,13 @@ web/vendor/basis/      three r180 의 basis_transcoder.js·wasm 복사(외부 CD
 
 | 종류(`tools/assets_tex.ts classify`) | 판정 | 형식(시도 순) | 밉 | 색공간(인코더) |
 |---|---|---|---|---|
-| keep | 글꼴 아틀라스(`font/`), LUT·램프·SSS 확산표(`_lut`·`_ramp`·`_diff`), 큐브맵 면, 가로·세로가 4의 배수가 아님, 2D 캔버스로 직접 그리는 배경(`modeselect/backdrop_temp.png`) | PNG 그대로 | 소스와 같음 | — |
+| keep | 글꼴 원본 시트(`font/<FFNT>/<n>.png`, 회색조 → GPU R8, [font_assets.md](font_assets.md)), LUT·램프·SSS 확산표(`_lut`·`_ramp`·`_diff`), 큐브맵 면, 가로·세로가 4의 배수가 아님, 2D 캔버스로 직접 그리는 배경(`modeselect/backdrop_temp.png`) | PNG 그대로 | 소스와 같음 | — |
 | ui | 3D 폴더 밖 전부(2D 레이아웃 render2d·lyt) | ETC1S(≥ 45 dB) → UASTC RDO 0.5(≥ 42) → UASTC(≥ 40) → 그래도 미달이면 PNG | 없음(소스도 없음) | 지각(sRGB) |
 | color | 3D, sRGB(매니페스트 `srgb`, glb 색 슬롯, 이름 `_alb/_emi`) | ETC1S(Y ≥ 40·RGB ≥ 32·A ≥ 36) → UASTC RDO 1(RGB ≥ 38) → UASTC | 있음(box, sRGB 공간) | 지각 |
 | data | 3D, 선형(거칠기·금속·AO·마스크·높이 등) | ETC1S(채널 최소 ≥ 38) → UASTC RDO 1(≥ 38) → UASTC | 있음(box, 선형) | 선형 |
 | normal | glb `normalTexture`, 이름 `_nml/_nrm` | UASTC RDO 1(≥ 36) → UASTC | 있음(box, 선형, 재정규화 안 함 = three `generateMipmap` 과 같음) | 선형 |
 
-- 3D 폴더 = `plaza/world/`·`plaza/player/`·`charselect/chara/`·`mg1801/{tex,chara,effect,npc,model}/`.
+- 3D 폴더 = `chara/`(캐릭터·NPC 공용, [chara_assets.md](chara_assets.md))·`plaza/world/`·`mg1801/{tex,effect,model}/`. 옛 캐릭터 폴더(`plaza/player/`·`charselect/chara/`·`mg1801/{chara,npc}/`)도 목록에 남겨 둔다(지금은 텍스처 없음).
 - PSNR 은 basisu `-stats` 의 0번 밉, 소스 PNG 대비 8비트 채널별 값. "Y" = Rec.709 휘도.
 - **작은 텍스처**: KTX2 가 PNG 보다 크고 256×256 이하면 PNG 를 쓴다(내려받기·메모리 둘 다 이득이 없음).
 - HDR(BC6H 를 푼 `.hdr`: IBL rad/irr 큐브, 라이트맵 일부)은 basisu 1.16 이 UASTC HDR 을 못 만들고 크기도 6 MB 뿐이라 **그대로**(서버 압축). RGBE 는 brotli 로 잘 준다.

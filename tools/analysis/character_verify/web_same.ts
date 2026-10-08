@@ -2,6 +2,7 @@
 // (tools/character_glb.py): every bone world matrix and morph weight must match at every integer frame of every kept clip,
 // when clips are played one after another on the same mixer (as character.ts does: stop old action, play new one).
 // Result clips come from <model>_result.glb (clip-only glb) bound to the main model by node names.
+// Shared assets (docs/engine/chara_assets.md): glb = model without clips, anims/resultAnims = one clip-only glb per motion, bound the same way.
 // usage: node tools/character_verify/run.mjs tools/character_verify/web_same.ts [pc01 pc02 ... | all]
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,7 +36,8 @@ let bad = 0;
 for (const key of keys) {
   const e = index[key];
   const web = await parse(fs.readFileSync(path.join(ROOT, 'web/assets/mg1801/chara', e.glb)));
-  if (e.resultGlb) web.animations.push(...(await parse(fs.readFileSync(path.join(ROOT, 'web/assets/mg1801/chara', e.resultGlb)))).animations);
+  for (const f of [...(e.anims ?? []), ...(e.resultAnims ?? []), ...(e.resultGlb ? [e.resultGlb] : [])])
+    web.animations.push(...(await parse(fs.readFileSync(path.join(ROOT, 'web/assets/mg1801/chara', f)))).animations);
   const meta = JSON.parse(fs.readFileSync(path.join(ROOT, 'extracted/converted/character', key, 'meta.json'), 'utf8'));
   const src = await parse(fs.readFileSync(path.join(ROOT, 'extracted/converted/character', key, meta.glb)));
   const mixers = [new THREE.AnimationMixer(web.scene), new THREE.AnimationMixer(src.scene)];

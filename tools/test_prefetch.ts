@@ -252,15 +252,15 @@ for (const b of ['setplayer', 'charselect', 'charselect:sound', 'char:first', 'p
   const p0 = bundles.get('plaza:p0')!;
   eq(p0.filter(([, k]) => k === 'gltf').length, 22, '광장 P0 모델 22(§12.2)');
   const cs = readJson('charselect/spec.json') as Spec;
-  eq(bundles.get('char:first')![0], ['charselect/chara/pc01/pc01_mario.glb', 'gltf'], '1P 처음 커서 = 마리오 glb');
+  eq(bundles.get('char:first')![0], ['chara/pc01/pc01_mario.glb', 'gltf'], '1P 처음 커서 = 마리오 glb');
   ok(cs.chars.length === 22, '캐릭터 22');
 }
 
-// 캐릭터 한 명 = glb + motions + 눈 + glb 안 텍스처(압축본)
+// 캐릭터 한 명 = 모델 glb + 모션 glb + motions + 눈 + glb 안 텍스처(압축본)
 const csSpec = readJson('charselect/spec.json') as Spec;
 const charKeys = (i: number): string[] => {
   const c = csSpec.chars[i];
-  const f = [`charselect/${c.glb}`, `charselect/${c.motions}`, c.eye?.tex ? `charselect/${c.eye.tex}` : '', c.eye?.lid ? `charselect/${c.eye.lid.tex}` : ''].filter(Boolean).map(normPath);
+  const f = [`charselect/${c.glb}`, ...(c.anims ?? []).map((a) => `charselect/${a}`), `charselect/${c.motions}`, c.eye?.tex ? `charselect/${c.eye.tex}` : '', c.eye?.lid ? `charselect/${c.eye.lid.tex}` : ''].filter(Boolean).map(normPath);
   return [...new Set([...f, ...glbImages(f[0])])];
 };
 const LOCKED = new Set([12, 21]);
@@ -501,6 +501,72 @@ console.log('7. URL → 키(상대 URL 은 페이지 기준 — assets/assets �
   ok(assetKeyFrom('./assets/plaza/world/x.glb', page, root) === 'plaza/world/x.glb', './assets/… → 키');
   ok(assetKeyFrom('http://localhost:51811/assets/a/b.3f2c9a1b.ktx2', page, root) === 'a/b.png', '해시·ktx2 → 소스 png 키');
   ok(assetKeyFrom('bundle/main.js', page, root) === null, '루트 밖 → null');
+}
+
+console.log('8. 공용 캐릭터 에셋(docs/engine/chara_assets.md) — 세 화면이 같은 키, 명세가 가리키는 파일 전부 존재(소스·압축본)');
+{
+  const page = 'http://localhost:51811/index.html?plaza=1';
+  const root = 'http://localhost:51811/assets/';
+  const key = (u: string): string | null => assetKeyFrom(u, page, root);
+  const names = (JSON.parse(readFileSync(`${WEB}/assets-dist/index.json`, 'utf8')) as { names: Record<string, string> }).names;
+  type C = { pc: string; glb: string | null; motions?: string; anims?: string[]; eye?: { tex: string | null; lid?: { tex: string } }; layers?: Record<string, string[]>; attach?: { glb: string } | null };
+  type M = { glb: string; motions: string; anims?: string[]; resultAnims?: string[]; eyeTex: string | null; color?: { albedo: string } };
+  const cs = readJson('charselect/spec.json') as { chars: C[] };
+  const pp = readJson('plaza/player/spec.json') as { chars: C[] };
+  const npc = readJson('plaza/world/chara/spec.json') as { chars: C[] };
+  const mi = readJson('mg1801/chara/index.json') as Record<string, M>;
+  const csUrl = (p: string): string => `assets/charselect/${p}`;
+  const plUrl = (p: string): string => `assets/plaza/player/${p}`;
+  const npcUrl = (p: string): string => `assets/plaza/world/chara/${p}`;
+  const mgUrl = (p: string): string => new URL(`assets/mg1801/chara/${p}`, page).href;
+  const all = new Set<string>();
+  const add = (k: string | null): string | null => {
+    if (k) {
+      all.add(k);
+      if (k.endsWith('.glb')) for (const t of glbImages(k)) all.add(t);
+    }
+    return k;
+  };
+  const charFiles = (u: (p: string) => string, c: C): void => {
+    for (const p of [c.glb!, c.motions ?? '', ...(c.anims ?? []), c.eye?.tex ?? '', c.eye?.lid?.tex ?? '', ...Object.values(c.layers ?? {}).flat(), c.attach?.glb ?? ''].filter(Boolean)) add(key(u(p)));
+  };
+  let sameModel = 0;
+  let sameEye = 0;
+  let sameIdle = 0;
+  let sameTex = 0;
+  for (const c of cs.chars) {
+    const p = pp.chars.find((x) => x.pc === c.pc)!;
+    const m = mi[c.pc];
+    charFiles(csUrl, c);
+    charFiles(plUrl, p);
+    for (const f of [m.glb, m.motions, ...(m.anims ?? []), ...(m.resultAnims ?? []), m.eyeTex ?? ''].filter(Boolean)) add(key(mgUrl(f)));
+    const models = [key(csUrl(c.glb!)), key(plUrl(p.glb!)), key(mgUrl(m.glb))];
+    if (models.every((k) => k === `chara/${c.pc}/${posix.basename(c.glb!)}`)) sameModel++;
+    const eyes = [c.eye?.tex ? key(csUrl(c.eye.tex)) : null, p.eye?.tex ? key(plUrl(p.eye.tex)) : null, m.eyeTex ? key(mgUrl(m.eyeTex)) : null];
+    if (new Set(eyes).size === 1 && (eyes[0] === null || eyes[0].startsWith('chara/tex/'))) sameEye++;
+    const idle = (u: (q: string) => string, list: string[] | undefined): string | null => {
+      const f = list?.find((x) => x.endsWith('/co_idle00.glb'));
+      return f ? key(u(f)) : null;
+    };
+    const idles = [idle(csUrl, c.anims), idle(plUrl, p.anims), idle(mgUrl, m.anims)];
+    if (idles[0] && new Set(idles).size === 1) sameIdle++;
+    const tex = glbImages(models[0]!);
+    if (tex.length && tex.every((t) => t.startsWith('chara/tex/'))) sameTex++;
+  }
+  eq(sameModel, 22, '모델 glb 키 = chara/pcNN/… (캐릭터 선택·광장·mg1801 같음)');
+  eq(sameEye, 22, '눈 텍스처 키 같음(세 화면)');
+  eq(sameIdle, 22, '대기 모션 co_idle00 glb 키 같음(세 화면)');
+  eq(sameTex, 22, '모델 텍스처 = chara/tex/…(모델 하나라 세 화면 같은 키)');
+  for (const c of npc.chars) charFiles(npcUrl, c);
+  add(key(mgUrl(mi.npc002.glb)));
+  eq(key(mgUrl(mi.npc002.glb)), key(npcUrl(npc.chars.find((x) => x.pc === 'npc002')!.glb!)), 'npc002 모델 광장·mg1801 같은 키');
+  for (const f of [mi.npc002.motions, ...(mi.npc002.anims ?? []), mi.npc002.color?.albedo ?? ''].filter(Boolean)) add(key(mgUrl(f)));
+  const keys = [...all];
+  const srcMiss = keys.filter((k) => size(k) < 0 || !k.startsWith('chara/'));
+  const distMiss = keys.filter((k) => !names[KTX.has(k) ? k.replace(/\.png$/i, '.ktx2') : k]);
+  eq(srcMiss, [], `명세 파일 ${keys.length}개 모두 chara/ 안에 있음(404 0)`);
+  eq(distMiss, [], '압축본 해시 표(index.json names)에 모두 있음');
+  console.log(`   공용 키 ${keys.length}개(모델·모션·motions·텍스처·소품)`);
 }
 
 console.log(fails ? `실패 ${fails} / ${count}` : `통과 ${count}/${count}`);

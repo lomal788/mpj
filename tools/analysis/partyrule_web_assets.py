@@ -1,4 +1,4 @@
-"""마리오 파티(보드) 파티 규칙 화면(web/script/shell/partyrule) 에셋 → web/assets/partyrule/partyrule.json + tex/ + font/ + sound/.
+"""마리오 파티(보드) 파티 규칙 화면(web/script/shell/partyrule) 에셋 → web/assets/partyrule/partyrule.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/partyrule_web_assets.py [임시 폴더]
 
@@ -27,6 +27,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import graphics_bntx  # noqa: E402
+import font_web_assets as fw  # noqa: E402
 import mgmcommon_web_assets as mc  # noqa: E402
 import ui_sarc  # noqa: E402
 
@@ -90,7 +91,7 @@ def split_origin_fix(b):
 def main():
     tmp = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(tempfile.mkdtemp())
     tmp.mkdir(parents=True, exist_ok=True)
-    for sub in ("font", "sound"):
+    for sub in ("sound",):
         (DST / sub).mkdir(parents=True, exist_ok=True)
     files = {k: ui_sarc.read_files(str(p)) for k, p in LYT.items()}
     parts = ui_sarc.read_files(str(mc.cw.PARTS))
@@ -149,11 +150,8 @@ def main():
         if not cpx.get(fam):
             print("  글꼴 없음", fam)
             continue
-        img, meta = mc.cw.build_atlas(fam, cpx[fam], text_set)
-        img.save(DST / meta["image"], optimize=True)
-        meta["image"] = "../partyrule/" + meta["image"]
-        fonts[fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        fonts[fam] = fw.font_ref(fam, text_set)
+        print(fam, len(fonts[fam]["chars"]), "chars")
 
     from sound_fsar import Fsar
     fs = Fsar(mc.FSPJ)

@@ -1,4 +1,4 @@
-"""광장 대기실 카드 뷰어(bq::ComUiCardViewer) 에셋 → web/assets/plaza/ui/plaza_card.json + tex/pc/ + font/.
+"""광장 대기실 카드 뷰어(bq::ComUiCardViewer) 에셋 → web/assets/plaza/ui/plaza_card.json + tex/pc/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/plaza_card_assets.py
 
@@ -16,6 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import font_web_assets as fw  # noqa: E402
 import mgmcommon_web_assets as mc  # noqa: E402
 import online_web_assets as ow  # noqa: E402
 import partyrule_web_assets as pr  # noqa: E402
@@ -30,7 +31,6 @@ LABELS = {"mn03_card_ui_achieve", "mn03_card_ui_name", "mn03_card_ui_time", "mn0
 
 
 def main():
-    (DST / "font").mkdir(parents=True, exist_ok=True)
     parts = ui_sarc.read_files(str(mc.cw.PARTS))
     common = json.loads((mc.DST / "spec.json").read_text(encoding="utf-8"))
     online = json.loads((ow.DST / "online.json").read_text(encoding="utf-8"))
@@ -91,11 +91,8 @@ def main():
         if not cpx.get(fam):
             print("  글꼴 없음", fam)
             continue
-        img, meta = mc.cw.build_atlas(fam, cpx[fam], text_set)
-        img.save(DST / meta["image"].replace("font/", "font/card_"), optimize=True)
-        meta["image"] = "../plaza/ui/" + meta["image"].replace("font/", "font/card_")
-        fonts[fam] = meta
-        print(fam, len(meta["glyphs"]), "glyphs", img.size)
+        fonts[fam] = fw.font_ref(fam, text_set)
+        print(fam, len(fonts[fam]["chars"]), "chars")
 
     part = {"version": 1, "screen": [1920, 1080],
             "source": "Super Mario Party Jamboree US v0 — web/tools/analysis/plaza_card_assets.py, 명세 web/docs/shell/online.md 5.8",

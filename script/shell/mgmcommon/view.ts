@@ -2,6 +2,7 @@
  * 명세 읽기·합치기와 2D 그리기 묶음 — 공용 명세(spec.json) + 모드 lyt 명세(mgmet.json·mgm01.json)를 합친다(원본 (자기 lyt, mgm00 lyt) 묶음, mgm_common.md 3.2·9.6).
  * 그리기는 charselect render2d 그대로. 나눈 창 정점색·흐림 창(BexZabutonBlurred) 처리는 modeselect 화면과 같은 규칙(modeselect.md 6.1·6.2) —
  * 9.1 import 경계상 modeselect 를 가져올 수 없어 여기에 같은 규칙을 둔다.
+ * 글꼴: 명세 fonts = 공용 글꼴 참조 {dir, chars}, 같은 글꼴이면 chars 를 합친다(docs/engine/font_assets.md §5.3).
  */
 import * as THREE from 'three';
 import { nodeMatrix, Render2D } from '../charselect/render2d';
@@ -20,8 +21,18 @@ export function mergeSpec(base: MgmSpec, part: MgmSpecPart): MgmSpec {
     split: { ...base.split, ...part.split },
     zabuton: { ...base.zabuton, ...part.zabuton },
     lineSpace: { ...base.lineSpace, ...part.lineSpace },
-    fonts: { ...base.fonts, ...(part.fonts ?? {}) },
+    fonts: mergeFonts(base.fonts, part.fonts),
   };
+}
+
+function mergeFonts(base: MgmSpec['fonts'], part: MgmSpecPart['fonts']): MgmSpec['fonts'] {
+  const out = { ...base };
+  for (const [k, f] of Object.entries(part ?? {})) {
+    const a = out[k] as (typeof f & { dir?: string; chars?: string }) | undefined;
+    const b = f as typeof f & { dir?: string; chars?: string };
+    out[k] = a && a.dir === b.dir ? ({ ...b, chars: [...new Set((a.chars ?? '') + (b.chars ?? ''))].join('') } as typeof f) : f;
+  }
+  return out;
 }
 
 export async function loadMgmSpec(url: (p: string) => string, parts: readonly string[] = []): Promise<MgmSpec> {

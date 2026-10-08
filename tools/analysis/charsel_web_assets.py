@@ -10,7 +10,8 @@
     mat = {black, white (RGBA 0..255), tex [{name, wu, wv}], srt [{t, r, s}]}
     track = {node | mat, prop ('tx','ty','rz','sx','sy','w','h','a','vc<k>','vis','blk<k>','wht<k>','srt<i>.<k>'), step, keys [[f, v, 기울기]]}
   textures{원본 이름: 'tex/…png'}  — 픽셀 그대로(ui_render.LazyTextures, compSel 적용)
-  fonts{패밀리: 글리프 아틀라스 메트릭}, texts{라벨: koKR}, chars[], sounds{}, env{}
+  fonts{패밀리: 공용 글꼴 참조 {dir, chars}(font_web_assets.font_ref, docs/engine/font_assets.md)}, texts{라벨: koKR}, chars[], sounds{}, env{}
+  chars[] 의 glb(모델)·motions·anims[](모션 glb)·eye.tex = 공용 web/assets/chara/ 를 이 폴더 기준 ../chara/… 로 가리킨다(charsel_chara.py, docs/engine/chara_assets.md)
 """
 import json
 import shutil
@@ -272,46 +273,6 @@ def decode_sheets_any(b, f):
     return out
 
 
-def build_atlas(family, fonts, text):
-    """fcpx 목록 순서(usen → 본 → extension)로 글자를 가진 첫 폰트의 셀 [추정: 복합 폰트 대체 순서]. 셀 픽셀 그대로"""
-    loaded = []
-    for fn in fonts:
-        p = FONT_DIR / fn.replace(".bffnt", ".ffnt")
-        b = p.read_bytes()
-        f, cmap, widths = ui_font.parse_ffnt(b)
-        loaded.append((p.stem, f, cmap, widths, b))
-    main = loaded[1] if len(loaded) > 1 else loaded[0]
-    chars = sorted(set(text) - {"\n", "\r"})
-    decoded = {}
-    cw = max(x[1]["tglp"]["cellW"] for x in loaded)
-    ch = max(x[1]["tglp"]["cellH"] for x in loaded)
-    cols = 16
-    rows = (len(chars) + cols - 1) // cols
-    px_, py_ = cw + 2, ch + 2
-    atlas = Image.new("RGBA", (cols * px_, max(1, rows) * py_), (255, 255, 255, 0))
-    glyphs = {}
-    for i, c in enumerate(chars):
-        for stem, f, cmap, widths, b in loaded:
-            gi = cmap.get(ord(c))
-            if gi is None:
-                continue
-            if stem not in decoded:
-                decoded[stem] = decode_sheets_any(b, f)
-            left, gw, adv = widths.get(gi, tuple(f["finf"]["defaultWidth"]))
-            sh, gx, gy = ui_font.glyph_cell(f, gi)
-            t = f["tglp"]
-            cell = decoded[stem][sh].crop((gx, gy, gx + t["cellW"], gy + t["cellH"]))
-            ax, ay = (i % cols) * px_ + 1, (i // cols) * py_ + 1
-            atlas.paste(cell, (ax, ay))
-            glyphs[c] = {"x": ax, "y": ay, "w": gw, "h": t["cellH"], "left": left, "adv": adv, "baseline": t["baseline"],
-                         "color": stem.endswith("extension") or stem.endswith("extension_shadow")}
-            break
-        else:
-            print(f"  {family}: 글자 없음 {c!r} U+{ord(c):04X}")
-    fi = main[1]["finf"]
-    return atlas, {"height": fi["height"], "width": fi["width"], "ascent": fi["ascent"], "image": f"font/{family}.png", "glyphs": glyphs}
-
-
 def build_ui(spec):
     files = ui_sarc.read_files(str(PARTS))
     lt = ui_render.LazyTextures()
@@ -362,14 +323,12 @@ def build_ui(spec):
         texts[c["text label"]] = msg[c["text label"]]
     spec["texts"] = texts
     names = "".join(msg[c["text label"]] for c in chars)
-    cpx = fcpx_fonts()
+    import font_web_assets as fw
     spec["fonts"] = {}
     for fam, use in FONT_USE.items():
         s = "".join(names if u == "@names" else "0123456789" if u == "@digits" else texts[u] for u in use)
-        img, meta = build_atlas(fam, cpx[fam], s)
-        img.save(DST / meta["image"], optimize=True)
-        spec["fonts"][fam] = meta
-        print(fam, cpx[fam], len(meta["glyphs"]), "glyphs", img.size)
+        spec["fonts"][fam] = fw.font_ref(fam, s)
+        print(fam, len(spec["fonts"][fam]["chars"]), "chars")
 
 
 def build_chars(spec, with_glb):
@@ -386,14 +345,14 @@ def build_chars(spec, with_glb):
     if with_glb:
         import charsel_chara
         for e in out:
-            e.update(charsel_chara.convert(e["pc"], CLIPS if e["idle"] == "co_chr_idle00" else [x for x in CLIPS if x != "co_chr_idle00"], DST / "chara", reuse=True))
+            e.update(charsel_chara.convert(e["pc"], CLIPS if e["idle"] == "co_chr_idle00" else [x for x in CLIPS if x != "co_chr_idle00"], DST, reuse=True))
     else:
         old = DST / "spec.json"
         if old.exists():
             prev = {x["pc"]: x for x in json.loads(old.read_text(encoding="utf-8")).get("chars", [])}
             for e in out:
                 p = prev.get(e["pc"], {})
-                for k in ("glb", "clips", "uv", "eye"):
+                for k in ("glb", "anims", "clips", "uv", "eye"):
                     if k in p:
                         e[k] = p[k]
     spec["chars"] = out
@@ -493,7 +452,7 @@ def main():
     spec["screen"] = [1920, 1080]
     spec["source"] = "Super Mario Party Jamboree US v0 — web/tools/analysis/charsel_web_assets.py, 명세 web/docs/shell/charselect.md"
     if "ui" in what:
-        for d in ("tex", "font"):
+        for d in ("tex",):
             (DST / d).mkdir(parents=True, exist_ok=True)
         build_ui(spec)
     build_chars(spec, "chara" in what)

@@ -7,9 +7,11 @@
  * 창(wnd): flags bit0 이면 프레임 재질 텍스처로 9칸(모서리 뒤집기·변/내용 clamp) [근사], 아니면 내용만.
  * 시스템 폰트(명세에 없는 글꼴, 계정 이름)는 브라우저 산세리프로 그린다 [근사]. 컬러 아이콘 글리프(extension)는 본 글꼴이면 글리프 색 그대로,
  * 그림자 글꼴이면 모양(알파)만 재질 색으로 칠한다 [추정: 캡처의 안내 아이콘 = 흰 윤곽 + 어두운 바탕].
+ * 글자 시트 = 공용 원본 FFNT 시트(fontSheet.ts·fontTable.ts, docs/engine/font_assets.md): 글리프마다 자기 시트, 회색조 시트는 R8 → red0 이면 R = 커버리지.
  */
 import * as THREE from 'three';
 import { assetHooks, type UiImageLike } from './assetHooks';
+import { resolveSpecFonts, sheetTexture } from './fontSheet';
 import type { LayoutInst, NodeState } from './scene2d';
 import type { FontSpec, Rgba, Spec } from './types';
 
@@ -97,6 +99,7 @@ uniform int texCount;
 uniform int mode;
 uniform int srgb0;
 uniform int srgb1;
+uniform int red0;
 uniform mat3 srt0;
 uniform vec4 black;
 uniform vec4 white;
@@ -108,6 +111,7 @@ void main() {
   vec4 t = vec4(1.0);
   if (texCount > 0) {
     t = texture2D(map0, (srt0 * vec3(vUv, 1.0)).xy);
+    if (red0 == 1) t = vec4(1.0, 1.0, 1.0, t.r);
     if (srgb0 == 1) t.rgb = toLinear(t.rgb);
     if (texCount > 1) {
       vec4 t1 = texture2D(map1, vUv);
@@ -196,7 +200,7 @@ export class Render2D {
       );
     };
     for (const [k, p] of Object.entries(this.spec.textures)) get(k, p);
-    for (const [k, f] of Object.entries(this.spec.fonts)) get(`font:${k}`, f.image);
+    jobs.push(resolveSpecFonts(this.spec.fonts as Record<string, unknown>, url));
     await Promise.all(jobs);
   }
 
@@ -245,6 +249,7 @@ export class Render2D {
           mode: { value: 0 },
           srgb0: { value: 0 },
           srgb1: { value: 0 },
+          red0: { value: 0 },
           srt0: { value: new THREE.Matrix3() },
           black: { value: new THREE.Vector4() },
           white: { value: new THREE.Vector4(1, 1, 1, 1) },
@@ -289,6 +294,7 @@ export class Render2D {
     u.texCount.value = Math.min(2, tex.length);
     u.srgb0.value = tex[0]?.userData.srgb ? 1 : 0;
     u.srgb1.value = tex[1]?.userData.srgb ? 1 : 0;
+    u.red0.value = tex[0]?.userData.red ? 1 : 0;
     u.map0.value = tex[0] ?? this.white;
     u.map1.value = tex[1] ?? this.white;
     (u.srt0.value as THREE.Matrix3).copy(srt ?? new THREE.Matrix3());
@@ -448,20 +454,13 @@ export class Render2D {
     });
     const lh = f.height * sy;
     let [pen, yTop] = place(lw, lh);
-    const img = this.images.get(`font:${ts.font}`);
-    if (!img) return;
-    const tex = this.texture(`font:${ts.font}`);
-    const iw = img.width;
-    const ih = img.height;
     for (const ch of chars) {
       const g = f.glyphs[ch];
-      if (g && g.w > 0) {
+      const tex = g && g.w > 0 ? sheetTexture(g.sheet, g.rgba) : null;
+      if (g && tex) {
         const gx = pen + g.left * sx;
         const gt = yTop - (f.ascent - g.baseline) * sy;
-        const u0 = g.x / iw;
-        const u1 = (g.x + g.w) / iw;
-        const v0 = g.y / ih;
-        const v1 = (g.y + g.h) / ih;
+        const { u0, v0, u1, v1 } = g;
         this.emit(this.corners(m, gx, gt - g.h * sy, gx + g.w * sx, gt), [u0, v0, u1, v0, u0, v1, u1, v1], [top, top, bot, bot], mat.black, mat.white, alpha, g.color && !ts.font.endsWith('_shadow') ? 2 : 1, [tex]);
       }
       pen += (g?.adv ?? f.width) * sx + ts.cs;

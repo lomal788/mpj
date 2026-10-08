@@ -1,6 +1,6 @@
 /**
  * mg1801 2D UI — 리듬 공용 UI(main ca::rm)를 원본 레이아웃으로 재생한다(view/lyt.ts). 에셋은 tools/mg1801_web_ui.py → assets/mg1801/ui.
- * 로케일은 koKR 고정(글자 아틀라스·메시지).
+ * 로케일은 koKR 고정(메시지). 비트맵 글꼴 = 공용 assets/font/ 원본 시트(ui.json fonts = {dir, chars}, docs/engine/font_assets.md).
  *
  * 판독한 원본 동작 [판독 main, 주소는 SwitchLoader 기본 베이스]:
  *   - 판정 텔롭 RmUiTelopMan::ShowTimingTelop @0x710043a800: 레이아웃 mg1800_tlp_fast/slow/just(형식 0 FAST·1 SLOW·2 JUST),
@@ -45,6 +45,7 @@
  */
 import * as THREE from 'three';
 import type { V3 } from '../../../core/fmath';
+import { resolveSpecFonts } from '../../../shell/charselect/fontSheet';
 import { loadUiImage, type UiImage } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 import type { PadSource, VibSegment } from '../../../view/input';
@@ -179,8 +180,9 @@ export class Mg1801Ui {
     const loadImg = (path: string): Promise<UiImage> => loadUiImage(this.assets.url(`ui/${path}`)).catch(() => Promise.reject(new Error(`UI 그림을 읽지 못했다: ${path}`)));
     const images = new Map<string, UiImage>();
     await Promise.all(Object.entries(d.textures).map(async ([name, file]) => images.set(name, await loadImg(file))));
-    const fonts = new Map<string, { meta: LytFontAtlas; image: UiImage }>();
-    await Promise.all(Object.entries(d.fonts).map(async ([fam, meta]) => fonts.set(fam, { meta, image: await loadImg(meta.file) })));
+    const fonts = new Map<string, { meta: LytFontAtlas }>();
+    await resolveSpecFonts(d.fonts as Record<string, unknown>, (p) => this.assets.url(`ui/${p}`));
+    for (const [fam, meta] of Object.entries(d.fonts)) fonts.set(fam, { meta });
     let telop: LytTelopFont | null = null;
     try {
       const buf = await this.assets.bytes(`ui/${d.telopFont.file}`);
@@ -193,7 +195,6 @@ export class Mg1801Ui {
     }
     this.data = d;
     this.lyt = new LytRenderer({ images, fonts, telop });
-    this.lyt.registerFontImages();
     for (const k of ['START', 'FINISH'] as const) {
       const inst = this.instance(k === 'START' ? 'sys_tlp_start_00' : 'sys_tlp_finish_00');
       inst.texts.set(k === 'START' ? 'x_tlp_start' : 'x_tlp_finish', d.texts[k === 'START' ? 'mg_tl101' : 'mg_tl301']);

@@ -2,6 +2,7 @@
  * 방 서버 시험 — docs/shell/online.md 9.5(HTTP + socket.io 바이너리·연결 수명·케이스) + docs/shell/plaza_3d.md §5.2(광장 대기실). 재구현 시험(원본 실행 대조 아님).
  * ① 바이너리 배치·바이트 수 ② PlazaRooms 순수 상태(가상 시계) ③ SocketIoOnline ↔ 실제 서버(server/main.ts: express API + socket.io /mpj-plaza)·연결 수명·케이스
  * ④ 광장 대기실 두 PlazaUi(실제 명세): 만들기 → 찾기·참가 → 입장 알림·하단 줄·원격 위치·−/+ 카드 → 기구 PlaySession → 둘 다 started
+ * ⑤ 광장 방 흐름(online.md 9.6): 세 PlazaUi — 손님 나감·다시 참가·핑 끊김·탭 닫기·방장 해산 뒤 잔상 없음, 목록 반영·참가 거절, 서버 없음 B3, 가짜 어댑터 같은 정리
  *
  *   npx tsx tools/test_room_server.ts
  */
@@ -29,6 +30,7 @@ import {
   encSearchId,
   encSimple,
   encStamp,
+  FakeOnline,
   MSG,
   relay,
   SocketIoOnline,
@@ -344,9 +346,9 @@ const self = (name: string, chara: number, more: [string, number][] = []): Onlin
     inbox.set(H, []);
     H.connect();
     H.createRoom(4, '');
-    ok(await pump([H], inbox, () => !!has(H, 'createFailed'), 4000), '서버 없음 → createFailed');
+    ok(await pump([H], inbox, () => (has(H, 'error') as { code?: string } | undefined)?.code === 'B3', 4000), '서버 없음 → 만들기 통신 오류 B3(online.md 9.6 ⑥, 이전 기대 createFailed)');
     H.searchRooms(-1);
-    ok(await pump([H], inbox, () => (has(H, 'searchDone') as { rooms: unknown[] } | undefined)?.rooms.length === 0, 4000), '서버 없음 → 빈 검색');
+    ok(await pump([H], inbox, () => inbox.get(H)!.filter((e) => e.t === 'error' && e.code === 'B3').length === 2, 4000), '서버 없음 → 찾기 통신 오류 B3(이전 기대 빈 검색)');
     A.disconnect();
   } finally {
     await srv.close().catch(() => undefined);
@@ -503,6 +505,321 @@ const self = (name: string, chara: number, more: [string, number][] = []): Onlin
   } finally {
     await srv.close();
   }
+}
+
+// ── ⑤ 광장 방 흐름(실제 서버, 세 페이지): 나가기·해산·끊김·다시 참가 잔상 ──
+const uiHost = (): { host: MgmDrawHost; ext: PlazaUiExtra; card: MgmSpecPart & PlazaCardExtra } => {
+  const read = <T>(p: string): T => JSON.parse(readFileSync(join(WEB, 'assets', p), 'utf8')) as T;
+  const onl = read<MgmSpecPart & OnlineExtra>('online/online.json');
+  const ext = read<PlazaUiExtra>('plaza/ui/plaza_ui.json');
+  const card = read<MgmSpecPart & PlazaCardExtra>('plaza/ui/plaza_card.json');
+  let spec = mergeSpec(read<MgmSpec>('mgmcommon/spec.json'), onl);
+  spec = mergeSpec(spec, read<MgmSpecPart>('mgm01/faces.json'));
+  spec = mergeSpec(spec, ext);
+  spec = mergeSpec(spec, card);
+  applyOnlineExtra(spec, onl);
+  applyPlazaUiExtra(spec, ext);
+  for (const [k, v] of Object.entries(card.texts)) if (!(k in spec.texts)) spec.texts[k] = v;
+  const all = spec as unknown as Spec;
+  return { host: { all, spec, r2d: null as unknown as Render2D, layout: (n) => new LayoutInst(n, spec.layouts[n], all), draw: () => {} }, ext, card };
+};
+type EngineLike = { sendPacket: (...a: unknown[]) => void; onPacket: (...a: unknown[]) => void; close(): void };
+const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { sock: { io: { engine: EngineLike } } | null }).sock?.io.engine ?? null;
+
+{
+  console.log('⑤ 광장 방 흐름(실제 서버·세 페이지): 나가기·해산·끊김·다시 참가');
+  const plaza = createPlaza();
+  const srv = await startPlazaServer({ port: 0, build: false, games: [plaza.game], routers: [plaza.router], socket: { pingInterval: 200, pingTimeout: 300 } });
+  const base = srv.url.replace(/\/$/, '');
+  const { host, ext, card } = uiHost();
+  const LEFT = 0x10100;
+
+  interface Side {
+    name: string;
+    ui: PlazaUi;
+    net: SocketIoOnline | FakeOnline;
+    next: number;
+    x: number;
+    /** follow.ts 와 같은 규칙(키 스테이션#순번, 이탈 = 스테이션의 모든 순번)으로 'net:remote'·'net:remoteLeft' 를 받아 둔 3D 원격 표 */
+    shown: Set<string>;
+    sounds: string[];
+  }
+  const sides: Side[] = [];
+  const make = (name: string, chara: number, x: number, net?: FakeOnline, b = base): Side => {
+    const n = net ?? new SocketIoOnline({ base: b, self: { name, chara, humans: 1 }, io, timeout: 3 });
+    const players = [{ slot: 0, chara, isCom: false, name }];
+    const s: Side = { name, ui: null as unknown as PlazaUi, net: n, next: 0, x, shown: new Set(), sounds: [] };
+    s.ui = new PlazaUi({ host, extra: ext, net: n, players: () => players, pads: { poll: () => ({ hold: 0, trig: 0 }) }, sound: { playSe: (l: string) => s.sounds.push(l) } as never, card, selfCard: defaultCard(`${name}-card`, name) });
+    sides.push(s);
+    return s;
+  };
+  const step = (s: Side): void => {
+    const t = s.next;
+    s.next = 0;
+    s.ui.out.length = 0;
+    s.ui.tick(DT, new Map([[0, { hold: t, trig: t }]]));
+    s.ui.sendLocal(DT, 0, 0, [0, 0, 0, 0], [s.x, -2.4, 21], [0, 1, 0, 0], s.ui.takeSendAll());
+    for (const e of s.ui.out) {
+      if (e.t === 'remote') s.shown.add(`${e.station}#${e.slot}`);
+      else if (e.t === 'remoteLeft') for (const k of [...s.shown]) if (k.startsWith(`${e.station}#`)) s.shown.delete(k);
+    }
+  };
+  const run = async (pred: () => boolean, max = 8000): Promise<boolean> => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < max) {
+      for (const s of sides) step(s);
+      if (pred()) return true;
+      await sleep(2);
+    }
+    return false;
+  };
+  const press = async (s: Side, bits: number): Promise<void> => {
+    s.next = bits;
+    for (const x of sides) step(x);
+    await sleep(1);
+  };
+  const flow = (s: Side) => s.ui.online?.flow ?? null;
+  const stations = (s: Side): string[] => [...new Set([...s.ui.remote.actors.values()].map((a) => a.station))].sort();
+  const shownSt = (s: Side): string[] => [...new Set([...s.shown].map((k) => k.split('#')[0]))].sort();
+  const remoteSt = (s: Side): string[] => [...new Set((s.ui.room?.members ?? []).filter((m) => !m.local).map((m) => m.station))].sort();
+  const names = (s: Side): string[] => [...s.ui.status.bySlot.values()].map((p) => p.name);
+  const idleMain = (s: Side): Promise<boolean> => run(() => s.ui.main && s.ui.onlineGuide.life.st === 1 && !s.ui.online);
+  const openFriend = async (s: Side): Promise<boolean> => {
+    await idleMain(s);
+    await press(s, 0x8);
+    return run(() => !!flow(s)?.netMenu.life.idle);
+  };
+  const create = async (s: Side): Promise<boolean> => {
+    if (!(await openFriend(s))) return false;
+    await run(() => false, 300);
+    await press(s, BTN.A);
+    if (!(await run(() => !!flow(s)?.roomType.life.idle))) return false;
+    await run(() => false, 300);
+    await press(s, BTN.A);
+    if (!(await run(() => !!flow(s)?.dialog.life.idle && flow(s)!.dialog.result < 0))) return false;
+    await press(s, BTN.A);
+    return run(() => flow(s)?.step === 'lobby:host' && s.ui.main);
+  };
+  const openList = async (s: Side): Promise<boolean> => {
+    if (!(await openFriend(s))) return false;
+    await run(() => false, 300);
+    await press(s, 0x40200);
+    await run(() => false, 200);
+    await press(s, BTN.A);
+    return run(() => !!flow(s)?.list.life.idle && flow(s)!.busy === 0 && !flow(s)!.list.rowsAnimating());
+  };
+  const joinFirst = async (s: Side): Promise<boolean> => {
+    await run(() => false, 1200);
+    await press(s, BTN.A);
+    if (!(await run(() => !!flow(s)?.dialog.life.idle && flow(s)!.dialog.result < 0))) return false;
+    await press(s, BTN.A);
+    return run(() => flow(s)?.step === 'lobby:client' && s.ui.main, 10000);
+  };
+  const confirmYes = async (s: Side): Promise<boolean> => {
+    await run(() => !!flow(s)?.lobby.life.idle && !flow(s)!.dialog.working, 3000);
+    await press(s, BTN.B);
+    if (!(await run(() => !!flow(s)?.dialog.life.idle && flow(s)!.dialog.result < 0))) return false;
+    await press(s, LEFT);
+    await run(() => false, 100);
+    await press(s, BTN.A);
+    return true;
+  };
+  const closeError = async (s: Side, label: string): Promise<boolean> => {
+    if (!(await run(() => flow(s)?.step === `error:${label}` && !!flow(s)?.dialog.life.idle))) return false;
+    await press(s, BTN.A);
+    return run(() => !s.ui.online);
+  };
+  const solo = (s: Side, what: string): void => {
+    eq([!!s.ui.online, !!s.ui.room, stations(s), [...s.shown]], [false, false, [], []], `${what}: 혼자 광장(흐름 끝·방 없음·원격 표·3D 없음)`);
+    if (s.net instanceof SocketIoOnline) eq(s.net.socketOpen, false, `${what}: 소켓 닫힘`);
+  };
+
+  try {
+    const H = make('Aya', 0, 1);
+    const C = make('Bo', 3, -1);
+    const D = make('Cy', 5, 0);
+    ok(await create(H), '방장 방 만들기 → 대기실');
+    const roomId = H.ui.room!.id;
+    ok(await openList(C), '손님 방 찾기 목록');
+    eq(flow(C)!.rooms.map((r) => [r.id, r.host, r.members]), [[roomId, 'Aya', [0]]], '목록 = 방장 방(방장 이름·캐릭터)');
+    ok(await joinFirst(C), '손님 참가 → 대기실');
+    ok(await run(() => stations(H).length === 1 && stations(C).length === 1 && shownSt(H).length === 1 && shownSt(C).length === 1), '양쪽 광장에 서로 보임(원격 표·3D)');
+    eq([names(H), names(C)], [['Aya', 'Bo'], ['Aya', 'Bo']], '하단 줄 양쪽');
+    ok(await openList(D), '셋째 방 찾기');
+    eq(flow(D)!.rooms.map((r) => [r.id, r.members]), [[roomId, [0, 3]]], '목록 인원 = 2(참가 반영)');
+    ok(await joinFirst(D), '셋째 참가');
+    ok(await run(() => [H, C, D].every((s) => stations(s).length === 2 && shownSt(s).length === 2 && s.ui.status.bySlot.size === 3)), '세 명 서로 보임·하단 줄 3칸');
+    eq(flow(H)!.lobbyState().count, 3, '방장 인원 텔롭 3');
+
+    console.log('  손님 나가기');
+    await run(() => !!H.ui.cardGuide?.shown);
+    await press(H, 0x1000);
+    eq(H.ui.card!.cards.map((x) => x.name), ['Aya', 'Bo', 'Cy'], '방장 카드 3장');
+    const cSt = remoteSt(H).find((st) => H.ui.room!.members.find((m) => m.station === st)?.name === 'Bo')!;
+    ok(await confirmYes(C), '손님 B → 나가기 예');
+    ok(await run(() => !C.ui.online && C.ui.main && !C.ui.status.online), '손님 = 흐름 끝, 혼자 광장 메인(원본: 나가기 뒤 광장, online.md 9.3)');
+    solo(C, '나간 손님');
+    eq(names(C), ['Bo'], '나간 손님 하단 줄 = 나만');
+    ok(await run(() => !remoteSt(H).includes(cSt) && !stations(H).includes(cSt) && !shownSt(H).includes(cSt) && names(H).length === 2), '방장 화면: 나간 손님 원격·3D·하단 줄 사라짐');
+    eq([names(H), names(D)], [['Aya', 'Cy'], ['Aya', 'Cy']], '남은 하단 줄');
+    eq([flow(H)!.lobbyState().count, flow(D)!.lobbyState().count], [2, 2], '인원 텔롭 2');
+    eq(H.ui.card!.cards.map((x) => x.name), ['Aya', 'Cy'], '열려 있던 카드 뷰어에서 나간 손님 카드 빠짐');
+    ok([...H.ui.stamps.keys()].every((k) => !k.startsWith(`${cSt}#`)), '나간 손님 스탬프 칸 없음');
+    await press(H, BTN.B);
+    await run(() => H.ui.card!.finished);
+
+    console.log('  같은 방 다시 참가');
+    ok(await openList(C), '다시 방 찾기');
+    eq(flow(C)!.rooms.map((r) => [r.id, r.members]), [[roomId, [0, 5]]], '목록 인원 = 2(나간 것 반영)');
+    ok(await joinFirst(C), '다시 참가');
+    ok(await run(() => [H, C, D].every((s) => stations(s).length === 2 && shownSt(s).length === 2 && s.ui.status.bySlot.size === 3)), '다시 셋: 잔상 없이 원격 2·3D 2·하단 줄 3');
+    ok(!stations(H).includes(cSt) && !shownSt(H).includes(cSt), '이전 스테이션 잔상 없음');
+    eq(stations(H), remoteSt(H), '방장 원격 표 = 방 멤버 스테이션');
+
+    console.log('  네트워크 끊김(핑 시간 초과)');
+    const dSt = remoteSt(H).find((st) => H.ui.room!.members.find((m) => m.station === st)?.name === 'Cy')!;
+    const eng = engineOf(D.net as SocketIoOnline)!;
+    eng.sendPacket = () => {};
+    eng.onPacket = () => {};
+    const t0 = Date.now();
+    ok(await run(() => !remoteSt(H).includes(dSt) && !stations(H).includes(dSt) && !shownSt(H).includes(dSt) && !stations(C).includes(dSt) && !shownSt(C).includes(dSt), 5000), '서버 핑 시간 초과 → 남은 사람 화면에서 정리');
+    console.log(`   끊김 → 정리 ${Date.now() - t0} ms (핑 간격 200 + 시간 초과 300)`);
+    ok(await closeError(D, 'sys_error_B3'), '끊긴 쪽 = 통신 오류 B3 대화상자 → 닫으면 광장');
+    solo(D, '끊긴 쪽');
+
+    console.log('  탭 닫기(전송 끊김)');
+    const cSt2 = remoteSt(H)[0];
+    engineOf(C.net as SocketIoOnline)!.close();
+    ok(await run(() => remoteSt(H).length === 0 && stations(H).length === 0 && shownSt(H).length === 0 && names(H).length === 1, 3000), '탭 닫음 → 방장 화면 즉시 정리');
+    ok(!stations(H).includes(cSt2), '닫은 탭 스테이션 없음');
+    await closeError(C, 'sys_error_B3');
+
+    console.log('  방장 해산');
+    ok(await openList(C), '손님 다시 찾기');
+    ok(await joinFirst(C), '손님 다시 참가');
+    ok(await openList(D), '셋째 다시 찾기');
+    ok(await joinFirst(D), '셋째 다시 참가');
+    ok(await run(() => [H, C, D].every((s) => stations(s).length === 2 && shownSt(s).length === 2)), '해산 전 셋');
+    ok(await confirmYes(H), '방장 B → 해산 예');
+    ok(await run(() => !H.ui.online && H.ui.main && !H.ui.status.online), '방장 = 혼자 광장 메인');
+    solo(H, '해산한 방장');
+    for (const s of [C, D]) {
+      ok(await run(() => flow(s)?.step === 'error:mn01_friend_mw_lobby_dismiss_client' && !s.ui.room && stations(s).length === 0 && s.shown.size === 0), `${s.name}: 해산 알림 대화상자, 원격·3D 바로 정리`);
+      ok(await closeError(s, 'mn01_friend_mw_lobby_dismiss_client'), `${s.name}: 닫으면 광장`);
+      solo(s, `해산당한 ${s.name}`);
+    }
+    ok(!plaza.rooms.rooms.has(roomId), '서버에서 방 지움');
+    ok(await openList(C), '해산 뒤 찾기');
+    eq(flow(C)!.rooms.length, 0, '해산한 방은 목록에 없음');
+    await press(C, BTN.B);
+    await run(() => !C.ui.online, 6000);
+
+    console.log('  방장 탭 닫기');
+    ok(await create(H), '방장 다시 만들기');
+    ok(await openList(C), '손님 찾기');
+    ok(await joinFirst(C), '손님 참가');
+    ok(await run(() => stations(H).length === 1 && shownSt(C).length === 1 && names(C).length === 2), '만남');
+    engineOf(H.net as SocketIoOnline)!.close();
+    ok(await run(() => flow(C)?.step === 'error:mn01_friend_mw_lobby_dismiss_client' && !C.ui.room && stations(C).length === 0 && C.shown.size === 0, 3000), '방장 탭 닫음 → 손님 해산 알림, 원격·3D 바로 정리');
+    ok(await closeError(C, 'mn01_friend_mw_lobby_dismiss_client'), '닫으면 광장');
+    solo(C, '방장 끊긴 손님');
+    ok(await run(() => names(C).length === 1 && C.ui.status.bySlot.get(0)?.name === 'Bo'), '손님 하단 줄 = 나만');
+    await closeError(H, 'sys_error_B3');
+    solo(H, '탭 닫은 방장');
+  } finally {
+    await srv.close();
+  }
+
+  console.log('  목록 반영·참가 거절(SocketIoOnline)');
+  const plaza2 = createPlaza();
+  const srv2 = await startPlazaServer({ port: 0, build: false, games: [plaza2.game], routers: [plaza2.router] });
+  const base2 = srv2.url.replace(/\/$/, '');
+  try {
+    const mk = (s: OnlineSelf) => new SocketIoOnline({ base: base2, self: s, io });
+    const inbox = new Map<SocketIoOnline, OnlineEvent[]>();
+    const nets: SocketIoOnline[] = [];
+    const add = (s: OnlineSelf): SocketIoOnline => {
+      const n = mk(s);
+      nets.push(n);
+      inbox.set(n, []);
+      n.connect();
+      return n;
+    };
+    const last = <T extends OnlineEvent['t']>(n: SocketIoOnline, t: T) => inbox.get(n)!.filter((e) => e.t === t).pop() as Extract<OnlineEvent, { t: T }> | undefined;
+    const search = async (n: SocketIoOnline): Promise<string[]> => {
+      inbox.get(n)!.length = 0;
+      n.searchRooms(-1);
+      await pump(nets, inbox, () => !!last(n, 'searchDone'));
+      return last(n, 'searchDone')!.rooms.map((r) => `${r.id}:${r.members.length}`);
+    };
+    const A = add(self('Aya', 0));
+    const S = add(self('See', 9));
+    const P = add(self('Pw', 1));
+    eq(await search(S), [], '처음 = 빈 목록');
+    A.createRoom(4, '');
+    await pump(nets, inbox, () => !!last(A, 'created'));
+    const id = A.room()!.id;
+    eq(await search(S), [`${id}:1`], '만들기 바로 반영');
+    P.createRoom(4, '1234');
+    await pump(nets, inbox, () => !!last(P, 'created'));
+    const pid = P.room()!.id;
+    const g1 = add(self('G1', 2));
+    g1.joinRoom(pid, '9999');
+    ok(await pump(nets, inbox, () => !!last(g1, 'joinFailed')), '비밀번호 틀림 → 거절');
+    eq(last(g1, 'joinFailed')!.reason, 'password', '거절 이유 password');
+    eq(g1.stat.sockets, 0, '거절은 소켓 안 엶');
+    const gs = [add(self('G2', 3)), add(self('G3', 4)), add(self('G4', 6))];
+    for (const g of gs) {
+      g.joinRoom(id, '');
+      ok(await pump(nets, inbox, () => !!last(g, 'joined')), `${g.opt.self.name} 참가`);
+    }
+    ok(!(await search(S)).some((x) => x.startsWith(id)), '가득 참 바로 반영(목록에서 빠짐)');
+    const g5 = add(self('G5', 7));
+    g5.joinRoom(id, '');
+    ok(await pump(nets, inbox, () => !!last(g5, 'joinFailed')), '가득 찬 방 → 거절');
+    eq(last(g5, 'joinFailed')!.reason, 'full', '거절 이유 full');
+    gs[2].leaveRoom();
+    await pump(nets, inbox, () => A.room()!.members.length === 3);
+    ok((await search(S)).includes(`${id}:3`), '한 명 나가면 다시 목록에');
+    A.startRoom();
+    await pump(nets, inbox, () => !!last(A, 'started'));
+    ok(!(await search(S)).some((x) => x.startsWith(id)), '시작됨 바로 반영(목록에서 빠짐)');
+    P.dissolveRoom();
+    await pump(nets, inbox, () => !plaza2.rooms.rooms.has(pid));
+    eq(await search(S), [], '해산 바로 반영');
+    for (const n of nets) n.disconnect();
+  } finally {
+    await srv2.close();
+  }
+
+  console.log('  서버 없음 → 통신 오류 대화상자, 광장 계속');
+  sides.length = 0;
+  const X = make('Xo', 2, 0, undefined, 'http://127.0.0.1:9');
+  ok(await openList(X) || flow(X)?.step.startsWith('error:') === true, '서버 없이 방 찾기');
+  ok(await closeError(X, 'sys_error_B3'), '방 찾기 HTTP 실패 → sys_error_B3 대화상자 → 닫으면 광장');
+  ok(await run(() => X.ui.main), '광장 메인 계속');
+  solo(X, '서버 없음');
+  ok(await openFriend(X), '다시 메뉴');
+  await run(() => false, 300);
+  await press(X, BTN.A);
+  await run(() => !!flow(X)?.roomType.life.idle);
+  await run(() => false, 300);
+  await press(X, BTN.A);
+  await run(() => !!flow(X)?.dialog.life.idle && flow(X)!.dialog.result < 0);
+  await press(X, BTN.A);
+  ok(await closeError(X, 'sys_error_B3'), '방 만들기 HTTP 실패 → sys_error_B3 → 광장');
+  solo(X, '서버 없음 만들기');
+
+  console.log('  가짜 어댑터(?online=fake)도 같은 정리');
+  sides.length = 0;
+  const fake = new FakeOnline({ rooms: 0, joinInterval: 0.5, leaveAfter: 0, error: 'none', seed: 7, matchSec: 4, self: { name: 'Fk', chara: 0, humans: 1 }, remoteMove: true, stampEvery: 0 });
+  const F = make('Fk', 0, 0, fake);
+  ok(await create(F), '가짜 방 만들기');
+  ok(await run(() => stations(F).length >= 2 && shownSt(F).length >= 2), '가짜 멤버 원격·3D');
+  ok(await confirmYes(F), '가짜 해산');
+  ok(await run(() => !F.ui.online && F.ui.main), '가짜: 혼자 광장');
+  await run(() => false, 1000);
+  solo(F, '가짜 해산 1 s 뒤');
 }
 
 console.log(`\n${count - fails}/${count} 통과`);

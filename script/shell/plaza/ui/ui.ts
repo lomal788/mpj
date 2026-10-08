@@ -302,7 +302,7 @@ export class PlazaUi {
         return { hold: p.hold & mask, trig: p.trig & mask };
       },
     };
-    this.online = new OnlineScreen({ host: this.o.host, net: this.net, self, pads, entry: 'friend', firstOnline: this.o.firstOnline, sound: this.o.sound });
+    this.online = new OnlineScreen({ host: this.o.host, net: this.net, self, pads, entry: 'friend', firstOnline: this.o.firstOnline, sound: this.o.sound, lobbyExit: 'end' });
     this.log.push('friend:open');
   }
 
@@ -340,14 +340,7 @@ export class PlazaUi {
     if (this.inSession !== this.sessionOn) {
       this.sessionOn = this.inSession;
       this.out.push({ t: 'session', on: this.sessionOn });
-      if (!this.sessionOn) {
-        const stations = new Set([...this.remote.actors.values()].map((a) => a.station));
-        for (const st of stations) {
-          this.remote.remove(st);
-          this.out.push({ t: 'remoteLeft', station: st });
-        }
-        this.card?.out();
-      }
+      if (!this.sessionOn) this.card?.out();
     }
     const ls = this.online?.flow.lobbyState();
     const lk = ls && ls.inSession ? `${ls.host}|${ls.ready}` : '';
@@ -366,7 +359,10 @@ export class PlazaUi {
     else if (!this.main && !menuOpen && this.wantMain && (this.status.finished || this.status.online === this.inSession)) this.startMain();
     if (this.main && this.inSession && this.onlineGuide.life.st >= 0) this.onlineGuide.out();
 
+    const room = this.room;
+    const live = new Set((room?.members ?? []).filter((m) => !m.local).map((m) => m.station));
     for (const e of this.net.plaza.splice(0)) {
+      if ((e.t === 'remoteInfo' || e.t === 'stamp') && !live.has(e.station)) continue;
       if (e.t === 'remoteInfo') {
         const r = this.remote.receive(e.station, e.slot, e.chara, e.pos, e.quat);
         this.log.push(`remote ${e.station} ${r.mode}`);
@@ -374,13 +370,21 @@ export class PlazaUi {
         const slot = this.stamps.get(`${e.station}#${e.slot}`);
         if (slot && slot.balloon.finished) this.showStamp(slot, e.stamp);
       } else if (e.t === 'memberLeft') {
-        if (this.remote.remove(e.station).length) this.out.push({ t: 'remoteLeft', station: e.station });
+        if (this.card?.open && room) {
+          const ids = new Set(room.members.map((m) => m.card?.id));
+          this.card.cards = this.card.cards.filter((c) => ids.has(c.id));
+        }
       } else if (e.t === 'joined' || e.t === 'memberReady') this.sendAll = true;
       else if (e.t === 'started') {
         this.card?.out();
         this.out.push({ t: 'started' });
       }
     }
+    for (const st of new Set([...this.remote.actors.values()].map((a) => a.station)))
+      if (!live.has(st)) {
+        this.remote.remove(st);
+        this.out.push({ t: 'remoteLeft', station: st });
+      }
     this.cardTick(dt, opPad.trig);
     this.remote.step(dt);
     for (const a of this.remote.actors.values())

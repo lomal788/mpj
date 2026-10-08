@@ -15,6 +15,8 @@ import { mg1801Options } from '../script/games/mg1801/index';
 import { Mg1801Game, calcTotalPoint, endingBgmName, gameBgmName, interEndBgmName, type Mg1801Options } from '../script/games/mg1801/logic/game';
 import { chartRows } from '../script/games/mg1801/logic/chart';
 import type { Mg1801Event } from '../script/games/mg1801/state';
+import { fileURLToPath } from 'node:url';
+import { fmabRepeatBad } from './anim_repeat';
 
 let bad = 0;
 const check = (name: string, ok: boolean, info = ''): void => {
@@ -480,6 +482,14 @@ function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801G
     if (g.events.some((e) => e.k === 'bgm' && e.label === 'SQ_BGM_MG1801_A')) acc = f;
   }
   check('G12 접수: 소리 쪽이 다다음 마디에 접수하면 로직도 그때(요청 + 2 마디 = 240 프레임)', acc - req === 240, `${acc - req}`);
+}
+
+{
+  const r = fmabRepeatBad(fileURLToPath(new URL('../assets/mg1801/model/mg1801_water00.fmab.json', import.meta.url)), [
+    ['mt_water00', 'texture_srt1', '0x10', 0, 1199],
+    ['mt_water00', 'utility_parameter0', '0x04', -1, 300],
+  ]);
+  check('물 fmab Repeat 커브 2개가 구간 뒤에도 반복(원본 wrap — 변환기 Curves.cs, plaza_3d.md §6.14 #14c ③)', r.length === 0, r.join(' · '));
 }
 
 process.exitCode = bad ? 1 : 0;

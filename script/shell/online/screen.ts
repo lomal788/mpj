@@ -37,6 +37,7 @@ export interface OnlineScreenOptions {
   firstOnline?: boolean;
   sound?: MgmSound;
   matchingTime?: number;
+  lobbyExit?: 'menu' | 'end';
   onNote?(text: string): void;
 }
 
@@ -63,7 +64,7 @@ export class OnlineScreen {
       },
     );
     const sink = { push: (e: OEv): void => this.view.push(e) };
-    this.flow = new OnlineFlow({ ev: sink, net: o.net, self: o.self, firstOnline: !!o.firstOnline, matchingTime: o.matchingTime });
+    this.flow = new OnlineFlow({ ev: sink, net: o.net, self: o.self, firstOnline: !!o.firstOnline, matchingTime: o.matchingTime, lobbyExit: o.lobbyExit });
     this.runner.start(this.flow.run(o.entry));
   }
 

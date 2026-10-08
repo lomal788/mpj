@@ -1,7 +1,7 @@
 /**
  * 실제 방 서버 어댑터 SocketIoOnline — 방 찾기·만들기·참가는 HTTP(바이너리), 방에 들어가는 순간 socket.io `/mpj-plaza`(바이너리), 나가거나 해산되면 끊는다.
  * 클라이언트 라이브러리는 ddalkkakrider 처럼 서버의 `/socket.io/socket.io.js` 를 script 로 읽고 `io('/<게임 id>', {reconnection, transports})`.
- * 연결 수명·배치·오류 자리: docs/shell/online.md 9.5. 혼자·로컬만이면 아무 통신도 하지 않는다(connect() 는 논리 접속).
+ * 연결 수명·배치·오류 자리: docs/shell/online.md 9.5·9.6(HTTP 실패 B3·시간 초과 B4). 혼자·로컬만이면 아무 통신도 하지 않는다(connect() 는 논리 접속).
  */
 import type { CardData, JoinFailReason, OnlineAdapter, OnlineEvent, OnlineSelf, RoomMember, RoomSize, RoomState } from './types';
 import { JOIN_TIMEOUT_S } from './types';
@@ -111,7 +111,7 @@ export class SocketIoOnline implements OnlineAdapter {
     return ps.slice(0, 4).map((p, i) => wirePlayer(p.name, i === 0 ? s.chara : p.chara, p.card));
   }
 
-  private async post(op: string, body: Uint8Array): Promise<Uint8Array | null> {
+  private async post(op: string, body: Uint8Array): Promise<Uint8Array | 'B3' | 'B4'> {
     const f = this.opt.fetch ?? fetch;
     const ac = new AbortController();
     const t = setTimeout(() => ac.abort(), this.limit * 1000);
@@ -119,12 +119,12 @@ export class SocketIoOnline implements OnlineAdapter {
     this.stat.httpBytes += body.length;
     try {
       const r = await f(`${this.opt.base}${API_BASE}/${op}`, { method: 'POST', body: body as BodyInit, headers: { 'Content-Type': 'application/octet-stream' }, signal: ac.signal });
-      if (!r.ok) return null;
+      if (!r.ok) return 'B3';
       const b = new Uint8Array(await r.arrayBuffer());
       this.stat.httpBytes += b.length;
       return b;
     } catch {
-      return null;
+      return ac.signal.aborted ? 'B4' : 'B3';
     } finally {
       clearTimeout(t);
     }
@@ -172,7 +172,7 @@ export class SocketIoOnline implements OnlineAdapter {
       io = this.opt.io ?? (await loadIo(this.opt.base));
     } catch {
       this.pending = null;
-      this.fail(kind);
+      this.emit({ t: 'error', code: 'B3' });
       return;
     }
     if (!this.pending) return;
@@ -185,6 +185,11 @@ export class SocketIoOnline implements OnlineAdapter {
     s.on(WIRE_EVENT, (data: unknown) => {
       if (this.sock === s) this.receive(toBytes(data));
     });
+    s.on('connect_error', () => {
+      if (this.sock !== s || this.entered) return;
+      this.closeSocket();
+      this.emit({ t: 'error', code: 'B3' });
+    });
     s.on('disconnect', () => {
       if (this.sock !== s) return;
       const had = this.entered;
@@ -193,7 +198,7 @@ export class SocketIoOnline implements OnlineAdapter {
       if (had && this.cur) {
         this.cur = null;
         this.emit({ t: 'error', code: 'B3' });
-      } else if (p) this.fail(p.kind);
+      } else if (p) this.emit({ t: 'error', code: 'B3' });
     });
   }
 
@@ -302,24 +307,26 @@ export class SocketIoOnline implements OnlineAdapter {
 
   createRoom(size: RoomSize, password: string): void {
     void this.post('create', encCreate(size, password, this.profile())).then((b) => {
-      const tk = b ? decTicket(b) : null;
-      if (!tk || tk.status !== TICKET.OK || !tk.token) return this.emit({ t: 'createFailed' });
+      if (typeof b === 'string') return this.emit({ t: 'error', code: b });
+      const tk = decTicket(b);
+      if (tk.status !== TICKET.OK || !tk.token) return this.emit({ t: 'createFailed' });
       void this.enter(tk.token, 'created');
     });
   }
 
   searchRooms(size: RoomSize | -1): void {
-    void this.post('search', encSearch(size, this.profile().length)).then((b) => this.emit({ t: 'searchDone', rooms: b ? decRooms(b) : [] }));
+    void this.post('search', encSearch(size, this.profile().length)).then((b) => this.emit(typeof b === 'string' ? { t: 'error', code: b } : { t: 'searchDone', rooms: decRooms(b) }));
   }
 
   searchRoomById(id: string): void {
-    void this.post('search-id', encSearchId(id, this.profile().length)).then((b) => this.emit({ t: 'searchDone', rooms: b ? decRooms(b) : [] }));
+    void this.post('search-id', encSearchId(id, this.profile().length)).then((b) => this.emit(typeof b === 'string' ? { t: 'error', code: b } : { t: 'searchDone', rooms: decRooms(b) }));
   }
 
   joinRoom(id: string, password: string): void {
     void this.post('join', encJoin(id, password, this.profile())).then((b) => {
-      const tk = b ? decTicket(b) : null;
-      if (!tk || tk.status !== TICKET.OK || !tk.token) return this.emit({ t: 'joinFailed', reason: (TICKET_REASON[tk?.status ?? 1] || 'missed') as JoinFailReason });
+      if (typeof b === 'string') return this.emit({ t: 'error', code: b });
+      const tk = decTicket(b);
+      if (tk.status !== TICKET.OK || !tk.token) return this.emit({ t: 'joinFailed', reason: (TICKET_REASON[tk.status] || 'missed') as JoinFailReason });
       void this.enter(tk.token, 'joined');
     });
   }

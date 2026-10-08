@@ -14,6 +14,10 @@
  * - 라이트맵 그림자(shadow_texture2d, sdw) [근사]: 원본은 정적 그림자 마스크로 평행광을 가린다고 보고 [추정: 슬롯 이름],
  *   평행광 직접광에 sdw 텍스처의 R 을 곱한다(UV = bake_texture_uv_index).
  * - punchthrough(render_state_display_face·alpha test): 변환기가 glb alphaMode MASK·doubleSided 로 넣은 값을 그대로 쓴다.
+ * - 양면 굴절 재질은 앞면만 그린다: 원본은 색 버퍼 캡처 뒤 그 캡처를 읽으며 그리므로 자기 뒷면이 굴절 장면에 없다. three 투과 패스는 DoubleSide 뒷면을
+ *   투과 버퍼에 먼저 그려 한 겹이 더 비친다(docs/shell/plaza_3d.md §6.14 #14c).
+ * - capture_color_buffer_type ≠ 0 인 비굴절 재질(분수 물줄기 등) [추정: 캡처 전에 그린다]: 혼합은 그대로 두고 불투명 목록 맨 끝(CAPTURE_ORDER)에서
+ *   깊이 쓰기 없이 그려 투과 버퍼(원본 캡처 자리)에 들어가게 한다(#14c).
  */
 import * as THREE from 'three';
 import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
@@ -38,7 +42,12 @@ export interface IblSet {
 
 type StdMat = THREE.MeshStandardMaterial;
 
+export const CAPTURE_ORDER = 1000;
+
 export const opt = (f: Fres, k: string): string | undefined => f.shader.options[`static_opt_${k}`];
+
+export const drawnBeforeCapture = (f: Fres): boolean =>
+  (opt(f, 'capture_color_buffer_type') ?? '0') !== '0' && opt(f, 'refraction_enable') !== '1' && ['2', '4'].includes(opt(f, 'state_type') ?? '0');
 
 export function fresOf(m: THREE.Material): Fres | null {
   const f = (m.userData as { fres?: Fres }).fres;
@@ -127,11 +136,11 @@ export function patchSss(m: StdMat, curv: THREE.Texture, diff: THREE.Texture, bl
 
 /**
  * static_opt_refraction_enable 1 (굴절) — 원본 forward_plus p386(분수 물기둥 jet_fountain01) SASS [판독: analysis/mat/plaza/sass/menu00__forward_plus__p386.fs.txt 330~584]:
- * 장면 색 버퍼(capture_color_buffer, Layer 핸들 0x570)를 화면 좌표 + 굴절 오프셋으로 읽는다. 오프셋 = refract(시선, N, 1/ior) 의 xy × refraction_uv_offset_scale,
- * 성분마다 ±refraction_uv_offset_limit 로 자름, 표본 LOD = roughness × Layer[0x4d0]. 불투명도 a = refraction_opacity ↔ rim_opacity 를 (1−N·V)^rim_power 로 섞음,
+ * 장면 색 버퍼(capture_color_buffer, Layer 핸들 0x570)를 화면 좌표 + 굴절 오프셋으로 읽는다. 오프셋 = refract((0,0,−1), 뷰 공간 N, ior) 의 xy × refraction_uv_offset_scale
+ * (전반사면 0, 332~372), 성분마다 ±refraction_uv_offset_limit 로 자름, 표본 LOD = roughness × Layer[0x4d0]. 불투명도 a = refraction_opacity ↔ rim_opacity 를 (1−N·V)^rim_power 로 섞음,
  * 출력 = 장면·(1 − a) + 확산·a + 반사(직접·IBL, a 를 곱하지 않음 — 끝부분 r16·r7 은 확산 쪽만, 반사 r0·r33 은 따로 더함) + 발광(c0.r·C0, 그 위 가산).
  * 웹: three 의 투과 패스(불투명 장면을 transmissionSamplerMap 에 그린 뒤 투과 재질을 그림 = 원본 색 버퍼 캡처와 같은 자리)를 쓰고, transmission_fragment 를 위 식으로 바꾼다.
- * LOD 는 three getTransmissionSample(거칠기·ior 로 밉 고름)로 [근사: Layer[0x4d0] 값 미확보], 굴절 오프셋의 화면 y 부호는 [추정].
+ * LOD 는 three getTransmissionSample(거칠기·ior 로 밉 고름)로 [근사: Layer[0x4d0] 값 미확보], x 오프셋 배율 Layer[0x4a4] 는 1 [근사]. 원본 y 는 아래 방향 uv 라 −N_y, WebGL 은 위 방향이라 그대로.
  */
 export function patchRefraction(m: THREE.MeshPhysicalMaterial, opacity: number, rimOpacity: number, rimPower: number, rim: boolean, ior: number, scale: number, limit: number): void {
   const prev = m.onBeforeCompile;
@@ -139,6 +148,7 @@ export function patchRefraction(m: THREE.MeshPhysicalMaterial, opacity: number, 
   m.transparent = false;
   m.depthWrite = true;
   m.alphaTest = 0;
+  if (m.side === THREE.DoubleSide) m.side = THREE.FrontSide;
   m.blending = THREE.NormalBlending;
   m.transmission = 1;
   m.thickness = 0;
@@ -152,7 +162,7 @@ export function patchRefraction(m: THREE.MeshPhysicalMaterial, opacity: number, 
       `#ifdef USE_TRANSMISSION
 {
   float mpjA = ${a};
-  vec3 mpjR = refract( - normalize( vViewPosition ), normal, ${f(1 / Math.max(ior, 1e-3))} );
+  vec3 mpjR = refract( vec3( 0.0, 0.0, - 1.0 ), normal, ${f(ior)} );
   vec2 mpjOff = clamp( mpjR.xy * ${f(scale)}, vec2( - ${f(limit)} ), vec2( ${f(limit)} ) );
   vec4 mpjClip = projectionMatrix * vec4( - vViewPosition, 1.0 );
   vec2 mpjUv = mpjClip.xy / mpjClip.w * 0.5 + 0.5 + mpjOff;
@@ -345,6 +355,7 @@ export class MaterialSetup {
         }
         mesh.castShadow = Number(f.renderInfo?.render_info_draw_shadowmap?.[0] ?? 0) >= 1;
         mesh.receiveShadow = opt(f, 'receive_shadow') === '1';
+        if (drawnBeforeCapture(f)) mesh.renderOrder = CAPTURE_ORDER;
         if (this.prepared.has(m) || !(m as StdMat).isMeshStandardMaterial) continue;
         this.prepared.add(m);
         const mp = initParams(m, f);
@@ -442,13 +453,16 @@ export class MaterialSetup {
       m.transparent = true;
       m.blending = THREE.AdditiveBlending;
       m.depthWrite = false;
-      if (opt(f, 'water_enable') === '1') m.opacity *= (f.params?.material_water_opacity?.value as number | undefined) ?? 1;
     } else if (state === '4') {
       m.transparent = true;
       m.blending = THREE.CustomBlending;
       m.blendEquation = THREE.AddEquation;
       m.blendSrc = THREE.ZeroFactor;
       m.blendDst = THREE.SrcColorFactor;
+      m.depthWrite = false;
+    }
+    if (drawnBeforeCapture(f)) {
+      m.transparent = false;
       m.depthWrite = false;
     }
   }

@@ -18,6 +18,7 @@ import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '../script/sh
 import { graphSource, type GraphDef, type GraphSource } from '../script/shell/stage3d/graph';
 import { patchRefraction, patchSss, patchUnlit, patchVertexColor, patchWater } from '../script/shell/stage3d/material';
 import { initParams, patchSrt0, srtMatrix } from '../script/shell/stage3d/params';
+import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const W = join(WEB, 'assets', 'plaza', 'world');
@@ -344,6 +345,73 @@ console.log('9. 단계 로딩 계획(loader_manager.md §11.4·§11.5 — plaza_
   ok(list.every((e) => !e.hookKey || !need.has(e.hookKey) || pri.get(e.hookKey)! <= pri.get(e.key)!), '부착 부모 등급 ≤ 자식');
   ok(order.every((e, i) => i === 0 || pri.get(order[i - 1].key)! <= pri.get(e.key)!), '순서 = 등급순');
   ok(list.every((e) => pri.has(e.key)), '필요한 것 모두 등급');
+}
+
+console.log('10. 애니 커브 반복(원본 wrap Repeat — §6.14 #14c ③, 변환기 Curves.cs)');
+{
+  const stuck = (v: number[]): number => {
+    const last = v[v.length - 1];
+    let k = v.length - 1;
+    while (k > 0 && Math.abs(v[k - 1] - last) < 1e-6) k--;
+    return k;
+  };
+  const REPEAT: [string, string, string, string, number, number][] = [["menu00_central_plaza00", "menu00_grass00_mt", "utility_parameter0", "0x08", 0, 400], ["menu00_fountain_water", "fountain_water00_mt", "utility_parameter0", "0x08", 0, 600], ["menu00_fountain_water", "fountain_water00_mt", "utility_parameter0", "0x0C", 0, 200], ["menu00_fountain_water", "fountain_water00_mt", "utility_parameter1", "0x08", 0, 1800], ["menu00_fountain_water", "fountain_water00_mt", "utility_parameter1", "0x0C", 0, 1800], ["menu00_fountain_water", "fountain_water00_mt", "utility_parameter3", "0x0C", 0, 20], ["menu00_fountain_water", "fountain_water01_mt", "utility_parameter0", "0x08", 0, 1800], ["menu00_fountain_water", "fountain_water01_mt", "utility_parameter0", "0x0C", 0, 1800], ["menu00_fountain_water", "fountain_water01_mt", "utility_parameter1", "0x08", 0, 1800], ["menu00_fountain_water", "fountain_water01_mt", "utility_parameter1", "0x0C", 0, 1800], ["menu00_fountain_water", "menu00_stage_caustics", "utility_parameter0", "0x08", 0, 300], ["menu00_fountain_water", "menu00_stage_caustics", "utility_parameter0", "0x0C", 0, 300], ["menu00_fountain_water", "menu00_stage_caustics", "utility_parameter1", "0x08", 0, 300], ["menu00_fountain_water", "menu00_stage_caustics", "utility_parameter1", "0x0C", 0, 300], ["menu00_fountain_water", "menu00_stage_caustics", "utility_parameter2", "0x08", 0, 600], ["menu00_fountain_water", "menu00_stage_caustics", "utility_parameter2", "0x0C", 0, 600], ["menu00_jet_fountain00", "menu00_jet_fountain00_mt", "texture_srt0", "0x14", 0, 30], ["menu00_jet_fountain00", "menu00_jet_fountain00_mt", "utility_parameter1", "0x0C", 0, 60], ["menu00_jet_fountain00", "menu00_jet_fountain00_mt", "utility_parameter2", "0x0C", 0, 60], ["menu00_jet_fountain00", "menu00_jet_fountain01_mt", "texture_srt0", "0x14", 0, 30], ["menu00_jet_fountain00", "menu00_jet_fountain01_mt", "utility_parameter1", "0x0C", 0, 60], ["menu00_jet_fountain00", "menu00_jet_fountain01_mt", "utility_parameter2", "0x0C", 0, 60], ["menu00_ocean00", "menu01_ocean00_mt", "utility_parameter0", "0x08", 30, 630], ["menu00_ocean00_op", "menu01_ocean00_mt", "utility_parameter0", "0x08", 30, 630], ["menu00_stage00_water00", "menu00_stage_caustics", "utility_parameter0", "0x08", 0, 300], ["menu00_stage00_water00", "menu00_stage_caustics", "utility_parameter0", "0x0C", 0, 300], ["menu00_stage00_water00", "menu00_stage_caustics", "utility_parameter1", "0x08", 0, 300], ["menu00_stage00_water00", "menu00_stage_caustics", "utility_parameter1", "0x0C", 0, 300], ["menu00_stage00_water00", "menu00_stage_caustics", "utility_parameter2", "0x08", 0, 600], ["menu00_stage00_water00", "menu00_stage_caustics", "utility_parameter2", "0x0C", 0, 600], ["menu00_stage00_water00", "stage_flag_mt", "utility_parameter0", "0x08", 0, 300], ["menu00_stage00_water00", "stage_flag_mt", "utility_parameter1", "0x00", 0, 598]];
+  type Fmab = { materialAnims: { frames: number; materials: Record<string, { params: Record<string, Record<string, number | number[]>> }> }[] };
+  const cache = new Map<string, Fmab>();
+  const bad: string[] = [];
+  for (const [file, mat, param, off, start, end] of REPEAT) {
+    let j = cache.get(file);
+    if (!j) cache.set(file, (j = JSON.parse(readFileSync(join(W, man.anims[file + '.fmab']), 'utf-8')) as Fmab));
+    const a = j.materialAnims[0];
+    const v = a.materials[mat]?.params['material_' + param]?.[off];
+    const period = end - start;
+    const f0 = start + Math.floor(period / 3);
+    if (!Array.isArray(v)) bad.push(`${file} ${mat} ${param}[${off}] 없음`);
+    else if (f0 + period <= a.frames && Math.abs(v[f0 + period] - v[f0]) > 1e-4) bad.push(`${file} ${mat} ${param}[${off}] f${f0 + period} ${v[f0 + period]} ≠ f${f0} ${v[f0]}`);
+    else if (end < a.frames && stuck(v) <= end) bad.push(`${file} ${mat} ${param}[${off}] ${end}f 뒤 끝값 고정`);
+  }
+  ok(bad.length === 0, `Repeat 커브 ${REPEAT.length}개(광장 fmab 6개, 원본 커브 덤프 [데이터])가 구간 뒤에도 주기대로 반복${bad.length ? ': ' + bad.slice(0, 4).join(' · ') : ''}`);
+  for (const file of ['menu00_ocean00', 'menu00_fountain_water']) {
+    const a = cache.get(file)!.materialAnims[0];
+    const rows = REPEAT.filter((r) => r[0] === file);
+    const moving = rows.filter((r) => {
+      const v = a.materials[r[1]].params['material_' + r[2]][r[3]] as number[];
+      const t = v.slice(r[5] + 1);
+      return t.length > 0 && Math.max(...t) - Math.min(...t) > 1e-6;
+    });
+    ok(moving.length === rows.filter((r) => r[5] < a.frames).length, `${file}: 한 주기 뒤(${rows.map((r) => r[5]).join('·')}f 뒤)에도 값이 변하는 트랙 ${moving.length}/${rows.length}`);
+  }
+  const b = readFileSync(join(W, 'model', 'menu00_jet_fountain00.glb'));
+  const jl = b.readUInt32LE(12);
+  const g = JSON.parse(b.subarray(20, 20 + jl).toString('utf-8')) as { accessors: { bufferView: number; byteOffset?: number; count: number; type: string }[]; bufferViews: { byteOffset?: number }[]; animations: { samplers: { output: number }[] }[] };
+  const bin = b.subarray(20 + jl + 8);
+  const comps: Record<string, number> = { SCALAR: 1, VEC3: 3, VEC4: 4 };
+  let bonesMoving = 0;
+  let bonesStuck = 0;
+  for (const s of g.animations[0].samplers) {
+    const acc = g.accessors[s.output];
+    const o = (g.bufferViews[acc.bufferView].byteOffset ?? 0) + (acc.byteOffset ?? 0);
+    const c = comps[acc.type];
+    for (let k = 0; k < c; k++) {
+      const v = Array.from({ length: acc.count }, (_, i) => bin.readFloatLE(o + (i * c + k) * 4));
+      if (Math.max(...v) - Math.min(...v) < 1e-6) continue;
+      bonesMoving++;
+      if (stuck(v) < acc.count * 0.9) bonesStuck++;
+    }
+  }
+  ok(bonesMoving >= 5 && bonesStuck === 0, `물기둥 fskb 움직이는 채널 ${bonesMoving}개, 끝값 고정 ${bonesStuck}개(기둥 2~5 는 키가 −50~264 로 엇갈림)`);
+}
+
+console.log('11. menu_common 애니 커브 반복(기구 fmab·퀘스트 발판 fskb — 원본 wrap Repeat)');
+{
+  const rb = fmabRepeatBad(join(W, 'anim', 'menu_cmn_balloon00.fmab.json'), [
+    ['menu01_balloon00_mt', 'texture_srt1', '0x10', 0, 600],
+    ['menu01_balloon00_mt', 'utility_parameter0', '0x0C', 0, 300],
+    ['menu01_balloon00_mt', 'utility_parameter1', '0x00', -20, 290],
+  ]);
+  ok(rb.length === 0, `기구 fmab Repeat 커브 3개가 구간 앞뒤에서도 반복 ${rb.join(' · ')}`);
+  const rq = glbRepeatBad(join(W, 'model', 'menu_cmn_quest_platform00.glb'), 'menu_cmn_quest_platform00_ev_quest_start_cut02', [['menu_cmn_quest_platform00', 0, 100]]);
+  ok(rq.length === 0, `퀘스트 발판 cut02(320f, 0~100f Repeat)가 100f 주기 ${rq.join(' · ')}`);
 }
 
 console.log(`${count - fails}/${count}`);

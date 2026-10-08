@@ -6,6 +6,7 @@ namespace Gfx;
 // cubic  v = (k0*s + o) + k1*s*t + k2*s*t^2 + k3*s*t^3, t = (f - f_i) / (f_{i+1} - f_i)
 // linear v = (k0*s + o) + k1*s*t
 // step   v = k0 (+ o for int)
+// frames outside [StartFrame, EndFrame] are folded by PreWrap/PostWrap (Repeat, Mirror; Clamp keeps the end value)
 public static class Curves
 {
     public static float Scale(AnimCurve c) => c.Scale == 0 ? 1f : c.Scale;
@@ -26,8 +27,21 @@ public static class Curves
         return i;
     }
 
+    public static float Wrap(AnimCurve c, float frame)
+    {
+        float s = c.StartFrame, len = c.EndFrame - c.StartFrame;
+        if (len <= 0) return frame;
+        var mode = frame < s ? c.PreWrap : frame > c.EndFrame ? c.PostWrap : WrapMode.Clamp;
+        if (mode == WrapMode.Clamp) return frame;
+        float k = MathF.Floor((frame - s) / len);
+        float t = frame - s - k * len;
+        if (mode == WrapMode.Mirror && ((long)k & 1) != 0) t = len - t;
+        return s + t;
+    }
+
     public static float Eval(AnimCurve c, float frame)
     {
+        frame = Wrap(c, frame);
         var fr = c.Frames;
         int n = fr.Length;
         if (n == 0) return 0;

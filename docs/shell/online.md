@@ -352,6 +352,7 @@ interface OnlineAdapter {
 - 안내 여러 칸: 오른쪽 정렬·칸 폭 = 글자 폭·간격 40(x_alignment_right ali1 gap 40 [데이터]) [근사].
 - 타이머 숫자: sys_num_time_00(80×800) 을 세로 10칸 0..9(위부터)로 보고 노드 uv 로 자른다 [추정].
 - 해산·나가기 뒤에는 광장 대신 다시 방 만들기/찾기 메뉴로 돌아간다 [설계: 원본은 광장 메인].
+  - 정정(2026-10-08, plaza-room2 — 9.6 ③): 광장 안(`PlazaUi`)에서는 원본대로 나가기·해산 뒤 **흐름을 끝내고 광장 메인(오프라인)** 으로 돌아간다(`OnlineFlow` 옵션 `lobbyExit: 'end'`). 위 '메뉴로 돌아감'은 광장이 없는 단독 온라인 페이지(`online_page.ts`, 기본 `'menu'`)에만 남긴다.
 - 매칭 성공 뒤 규칙판(ComUiBdRule) 5 s 는 건너뛴다(참가자 목록 5 s 까지만) [설계].
 - 사람 2명 이상에서 8인 탭으로 가려 하면 알림 PlayModeMissed01 [추정, 11절 4].
 - 정정(헤드리스 확인 뒤): 변환물의 나눈 창 조각(`창#C`·`#LT`…)이 창 자식 목록 끝에 붙어 sys_dialog_00 의 글자·선택지를 덮었다 → 그리기 전에 조각을 같은 부모의 다른 자식보다 앞에 둔다(ui2d 는 창 다음 자식) [설계 보정, view.ts frameFirst]. 줄바꿈·색 태그 문구는 mgm_common.md 9.6 처럼 RichTextPane 으로 그린다.
@@ -419,6 +420,52 @@ interface OnlineAdapter {
 | 사람 2 + 원격 2 | 방 입장부터 소켓 하나 | 내 2 + 원격 2(스테이션#순번) | 4/4 |
 | 사람 3 이 사람 2 방에(4인) | join → full | — | — |
 
+### 9.6 광장 방 흐름 점검·수정 — 기본 실제 서버, 나가기·해산·끊김 잔상 (2026-10-08, plaza-room2)
+
+사용자 지적(원문): "파티에서 나가거나 했을 때 해당 파티에 있던 플레이어들이 그대로 남아 있던데 그런 문제, 실제로 socket io 사용하는데 방 만들기, 방 찾기 제대로 반영 안 되어 있는 것 같아."
+재현 = `tools/test_room_server.ts` ⑤(실제 서버에 광장 UI 세 개 + 가짜 어댑터 한 개, 수정 전 14건 실패). 원인과 수정:
+
+| # | 증상(수정 전) | 원인(코드 위치) | 원본 규칙 | 수정 |
+|---|---|---|---|---|
+| ① | 방 만들기·찾기가 실제로 반영되지 않음(다른 브라우저와 안 만남) | `plaza/ui/part.ts` 어댑터 고르기가 `online=io` 일 때만 `SocketIoOnline`, 기본은 `FakeOnline`(가짜 방 7개·3 s 마다 가짜 입장·가짜 스탬프). `npm run dev`(`tools/serve.ts` = esbuild serve)에는 방 서버(HTTP API·socket.io)가 없어 `online=io` 를 붙여도 붙을 곳이 없음 | — | **기본 = `SocketIoOnline`(페이지와 같은 출처)**. 가짜는 `?online=fake`(시험·데모), `?online=off` = 가짜·방 없음(기존 그대로). `npm run dev` 하나로 페이지 + 방 서버(아래 개발 서버) |
+| ② | 나가기·해산 뒤 이전 멤버 3D 캐릭터가 광장에 그대로 남음(가짜 어댑터에서 항상, 실제 서버는 나가는 틱에 위치가 와 있으면) | (a) `online/fake.ts` `leaveRoom`·`dissolveRoom` 이 0.5 s 뒤에야 방을 지워 그동안 원격 위치(`remoteMove`)를 계속 냄. (b) `plaza/ui/ui.ts` `tick` 이 세션 끝 정리(원격 표 비움 + `remoteLeft`)를 **광장 사건 처리보다 먼저** 하고, `remoteInfo` 를 방 멤버인지 보지 않고 `RemoteTable.receive` 에 넣음 → 정리 뒤 들어온 위치가 원격 표·'net:remote'(3D)를 다시 만들고, 그 스테이션을 지울 사건은 다시 오지 않음 | `ResetRemotePlayer`(세션 끝)·사건 1 `LeftStation`(스테이션 이탈) — 원격 플레이어는 세션 멤버 스테이션의 것만 [판독 5.5] | `PlazaUi` 가 **매 틱 원격 표를 방 멤버(원격 스테이션)에 맞춘다**: 멤버가 아닌 스테이션의 위치·스탬프는 버리고, 표에 남은 비멤버 스테이션은 지우고 'net:remoteLeft'(follow.ts 가 3D `dispose`·로딩 중 취소). 세션 끝·멤버 이탈·늦게 온 위치 모두 이 한 경로. 가짜 어댑터도 나가기·해산을 즉시 반영 |
+| ③ | 손님이 나가면(방장이 해산하면) 혼자 광장이 아니라 친구 매치 메뉴가 다시 뜸. 메뉴 동안 하단 줄이 Finish 상태라 이전 멤버 칸이 남아 있음 | `online/flow.ts` `run` → `lobbyFlow` 가 'menu' 를 돌려주면 `friendMenu` 를 다시 돈다(9.3 [설계] "원본은 광장 메인") | MainImpl 대기실 람다: 나가기 = `LeaveSession`, 해산 = `DissolveSession` 뒤 광장 메인(오프라인 대기) [판독 5.5 정정]. 해산당함 = 오류 표시 "호스트가 방을 해산했습니다." 뒤 menu00(광장) | `OnlineFlow`/`OnlineScreen` 옵션 `lobbyExit`(`'menu'` 기본 = 단독 페이지, `'end'` = 광장). 광장은 `'end'`: 나가기 → 결과 `leave`, 해산 → `dissolve` 로 흐름 끝 → `PlazaUi` 가 어댑터 `disconnect` → 하단 줄 오프라인 Start(이 기기 사람만) |
+| ④ | 열려 있던 −/+ 카드 뷰어에 나간 사람 카드가 남음 | `ui.ts` `cardTick` 이 열 때만 카드 목록을 채움 | 람다가 열 때 한 번 `ClearCardData` → 멤버마다 `AddCardData` [판독 5.8]. 멤버 이탈 때 카드 목록을 고치는지는 람다 본문에 없음(손님은 세션이 끊기면 `Out`) | [설계] 멤버가 빠지면 그 스테이션 카드를 목록에서 뺀다(보던 카드면 같은 자리 다음 장, 0장이면 원본 Update 규칙대로 Out). 세션 끝이면 Out(기존) — 8 사용자 확인 필요 |
+| ⑤ | 로컬 사람 2명 스테이션의 데이터 도착(memberReady)이 첫 사람만 준비로 바뀜 → 하단 줄에 둘째 얼굴이 안 나오고 준비 인원이 모자람 | `flow.ts` `onEvent('memberReady')` 가 `find`(첫 멤버만) | GetNetworkPlayerDataCount = 데이터 받은 항목 수, 스테이션 데이터에 그 기기 사람이 모두 실림 [판독 5.5] | 같은 스테이션 멤버 모두 준비 |
+| ⑥ | 서버가 없거나 HTTP 가 실패하면 빈 목록·"방을 찾지 못했습니다."·만들기 실패 알림만 나오고 오류 대화상자가 없음. 방 목록 화면은 오류를 아예 보지 않음 | `online/socketio.ts` `post` 실패 = 빈 검색·`createFailed`·`joinFailed missed`, 소켓 연결 실패 = 같은 실패 사건. `flow.ts` `listStep` 반복에 `pendingError` 검사 없음 | NetErrorListener: 코드 1(시간 초과) → `sys_error_B4`, 그 밖 통신 오류 → `sys_error_B3`(세션 없으면 일반 오류 + Disconnect) [판독 5.5], ConnectNpln 실패 = B3 [판독 5.7] | HTTP 연결 실패·비정상 응답·socket.io 클라이언트 스크립트를 못 읽음·소켓 연결 오류 = `error B3`, HTTP 20 s 시간 초과 = `error B4`. 흐름은 목록·방 종류·참가 어디서든 오류를 보면 화면을 닫고 오류 대화상자(A 로 닫음) → 친구 매치 끝 → 광장 메인 계속. 서버 판단 실패(표 상태 missed·full·password·members)는 기존 알림 그대로 |
+| ⑦ | 같은 방에 동시에 참가 표를 받은 두 사람이 같은 캐릭터일 수 있음 | `server/games/mpj-plaza/rooms.ts` `join` 캐릭터 겹침 검사가 입장한 멤버만 봄 | 참가 4단계 캐릭터 겹침 [판독 5.4] | 예약 표(아직 ENTER 전) 사람 캐릭터도 겹침에 넣음 |
+
+**연결 끊김·시간 초과 규칙**(엔진 값 = 9.5 `pingInterval 5000·pingTimeout 10000`, 재접속 없음):
+
+| 경우 | 서버가 아는 때 | 남은 사람 화면 | 끊긴 사람 화면 |
+|---|---|---|---|
+| 나가기·해산(대화상자 예) | LEAVE·DISSOLVE 받음(곧이어 소켓 끊음 — 메시지가 빠져도 끊김으로 같은 처리) | 손님 이탈 = LEFT → 그 스테이션 정리 / 방장(시작 전) = DISSOLVED → "호스트가 방을 해산했습니다." | 혼자 광장(③) |
+| 탭 닫기·새로 고침 | 브라우저가 웹소켓을 닫는 즉시 | 같음(손님 LEFT, 방장 DISSOLVED). 시작한 방은 방장이 떠나도 LEFT | — |
+| 네트워크 끊김 | engine.io 핑 응답이 없을 때: 최대 pingInterval + pingTimeout ≈ **15 s** | 같음 | 클라이언트도 핑이 15 s 안 오면 끊김 → `error B3` "통신이 끊어졌습니다." → 닫으면 혼자 광장 |
+| 입장 표만 받고 안 들어옴 | 20 s(JOIN_TIMEOUT_S) 뒤 예약 자리 풀림, 방장이 안 들어온 방은 지움 | 목록에 안 나옴 | createFailed/joinFailed |
+끊긴 스테이션은 방에서 빠지고 되살리지 않는다. 다시 들어오면 새 참가(새 스테이션 번호)라 이전 키(`스테이션#순번`)와 겹치지 않는다. 시험 ⑤ 실측: 핑 200/300 ms 서버에서 끊김 → 남은 사람 정리 약 0.35 s.
+
+**방 찾기 목록 반영**: 원본은 목록을 열 때·Y 갱신·L/R 탭·참가 실패 뒤에만 다시 찾고 자동 새로 고침은 없다 [판독 5.3] → 웹도 같은 때 HTTP `search` 를 부르고, 응답은 그 순간 서버 상태다: 방장이 입장한 방 · 입장 열림 · 시작 안 함 · 인원(입장 + 예약 표) < 최대. 그래서 만들기·나가기(인원 줄어 다시 보임)·해산(지움)·가득 참·시작됨이 다음 검색에 바로 반영된다(시험 ⑤ "목록 반영").
+
+**잔상 정리 기준**(세션 끝·멤버 이탈 모두 ② 한 경로 + 기존 SetPlayers):
+
+| 상태 | 위치 | 비우는 곳 |
+|---|---|---|
+| 원격 위치 표·보간 상태 | `ui.ts` `RemoteTable`(RemoteActor 안에 보간 from/to) | 방 멤버 아닌 스테이션 = 표에서 지움(보간 상태도 같이 사라짐) |
+| 3D 캐릭터 | `follow.ts` `remotes`(키 `스테이션#순번`)·`loading` | 'net:remoteLeft' → `removeRemote`: `dispose`·액터 목록에서 뺌·로딩 중이면 다 읽은 뒤 버림 |
+| 하단 줄·스탬프 칸 | `status.ts` `SetPlayers`(대기 상태 매 프레임) → `onChange` → `ui.ts` `stamps` 삭제 | 멤버 이탈 = 다음 프레임, 세션 끝 = 오프라인 Start 의 SetPlayers 가 원격 칸을 모두 지움 |
+| 인원 텔롭 | `flow.ts` `lobbyState()`(flow.room) | memberLeft 가 멤버를 뺌 / 방 없음 = 텔롭 Out |
+| 카드 뷰어 목록 | `card.ts` `cards` | ④ |
+| 스탬프·위치 받은 큐 | `ui.ts` `PlazaNet.plaza` | 멤버 아닌 스테이션 사건은 버림(②) |
+가짜 어댑터(`?online=fake`)도 같은 `PlazaUi` 경로를 탄다(시험 ⑤ 마지막).
+
+**개발 서버·기본값**
+
+- `npm run dev`(= `tools/serve.ts`, 포트 51811 그대로): 앞단 node http 서버 하나에 ① express `createApp(fallback)`(9.5 와 같은 게임 라우터 `/api/v1/mpj-plaza/*`) — fallback 은 같은 프로세스의 **esbuild serve**(127.0.0.1 임의 포트, watch·`/esbuild` 변경 알림 그대로)로 요청을 넘긴다, ② socket.io `createSocket`(같은 http 서버에 붙어 `/socket.io/*` 의 폴링·**웹소켓 업그레이드**·클라이언트 스크립트를 직접 처리). 새 의존성 없음(express·socket.io 는 이미 있음). → `http://localhost:51811/index.html?plaza=1` 이 바로 실제 방 서버를 쓴다.
+- `npx tsx tools/serve.ts --dist`: web/dist 정적(배포 헤더) + 같은 API·socket.io. 배포 서버 `server/main.ts`(`--dist`·`--port`)는 원래부터 같은 출처 구성이라 그대로.
+- URL `online`: 없음·`io` = 실제 서버(같은 출처, `server=http://호스트:포트` 로 바꿈) · `fake` = 가짜(시험·데모) · `off` = 가짜·방 없음. 혼자·로컬 플레이는 친구 매치 메뉴에서 방 찾기·만들기를 고르기 전까지 통신 없음(9.5 그대로).
+- 서버가 없을 때(정적 호스팅만): 광장·로컬 플레이는 그대로, 친구 매치에서 방 찾기·만들기를 하면 ⑥ 대로 `sys_error_B3` 대화상자 → 광장.
+
 ### 9.4 파일과 구현 순서
 `types.ts`(9.2 계약·상수) → `fake.ts`(FakeOnline) → `flow.ts`(3.1·5.1~5.7 상태기계, 순수: 사건 `OEvent` 를 낸다) → `view.ts`(레이아웃 적용) → `widgets.ts`(대화상자·알림·키보드·텔롭) → `screen.ts`(틱 순서: 입력 → 어댑터 poll → 흐름 → 레이아웃 갱신 → 그리기) → `index.ts`. 시험 `web/tools/test_online.ts`(흐름 + 쓰는 라벨 존재).
 
@@ -432,6 +479,7 @@ interface OnlineAdapter {
 1. ComUiDialogBox·UiNoticeModule·ComUiLoadingTelop·ComUiTimer·ComUiScrollBar 의 엔진 동작(main) — 웹은 9.3 단순 구현.
 2. 대기실 안내 버튼 → 동작 연결과 해산/나가기 확인 대화상자 호출 위치(SequenceMainMenu::MainImpl 8216 B 미판독). — 정정(2026-10-08): 입력 → 람다 연결은 5.5 정정 줄로 해결. 해산·나가기 람다 본문(@0x71001cd350·@0x71001cd398 의 대상)은 미판독이라 대화상자 문구·기본 커서는 기존 그대로.
 10. (사용자 확인 필요, plaza-room) 방장 수락 왕복을 HTTP join 서버 검사 + 입장 표 20 s 로 대신함, 메뉴를 열 때 실제 접속을 하지 않음(원본 ConnectNpln 시점과 다름 — 사용자 지시), 캐릭터·이름·카드는 입장 때 한 번만 보내고 위치는 i16 양자화·yaw 만, `start` 를 WaitSync 대신 서버 방송 한 번으로 맞춤, B6 는 쓰지 않고 B9 = 혼자 START, 전 세계 매칭은 이 서버에서 미지원(matchFailed), 저장 데이터 없는 카드(업적 −1·랭크 0·시간 0 숨김·디자인 0·스티커 없음) 는 [설계]. 모드 메뉴(menu01) 이후 온라인 동기는 범위 밖(방 연결은 광장을 나가면 끊긴다).
+11. (사용자 확인 필요, plaza-room2 — 9.6) 열린 카드 뷰어에서 나간 사람 카드를 빼는 것 [설계: 원본 람다는 열 때 한 번 채움], HTTP 실패 = B3·시간 초과 = B4 로 원본 통신 오류 규칙에 맞춘 것(원본은 NPLN 오류 코드), 네트워크 끊김 감지 ≈ 15 s(socket.io 핑 값, 원본 NEX 시간 초과 값 미판독), 끊긴 뒤 재접속 없음.
 3. NetworkManager::OnReceive 의 참가 요청 수락/거절 조건(알림 Missed01~03 언제 나오는지), IsReadyNetworkPlayerData 뒷부분.
 4. 8인 탭 전환 시 사람 2명 이상일 때의 보조 람다 @0x71001cf738 본문.
 5. Scene::Params 를 덮어쓰는 데이터가 있는지(MATCHING_TIME 120·FAIL_LIMIT 2 는 기본값).

@@ -34,6 +34,7 @@ export interface OnlineFlowOptions {
   firstOnline: boolean;
   matchingTime?: number;
   failLimit?: number;
+  lobbyExit?: 'menu' | 'end';
 }
 
 const ERROR_LABEL: Record<ErrorCode, string> = { B3: 'sys_error_B3', B4: 'sys_error_B4', B6: 'sys_error_B6', B9: 'sys_error_B9' };
@@ -68,11 +69,12 @@ export class OnlineFlow {
   private inbox: OnlineEvent[] = [];
   private pendingError: string | null = null;
   private playRequested = false;
-  private busy = 0;
+  busy = 0;
   private guideOn: string[] | null = null;
   private firstOnline: boolean;
   private readonly matchingTime: number;
   private readonly failLimit: number;
+  private readonly lobbyExit: 'menu' | 'end';
   timeLeft = 0;
 
   constructor(o: OnlineFlowOptions) {
@@ -82,6 +84,7 @@ export class OnlineFlow {
     this.firstOnline = o.firstOnline;
     this.matchingTime = o.matchingTime ?? MATCHING_TIME;
     this.failLimit = o.failLimit ?? FAIL_LIMIT;
+    this.lobbyExit = o.lobbyExit ?? 'menu';
     this.netMenu = new NetMenuPanel(o.ev);
     this.roomType = new RoomTypePanel(o.ev);
     this.list = new SessionListView(o.ev);
@@ -122,11 +125,9 @@ export class OnlineFlow {
           this.ev.push({ t: 'notice', label: NOTICE.JoinSession, ins: { Text0: e.member.name } });
         }
         break;
-      case 'memberReady': {
-        const m = this.room?.members.find((x) => x.station === e.station);
-        if (m) m.ready = true;
+      case 'memberReady':
+        for (const m of this.room?.members ?? []) if (m.station === e.station) m.ready = true;
         break;
-      }
       case 'memberLeft':
         if (this.room) this.room.members = this.room.members.filter((x) => x.station !== e.station);
         break;
@@ -221,7 +222,7 @@ export class OnlineFlow {
         }
       }
       const l = yield* this.lobbyFlow();
-      if (l !== 'menu') {
+      if ((l !== 'menu' && l !== 'leave' && l !== 'dissolve') || this.lobbyExit === 'end') {
         this.end(l);
         return;
       }
@@ -375,7 +376,7 @@ export class OnlineFlow {
     const e = yield* this.waitEvent(['searchDone'], JOIN_TIMEOUT_S);
     this.rooms = e?.rooms ?? [];
     if (id) this.searchId = this.rooms.length ? id : '';
-    if (this.rooms.length === 0 && (notify || id)) this.ev.push({ t: 'notice', label: NOTICE.SerchSession01 });
+    if (this.rooms.length === 0 && (notify || id) && !this.pendingError) this.ev.push({ t: 'notice', label: NOTICE.SerchSession01 });
     else if (this.rooms.length) yield* this.sleep(0.5);
     this.busy--;
   }
@@ -396,7 +397,7 @@ export class OnlineFlow {
       yield;
       L.settle(this.io);
       if (L.life.st !== 1) continue;
-      if (this.room) {
+      if (this.room || (this.pendingError && this.busy === 0)) {
         L.life.out();
         this.guide(null);
         continue;
@@ -502,7 +503,7 @@ export class OnlineFlow {
       this.mark('joinRequest');
       this.net.joinRoom(r.id, pw);
       const e = yield* this.waitEvent(['joined', 'joinFailed'], JOIN_TIMEOUT_S * 2);
-      if (e?.t !== 'joined') {
+      if (e?.t !== 'joined' && !this.pendingError) {
         this.ev.push({ t: 'notice', label: NOTICE.JoinSessionMissed00 });
         this.ev.push({ t: 'note', text: `참가 실패 ${e?.t === 'joinFailed' ? e.reason : 'timeout'}` });
         this.busy--;
@@ -563,7 +564,7 @@ export class OnlineFlow {
             this.room = null;
             this.lobby.finish();
             this.mark('dissolve');
-            return 'menu';
+            return 'dissolve';
           }
         } else if (t & BTN.A) {
           this.ev.push({ t: 'se', label: 'SQ_SE_SYS_DECI' });
@@ -578,7 +579,7 @@ export class OnlineFlow {
           this.room = null;
           this.lobby.finish();
           this.mark('leave');
-          return 'menu';
+          return 'leave';
         }
       }
     }

@@ -687,6 +687,7 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 |4. 저장 flush와 한 판 기록 갱신|favorite/NEW save bit writer, 시작SaveRequest; 현재 record 표시|취소/종료시SaveRequest·save flush reader, MGRecorder 한 판 갱신|
 |5. main Human 이름/희소 슬롯 보충 caller|동일current getter가 반대 비교임을 확인; boot4칸+인원setter 연결|이름의 설계 의도는 원본 개발 자료; FUN_71001f07a0 caller와<4 예외 진입 fixture|
 |6. 112와 전체available/세이브 분모|프리 플레이MgAll=112, MGList ID공간152|MGList의 모드별available 집합·save playcount u16 writer; old mgmet 분모 문제의 나머지|
+|~~7. 3D 바다 `mgm01_sea00.fmab` 커브 wrap~~ → **해결(2026-10-08)**|원본 Repeat 커브 4개(모래 60~660f·바다 30~630f, 클립 6000f)|변환기 `Curves.cs` 가 원본 wrap 으로 접음. mgm01 3D 는 아직 변환 산출물이 없어 다시 만들 사본은 없다(다음 변환 때 반영). 시험 test_mgm01 11절 — 변환기를 그 자리에서 돌려 확인(mgm00 바나나 결과 모션 2개 포함). 근거 plaza_3d.md §8|
 
 [판독] old mgmet §11 중 최초 네 슬롯·타입 getter/변화 소비·Exit 첫 WaitUntil은 §8.1·8.2·3.2로 보충한다. 분모112는 목록 JSON 집합까지만 좁혔다. flag4의 실제 한 판 설명 소비와 Scene 인스턴스 수명은 다음 단계에 남긴다.
 

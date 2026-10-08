@@ -231,15 +231,11 @@ export class FakeOnline implements OnlineAdapter {
   }
 
   leaveRoom(): void {
-    this.at(0.5, () => {
-      this.cur = null;
-    });
+    this.cur = null;
   }
 
   dissolveRoom(): void {
-    this.at(0.5, () => {
-      this.cur = null;
-    });
+    this.cur = null;
   }
 
   startRoom(): void {

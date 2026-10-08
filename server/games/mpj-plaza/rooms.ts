@@ -169,7 +169,7 @@ export class PlazaRooms {
         if (!r || !r.entryOpen || r.started || r.members.length === 0 || q.players.length === 0) return encTicket(TICKET.MISSED);
         if (r.password !== '' && r.password !== q.password) return encTicket(TICKET.PASSWORD);
         if (this.players(r) + q.players.length > r.size || (r.size === 8 && q.players.length > 1)) return encTicket(TICKET.FULL);
-        const used = new Set(r.members.flatMap((m) => m.players.map((p) => p.chara)));
+        const used = new Set([...r.members.flatMap((m) => m.players), ...[...this.tickets.values()].filter((t) => t.room === r).flatMap((t) => t.players)].map((p) => p.chara));
         if (q.players.some((p) => used.has(p.chara) || (r.size === 8 && p.chara === KOOPA))) return encTicket(TICKET.MEMBERS);
         return this.ticket(r, q.players, false);
       }

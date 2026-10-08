@@ -243,7 +243,7 @@ f ≤ F[0] → K[0][0]·s + o,  f ≥ F[n−1] → K[n−1][0]·s + o
 ```
 
 - 스켈레탈 커브 형식 분포: `Cubic, 프레임 u8, 키 s16` 1,620,307 / `Cubic u8 s8` 190,013 / 그 밖 소수. Linear는 1,024개. 전 클립 `Baked = False` [데이터].
-- wrap(pre/post): Clamp/Clamp 1,892,537, 그 밖(Repeat, 3) 약 3,600 [데이터]. 변환은 0..FrameCount 안만 쓰므로 영향 없음.
+- wrap(pre/post): Clamp/Clamp 1,892,537, 그 밖(Repeat, 3) 약 3,600 [데이터]. ~~변환은 0..FrameCount 안만 쓰므로 영향 없음~~ → **정정(2026-10-08)**: 커브 구간 [start, end] 가 클립 길이보다 짧거나 엇갈린 Repeat 커브가 있어(물 흐름 30~1800f 주기, 뼈 키 −50~490f 등) 끝값 고정으로 구우면 흐름이 멈춘다. 변환기 `Curves.cs` 가 pre/post wrap(Repeat·Mirror)을 원본대로 접는다. 다시 만든 파일·시험은 shell/plaza_3d.md §8.
 - 프레임이 소수인 커브 3,387개(이펙트 모델 등) [데이터]. 정수 프레임 베이크는 키 사이 값을 그대로 샘플하므로 문제 없다.
 - 이 식을 C#(변환기)과 파이썬(`curve_check.py`)으로 따로 구현해 three.js 재생값과 대조했다(10절).
 

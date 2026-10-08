@@ -147,7 +147,7 @@ const tap = async (bits: number, ms = 1200): Promise<void> => {
 };
 
 try {
-  await page.goto(`${server.url}index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0011&join=4`);
+  await page.goto(`${server.url}index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0011&online=fake&join=4`);
   if (await wait('① 광장 로드', "m && m.flow === 'plaza' && d && d.models > 0", 180000)) {
     await page.waitForTimeout(1500);
     await shot('01_loaded');

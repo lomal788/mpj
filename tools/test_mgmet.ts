@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url';
 import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/render2d';
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
+import { existsSync } from 'node:fs';
+import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';
 import {
   computeAlignment,
   createWork,
@@ -424,6 +426,25 @@ function makeHub(o: { com: boolean[]; sp?: number; modeFlags?: number; boss?: bo
   h.tap(0x1);
   ok(h.until(() => h.done() !== null, 100), '플레이 A');
   eq(h.done(), { kind: 'rule', update: 1, rule: { cpu: 0, explain: 1, flag4: false } } as MgmetResult, '규칙 결과');
+}
+
+console.log('6. 3D 애니 커브 반복(원본 wrap Repeat — 변환기 Curves.cs, plaza_3d.md §6.14 #14c ③). web 은 아직 mgmet 3D 를 안 쓰므로 변환 산출물(extracted/converted/graphics/mgmet)을 본다');
+{
+  const G = join(WEB, '..', 'extracted', 'converted', 'graphics', 'mgmet');
+  if (!existsSync(G)) console.log('   건너뜀: 변환 산출물 없음', G);
+  else {
+    const sea: [string, string, string, number, number][] = [['mgmet_ocean00_mt', 'utility_parameter0', '0x08', 0, 450]];
+    for (const f of ['mgmet_sea00', 'mgmet_sea00_op_c01']) {
+      const r = fmabRepeatBad(join(G, 'anim', f + '.fmab.json'), sea);
+      ok(r.length === 0, `${f}.fmab 바다 커브 450f 뒤에도 반복 ${r.join(' · ')}`);
+    }
+    const map: [string, number, number][] = [['fabric_joint_l2', 60, 360], ['fabric_joint_l3', 120, 420], ['fabric_joint_r2', 140, 440], ['fabric_joint_r3', 190, 490]];
+    const veh: [string, number, number][] = [['pos_banana_1', 35, 155], ['pos_jetski_0', 85, 205], ['pos_jetski_2', 25, 145], ['pos_jetski_3', 50, 170], ['pos_submarine_0', 45, 165], ['pos_submarine_2', 60, 180], ['pos_submarine_3', 15, 135]];
+    for (const [f, rows] of [['mgmet_map01', map], ['mgmet_vehicle00', veh]] as const) {
+      const r = glbRepeatBad(join(G, 'model', f + '.glb'), f, [...rows]);
+      ok(r.length === 0, `${f}.glb 뼈 ${rows.length}개(키 구간이 엇갈린 Repeat)가 구간 밖에서도 반복 ${r.slice(0, 3).join(' · ')}`);
+    }
+  }
 }
 
 console.log(`${count - fails}/${count} 통과`);

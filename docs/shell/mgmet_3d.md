@@ -191,6 +191,7 @@
 - 적용은 07 §6.1·6.2(Aim: `lookAt` + `rotateZ(twist)`, fovy = 전체 세로각, aspect 미적용, near/far 적용).
 - 끝 신호 제안 [설계]: 재생기 `isFinished()`(비루프 frame ≥ frameMax 또는 역재생 frame ≤ 0), `isIdle()`(구간 이동 끝), `onFinished(label)` 콜백. 신호 대응: `openingDone` ← op_01→op_02 끝, `zoomDone` ← op_03 끝, `selectionCameraIdle` ← isIdle, `modeZoomDone` ← `*_in` 끝. 진행 순서(틱 안에서 frame 진행과 MoveUpdate 중 무엇이 먼저인지)는 [미확정] — 1프레임 차이.
 - 주입 지점: A 계약 `stage.setCameraDriver({ apply(camera, df) })` 에서 frame += df·speed 후 적용.
+- **커브 wrap 해결(2026-10-08)**: 맵 애니 `mgmet_map01.fskb`(천 뼈 4개, 키 60~490f 로 엇갈린 Repeat)·`mgmet_vehicle00.fskb`(위치 뼈 7개)·바다 `mgmet_sea00`·`sea00_op_c01.fmab`(450f 주기 Repeat)가 변환기에서 끝값 고정으로 구워져 있었다 → `Curves.cs` 가 원본 wrap 으로 접게 고치고 extracted/converted/graphics/mgmet 을 다시 만듦(glb 는 애니 바이트만 바뀜). 시험 test_mgmet 6절. 근거·전체 목록 plaza_3d.md §8.
 
 ### 10.4 바다 `mgmet_ocean00_mt` 셰이더 판독 (프로그램 p59, 오프닝 `sea00_op_c01` 은 p55) [판독: SASS]
 

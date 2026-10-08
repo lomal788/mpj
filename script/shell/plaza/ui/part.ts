@@ -4,7 +4,8 @@
  *   듣기 'interact:telop' {area, visible, detail?} · 'interact:decide' {result}(3 = 친구 매치 메뉴) · 'interact:pop' {visible, x, y}(레이아웃 좌표) 또는 {visible, ndc:[x,y]} · 'ui:mainLayout' boolean
  *   내기 'ui:friendMenu' boolean · 'ui:stampList' {slot, open} · 'net:remote' {station, slot, chara 'pcNN', pos, quat, mode, speed} · 'net:remoteLeft' {station} · 'net:session' boolean(방 접속 여부가 바뀔 때)
  *   대기실(docs/shell/plaza_3d.md §5.2): 내기 'net:lobby' {host, ready} · 'net:started'(PlaySession — 모두 모드 메뉴로), 듣기 'net:playSession'(방장 기구 결정)
- * 시험값(URL): online=off 이면 가짜 온라인 없음, online=io[&server=http://호스트:포트] = 실제 방 서버(server/main.ts, HTTP + socket.io 바이너리, 기본 = 페이지와 같은 출처), join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7), first=1.
+ * 온라인(docs/shell/online.md 9.5·9.6): 기본 = 실제 방 서버(SocketIoOnline, HTTP + socket.io 바이너리, 페이지와 같은 출처 — npm run dev·server/main.ts), server=http://호스트:포트 로 바꿈.
+ * 시험값(URL): online=fake = 가짜 온라인(시험·데모: join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7)), online=off = 가짜·방 없음, first=1.
  */
 import * as THREE from 'three';
 import { MgmSound } from '../../mgmcommon';
@@ -109,7 +110,8 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
   const self = locals()[0];
   const selfInfo = { name: self?.name ?? 'Player', chara: self?.chara ?? 0, humans: Math.max(1, locals().filter((p) => !p.isCom).length) };
   const selfCard = defaultCard(`${selfInfo.name}-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e9).toString(36)}`, selfInfo.name);
-  const net: OnlineAdapter = q.get('online') === 'io' ? new SocketIoOnline({ base: (q.get('server') ?? '').replace(/\/$/, ''), self: { ...selfInfo, card: selfCard } }) : new FakeOnline({
+  const fake = q.get('online') === 'fake' || q.get('online') === 'off';
+  const net: OnlineAdapter = !fake ? new SocketIoOnline({ base: (q.get('server') ?? '').replace(/\/$/, ''), self: { ...selfInfo, card: selfCard } }) : new FakeOnline({
     rooms: q.get('online') === 'off' ? 0 : num('rooms', 7),
     joinInterval: num('join', 3),
     leaveAfter: num('leave', 0),

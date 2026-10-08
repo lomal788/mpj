@@ -12,6 +12,9 @@ import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/re
 import { LayoutInst } from '../script/shell/charselect/scene2d';
 import type { Spec } from '../script/shell/charselect/types';
 import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '../script/shell/mgmcommon';
+import { mkdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';
 import {
   FILTER,
   filterNextIndex,
@@ -796,6 +799,36 @@ console.log('10. 상태기계: 목록 ↔ 설정 ↔ 승패 표 ↔ 한 판 호�
   run(60);
   eq([states().slice(-2), exited], [[7, 9], 1], '목록 B → 7 → 9 → 항구로');
   ok(!sc.guide.shown, 'Back 안내 Out');
+}
+
+console.log('11. 3D 애니 커브 반복(원본 wrap Repeat — 변환기 Curves.cs, plaza_3d.md §6.14 #14c ③). mgm01 바다·mgm00 바나나 결과 모션은 아직 변환 산출물이 없어 변환기를 그 자리에서 돌린다');
+{
+  const EXE = join(WEB, 'tools/analysis/graphics_bfres2gltf/bin/Release/net7.0/graphics_bfres2gltf.exe');
+  const BEA = join(WEB, '..', 'extracted', 'bea');
+  const OUT = join(WEB, 'test/out/anim_repeat');
+  const seaSrc = join(BEA, 'mgm~mgm01.nx.bea/mgm/mgm01/model/mgm01_sea00.fmab');
+  if (!existsSync(EXE) || !existsSync(seaSrc)) console.log('   건너뜀: 변환기나 원본 아카이브 없음');
+  else {
+    mkdirSync(OUT, { recursive: true });
+    const sea = join(OUT, 'mgm01_sea00.fmab.json');
+    spawnSync(EXE, ['anim', seaSrc, sea]);
+    const r = fmabRepeatBad(sea, [
+      ['beach_sand00_cw_mt', 'utility_parameter0', '0x00', 60, 660],
+      ['beach_sand00_w_mt', 'utility_parameter0', '0x00', 60, 660],
+      ['mgmen_ocean00_mt', 'utility_parameter0', '0x08', 30, 630],
+      ['sand00_mt', 'utility_parameter0', '0x00', 60, 660],
+    ]);
+    ok(r.length === 0, `mgm01_sea00.fmab Repeat 커브 4개가 구간 앞뒤에서도 반복 ${r.join(' · ')}`);
+    const bones: [string, number, number][] = ['pelvis', 'L_thigh', 'L_calf', 'L_foot', 'R_thigh', 'R_calf', 'R_foot', 'spine00', 'L_clavicle', 'L_upperarm', 'L_forearm', 'L_hand', 'attach_L_hand_mrr', 'L_hand_roll', 'R_clavicle', 'R_upperarm', 'R_forearm', 'R_hand', 'attach_R_hand_mrr', 'R_hand_roll', 'head', 'chin'].map((b) => [b, 0, 30]);
+    const yoshi = join(BEA, 'chara~npc071.nx.bea/chara/npc/npc071_yoshi/model/npc071_yoshi.fmdb');
+    for (const k of ['00', '01']) {
+      const clip = `mgm04_result00_banana${k}_shake00a`;
+      const glb = join(OUT, clip + '.glb');
+      spawnSync(EXE, ['gltf', yoshi, glb, '--anim', join(BEA, 'mgm~mgm00.nx.bea/mgm/mgm00/model', clip + '.fskb')]);
+      const rb = glbRepeatBad(glb, clip, bones);
+      ok(rb.length === 0, `${clip}.fskb(뼈 23개 0~30f Repeat, 같은 뼈를 가진 요시 모델에 붙여 구움 — tail 은 요시에 없어 뺌)가 120f 내내 30f 주기 ${rb.slice(0, 3).join(' · ')}`);
+    }
+  }
 }
 
 console.log(fails ? `실패 ${fails}/${count}` : `통과 ${count}/${count}`);

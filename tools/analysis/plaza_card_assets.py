@@ -9,6 +9,7 @@
   designs   cardDesignList.json(배열 번호 = CardDesignID) [데이터]
   texts     mn03_card_ui_*·im_achieve401_name·sys_ctrl_back·mn01_friend_ctrl_lobby_card
   fonts     이 묶음 레이아웃 글꼴을 공용·온라인·광장 UI·이 묶음 문구 글자로 다시 만든 것(mergeSpec fonts 덮어쓰기 — 이 묶음을 마지막에 합친다)
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 mgmcommon 기준 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
 import sys
@@ -59,7 +60,7 @@ def main():
     mc.DST = DST
     tex, srgb, miss = b.write_textures("pc")
     mc.DST = common_dst
-    textures = {k: "../plaza/ui/" + v for k, v in tex.items()}
+    textures = {k: v if v.startswith("../") else "../plaza/ui/" + v for k, v in tex.items()}
     design_tex = [names.get(d["bgTextureName"], d["bgTextureName"]) for d in designs]
     ranks = sorted(k for k in textures if k.startswith("sys_icon_rank_"))
 

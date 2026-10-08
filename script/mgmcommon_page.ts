@@ -8,6 +8,7 @@
  */
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { assetHooks } from './shell/charselect/assetHooks';
 import {
   FiberRunner,
   MessageFlow,
@@ -85,8 +86,7 @@ export async function runMgmCommonDemo(
     const c = ctx;
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(url)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(url, b);

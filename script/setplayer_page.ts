@@ -5,6 +5,7 @@
  */
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { assetHooks } from './shell/charselect/assetHooks';
 import { ASSETS } from './env';
 import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from './shell/setplayer';
 import { appFlow } from './view/appFlow';
@@ -123,8 +124,7 @@ export async function runSetPlayer(
     const c = actx;
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(url)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(url, b);

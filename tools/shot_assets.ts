@@ -286,7 +286,7 @@ const AUDIO_SAMPLES = [
   'mg1801/sound/stream/SM_JIN_RC01_MG_SUCCESS.wav',
   'mg1801/sound/wave/main_war1_065.wav',
   'mg1801/sound/wave/main_war12_003.wav',
-  'mgmcommon/sound/SQ_SE_SYS_DECI.wav',
+  'common/sound/SQ_SE_SYS_DECI.wav',
   'charselect/sound/voice/pc01_0.wav',
 ];
 async function audioCheck(browser: Browser, base: string): Promise<unknown[]> {

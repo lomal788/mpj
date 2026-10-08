@@ -7,10 +7,11 @@
   filters[14]  filterdata 순서 그대로 {name, sortIdx, label}
   mgList[]     {id, name, rule(문자열), endless, gyro, callInst, available} — id 배정은 9절 [추정](ND 0..78 → 0..78, CA → 79..116, ND Extra → 117..)
   records[]    common/data/gamerecord.json {name, stage, mode, format, sortOrder, initialRecord}
-  sounds       {라벨: {file, gain, evidence}} — mgm01 고유 SE 렌더(sound_seq.py, 공용 변환기와 같은 방법)
+  sounds       {라벨: {file, gain, evidence}} — mgm01 고유 SE 렌더(sound_seq.py, 공용 변환기와 같은 방법). file 은 assets 기준.
+               SYS 효과음과 같은 시퀀스를 가리키는 별칭 라벨(CANCEL·CUR·DEC·DECI_S·DECI_LR)은 공용 web/assets/common/sound/ 파일
+               (common_shared.py, docs/engine/common_assets.md)
 """
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -18,6 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import common_shared as cs  # noqa: E402
 
 BEA = ROOT / "extracted" / "bea"
 DST = ROOT / "web" / "assets" / "mgm01"
@@ -60,9 +62,9 @@ def render_sounds(tmp):
         r = subprocess.run([sys.executable, str(ROOT / "web/tools/analysis/sound_seq.py"), "render", str(FSPJ), label, str(out)],
                            capture_output=True, text=True, encoding="utf-8")
         print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = cs.sound(label, out, DST / "sound" / f"{label}.wav", cs.ASSETS) or f"mgm01/sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        sounds[label] = {"file": f"mgm01/sound/{label}.wav", "gain": round(vol / 127, 4),
+        sounds[label] = {"file": f, "gain": round(vol / 127, 4),
                          "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
     return sounds
 

@@ -7,9 +7,9 @@
   modes[]   버튼 0..8 {button, key, name 라벨, detail 라벨, icon 섬 아이콘 부품, win 사진 창 부품, joycon, next}
   partMats  {레이아웃: [{part, pane, tex[이름], srt[{t,r,s}]}]}  부품 속성의 재질 덮어쓰기(사진 창 그림 등) [데이터]
   align     버튼 정렬 {top, pitch}  (ali1 크기 900·여백 −81, 버튼 높이 172)
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
-import shutil
 import struct
 import sys
 from pathlib import Path
@@ -17,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import charsel_web_assets as cw  # noqa: E402
+import common_shared as cs  # noqa: E402
 import font_web_assets as fw  # noqa: E402
 import ui_lyt  # noqa: E402
 import ui_render  # noqa: E402
@@ -241,8 +242,7 @@ def main():
             print("  텍스처 없음", tn)
             continue
         fn = "tex/" + tn.replace("^", "_") + ".png"
-        img.save(DST / fn, optimize=True)
-        spec["textures"][tn] = fn
+        spec["textures"][tn] = cs.tex(tn, img, DST / fn, DST) or fn
 
     msg = cw.messages()
     texts = {k: msg[k] for k in LABELS}
@@ -267,8 +267,8 @@ def main():
     spec["sounds"] = {}
     for label, (vol, ev) in SE.items():
         src = ROOT / "extracted" / "converted" / "charsel" / "sound" / f"{label}.wav"
-        shutil.copyfile(src, DST / "sound" / f"{label}.wav")
-        spec["sounds"][label] = {"file": f"sound/{label}.wav", "gain": round(vol / 127, 4),
+        f = cs.sound(label, src, DST / "sound" / f"{label}.wav", DST) or f"sound/{label}.wav"
+        spec["sounds"][label] = {"file": f, "gain": round(vol / 127, 4),
                                  "evidence": "[판독] menu01 ComUiMap::UpdateProcess, 볼륨 [데이터 fsar], 렌더 근사(sound_seq.py, charsel 변환물)"}
     (DST / "spec.json").write_text(json.dumps(spec, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print("spec.json", (DST / "spec.json").stat().st_size, "B", len(spec["textures"]), "textures")

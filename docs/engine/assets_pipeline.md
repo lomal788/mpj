@@ -36,7 +36,7 @@ web/assets-dist/       배포: 같은 경로 구조. png→.ktx2(또는 png 그�
 web/vendor/basis/      three r180 의 basis_transcoder.js·wasm 복사(외부 CDN 안 씀)
 ```
 
-- **증분**: 소스 내용 sha1·분류·인코더 설정(`TEX_RECIPE`·`MESH_RECIPE`·`AUDIO_RECIPE`)이 같고 산출물이 있으면 건너뛴다. glb 는 참조 텍스처의 결과(ktx2/png)도 키에 넣는다(텍스처 형식이 바뀌면 glb 의 이미지 URI 를 다시 씀). 내용이 같은 PNG 는 한 번만 인코딩해 복사한다. 경로만 바뀐 같은 텍스처(분류·설정까지 같은 키)는 옛 결과를 복사한다(캐릭터 공용 폴더 `chara/` 로 옮길 때 162장 재인코딩 0 — [chara_assets.md](chara_assets.md)). 30 s 마다 캐시를 저장해 중간에 끊겨도 이어서 한다.
+- **증분**: 소스 내용 sha1·분류·인코더 설정(`TEX_RECIPE`·`MESH_RECIPE`·`AUDIO_RECIPE`)이 같고 산출물이 있으면 건너뛴다. glb 는 참조 텍스처의 결과(ktx2/png)도 키에 넣는다(텍스처 형식이 바뀌면 glb 의 이미지 URI 를 다시 씀). 내용이 같은 PNG 는 한 번만 인코딩해 복사한다. 경로만 바뀐 같은 텍스처·소리(분류·설정까지 같은 키)는 옛 결과를 복사한다(캐릭터 공용 폴더 `chara/` 로 옮길 때 162장, 공용 `common/` 으로 옮길 때 그림 55·소리 8 재인코딩 0 — [chara_assets.md](chara_assets.md), [common_assets.md](common_assets.md)). 30 s 마다 캐시를 저장해 중간에 끊겨도 이어서 한다.
 - `--only plaza/world/` 처럼 일부만 다시 만들 수 있다(나머지는 이전 결과 유지). 변환기가 소스를 다시 쓰면 `npm run assets` 한 번이면 바뀐 것만 다시 압축된다.
 - 소스에서 사라진 파일의 옛 산출물은 지우지 않고 개수만 알린다(`--prune` 을 주면 지움 — 사용자가 직접).
 - 배포 빌드(`npm run build`)는 `assets-dist/`(캐시·보고서 제외)와 `vendor/` 를 `dist/` 에 싣고, 압축본이 소스보다 오래됐으면 경고한다. `npx tsx tools/build.ts --src-assets` 는 소스도 싣고 기본 모드를 src 로 한다(개발 페이지 배포용).

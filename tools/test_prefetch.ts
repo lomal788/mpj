@@ -6,7 +6,7 @@
  *
  *   npx tsx tools/test_prefetch.ts
  */
-import { readFileSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createAssetManager, jsonHandler, P0, P1, P2, P3, ST_IDLE, ST_QUEUED, ST_READY, type AssetHandler, type AssetIo, type AssetManager, type FetchLike } from '../script/lib/assetcore';
@@ -567,6 +567,75 @@ console.log('8. 공용 캐릭터 에셋(docs/engine/chara_assets.md) — 세 화
   eq(srcMiss, [], `명세 파일 ${keys.length}개 모두 chara/ 안에 있음(404 0)`);
   eq(distMiss, [], '압축본 해시 표(index.json names)에 모두 있음');
   console.log(`   공용 키 ${keys.length}개(모델·모션·motions·텍스처·소품)`);
+}
+
+console.log('9. 공용 시스템 효과음·UI 그림(docs/engine/common_assets.md) — 화면 사이 같은 키, 명세가 가리키는 파일 전부 존재, 사운드 라벨 전부 해석');
+{
+  const page = 'http://localhost:51811/index.html?plaza=1';
+  const root = 'http://localhost:51811/assets/';
+  const key = (u: string): string | null => assetKeyFrom(u, page, root);
+  const names = (JSON.parse(readFileSync(`${WEB}/assets-dist/index.json`, 'utf8')) as { names: Record<string, string> }).names;
+  type S2 = { textures?: Record<string, string>; sounds?: Record<string, { file: string }> };
+  const mg = (dir: string) => (p: string): string => new URL(`assets/${dir}${p}`, page).href;
+  const pg = (dir: string) => (p: string): string => `assets/${dir}${p}`;
+  const cat = readJson('mgm01/catalog.json') as S2;
+  const SPECS: [string, string, (p: string) => string, S2][] = [
+    ['charselect', 'charselect/spec.json', pg('charselect/'), readJson('charselect/spec.json') as S2],
+    ['modeselect', 'modeselect/spec.json', pg('modeselect/'), readJson('modeselect/spec.json') as S2],
+    ...['spec.json', 'mgmet.json', 'mgm01.json', '../mgmet/extra.json', '../online/online.json', '../partyrule/partyrule.json', '../setplayer/setplayer.json', '../plaza/ui/plaza_ui.json', '../plaza/ui/plaza_card.json', '../mgm01/faces.json'].map(
+      (f): [string, string, (p: string) => string, S2] => [`mgmcommon+${f}`, normPath(`mgmcommon/${f}`), pg('mgmcommon/'), readJson(normPath(`mgmcommon/${f}`)) as S2],
+    ),
+    ['mgm01 catalog(mgm01_page: ../ + file, mgmcommon 기준)', 'mgm01/catalog.json', (p) => `assets/mgmcommon/../${p}`, cat],
+    ['mgm01 catalog(mgmscreens_page)', 'mgm01/catalog.json', (p) => `assets/mgmcommon/../${p}`, cat],
+    ['plaza_page loadSounds(plaza_ui 기준 mgmcommon/)', 'plaza/ui/plaza_ui.json', (p) => new URL(p, new URL('assets/mgmcommon/', page)).href, readJson('plaza/ui/plaza_ui.json') as S2],
+    ['mg1801 ui(Assets url ui/…)', 'mg1801/ui/ui.json', mg('mg1801/ui/'), readJson('mg1801/ui/ui.json') as S2],
+  ];
+  const texKeys = new Map<string, Set<string>>();
+  const sndKeys = new Map<string, Set<string>>();
+  const all = new Set<string>();
+  let labels = 0;
+  const unresolved: string[] = [];
+  for (const [, , url, s] of SPECS) {
+    for (const [n, p] of Object.entries(s.textures ?? {})) {
+      const k = key(url(p));
+      if (!k) continue;
+      all.add(k);
+      if (!texKeys.has(n)) texKeys.set(n, new Set());
+      texKeys.get(n)!.add(k);
+    }
+    for (const [l, v] of Object.entries(s.sounds ?? {})) {
+      labels++;
+      const k = key(url(v.file));
+      if (!k || !existsSync(`${WEB}/assets/${k}`)) {
+        unresolved.push(`${l} → ${k}`);
+        continue;
+      }
+      all.add(k);
+      if (!sndKeys.has(l)) sndKeys.set(l, new Set());
+      sndKeys.get(l)!.add(k);
+    }
+  }
+  const multiTex = [...texKeys].filter(([, v]) => v.size > 1).map(([n, v]) => `${n}: ${[...v].join(' | ')}`);
+  const multiSnd = [...sndKeys].filter(([, v]) => v.size > 1).map(([n, v]) => `${n}: ${[...v].join(' | ')}`);
+  eq(multiTex, [], `그림 원본 이름 ${texKeys.size}개 — 이름 하나에 키 하나(화면 사이 같은 키)`);
+  eq(multiSnd, [], `효과음 라벨 ${sndKeys.size}개 — 라벨 하나에 키 하나`);
+  eq(unresolved, [], `사운드 라벨 ${labels}개(명세마다) 전부 소스 파일로 해석`);
+  const one = (n: string): string => [...(texKeys.get(n) ?? [])].join();
+  eq(one('sys_white_00^s'), 'common/tex/sys_white_00_s.png', 'sys_white_00^s = common/tex(캐릭터 선택·mgmcommon·온라인·파티 규칙·인원 설정·광장 UI·mg1801 같은 키)');
+  eq(one('face_128_pc01^u'), 'common/tex/face_128_pc01_u.png', '얼굴 face_128_pc01^u = common/tex(캐릭터 선택·mgm01 faces·mg1801 같은 키)');
+  eq(one('mgmet_pict_free_02^o'), 'common/tex/mgmet_pict_free_02_o.png', 'mgmet_pict_free_02^o = common/tex(mgmet.json·extra.json 같은 키)');
+  const snd = (l: string): string => [...(sndKeys.get(l) ?? [])].join();
+  eq(snd('SQ_SE_SYS_DECI_L'), 'common/sound/SQ_SE_SYS_DECI_L.wav', 'SQ_SE_SYS_DECI_L = common/sound(캐릭터 선택·mgmet·온라인·파티 규칙·인원 설정 같은 키)');
+  const alias: [string, string][] = [['SQ_SE_MGM01_CANCEL', 'SQ_SE_SYS_CANCEL'], ['SQ_SE_MGM01_CUR', 'SQ_SE_SYS_CURSOR'], ['SQ_SE_MGM01_DEC', 'SQ_SE_SYS_DECI'], ['SQ_SE_MGM01_DECI_S', 'SQ_SE_SYS_DECI_S'], ['SQ_SE_MGM01_DECI_LR', 'SQ_SE_SYS_DECI_LR']];
+  eq(alias.filter(([a, b]) => !snd(a) || snd(a) !== snd(b) || !snd(a).startsWith('common/sound/')), [], '별칭 라벨(같은 시퀀스) 5쌍 = 같은 common/sound 키');
+  const commonKeys = [...all].filter((k) => k.startsWith('common/'));
+  const srcMiss = [...all].filter((k) => !existsSync(`${WEB}/assets/${k}`));
+  const distName = (k: string): string => (KTX.has(k) ? k.replace(/\.png$/i, '.ktx2') : LOSSY.has(k) ? k.replace(/\.wav$/i, '.ogg') : FLAC.has(k) ? k.replace(/\.wav$/i, '.flac') : k);
+  const distMiss = [...all].filter((k) => !names[distName(k)]);
+  eq(srcMiss, [], `명세가 가리키는 그림·소리 ${all.size}개 소스에 있음(404 0)`);
+  eq(distMiss, [], '압축본 해시 표(index.json names)에 모두 있음');
+  eq(commonKeys.length, 55 + 8, '공용 키 = 그림 55 + 소리 8');
+  console.log(`   그림·소리 키 ${all.size}개(공용 ${commonKeys.length}), 사운드 라벨 ${labels}개`);
 }
 
 console.log(fails ? `실패 ${fails} / ${count}` : `통과 ${count}/${count}`);

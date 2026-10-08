@@ -4,6 +4,8 @@
  * 설계: docs/engine/assets_pipeline.md §6.
  * broker: 페이지가 앱 로더 관리자를 꽂는 자리(docs/engine/loader_manager.md §13). 없으면(시험·단독 페이지) Preview3D 가 직접 읽는다.
  * 등급 숫자는 관리자 등급과 같다(0 지금 막음 · 1 곧 · 2 다음 · 3 유휴).
+ * loadBytes: 효과음 등 바이트(공용 assets/common/sound 를 여러 화면이 같은 주소로 읽음 — docs/engine/common_assets.md §7). 앱 흐름에서는 페이지가 관리자 bytes 키로 바꿔 끼운다.
+ * 돌려주는 ArrayBuffer 는 부른 쪽 것(decodeAudioData 가 떼어 가도 됨).
  */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -36,4 +38,5 @@ export const assetHooks = {
       img.src = url;
     }),
   textureFromImage: (img: UiImageLike | HTMLCanvasElement | ImageBitmap): THREE.Texture => new THREE.Texture(img as HTMLImageElement),
+  loadBytes: (url: string): Promise<ArrayBuffer> => fetch(url).then((r) => r.arrayBuffer()),
 };

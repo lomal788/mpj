@@ -5,6 +5,7 @@
  */
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { assetHooks } from './shell/charselect/assetHooks';
 import { createWork, MemorySave, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
 import { MgmetHowtoView } from './shell/mgmet/howto';
@@ -135,8 +136,7 @@ export async function runMgmet(
     const c = ctx;
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(url)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(url, b);

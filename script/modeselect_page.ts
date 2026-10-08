@@ -5,6 +5,7 @@
 import { ASSETS } from './env';
 import { appFlow } from './view/appFlow';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { assetHooks } from './shell/charselect/assetHooks';
 import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from './shell/modeselect';
 import type { PadSource } from './view/input';
 
@@ -59,8 +60,7 @@ export async function runModeSelect(
     const c = ctx;
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(url)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(url, b);

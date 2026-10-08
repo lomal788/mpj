@@ -17,8 +17,8 @@
  *   assets-dist/index.json          런타임 표 { v: 2, ktx2[], lossy[], flac[], names{압축본 이름 → 해시 이름} } (shell/stage3d/assetLoader.ts 가 읽음,
  *                                   형식: docs/engine/loader_manager.md §5.8.2)
  *   assets-dist/report.json         파일별 형식·크기·PSNR·GPU 추정, 폴더별 합
- *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과). 텍스처는 경로만 바뀐 같은 내용(키 = 경로 뺀 내용·설정)이면 옛 결과를 복사한다
- *                                   (캐릭터 공용 폴더 assets/chara/ 로 옮긴 것 — docs/engine/chara_assets.md)
+ *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과). 텍스처·소리는 경로만 바뀐 같은 내용(키 = 경로 뺀 내용·설정)이면 옛 결과를 복사한다
+ *                                   (캐릭터 공용 폴더 assets/chara/·시스템 효과음과 공용 UI 그림 assets/common/ 으로 옮긴 것 — docs/engine/chara_assets.md, common_assets.md)
  *   web/vendor/basis/               three 의 Basis 트랜스코더(js·wasm) 정적 복사 — 외부 CDN 금지
  */
 import crypto from 'node:crypto';
@@ -188,7 +188,7 @@ async function main(): Promise<void> {
     return false;
   };
   const byKey = new Map<string, Entry>();
-  for (const e of Object.values(prev.entries)) if (e.kind === 'tex' && !byKey.has(e.key) && Object.keys(e.outs).every((o) => fs.existsSync(path.join(DIST, o)))) byKey.set(e.key, e);
+  for (const e of Object.values(prev.entries)) if ((e.kind === 'tex' || e.kind === 'audio') && !byKey.has(e.key) && Object.keys(e.outs).every((o) => fs.existsSync(path.join(DIST, o)))) byKey.set(e.key, e);
   const stem = (r: string): string => r.replace(/\.[^./]+$/, '');
   const moved = (rel: string, key: string): Entry | null => {
     const e = force ? undefined : byKey.get(key);
@@ -200,7 +200,7 @@ async function main(): Promise<void> {
       fs.copyFileSync(path.join(DIST, o), path.join(DIST, to));
       outs[to] = n;
     }
-    return { rel, kind: e.kind, key, srcBytes: e.srcBytes, outs, br: e.br, tex: e.tex };
+    return { rel, kind: e.kind, key, srcBytes: e.srcBytes, outs, br: e.br, tex: e.tex, audio: e.audio };
   };
   const copyAs = (src: string, rel: string, key: string, kind: Kind): Entry => {
     const d = path.join(DIST, rel);
@@ -324,6 +324,8 @@ async function main(): Promise<void> {
   console.log(`  glb ${groups.mesh.length} ${((performance.now() - t0) / 1000).toFixed(0)} s`);
 
   // 3. 소리
+  let audioNew = 0;
+  let audioMoved = 0;
   await pool(groups.audio, jobs, async (rel) => {
     const src = path.join(SRC, rel);
     const key = `${AUDIO_RECIPE}|${hashOf(rel)}`;
@@ -340,13 +342,20 @@ async function main(): Promise<void> {
       state.entries[rel] = old;
       return;
     }
+    const mv = moved(rel, key);
+    if (mv) {
+      state.entries[rel] = mv;
+      audioMoved++;
+      return;
+    }
+    audioNew++;
     const base = rel.replace(/\.wav$/i, '');
     const r = await encodeAudio(src, rel, path.join(DIST, base));
     const outs: Record<string, number> = {};
     for (const [ext, n] of Object.entries(r.files)) outs[base + ext] = n;
     state.entries[rel] = { rel, kind: 'audio', key, srcBytes: fs.statSync(src).size, outs, audio: { kind: r.kind, info: r.info } };
   });
-  console.log(`  소리 ${groups.audio.length} ${((performance.now() - t0) / 1000).toFixed(0)} s`);
+  console.log(`  소리 ${groups.audio.length} (새로 ${audioNew}, 옮긴 경로 옛 결과 복사 ${audioMoved}) ${((performance.now() - t0) / 1000).toFixed(0)} s`);
 
   // 4. json·그 밖
   for (const rel of [...groups.json, ...groups.copy]) {

@@ -17,10 +17,11 @@
   lineSpace {레이아웃: {글자 페인: 값}}  (0 이 아닌 것만)
   missingTextures {묶음: [이름]}  — 묶음 BNTX 에 없는 텍스처(UiSharedTexture 등). 화면에서는 흰 1×1 이 된다
   soundNotes  재생 파일을 만들지 못한 라벨과 이유
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 mgmcommon 기준 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
+Bundle.write_textures 는 공용 그림이면 그 경로(mgmcommon 기준)를, 아니면 묶음 폴더 기준 'tex/<sub>/…' 를 돌려준다.
 """
 import json
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -29,6 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
 import charsel_web_assets as cw  # noqa: E402
+import common_shared as cs  # noqa: E402
 import font_web_assets as fw  # noqa: E402
 import graphics_bntx  # noqa: E402
 import modesel_web_assets as mw  # noqa: E402
@@ -39,6 +41,7 @@ import ui_sarc  # noqa: E402
 
 BEA = ROOT / "extracted" / "bea"
 DST = ROOT / "web" / "assets" / "mgmcommon"
+SPEC_BASE = DST
 LYT = {
     "mgm00": BEA / "mgm~mgm00.nx.bea" / "mgm" / "mgm00" / "layout.lyt",
     "mgmet": BEA / "mgm~mgmet.nx.bea" / "mgm" / "mgmet" / "layout.lyt",
@@ -166,8 +169,7 @@ class Bundle:
                 missing.append(tn)
                 continue
             fn = f"tex/{sub}/" + tn.replace("^", "_") + ".png"
-            img.save(DST / fn, optimize=True)
-            textures[tn] = fn
+            textures[tn] = cs.tex(tn, img, DST / fn, SPEC_BASE) or fn
         return textures, sorted(srgb), missing
 
 
@@ -213,9 +215,9 @@ def render_sounds(spec, tmp):
         r = subprocess.run([sys.executable, str(ROOT / "web/tools/analysis/sound_seq.py"), "render", str(FSPJ), label, str(out)],
                            capture_output=True, text=True, encoding="utf-8")
         print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = cs.sound(label, out, DST / "sound" / f"{label}.wav", DST) or f"sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        spec["sounds"][label] = {"file": f"sound/{label}.wav", "gain": round(vol / 127, 4),
+        spec["sounds"][label] = {"file": f, "gain": round(vol / 127, 4),
                                  "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
     spec["soundNotes"] = {k: {"volume": fs.find(k)["volume"], "note": v} for k, v in SILENT.items()}
 

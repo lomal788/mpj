@@ -12,9 +12,9 @@
             mn01_mainMenu_ctrl_friend_*, im_guest00_name
   fonts     이 묶음 레이아웃 글꼴을 공용·온라인·이 화면 문구 글자로 다시 만든 것(mergeSpec fonts 덮어쓰기)
   sounds    SQ_SE_STAMP_1P~4P·SQ_SE_STAMP_PC·SQ_SE_SYS_CURSOR_S(공용·온라인 명세에 없는 것) — sound_seq.py 렌더 [근사]
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 mgmcommon 기준 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -107,7 +107,7 @@ def main():
     mc.DST = DST
     tex, srgb, miss = b.write_textures("pu")
     mc.DST = common_dst
-    textures = {k: "../plaza/ui/" + v for k, v in tex.items()}
+    textures = {k: v if v.startswith("../") else "../plaza/ui/" + v for k, v in tex.items()}
 
     msg = mc.cw.messages()
     stamp_msg = json.loads((mc.cw.MSG_DIR / "stamp.json").read_text(encoding="utf-8"))
@@ -151,9 +151,9 @@ def main():
         print(label, r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
         if not out.exists():
             continue
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = mc.cs.sound(label, out, DST / "sound" / f"{label}.wav", mc.SPEC_BASE) or f"../plaza/ui/sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        sounds[label] = {"file": f"../plaza/ui/sound/{label}.wav", "gain": round(vol / 127, 4),
+        sounds[label] = {"file": f, "gain": round(vol / 127, 4),
                          "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
 
     part = {"version": 1, "screen": [1920, 1080],

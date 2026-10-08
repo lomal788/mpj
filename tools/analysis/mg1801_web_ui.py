@@ -7,6 +7,7 @@
                  textures{이름: png 경로}, fonts{패밀리: 공용 글꼴 참조 {dir, chars}}, telopFont, texts{라벨: koKR 문구}, vib{키: 진동}
   tex/*.png      레이아웃 BNTX 텍스처(compSel 적용, ui_render.LazyTextures). 원본 픽셀 그대로
                  + 캐릭터 얼굴 face_128_pcNN^u(bq Parts.lyt timg/__Combined.bntx, 공유 텍스처). 결과 화면 sys_face_01 의 Face_128 칸에 들어간다
+                 여러 화면 공용 그림(얼굴·sys_white 등)은 web/assets/common/tex/ 를 ../../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md)
   fonts          비트맵 글꼴 = 공용 assets/font/ 원본 시트 참조 {dir: '../../font/', chars}(font_web_assets.py, docs/engine/font_assets.md)
   font/bqfont_telop.otf  BFOTF 복호화 → 필요한 글자만 서브셋(fontTools). 글리프 윤곽은 원본 그대로
 
@@ -26,6 +27,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import common_shared as cs  # noqa: E402
 import font_web_assets as fw  # noqa: E402
 import ui_bnvib  # noqa: E402
 import ui_font  # noqa: E402
@@ -234,8 +236,7 @@ def main():
                 print(f"  {name}: 텍스처 없음 {tn} (런타임 생성으로 보임)")
                 continue
             fn = "tex/" + tn.replace("^", "_") + ".png"
-            img.save(DST / fn, optimize=True)
-            textures[tn] = fn
+            textures[tn] = cs.tex(tn, img, DST / fn, DST) or fn
         print(name, tags, len(texnames), "tex", "masks", {k: v["tex"] for k, v in masks.items()} if masks else "")
 
     # 캐릭터 얼굴: UiSharedTextureModule::GetPCFace → "face_%s_pc%02d^u"(크기 표 @0x71019deff8 의 "128", 번호 = CharacterData::PCNumber
@@ -252,8 +253,7 @@ def main():
             print(f"  얼굴 없음 {tn}")
             continue
         fn = "tex/" + tn.replace("^", "_") + ".png"
-        img.save(DST / fn, optimize=True)
-        textures[tn] = fn
+        textures[tn] = cs.tex(tn, img, DST / fn, DST) or fn
     print("faces", len(faces))
 
     msg = messages()

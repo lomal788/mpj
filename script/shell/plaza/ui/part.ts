@@ -10,6 +10,7 @@
  *   앱 수명 렌더러(stage.keep)면 그리기 객체(PlazaUiView — 명세·그림·텍스처·셰이더)를 렌더러에 두고 다시 들어오면 그대로 쓴다(덧붙이기 extra 는 없는 키만 넣어 여러 번 불러도 같음).
  */
 import * as THREE from 'three';
+import { assetHooks } from '../../charselect/assetHooks';
 import { MgmSound } from '../../mgmcommon';
 import { applyOnlineExtra, CHARA_PC, defaultCard, FakeOnline, ONLINE_FACES, ONLINE_PART, SocketIoOnline, type OnlineAdapter, type OnlineExtra } from '../../online';
 import { PLAZA_BTN, type PlazaActor, type PlazaContext, type PlazaPad, type PlazaPart, type PlazaPartFactory } from '../types';
@@ -83,8 +84,7 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
     const c = audio;
     let b = buffers.get(file);
     if (!b) {
-      b = fetch(file)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(file)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(file, b);

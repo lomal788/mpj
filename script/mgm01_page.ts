@@ -8,6 +8,7 @@
  */
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { assetHooks } from './shell/charselect/assetHooks';
 import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, pushResult, SceneStack, type Flow, type MgmPlayer, type MgmSceneInstance, type MgResultEntry, type MgmWork } from './shell/mgmcommon';
 import {
   FilterScreen,
@@ -111,8 +112,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
     const c = actx;
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(url)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(url, b);
@@ -189,7 +189,8 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
     },
     () => mgmPlayers,
   );
-  const sound = new MgmSound({ ...view.spec.sounds, ...catalog.json.sounds }, (p) => (p.startsWith('mgm01/') ? `${ASSETS}${p}` : view.url(p)), {
+  const catSounds = Object.fromEntries(Object.entries(catalog.json.sounds).map(([k, v]) => [k, { ...v, file: `../${v.file}` }]));
+  const sound = new MgmSound({ ...view.spec.sounds, ...catSounds }, view.url, {
     play: (_l, url, gain) => playSe(url, gain),
   });
 

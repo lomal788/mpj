@@ -1,6 +1,7 @@
 /**
  * 흐름 예측 묶음 → 관리자 키 목록(mpj 전용). 설계: docs/engine/loader_manager.md §13.3. 키 = web/assets/ 기준 소스 경로.
  * 화면이 실제로 읽는 키와 같아야 한다: 2D 그림 = Render2D.load(명세 + 부품의 textures, 기준 폴더 상대) → uiimage,
+ * 여러 화면 공용 그림·효과음은 명세가 ../common/… 로 가리켜 normPath 뒤 같은 키 common/…(docs/engine/common_assets.md),
  * 글꼴 = 명세 fonts {dir, chars} → 공용 font/fcpx.json·<FFNT>/glyphs.json(json) + chars 가 든 원본 시트 font/<FFNT>/<n>.png(uiimage, docs/engine/font_assets.md),
  * Preview3D(캐릭터 선택·광장 플레이어·NPC) = 모델 glb·모션 glb(anims)·motions·눈·눈꺼풀 — 공용 assets/chara/ 라 세 화면이 같은 키(docs/engine/chara_assets.md),
  * 광장 무대 = world.ts plazaP0Paths(World 와 같은 규칙).

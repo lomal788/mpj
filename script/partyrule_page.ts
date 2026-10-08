@@ -5,6 +5,7 @@
  */
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { assetHooks } from './shell/charselect/assetHooks';
 import { MgmSound, MgmView } from './shell/mgmcommon';
 import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from './shell/partyrule';
 import type { PadSource } from './view/input';
@@ -170,8 +171,7 @@ export async function runPartyRule(
     const c = ctx;
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
+      b = assetHooks.loadBytes(url)
         .then((a) => c.decodeAudioData(a))
         .catch(() => null);
       buffers.set(url, b);

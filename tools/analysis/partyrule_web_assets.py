@@ -15,10 +15,10 @@
   textures  레이아웃 기본값 + 코드가 CreateTexture 로 바꿔 넣는 그림(DYN_TEX: 규칙 행 아이콘·플레이 방법 그림, partyrule.md 7절)
             큰 글꼴(bqfont_large*)은 다시 만들지 않는다 — 이 화면의 큰 글꼴 문구는 턴 수 숫자뿐이고 공용 큰 글꼴에 숫자가 있다
   boards    BoardItemParam.json 의 imNameLabel 7칸(보드 이름 띠 SetBoard)
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 mgmcommon 기준 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -119,7 +119,7 @@ def main():
                 b.tex_names.add(t.name)
     tex, srgb, miss = b.write_textures("pr")
     mc.DST = common_dst
-    textures = {k: "../partyrule/" + v for k, v in tex.items()}
+    textures = {k: v if v.startswith("../") else "../partyrule/" + v for k, v in tex.items()}
 
     msg = mc.cw.messages()
     mjson = {s: json.loads((mc.cw.MSG_DIR / f"{s}.json").read_text(encoding="utf-8")) for s in ("menu01_mode", "im_common", "system")}
@@ -161,9 +161,9 @@ def main():
         r = subprocess.run([sys.executable, str(ROOT / "web/tools/analysis/sound_seq.py"), "render", str(mc.FSPJ), label, str(out)],
                            capture_output=True, text=True, encoding="utf-8")
         print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = mc.cs.sound(label, out, DST / "sound" / f"{label}.wav", mc.SPEC_BASE) or f"../partyrule/sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        sounds[label] = {"file": f"../partyrule/sound/{label}.wav", "gain": round(vol / 127, 4),
+        sounds[label] = {"file": f, "gain": round(vol / 127, 4),
                          "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
 
     boards = [p["imNameLabel"] for p in json.loads(BOARD_PARAM.read_text(encoding="utf-8-sig"))["BoardItemParam"]]

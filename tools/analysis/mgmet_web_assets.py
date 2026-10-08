@@ -7,9 +7,9 @@
   texts     mgm02~06 *_ent_mw_guide00 (액티비티 앞 안내 표 mgmet @0x71000e3700 의 다른 모드 문구, 글리프는 공용 글꼴이 GLYPH_ONLY 로 덮음)
   msgAttr   위 문구의 msbt ATR1 (공용 변환기 msg_attrs 그대로)
   sounds    SQ_SE_SYS_DECI_L(플레이 결정)·SQ_SE_SYS_CURSOR_S(값 변경) — sound_seq.py 렌더 [근사, 공용과 같은 방식]
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,6 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "web/tools/analysis"))
+import common_shared as cs  # noqa: E402
 import graphics_bntx  # noqa: E402
 import mgmcommon_web_assets as mc  # noqa: E402
 import ui_render  # noqa: E402
@@ -56,8 +57,7 @@ def main():
             print("  텍스처 못 읽음", tn)
             continue
         fn = "tex/" + tn.replace("^", "_") + ".png"
-        img.save(DST / fn, optimize=True)
-        textures[tn] = "../mgmet/" + fn
+        textures[tn] = cs.tex(tn, img, DST / fn, mc.SPEC_BASE) or "../mgmet/" + fn
 
     texts = {}
     for stem in GUIDE_FILES:
@@ -76,9 +76,9 @@ def main():
         r = subprocess.run([sys.executable, str(ROOT / "web/tools/analysis/sound_seq.py"), "render", str(mc.FSPJ), label, str(out)],
                            capture_output=True, text=True, encoding="utf-8")
         print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = cs.sound(label, out, DST / "sound" / f"{label}.wav", mc.SPEC_BASE) or f"../mgmet/sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        sounds[label] = {"file": f"../mgmet/sound/{label}.wav", "gain": round(vol / 127, 4),
+        sounds[label] = {"file": f, "gain": round(vol / 127, 4),
                          "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
 
     part = {"version": 1, "screen": [1920, 1080],

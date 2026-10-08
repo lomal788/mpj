@@ -9,7 +9,8 @@
             txt {font, fs, cs, al, text}, wnd {fs{l,r,t,b}, frame 재질, content 재질, cvc}, part 레이아웃 이름, ov 부품 덮어쓰기}
     mat = {black, white (RGBA 0..255), tex [{name, wu, wv}], srt [{t, r, s}]}
     track = {node | mat, prop ('tx','ty','rz','sx','sy','w','h','a','vc<k>','vis','blk<k>','wht<k>','srt<i>.<k>'), step, keys [[f, v, 기울기]]}
-  textures{원본 이름: 'tex/…png'}  — 픽셀 그대로(ui_render.LazyTextures, compSel 적용)
+  textures{원본 이름: 'tex/…png'}  — 픽셀 그대로(ui_render.LazyTextures, compSel 적용). 여러 화면 공용 그림·효과음은 web/assets/common/ 을 ../common/… 로
+                                   (common_shared.py, docs/engine/common_assets.md)
   fonts{패밀리: 공용 글꼴 참조 {dir, chars}(font_web_assets.font_ref, docs/engine/font_assets.md)}, texts{라벨: koKR}, chars[], sounds{}, env{}
   chars[] 의 glb(모델)·motions·anims[](모션 glb)·eye.tex = 공용 web/assets/chara/ 를 이 폴더 기준 ../chara/… 로 가리킨다(charsel_chara.py, docs/engine/chara_assets.md)
 """
@@ -27,6 +28,7 @@ import ui_font  # noqa: E402
 import ui_lyt  # noqa: E402
 import ui_render  # noqa: E402
 import ui_sarc  # noqa: E402
+import common_shared as cs  # noqa: E402
 
 BEA = ROOT / "extracted" / "bea"
 DST = ROOT / "web" / "assets" / "charselect"
@@ -313,8 +315,7 @@ def build_ui(spec):
             print("  텍스처 없음", tn)
             continue
         fn = "tex/" + tn.replace("^", "_") + ".png"
-        img.save(DST / fn, optimize=True)
-        spec["textures"][tn] = fn
+        spec["textures"][tn] = cs.tex(tn, img, DST / fn, DST) or fn
     spec["layouts"] = layouts
 
     msg = messages()
@@ -352,7 +353,7 @@ def build_chars(spec, with_glb):
             prev = {x["pc"]: x for x in json.loads(old.read_text(encoding="utf-8")).get("chars", [])}
             for e in out:
                 p = prev.get(e["pc"], {})
-                for k in ("glb", "anims", "clips", "uv", "eye"):
+                for k in ("glb", "anims", "clips", "uv", "eye", "motions", "albedo", "body"):
                     if k in p:
                         e[k] = p[k]
     spec["chars"] = out
@@ -374,8 +375,8 @@ def build_sound(spec):
         r = subprocess.run([sys.executable, str(ROOT / "web/tools/analysis/sound_seq.py"), "render", str(FSPJ), label, str(tmp)],
                            capture_output=True, text=True, encoding="utf-8")
         print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
-        shutil.copyfile(tmp, DST / "sound" / f"{label}.wav")
-        spec["sounds"][label] = {"file": f"sound/{label}.wav", "gain": round(vol / 127, 4), "evidence": ev + ", 렌더 근사(sound_seq.py)"}
+        f = cs.sound(label, tmp, DST / "sound" / f"{label}.wav", DST) or f"sound/{label}.wav"
+        spec["sounds"][label] = {"file": f, "gain": round(vol / 127, 4), "evidence": ev + ", 렌더 근사(sound_seq.py)"}
     build_bgm(spec)
     build_voices(spec)
 

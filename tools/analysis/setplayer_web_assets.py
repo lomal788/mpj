@@ -10,10 +10,10 @@ bq Parts 에서 이 흐름이 만드는 레이아웃(sys_connect_base_00 본체�
             큰 글꼴(bqfont_large*)은 이 화면에서 인원 숫자 "N명" 에만 쓰므로 그 글자만 넣는다
   texts     menu01_main 의 mn01_connect_ui_*·mn01_ui_ok, im_common 의 im_guest00_name, system 의 sys_ctrl_back·sys_swkbd_username_header
   sounds    SQ_SE_SYS_DECI_L(유저 단계 OK) — sound_seq.py 렌더 [근사, 공용과 같은 방식]. CURSOR·DECI·CANCEL 은 공용 명세 것
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 mgmcommon 기준 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -67,7 +67,7 @@ def main():
     mc.DST = DST
     tex, srgb, miss = b.write_textures("sp")
     mc.DST = common_dst
-    textures = {k: "../setplayer/" + v for k, v in tex.items()}
+    textures = {k: v if v.startswith("../") else "../setplayer/" + v for k, v in tex.items()}
 
     msg = mc.cw.messages()
     texts = {}
@@ -110,9 +110,9 @@ def main():
         r = subprocess.run([sys.executable, str(ROOT / "web/tools/analysis/sound_seq.py"), "render", str(mc.FSPJ), label, str(out)],
                            capture_output=True, text=True, encoding="utf-8")
         print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = mc.cs.sound(label, out, DST / "sound" / f"{label}.wav", mc.SPEC_BASE) or f"../setplayer/sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        sounds[label] = {"file": f"../setplayer/sound/{label}.wav", "gain": round(vol / 127, 4),
+        sounds[label] = {"file": f, "gain": round(vol / 127, 4),
                          "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
 
     part = {"version": 1, "screen": [1920, 1080],

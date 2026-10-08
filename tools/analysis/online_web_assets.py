@@ -10,10 +10,10 @@
   texts     menu01_main 의 mn01_friend_*·mn01_mainMenu_ctrl_friend_*, menu01_mode 의 mn01_bd_ui_match_*·mn01_mode_ui_match_only·mn01_bd_mw_match,
             matching00 전체, system 의 sys_error_*·sys_notice_*·sys_network_*·sys_swkbd_*·sys_ctrl_back·sys_rtt_error_tlp
   sounds    online.md 7절 SE(공용 명세에 없는 것만) — sound_seq.py 렌더 [근사, 공용과 같은 방식]
+여러 화면 공용 그림·효과음은 web/assets/common/ 을 mgmcommon 기준 ../common/… 로 가리킨다(common_shared.py, docs/engine/common_assets.md).
 """
 import json
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -79,7 +79,7 @@ def main():
     mc.DST = DST
     tex, srgb, miss = b.write_textures("on")
     mc.DST = common_dst
-    textures = {k: "../online/" + v for k, v in tex.items()}
+    textures = {k: v if v.startswith("../") else "../online/" + v for k, v in tex.items()}
 
     msg = mc.cw.messages()
     mj = {s: json.loads((mc.cw.MSG_DIR / f"{s}.json").read_text(encoding="utf-8")) for s in ("menu01_main", "menu01_mode", "matching00", "system")}
@@ -133,9 +133,9 @@ def main():
         print(label, r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr[-300:])
         if not out.exists():
             continue
-        shutil.copyfile(out, DST / "sound" / f"{label}.wav")
+        f = mc.cs.sound(label, out, DST / "sound" / f"{label}.wav", mc.SPEC_BASE) or f"../online/sound/{label}.wav"
         vol = fs.find(label)["volume"]
-        sounds[label] = {"file": f"../online/sound/{label}.wav", "gain": round(vol / 127, 4),
+        sounds[label] = {"file": f, "gain": round(vol / 127, 4),
                          "evidence": ev + f", 볼륨 {vol} [데이터 fsar], 렌더 근사(sound_seq.py)"}
 
     part = {"version": 1, "screen": [1920, 1080],

@@ -153,6 +153,29 @@ export async function loadTexture(url: string): Promise<THREE.Texture> {
   return new THREE.TextureLoader().loadAsync(url);
 }
 
+/**
+ * 미리 만들어 재질에 건 텍스처 객체에 나중에 그림을 채운다(plaza npcMaterial 의 배열 층). 압축본이면 KTX2 데이터를 옮겨 압축 텍스처로 바꾼다
+ * (colorSpace·flipY·감김은 부른 쪽이 정한 값 그대로).
+ */
+export async function loadTextureInto(url: string, tx: THREE.Texture): Promise<void> {
+  const k = await ktx2UrlFor(url);
+  if (!k) {
+    tx.image = await new THREE.ImageLoader().loadAsync(url);
+    tx.needsUpdate = true;
+    return;
+  }
+  const c = (await ktx2Loader().loadAsync(k)) as THREE.CompressedTexture;
+  (tx as unknown as { isCompressedTexture: boolean }).isCompressedTexture = true;
+  tx.image = c.image;
+  tx.mipmaps = c.mipmaps;
+  tx.format = c.format;
+  tx.type = c.type;
+  tx.generateMipmaps = false;
+  tx.minFilter = c.minFilter;
+  tx.premultiplyAlpha = c.premultiplyAlpha;
+  tx.needsUpdate = true;
+}
+
 /** 2D 레이아웃(render2d·lyt)용 그림: 압축본이면 크기 + 텍스처 원본 */
 export interface KtxImage {
   readonly width: number;

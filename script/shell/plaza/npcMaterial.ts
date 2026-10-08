@@ -8,6 +8,7 @@
  * [근사] 림·SSS·노멀 배열은 넣지 않는다.
  */
 import * as THREE from 'three';
+import { loadTextureInto } from '../stage3d/assetLoader';
 import type { Heading } from './heading';
 
 type ParamV = number | number[];
@@ -201,10 +202,7 @@ export class NpcLook {
       tx.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
       tx.matrixAutoUpdate = false;
       tx.wrapS = tx.wrapT = THREE.ClampToEdgeWrapping;
-      new THREE.ImageLoader().load(this.url(f.replace(/^\.\.\//, '')), (img) => {
-        tx.image = img;
-        tx.needsUpdate = true;
-      });
+      void loadTextureInto(this.url(f.replace(/^\.\.\//, '')), tx).catch(() => undefined);
       this.texCache.set(f, tx);
       t = tx;
     }

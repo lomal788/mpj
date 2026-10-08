@@ -6,8 +6,9 @@
  *   npx tsx tools/shot_assets.ts plaza        한 장면만
  *
  * 결정성: Playwright 가짜 시계(멈춤)로 rAF·performance.now 를 쥐고 fast=1(rAF 하나 = 스텝 하나)로 같은 프레임 수만큼 돌린다. 로드 중
- * 타이머를 기다리는 곳은 네트워크가 1 s 넘게 조용할 때만 16 ms 씩 민다. Math.random 은 고정 시드. 늦게 읽는 모델은 시계를 멈춘 채
- * 네트워크가 조용해질 때까지 기다려 두 모드에서 같은 프레임에 붙게 한다.
+ * 타이머를 기다리는 곳은 네트워크가 1 s 넘게 조용할 때만 16 ms 씩 민다. Math.random 은 고정 시드. 프레임마다 시계를 멈춘 채 요청이
+ * 0.4 s 조용해질 때까지 기다린다. 소스 모드를 두 번 찍으면 비트까지 같다(결정적). 다만 늦게 붙는 캐릭터의 준비가 compileAsync 폴링(가짜 시계)에
+ * 걸려 모드마다 다른 프레임에 시작하므로, 압축 손실만 보려고 소스 모드 10 프레임 뒤 장면과 비교해 움직인 픽셀을 뺀 "정지 픽셀" 수치를 함께 낸다.
  * GPU 메모리: WebGL2 texStorage2D·3D, texImage2D, compressedTexImage2D, generateMipmap, deleteTexture 를 감싸 살아 있는 텍스처 바이트를 센다
  * (렌더 타깃 포함 — 두 모드에서 같으므로 차이는 텍스처 몫).
  */
@@ -71,35 +72,53 @@ type Win = {
   __mpjAssets?: unknown;
 };
 
-/** 네트워크 자원 수가 quietMs 동안 그대로면 true */
+/** 페이지별 진행 중 요청(노드 쪽에서 셈 — 가짜 시계는 Resource Timing 을 비운다) */
+const net = new WeakMap<Page, { inflight: number; last: number; total: number; bytes: number }>();
+function track(page: Page, errors: string[]): void {
+  const st = { inflight: 0, last: Date.now(), total: 0, bytes: 0 };
+  net.set(page, st);
+  page.on('request', () => {
+    st.inflight++;
+    st.total++;
+    st.last = Date.now();
+  });
+  const done = (): void => {
+    st.inflight = Math.max(0, st.inflight - 1);
+    st.last = Date.now();
+  };
+  page.on('requestfinished', (r) => {
+    done();
+    void r.sizes().then((z) => (st.bytes += z.responseBodySize + z.responseHeadersSize)).catch(() => undefined);
+  });
+  page.on('requestfailed', done);
+  page.on('response', (r) => {
+    if (r.status() >= 400) errors.push(`HTTP ${r.status()} ${r.url()}`);
+  });
+}
+
+/** 요청 시작·끝이 quietMs 동안 없고 진행 중 요청이 0 이면 끝(오래 열린 요청만 남았으면 4 s 뒤 끝, 최대 60 s) */
 async function netQuiet(page: Page, quietMs: number): Promise<void> {
-  let last = -1;
-  let since = Date.now();
+  const st = net.get(page)!;
+  const t0 = Date.now();
   for (;;) {
-    const n = await page.evaluate(() => performance.getEntriesByType('resource').length);
-    if (n !== last) {
-      last = n;
-      since = Date.now();
-    } else if (Date.now() - since >= quietMs) return;
-    await page.waitForTimeout(150);
+    const idle = Date.now() - st.last;
+    if (idle >= quietMs && (st.inflight === 0 || idle >= 4000)) return;
+    if (Date.now() - t0 > 60000) return;
+    await page.waitForTimeout(100);
   }
 }
 
 /** cond 가 참이 될 때까지: 실제 시간으로 기다리고, 네트워크가 1 s 조용하면 가짜 시계를 16 ms 민다 */
 async function until(page: Page, cond: string, timeoutMs: number): Promise<void> {
   const t0 = Date.now();
-  let lastN = -1;
-  let since = Date.now();
+  const st = net.get(page)!;
   for (;;) {
     if (await page.evaluate(cond)) return;
     if (Date.now() - t0 > timeoutMs) throw new Error(`대기 실패: ${cond}`);
-    const n = await page.evaluate(() => performance.getEntriesByType('resource').length);
-    if (n !== lastN) {
-      lastN = n;
-      since = Date.now();
-    } else if (Date.now() - since > 1000) {
+    const idle = Date.now() - st.last;
+    if (idle > 1000 && (st.inflight === 0 || idle > 4000)) {
       await page.clock.runFor(16);
-      since = Date.now();
+      st.last = Date.now();
     }
     await page.waitForTimeout(100);
   }
@@ -110,19 +129,20 @@ async function stepTo(page: Page, frameExpr: string, target: number): Promise<nu
   for (let guard = 0; guard < 5000; guard++) {
     const f = (await page.evaluate(frameExpr)) as number;
     if (f >= target) return f;
+    await netQuiet(page, 400);
     await page.clock.runFor(17);
-    if (guard % 20 === 0) await netQuiet(page, 600);
   }
   throw new Error('stepTo 초과');
 }
 
-async function capture(browser: Browser, url: string, scene: string, mode: 'src' | 'dist'): Promise<Run> {
+async function capture(browser: Browser, url: string, scene: string, mode: 'src' | 'dist', tag = ''): Promise<Run> {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   const errors: string[] = [];
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push(m.text());
+    if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
+  track(page, errors);
   await page.addInitScript(INIT);
   await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-01-01T00:00:01Z'));
@@ -166,10 +186,19 @@ async function capture(browser: Browser, url: string, scene: string, mode: 'src'
     shotTarget = page.locator('canvas').first();
   }
   await netQuiet(page, 1000);
-  const png = path.join(OUT, `${scene}_${mode}.png`);
+  const png = path.join(OUT, `${scene}_${mode}${tag}.png`);
   await shotTarget.screenshot({ path: png });
+  if (mode === 'src') {
+    // 움직이는 픽셀 가림용: 10 프레임 뒤 한 장 더(정지 배경만 압축 비교에 쓴다)
+    const fx = scene === 'plaza' ? `(window.__mpj.plaza() || { frame: 0 }).frame` : scene === 'charselect' ? `window.__charselect.handle.state.frame` : `window.__mpj.frame`;
+    if (scene === 'mg1801') await page.evaluate(() => (window as unknown as Win).__mpj!.hold(430));
+    await stepTo(page, fx, frame + 10);
+    await netQuiet(page, 1000);
+    await shotTarget.screenshot({ path: png.replace(/\.png$/, '_t10.png') });
+  }
   const gpu = await page.evaluate(() => (window as unknown as Win).__gpu());
-  const net = await page.evaluate(() => (window as unknown as Win).__net());
+  const st = net.get(page)!;
+  const netRes = { bytes: st.bytes, n: st.total, by: {} };
   const assets = await page.evaluate(() => (window as unknown as Win).__mpjAssets);
   const ktx2Target = await page.evaluate(() => {
     const c = document.createElement('canvas').getContext('webgl2');
@@ -177,7 +206,7 @@ async function capture(browser: Browser, url: string, scene: string, mode: 'src'
     return ['WEBGL_compressed_texture_astc', 'EXT_texture_compression_bptc', 'WEBGL_compressed_texture_s3tc', 'WEBGL_compressed_texture_etc', 'WEBGL_compressed_texture_etc1'].filter((e) => ex.includes(e)).join(',');
   });
   await page.close();
-  return { scene, mode, loadMs, frame, net, gpu, errors, png, assets, ktx2Target };
+  return { scene, mode, loadMs, frame, net: netRes, gpu, errors, png, assets, ktx2Target };
 }
 
 const READY: Record<string, string> = {
@@ -187,8 +216,10 @@ const READY: Record<string, string> = {
 };
 
 /** 실제 시계로 로드 시간만 잰다(페이지 열기 → 장면 준비 + 네트워크 조용 0.5 s 전까지) */
-async function measureLoad(browser: Browser, url: string, scene: string, mode: 'src' | 'dist'): Promise<{ readyMs: number; quietMs: number; net: Run['net']; gpu: Run['gpu'] }> {
+async function measureLoad(browser: Browser, url: string, scene: string, mode: 'src' | 'dist'): Promise<{ readyMs: number; quietMs: number; net: Run['net']; gpu: Run['gpu']; errors: string[] }> {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  const errors: string[] = [];
+  track(page, errors);
   await page.addInitScript(INIT);
   const t0 = Date.now();
   await page.goto(`${url}&assets=${mode}`);
@@ -199,66 +230,48 @@ async function measureLoad(browser: Browser, url: string, scene: string, mode: '
   const net = await page.evaluate(() => (window as unknown as Win).__net());
   const gpu = await page.evaluate(() => (window as unknown as Win).__gpu());
   await page.close();
-  return { readyMs, quietMs, net, gpu };
+  return { readyMs, quietMs, net, gpu, errors };
 }
 
-/** 두 PNG 의 픽셀 차이(브라우저 캔버스로 디코드) */
-async function diff(browser: Browser, a: string, b: string, out: string): Promise<Record<string, number>> {
+/** 두 PNG 의 픽셀 차이(브라우저 캔버스로 디코드). 페이지 코드는 문자열(번들러 보조 함수 __name 이 끼지 않게) */
+const DIFF_JS = `async (da, db, dc) => {
+  const load = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+  const [ia, ib, ic] = await Promise.all([load(da), load(db), dc ? load(dc) : null]);
+  const w = Math.min(ia.width, ib.width), h = Math.min(ia.height, ib.height);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  g.drawImage(ia, 0, 0); const pa = g.getImageData(0, 0, w, h).data;
+  g.clearRect(0, 0, w, h); g.drawImage(ib, 0, 0); const pb = g.getImageData(0, 0, w, h).data;
+  let pc = null; if (ic) { g.clearRect(0, 0, w, h); g.drawImage(ic, 0, 0); pc = g.getImageData(0, 0, w, h).data; }
+  let mN = 0, mSe = 0, mSa = 0, mMax = 0, mOver8 = 0, mOver24 = 0;
+  const heat = g.createImageData(w, h);
+  let se = 0, sa = 0, max = 0, over8 = 0, over24 = 0;
+  for (let i = 0; i < w * h; i++) {
+    let m = 0;
+    for (let k = 0; k < 3; k++) { const d = Math.abs(pa[i * 4 + k] - pb[i * 4 + k]); se += d * d; sa += d; if (d > m) m = d; }
+    if (m > max) max = m; if (m > 8) over8++; if (m > 24) over24++;
+    if (pc) {
+      let base = 0; for (let k = 0; k < 3; k++) base = Math.max(base, Math.abs(pa[i * 4 + k] - pc[i * 4 + k]));
+      if (base <= 2) { mN++; for (let k = 0; k < 3; k++) { const d = Math.abs(pa[i * 4 + k] - pb[i * 4 + k]); mSe += d * d; mSa += d; } if (m > mMax) mMax = m; if (m > 8) mOver8++; if (m > 24) mOver24++; }
+    }
+    const v = Math.min(255, m * 8);
+    heat.data[i * 4] = v; heat.data[i * 4 + 1] = v > 128 ? 255 : 0; heat.data[i * 4 + 2] = 0; heat.data[i * 4 + 3] = 255;
+  }
+  g.putImageData(heat, 0, 0);
+  const mse = se / (w * h * 3);
+  const mm = mN ? mSe / (mN * 3) : 0;
+  const masked = pc ? { stable: mN / (w * h), stablePsnr: mm ? 10 * Math.log10((255 * 255) / mm) : 99, stableMae: mN ? mSa / (mN * 3) : 0, stableMax: mMax, stableOver8: mN ? mOver8 / mN : 0, stableOver24: mN ? mOver24 / mN : 0 } : {};
+  return { w, h, mae: sa / (w * h * 3), rmse: Math.sqrt(mse), psnr: mse ? 10 * Math.log10((255 * 255) / mse) : 99, max, over8: over8 / (w * h), over24: over24 / (w * h), ...masked, heat: c.toDataURL('image/png') };
+}`;
+async function diff(browser: Browser, a: string, b: string, out: string, base?: string): Promise<Record<string, number>> {
   const page = await browser.newPage();
-  const r = await page.evaluate(
-    async ([da, db]) => {
-      const load = (s: string): Promise<HTMLImageElement> =>
-        new Promise((ok) => {
-          const i = new Image();
-          i.onload = () => ok(i);
-          i.src = s;
-        });
-      const [ia, ib] = await Promise.all([load(da), load(db)]);
-      const w = Math.min(ia.width, ib.width);
-      const h = Math.min(ia.height, ib.height);
-      const c = document.createElement('canvas');
-      c.width = w;
-      c.height = h;
-      const g = c.getContext('2d')!;
-      g.drawImage(ia, 0, 0);
-      const pa = g.getImageData(0, 0, w, h).data;
-      g.clearRect(0, 0, w, h);
-      g.drawImage(ib, 0, 0);
-      const pb = g.getImageData(0, 0, w, h).data;
-      const heat = g.createImageData(w, h);
-      let se = 0;
-      let sa = 0;
-      let max = 0;
-      let over8 = 0;
-      let over24 = 0;
-      for (let i = 0; i < w * h; i++) {
-        let m = 0;
-        for (let k = 0; k < 3; k++) {
-          const d = Math.abs(pa[i * 4 + k] - pb[i * 4 + k]);
-          se += d * d;
-          sa += d;
-          m = Math.max(m, d);
-        }
-        max = Math.max(max, m);
-        if (m > 8) over8++;
-        if (m > 24) over24++;
-        const v = Math.min(255, m * 8);
-        heat.data[i * 4] = v;
-        heat.data[i * 4 + 1] = v > 128 ? 255 : 0;
-        heat.data[i * 4 + 2] = 0;
-        heat.data[i * 4 + 3] = 255;
-      }
-      g.putImageData(heat, 0, 0);
-      const mse = se / (w * h * 3);
-      return { w, h, mae: sa / (w * h * 3), rmse: Math.sqrt(mse), psnr: mse ? 10 * Math.log10((255 * 255) / mse) : 99, max, over8: over8 / (w * h), over24: over24 / (w * h), heat: c.toDataURL('image/png') };
-    },
-    [`data:image/png;base64,${fs.readFileSync(a).toString('base64')}`, `data:image/png;base64,${fs.readFileSync(b).toString('base64')}`],
-  );
+  const enc = (f: string): string => `data:image/png;base64,${fs.readFileSync(f).toString('base64')}`;
+  const r = (await page.evaluate(`(${DIFF_JS})(${JSON.stringify(enc(a))}, ${JSON.stringify(enc(b))}, ${base ? JSON.stringify(enc(base)) : 'null'})`)) as Record<string, number> & { heat: string };
   fs.writeFileSync(out, Buffer.from(r.heat.split(',')[1], 'base64'));
   await page.close();
-  const { heat: _h, ...rest } = r;
-  void _h;
-  return Object.fromEntries(Object.entries(rest).map(([k, v]) => [k, typeof v === 'number' ? +v.toFixed(4) : v])) as Record<string, number>;
+  const rest: Record<string, number> = {};
+  for (const [k, v] of Object.entries(r)) if (k !== 'heat') rest[k] = typeof v === 'number' ? +v.toFixed(4) : (v as unknown as number);
+  return rest;
 }
 
 const SCENES: Record<string, string> = {
@@ -279,12 +292,11 @@ const AUDIO_SAMPLES = [
 async function audioCheck(browser: Browser, base: string): Promise<unknown[]> {
   const page = await browser.newPage();
   await page.goto(`${base}index.html?assets=src`);
-  const out = await page.evaluate(
-    async ([files, base]) => {
-      const dec = async (url: string): Promise<Float32Array | string> => {
+  const AUDIO_JS = `async (files, base) => {
+      const dec = async (url) => {
         try {
           const r = await fetch(url);
-          if (!r.ok) return `HTTP ${r.status}`;
+          if (!r.ok) return \`HTTP \${r.status}\`;
           const ctx = new OfflineAudioContext(1, 1, 48000);
           const b = await ctx.decodeAudioData(await r.arrayBuffer());
           return b.getChannelData(0).slice();
@@ -292,12 +304,12 @@ async function audioCheck(browser: Browser, base: string): Promise<unknown[]> {
           return String(e);
         }
       };
-      const res: unknown[] = [];
+      const res = [];
       for (const rel of files) {
-        const ref = await dec(`${base}assets/${rel}`);
+        const ref = await dec(\`\${base}assets/\${rel}\`);
         const exts = rel.includes('/wave/') ? ['.flac'] : ['.ogg', '.m4a'];
         for (const ext of exts) {
-          const t = await dec(`${base}assets-dist/${rel.replace(/\.wav$/, ext)}`);
+          const t = await dec(\`\${base}assets-dist/\${rel.replace(/\.wav$/, ext)}\`);
           if (typeof ref === 'string' || typeof t === 'string') {
             res.push({ rel, ext, error: typeof ref === 'string' ? ref : t });
             continue;
@@ -330,9 +342,8 @@ async function audioCheck(browser: Browser, base: string): Promise<unknown[]> {
         }
       }
       return res;
-    },
-    [AUDIO_SAMPLES, base] as const,
-  );
+    }`;
+  const out = (await page.evaluate(`(${AUDIO_JS})(${JSON.stringify(AUDIO_SAMPLES)}, ${JSON.stringify(base)})`)) as unknown[];
   await page.close();
   return out;
 }
@@ -348,7 +359,8 @@ try {
     for (const mode of ['src', 'dist'] as const) {
       const l = await measureLoad(browser, `${server.url}${q}`, scene, mode);
       loads[mode] = l;
-      console.log(`${scene} ${mode} 로드(실제 시계): 준비 ${l.readyMs} ms, 네트워크 끝 ${l.quietMs} ms, 전송 ${(l.net.bytes / 1e6).toFixed(1)} MB, GPU 텍스처 ${(l.gpu.total / 1e6).toFixed(1)} MB`);
+      console.log(`${scene} ${mode} 로드(실제 시계): 준비 ${l.readyMs} ms, 네트워크 끝 ${l.quietMs} ms, 전송 ${(l.net.bytes / 1e6).toFixed(1)} MB, GPU 텍스처 ${(l.gpu.total / 1e6).toFixed(1)} MB, 오류 ${l.errors.length}`);
+      for (const e of l.errors.slice(0, 8)) console.log(`   ${e.slice(0, 200)}`);
     }
     for (const mode of ['src', 'dist'] as const) {
       const r = await capture(browser, `${server.url}${q}`, scene, mode);
@@ -356,9 +368,13 @@ try {
       for (const e of r.errors.slice(0, 5)) console.log(`   ${e.slice(0, 300)}`);
       runs.push(r);
     }
-    const d = await diff(browser, runs[0].png, runs[1].png, path.join(OUT, `${scene}_diff.png`));
-    console.log(`${scene} 차이: PSNR ${d.psnr} dB, 평균 ${d.mae}, 최대 ${d.max}, >8 ${(d.over8 * 100).toFixed(2)}%, >24 ${(d.over24 * 100).toFixed(2)}%`);
-    result[scene] = { loads, runs: runs.map(({ png, ...r }) => ({ ...r, png: path.relative(WEB, png) })), diff: d };
+    const t10 = runs[0].png.replace(/\.png$/, '_t10.png');
+    const base = await diff(browser, runs[0].png, t10, path.join(OUT, `${scene}_diff_motion.png`));
+    const d = await diff(browser, runs[0].png, runs[1].png, path.join(OUT, `${scene}_diff.png`), t10);
+    console.log(`${scene} 움직임(src 프레임 +10): >2 인 픽셀 ${((1 - (d.stable ?? 0)) * 100).toFixed(1)}%`);
+    console.log(`${scene} 차이(src↔dist): PSNR ${d.psnr} dB, 평균 ${d.mae}, 최대 ${d.max}, >8 ${(d.over8 * 100).toFixed(2)}%, >24 ${(d.over24 * 100).toFixed(2)}%`);
+    console.log(`${scene} 정지 픽셀(10 프레임 동안 차 ≤ 2, ${(d.stable * 100).toFixed(1)}%)만: PSNR ${d.stablePsnr} dB, 평균 ${d.stableMae}, 최대 ${d.stableMax}, >8 ${(d.stableOver8 * 100).toFixed(2)}%, >24 ${(d.stableOver24 * 100).toFixed(2)}%`);
+    result[scene] = { loads, runs: runs.map(({ png, ...r }) => ({ ...r, png: path.relative(WEB, png) })), baseline: base, diff: d };
   }
   if (!only.length || only.includes('audio')) {
     const a = await audioCheck(browser, server.url);

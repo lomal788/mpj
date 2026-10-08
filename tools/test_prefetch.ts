@@ -634,7 +634,7 @@ console.log('9. 공용 시스템 효과음·UI 그림(docs/engine/common_assets.
   const distMiss = [...all].filter((k) => !names[distName(k)]);
   eq(srcMiss, [], `명세가 가리키는 그림·소리 ${all.size}개 소스에 있음(404 0)`);
   eq(distMiss, [], '압축본 해시 표(index.json names)에 모두 있음');
-  eq(commonKeys.length, 55 + 8, '공용 키 = 그림 55 + 소리 8');
+  eq(commonKeys.length, 126 + 14, '공용 키 = 그림 126(sys_ 범주 97 + 얼굴·mn0x·mgmet 29) + 소리 14(SQ_SE_SYS_ 범주)');
   console.log(`   그림·소리 키 ${all.size}개(공용 ${commonKeys.length}), 사운드 라벨 ${labels}개`);
 }
 

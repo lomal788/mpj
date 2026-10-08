@@ -93,6 +93,21 @@ console.log('1. NPC 배치(§6.10 ③)');
     ok(existsSync(g), `소품 변환물 ${p.model}`);
     if (!p.host) ok(!!wpos(deco, p.socket), `소품 소켓 ${p.socket}`);
   }
+  const PROP_ANIMS = ['npc00_obj', 'npc07_obj', 'npc02_obj', 'air_npc03', 'air_npc04', 'air_npc05'];
+  ok(DECO_PROPS.every((p) => !p.clip || (p.clip === p.model && PROP_ANIMS.includes(p.clip))), `소품 애니 = MapManager::Create 가 이름을 넘기는 것만(§6.14 #15): ${DECO_PROPS.filter((p) => p.clip).map((p) => p.clip).join(',')}`);
+  ok(!DECO_PROPS.find((p) => p.name === 'Group02_item')?.clip, '비치볼(Group02_item)은 자기 클립 없이 ball_anim 만 따라감');
+  {
+    const b = readFileSync(join(GFX, 'model', 'menu00_ast_beachball00.glb'));
+    const jl = b.readUInt32LE(12);
+    const js = JSON.parse(b.subarray(20, 20 + jl).toString('utf8')) as { nodes: { name?: string }[]; animations: { channels: { sampler: number; target: { node: number; path: string } }[]; samplers: { output: number }[] }[]; accessors: { bufferView: number; byteOffset?: number }[]; bufferViews: { byteOffset?: number }[] };
+    const bin = 20 + jl + 8;
+    const a = js.animations[0];
+    const ch = a.channels.find((c) => js.nodes[c.target.node].name === 'beach_ball' && c.target.path === 'translation')!;
+    const acc = js.accessors[a.samplers[ch.sampler].output];
+    const off = bin + (js.bufferViews[acc.bufferView].byteOffset ?? 0) + (acc.byteOffset ?? 0);
+    const t = [0, 4, 8].map((k) => b.readFloatLE(off + k));
+    ok(Math.hypot(t[0], t[1], t[2]) > 50, `비치볼 anm00 은 보드 월드 좌표(${t.map((v) => v.toFixed(1)).join(', ')}) — 틀면 공이 ball_anim 에서 64 m 떨어져 돈다`);
+  }
   const kin = spec.chars.find((x) => x.pc === 'npc022')!;
   for (const m of ['bd_flag_idle00', 'bd_flag_swing00', 'co_bye00', 'co_joy03', 'bnclr_idle00', 'bnclr_pass00']) ok(!!kin.clips?.[m], `키노피오 모션 ${m}`);
   ok((kin.layers['npc022_body_arr_alb'] ?? []).length === 6, '키노피오 색 층 6');

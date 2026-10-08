@@ -13,6 +13,7 @@ import { FixedClock } from '../script/shell/plaza/scene';
 import { DECO_ITEMS, DECO_TYPE, decoVisible, defaultDecoState, isDefaultDeco, parseDecoParam, setDecoDisplay } from '../script/shell/plaza/deco';
 import type { PlazaLayoutEntry } from '../script/shell/plaza/types';
 import { plazaPlan, type PlazaFirstFile } from '../script/shell/plaza/world';
+import { Clip } from '../script/shell/stage3d/clip';
 import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '../script/shell/stage3d/meshCollider';
 import { graphSource, type GraphDef, type GraphSource } from '../script/shell/stage3d/graph';
 import { patchRefraction, patchSss, patchUnlit, patchVertexColor, patchWater } from '../script/shell/stage3d/material';
@@ -275,6 +276,20 @@ for (const hz of [30, 60, 75, 120, 144, 240]) {
   let after = 0;
   for (let i = 0; i < 144; i++) after += c.advance(1000 / 144);
   ok(stall === FixedClock.MAX_STEPS && Math.abs(after - 60) <= 1, `3 초 멈춤 뒤: 그 프레임 ${stall} 스텝(넘친 밀림 버림), 다음 1 초 ${after} 프레임(빨리 감기 없음)`);
+}
+
+{
+  const root = new THREE.Object3D();
+  root.name = 'r';
+  const track = new THREE.VectorKeyframeTrack('r.position', [0, 1], [0, 0, 0, 60, 0, 0]);
+  const c = new Clip(new THREE.AnimationMixer(root), new THREE.AnimationClip('a', 1, [track]), undefined, { loop: true });
+  const xs: number[] = [];
+  for (let i = 0; i < 30; i++) {
+    c.step(1);
+    xs.push(root.position.x);
+  }
+  ok(c.frames === 60 && c.frame === 30, `클립 진행량 = 스텝당 1 프레임(원본 delta × 60 × 속도 1): ${c.frame}/${c.frames}`);
+  ok(xs.every((x, i) => Math.abs(x - (i + 1)) < 1e-4), `한 스텝 이동 = 1 프레임분(초당 60 프레임): ${xs.slice(0, 3).map((x) => x.toFixed(3)).join(',')}`);
 }
 
 console.log('8. import 경계(mgm_common.md §9.1 — lib/assetcore·assetcore-three 는 어디서나 허용)');

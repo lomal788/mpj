@@ -209,7 +209,7 @@ export const DECO_PROPS: DecoPropDef[] = [
   { group: 'E', name: 'Group00_item01_loc', model: 'npc07_obj', socket: 'attach_ground_npc07', clip: 'npc07_obj' },
   { group: 'E', name: 'Group00_item01', model: 'menu00_obj_shuttle00', socket: 'shuttle_anim', host: 'Group00_item01_loc' },
   { group: 'E', name: 'Group02_item_loc', model: 'npc02_obj', socket: 'attach_ground_npc02', clip: 'npc02_obj' },
-  { group: 'E', name: 'Group02_item', model: 'menu00_ast_beachball00', socket: 'ball_anim', host: 'Group02_item_loc', clip: 'menu00_ast_beachball00_anm00' },
+  { group: 'E', name: 'Group02_item', model: 'menu00_ast_beachball00', socket: 'ball_anim', host: 'Group02_item_loc' },
   { group: 'E', name: 'Group03_npc01_item', model: 'menu00_chair00', socket: 'pos_chiar_b' },
   { group: 'E', name: 'Group03_npc02_item', model: 'menu00_chair00', socket: 'pos_chiar_c' },
   { group: 'E', name: 'Group05_item', model: 'menu00_obj_sheet', socket: 'attach_ground_npc05' },

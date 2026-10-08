@@ -1,13 +1,14 @@
 # 08 이펙트 (파티클 · VFXB · bex::Effect)
 
-2026-10-02. 상태: **분석 진행**. 파일 형식은 전체 파일로 검사했고, 런타임 API와 mg1801 호출은 판독했다. 입자 하나하나의 운동식은 GPU 셰이더(BNSH) 쪽에 있어서 판독하지 못했다(6.4). 웹 구현은 하지 않았다.
+상태: **부분 판독**. 기존 파일 형식·API 분석에 더해 mg1800 반짝이 VS의 위치 해석식, mg1801 물결 CS의 위치·속도·힘 갱신, 키 보간·루프와 일부 정점/픽셀식을 판독했다(6.3~6.4). CPU 입자 갱신식과 속성·필드 버퍼 작성부의 일부 연결은 남아 있다(11절).
 
 확정 수준 표기는 작업 지침 [분석.txt](../../../../web/분석.txt)(`c:/dev/web/분석.txt`)를 따른다.
 
 - **[실행: 파서]** 우리가 만든 파서를 원본 파일 전체에 돌려 확인한 것
-- **[판독]** 원본 코드를 읽어 확인한 것
+- **[판독]** 원본 CPU 코드 또는 Maxwell SASS·셰이더 메타데이터를 읽어 확인한 것
 - **[데이터]** 데이터 값을 확인한 것
-- **[추정]**, **[미확정]**
+- **[추정]**, **[미확정]** — 근사 또는 연결이 확인되지 않은 것
+- 필드 표의 **P/C/D** = 전체 파일 파서 검사 / 원본 코드 판독 / 데이터 값 확인
 
 이 문서에 원본 실행(게임 실행) 확인은 없다.
 
@@ -41,7 +42,7 @@ mg1801(싹둑싹둑 수프)에서 보이는 파티클은 네 가지다.
 |---|---|
 | 이펙트 바이너리 | 각 아카이브의 `_Vfx/<경로>/ConvertList.xml`. 이름은 xml이지만 실제로는 VFXB 바이너리다(BEA 타입 `_VFX2`). 149개 파일, 모두 VFXB 버전 53 [실행: 파서] |
 | 셰이더 | 같은 폴더의 `ConvertList.xml.bnsh`, `ConvertList.xml.compute.bnsh` (BNSH) |
-| mg1801 | `extracted/bea/mg~mg1801.nx.bea/_Vfx/mg/mg1801/ConvertList.xml` (1,360,484 B) |
+| mg1801 | `extracted/bea/mg~mg1801.nx.bea/_Vfx/mg/mg1801/ConvertList.xml` (1,360,484 B; 8,866,460 B는 mg0101 파일) |
 | 리듬 공용 | `extracted/bea/mg~mg1800.nx.bea/_Vfx/mg/mg1800/ConvertList.xml` (`mg1800_success00/01`) |
 | 미니게임 공용 | `extracted/bea/libca~mg_common.nx.bea/_Vfx/libca/mg_common/ConvertList.xml` (`mg_common_pt_effect_00`) |
 | 상주(bq) | `extracted/bea/bq.nx.bea/_Vfx/bq/ConvertList.xml` (48 MB, `fx_*` 공용 이펙트) |
@@ -192,22 +193,17 @@ mg1801(싹둑싹둑 수프)에서 보이는 파티클은 네 가지다.
 
 오프셋은 EMTR 바이너리 시작 기준이다. 이름은 EffectLibrary 이름을 따르고, 원본 심볼이 아니다.
 
-검증 수준 표기:
-- (P) — 149개 파일 9,642 이미터 전부에서 크기·ID 검사 통과
-- (C) — vfx2 코드가 그 오프셋을 그 의미로 읽음 [판독: effect_vfx2_calc.c]
-- (D) — 값 분포·mg1801 값이 의미와 맞음 [데이터]
-
 | 오프셋 | 크기 | 필드 | 검증 | 비고 |
 |---|---|---|---|---|
 | 0x000 | 16 | flag, randomSeed, pad×2 | P | mg1801 전부 0 |
 | 0x010 | 96 | name | P D | `steam00` 등 |
-| 0x070 | 0xC50 | **Static 블록**(아래 표) | P C | vfx2 가 0x000~0xCBF(0xCC0 B)를 그대로 GPU 상수 버퍼에 복사한다(FUN_71007491a0 `memcpy(…,*param_1,0xcc0)`) → **입자 운동·색·크기 곡선은 셰이더가 계산한다** |
+| 0x070 | 0xC50 | **Static 블록**(아래 표) | P C | vfx2 가 0x000~0xCBF(0xCC0 B)를 그대로 GPU 상수 버퍼에 복사한다(FUN_71007491a0 `memcpy(…,*param_1,0xcc0)`) 뒤 루프·고정색·키 패딩을 초기화한다. 위치 계산은 calcType/프로그램별로 다르다(6.3) |
 | 0xCC0 | 0x88 | EmitterInfo: u8×16(isParticleDraw, sortType, **calcType**(0xCC2), followType, …), randomSeed, drawPath, alphaFadeTime, fadeInTime, trans xyz(0xCE0), transRand xyz, rotate xyz(0xCF8, 라디안), rotateRand, scale xyz(0xD10), color0 rgba(0xD1C), color1 rgba, emissionRange… | P D C(0xCC3) | calcType 분포 0:6,232 / 1:3,011 / 2:399 |
 | 0xD48 | 0x20 | Inherit: u8×16, u64, velocityRate, scaleRate | P | |
 | 0xD68 | 0x48 | **Emission**: isOneTime(0xD68), isWorldGravity(0xD69), isEmitDistEnabled(0xD6A), isWorldOrientedVelocity, **start**(0xD6C u32), **timing**(0xD70 u32), **duration**(0xD74 u32), **rate**(0xD78 f32), **rateRandom**(0xD7C, 정수 %), **interval**(0xD80 i32), intervalRandom(0xD84 정수), positionRandom, gravityScale, gravityDir xyz, emitterDist unit/min/max/margin, emitterDistParticlesMax(0xDAC) | P C D | 쓰임은 6.1 |
 | 0xDB0 | 0x58 | **Shape**: volumeType(0xDB0), sweepStartRandom, arcType, isVolumeLatitudeEnabled, …, sweepLongitude(0xDB8), sweepLatitude, sweepStart, volumeSurfacePosRand, caliberRatio, lineCenter, lineLength(0xDD0), **volumeRadius xyz(0xDD4)**, **volumeFormScale xyz(0xDE0)**, primEmitType(0xDEC), primitiveIndex u64(0xDF0), numDivideCircle(0xDF8), …Random, numDivideLine(0xE00), …Random | P C | 코드: volumeType 2 → ×numDivideCircle, 13 → ×numDivideLine. 0xDE0~0xDE8 × 이미터셋 스케일 |
 | 0xE08 | 0x10 | **Render**: isBlendEnable, isDepthTest, depthFunc, isDepthMask, isAlphaTest, alphaFunc, **blendType**(0xE0E), displaySide, alphaThreshold, pad | P D | |
-| 0xE18 | 0x60 | **Particle**: infiniteLife(0xE18), isTriming, **billboardType**(0xE1A), rotType, offsetType, rotRevRand xyz, isRotate xyz(0xE20~22), …, **life**(0xE28 i32 프레임), lifeRandom(0xE2C), momentumRandom, vertexInfoFlags, **primitiveID**(0xE38 u64), primitiveExID(0xE40), 루프 플래그 12 B, (0xE54 u32, 0xE58 u32), 루프 비율 i16×5(0xE5C), pad, i32×4(0xE68, 전부 100) | P C | 코드: infiniteLife 는 isOneTime 일 때만 유효(아니면 0으로 덮음). life 는 0xE28 또는 이미터 애니 최대값 |
+| 0xE18 | 0x60 | **Particle**: infiniteLife(0xE18), isTriming, **billboardType**(0xE1A), rotType, offsetType, rotRevRand xyz, isRotate xyz(0xE20~22), …, **life**(0xE28 i32 프레임), lifeRandom(0xE2C), momentumRandom, vertexInfoFlags, **primitiveID**(0xE38 u64), primitiveExID(0xE40), 루프 enable u8×9(0xE48~50), 랜덤 위상 u8×9(0xE51~59), pad, 색/알파 루프 주기 u16×4(0xE5C), scale 주기 i32(0xE64), 추가 애니 주기 i32×4(0xE68, 표본 100) | P C | 코드: infiniteLife 는 isOneTime 일 때만 유효(아니면 0으로 덮음). life 는 0xE28 또는 이미터 애니 최대값 |
 | 0xE78 | 0x10 | Combiner u8×16 | P D | 거의 `00…00 00080808 …` |
 | 0xE88 | 0xAC | **ShaderRef**: u8×4(+2 = 두 번째 셰이더 있음), 0xE8C, 0xE90, **shaderIndex(0xE94)**, shaderIndex2(0xE98), 0xE9C(−1), computeShaderIndex(0xEA0, 이름 추정), …, `SHADER_1` 같은 정의 문자열(0xEF0), actionIndex(0xF30, 이름 추정) | P D | shaderIndex 는 파일 안 이미터 순서대로 0,1,2… 증가하는 BNSH 변형 번호 |
 | 0xF34 | 0x30 | **Velocity**: allDirection(0xF34), designatedDirScale, designatedDir xyz, diffusionDirAngle, xzDiffusion, diffusion xyz, velRandom, emVelInherit | P C D | 코드: allDirection × 이미터셋 스케일. steam 방향 (0,1,0) |
@@ -226,7 +222,7 @@ Static 블록 세부(0x070~0xCBF):
 | 0x070 | flags1..4 | P |
 | 0x080 | **키 개수** numColor0Keys, numAlpha0Keys, numColor1Keys, numAlpha1Keys, numScaleKeys, numParamKeys | D: mg1801 17개 이미터 모두 키 표의 실제 키 수와 일치 |
 | 0x098 | u32×4 (0/1) | P |
-| 0x0A8~0x0FF | u32×22 | P: 5,485 표본 전부 0. EffectLibrary v50 에 없는 32 B 가 이 범위 어딘가에 있다(도구는 0x0B0 에 `unknownV53[8]`로 둠). 그래서 이 범위의 이름(loop rate/random 등)은 [미확정] |
+| 0x0A8~0x0FF | 런타임 애니 루프 값 | 원본 파일 5,485 표본은 전부 0(P). 복사 후 +0xB0~D4·E0~FC를 루프 주기/랜덤 위상으로 덮어쓴다(C, 6.3). 파서의 `unknownV53` 및 이 범위의 v50 필드 이름을 런타임 이름으로 쓰지 않는다. +A8/AC·D8/DC는 미확정 |
 | 0x100 | **gravityDir xyz, gravityScale(0x10C)** | D: (0,−1,0), 0.006~0.008. 코드 0x10C 읽음(C) |
 | 0x110 | **airRes** | D: 0.95~1.0 |
 | 0x114~0x15F | 흔들림(amplitude/cycle/phase)·계수 | P |
@@ -238,14 +234,14 @@ Static 블록 세부(0x070~0xCBF):
 | 0x7B0 | color1 키표 | D |
 | 0x830 | alpha1 키표 | D |
 | 0x8B0 | softEdge, fresnel, near/far alpha, decal, alphaThreshold, … (16 f32) | P |
-| 0x8F0 | **scale 키표** | D(배율, base 에 곱함 [추정]) |
+| 0x8F0 | **scale 키표** | C D(배율, 입자 base scale에 곱함) |
 | 0x970 | param 키표, 0x9F0~0xB70 애니 키표 4개 | P |
 | 0xBF0 | f32×16 | P |
 | 0xC30 | rotateInit xyz, rotateInitRand xyz, **rotateAdd xyz(0xC50)**, rotateRegist, rotateAddRand xyz, … | C(0xC30·0xC40 읽음) D(π 값) |
 | 0xC80 | scaleLimitDist…, f32×16 | P |
 
 - 키 한 개는 `{x, y, z, time}` 이다. time 은 수명 대비 비율 0..1 [데이터: 0→1 증가].
-- 키표 오프셋은 EffectLibrary 표기보다 +0x20 뒤에 있다(0x0A8 의 추가 32 B 때문).
+- 키표 오프셋은 EffectLibrary v50 표기보다 +0x20 뒤다. 추가 32 B의 구조적 위치와 런타임 루프 슬롯의 의미는 구별한다(6.3).
 
 ### 4.4 열거형 (값 분포는 9,642 이미터 전체) [실행: 파서]
 
@@ -253,8 +249,8 @@ Static 블록 세부(0x070~0xCBF):
 |---|---|---|
 | volumeType | 0 Point, 1 Circle, **2 CircleDiv**, 3 CircleFill, 4 Sphere, 5 SphereDiv, 6 SphereDiv64, 7 SphereFill, 8 Cylinder, 9 CylinderFill, 10 Box, 11 BoxFill, 12 Line, **13 LineDiv**, 14 Rectangle, 15 Primitive | EffectLibrary 열거. 2·13 은 코드로 확인 [판독]. 나머지 [추정] |
 | blendType | 0(5,014) 일반 알파, 1(4,585) 가산, 2 감산, 3 곱, 4 스크린, 5(27) ? | EffectLibrary 열거 [추정]. 김(0)=반투명 연기, 물보라·고리(1)=가산 발광이라는 화면 기대와 맞음 |
-| billboardType | 0(6,546), 3, 4, 5, 6, 7, 1, 10, 2 | EffectLibrary 의 VertexTransformMode(0 Billboard, 1 PlateXY, 2 PlateXZ, 3 DirectionalY, 4 DirectionalPolygon, …)는 이 버전과 맞지 않는다. 수면 위 물결(wave00/01, white_wave00)이 4 다 → 4 = 수평 판(XZ)으로 보인다 [추정]. 메시 프리미티브 거품(bubble00, crown00)이 3 이다 [미확정] |
-| calcType | 0 CPU, 1 GPU, 2 GPU+스트림아웃 | EffectLibrary 이름 [추정] |
+| billboardType | 0(6,546), 3, 4, 5, 6, 7, 1, 10, 2 | EffectLibrary 의 VertexTransformMode(0 Billboard, 1 PlateXY, 2 PlateXZ, 3 DirectionalY, 4 DirectionalPolygon, …)는 이 버전과 맞지 않는다. 물결(4)의 판독된 VS는 로컬 `(x,y,z)→(x,z,−y)` 축 치환으로 XZ 판을 만든다 [판독: 6.4]. 거품/왕관(3)은 메시 정점과 입자 변환을 읽는다. 다른 프로그램까지의 열거형 전체 의미는 미확정 |
+| calcType | 0 CPU, 1 GPU, 2 GPU+스트림아웃 | 이름은 EffectLibrary. 확인한 0은 현재 위치 속성, 1은 초기 위치/속도의 해석식, 2는 CS 상태 갱신 + VS를 사용 [판독: 6.3]. 2의 실제 버퍼 제출 방식은 미확정 |
 | color*Type | 0 고정, 2 8키 애니 | 키 개수와 타입 2 가 함께 나타남 [데이터]. 1(랜덤) [추정] |
 | sampler wrap | 0 Mirror, 1 Repeat | 4분의1 원 텍스처(`mg1800_success00_ring00` 등 64×64)가 wrap 0 + `repeat=3` 이고, 반쪽 별(`mg_common_star_00` 32×64)이 wrapU 0 + `repeat=1` → **repeat 0 = 1×1, 1 = 2×1, 2 = 1×2, 3 = 2×2 로 UV 를 늘리고 Mirror 로 대칭 복사해 전체 그림을 만든다** [데이터][추정: 셰이더 식] |
 
@@ -283,7 +279,7 @@ Static 블록 세부(0x070~0xCBF):
 | EP01..03 | 4/158/95 | ? | — |
 | EA** (EATR, EADV, EAER, EAC0, EAET, EASL, EAOV, EAC1, EAPL, EAES, EAA0, EASS) | 1~61 | 이미터 애니메이션: `{u8 enable, loop, randomStart, pad; u32 keyCount; u32 loopCount; {x,y,z,t}×n}` (EffectLibrary) | — |
 
-- 이 표의 "추정 의미"는 4문자 이름과 EffectLibrary 를 근거로 한 [추정]이다. 필드 효과의 식은 [미확정]이다.
+- 이름은 4문자 magic과 EffectLibrary를 근거로 한 추정이다. wave00 CS의 힘 reader는 6.3에서 판독했으나 FRN1 원본 payload→필드 버퍼 작성 연결은 아직 미확정이다. FRND/FSPN/EA**를 같은 식으로 대체하지 않는다.
 
 ---
 
@@ -297,7 +293,7 @@ Create(name)
   └ 성공 → ParticleFx2Emitter(=vfx2 EmitterSet 인스턴스) 생성, 레이어 비트 = EffectModule 기본값
 Start(false)    → 방출 시작(시간 0)
 매 프레임         → 이미터마다 방출 판정(6.1) → 입자 생성(초기 위치·속도·수명) → 셰이더가 시간 t 로 그림
-Stop(false)     → 방출 중단. 남은 입자의 처리는 [미확정](vtable+0x10)
+Stop(false)     → 방출 중단. 남은 입자의 처리는 [미확정] (`vtable+0x10`)
 selfDestroy=1   → 모든 이미터가 끝나고 입자가 다 사라지면 파괴 [추정]
 ```
 
@@ -325,7 +321,7 @@ selfDestroy=1   → 모든 이미터가 끝나고 입자가 다 사라지면 파
    - 일반 이미터: 시작 = `start`, 끝 = `start + duration`.
    - 자식 이미터(플래그 bit 0x11): 시작 = 부모 수명 × `timing`/100, 끝 = 시작 + duration.
    - 시간 ≥ 시작이고, (끝 제한이 없거나 시간 < 끝) 일 때 방출 함수(FUN_710074cb60)를 부른다. 끝 제한이 걸리는 조건은 플래그 bit 0x14, bit 0 이다. 연속 이미터(isOneTime=0)는 duration 과 무관하게 계속 낸다 [추정: 플래그 뜻].
-3. **방출 간격**(FUN_710074cb60) [판독 일부]: 간격 = `interval + 1` 프레임. 간격마다 다음 값을 누적한다(이미터 LCG `x = x·0x41C64E6D + 0x3039`, u = x·2⁻³²).
+3. **방출 간격**(FUN_710074cb60) [판독 일부]: 간격 = `interval + 1` 프레임. 간격마다 다음 값을 누적한다(`u = oldSeed·2⁻³²`를 먼저 읽고, 이미터 LCG `seed = oldSeed·0x41C64E6D + 0x3039`를 u32로 갱신).
    - `rate × emissionScale(인스턴스+0xDC) × 모듈 배율(+0x24C) × (100 − u·rateRandom)/100`
    - 누적 값의 정수 부분만큼 입자를 만든다. 한 분기에서 누적값을 1 이상으로 올린다(`if (fVar15 <= 1.0) fVar15 = 1.0`) [판독: 분기 조건 뜻은 미확정].
 4. **최대 입자 수**(FUN_710073d51c, FUN_7100760da4) [판독]:
@@ -369,36 +365,137 @@ dirNormal = 모양 표면 법선(구·원) 또는 0;
 v0 = dirNormal * allDirection
    + normalize(designatedDir) * designatedDirScale
    + 확산(diffusionDirAngle, diffusion xyz);
-v0 *= 1 - rand() * velRandom / 100;
+v0 *= 1 - rand() * velRandom / 100; // 후보식. twinkle의 원시 velRandom=0.1도 있어 /100 정규화는 미확정
 life = particle.life * (1 - rand() * lifeRandom / 100); // lifeRandom 은 % 로 추정(값이 life 보다 큰 표본 있음). 범위 방향은 미확정
 scale0 = scale.xyz * (1 - rand() * scaleRandom / 100);
 rot0 = rotateInit + rand±(rotateInitRand);   // rotRevRand 면 부호 랜덤
 ```
 
-### 6.3 시간에 따른 값 (셰이더 계산) [추정]
+### 6.3 입자 프로그램별 운동·시간·키 [판독]
 
-Static 블록이 GPU 상수 버퍼로 그대로 간다는 것은 [판독]이다(4.3). 아래 식은 그 필드 이름에 맞춘 추정이다.
+기존 광장 분석의 [sass_dis.py](../../tools/analysis/sass_dis.py)·[bnsh_sass.py](../../tools/analysis/bnsh_sass.py)를 재사용했다([plaza_3d.md](../shell/plaza_3d.md) 6.8·6.13, [charselect.md](../shell/charselect.md) 12.11). BNSH 변형 번호는 0부터이며 VS/FS/CS 단계는 1/5/6이다. 이 절의 주소·슬롯 오프셋은 16진수다. 아래 주소는 해당 BNSH 파일 시작 기준 코드 헤더 주소 `pa`; VS/FS 명령은 `pa+0x80`, 이 CS는 `pa+0x100`부터다. `c[n][offset]`·`a[offset]`은 실제 SASS 슬롯이며 BFSHA 재질용 도구의 의미 이름을 이펙트에 적용하지 않았다.
 
-```ts
-r = t / life;                                   // 0..1
-color0 = type==2 ? keyLerp(color0Keys, r) : color0Const;
-alpha0 = type==2 ? keyLerp(alpha0Keys, r).x : alpha0Const;
-color1, alpha1 = 같은 방식;
-scale  = scale0 * keyLerp(scaleKeys, r);          // 키 xyz = 배율
-rot    = rot0 + rotateAdd * t;                    // rotateRegist 는 감쇠로 추정
-// 운동(공기저항 a = airRes, 중력 g = gravityDir * gravityScale)
-// CPU 적분 근사(웹 권장): 매 프레임  v = v * a + g;  p += v;
-// 해석식 후보:  p(t) = p0 + v0 * (1 - a^t)/(1 - a) + g * (적분항)   (a=1 이면 v0*t + g*t²/2)
-final = texSample(tex0) * color0 (컴바이너 0번 = 텍스처×색0) [추정], alpha = texA * alpha0
+| 자원·이미터 | 변형 → VS pa | 위치 reader / 계산 |
+|---|---|---|
+| mg1800 ring 계열 | 0~3,9,10→15000; 6,7→17C00 | calcType 0, 현재 `a[80..88]`; 속도 적분 없음 |
+| mg1800 twinkle00/01 | 4,5,11→16200 | calcType 1, 아래 해석식; 세 변형 VS 코드 동일 |
+| mg1800 twinkle02 | 8→18C00 | calcType 1, 같은 위치 해석식; 키·흔들림·FS는 별도 |
+| mg1801 steam00 / steam01 | 0,1→38000 / 6,7→3DA00 | calcType 0, 현재 `a[80..88]` |
+| steam00 bubble00 / 자식 crown00 | 2,3→39900 / 4,5→3BC00 | calcType 0, 중심 `a[A0..A8]` / `a[B0..B8]`, 메시 정점은 각각 `a[90..98]` / `a[A0..A8]` |
+| water_entry00/01 shader00 | 8→3EE00 | calcType 0, 현재 중심 + 입자별 3×4 변환 `a[D0/E0/F0]` |
+| splash01 / splash02 / bubble00 | 9,10→40900 / 11→41D00 / 12→43800 | calcType 0, 현재 위치; 커스텀 정점 변환·속성 배치는 프로그램별로 다름 |
+| wave00 | 13,14→44900; CS 0→3000 | calcType 2, 아래 CS가 `P,V`를 갱신하고 VS는 현재 `a[80..88]`을 읽음 |
+| wave01 / white_wave00 | 15→45D00 / 16→46F00 | calcType 0, 현재 `a[80..88]`; XZ 판 변환(6.4) |
+| mg0508 success ring / ring01 | 18~21→3C700 / 22,23→3DB00 | 모두 calcType 0, 현재 `a[80..88]` |
+| mg0508 success twinkle00/01 / 02 | 24,25→3ED00 / 26,27→40600 | 모두 calcType 0, 현재 `a[80..88]`; mg1800 해석식과 별개(7.5) |
+
+mg1801은 17변형/11종 VS, mg1800은 12변형/4종 VS다. 동일 주소 묶음은 코드 바이트도 동일하다. CPU 계열 VS에는 아래 중력·공기저항 적분이 없다. 이 관찰만으로 CPU 갱신부의 힘·적분식을 확정할 수는 없다.
+
+**mg1800 twinkle 해석식.** `c[9]`는 EmitterData의 절대 오프셋을 유지한 Static, `c[A]`는 동적 인스턴스 상수다.
+
+| 입력 | 슬롯 / 의미 |
+|---|---|
+| 초기 위치·수명 | `a[80..88]=p₀`, `trunc(a[8C])=L`(signed int) |
+| 초기 속도·생성 시간 | `a[90..98]=v₀`, `a[9C]=b` |
+| 크기·이동 배율·난수·회전 | `a[A0/A4]=s₀x/s₀y`, `a[AC]=m`, `a[B0/B4/B8]=rₓ/rᵧ/r_z`, `a[C0..C8]=θ₀` |
+| 시간·힘 | `now=c[A][20]`, `τ=c[A][2C]`, `a=c[9][110]`, `g=c[9][100..108]·c[9][10C]` |
+
+```text
+t = now − b; T = t + τ
+if L <= 0 or t >= L or b > now: 그리기 제외
+if a == 1: F = T; G = T²/2
+else:
+  E = exp2(T·log2(abs(a)))
+  F = (1−E)/(1−a)
+  G = (T−(E−1)·1.4426950216293335/log2(a))/(1−a)
+p = p₀ + m·(v₀·F + g·G)
 ```
 
-- keyLerp: 키가 1개면 상수다. r 이 첫 키 앞이면 첫 키, 마지막 키 뒤면 마지막 키 값을 쓴다. 그 사이는 선형 보간 [추정].
-- **원본과 같게 하려면** 셰이더 식을 확정해야 한다(11절 1항).
+위 수명 분기는 출력 알파를 0, clip xyz를 0, w를 `5·c[8][1E4]`로 만든 뒤 종료한다(VS +28~F8). 풀 슬롯 삭제 식은 아니다. `a>0`이면 `E=a^T`, `G=(T−(a^T−1)/ln(a))/(1−a)`로 읽을 수 있다. 원본은 `a==1`을 정확히 비교하고 거듭제곱에는 `abs(a)`, G의 로그에는 `a`를 쓴다(+1B0~4D0). `a<=0`을 임의 clamp하지 않는다. MUFU/RRO·FTZ/FMA의 유한 정밀도까지 위 수학 표기가 보장하지는 않는다.
 
-### 6.4 판독하지 못한 부분과 이유
+실제 mg1800 twinkle은 `a=0.949999988079071`, gravityScale=0, allDirection=1.5, 이미터 scale=0.05다. `F(1)=1`이므로 `v←a·v+g; p←p+v` 근사와도 첫 프레임부터 다르다. `τ,m,r,θ₀`의 reader 역할은 위와 같지만 CPU 작성부·랜덤 시드 대응은 미확정이다. VS 내부에는 새 난수를 생성하는 연산이 없다.
 
-- vfx2 는 심볼이 없다. CPU 쪽 코드는 Static 블록의 공기저항(0x110)을 읽지 않는다(`srch #0x110` 에 float 읽기 0건) [판독]. 입자 위치는 정점 셰이더에서 계산한다고 본다.
-- 셰이더는 `ConvertList.xml.bnsh`(Maxwell 바이너리)에 있다. Ryujinx 셰이더 변환기(Maxwell → GLSL)로 풀면 식을 읽을 수 있다. 이번 작업에서는 하지 않았다.
+**wave00 CS 상태 갱신.** 포인터는 `c[0][270/274]=S`(Static), `[280/284]=D`(동적), `[290/294]=F`(필드), `[310/314]=P`, `[320/324]=V`, `[330/334]=d`, `[340/344]=M`, `[350/354]=U`다. 입자 배열 stride는 16 B; `i=32·blockIdx.x+threadIdx.x`, 상한은 `trunc(D[24])`다. `P.w=L`, `V.w=b`, `M.w=m`, `U.xyz=(uₓ,uᵧ,u_z)`이며 U를 읽기만 한다.
+
+```text
+t = D[20] − V.w; Δt = D[28]; L = trunc(P.w)
+if i >= trunc(D[24]) or L <= 0 or t > L or t < 0: 갱신 생략
+P′ = P.xyz + Δt·m·V.xyz                        # 이전 속도로 먼저 이동
+V′ = exp2(Δt·log2(abs(S[110])))·V.xyz + Δt·g + N
+K = trunc(F[5C]); A = F[50..58]; κ = 6.283184051513672
+if K != 0 and trunc(t) % K == 0:
+  Nₓ = Aₓ·sin(κ·(u_z−0.5) + u_z·t²)
+  Nᵧ = Aᵧ·sin(κ·(uₓ−0.5) + uᵧ·t²)
+  N_z = A_z·sin(κ·(uᵧ−0.5) + uₓ·t²)
+else: N = 0
+```
+
+`g=S[100..108]·S[10C]`. N에 Δt나 m을 곱하지 않으며 축별 위상 교차도 그대로다(CS +448~670). K=0은 정수 나머지 경로가 −1을 선택해 힘을 끈다. CS의 `t>L`과 VS의 `t>=L` 경계가 다르므로 t=L에서 갱신해도 그려지지 않는다. 버퍼 슬롯의 생성·회수는 이 코드에 없다.
+
+`tangent d′=P′−P`를 일단 저장하고 퇴화 보정 뒤 다시 쓴다(+6F0~730, +970~978). `ε=9.999999974752427e−7`, `δ=0.0010000000474974513`(파일 +3B00의 c[1][0/4]): `|d′|<ε`이면 t≠0일 때 이전 d를 유지한다. t=0이면 gravityScale>0에서 `ε·normalize(gravityDir)`, 그 밖에는 V′, P′ 순으로 길이≥ε인 벡터를 정규화하며 둘 다 짧으면 `(0,ε,0)`이다. 일반 분기에서 `0<Δt·|V′|<δ`이고 `|d′|<δ`이면 `d′=Δt·V′`로 보정한다. CS에는 월드/로컬 행렬 변환이 없다.
+
+wave00 데이터는 airRes=1, gravityScale=0, FRN1 payload 첫 xyz=(0.0003,0,0.0003)이다. FRN1→`F[50..5C]` 작성 연결은 아직 확인하지 못했으므로 그 값을 N의 확정 파라미터로 대입하지 않는다. 초기 V, 난수 U, m의 작성 연결도 남아 있다.
+
+**색·알파·크기 키와 루프.** `FUN_71007491a0`는 Static 복사 뒤 다음 값을 쓴다([effect_vfx2_calc.c](../../../analysis/decomp/effect_vfx2_calc.c) 1253~1353행, 고정색·키 패딩은 같은 함수 앞부분).
+
+| 채널 | 주기 P 슬롯 ← 원본(활성 플래그) | 랜덤 위상 Q 슬롯 ← 원본 |
+|---|---|---|
+| color0 / alpha0 | B0 / B4 ← E5C / E5E (E48 / E49) | C4 / C8 ← E51 / E52 |
+| color1 / alpha1 | B8 / BC ← E60 / E62 (E4A / E4B) | CC / D0 ← E53 / E54 |
+| scale | C0 ← E64 (E4C) | D4 ← E55 |
+| 추가 애니 4채널 | E0/E4/E8/EC ← E68/E6C/E70/E74 (E4D~E50) | F0/F4/F8/FC ← E56~E59 |
+
+비활성 P는 0, 활성 P는 원본 정수(color/alpha는 u16, scale/추가 애니는 i32)를 float로 변환한다. Q는 플래그의 0/1이다. 파서가 E54/E58 등을 u32로 읽은 이름이나 파일의 0인 B0~FF 값을 런타임 값으로 사용하면 틀린다. 확인한 VS의 채널 위상은 `P>0 ? fract(t/P + r·Q) : t/L`; 주기 100을 임의로 `100%·life`로 바꾸지 않는다. 채널별 r 선택은 별도 속성 reader다.
+
+키 구간은 `FSET.GE`와 `(q−tᵢ)/(tᵢ₊₁−tᵢ)`·FMA로 **선형 보간**한다. 유효 키 시간이 증가하는 표본에서는 첫 키 이전은 첫 값, 마지막 키 이후는 마지막 값이다. 초기화 시 고정 색/알파를 첫 키 슬롯(6B0/730/7B0/830)에 쓰고, 1~7키 채널의 남은 슬롯은 마지막 xyz와 `마지막 time + 슬롯 번호`로 채운다. 원본 파일의 0 패딩을 그대로 보간하지 않는다. 크기는 입자 base scale×키 배율, 색은 키×동적 color0/1(`c[A][0..1C]`)×Static colorScale(6A0), 알파는 동적 fade(30) 등이 뒤에 적용된다.
+
+mg1800 twinkle 변형 4의 회전 reader(+C30~1108)는 저항 q=`c[9][C5C]`에 대해 q=1이면 H=t, q=0이면 H=0, 그 밖에는 `H=(1−abs(q)^t)/(1−q)`다. `S=c[9]`, `bit(S[70],n)`은 비트 n의 0/1, `Bⱼ=sign(floor(2rⱼ))`일 때:
+
+```text
+σₓ = 1−2·bit(S[70],28)·B_z
+σᵧ = 1−2·bit(S[70],29)·Bₓ
+σ_z = 1−2·bit(S[70],1)·Bᵧ
+ωₓ = S[C50] + (rₓ+rᵧ−1)·S[C60]
+ωᵧ = S[C54] + (rᵧ+r_z−1)·S[C64]
+ω_z = S[C58] + (rₓ+r_z−1)·S[C68]
+θ = σ ⊙ (θ₀ + H·ω) + (r−0.5) ⊙ S[C40..C48]
+```
+
+⊙은 성분별 곱이다. 속성 r·θ₀의 CPU 작성 연결은 별도 미확정이다. 데이터의 q=1, rotateAdd.z=0.1745329201221466에서는 랜덤 증가/부호 반전이 없는 Z 증가분이 10°/프레임이다. 이 회전 reader를 다른 프로그램에 일반화하지 않는다.
+
+twinkle00/01의 X 흔들림은 cycle=9, amplitude=0.7, phaseRandom=0; 02는 5, 0.75, 1이다. 판독한 X reader에서 `h=(t+S[148])/S[138]+rₓ·S[140]`이며 flags1 비트 0/1/2가 각각 아래 항을 선택해 더한다. 비트 조합을 하나의 파형 enum으로 단정하지 않는다.
+
+```text
+cos 항 = 1 − A·(0.5+0.5·cos(6.2831854820251465·h))
+saw 항 = abs(1 − A·fract(h))
+square 항 = abs(1 − A·(1 − I(fract(h)>=0.5)))
+```
+
+변형 4의 X base는 `a[A0]+sat(max(0,rₓ))`, Y는 `a[A4]`이고 키·선택된 흔들림·동적 scale `[34/38]`을 곱한다. 이 보정과 Y 흔들림 유무를 다른 프로그램에 일반화하지 않는다.
+
+### 6.4 좌표계·픽셀식과 판독 경계 [판독]
+
+mg1800 twinkle·고리와 mg0508 success는 중심을 `c[A][E0..10C]` 행렬과 `[110..11C]` 가산 벡터로 변환한다. 확인한 twinkle billboard 0 변형 4는 `c[8][180..1AC]` 기저와 `c[A][120/130/140]` 기저 길이(SQRT)를 사용하고 `[150..158]` 가산 뒤 `c[8][0..3C]` 투영으로 간다. mg1801 steam/wave 계열은 중심에 `[40..6C]`, 물결 도형에 `[80..AC]`를 사용한다. 이 행렬의 CPU 작성부가 남아 있어 초기 위치를 곧바로 월드 좌표라고 단정하지 않는다(6.2의 단순 더하기는 후보식).
+
+wave00 VS +838~B30은 로컬 Euler 변환 `Rᵧ·Rₓ·R_z` 뒤 `(x,y,z)→(x,z,−y)`를 적용한다. 회전 0이면 XY 사각형이 XZ 판이 된다. wave00 이미터 자체 회전은 0이며 white_wave는 Y=π/2이므로 XZ 배치를 이미터 X 회전으로 설명할 수 없다. billboard 3의 bubble/crown은 메시 정점·입자 변환을 읽는 경로이며, 5/6/7/10 및 열거형 전체는 미확정이다.
+
+**wave00/01 flowmap FS**(변형 13/15, pa=45900): VS에서 받은 normalized age의 `h=fract(t/L)`로 아래 UV를 계산한다. flow는 sampler1(handle A)의 RG, tex는 sampler0(handle 8)이다.
+
+```text
+d = flow·0.7400000095367432 − 0.3700000047683716
+T₀ = tex(UV − d·h); T₁ = tex(UV − d·fract(h+0.5))
+w = 0.5 + 0.5·cos(6.2831854820251465·h)
+T = T₀ + (T₁−T₀)·w
+RGB = T.rgb·vertexColor0.rgb
+alpha = sat(T.a·vertexAlpha0)·vertexFade
+alpha <= c[9][8D8]이면 discard
+```
+
+0.74는 파일 +45C00의 c[1][0], 0.37은 immediate 0x3EBD70A4다. 흐름맵은 UV를 바꾸며 입자 위치의 힘 N과 별개다.
+
+mg1800 twinkle FS 변형 4(pa=17A00)는 `RGB=C₁+tex.rgb²·(C₀−C₁)`, `alpha=sat(sat(tex.r²·C₀.a)·fade)`다. 변형 8/11(pa=1A500)은 같은 구조에서 tex를 제곱하지 않는다. 따라서 컴바이너를 일괄 `tex·color0`로 확정할 수 없다. shader00 FS의 `c[D][0..8]` 색 계수 등 CSDP reader 일부는 보이지만, CSDP payload 전체 배치·버퍼 작성부·노말/깊이 조합은 아직 미확정이다.
+
+분석 범위는 표의 실제 프로그램과 해당 경로다. mg0508의 oil/fire GPU와 smoke CS는 이 표의 success와 다른 코드이며 운동식을 공유한다고 확인하지 않았다. CPU 입자 갱신·FRND/FSPN/EA**·랜덤 초기화·UBO 작성부의 남은 연결은 11절에 모았다.
 
 ---
 
@@ -480,7 +577,19 @@ final = texSample(tex0) * color0 (컴바이너 0번 = 텍스처×색0) [추정],
 - 텍스처는 4분의1 원·반쪽 별이다. `repeat=3`(2×2) + Mirror 로 펼쳐 전체 고리를 만든다(4.4).
 - 요약: JUST 는 노랑→빨강 고리 + 주황 반짝이, FAST·SLOW 는 청록 고리 + 파랑 반짝이 [데이터: 키 색].
 
-### 7.5 그 밖
+### 7.5 `mg0508_success00` — 기존 호출 분석과 셰이더 연결
+
+호출 시점·상태는 [mg0508.md](../minigame/mg0508.md)의 완료 분석을 재사용한다. state 17에서 누적값이 1에 도달하면 점수·성공 이펙트·CHECK·포즈를 처리한다. `FUN_7100013f80`의 성공 이펙트 위치는 **월드 원점**, 레이어는 `1<<team`; 원형 pane 위치는 사운드 기준이다. pane 위치에 성공 이펙트를 추가하는 연결은 없다.
+
+| 이미터 | 변형 / calcType | 원시 파라미터 |
+|---|---|---|
+| ring00_base, ring00 / ring01 | 18~21 / 22,23, 모두 0 | life 30, rate 1, trans=(0,0.125,0), airRes 1, gravityScale 0 |
+| twinkle00/01 | 24,25, 모두 0 | life 38, rate 10, 반경 1, allDirection=1.4199999571, scale=0.15000000596, airRes=0.89999997616, gravityScale 0, velRandom=0.10000000149 |
+| twinkle02 | 26,27, 0 | life 50, 그 밖 위와 같고 velRandom=0 |
+
+twinkle rotateAdd.z=0.1745329201221466, rotateRegist=1이다. VS는 현재 위치를 읽고 mg1800의 초기 속도/airRes 적분을 읽지 않는다(6.3). 따라서 0.9의 CPU 감쇠식, 초기 속도·난수 정규화는 미확정으로 남긴다. ring의 +0.125는 이펙트 내부 이미터 이동값이며 호출 위치와 구별한다.
+
+### 7.6 그 밖
 
 - `libca/mg_common` 의 `mg_common_pt_effect_00`(고리 1 + 별 2)은 main `FUN_710043ce38` 가 이름을 읽는다(`CaComUiPerfectTelop::SettingEffect` 0x710043c338 근처) [판독: 참조 1건]. mg1801 에서 쓰는지는 [미확정].
 - mg1801 메시 프리미티브 BFRES 안 모델 이름: `mg1801_bubble00`, `mg1801_crown00`, `mg1801_circle00`, `mg1801_plane00` [실행: graphics_bfres2gltf dump]. glb 로 바꾼 파일은 `prim/primitives.glb` 다.
@@ -523,7 +632,7 @@ graphics_bfres2gltf gltf primitives.bfres prim/primitives.glb --all
 | `view/effects/registry.ts` | ParticleFx2Module 리소스 목록 + 이름 해석(3.3) | 이름 → EmitterSetDef. 확장자·경로 제거 규칙을 같게 한다 |
 | `view/effects/effect.ts` | bex::Effect | `create(name)`, `setPosition`, `start`, `stop`, `selfDestroy`, `layerBits` |
 | `view/effects/emitter.ts` | vfx2 Emitter | 방출 시계(6.1), LCG 0x41C64E6D/0x3039, 풀 크기(6.1 식 4) |
-| `view/effects/particles.ts` | 셰이더 | 입자 상태 배열, 프레임 적분, 키 보간 |
+| `view/effects/particles.ts` | CPU 갱신 + VS/CS | 입자 상태 배열, 프로그램별 운동식, 키 보간 |
 | `view/effects/render.ts` | BNSH | three.js `InstancedMesh`(평면 사각형 / glb 메시) + `ShaderMaterial` |
 | `games/mg1801/view` | MapImpl·Obj·Player 호출 | 로직 사건 `effect` → registry |
 
@@ -537,7 +646,7 @@ graphics_bfres2gltf gltf primitives.bfres prim/primitives.glb --all
 | `color0/alpha0/color1/alpha1/scale` 키표 | `curves.color0` 등 `{t, v}` |
 | `render.blendType` 0/1 | `THREE.NormalBlending` / `THREE.AdditiveBlending` |
 
-### 9.3 업데이트 순서 (프레임마다, 로직 step 뒤 화면 onStep)
+### 9.3 업데이트 순서 후보 (프레임마다, 로직 step 뒤 화면 onStep)
 
 ```ts
 for (const fx of effects) {
@@ -548,7 +657,7 @@ for (const fx of effects) {
     for (const p of em.particles) {
       p.age += 1;
       if (p.age >= p.life) kill(p);
-      else { p.vel = p.vel * drag + gravity; p.pos += p.vel; }        // 6.3 [추정]
+      else updateByProgram(p, em);                                  // 6.3: GPU 해석식 / wave CS / 미확정 CPU 경로
     }
   }
   if (fx.selfDestroy && fx.allDone()) remove(fx);
@@ -556,19 +665,19 @@ for (const fx of effects) {
 // 그리기: 키 보간으로 색·알파·크기, billboardType 별 정점 변환
 ```
 
-- 로직 결정성과는 무관하다(화면 전용). 그래서 Math.random 을 써도 로직 골든에는 영향이 없다. 원본과 같은 무늬가 필요하면 LCG 를 쓴다.
+- 위 순서는 웹 설계 후보다. 셰이더의 그리기 제외와 풀 삭제는 별개이며, 첫 방출·위치 반영·selfDestroy 순서는 미확정이다. 난수 초기화의 속성별 연결도 남아 있으므로 Math.random이나 방출 LCG만으로 원본 무늬와 같다고 보장할 수 없다.
 
 ### 9.4 원본과 다를 근사 목록
 
 | 항목 | 원본 | 웹 근사 | 동등성 유지 방법 |
 |---|---|---|---|
-| 입자 운동식 | GPU 셰이더(미판독) | CPU 프레임 적분 `v=v·drag+g` | BNSH 판독 뒤 식 교체(11절) |
+| 입자 운동식 | mg1800 GPU 해석식 / wave00 CS / CPU 경로(6.3) | 일괄 `v=v·drag+g`는 원본과 다름 | 판독된 두 식을 분리하고 CPU 경로는 미확정 유지 |
 | 커스텀 셰이더(물보라 shader00·splash·bubble/crown: 노말맵 + 수프색 + 알베도, CSDP 파라미터) | 굴절·라이팅 계열 [추정] | 알베도 × color0 + 가산. 노말맵은 무시하거나 간단한 림 | 화면 대조 |
-| flowmap(wave00/01) | 흐름맵 UV 왜곡 | 생략하거나 시간 UV 오프셋 | — |
-| GPU+SO(wave00) | 스트림아웃 | CPU 와 같게 | — |
-| 필드(FRND·FSPN·FRN1) | 랜덤 흔들림·회전 | 작은 랜덤 가속(값은 하위 섹션 그대로) [추정] | — |
+| flowmap(wave00/01) | 이중 UV 샘플·cos 혼합(6.4) | 생략하면 물결 표면이 다름 | 0.74/0.37과 수명 위상을 그대로 사용 |
+| GPU+SO(wave00) | 현재 위치 이동 후 속도·주기 힘·tangent 갱신(6.3) | 계산 장소만 CPU로 옮길 수 있음 | 갱신 순서·Δt·힘 축·경계 보존, 버퍼 작성 연결 확인 |
+| 필드(FRND·FSPN·FRN1) | FRN1 추정 경로의 CS reader 일부 판독; 원본 payload 연결 미확정 | 임의 랜덤 가속은 근사 | 필드 버퍼 작성부 확인 전 효과 확정 금지 |
 | 소프트 파티클·깊이 페이드 | 있음(softParticle 파라미터) | 없음(depthWrite false) | — |
-| billboardType 3/4 | 미확정 | 3 = 메시 그대로(카메라 무관), 4 = XZ 평판 | 화면 대조 |
+| billboardType 3/4 | 메시 정점·입자 변환 / 물결 XZ 축 치환 판독(6.4) | 메시 변환을 생략하면 다름 | 프로그램별 속성·행렬 유지 |
 | 정렬(sortType) | 이미터별 | three.js 투명 정렬 | — |
 
 ### 9.5 우선순위 (mg1801 최소 기능부터)
@@ -596,7 +705,16 @@ for (const fx of effects) {
 | 프리미티브 | graphics_bfres2gltf dump/gltf | 모델 4개, glb 출력 | [실행] |
 | 이펙트 이름 위치 | `effect_vfxb.py find` / esets 목록 | mg1801 이 쓰는 6개 이름이 각각 한 파일에만 있음 | [실행: 파서] |
 
-### 10.2 웹 구현 시 기대값 (재구현 대조용)
+### 10.2 셰이더 판독 검증
+
+| 근거 | 확인 결과 |
+|---|---|
+| BNSH 메타데이터·코드 바이트 | mg1801 17변형/11종 VS, mg1800 12변형/4종 VS; mg0508 success 10변형의 shaderIndex·calcType·위치 reader 대응(6.3) |
+| SASS 교차 판독 | envydis 미지원 MUFU 표기를 기존 nvdisasm의 SQRT로 확인; 회전 부호/난수 교차항과 CS 축·시간·수명 분기 확인 |
+| 상수 풀 | CS +3B00의 ε/δ, 물결 FS +45C00의 0.74와 immediate 0.37이 식과 대응 |
+| CPU writer | FUN_71007491a0의 루프 슬롯·고정색·키 패딩과 VS reader 대응 |
+
+### 10.3 웹 구현 시 기대값 (재구현 대조용)
 
 | 입력 | 기대 |
 |---|---|
@@ -612,22 +730,19 @@ for (const fx of effects) {
 
 ## 11. 미확정 사항과 추가 분석에 필요한 근거
 
-| # | 항목 | 영향 | 확인 방법 |
+현재 문서의 기존 미확정 표는 **12항목**이다. 1~5는 아래처럼 부분 해결했으며 6~12의 기존 API·파일 형식·호출 분석은 재사용했다. 셰이더 reader의 판독과 CPU writer까지의 연결 완료를 구별한다.
+
+| # | 현재 상태·남은 항목 | 영향 | 필요한 근거 |
 |---|---|---|---|
-| 1 | 입자 운동·색·크기 곡선의 정확한 식(공기저항·중력 적분, 키 보간 방식, 랜덤 범위 방향) | 모든 입자의 모양 | `ConvertList.xml.bnsh` 를 Ryujinx ShaderTools 등으로 GLSL 변환해 정점 셰이더 판독 |
-| 2 | Static 0x0A8~0x0FF 의 필드 이름(추가 32 B 위치) | 루프 계열 값. 지금 표본은 전부 0이라 영향 없음 | 0이 아닌 표본을 찾거나 vfx2 코드에서 읽는 곳 |
-| 3 | billboardType 열거(3, 4, 5, 6, 7, 10) | 물결·메시 방향 | 셰이더 판독 또는 화면 대조 |
-| 4 | Combiner·ShaderRef 의 나머지 필드, CSDP 16 값의 의미 | 커스텀 셰이딩 | 셰이더 판독 |
-| 5 | 하위 섹션(FRND, FSPN, FRN1, EA**)의 필드 배치와 효과 | 흔들림·회전 | vfx2 코드에서 4문자 상수(예 0x444E5246) 검색 |
+| 1 | **부분 해결:** mg1800 GPU 위치 해석식, wave00 CS, 키 선형 보간·루프·일부 회전/크기 판독(6.3). CPU 운동·초기 위치/속도/수명/랜덤 범위·m/τ·속성 작성은 미확정 | 초기 분포와 CPU 입자 움직임 | CPU 입자 버퍼 작성·갱신 함수 → 각 프로그램 속성/UBO 연결 |
+| 2 | **부분 해결:** B0~D4·E0~FC의 런타임 루프 슬롯과 작성 원본 확인. A8/AC·D8/DC 및 추가 애니 채널별 사용은 미확정 | 루프 위상·추가 애니 | FUN_71007491a0의 나머지 작성과 해당 슬롯 reader |
+| 3 | **부분 해결:** 물결(4)의 XZ 축 치환, 메시(3)의 실제 속성 경로 확인. 3의 전체 모드 및 5/6/7/10 열거 의미 미확정 | 방향·좌표계 | 해당 billboard 프로그램과 변환 UBO 작성부 |
+| 4 | **부분 해결:** ShaderRef→표의 실제 VS/CS, flowmap·twinkle FS 판독. Combiner 나머지·CSDP 전체·노말/깊이 합성은 미확정 | 커스텀 셰이딩 | CSDP→c[D] 작성·프로그램별 FS/메타데이터 |
+| 5 | **부분 해결:** wave00의 주기 힘 reader 판독. FRN1→F[50..5C] 연결, FRND/FSPN/EA** 필드·식 미확정 | 흔들림·회전 | 하위 섹션→필드/애니 버퍼 작성 및 CPU 갱신부 |
 | 6 | Stop(bool) 동작(vtable+0x10), selfDestroy 시점, 남은 입자 처리 | steam00 → steam01 전환 모습 | `effect_bex.c` 내부 vtable(PTR_DAT_7101a851e8) 함수 판독 |
-| 7 | SetPosition 이 Start 뒤에 불릴 때 첫 방출 위치 | 원점이 아닌 PlayEffect 사용 게임 | 내부 갱신 함수(+0x119 읽는 곳) 판독 |
-| 8 | 같은 이미터셋 이름이 여러 리소스에 있을 때의 우선순위(등록 순서) | 다른 게임 | ParticleFx2Module 리소스 등록 함수 판독 |
-| 9 | 기본 레이어 비트와 카메라 레이어 마스크 | 표시 여부 | `FUN_71001186bc`, 카메라 담당 문서 |
-| 10 | G3NT 8바이트·ID 해시, TRMA/TRIM | 프리미티브 대응(지금은 순서 추정) | 다른 파일 표본 비교 |
-| 11 | 방출 끝 프레임 포함 여부(duration 경계)·intervalRandom 적용식 | 물결 개수 ±1 | FUN_710074cb60 나머지 판독 |
-| 12 | `mg_common_pt_effect_00` 사용처 | 미니게임 공용 연출 | FUN_710043ce38 호출자 |
-
-### 정정 기록
-
-- mg1801.md 7절의 "`RmStarEffectMan`" 이펙트 항목: 실제로는 파티클이 아니라 점수 가산이다(3.4). 그 문서는 이 담당이 고치지 않는다. 같은 내용을 SHARED 게시판에 올렸다.
-- 작업 지시의 "mg1801 ConvertList 약 8.8 MB"는 mg0101(8,866,460 B)의 크기다. mg1801 은 1,360,484 B 다 [데이터].
+| 7 | SetPosition 이 Start 뒤에 불릴 때 첫 방출 위치 | 원점이 아닌 PlayEffect 사용 게임 | 내부 갱신 함수(+0x119 읽는 곳) |
+| 8 | 같은 이미터셋 이름의 리소스 등록 순서 | 다른 게임의 이름 충돌 | ParticleFx2Module 등록 함수 |
+| 9 | 기본 레이어 비트와 카메라 레이어 마스크 | 표시 여부 | `FUN_71001186bc`, 카메라 문서 |
+| 10 | G3NT 8바이트·ID 해시, TRMA/TRIM | 프리미티브 대응(순서 추정 포함) | 기존 파일 분석의 미확인 대응 |
+| 11 | 방출 duration 경계·intervalRandom 적용식 | 물결 개수 ±1 | FUN_710074cb60 남은 경로; CS/VS 수명 경계와 별개 |
+| 12 | `mg_common_pt_effect_00`의 mg1801 사용 여부 | 미니게임 공용 연출 | FUN_710043ce38 호출자 |

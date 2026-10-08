@@ -133,6 +133,7 @@ gltf-transform 의 GLB 쓰기는 이미지를 안에 넣어 버리므로 JSON �
 
 - 시작 정렬: Opus 는 pre-skip, AAC(mp4)는 편집 목록으로 인코더 앞 지연을 적어 디코더가 잘라낸다 → 원본과 시작 표본이 같다(§9.4 측정). 리듬 게임 BGM 시작 시각이 바뀌지 않는다.
 - 반복 BGM 구간은 초 단위(`loop.startSec`)라 rate 가 바뀌어도(Opus 는 48 kHz 로 풂) 같다.
+- BGM(명세가 BGM 라벨로 가리키는 wav)은 통파일에 더해 스트리밍 조각 `<이름>.bgm/NNN.ogg|.m4a`(4 s + 앞뒤 패드 80 ms, 반복 경계에서 자름)를 만들고 `index.json` `streams` 에 배치를 적는다 — 설계·검증: [04_sound.md §12](04_sound.md).
 - 런타임: 소리는 페이지마다 fetch → decodeAudioData 로 읽는 곳이 많아(charselect_page·plaza_page·view/audio 등 12곳) 압축 모드에서만 전역 fetch 를 감싸 `.wav` 요청을 바꾼다(`installFetchShim`). 압축본 루트 밖·다른 확장자는 그대로 지나간다 [설계].
 
 ---

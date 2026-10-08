@@ -9,6 +9,7 @@ import { createCharSelect, type CharSelectHandle } from './shell/charselect';
 import { P1 } from './lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
 import { appFlow } from './view/appFlow';
+import { BgmChannel } from './view/bgm';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -87,7 +88,7 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     voiceToken.set(slot, t);
     return t;
   };
-  let bgm: { label: string; src: AudioBufferSourceNode | null; gain: GainNode | null } | null = null;
+  const bgm = new BgmChannel(() => ctx);
   const playVoice = (url: string, gain: number, slot: number): void => {
     if (!ctx) return;
     const c = live(ctx);
@@ -104,36 +105,11 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     });
   };
   const playBgm = (label: string, url: string, gain: number, loopStart: number, loopEnd: number): void => {
-    if (!ctx || bgm?.label === label) return;
-    const c = live(ctx);
-    const me: { label: string; src: AudioBufferSourceNode | null; gain: GainNode | null } = { label, src: null, gain: null };
-    bgm = me;
-    void buffer(c, url).then((buf) => {
-      if (!buf || bgm !== me) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      src.loop = true;
-      src.loopStart = loopStart;
-      src.loopEnd = loopEnd;
-      const g = c.createGain();
-      g.gain.value = gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-      me.src = src;
-      me.gain = g;
-    });
+    if (!ctx || bgm.label === label) return;
+    live(ctx);
+    bgm.play(label, url, { gain, loop: { startSec: loopStart, endSec: loopEnd } });
   };
-  const stopBgm = (fade: number): void => {
-    if (!ctx || !bgm) return;
-    const { src, gain } = bgm;
-    bgm = null;
-    if (src && gain) {
-      const t = ctx.currentTime;
-      gain.gain.setValueAtTime(gain.gain.value, t);
-      gain.gain.linearRampToValueAtTime(0, t + fade);
-      src.stop(t + fade);
-    }
-  };
+  const stopBgm = (fade: number): void => bgm.stop(fade);
   const playSe = (url: string, gain: number, x?: number): void => {
     if (!ctx) return;
     const c = live(ctx);

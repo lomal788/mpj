@@ -14,8 +14,9 @@
  *   assets-dist/<소스와 같은 경로>   png → .ktx2(또는 png 그대로), wav → .ogg+.m4a 또는 .flac, glb → 같은 이름(meshopt), json → 같은 이름(공백 제거), 그 밖 = 복사
  *                                   (해시 없는 작업본 — 증분 비교·같은 내용 복사의 원본)
  *   assets-dist/<경로>.<sha256 8>.<확장자>   배포본(내용 해시 이름, 작업본의 복사) + 이득 있으면 .br·.gz. 배포(tools/build.ts)는 이것만 싣는다
- *   assets-dist/index.json          런타임 표 { v: 2, ktx2[], lossy[], flac[], names{압축본 이름 → 해시 이름} } (shell/stage3d/assetLoader.ts 가 읽음,
- *                                   형식: docs/engine/loader_manager.md §5.8.2)
+ *   assets-dist/index.json          런타임 표 { v: 2, ktx2[], lossy[], flac[], names{압축본 이름 → 해시 이름}, streams{BGM 소스 → 조각 배치} }
+ *                                   (shell/stage3d/assetLoader.ts 가 읽음, 형식: docs/engine/loader_manager.md §5.8.2, BGM 조각: docs/engine/04_sound.md §12 —
+ *                                   조각 가상 경로 <이름>.bgm/NNN.wav 도 lossy 에 넣어 소리 이름 바꿈을 그대로 탄다)
  *   assets-dist/report.json         파일별 형식·크기·PSNR·GPU 추정, 폴더별 합
  *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과). 텍스처·소리는 경로만 바뀐 같은 내용(키 = 경로 뺀 내용·설정)이면 옛 결과를 복사한다
  *                                   (캐릭터 공용 폴더 assets/chara/·시스템 효과음과 공용 UI 그림 assets/common/ 으로 옮긴 것 — docs/engine/chara_assets.md, common_assets.md)
@@ -29,7 +30,8 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { classify, CLASS_RECIPE, encodeTexture, gpuBytes, pngInfo, TEX3D_ROOTS, TEX_RECIPE, type TexHint, type TexPlan, type TexResult } from './assets_tex';
 import { imageSlots, MESH_RECIPE, packGlb, readGlb, type MeshStats } from './assets_mesh';
-import { AUDIO_RECIPE, encodeAudio, type AudioOut } from './assets_audio';
+import { AUDIO_RECIPE, audioKind, BGM_RECIPE, encodeAudio, wavInfo, type AudioOut } from './assets_audio';
+import { bgmChunkKey, sameLoop, validLoop, type BgmPlan } from '../script/lib/bgmstream';
 import { hashedName, PRECOMPRESS, precompressAll } from './precompress';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -146,6 +148,47 @@ function collectHints(files: string[]): Map<string, TexHint> {
   return out;
 }
 
+/** 명세 JSON 이 BGM 라벨(자기 label 또는 위 키에 _BGM_)로 가리키는 손실 압축 wav → 반복 표본(loop{startSec,endSec} 또는 loopStart/loopEnd 초) */
+function collectBgm(files: string[]): Map<string, { loop: [number, number] | null }> {
+  const out = new Map<string, { loop: [number, number] | null }>();
+  const isBgm = (l: string | null): boolean => !!l && /(^|_)BGM_/.test(l);
+  for (const f of files) {
+    if (!f.endsWith('.json') || fs.statSync(f).size >= 4e6 || /\.(fmab|fsnb)\.json$/.test(f)) continue;
+    let j: unknown;
+    try {
+      j = JSON.parse(fs.readFileSync(f, 'utf8'));
+    } catch {
+      continue;
+    }
+    const dir = path.dirname(f);
+    const visit = (o: unknown, label: string | null): void => {
+      if (!o || typeof o !== 'object') return;
+      if (Array.isArray(o)) {
+        for (const x of o) visit(x, label);
+        return;
+      }
+      const r = o as Record<string, unknown>;
+      const own = typeof r.label === 'string' ? r.label : label;
+      if (typeof r.file === 'string' && /\.wav$/i.test(r.file) && isBgm(own)) {
+        const abs = path.resolve(dir, r.file);
+        const rel = posix(path.relative(SRC, abs));
+        if (!rel.startsWith('..') && fs.existsSync(abs) && audioKind(rel) === 'lossy') {
+          const info = wavInfo(abs);
+          const lp = r.loop as { startSec?: unknown; endSec?: unknown } | null | undefined;
+          const sec = lp && typeof lp.startSec === 'number' && typeof lp.endSec === 'number' ? [lp.startSec, lp.endSec] : typeof r.loopStart === 'number' && typeof r.loopEnd === 'number' ? [r.loopStart, r.loopEnd] : null;
+          const loop = sec ? validLoop([Math.round(sec[0] * info.rate), Math.round(sec[1] * info.rate)], info.frames) : null;
+          const prev = out.get(rel);
+          if (prev && !sameLoop(prev.loop, loop)) console.warn(`  BGM 반복이 명세마다 다르다(앞의 것 사용): ${rel} ${JSON.stringify(prev.loop)} / ${JSON.stringify(loop)} (${posix(path.relative(SRC, f))})`);
+          else out.set(rel, { loop });
+        }
+      }
+      for (const [k, v] of Object.entries(r)) visit(v, isBgm(k) ? k : own);
+    };
+    visit(j, null);
+  }
+  return out;
+}
+
 function copyVendor(): void {
   const lib = path.join(WEB, 'node_modules', 'three', 'examples', 'jsm', 'libs', 'basis');
   fs.mkdirSync(VENDOR, { recursive: true });
@@ -170,7 +213,8 @@ async function main(): Promise<void> {
   const state: State = { v: 1, entries: {} };
   const files = walk(SRC).sort();
   const hints = collectHints(files);
-  console.log(`소스 ${files.length}개, 힌트 ${hints.size}개, 동시 ${jobs}`);
+  const bgms = collectBgm(files);
+  console.log(`소스 ${files.length}개, 힌트 ${hints.size}개, BGM ${bgms.size}개, 동시 ${jobs}`);
 
   const want = (rel: string): boolean => !only || rel.startsWith(only);
   const reuse = (rel: string, key: string): Entry | null => {
@@ -328,7 +372,8 @@ async function main(): Promise<void> {
   let audioMoved = 0;
   await pool(groups.audio, jobs, async (rel) => {
     const src = path.join(SRC, rel);
-    const key = `${AUDIO_RECIPE}|${hashOf(rel)}`;
+    const bgm = bgms.get(rel);
+    const key = `${AUDIO_RECIPE}|${hashOf(rel)}${bgm ? `|${BGM_RECIPE}:${bgm.loop ? bgm.loop.join('-') : 'none'}` : ''}`;
     if (!want(rel)) {
       keep(rel);
       return;
@@ -350,10 +395,10 @@ async function main(): Promise<void> {
     }
     audioNew++;
     const base = rel.replace(/\.wav$/i, '');
-    const r = await encodeAudio(src, rel, path.join(DIST, base));
+    const r = await encodeAudio(src, rel, path.join(DIST, base), bgm);
     const outs: Record<string, number> = {};
     for (const [ext, n] of Object.entries(r.files)) outs[base + ext] = n;
-    state.entries[rel] = { rel, kind: 'audio', key, srcBytes: fs.statSync(src).size, outs, audio: { kind: r.kind, info: r.info } };
+    state.entries[rel] = { rel, kind: 'audio', key, srcBytes: fs.statSync(src).size, outs, audio: { kind: r.kind, info: r.info, ...(r.stream ? { stream: r.stream } : {}) } };
   });
   console.log(`  소리 ${groups.audio.length} (새로 ${audioNew}, 옮긴 경로 옛 결과 복사 ${audioMoved}) ${((performance.now() - t0) / 1000).toFixed(0)} s`);
 
@@ -431,11 +476,15 @@ async function main(): Promise<void> {
   }
 
   // 소스에서 사라진 항목은 버린다(파일은 --prune 때만 지움)
-  const index = { v: 2, ktx2: [] as string[], lossy: [] as string[], flac: [] as string[], names: {} as Record<string, string> };
+  const index = { v: 2, ktx2: [] as string[], lossy: [] as string[], flac: [] as string[], names: {} as Record<string, string>, streams: {} as Record<string, BgmPlan> };
   const names: [string, string][] = [];
   for (const e of Object.values(state.entries)) {
     if (e.kind === 'tex' && Object.keys(e.outs)[0]?.endsWith('.ktx2')) index.ktx2.push(e.rel);
     if (e.kind === 'audio' && e.audio) (e.audio.kind === 'flac' ? index.flac : index.lossy).push(e.rel);
+    if (e.kind === 'audio' && e.audio?.stream) {
+      index.streams[e.rel] = e.audio.stream;
+      for (let i = 0; i < e.audio.stream.chunks.length; i++) index.lossy.push(bgmChunkKey(e.rel, i));
+    }
     names.push(...Object.entries(e.names ?? {}));
   }
   index.ktx2.sort();
@@ -467,7 +516,7 @@ async function main(): Promise<void> {
   }
 
   writeReport(state);
-  console.log(`완료 ${((performance.now() - t0) / 1000).toFixed(0)} s → ${posix(path.relative(WEB, DIST))}/ (index ktx2 ${index.ktx2.length}·lossy ${index.lossy.length}·flac ${index.flac.length})`);
+  console.log(`완료 ${((performance.now() - t0) / 1000).toFixed(0)} s → ${posix(path.relative(WEB, DIST))}/ (index ktx2 ${index.ktx2.length}·lossy ${index.lossy.length}·flac ${index.flac.length}·BGM 조각 ${Object.keys(index.streams).length}곡)`);
 }
 
 function writeReport(state: State): void {

@@ -204,6 +204,7 @@
 | `ktx2`·`lossy`·`flac` | v1 과 같음(소스 이름 → 압축본 확장자 바꾸기) | `assetLoader.ts` `ktx2UrlFor`·`audioUrlFor` |
 | `names` | 확장자를 바꾼 뒤의 압축본 이름 → 해시 이름. 표에 없으면 그대로 | `assetLoader.ts` `distUrl`(loader-123) |
 | `bundle` | 배포 빌드(`build.ts`)가 `dist/assets-dist/index.json` 에만 넣는 해시 청크 목록 | 서비스 워커의 옛 캐시 정리 |
+| `streams` | BGM 소스 경로(.wav) → 스트리밍 조각 배치(`planBgm` 결과). 조각 가상 경로 `<이름>.bgm/NNN.wav` 는 `lossy` 에도 들어가 위 이름 바꾸기를 그대로 탄다 | `assetLoader.ts` `distStream` → `view/bgm.ts`(04_sound.md §12) |
 
 - 크기 [실측]: 2,496 항목 표 → index.json 309 KB(brotli 31 KB, gzip 43 KB). 재방문엔 304(바디 0).
 - v1 만 아는 코드는 `names` 를 무시하므로 해시 없는 작업본 경로(개발 서버 `?assets=dist`)에서는 계속 돈다. 배포(`dist/`)에는 해시 이름만 있으므로 `names` 를 써야 한다.

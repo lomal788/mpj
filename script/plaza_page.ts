@@ -14,6 +14,7 @@ import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayer
 import { parseDecoParam } from './shell/plaza/deco';
 import { AREA } from './shell/plaza/interact';
 import { appFlow } from './view/appFlow';
+import { BgmChannel } from './view/bgm';
 import type { PadSource } from './view/input';
 import { plazaGl, plazaGlEnabled } from './view/plazaGl';
 
@@ -99,24 +100,20 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     }
     return b;
   };
-  let bgm: { label: string; src: AudioBufferSourceNode | null } | null = null;
-  const play = (label: string, loop: boolean): void => {
+  const bgm = new BgmChannel(() => actx, OWNER);
+  const play = (label: string): void => {
     const s = sounds[label];
     if (!actx || !s) return;
     const c = actx;
     if (c.state === 'suspended') void c.resume().catch(() => undefined);
-    const me = loop ? { label, src: null as AudioBufferSourceNode | null } : null;
-    if (me) bgm = me;
     void buffer(c, s.url).then((buf) => {
-      if (!buf || (me && bgm !== me)) return;
+      if (!buf) return;
       const src = c.createBufferSource();
       src.buffer = buf;
-      src.loop = loop;
       const g = c.createGain();
       g.gain.value = s.gain;
       src.connect(g).connect(c.destination);
       src.start();
-      if (me) me.src = src;
     });
   };
 
@@ -137,11 +134,11 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     players,
     pad: (slot) => cur[slot] ?? null,
     sound: {
-      se: (label) => play(label, false),
+      se: (label) => play(label),
       bgm: (label) => {
-        bgm?.src?.stop();
-        bgm = null;
-        if (label) play(label, true);
+        bgm.stop(0);
+        const s = label ? sounds[label] : undefined;
+        if (label && s) bgm.play(label, s.url, { gain: s.gain, loop: 'all' });
       },
     },
     params: cfg.params,
@@ -225,7 +222,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       cancelAnimationFrame(raf);
       ro.disconnect();
       offArea();
-      bgm?.src?.stop();
+      bgm.stop(0);
       if (gl) gl.leave(run.world.stage.scene, () => run.stop());
       else run.stop();
       assets.release(OWNER);

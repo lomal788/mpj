@@ -12,6 +12,7 @@ import { P0, P1 } from '../lib/assetcore';
 import { assetHooks, type UiImageLike } from '../shell/charselect/assetHooks';
 import { KIND_BYTES, KIND_UI_IMAGE } from '../shell/stage3d/assetHandlers';
 import { appAssets, assetKeyOf } from './appAssets';
+import { bgmPrefetchKey } from './bgm';
 import { FlowPrefetch, type FlowMode } from './flow';
 
 const G = globalThis as { __mpjFlow?: FlowPrefetch };
@@ -72,6 +73,7 @@ export function appFlow(): FlowPrefetch {
         c.flowKeys(bundle, json, {
           gltfTextures: ASSET_MODE === 'dist',
           gameDir: (name) => GAMES.find((g) => g.id === name)?.assetsDir ?? null,
+          bgmKey: bgmPrefetchKey,
         }),
       ),
     loadCode: (bundle) => void GAMES.find((g) => g.id === bundle.slice(5))?.load?.()?.catch(() => undefined),

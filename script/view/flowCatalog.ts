@@ -23,6 +23,8 @@ export interface FlowCatalogOptions {
   gltfTextures: boolean;
   /** 게임 이름 → 에셋 폴더(ASSETS 기준, 끝 '/') */
   gameDir?(name: string): string | null;
+  /** BGM wav 키 → 미리 받을 키(압축 모드 = 첫 조각, docs/engine/04_sound.md §12). 없으면 그대로 */
+  bgmKey?(key: string): string;
 }
 
 /** 'a/b/../c/./d' → 'a/c/d' */
@@ -103,8 +105,12 @@ export async function flowKeys(bundle: string, json: FlowJson, o: FlowCatalogOpt
     case 'charselect:sound': {
       const out: [string, string][] = [];
       const s = await json<CharsetSpec>('charselect/spec.json');
-      const snd = [...Object.values(s.sounds ?? {}).map((x) => x.file), ...Object.values(s.voices ?? {}).flatMap((v) => v.files), ...(s.bgm ? [s.bgm.file] : [])];
+      const snd = [...Object.values(s.sounds ?? {}).map((x) => x.file), ...Object.values(s.voices ?? {}).flatMap((v) => v.files)];
       for (const f of new Set(snd)) out.push([normPath(`charselect/${f}`), 'bytes']);
+      if (s.bgm) {
+        const k = normPath(`charselect/${s.bgm.file}`);
+        out.push([o.bgmKey?.(k) ?? k, 'bytes']);
+      }
       return out;
     }
     case 'plaza:p0': {

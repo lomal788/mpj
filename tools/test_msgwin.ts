@@ -22,6 +22,7 @@ import {
   type MgmDrawHost,
   type MgmSpec,
 } from '../script/shell/mgmcommon';
+import { resolveFontsFromDisk } from './fontSpecNode';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;
@@ -40,6 +41,7 @@ const near = (a: number, b: number, e = 1e-3): boolean => Math.abs(a - b) <= e;
 const DT = Math.fround(1 / 60);
 
 const spec = JSON.parse(readFileSync(join(WEB, 'assets/mgmcommon/spec.json'), 'utf8')) as MgmSpec;
+await resolveFontsFromDisk(spec.fonts as Record<string, unknown>, join(WEB, 'assets/mgmcommon'));
 const all = spec as unknown as Spec;
 const texts = spec.texts;
 const host: MgmDrawHost = { all, spec, r2d: null as unknown as Render2D, layout: (n) => new LayoutInst(n, spec.layouts[n], all), draw: () => {} };

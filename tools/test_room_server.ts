@@ -46,8 +46,17 @@ import type { PlazaCardExtra } from '../script/shell/plaza/ui/card';
 import { createPlaza } from '../server/games/mpj-plaza';
 import { PlazaRooms } from '../server/games/mpj-plaza/rooms';
 import { startPlazaServer } from '../server/main';
+import { resolveFontsFromDisk } from './fontSpecNode';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const SPEC_FILES = ['online/online.json', 'plaza/ui/plaza_ui.json', 'plaza/ui/plaza_card.json', 'mgmcommon/spec.json', 'mgm01/faces.json'];
+const specCache = new Map<string, unknown>();
+for (const p of SPEC_FILES) {
+  const f = join(WEB, 'assets', p);
+  const j = JSON.parse(readFileSync(f, 'utf8')) as { fonts?: Record<string, unknown> };
+  await resolveFontsFromDisk(j.fonts, join(WEB, 'assets/mgmcommon'));
+  specCache.set(p, j);
+}
 let fails = 0;
 let count = 0;
 function ok(cond: boolean, msg: string): void {
@@ -361,7 +370,7 @@ const self = (name: string, chara: number, more: [string, number][] = []): Onlin
   const plaza = createPlaza();
   const srv = await startPlazaServer({ port: 0, build: false, games: [plaza.game], routers: [plaza.router] });
   const base = srv.url.replace(/\/$/, '');
-  const read = <T>(p: string): T => JSON.parse(readFileSync(join(WEB, 'assets', p), 'utf8')) as T;
+  const read = <T>(p: string): T => structuredClone(specCache.get(p)) as T;
   const onl = read<MgmSpecPart & OnlineExtra>('online/online.json');
   const ext = read<PlazaUiExtra>('plaza/ui/plaza_ui.json');
   const card = read<MgmSpecPart & PlazaCardExtra>('plaza/ui/plaza_card.json');
@@ -509,7 +518,7 @@ const self = (name: string, chara: number, more: [string, number][] = []): Onlin
 
 // ── ⑤ 광장 방 흐름(실제 서버, 세 페이지): 나가기·해산·끊김·다시 참가 잔상 ──
 const uiHost = (): { host: MgmDrawHost; ext: PlazaUiExtra; card: MgmSpecPart & PlazaCardExtra } => {
-  const read = <T>(p: string): T => JSON.parse(readFileSync(join(WEB, 'assets', p), 'utf8')) as T;
+  const read = <T>(p: string): T => structuredClone(specCache.get(p)) as T;
   const onl = read<MgmSpecPart & OnlineExtra>('online/online.json');
   const ext = read<PlazaUiExtra>('plaza/ui/plaza_ui.json');
   const card = read<MgmSpecPart & PlazaCardExtra>('plaza/ui/plaza_card.json');

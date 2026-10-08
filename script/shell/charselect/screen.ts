@@ -293,12 +293,8 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     }
   };
 
-  // 소리 버퍼 미리 받기(docs 12.10): SE·보이스 변형 전부·BGM — 결정 순간 디코드 지연으로 보이스가 늦거나 빠지지 않게
-  opts.sound?.preload?.([
-    ...Object.values(spec.sounds ?? {}).map((x) => url(x.file)),
-    ...Object.values(spec.voices ?? {}).flatMap((v) => v.files.map(url)),
-    ...(spec.bgm ? [url(spec.bgm.file)] : []),
-  ]);
+  // 소리 버퍼 미리 받기(docs 12.10): SE·보이스 변형 전부 — 결정 순간 디코드 지연으로 보이스가 늦거나 빠지지 않게(BGM 은 어댑터가 첫 조각부터 스트리밍)
+  opts.sound?.preload?.([...Object.values(spec.sounds ?? {}).map((x) => url(x.file)), ...Object.values(spec.voices ?? {}).flatMap((v) => v.files.map(url))]);
   // 배경음악: 장면(menu01) 시작부터 돌던 SM_BGM_MENU_MAP 을 이어서 튼다(어댑터가 이미 돌고 있으면 무시, docs 12.3)
   if (spec.bgm) opts.sound?.bgm?.(spec.bgm.label, url(spec.bgm.file), spec.bgm.gain, spec.bgm.loopStart, spec.bgm.loopEnd);
   handle(state.start(false));

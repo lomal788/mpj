@@ -35,7 +35,10 @@ interface DistIndex {
   lossy: Set<string>;
   flac: Set<string>;
   names: Map<string, string>;
+  streams: Map<string, unknown>;
 }
+
+type IndexJson = { ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string>; streams?: Record<string, unknown> };
 
 let cfg: AssetLoaderConfig = { mode: 'src', srcBase: './assets/', distBase: './assets-dist/', transcoderPath: './vendor/basis/', texLod: 0 };
 let indexP: Promise<DistIndex> | null = null;
@@ -43,6 +46,7 @@ let ktx2: KTX2Loader | null = null;
 let rawFetch: typeof fetch | null = null;
 let opusP: Promise<boolean> | null = null;
 let distNames: Map<string, string> | null = null;
+let distStreams: Map<string, unknown> | null = null;
 
 /** 읽은 압축 텍스처 통계(검증·디버그용) */
 export const assetStats = { ktx2: 0, ktx2Bytes: 0, png: 0, gltf: 0 };
@@ -64,17 +68,24 @@ function fetchRaw(url: string): Promise<Response> {
 
 function distIndex(): Promise<DistIndex> {
   indexP ??= fetchRaw(new URL(`${cfg.distBase}index.json`, baseUri()).href)
-    .then((r) => (r.ok ? (r.json() as Promise<{ ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string> }>) : ({} as { ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string> })))
+    .then((r) => (r.ok ? (r.json() as Promise<IndexJson>) : ({} as IndexJson)))
     .catch((e: unknown) => {
       console.warn('assets-dist/index.json 을 읽지 못했다 — 이름 바뀜 없이 읽는다', e);
-      return {} as { ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string> };
+      return {} as IndexJson;
     })
     .then((j) => {
       const names = new Map(Object.entries(j.names ?? {}));
+      const streams = new Map(Object.entries(j.streams ?? {}));
       distNames = names;
-      return { ktx2: new Set(j.ktx2 ?? []), lossy: new Set(j.lossy ?? []), flac: new Set(j.flac ?? []), names };
+      distStreams = streams;
+      return { ktx2: new Set(j.ktx2 ?? []), lossy: new Set(j.lossy ?? []), flac: new Set(j.flac ?? []), names, streams };
     });
   return indexP;
+}
+
+/** 압축 모드에서 이 BGM(소스 키)의 스트리밍 조각 배치(index.json streams — lib/bgmstream BgmPlan, docs/engine/04_sound.md §12). 소스 모드·표를 읽기 전·없음이면 null */
+export function distStream<T = unknown>(key: string): T | null {
+  return cfg.mode === 'dist' ? ((distStreams?.get(key) as T | undefined) ?? null) : null;
 }
 
 /** 압축 모드 해시 표(index.json names)를 읽을 때까지 기다린다. 소스 모드는 바로 끝난다 */

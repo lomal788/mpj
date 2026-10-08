@@ -28,6 +28,8 @@
  * - 같은 플레이어(PLY_*) 동시 재생 한도: 넘치면 우선순위가 가장 낮고(같으면 가장 오래된) 소리를 멈추고, 새 소리가 그보다 낮으면 내지 않는다 [추정: nn::atk 공개 동작].
  * - BGM 끼리(핸드셰이크 밖에서 바로 낸 BGM): 새 SQ_BGM 이 시작하면 반복(loop)하는 이전 BGM 을 멈춘다 [근사: 즉시].
  *   반복하지 않는 BGM 은 soundStop 이나 자연 끝까지 둔다(원본 단계 9 는 게임 BGM 핸들만 멈춘다).
+ * - 렌더 BGM 은 공용 스트리밍 재생기(view/bgm.ts → lib/bgmstream, docs/engine/04_sound.md §12.8)로 낸다: 표본 0 = 출발 오디오 시각(통파일 start(at) 와 같은 식),
+ *   처음 받는 BPM 의 곡은 로드 때 첫 조각을 풀어 두고(원본 prefetch), 나머지는 요청 때 푼다. 늦으면 지금처럼 늦은 만큼 건너뛴다.
  *
  * 3D(Play3D) [판독: 04_sound.md 6.7, view/audio.ts calc3d]:
  *   리스너 0 = 카메라(bex 기본값 interiorSize 10·maxVolumeDistance 20·unitDistance 50, FUN_71000e3e30).
@@ -40,6 +42,7 @@ import type { V3 } from '../../../core/fmath';
 import type { SoundSnapshot } from '../../../game';
 import type { Assets } from '../../../view/assets';
 import { calc3d, type AudioOut, type Bus, type Listener3d, type Sound3dInfo } from '../../../view/audio';
+import { bgmSource, playBgmStream, type AppBgmSource } from '../../../view/bgm';
 import { SeqEngine, type SeqData, type SeqSound } from '../../../view/seq';
 
 interface PlayerInfo {
@@ -136,6 +139,7 @@ export class SoundMap {
   private m: Manifest = { bpms: [], sounds: {}, substitute: {}, listener3d: { default: { interiorSize: 10, maxVolumeDistance: 20, unitDistance: 50 }, preset: [] } };
   private readonly buffers = new Map<string, AudioBuffer>();
   private readonly pending = new Map<string, Promise<AudioBuffer | undefined>>();
+  private readonly streams = new Map<string, AppBgmSource>();
   private readonly presets = new Set<string>(['mg1801']);
   private readonly handles = new Set<Handle>();
   private readonly glob = new Array<number>(16).fill(-1);
@@ -166,25 +170,41 @@ export class SoundMap {
     this.m = await this.assets.json<Manifest>('manifest.json');
     if (!this.audio) return;
     const eager = new Set<string>();
-    const lazy = new Set<string>();
+    const eagerBgm = new Map<string, BgmRender>();
+    const lazyBgm = new Map<string, BgmRender>();
     for (const [label, e] of Object.entries(this.m.sounds)) {
       if (e.kind === 'seq') for (const w of e.seq.waves) eager.add(w.file);
       else if (e.kind === 'stream') eager.add(e.file);
       else
         for (const [bpm, r] of Object.entries(e.bpm)) {
-          if (Number(bpm) === EAGER_BPM && !LAZY_BGM.has(label)) eager.add(r.file);
-          else lazy.add(r.file);
+          if (Number(bpm) === EAGER_BPM && !LAZY_BGM.has(label)) eagerBgm.set(r.file, r);
+          else lazyBgm.set(r.file, r);
         }
     }
-    for (const f of eager) lazy.delete(f);
+    for (const f of eagerBgm.keys()) lazyBgm.delete(f);
     let n = 0;
-    await Promise.all(
-      [...eager].map(async (f) => {
+    const total = eager.size + eagerBgm.size;
+    await Promise.all([
+      ...[...eager].map(async (f) => {
         await this.fetch(f);
-        onFile?.(++n, eager.size, f);
+        onFile?.(++n, total, f);
       }),
-    );
-    for (const f of lazy) void this.fetch(f);
+      ...[...eagerBgm.values()].map(async (r) => {
+        await this.stream(r).pin(0);
+        onFile?.(++n, total, r.file);
+      }),
+    ]);
+    for (const r of lazyBgm.values()) this.stream(r).prefetch?.(0);
+  }
+
+  /** 렌더 BGM 의 스트리밍 소스(파일마다 하나 — 첫 조각을 풀어 둔 것을 유지) */
+  private stream(r: Pick<BgmRender, 'file' | 'loop'>): AppBgmSource {
+    let s = this.streams.get(r.file);
+    if (!s) {
+      s = bgmSource(this.audio!.ctx, this.assets.url(r.file), r.loop);
+      this.streams.set(r.file, s);
+    }
+    return s;
   }
 
   private fetch(file: string): Promise<AudioBuffer | undefined> {
@@ -346,6 +366,7 @@ export class SoundMap {
     };
     this.handles.add(rb.handle);
     this.rhythm.push(rb);
+    void this.stream(r).pin(0);
     this.setGlobal(13, r.songId, now);
     return true;
   }
@@ -488,6 +509,25 @@ export class SoundMap {
     at: number,
     isBgm: boolean,
   ): FileHandle {
+    if (e.kind === 'bgm' && this.audio) {
+      let stopped = false;
+      const st = playBgmStream(this.audio.ctx, this.stream({ file, loop }), { dest: this.audio.busNode(e.bus), gain, at });
+      return {
+        label,
+        player: e.player?.name ?? null,
+        prio: 64,
+        started: at,
+        bgm: isBgm,
+        loop: !!loop,
+        seq: null,
+        stop: () => {
+          stopped = true;
+          st.stop(0);
+        },
+        stopAt: (t: number) => st.stopAt(t),
+        alive: () => !stopped && st.alive(),
+      };
+    }
     let src: AudioBufferSourceNode | null = null;
     let stopped = false;
     let stopTime = Infinity;

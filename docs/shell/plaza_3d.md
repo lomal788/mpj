@@ -116,6 +116,13 @@ if (GetArea(T) != 0) {                                 // 기구 앞(z < 18 && �
 SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0,1,0), eye)
 ```
 - 정정(§2 카메라 줄): fov 를 1~2000 으로 자르는 게 아니라 **near 1·far 2000** 이다. 위치는 sin·cos 가 아니라 `v.y = sin(각)`(수평 단위 벡터에 그대로 y 를 얹음, cos 곱 없음)이다. 섞는 축은 **카메라 목표 T 의 z** 이고 섞는 조건은 `GetArea(T) == 0` 이다. 카메라는 광장 중심(`camera00_pos`) 쪽에서 플레이어를 바라본다.
+- **재검증(사용자 지적 "카메라 이동·확대·축소가 다르다", 2026-10-08, plaza-B)** [어셈블리 재대조 + 캡처 10·11·6 대조]:
+  - 파라미터 대응은 문자열 길이 바이트로 다시 맞췄다: s8 = TargetPlayRange(29자), [sp+0x50] = FollowSpeed(25), [sp+0x70] = TargetOffsetY(21), [sp+0x60] = CameraLength(20), s12 = CameraAngle(19), s10 = Fovy(18). 기구 갈래: s15 = BalloonOffY, s8 = BalloonLength, s12 = BalloonAngle, s11 = BalloonFovy.
+  - 눈 위치 @0x7100004360~0x71000043d0(평소)·@0x7100004644~0x71000046cc(기구): `v = camera00 − A` → `v.y = 0` → 정규화(0 이면 0) → `v.y = sinf(각 × 0.017453292)`(**라디안**) → `eye = A + v × 길이`. cos 곱 없음이 맞다. 그래서 수평 거리 = 길이, 높이 = 길이·sin(각), 내려보는 각 = atan(sin 각)(평소 14.5°, 각 0 이면 0°).
+  - `SetProjectionPerspectiveFovy(fovy × 0.017453292, 1.0, 2000.0)` — 첫 인자 = **세로** 시야각(라디안), 나머지 = 근·원 클립. 가로 비는 화면 비.
+  - 추종 속도는 **프레임 단위**다: 이 함수는 파이버 루프(`Fiber::Wait` 한 번 = 1 프레임) 안에서 dt 를 읽지 않고 `T += d·k·0.01` 을 한다. 메뉴는 Variable60(01_core §4.3) 이라 60 fps 기준 = 웹 1/60 s 틱 1회. 웹 camera.ts 는 df 를 정수 틱으로 누적해 틱마다 1회 — 초 단위 섞임 없음.
+  - **−/+ 는 카메라 줌이 아니다** [판독]: menu00 에 줌·카메라 파라미터 쓰기 코드가 없다(`zoom`·`SetCameraParam` 0, `GetCameraParam` 은 매 프레임 json 값을 이름으로 읽기만). `0x3000`(PLUS|MINUS) 입력은 `SequenceMainMenu::MainImpl` 에서 **세션 중일 때만** 파이버(@0x7100060a40 호스트 / @0x7100061360 손님) = `ComUiCardViewer::ClearCardData` → 멤버마다 `GetNetworkPlayerCardData`·`AddCardData` → `Start` = **멤버 카드(방 정보) 보기**다. 그 밖 0x3000 은 기구 출발 건너뛰기(TakeOffImpl)뿐. 캡처 10·11 오른쪽 위 "−/+" 는 이 안내(D 갈래 UI)다. 원본에서 확대·축소처럼 보이는 것은 **기구 앞 섞기**(목표 z 18 → 9 에서 fov 40 → 65, 길이 10 → 18, 높이 +2.5 → +8, 각 15° → 0°)이고, 오른쪽 스틱 등 사용자 카메라 조작은 없다. 높은 전경은 X "광장 보기"(OverView, overview.ts §6.14 ⑧).
+  - 캡처 대조: **11.png**(기구 앞, 수평 시선) = t = 1: 내려보는 각 0 → 수평선이 화면 가운데(캡처 410/778 ≈ 0.53) ✓, 눈 (0, T.y+8, 27)·주시 (0, T.y+8, 9)·세로 fov 65 → 기구 바구니(지름 약 5 m, 거리 약 27 m) 화면 폭의 약 11% ✓. **10.png** = 1번(와리오)이 계단 앞 z ≈ 14.4 인 섞임 t ≈ 0.4: 각 9° → 내려보는 각 8.9°·fov 51 → 수평선 높이 화면 위에서 약 0.33(캡처 먼 언덕 ≈ 0.29) ✓ — 평소값(14.5°·fov 40)이면 0.145 로 맞지 않는다. 눈은 별 분수 중심 `camera00_pos`(분수 반지름 약 7.5, 충돌 원형 벽 z 25.49) 쪽 10~14 m 라 분수 별 조각상 뒤에서 기구 쪽을 본다 ✓. **6.png**(계단 앞 근경)도 같은 섞임 구간. 캡처는 가로가 잘리거나 크기가 바뀐 영상이라 화소 단위 대조는 [측정: 비율만].
 
 ## 4. 막힘 요소 (아예 막히는 것만)
 
@@ -174,6 +181,25 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 **웹 모듈(D)** `web/script/shell/plaza/ui/`: `status.ts`(①, 순수 상태) · `stamp.ts`(②, 순수 상태) · `telop.ts`(③④⑤ 순수 상태) · `net.ts`(⑥ 보내기 타이머·받기 보간, 순수) · `view.ts`(그리기: 투명 WebGL 캔버스 + charselect Render2D, online `OnlineScreen` 을 같은 캔버스에 얹음) · `part.ts`(PlazaPart `createPlazaUi`) · `index.ts`. 에셋 `web/assets/plaza/ui/plaza_ui.json`(+tex/font/sound) ← `web/tools/analysis/plaza_ui_assets.py`(online_web_assets.py 방식). 갈래 신호(SHARED 합의): D 가 듣는 것 `interact:telop` {area, visible, detail}·`interact:pop` {x, y, visible}(레이아웃 좌표)·`ui:mainLayout` boolean, D 가 내는 것 `ui:friendMenu` boolean(친구 매치 메뉴 열림 = 이동 멈춤)·`ui:stampList` {slot, open}·`net:remote` {station, slot, chara, pos, quat, mode}(원격 표시용 목표, C 가 그림).
 
 정정(구현 뒤): 묶음 상태 = `ui.ts`(`PlazaUi`: ComUiMainMenuLayout Start/Finish·UiStamp 맵·`PlazaNet`(광장 사건 remoteInfo·stamp 를 온라인 흐름 inbox 와 가르는 어댑터 대리)·친구 매치 = 조작 플레이어 Y(bex 0x8)·대기실 A 막음), 명세 확장 = `data.ts`. C 요청 반영: `interact:decide` {result:3}(친구 매치 오브제 앞 A) → 친구 매치 메뉴, 메뉴가 닫히면 메인 레이아웃 복귀, `net:session` boolean(방 접속 여부가 바뀔 때). `interact:pop` 은 `ndc:[x,y]`(뷰포트 −1..1, D 가 §5.1 ④ 식으로 바꿈)도 받는다. 스탬프 소리 SQ_SE_STAMP_1P~4P·PC 는 별도 소리 묶음 `sound~subarc_voi_stamp`(fsst, 캐릭터 목소리 + 로컬 변수) 에 있어 공용 렌더 도구(sound_seq.py, 상주 fspj 만)로 만들지 못함 → 소리 없음(라벨 사건만) [§8]. 검증: `npx tsx tools/test_plaza_ui.ts` 119/119(재구현 시험, 원본 실행 대조 아님), `tools/test_online.ts` 154/154 그대로, tsc 새 오류 0.
+
+### 5.2 대기실(방) 흐름 점검·수정 (2026-10-08, plaza-room)
+
+사용자 지적("파티를 만들거나 참가하면 광장에서 사람들과 만나고 대기실로 쓰는데 안 되어 있다")으로 가짜 어댑터 흐름을 코드·상태로 따라가 끊긴 곳을 찾고, 판독(online.md 5.5·5.6 정정·5.8, C `analysis/decomp/plaza_menu00_lobby.c`·`plaza_main_card*.c`·`plaza_main_cardviewer_upd.c`)대로 고쳤다. 실제 방 서버는 online.md 9.5.
+
+| # | 끊긴 곳(수정 전) | 원본 [판독] | 수정 |
+|---|---|---|---|
+| 1 | 방장이 기구로 가면 세션 중에도 오프라인 출발 연출(페이드 1 s → SequenceBalloon 기구 이륙) 뒤 `exit session`, `startRoom` 을 아무도 부르지 않아 **다른 멤버는 그대로 광장** | `SelectedBalloonImpl` 세션 분기 = 카메라·플레이어 Stop·LookAt(balloon_pos) 뒤 바로 `PlaySession`(연출 없음) | balloon.ts `begin()`: 세션이면 'net:playSession' 을 내고 대기(phase 'session'). D(PlazaUi) 가 온라인 흐름 `requestPlay()` → `playSession`(startRoom) |
+| 2 | 손님은 `started` 를 받아도 대기실 흐름이 무시 | 메시지 7 → 손님도 FinishSequence·Stop·같은 PlaySessionFiber | flow.ts `lobbyFlow` 가 `started` 를 받으면 방장·손님 모두 같은 끝(`SQ_SE_MENU00_TRANSITION_WHO`·텔롭 Out·1 s). D 가 'net:started' → balloon.ts 가 입력·카메라 멈춤 → **0.5 s 페이드 아웃 → 1.0 s → `exit({k:'session'})`**(PlaySessionFiber 순서) → main.ts 모드 메뉴 |
+| 3 | 원격 멤버는 움직일 때만 위치를 보내서 **가만히 있는 사람은 광장에 안 보임** | 참가자 = 지도 데이터 뒤 `SendRemotePlayerInfoAll`, 기존 멤버 = 새 멤버 데이터(사건 4) 받으면 `SendRemotePlayerInfoAll` | PlazaUi 가 `joined`(내가 참가)·`memberReady`(남의 데이터 도착) 때 다음 틱에 모든 로컬 슬롯 위치를 타이머와 무관하게 보냄 |
+| 4 | 방을 나가거나 해산·오류로 세션이 끝나도 원격 3D 캐릭터가 남음 | `ResetRemotePlayer`(세션 끝) | 세션이 끝나면 원격 표·3D 모두 지움('net:remoteLeft' 스테이션마다) |
+| 5 | follow.ts 원격 키 = 스테이션만(슬롯 무시, 타입 number) | `PlayerManager` 원격 맵 키 = (스테이션, 슬롯) `NetworkPlayerInfo` | 키 = `스테이션#슬롯`, 이탈은 스테이션의 모든 슬롯 |
+| 6 | 대기실 −/+ 안내·멤버 카드 없음 | MainImpl 세션 분기: 입력 없으면 ComUiGuide00 위치 0xc `mn01_friend_ctrl_lobby_card`, **0x3000 → 카드 뷰어**(online.md 5.8) | `plaza/ui/card.ts`(ComUiCard·ComUiCardViewer) + 안내. 카드가 열려 있는 동안 대기실 입력(Y·X·B)·이동을 막고, 닫히면 돌려준다. 기구 출발 건너뛰기(+/−)는 오프라인 SequenceBalloon 에서만 쓰여 겹치지 않음(세션이면 기구 연출 자체가 없음) |
+| 7 | 손님도 기구 앞에서 다가가기·기구 결정이 됨 | 세션 중 손님은 판정 안 함, 방장 기구는 IsReadyNetworkPlayerData 일 때만 | interact.ts 는 다른 갈래 파일 → SHARED 요청(D 가 'net:lobby' {host, ready} 를 냄). 받기 전까지는 손님이 기구로 가도 `startRoom` 을 보내지 않는다(서버·흐름이 방장만 허용) |
+
+- 참가 뒤 위치: 원본 `OnlineMenuImpl` 끝은 `RestoreLocalPlayerData` 가 참(로컬 플레이어 데이터가 바뀜 — 예: 참가 때 캐릭터 다시 고르기)일 때만 로컬 플레이어를 `pc_plaza_balloon_pos_p<사람 수>_pc<i>` 에 다시 만들고 카메라를 로케이터 3 으로 옮긴다. 아니면 **친구 매치 기계 앞 그 자리 그대로** 대기실이 된다 [판독 @0x710005c780 끝]. 웹은 캐릭터 다시 고르기가 자동 교체 [설계, online.md 9.3]라 3D 캐릭터를 바꾸지 않고 그 자리 그대로(§8).
+- 원격 첫 표시: 받은 위치에 바로 놓는다. 첫 표시 플래그(광장 재진입 `SendRemotePlayerInfoAll_Setup`)의 기본 소켓 경로는 웹 흐름(광장 재진입 없음)에서 쓰이지 않아 구현하지 않음(online.md 5.5 정정 줄).
+- 연결 수명·메시지 배치·바이트 수·케이스(혼자 / 사람 1 + CPU / 로컬 사람 2~4 + CPU / 로컬 2 + 원격 2)는 online.md 9.5 표. 광장 입장·로컬 플레이만으로는 HTTP·소켓을 부르지 않고, 방 찾기·만들기·참가는 HTTP, 방에 들어가는 순간 socket.io `/mpj-plaza` 에 연결한다. 로컬 여러 명은 한 소켓(스테이션)에 사람 순번 슬롯으로 묶여 원격에서 `스테이션#순번` 캐릭터로 보인다.
+- 시험: `tools/test_room_server.ts`(방 상태·바이너리 크기·HTTP·소켓·케이스·두 광장 UI), 헤드리스 `tools/shot_plaza_room.ts`(두 페이지가 같은 서버로 만나 출발까지, 마지막 1회).
 
 ## 6. 구현 지시서
 
@@ -389,6 +415,11 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | 9 | 7.png 키노피오 메시지 창(얼굴 아이콘형) | 7.png 는 첫 진입 안내(`SequenceFront`·guidance 카메라 `menu00_ev_intro_scroll_cam`)의 장면 — §8 에서 범위 밖으로 정한 첫 진입 연출 | 범위 밖 그대로(§8). 카메라·메시지 형식은 이후 첫 진입 연출 구현 때 |
 | 10 | 8.png 대기실 4/4 | 웹도 4/4 에서 "방 정보 / 해산하기"(초대하기 없음) [측정]. 마지막 입장 직후 잠깐 "참가자를 기다리는 중…" 이 보이는 것은 가짜 멤버 준비 지연(D). 원격 멤버가 광장에 서 있는 모습은 가짜 걷기 원(online/fake.ts, D) | D 에 SHARED 로 알림 |
 | 11 | 시간이 빨리 감(사용자 실기) | plaza_page 루프가 밀린 시간을 버리지 않아(한 번에 4 스텝 상한 뒤 남은 밀림 누적) 셰이더 컴파일 등 긴 멈춤 뒤 몇 초 동안 4배속으로 따라잡음 [코드 분석] | `scene.ts FixedClock`: 1/60 고정 스텝, 한 번 최대 4 스텝·넘친 밀림 버림(main.ts MAX_BACKLOG 규칙). 시험: 30·60·75·120·144·240 Hz 10 초 = 600 프레임, 3 초 멈춤 뒤 1 초 = 60 프레임 |
+| 13 | **계단을 못 올라감**(사용자) — z 13.38 에서 y −2.38 로 떨어져 갇힘 | `MeshCollider.groundHeight` 가 아래를 향한 면(계단 밑판 ny −1, y −2.38)도 지면으로 셌고(|ny| 판정), 챌판 사이 점에서 그 밑판으로 떨어진 뒤 다음 챌판이 벽이 됨. 반지름 0.9 몸은 다음 단 챌판 윗모서리(발 위 0.61)에도 걸림 [측정: 조정자 stairs_sim·삼각 597·598·601·607] | 지면 = 위를 향한 면(ny > 0.05)만, 가파른 위향 면도 STEP 안이면 디딤. 벽 판정에 PhysX autostep 처럼 발 + STEP 에서 시작하는 반구 아랫면 적용 [근사]. 회귀 시험 test_plaza_move 6절: 시작 → 기구 앞(z < 9, y ≥ 0) x 0·±1 통과(벽 밀기 결과는 전과 같음) |
+| 14 | 물기둥이 구겨진 은박지 같음(9.png) | ① 그래프 재질에는 srt0 을 표준 텍스처(_n0 물 노멀)에 안 걸어 노멀 무늬가 2배 촘촘하고 멈춰 있었음(원본 srt0 배율 0.5·fmab 스크롤 300f) ② 굴절 재질 반사·림 알파가 잡음 노멀로 반짝임 | ① srt0 을 그래프 재질 표준 텍스처에도 적용 [판독 sg1 "노멀 = 표준 _n0(srt0 스크롤)"] ② (확산 + 반사)·α + 발광 유지. 굵기는 원본과 같음(화면 폭 10~11 %, 6.png·9.png 대조), 바깥 큰 원기둥 + 안쪽 물줄기 두 겹도 원본과 같음. 남은 차이: 원본은 뒤 장면을 굴절(uv 0.03)해 비치고 세로 결이 보임 — 웹은 굴절 왜곡 없이 비침 + 반사 잡음 [근사] |
+| 14b | 물기둥 2차 수정(원본 6.png 대조) | ① 굴절을 장면 캡처 없이 배경 그대로 비치게 했었음 ② 국소 반사 큐브 `fountain_hdr_test_rad` 가 매우 밝음(평균 휘도 3.4, 해 748)인데 원본 `specular_ibl_normalization_enable` 1 을 무시 → 잡음 노멀마다 해 반사가 흰 점으로 번쩍임 [데이터: HDR 측정] ③ 반사에 굴절 불투명도 a 를 곱했었음 | ① three 투과 패스(불투명 장면 → transmissionSamplerMap, 원본 색 버퍼 캡처 자리)로 굴절 재질을 물리 재질로 바꾸고 transmission_fragment 를 원본 식으로: 장면(화면 uv + clamp(refract(V,N,1/ior).xy × 0.03, ±0.03)) × (1−a) + 확산 × a [판독: p386 330~584] ② 국소 큐브 평균 휘도를 공통 큐브(menu00_plaza_rad)에 맞추는 배율 specNorm(분수 0.153, 바다 0.222, 금 0.94·0.82)을 envMapIntensity 로 [근사: 정규화 식 미판독] ③ 반사는 a 를 곱하지 않음(SASS 끝부분: r16·r7 은 확산만) [판독]. 물기둥 영역 평균·표준편차: 웹 (142,183,182)/(64,48,58) ↔ 원본 (139,193,191)/(59,43,64) [측정]. 남은 차이: 잡음 무늬가 원본은 세로 결, 웹은 둥근 칸 — 노멀 잡음 좌표(uv1 회전·타일)·GSAA(원본 반사 LOD = max(분산^0.6, …) 추정) 미판독 [근사] |
+| 15 | 새·그림자가 아주 빠름(사용자) | #11 의 밀림 따라잡기(긴 멈춤 뒤 4배속)가 원인 [코드 분석]. 데이터 쪽은 정상: glb 클립 길이 = 원본 프레임/60(갈매기 40f = 0.667 s, air_gull 3600f = 60 s, air_npc 1000f = 16.7 s, 전부 60.0 f/s) [측정], 하늘 NPC·갈매기에 SetSpeed 호출 없음 [판독: plaza_menu00_world.c] | FixedClock. 실 GPU(RTX 4060, d3d11 헤드리스) 5 초 측정: 무대 290 프레임(58/s) [측정] |
+| 16 | 이동하다 새 물체가 보일 때 렉(사용자) | 처음 보이는 재질의 셰이더 컴파일·텍스처 업로드 | `Stage3D.warmup()`: 숨은·화면 밖 메시까지 잠깐 보이게 해 `compileAsync`(장면 전체) → 재질 텍스처 `initTexture` → 한 번 그리기(그림자·후처리 포함) → 되돌림. 실 GPU 카메라 한 바퀴 8 초: 전 50 ms 넘는 프레임 5개·최대 1944 ms → 후 0개·최대 35 ms. 대신 로드가 약 10 s 늘어남(프로그램 196·텍스처 469) [측정]. 헤드리스 swiftshader 는 이 비교에 쓰지 않음 |
 | 12 | 장식 배치 | 7.png ↔ c2_overview: 기본 장식(분수·나무·가랜드·풍선·타일·조각상) 위치·종류 같음 [측정: 화면 대조]. 배율 상속 문제는 §6.12 에서 소켓 부착만 해당(장식 hook 노드는 배율 1) | 변경 없음 |
 
 ## 7. 미확정
@@ -424,7 +455,10 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (A) 소켓 부착 배율 | 위치·회전만 따르고 로케이터 뼈 배율(100·50)은 상쇄 | GetPosFromBone/GetRotFromBone [판독] |
 | (A) 굴절 재질(분수 물기둥 jet_fountain01·컬렉션 유리) | 뒤 장면을 왜곡 없이 비치게(α = opacity ↔ rim_opacity·(1−N·V)^power), 반사·발광은 가산 | 원본 굴절 셰이더(장면 색 uv 오프셋 0.03)는 미판독 [근사]. 물기둥이 흰빛으로 밝게 번지는 것은 원본 식의 발광 c0.r·C0(0.77) + 블룸 — 원본 화면 대조 필요 |
 | (A) 물 표면(water_enable: 바다·분수 물·무대 물) | 물 합성 근사(§6.14 ④): 탁함 k = 상수(바다 1, 그 밖 1/muddy_range) | 물 깊이·수중 장면 굴절 없음 [근사] |
-| (A) 광장 보기(OverView) | overview.ts 가 카메라·대기·해제를 맡고, C 의 interact 는 결과 13 뒤 다음 프레임 돌아옴 → 보기 동안 overview 가 입력·메인 레이아웃 끔을 다시 냄 | C 에 "13 은 overview:end 까지 대기" 요청(SHARED). 안내 ComUiGuide00(pos 0x11)·더킹 사운드는 아직 없음 |
+| (A) 광장 보기(OverView) | overview.ts 가 카메라·대기·해제, interact.ts 는 결과 13 에서 `overview:end` 까지 상태 유지 후 resume(작은 Edit) | OverViewImpl [판독]. 안내 ComUiGuide00(pos 0x11, 라벨 = 레지스터 인자 미판독)·더킹 FX 트리거는 아직 없음 |
+| (A) 국소 반사 정규화 | 국소 큐브 평균 휘도를 공통 반사 큐브 평균에 맞춤(specNorm) | specular_ibl_normalization 식 미판독 [근사] |
+| (A) 캐릭터 충돌 반지름 0.9 와 계단 | 자동 오르기 근사(발 + STEP 반구)로 계단을 오르게 함 | 반지름은 B 의 [추정](bubble_radius). 원본 컨트롤러 반지름·stepOffset 미판독 [근사] |
+| (A) 첫 그리기 준비(warmup) | 로드 때 전부 미리 컴파일(로드 +약 10 s) | 렉 없애기 우선 [설계]. 더 줄이려면 재질 변형 수를 줄이거나 단계별 준비 |
 | (A) 그림자 범위 | 캐스케이드 둘째 경계 38.4 m 까지 맵 하나 | 원본 캐스케이드 3·정적 EVSM [근사] |
 | (A) 가짜 원격 멤버 위치 | 수신 위치를 지면에 맞춤·낙하 보정 | 가짜 걷기 원이 장애물을 지남(online/fake.ts, D) [설계] |
 | (A) 비행 파타파타 경로 | air_npc03~05 를 AttachLocaterDecoNpc/attach_air_npc03~05 에 늘 붙여 1000f 루프(뼈 npc03~05_anim 을 C 가 getSocket) | C 판독 표(§6.10 장식 NPC C). MapStructure 밖 — manifest.plaza.extraLayout [판독+설계] |
@@ -464,3 +498,12 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (C) 화면 페이드 | ctx.overlay 위 검은 막(불투명도 선형) | `bq::WipeModule` 와이프 종류·곡선 미판독 [근사] |
 | (C) 따라가기 이동 | 목표 쪽 수평 단위 방향을 B `PlazaMover` 의 깊이 1 레버로(달리기 6 = AutoInterpolation 기본 6.0), 도착하면 목표 위치로 맞춤 | AutoInterpolation 이 ComActor 를 움직이는 경로(레버 대체인지 직접 이동인지) 미판독 [근사] |
 | (C) NPC 셰이더 그래프 | §6.11 판독 식대로(색 층·눈 합성·쿠리보 UV·틴트). 림·SSS·노멀 배열은 생략 | plaza-C-sg [판독], 생략분 [근사] |
+| (room) 세션 중 기구 선택 | 오프라인 출발 연출 없이 바로 PlaySession → 모두 0.5 s 페이드 아웃 → 1.0 s → 모드 메뉴 | `SelectedBalloonImpl`·`PlaySessionFiber` [판독, online.md 5.6 정정]. WaitSync(1) 는 서버 `started` 방송 한 번으로 맞춤 [근사] |
+| (room) 모드 메뉴 이후 | 방 연결은 광장을 나가면 끊고, 모드 메뉴는 기존 오프라인 화면 | menu01 온라인 동기(플레이어 Work·WaitSync)는 범위 밖 [설계] |
+| (room) 카드 내용 | 이름 = 플레이어 이름, 업적 −1(`im_achieve401_name` "수습 플레이어")·랭크 0·플레이 시간 0(숨김)·디자인 0(`card_bg_07`)·스티커 없음 | 저장 데이터 없음 → 원본 빈 카드 기본값(`GetNetworkPlayerCardData` 초기값)과 같게 [설계] |
+| (room) 카드 소리 | `SQ_SE_SYS_DECI_S`(열기)·`SQ_SE_SYS_CANCEL_S`(닫기)·`SQ_SE_SYS_CURSOR_S`(넘기기) 라벨만, 덕킹 `ST_DUCKING_*_CARD` 없음 | 공용 명세에 있는 소리만 남 [설계] |
+| (room) 참가 때 캐릭터 다시 고르기 | 온라인 흐름이 다음 빈 캐릭터로 자동 교체해도 광장 3D 캐릭터·위치는 그대로 | 원본은 RestoreLocalPlayerData 참이면 기본 소켓에 다시 만듦 [판독] — 웹 자동 교체가 [설계]라 3D 교체는 하지 않음 |
+| (room) 손님 기구 판정 | interact 담당에 SHARED 요청('net:lobby' {host, ready}) — 반영 전에는 손님도 기구 안내가 뜰 수 있으나 출발은 방장만 | MainImpl 세션 분기 [판독] |
+| (room) 서버·통신 | 방 찾기·만들기·참가 = HTTP(바이너리), 방 입장부터 socket.io `/mpj-plaza`(바이너리, 위치 10 B·중계 12 B), 나가기·해산 = 소켓 끊음, 혼자·로컬만 = 통신 없음 — online.md 9.5 표 | 원본 NEX 대신 ddalkkakrider 와 같은 http + socket.io 구조 [설계: 사용자 지시] |
+| (room) 가짜 원격 걷기 | FakeOnline 옵션 `walk`(광장 MeshCollider `collide` 벽 밀어내기 + `groundHeight` 지면 스냅, 몸 반지름 0.9·키 1.6) 로 원 위 목표점을 0.2 s 마다 최대 0.6 m 따라감, 원 중심 (0, −2.36, 25)(1번 시작 자리 뒤 광장 바닥) | 광장 A 지적(가짜 원이 기구 계단·난간 위를 지남) — 실제 원본 멤버는 사람이 조작 [설계: 가짜 데이터] |
+| (room) 가짜 어댑터의 로컬 여러 명 | FakeOnline 은 이 기기를 멤버 한 명으로만 넣는다(사람 2 + 가짜 3 = 하단 줄 4칸) — 실제 서버(SocketIoOnline)는 사람마다 멤버(스테이션#순번) | 가짜 데이터 단순화 [설계], 실제 규칙은 test_room_server ③ |

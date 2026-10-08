@@ -3,7 +3,7 @@
  * 시간은 tick(dt) 로만 흐른다(시험 재현). 난수는 시드 고정 xorshift.
  */
 import type { ErrorCode, JoinFailReason, OnlineAdapter, OnlineEvent, OnlineSelf, RoomMember, RoomSize, RoomState, RoomSummary } from './types';
-import { KOOPA } from './types';
+import { defaultCard, KOOPA } from './types';
 
 export type FakeError = 'none' | 'connect' | 'join' | 'password' | 'full' | 'dissolve' | 'disconnect' | 'match' | 'timeout';
 
@@ -23,10 +23,12 @@ export interface FakeOptions {
   remoteMove?: boolean;
   /** 광장: 원격 멤버 하나가 이 간격(초)마다 스탬프를 보낸다(0·없음 = 안 보냄) [설계] */
   stampEvery?: number;
+  /** 광장: 걷기를 무대 충돌(MeshCollider 벽 밀어내기 + 지면 스냅)에 맞춘다 — (위치, 수평 이동) → 새 위치. 없으면 원 위 점 그대로 [설계] */
+  walk?: (pos: [number, number, number], move: [number, number]) => [number, number, number];
 }
 
 /** 원격 걷기 흉내 원 중심(광장 char_start_pos 근처, plaza_3d.md §1.1) [설계] */
-export const FAKE_WALK_CENTER: readonly [number, number, number] = [0, -2.4, 16];
+export const FAKE_WALK_CENTER: readonly [number, number, number] = [0, -2.36, 25];
 /** 메뉴 단축 스탬프 Number 1000·25·13·9 → StampID(stampList 배열 번호) [데이터] */
 export const FAKE_STAMPS: readonly number[] = [0, 28, 16, 12];
 
@@ -49,6 +51,7 @@ export class FakeOnline implements OnlineAdapter {
   private matching = false;
   private sendT = 0;
   private stampT = 0;
+  private readonly walkPos = new Map<string, [number, number, number]>();
   readonly log: string[] = [];
   /** 이 기기가 보낸 광장 위치·스탬프(시험 확인용) */
   readonly sent: { t: 'info' | 'stamp'; slot: number; v: number[] }[] = [];
@@ -99,7 +102,9 @@ export class FakeOnline implements OnlineAdapter {
   }
 
   private member(chara: number, host: boolean, local: boolean, name?: string): RoomMember {
-    return { station: `st${++this.seq}`, name: name ?? this.pick(FAKE_NAMES), chara, host, ready: local, local };
+    const station = `st${++this.seq}`;
+    const n = name ?? this.pick(FAKE_NAMES);
+    return { station, name: n, chara, host, ready: local, local, card: local && this.opt.self.card ? this.opt.self.card : defaultCard(station, n) };
   }
 
   private freeChara(room: RoomState): number {
@@ -298,7 +303,17 @@ export class FakeOnline implements OnlineAdapter {
         remote.forEach((m, k) => {
           const r = 3 + k;
           const a = (this.time * 2) / r + k * 1.7;
-          const pos: [number, number, number] = [FAKE_WALK_CENTER[0] + Math.cos(a) * r, FAKE_WALK_CENTER[1], FAKE_WALK_CENTER[2] + Math.sin(a) * r];
+          let pos: [number, number, number] = [FAKE_WALK_CENTER[0] + Math.cos(a) * r, FAKE_WALK_CENTER[1], FAKE_WALK_CENTER[2] + Math.sin(a) * r];
+          const walk = this.opt.walk;
+          if (walk) {
+            const cur = this.walkPos.get(m.station) ?? walk([...FAKE_WALK_CENTER], [0, 0]);
+            const dx = pos[0] - cur[0];
+            const dz = pos[2] - cur[2];
+            const d = Math.hypot(dx, dz);
+            const k2 = d > 0.6 ? 0.6 / d : 1;
+            pos = walk(cur, [dx * k2, dz * k2]);
+            this.walkPos.set(m.station, pos);
+          }
           const yaw = -a;
           this.emit({ t: 'remoteInfo', station: m.station, slot: 0, chara: m.chara, pos, quat: [0, Math.sin(yaw / 2), 0, Math.cos(yaw / 2)] });
         });

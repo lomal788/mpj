@@ -23,6 +23,7 @@
 import * as THREE from 'three';
 import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
+import { loadTexture } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 
 interface TexEntry {
@@ -151,7 +152,7 @@ export class MaterialSetup {
         const e = this.index[name];
         if (!e || e.cube || !e.files.length) return null;
         const url = this.assets.url(`tex/${e.files[0]}`);
-        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : await new THREE.TextureLoader().loadAsync(url);
+        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : await loadTexture(url);
         t.flipY = false;
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         if (!e.files[0].endsWith('.hdr') && e.srgb) t.colorSpace = THREE.SRGBColorSpace;

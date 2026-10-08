@@ -8,8 +8,9 @@
  * - 톤맵·포스트(post00 블룸 등)는 넣지 않는다 [근사].
  */
 import * as THREE from 'three';
-import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { createGltfLoader } from './assetLoader';
 import { Clip } from './clip';
 import { fresOf, MaterialSetup } from './material';
 import type { GraphDef } from './graph';
@@ -119,7 +120,7 @@ export class Stage3D {
   env: StageEnv = {};
   materials!: MaterialSetup;
   readonly stats = { loadMs: 0, models: 0, bytes: 0 };
-  private readonly loader = new GLTFLoader();
+  private readonly loader = createGltfLoader();
   private readonly models = new Map<string, Model>();
   private readonly gltfs = new Map<string, Promise<GLTF>>();
   private readonly clipsLive: { step(df: number): void }[] = [];

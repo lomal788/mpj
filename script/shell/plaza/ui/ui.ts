@@ -4,10 +4,11 @@
  * 한 틱 순서 [설계]: 입력 → 어댑터(광장 사건 가르기) → 온라인 화면 → 메인 레이아웃 시작/끝 → 하단 줄·스탬프·텔롭 갱신.
  */
 import type { LayoutInst } from '../../charselect/scene2d';
-import { IDENTITY, operationPlayerId, type Mat3, type MgmDrawHost, type MgmPadSource, type MgmPlayer, type MgmSound } from '../../mgmcommon';
+import { IDENTITY, MgmGuide, operationPlayerId, type Mat3, type MgmDrawHost, type MgmPadSource, type MgmPlayer, type MgmSound } from '../../mgmcommon';
 import { OnlineScreen, type OnlineAdapter, type OnlineEvent, type OnlineSelf, type RoomState } from '../../online';
+import { CARD_BTN, CardViewer, type CardEvent, type PlazaCardExtra } from './card';
 import { listStamps, stampSe, type PlazaUiExtra } from './data';
-import { RemoteSender, RemoteTable, type Quat, type RemoteMode, type Vec3 } from './net';
+import { RemoteSender, RemoteTable, SEND_SLOTS, type Quat, type RemoteMode, type Vec3 } from './net';
 import { PlayerStatusMgr, type PlayerStatus, type StatusPlayer } from './status';
 import { StampBalloon, StampCtrl, type StampEvent, type StampSlot } from './stamp';
 import { LocationTelop, OnlineGuide, PopGuide } from './telop';
@@ -27,6 +28,8 @@ export type PlazaUiOut =
   | { t: 'remote'; station: string; slot: number; chara: number; pos: Vec3; quat: Quat; mode: RemoteMode; speed: number }
   | { t: 'remoteLeft'; station: string }
   | { t: 'session'; on: boolean }
+  | { t: 'lobby'; host: boolean; ready: boolean }
+  | { t: 'started' }
   | { t: 'se'; label: string }
   | { t: 'vib'; slot: number; label: string };
 
@@ -78,7 +81,7 @@ export class PlazaNet implements OnlineAdapter {
     for (const e of this.net.poll()) {
       if (e.t === 'remoteInfo' || e.t === 'stamp') this.plaza.push(e);
       else {
-        if (e.t === 'memberLeft') this.plaza.push(e);
+        if (e.t === 'memberLeft' || e.t === 'joined' || e.t === 'memberReady' || e.t === 'started') this.plaza.push(e);
         out.push(e);
       }
     }
@@ -93,6 +96,9 @@ export class PlazaNet implements OnlineAdapter {
   sendStamp(slot: number, stamp: number, chara: number): void {
     this.net.sendStamp?.(slot, stamp, chara);
   }
+  setSelf(self: OnlineSelf): void {
+    this.net.setSelf?.(self);
+  }
 }
 
 export interface PlazaUiOptions {
@@ -105,6 +111,10 @@ export interface PlazaUiOptions {
   sound?: MgmSound;
   selfName?: string;
   firstOnline?: boolean;
+  /** 대기실 카드 뷰어 명세(plaza_card.json), 없으면 카드 없음 */
+  card?: PlazaCardExtra;
+  /** 이 기기 카드(OnlineSelf.card) */
+  selfCard?: OnlineSelf['card'];
 }
 
 export class PlazaUi {
@@ -124,6 +134,12 @@ export class PlazaUi {
   private friendOpen = false;
   private sessionOn = false;
   private decideFriend = false;
+  private lobbyKey = '';
+  private sendAll = false;
+  /** 대기실 멤버 카드(ComUiCardViewer) */
+  readonly card: CardViewer | null;
+  /** MainImpl 세션 분기 안내 ComUiGuide00 위치 0xc `mn01_friend_ctrl_lobby_card` [판독 online.md 5.5 정정] */
+  readonly cardGuide: MgmGuide | null;
   private pads: Map<number, { hold: number; trig: number }> = new Map();
   frame = 0;
 
@@ -134,6 +150,8 @@ export class PlazaUi {
     this.telop = new LocationTelop(o.host);
     this.pop = new PopGuide(o.host);
     this.onlineGuide = new OnlineGuide(o.host);
+    this.card = o.card ? new CardViewer(o.host, o.card) : null;
+    this.cardGuide = o.card ? new MgmGuide(o.host, 0xc, 'mn01_friend_ctrl_lobby_card') : null;
   }
 
   private se(label: string): void {
@@ -165,7 +183,7 @@ export class PlazaUi {
     const room = this.room;
     if (!room) return this.o.players().map((p) => ({ pid: p.slot, key: `p${p.slot}`, name: p.name, chara: p.chara, human: !p.isCom, local: true }));
     let localPid = 0;
-    return room.members.map((m) => ({ pid: m.local ? localPid++ : -1, key: m.station, name: m.name, chara: m.ready || m.local ? m.chara : -1, human: true, local: m.local }));
+    return room.members.map((m) => ({ pid: m.local ? localPid++ : -1, key: `${m.station}#${m.slot ?? 0}`, name: m.name, chara: m.ready || m.local ? m.chara : -1, human: true, local: m.local }));
   }
 
   /** ComUiMainMenuLayout::Start [판독 @0x7100074b98] — 하단 줄 Start(+ 대기 텔롭은 온라인 흐름이) */
@@ -233,14 +251,32 @@ export class PlazaUi {
   }
 
   /** 로컬 플레이어 위치 보내기(ComPlayerUtil) — 세션·스테이션 ≥ 2 일 때만 */
-  sendLocal(dt: number, slot: number, chara: number, vel: readonly number[], pos: Vec3, quat: Quat): boolean {
+  sendLocal(dt: number, slot: number, chara: number, vel: readonly number[], pos: Vec3, quat: Quat, force = false): boolean {
     let s = this.senders.get(slot);
     if (!s) this.senders.set(slot, (s = new RemoteSender(slot)));
     const room = this.room;
-    const go = s.step(dt, vel);
+    const go = s.step(dt, vel) || (force && slot < SEND_SLOTS);
     if (!go || !room || room.members.length < 2) return false;
     this.net.sendPlayerInfo(slot, chara, pos, quat);
     return true;
+  }
+
+  /** SendRemotePlayerInfoAll 차례(참가 직후·새 멤버 데이터 받음) — 부르는 쪽이 이번 틱 모든 로컬 슬롯을 force 로 보낸다 [판독 online.md 5.5 정정] */
+  takeSendAll(): boolean {
+    const v = this.sendAll;
+    this.sendAll = false;
+    return v;
+  }
+
+  /** 광장 기구 결정(세션 중) → PlaySession [판독 SelectedBalloonImpl] */
+  playSession(): void {
+    this.online?.flow.requestPlay();
+  }
+
+  /** 대기실이 입력을 받는 중(대화상자·방 정보·키보드 없음) */
+  private lobbyIdle(): boolean {
+    const f = this.online?.flow;
+    return !!f && f.step.startsWith('lobby:') && !f.dialog.working && !f.keypad.working && f.info.life.st === -1 && f.lobby.life.idle;
   }
 
   private padOf(slot: number): { hold: number; trig: number } {
@@ -248,13 +284,21 @@ export class PlazaUi {
   }
 
   private openFriend(): void {
-    const self: OnlineSelf = { name: this.o.selfName ?? this.o.players()[0]?.name ?? 'Player', chara: this.o.players()[0]?.chara ?? 0, humans: Math.max(1, this.humans()) };
+    const humans = this.o.players().filter((p) => !p.isCom);
+    const self: OnlineSelf = {
+      name: this.o.selfName ?? this.o.players()[0]?.name ?? 'Player',
+      chara: this.o.players()[0]?.chara ?? 0,
+      humans: Math.max(1, this.humans()),
+      card: this.o.selfCard,
+      players: humans.map((p, i) => ({ name: p.name, chara: p.chara, card: i === 0 ? this.o.selfCard : undefined })),
+    };
+    this.net.setSelf(self);
     const pads: MgmPadSource = {
       poll: (pid: number) => {
         const p = this.padOf(pid);
         const f = this.online?.flow;
         const lobbyIdle = !!f && f.step.startsWith('lobby:') && !f.dialog.working && !f.keypad.working && f.info.life.st === -1;
-        const mask = lobbyIdle ? ~0x1 : ~0;
+        const mask = this.card?.open ? 0 : lobbyIdle ? ~0x1 : ~0;
         return { hold: p.hold & mask, trig: p.trig & mask };
       },
     };
@@ -277,7 +321,10 @@ export class PlazaUi {
       this.online.tick(dt);
       if (this.online.finished) {
         this.log.push(`friend:end ${this.online.flow.result}`);
-        if (!this.online.flow.room) this.online = null;
+        if (!this.online.flow.room) {
+          this.online = null;
+          this.net.disconnect();
+        }
       }
     } else {
       this.net.tick(dt);
@@ -293,15 +340,29 @@ export class PlazaUi {
     if (this.inSession !== this.sessionOn) {
       this.sessionOn = this.inSession;
       this.out.push({ t: 'session', on: this.sessionOn });
+      if (!this.sessionOn) {
+        const stations = new Set([...this.remote.actors.values()].map((a) => a.station));
+        for (const st of stations) {
+          this.remote.remove(st);
+          this.out.push({ t: 'remoteLeft', station: st });
+        }
+        this.card?.out();
+      }
+    }
+    const ls = this.online?.flow.lobbyState();
+    const lk = ls && ls.inSession ? `${ls.host}|${ls.ready}` : '';
+    if (lk !== this.lobbyKey) {
+      this.lobbyKey = lk;
+      this.out.push({ t: 'lobby', host: !!ls?.host, ready: !!ls?.ready });
     }
     const f = this.online?.flow;
-    const menuOpen = !!this.online && !(f && f.step.startsWith('lobby:'));
+    const menuOpen = (!!this.online && !(f && f.step.startsWith('lobby:'))) || !!this.card?.open;
     if (menuOpen !== this.friendOpen) {
       if (!menuOpen) this.wantMain = true;
       this.friendOpen = menuOpen;
       this.out.push({ t: 'friendMenu', open: menuOpen });
     }
-    if (this.main && (menuOpen || !this.wantMain || this.status.online !== this.inSession)) this.finishMain();
+    if (this.main && ((menuOpen && !this.card?.open) || !this.wantMain || this.status.online !== this.inSession)) this.finishMain();
     else if (!this.main && !menuOpen && this.wantMain && (this.status.finished || this.status.online === this.inSession)) this.startMain();
     if (this.main && this.inSession && this.onlineGuide.life.st >= 0) this.onlineGuide.out();
 
@@ -310,12 +371,17 @@ export class PlazaUi {
         const r = this.remote.receive(e.station, e.slot, e.chara, e.pos, e.quat);
         this.log.push(`remote ${e.station} ${r.mode}`);
       } else if (e.t === 'stamp') {
-        const slot = this.stamps.get(e.station);
+        const slot = this.stamps.get(`${e.station}#${e.slot}`);
         if (slot && slot.balloon.finished) this.showStamp(slot, e.stamp);
       } else if (e.t === 'memberLeft') {
         if (this.remote.remove(e.station).length) this.out.push({ t: 'remoteLeft', station: e.station });
+      } else if (e.t === 'joined' || e.t === 'memberReady') this.sendAll = true;
+      else if (e.t === 'started') {
+        this.card?.out();
+        this.out.push({ t: 'started' });
       }
     }
+    this.cardTick(dt, opPad.trig);
     this.remote.step(dt);
     for (const a of this.remote.actors.values())
       this.out.push({ t: 'remote', station: a.station, slot: a.slot, chara: a.chara, pos: [...a.pos], quat: [...a.quat], mode: a.mode, speed: a.speed });
@@ -343,6 +409,41 @@ export class PlazaUi {
     this.telop.update(df);
     this.pop.update(df);
     this.onlineGuide.update(df);
+  }
+
+  /** 대기실 −/+ 카드(MainImpl 세션 분기 0x3000 → 카드 람다) [판독 online.md 5.5 정정·5.8] */
+  private cardTick(dt: number, trig: number): void {
+    const card = this.card;
+    const guide = this.cardGuide;
+    if (!card || !guide) return;
+    const room = this.room;
+    const idle = !!room && this.main && this.lobbyIdle() && !card.open;
+    if (room && idle && trig & CARD_BTN.OPEN) {
+      this.se('SQ_SE_SYS_DECI_S');
+      this.out.push({ t: 'vib', slot: this.operator(), label: 'bv_vib_sys_deci_s' });
+      card.clear();
+      for (const m of room.members) if (m.card && (m.ready || m.local)) card.add(m.card);
+      card.start(0);
+      this.log.push(`card:open ${card.cards.length}`);
+    }
+    if (idle && !card.open) guide.in();
+    else guide.out();
+    guide.update();
+    const ev: CardEvent[] = [];
+    card.update(dt * 60, card.st === 1 ? trig : 0, ev);
+    for (const e of ev) {
+      if (e.t === 'se') this.se(e.label);
+      else this.out.push({ t: 'vib', slot: this.operator(), label: e.label });
+    }
+  }
+
+  /** 카드·카드 안내 그리기 목록(대기실 텔롭 등 온라인 화면 위, 순위 0x8400) */
+  cardDrawList(): [LayoutInst, Mat3][] {
+    const out: [LayoutInst, Mat3][] = [];
+    if (this.cardGuide?.inst.visible) out.push([this.cardGuide.inst, this.cardGuide.base]);
+    if (this.card?.inst.visible) out.push([this.card.inst, IDENTITY]);
+    if (this.card?.guide.inst.visible) out.push([this.card.guide.inst, this.card.guide.base]);
+    return out;
   }
 
   /** 메인 레이아웃을 켜 둘지(다른 갈래의 'ui:mainLayout' 신호, 기본 켬) */
@@ -381,7 +482,8 @@ export class PlazaUi {
       stamps: [...this.stamps.values()].map((s) => ({ key: s.key, ctrl: s.ctrl ? { list: s.ctrl.list.st, guide: s.ctrl.guide.st } : null, balloon: s.balloon.st })),
       telop: { area: this.telop.area, st: this.telop.life.st },
       pop: this.pop.st,
-      online: this.online ? this.online.summary() : null,
+      online: this.online ? { ...this.online.summary(), netIdle: this.online.flow.netMenu.life.idle, netSel: this.online.flow.netMenu.sel, listIdle: this.online.flow.list.life.idle && !this.online.flow.list.rowsAnimating(), dialogIdle: this.online.flow.dialog.life.idle } : null,
+      card: this.card ? { st: this.card.st, n: this.card.cards.length, index: this.card.index, guide: this.cardGuide?.shown ?? false } : null,
       remote: [...this.remote.actors.values()].map((a) => `${a.station}:${a.mode}`),
       log: this.log.slice(-20),
     };

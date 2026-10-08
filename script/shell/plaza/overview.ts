@@ -3,7 +3,8 @@
  * PlayFxTrigger("ST_DUCKING_START_LOOKMENU") → CameraManager::PlayAnim(0x10) + SetSpeed(0)(= 카메라 표 16 'deco_00' = env/menu00_deco_all_cam.fsnb
  * 프레임 0 정지, 표는 CameraManager::Initialize 의 이름 표 menu00.nro 0x1c7a58·경로 표 0x19b2e4 [데이터]) → 안내 ComUiGuide00(pos 0x11) In →
  * 조작 플레이어 GetTrigger & 6(bex B 0x2 | X 0x4)까지 대기 → SQ_SE_SYS_CANCEL → 안내 Out → StopAnim → "ST_DUCKING_FINISH_LOOKMENU" → 상태 2.
- * 시작은 C(interact.ts)의 'interact:decide' {result: 13}. 끝나면 'overview:end' 를 낸다.
+ * 시작은 interact.ts 의 'interact:decide' {result: 13}(입력·메인 레이아웃 끔은 interact 가 함). 끝나면 'overview:end' → interact 가 상태 2 로 돌아옴(resume).
+ * 안내 ComUiGuide00(SetGuidePos 0x11, 라벨 = 레지스터 인자라 미판독)은 아직 없음.
  */
 import { FsnbCamera } from './balloon';
 import { PLAZA_BTN, type PlazaContext, type PlazaPart, type PlazaPartFactory } from './types';
@@ -36,8 +37,6 @@ export const createOverview: PlazaPartFactory = async (ctx: PlazaContext): Promi
     stage.setCameraDriver(null, 'anim');
     ctx.emit('ui:overview', false);
     ctx.emit('overview:end', true);
-    ctx.emit('player:input', true);
-    ctx.emit('ui:mainLayout', true);
   };
   const off = ctx.on('interact:decide', (v) => {
     if ((v as { result: number }).result === RESULT_OVERVIEW) begin();
@@ -54,10 +53,6 @@ export const createOverview: PlazaPartFactory = async (ctx: PlazaContext): Promi
         const trig = b & ~prev;
         prev = b;
         if (shown > 1 && trig & (PLAZA_BTN.B | PLAZA_BTN.X)) end();
-        else {
-          ctx.emit('player:input', false);
-          ctx.emit('ui:mainLayout', false);
-        }
       }
     },
     debug: () => ({ active, frames: shown, camera: clip ? OVERVIEW_CAMERA.file : null }),

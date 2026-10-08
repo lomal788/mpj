@@ -148,7 +148,7 @@ interface Follower extends Body {
 }
 
 interface Remote extends Body {
-  station: number;
+  station: string;
   target: THREE.Vector3 | null;
   yawTarget: number | null;
   speed: number;
@@ -156,7 +156,7 @@ interface Remote extends Body {
 
 /** 원격 표시 사건(D 의 FakeOnline/online, docs §5.1) */
 export interface NetRemote {
-  station: number;
+  station: string;
   slot: number;
   chara: string;
   pos: number[];
@@ -167,11 +167,12 @@ export interface NetRemote {
 
 export class FollowSystem {
   readonly followers: Follower[] = [];
-  readonly remotes = new Map<number, Remote>();
+  /** 키 = 스테이션#슬롯(PlayerManager 원격 맵 키 NetworkPlayerInfo) */
+  readonly remotes = new Map<string, Remote>();
   private loader: PlazaCharaLoader | null = null;
   private acc = 0;
   private readonly blocked: RayBlocked;
-  private readonly loading = new Set<number>();
+  private readonly loading = new Set<string>();
   enabled = true;
 
   constructor(private readonly ctx: PlazaContext) {
@@ -259,19 +260,23 @@ export class FollowSystem {
 
   /** PlayerManager::OnReceive 결과(mode 는 D 가 원본 규칙 > 5 순간이동·≤ 1 회전만·그 사이 보간으로 정함) */
   async remote(e: NetRemote): Promise<void> {
-    let r = this.remotes.get(e.station);
+    const key = `${e.station}#${e.slot}`;
+    let r = this.remotes.get(key);
     const pos = new THREE.Vector3(e.pos[0], e.pos[1], e.pos[2]);
     const ground = this.ctx.world.collider.groundHeight(pos.x, pos.z, pos.y + 2);
     if (ground) pos.y = ground.y;
     const yaw = yawOfQuat(new THREE.Quaternion(e.quat[0], e.quat[1], e.quat[2], e.quat[3]));
     if (!r) {
-      if (this.loading.has(e.station)) return;
-      this.loading.add(e.station);
+      if (this.loading.has(key)) return;
+      this.loading.add(key);
       const b = await this.body(e.chara, e.slot, 'remote');
-      this.loading.delete(e.station);
+      if (!this.loading.delete(key)) {
+        this.drop(b.actor, b.chara);
+        return;
+      }
       b.mover.place(pos, yaw);
       r = { ...b, station: e.station, target: null, yawTarget: null, speed: 0 };
-      this.remotes.set(e.station, r);
+      this.remotes.set(key, r);
       this.sync(r);
       return;
     }
@@ -288,13 +293,20 @@ export class FollowSystem {
     }
   }
 
-  removeRemote(station: number): void {
-    const r = this.remotes.get(station);
-    if (!r) return;
-    const i = this.ctx.actors.indexOf(r.actor);
+  private drop(actor: PlazaActor, chara: PlazaChara): void {
+    const i = this.ctx.actors.indexOf(actor);
     if (i >= 0) this.ctx.actors.splice(i, 1);
-    r.chara.dispose();
-    this.remotes.delete(station);
+    chara.dispose();
+  }
+
+  /** 스테이션 이탈·세션 끝(ResetRemotePlayer) — 그 스테이션의 모든 슬롯 */
+  removeRemote(station: string): void {
+    for (const k of [...this.loading]) if (k.startsWith(`${station}#`)) this.loading.delete(k);
+    for (const [k, r] of [...this.remotes]) {
+      if (r.station !== station) continue;
+      this.drop(r.actor, r.chara);
+      this.remotes.delete(k);
+    }
   }
 
   update(df: number): void {
@@ -350,7 +362,7 @@ export const createFollow: PlazaPartFactory = async (ctx: PlazaContext): Promise
   registry.set(ctx, sys);
   const offs = [
     ctx.on('net:remote', (v) => void sys.remote(v as NetRemote)),
-    ctx.on('net:remoteLeft', (v) => sys.removeRemote((v as { station: number }).station)),
+    ctx.on('net:remoteLeft', (v) => sys.removeRemote((v as { station: string }).station)),
     ctx.on('player:input', (v) => {
       sys.enabled = !!v;
     }),

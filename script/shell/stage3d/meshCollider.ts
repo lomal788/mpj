@@ -1,7 +1,10 @@
 /**
  * 삼각 메시 충돌(Collider 구현) — 원본 PhysX 삼각 메시(apx → collision.json)를 그대로 쓴다(docs/shell/stage3d.md §5, plaza_3d.md §3.2).
- * - 지면: (x, z) 를 지나는 수직선과 삼각형의 교점 중 fromY + STEP 아래에서 가장 높은 것. 걸을 수 있는 면 = 법선 y ≥ cos(SLOPE_LIMIT).
+ * - 지면: (x, z) 를 지나는 수직선과 **위를 향한**(법선 y > 0) 삼각형의 교점 중 fromY + STEP 아래에서 가장 높은 것. 아래를 향한 면(계단 밑판 등)은 지면이 아니다.
+ *   가파른 위향 면(계단 챌판 77.6° 등)도 STEP 안이면 디딜 수 있다(PhysX stepOffset 처럼 단을 오름) [근사].
  * - 벽: 원기둥(반지름 r, 발 y + STEP ~ y + height)이 걸을 수 없는 면(가파른 면)과 겹치면 수평으로 밀어낸다(벽 미끄러짐).
+ *   PhysX 컨트롤러의 자동 오르기(stepOffset 만큼 올려서 앞으로 쓸기)처럼, 몸 아랫면을 발 + STEP 에서 시작하는 반구로 보고 중심에서 수평 d 떨어진
+ *   접점이 그 반구(yLo + r − √(r² − d²))보다 낮으면 벽으로 치지 않는다 — 반지름 0.9 몸이 계단 다음 단 챌판에 걸리지 않게 [근사: PhysX 캡슐·autostep].
  * STEP·SLOPE_LIMIT 는 PhysX 캐릭터 컨트롤러의 stepOffset·slopeLimit 자리 [근사: 원본 값 미확정].
  * 질의는 XZ 격자(CELL m) 로 후보 삼각형을 줄인다.
  */
@@ -18,6 +21,7 @@ export interface MeshColliderData {
 export const COLLIDER_STEP = 0.5;
 export const COLLIDER_SLOPE_LIMIT_DEG = 45;
 const CELL = 2;
+const UP_MIN = 0.05;
 const ITER = 3;
 
 export class MeshCollider implements Collider {
@@ -25,6 +29,7 @@ export class MeshCollider implements Collider {
   readonly tri: Uint32Array;
   readonly nrm: Float32Array;
   readonly walk: Uint8Array;
+  readonly up: Uint8Array;
   private readonly grid = new Map<number, number[]>();
   readonly minX: number;
   readonly minZ: number;
@@ -36,6 +41,7 @@ export class MeshCollider implements Collider {
     const n = this.tri.length / 3;
     this.nrm = new Float32Array(n * 3);
     this.walk = new Uint8Array(n);
+    this.up = new Uint8Array(n);
     const cosLimit = Math.cos((COLLIDER_SLOPE_LIMIT_DEG * Math.PI) / 180);
     let minX = Infinity;
     let minZ = Infinity;
@@ -55,6 +61,7 @@ export class MeshCollider implements Collider {
       const nn = b.clone().sub(a).cross(c.clone().sub(a)).normalize();
       this.nrm.set([nn.x, nn.y, nn.z], t * 3);
       this.walk[t] = Math.abs(nn.y) >= cosLimit ? 1 : 0;
+      this.up[t] = nn.y > UP_MIN ? 1 : 0;
       const x0 = Math.floor((Math.min(a.x, b.x, c.x) - minX) / CELL);
       const x1 = Math.floor((Math.max(a.x, b.x, c.x) - minX) / CELL);
       const z0 = Math.floor((Math.min(a.z, b.z, c.z) - minZ) / CELL);
@@ -123,7 +130,7 @@ export class MeshCollider implements Collider {
     let best = -Infinity;
     let bt = -1;
     for (const t of this.cells(x, z, x, z)) {
-      if (!this.walk[t]) continue;
+      if (!this.up[t]) continue;
       const y = this.yAt(t, x, z);
       if (Number.isNaN(y) || y > top) continue;
       if (y > best) {
@@ -164,6 +171,7 @@ export class MeshCollider implements Collider {
         const dz = p.z - q.z;
         const d = Math.hypot(dx, dz);
         if (d >= radius) continue;
+        if (q.y - yLo < radius - Math.sqrt(Math.max(0, radius * radius - d * d))) continue;
         let nx: number;
         let nz: number;
         if (d > 1e-6) {

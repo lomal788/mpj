@@ -12,10 +12,11 @@
  *           ?avlat=raw|<ms> 출력 지연 보정(raw = 보정 없이 currentTime, 원본처럼 / ms = 측정값에 더 늦출 양),
  *           ?synclog=1 스텝·소리 시각 기록(window.__mpj.sync, tools/sync_measure.ts),
  *           ?charselect=1 시작 전에 캐릭터 선택 화면(독립 모듈 shell/charselect, script/charselect_page.ts)을 띄우고 고른 캐릭터로 시작
- *           ?plaza=1 플레이어 설정 → 광장 3D(shell/plaza) → 기구 → 모드 메뉴 → 항구 → 프리 플레이 목록 → 게임(docs/shell/plaza_3d.md §6.9), &skipsetup=1 설정 건너뜀
+ *           ?plaza=1 플레이어 설정 → 광장 3D(shell/plaza) → 기구 → 모드 메뉴 → 항구 → 프리 플레이 목록 → 게임(docs/shell/plaza_3d.md §6.9), &skipsetup=1 설정 건너뜀(&chars=pc05,pc02 슬롯별 캐릭터, &names=A,B 이름)
  * 시험 훅: window.__mpj (stage, frame, result, error, hold(frame), dropped, sync)
  */
 import './style.css';
+import './view/assetMode';
 import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from './core/clock';
 import { DEV } from './env';
 import { type GameDef, type GameLogic, type GameSetup, type GameView, type PlayerSetup, readOptions } from './game';
@@ -448,6 +449,10 @@ function plazaFlow(): void {
   flowPlayers.names = undefined;
   flowPlayers.pads = padSourcesFor(com, keyboard);
   if (q.get('skipsetup') === '1') {
+    const cq = q.get('chars');
+    if (cq) cq.split(',').forEach((c, i) => c && i < flowPlayers.chars.length && (flowPlayers.chars[i] = c));
+    const nq = q.get('names');
+    if (nq) flowPlayers.names = com.map((_, i) => nq.split(',')[i] || `${i + 1}P`);
     flowPlaza();
     return;
   }

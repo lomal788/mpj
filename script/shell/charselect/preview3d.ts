@@ -21,7 +21,8 @@
  * - 깜빡임 프레임 = 본 모션 노드 프레임(AnimationNodeBundle), 묶음 없는 모션에서는 멈춰 기본값으로.
  */
 import * as THREE from 'three';
-import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { assetHooks } from './assetHooks';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { BodyGraph, CharaSpec, Spec } from './types';
 
@@ -181,14 +182,14 @@ function stepAt(steps: [number, number][], f: number): number {
 const wrap = (f: number, n: number | undefined): number => (n && n > 0 ? f % n : f);
 
 async function loadTex(url: string): Promise<THREE.Texture> {
-  const t = await new THREE.TextureLoader().loadAsync(url);
+  const t = await assetHooks.loadTexture(url);
   t.flipY = false;
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
 
 export class Preview3D {
-  private readonly loader = new GLTFLoader();
+  private readonly loader = assetHooks.createGltfLoader();
   private readonly preps = new Map<string, Prep>();
   private order: number[] = [];
   private loading = 0;

@@ -3,6 +3,7 @@
  * → CallSceneImpl @0x7100047628 (docs/shell/plaza_3d.md §6.10 ④) [판독 + 어셈블리].
  * 카메라 컷 = fsnb 베이크 json(manifest.anims)을 stage 'anim' 슬롯에(07_camera_lighting §6.2: EulerZXY → three 'YXZ', Aim → lookAt+twist, fovy 전체 세로각).
  * 화면 페이드(bq::WipeModule)는 ctx.overlay 위 검은 막 [근사: 와이프 종류 무시]. 끝나면 오프라인 ctx.exit({k:'balloon'}), 방 있으면 {k:'session'}.
+ * 세션 중 방장은 연출 없이 'net:playSession'(NetworkManager::PlaySession), 'net:started'(방장·손님 PlaySessionFiber) → 0.5 s 페이드 아웃 → 1.0 s → {k:'session'} (online.md 5.6 정정).
  */
 import * as THREE from 'three';
 import type { CameraDriver, ClipHandle } from '../stage3d';
@@ -33,6 +34,10 @@ export const TAKEOFF = {
   /** TakeOffPass/Get 람다 Sleep(0.25) 뒤 쌍안경 보임 바꿈 */
   binocularSec: 0.25,
   takeoffClip: 'pos_balloon_takeoff',
+  /** PlaySessionFiber FadeOut(0x3f000000) [판독] */
+  sessionFadeSec: 0.5,
+  /** PlaySessionFiber Sleep(1.0) 뒤 RequestCallScene [판독] */
+  sessionSleepSec: 1,
 } as const;
 
 interface CamClip {
@@ -94,7 +99,7 @@ export class FsnbCamera implements CameraDriver {
   }
 }
 
-type Phase = 'idle' | 'selectFade' | 'setup' | 'fadeIn' | 'cut00' | 'cut01' | 'endFade' | 'done';
+type Phase = 'idle' | 'selectFade' | 'setup' | 'fadeIn' | 'cut00' | 'cut01' | 'endFade' | 'session' | 'sessionFade' | 'sessionWait' | 'done';
 
 /** 검은 막(WipeModule) */
 class Fade {
@@ -150,6 +155,8 @@ export class BalloonSystem {
   readonly fade: Fade;
   skipEnabled = false;
   online = false;
+  /** 'net:lobby' — 방장·IsReadyNetworkPlayerData */
+  lobby = { host: false, ready: false };
   events: string[] = [];
   private prevButtons = 0;
 
@@ -187,6 +194,12 @@ export class BalloonSystem {
     this.ctx.emit('camera:follow', false);
     this.ctx.emit('player:input', false);
     this.ctx.emit('player:lookAt', { target: this.ctx.world.socket('balloon_pos')?.pos ?? new THREE.Vector3() });
+    if (this.online && this.lobby.host && this.lobby.ready) {
+      this.phase = 'session';
+      this.log('playSession');
+      this.ctx.emit('net:playSession', true);
+      return;
+    }
     this.phase = 'selectFade';
     this.fade.start(1, TAKEOFF.fadeOutSelectSec);
   }
@@ -318,6 +331,25 @@ export class BalloonSystem {
     this.ctx.emit('balloon:fade', { out: true, sec: skip ? TAKEOFF.fadeOutSkipSec : TAKEOFF.fadeOutEndSec });
   }
 
+  /** PlaySessionFiber(방장·손님): 입력·카메라 멈춤 → 페이드 아웃 0.5 s → Sleep 1.0 → 모드 메뉴 [판독 online.md 5.6 정정] */
+  started(): void {
+    if (this.phase === 'sessionFade' || this.phase === 'sessionWait' || this.phase === 'done') return;
+    this.log('started');
+    this.ctx.emit('camera:follow', false);
+    this.ctx.emit('player:input', false);
+    this.phase = 'sessionFade';
+    this.fade.start(1, TAKEOFF.sessionFadeSec);
+  }
+
+  /** 방장 PlaySession 이 안 되고 세션이 끝남 → 광장으로 */
+  sessionLost(): void {
+    if (this.phase !== 'session') return;
+    this.log('sessionLost');
+    this.phase = 'idle';
+    this.ctx.emit('camera:follow', true);
+    this.ctx.emit('player:input', true);
+  }
+
   /** CallSceneImpl */
   private callScene(): void {
     this.phase = 'done';
@@ -368,6 +400,16 @@ export class BalloonSystem {
       case 'endFade':
         if (!this.fade.playing) this.callScene();
         break;
+      case 'sessionFade':
+        if (!this.fade.playing) {
+          this.phase = 'sessionWait';
+          this.after(TAKEOFF.sessionSleepSec, () => {
+            this.phase = 'done';
+            this.log('callScene');
+            this.ctx.exit({ k: 'session' });
+          });
+        }
+        break;
       default:
         break;
     }
@@ -411,6 +453,13 @@ export const createBalloon: PlazaPartFactory = async (ctx: PlazaContext): Promis
     }),
     ctx.on('net:session', (v) => {
       sys.online = !!v;
+      if (!v) sys.sessionLost();
+    }),
+    ctx.on('net:lobby', (v) => {
+      sys.lobby = v as { host: boolean; ready: boolean };
+    }),
+    ctx.on('net:started', () => {
+      sys.started();
     }),
   ];
   return {

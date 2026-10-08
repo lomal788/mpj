@@ -49,6 +49,7 @@
  *    08_effects.md 4절 [판독], 입자 크기·지정 방향 속도에 곱하는 것은 [추정]. 중력은 곱하지 않는다. SetAnimationSpeed(PlayRate)는 쓰지 않는다(BPM 120 에서 1).
  */
 import * as THREE from 'three';
+import { loadTexture } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 
 type Vec3 = { x: number; y: number; z: number };
@@ -505,10 +506,9 @@ export class EffectSystem {
 
   async load(): Promise<void> {
     const data = await this.assets.json<EffectsJson>('effect/effects.json');
-    const loader = new THREE.TextureLoader();
     await Promise.all(
       Object.entries(data.textures).map(async ([name, t]) => {
-        const tex = await loader.loadAsync(this.assets.url(`effect/${t.file}`));
+        const tex = await loadTexture(this.assets.url(`effect/${t.file}`));
         tex.flipY = false;
         tex.colorSpace = t.srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
         tex.needsUpdate = true;

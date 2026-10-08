@@ -6,6 +6,7 @@
  *      ?auto=1         열자마자 시작
  */
 import './style.css';
+import './view/assetMode';
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { runModeSelect, type ModeSelectRun } from './modeselect_page';
 import { runMgmCommonDemo, type MgmCommonRun } from './mgmcommon_page';

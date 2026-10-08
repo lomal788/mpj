@@ -204,9 +204,19 @@ UpdateProcess: 대기 + 두 버튼 애니 끝 + 단계 파이버 없음/끝 → 
 - 5.5a 방 정보 창: UiNetSessionInfoFiber → 안내 B 뒤로 In → SessionInfo Start(ID·패스워드 채움) → 숨김까지 대기 → 안내 Out.
 - 세션 사건(NetSessionListener): 사건 2(방장 해산) → 오류 표시 "호스트가 방을 해산했습니다."(mn01_friend_mw_lobby_dismiss_client), 돌아갈 장면 menu00. 사건 1(스테이션 이탈): 나 자신이면 sys_error_B3 "통신이 끊어졌습니다.", 다른 사람이면 그 스테이션 데이터 지움(LeftStation), 예약 이탈이 아니고 +0x31(플레이 중) 이면 B3.
 - 오류(NetErrorListener): 코드 1 → sys_error_B4 "접속 시간이 초과되었습니다.", 0x80 → B3, 0x5f4e4503 하위 4 → 재검색, 그 밖: 세션 있으면 B3, 없으면 일반 오류 + Disconnect.
+- 정정(2026-10-08, plaza-room 판독 — `SequenceMainMenu::MainImpl` @0x710005a170 세션 분기, `analysis/decomp/plaza_menu00_npc_seq.c` 6896~7420): 대기실 입력은 MainImpl 이 조작 플레이어(`GetOperationPlayerId(false,true)`) 트리거로 직접 본다(11 ② 해결). **방장**: bex 0x4 → 방 정보 파이버(UiNetSessionInfoFiber, SQ_SE_SYS_DECI_S + 진동), 0x8 이고 `IsEnableFriendInvitation` → `StartFriendInvitation`, **0x3000(+/−) → 카드 뷰어 람다 @0x7100060a40**(SQ_SE_SYS_DECI_S + 진동), B(0x2) → 해산 확인 람다(SQ_SE_SYS_CANCEL). **손님**: B → 나가기 확인 람다(SQ_SE_SYS_CANCEL), **0x3000 → 카드 뷰어 람다 @0x7100061360**. 입력이 없으면(또는 친구 초대 중이면) MainImpl 의 `ComUiGuide00` 을 1칸·**위치 0xc**·`mn01_friend_ctrl_lobby_card`("E00F/E00E 마리오 파티 카드")로 In(끝나 있을 때만), NPC `Idle(0.3)`, 장소 텔롭 Out. 람다를 시작하면 `PlayerManager::Stop`. 영역 판정·다가가기·기구 결정은 **오프라인이거나 방장일 때만**(손님은 하지 않음), 방장의 기구 결과 6 은 `IsReadyNetworkPlayerData` 일 때만.
+- 위치 동기 시점 [판독]: ① JoinSessionFiber 7단계 지도 데이터 받은 뒤 `SendRemotePlayerInfoAll`(참가자 → 모두) ② `NetworkManager::OnReceive` 사건 4(새 멤버의 플레이어 데이터, 내 상태 +0xb8 == 2·재요청 플래그 0) → 그 스테이션에 `SendToNetworkPlayerData` 답장 + `SendRemotePlayerInfoAll`(기존 멤버 → 모두) ③ 세션 중 광장 재진입(`SequenceMainMenu::Setup`) → `SendNetworkPlayerData(1)` + `SendRemotePlayerInfoAll_Setup`(위치 없이 회전·**첫 표시 플래그 1**) → 받는 쪽 `PlayerManager::OnReceive` 는 처음 보는 (스테이션, 슬롯)이고 플래그면 `GetAttachSocketPcDefault(4, 표 DAT_710019b490[원격 수 % 4])` 소켓에 놓는다. 그 밖에는 움직이는 동안 0.2 s 마다(plaza_3d.md §5.1 ⑥).
+
+### 5.8 카드 뷰어 (bq::ComUiCardViewer, main) [판독 — `analysis/decomp/plaza_main_card.c`·`plaza_main_card2.c`·`plaza_main_cardviewer_upd.c`, menu00 람다 `plaza_menu00_lobby.c`]
+- **menu00 람다**(@0x7100060a40 방장 / @0x7100061360 손님): `ST_DUCKING_START_CARD` → `ClearCardData` → 세션 멤버마다 `GetNetworkPlayerCardData`(받은 플레이어 데이터의 카드, 데이터 상태 2 가 아니면 빈 카드 = id 0) → `AddCardData(카드, false)`(**id 0 이면 넣지 않음**, 같은 id 면 덮어씀) → `Start(0)` → `ComUiCard::IsFinished` 까지 대기(손님은 세션이 끊기면 `Out`) → `ST_DUCKING_FINISH_CARD`. 카드 뷰어는 menu00 `SequenceMainMenu` 생성 때 그리기 순위 0x8400 으로 만들고 **+0x70 = 1(안내 켬)**.
+- **ComUiCard**(@0x71003367e4): Parts `sys_card_base_00`(+0x3c = 순위), 상태 +0x38(−1 숨김·0 in·1 대기·2 out), 생성 때 `x_parts_status/x_text_time_00` = `mn03_card_ui_time_title`, `x_parts_cursor` 부품 애니 "normal". In = "in"(상태 0), Out = "out"(2), `IsFinished` = 상태 < 0.
+- **SetCardData(CardData 0x90 B)**: +0x10 이름(문자열) → `x_parts_status/x_text_username` = `mn03_card_ui_name`(문자열 변수), +0x32 업적 ID(s16, 무효면 `im_achieve401_name`) → `x_text_title` = `mn03_card_ui_achieve`(Text0 삽입 = 업적 이름 라벨), +0x34 랭크 → `x_parts_status/x_parts_rank`(UiControlPlayerRank, 텍스처 `sys_icon_rank_%02d^q` [추정: mgm01 썸네일과 같은 이름 규칙]), +0x38 플레이 시간(초) 0 이면 `x_text_time_00/01` 숨김, 아니면 보임 + `x_text_time_01` = `mn03_card_ui_time`(Number0 = 시, Number1 = 분), +0x8c 디자인 ID → `cardDesignList.json` 의 `bgTextureName` → `x_parts_card/x_card` 텍스처, +0x3c + 8·i 스티커 10개(`x_parts_sticker_%02d`: id ≥ 0x5f 숨김, 아니면 `cardStickerList` 텍스처를 `x_sticker_base`·`x_sticker_white` 에, 위치 = (s16/32767)·영역 크기·영역 배율·0.5(영역 = `x_parts_card/x_sticker_list`), 회전 = byte/255·360°, 배율 = byte/255·영역 배율). 빈 카드 기본값 = 업적 0xffff·랭크 0·시간 0·디자인 0·스티커 id 0xff 배율 0x96.
+- **Update**(vtable +0x218 = @0x7100337b88): 0 이고 애니 끝 → "normal", 1. 2 이고 끝 → 숨김, −1. 1(대기): 카드 0장 → Out. 조작 플레이어 **B → `SQ_SE_SYS_CANCEL_S`, Out**. 카드 < 2 장 → `x_parts_cursor` 숨김·0번. 2장 이상 → 커서 보임, **왼쪽(0x10100) → (i − 1) mod n, 오른쪽(0x40200) → (i + 1) mod n**, 둘 다 `SQ_SE_SYS_CURSOR_S`(2D, `x_parts_cursor/pict_left`·`pict_right` 위치) + 진동 `bv_vib_sys_cursor_s`. 보이는 카드 id 가 바뀌면 SetCardData. 매 프레임(@0x7100337980) 안내 = 상태 1 이고 +0x70 이면 In, 아니면 Out.
+- **안내**: 생성자의 ComUiGuide00 1칸·위치 0x11·`sys_ctrl_back`.
 
 ### 5.6 방장 시작 (PlaySessionFiber::Update @0x7100037a00) [판독]
 호출 = 광장에서 기구(`SequenceMainMenu::SelectedBalloonImpl`·`SequenceBalloon::CallSceneImpl`)로 갈 때. 방장: `SetSessionEntry(false)` 후 공개·입장 꺼질 때까지 대기(새 참가 막기). 접속/세션 없음 → B3(menu00). 스테이션 ≥ 2 인데 데이터 인원 < 2 이거나 멤버 < 데이터 인원 → B3. 정상: 플레이어 목록 정규화, 데이터 받은 원격 멤버는 그 캐릭터·사람(type 0), 나머지 칸은 COM(type 1), `PlaySession(2, gameMode)`, BGM 정지, `SQ_SE_MENU00_TRANSITION_WHO`, 0.5 s 페이드 아웃, WaitSync(1), Sleep 1, 메뉴 복귀 코드 1, menu01 호출. 스테이션 1(혼자)이면 아무것도 안 하고 끝(혼자 진행).
+- 정정(2026-10-08, plaza-room 판독 — `analysis/decomp/online_menu00.c` 의 `NetworkManager::PlaySession` @0x710002d270·`OnReceive` 사건 7 @0x710002dc30·`SelectedBalloonImpl` @0x710005ed30·`PlaySessionFiber::Update` @0x7100037a00): ① **세션 중 기구 선택**은 페이드·기구 출발 연출 없이 메뉴 카메라 Stop·`PlayerManager::Stop`·`LookAt(balloon_pos)` 뒤 **바로** `NetworkManager::PlaySession` + `StopSoundExitScene` + 장면 순서 −1 이다(오프라인만 1.0 s 페이드 → SequenceBalloon). ② `NetworkManager::PlaySession`(방장)은 `SetIsPublic(false)` 후 **자기 외 모든 스테이션에 메시지 7**(`NetTransfer::SendTo(…, 7)`)을 보내고 PlaySessionFiber 를 시작한다. ③ 손님은 메시지 7 을 받으면(방장 아님·PlaySessionFiber 안 도는 중·나가는 중 아님) `SequenceManager::FinishSequence`·메뉴 카메라 Stop·`PlayerManager::Stop` 후 **같은 PlaySessionFiber** 를 돈다. ④ Fiber 의 시간 순서 = (방장만) 입장 닫힘 대기 → 검사 → 목록 → `PlaySession(2)` → BGM 정지(6) → `SQ_SE_MENU00_TRANSITION_WHO` → `StopSoundExitScene` → 페이드 아웃 **0.5 s**(이미 페이드 중·끝이면 생략) → `WaitSync(1)`(모든 스테이션 맞춤) → `FriendMatchSyncFinishSession` → Sleep **1.0** → 메뉴 복귀 코드 1 → `RequestCallScene`(menu01) → Sleep 0.5.
 
 ### 5.7 전 세계 매칭 상세 [판독]
 - **ConnectNpln**(matching00·menu00 공통 꼴 @0x7100007cb0): 저장 플래그(+0x6c) 미설정이면 안내 대화상자 sys_network_check_dlg00(확인만) → dlg01 "접속한다/접속하지 않는다"(접속하지 않는다 → 끝). 로딩 텔롭(ComUiLoadingTelop = sys_tlp_loading_00, 문구 sys_network_load_tlp "인터넷에 접속하고 있습니다.") In → `ConnectNpln` 이 끝날 때까지 0.5 s 폴링 → Out. 처음 접속 성공이면 플래그 저장. 실패 → RequestError(0) = B3.
@@ -347,6 +357,68 @@ interface OnlineAdapter {
 - 정정(헤드리스 확인 뒤): 변환물의 나눈 창 조각(`창#C`·`#LT`…)이 창 자식 목록 끝에 붙어 sys_dialog_00 의 글자·선택지를 덮었다 → 그리기 전에 조각을 같은 부모의 다른 자식보다 앞에 둔다(ui2d 는 창 다음 자식) [설계 보정, view.ts frameFirst]. 줄바꿈·색 태그 문구는 mgm_common.md 9.6 처럼 RichTextPane 으로 그린다.
 - 큰 글꼴(bqfont_large): 제목 "프렌드 매치" 글자가 공용 큰 글꼴에 없어 online.json 에 공용 글자 + 이 문구로 다시 만든 큰 글꼴을 넣는다(mergeSpec fonts 덮어쓰기) [설계].
 
+### 9.5 실제 방 서버(HTTP + socket.io 바이너리)와 광장 대기실 연결 [설계 + 5.4~5.8 판독] (2026-10-08, plaza-room)
+
+사용자 지시(2026-10-08): ① 서버는 ddalkkakrider(`E:/programming/python/ddalkkakrider_work/web`, 읽기만) 와 같은 구조 — http 서버 하나에 express `createApp(fallback)`(`scripts/server/api/index.mjs`, `/api/v1/…` 라우터 + 정적 파일 fallback) 과 socket.io `Server` 하나(`scripts/server/socket.ts` 의 `createSocket(http, {games, report, ...engine})`: 게임마다 `io.of('/'+id)` 네임스페이스·`guard` 미들웨어·`register(namespace, {every})`·`status(id)`·`close()`, 엔진 `maxHttpBufferSize 8192·pingInterval 5000·pingTimeout 10000`), 버전 socket.io·socket.io-client **4.0.1**, express **5.2.1**. ② 방 찾기·만들기·참가 요청은 **HTTP**, **실제 방에 입장하는 순간부터 socket**, 나가거나 해산되면 소켓을 끊는다. ③ 혼자·로컬만이면 HTTP·소켓 모두 호출 없음. ④ 통신은 **JSON 금지·바이너리**, 위치는 원본처럼 움직일 때만 0.2 s.
+
+**파일**: `web/server/socket.ts`(ddalkkakrider `createSocket`·`guard`·`Game`/`GameContext` 계약 그대로) · `web/server/games.ts`(게임 목록) · `web/server/games/mpj-plaza/index.ts`(Game `id = 'mpj-plaza'`, `register(namespace, {every})` + HTTP 라우터) · `rooms.ts`(순수 방 상태 `PlazaRooms`, 전송과 분리) · `web/server/api/index.ts`(`createApp(fallback, routers)` — ddalkkakrider createApp 과 같은 꼴, 로그인 라우터 대신 게임 라우터) · `web/server/main.ts`(http 서버: API + socket.io + 정적 파일 web/ + esbuild 번들 — ddalkkakrider `server.mjs` 처럼 **페이지와 같은 http 에** 붙여 클라이언트가 `/socket.io/socket.io.js` 를 같은 출처에서 읽는다). 클라이언트 `script/shell/online/wire.ts`(바이너리 배치, 서버·클라이언트 공용) · `socketio.ts`(`SocketIoOnline implements OnlineAdapter`). 나중에 ddalkkakrider `games.ts` 목록에 `mpj-plaza` 의 Game 을 그대로 넣고 라우터를 createApp 에 더하면 같은 서버에 얹힌다.
+
+**연결 수명**
+
+| 단계 | 통신 | 원본 대응 |
+|---|---|---|
+| 광장 입장·혼자·로컬 멀티(사람 1~4 + CPU) | 없음 | 오프라인 광장 |
+| 친구 매치 메뉴 열기(Y) | 없음 — 어댑터 `connect()` 는 '메뉴 사용 가능'만 알림(논리 접속) [설계: 사용자 지시] | ConnectNplnFiber(원본은 여기서 NPLN 접속) |
+| 방 찾기·탭 바꾸기·갱신·방 ID 찾기 | HTTP `POST /api/v1/mpj-plaza/search`·`search-id` | SearchSession·SearchIdSession |
+| 방 만들기 | HTTP `create` → 입장 표(토큰 16 B) → **socket.io `/mpj-plaza` 연결** → ENTER → ROOM(=created) | CreateSessionFiber |
+| 참가 | HTTP `join`(패스워드·인원·캐릭터 겹침 검사, 자리 예약) → 토큰 → socket 연결 → ENTER → ROOM(=joined) → READY | JoinSessionFiber 6~7단계 |
+| 방 안 | socket 바이너리: 입장·준비·이탈·해산·시작 알림, 위치(움직일 때 0.2 s), 스탬프 | 세션 메시지 |
+| 나가기 / 해산 / 해산당함 / 오류 | LEAVE·DISSOLVE 보낸 뒤 **소켓 끊음** | LeaveSession·DissolveSession |
+| 시작(started) | 광장을 나갈 때 끊음(모드 메뉴 온라인 동기는 범위 밖) | PlaySession → menu01 |
+
+방장 수락 왕복(원본 SendRequestJoin → 방장 응답 20 s)은 HTTP `join` 의 서버 검사 + **입장 표 유효 20 s**(JOIN_TIMEOUT_S, 예약한 자리는 20 s 안에 ENTER 가 없으면 풀림)로 대신한다 [설계]. 방장이 만든 방도 방장이 ENTER 해야 검색에 나온다.
+
+**HTTP**(`Content-Type: application/octet-stream`, 요청·응답 본문 모두 바이너리, 리틀 엔디언). 이름 = UTF-8(최대 32 B) 앞에 u8 길이. **프로필**(이 기기 사람들) = `n u8` + 사람마다 `chara u8 · nameLen u8 · name · achievement i16 · rank u8 · time u32 · design u8 · stickers u8(+7 B씩)` = 1 + Σ(11 + 이름).
+
+| 경로 | 요청 | 응답 |
+|---|---|---|
+| `search` | `size i8(−1/4/8) · humans u8` = 2 B | `n u8` + 방마다 `id u32 · size u8 · locked u8 · hostName · nChara u8 · chara u8×n` |
+| `search-id` | `id u32 · humans u8` = 5 B | 같음 |
+| `create` | `size u8 · hasPw u8 · pw u16 · 프로필` = 4 + 프로필(사람 1명·이름 3 B = 19 B) | 성공 `0 · id u32 · token 16 B` = 21 B / 실패 `상태 u8` = 1 B |
+| `join` | `id u32 · hasPw u8 · pw u16 · 프로필` = 7 + 프로필 | 같음. 상태 1 missed · 2 full · 3 password · 4 members(캐릭터 겹침·8인 쿠파) |
+
+**socket.io**(네임스페이스 `/mpj-plaza`, 이벤트 이름 `m` 하나, 인자 = 바이너리 하나 — 첫 바이트 = 종류). socket.io 4 는 바이너리 이벤트마다 머리 글 패킷(`451-/mpj-plaza,["m",{"_placeholder":true,"num":0}]`, 약 50 B)이 따로 붙는다(엔진 고정 비용, 아래 크기는 실린 바이너리만). 모두 신뢰 전송(위치도 — 참가·데이터 때 한 번 보내는 SendRemotePlayerInfoAll 이 `volatile` 로 버려지면 가만히 있는 사람이 안 보여서, 시험에서 실제로 빠짐을 확인하고 바꿈; 0.2 s·움직일 때만이라 양이 작다).
+
+| 방향 | 종류 | 배치 | 크기 |
+|---|---|---|---|
+| C→S | 0x01 ENTER | token 16 B | 17 B |
+| C→S | 0x02 READY | — (플레이어 데이터 보냄 = SendNetworkPlayerDataJoin) | 1 B |
+| C→S | 0x03 LEAVE · 0x04 DISSOLVE · 0x05 START | — | 1 B |
+| C→S | 0x10 INFO | `slot u8 · x i16 · y i16 · z i16 · yaw u16` (위치 = round(m × 256), ±128 m·3.9 mm, yaw = rad/2π × 65536) | **10 B** |
+| C→S | 0x11 STAMP | `slot u8 · stamp u8` | 3 B |
+| S→C | 0x81 ROOM | `me u16(내 스테이션) · id u32 · size u8 · flags u8(열림·패스워드) · pw u16 · nStations u8` + 스테이션마다 `station u16 · flags u8(방장·준비) · 프로필` | 12 + Σ(3 + 프로필) |
+| S→C | 0x82 JOINED(남) | `station u16 · flags u8 · 프로필` | 3 + 프로필 |
+| S→C | 0x83 READY · 0x84 LEFT | `station u16` | 3 B |
+| S→C | 0x85 DISSOLVED · 0x86 STARTED | — | 1 B |
+| S→C | 0x87 ERROR | `code u8`(3·4·6·9 = B3·B4·B6·B9) | 2 B |
+| S→C | 0x90 REMOTE_INFO | `station u16` + INFO 의 slot 이후를 **그대로** | **12 B** |
+| S→C | 0x91 REMOTE_STAMP | `station u16 · slot u8 · stamp u8` | 5 B |
+
+- 캐릭터·이름·카드는 입장 때 프로필로 한 번만 보낸다(원본 SendRemotePlayerInfo 는 매번 캐릭터를 싣지만 바뀌지 않는 값은 빼라는 지시 [설계]). 회전은 광장에서 Y 축뿐이라 yaw 하나 [설계: 원본 쿼터니언]. slot = 이 기기 **사람 순번**(원본 PlayerManager 슬롯 +0x40.. 은 사람만 만든다).
+- 보내기 = 방 안(스테이션 ≥ 2)일 때만, 움직일 때(속도² > 0.1) 0.2 s, 멈추면 안 보냄, 참가·새 멤버 데이터 때 한 번 전부(5.5 정정) — plaza_3d.md §5.1 ⑥ 그대로.
+- 오류: HTTP 실패·시간 초과(20 s) → search = 빈 결과, create = createFailed, join = joinFailed missed. 소켓이 ROOM 전에 끊김/연결 실패 → createFailed / joinFailed missed. 방 안에서 끊김 → `error B3`. 혼자 START → `error B9`. 방장 끊김·해산 → DISSOLVED. 시작한 방은 방장이 떠나도 해산하지 않음. 전 세계 매칭(`matchmake`)은 이 서버에서 **지원하지 않음 → matchFailed** [설계: 범위 밖].
+- 로컬 여러 명: 한 기기 = 한 소켓·한 스테이션, 사람마다 `RoomMember`(같은 station, `slot` = 순번)로 펼친다. 방 인원 = 사람 수 합. 8인 방은 이 기기 사람 1명만(만들기·참가 모두, 원본 RoomType·JoinSession 규칙), 쿠파는 8인 금지.
+
+**케이스**
+
+| 케이스 | 통신 | 광장 3D | 방 인원 |
+|---|---|---|---|
+| 혼자(사람 1, CPU 없음) | 없음(메뉴를 열 때까지) | 1번만 | — |
+| 사람 1 + CPU 3 | 없음 | 1번만(CPU 는 광장에 안 나옴 [판독]) | 방에 들어가면 1 |
+| 사람 2~4 + CPU | 없음 | 사람 수만큼(2~4P 따라감) | 방에 들어가면 사람 수, 8인 방 불가 |
+| 사람 2 + 원격 2 | 방 입장부터 소켓 하나 | 내 2 + 원격 2(스테이션#순번) | 4/4 |
+| 사람 3 이 사람 2 방에(4인) | join → full | — | — |
+
 ### 9.4 파일과 구현 순서
 `types.ts`(9.2 계약·상수) → `fake.ts`(FakeOnline) → `flow.ts`(3.1·5.1~5.7 상태기계, 순수: 사건 `OEvent` 를 낸다) → `view.ts`(레이아웃 적용) → `widgets.ts`(대화상자·알림·키보드·텔롭) → `screen.ts`(틱 순서: 입력 → 어댑터 poll → 흐름 → 레이아웃 갱신 → 그리기) → `index.ts`. 시험 `web/tools/test_online.ts`(흐름 + 쓰는 라벨 존재).
 
@@ -358,7 +430,8 @@ interface OnlineAdapter {
 
 ## 11. 미확정 사항과 추가 분석에 필요한 근거
 1. ComUiDialogBox·UiNoticeModule·ComUiLoadingTelop·ComUiTimer·ComUiScrollBar 의 엔진 동작(main) — 웹은 9.3 단순 구현.
-2. 대기실 안내 버튼 → 동작 연결과 해산/나가기 확인 대화상자 호출 위치(SequenceMainMenu::MainImpl 8216 B 미판독).
+2. 대기실 안내 버튼 → 동작 연결과 해산/나가기 확인 대화상자 호출 위치(SequenceMainMenu::MainImpl 8216 B 미판독). — 정정(2026-10-08): 입력 → 람다 연결은 5.5 정정 줄로 해결. 해산·나가기 람다 본문(@0x71001cd350·@0x71001cd398 의 대상)은 미판독이라 대화상자 문구·기본 커서는 기존 그대로.
+10. (사용자 확인 필요, plaza-room) 방장 수락 왕복을 HTTP join 서버 검사 + 입장 표 20 s 로 대신함, 메뉴를 열 때 실제 접속을 하지 않음(원본 ConnectNpln 시점과 다름 — 사용자 지시), 캐릭터·이름·카드는 입장 때 한 번만 보내고 위치는 i16 양자화·yaw 만, `start` 를 WaitSync 대신 서버 방송 한 번으로 맞춤, B6 는 쓰지 않고 B9 = 혼자 START, 전 세계 매칭은 이 서버에서 미지원(matchFailed), 저장 데이터 없는 카드(업적 −1·랭크 0·시간 0 숨김·디자인 0·스티커 없음) 는 [설계]. 모드 메뉴(menu01) 이후 온라인 동기는 범위 밖(방 연결은 광장을 나가면 끊긴다).
 3. NetworkManager::OnReceive 의 참가 요청 수락/거절 조건(알림 Missed01~03 언제 나오는지), IsReadyNetworkPlayerData 뒷부분.
 4. 8인 탭 전환 시 사람 2명 이상일 때의 보조 람다 @0x71001cf738 본문.
 5. Scene::Params 를 덮어쓰는 데이터가 있는지(MATCHING_TIME 120·FAIL_LIMIT 2 는 기본값).

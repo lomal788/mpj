@@ -210,7 +210,7 @@ try {
       await page.waitForTimeout(500);
       await shot('06a_balloon_near');
       await tap(A, 300);
-      if (await wait('⑥ 출발 컷', "(d && d.parts && d.parts.balloon && d.parts.balloon.cam && d.camera && d.camera.driven) || (m && m.flow !== 'plaza')", 30000) && (await flow()) === 'plaza') {
+      if (await wait('⑥ 출발 컷', "(d && d.parts && d.parts.balloon && ((d.parts.balloon.cam && d.camera && d.camera.driven) || String(d.parts.balloon.phase).indexOf('session') === 0)) || (m && m.flow !== 'plaza')", 30000) && (await flow()) === 'plaza') {
         await page.waitForTimeout(2500);
         await shot('06b_takeoff_cut');
       }

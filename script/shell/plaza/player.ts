@@ -370,6 +370,11 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
     if (!v) lever = NO_LEVER;
     else forced = false;
   });
+  const offPlace = ctx.on('player:place', (v) => {
+    const r = v as { pos: THREE.Vector3; yawDeg?: number };
+    mover.place(r.pos, r.yawDeg ?? mover.yaw);
+    sync();
+  });
   const offLook = ctx.on('player:lookAt', (v) => {
     const r = v as { target: THREE.Vector3; immediate?: boolean };
     mover.lookAt(r.target, !!r.immediate);
@@ -409,6 +414,7 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
       offInput();
       offPlay();
       offLook();
+      offPlace();
       const i = ctx.actors.indexOf(actor);
       if (i >= 0) ctx.actors.splice(i, 1);
       chara.dispose();

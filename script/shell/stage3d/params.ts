@@ -3,7 +3,7 @@
  * - fres.params 를 재질마다 유니폼 값으로 둔다: material_utility_parameterN → P[N], material_utility_colorN → C[N], material_texture_srtN → srt[N](3×3), 그 밖은 raw.
  * - fmab json(프레임별로 구운 값, 성분 = 구조체 안 바이트 오프셋 03_graphics.md)이 그 값을 프레임마다 덮는다.
  * - TexSrt(0x00 모드, 0x04/0x08 스케일, 0x0C 회전, 0x10/0x14 이동) → 행렬: Maya 모드 식 [추정: Switch-Toolbox CalculateSRT2D 와 같은 꼴, 단위값이면 항등].
- * - 표준(그래프 아닌) 재질이 static_opt_texture_srt0 이면 기본 텍스처 좌표(vMapUv·노멀·거칠기·금속·발광·알파)에 srt0 을 곱한다 [추정: 어느 텍스처가 srt0 을 쓰는지].
+ * - static_opt_texture_srt0 이면(그래프 재질 포함) 표준 텍스처 좌표(vMapUv·노멀·거칠기·금속·발광·알파)에 srt0 을 곱한다 [판독 sg1: 분수 물기둥 jet_fountain00 "노멀 = 표준 _n0(srt0 스크롤 — fmab)"; 어느 표준 텍스처까지인지는 추정].
  */
 import * as THREE from 'three';
 import type { ClipHandle, Fres } from './types';

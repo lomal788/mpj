@@ -9,6 +9,7 @@ import * as THREE from 'three';
 import type { Spec } from '../charselect';
 import { Preview3D } from '../charselect/preview3d';
 import type { ClipHandle, StageModel } from '../stage3d';
+import { createGltfLoader } from '../stage3d/assetLoader';
 import { Heading, type HeadParams, type HeadTarget } from './heading';
 import { NpcLook } from './npcMaterial';
 import { attachToSocket } from './world';
@@ -447,8 +448,7 @@ export class NpcSystem {
     if (!a || !r) return;
     const b = r.getObjectByName(a.bone);
     if (!b) return;
-    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
-    const g = await new GLTFLoader().loadAsync(this.ctx.assetUrl(`plaza/world/chara/${a.glb}`));
+    const g = await createGltfLoader().loadAsync(this.ctx.assetUrl(`plaza/world/chara/${a.glb}`));
     const hat = g.scene;
     hat.position.set(a.t[0], a.t[1], a.t[2]);
     hat.rotation.set(THREE.MathUtils.degToRad(a.rDeg[0]), THREE.MathUtils.degToRad(a.rDeg[1]), THREE.MathUtils.degToRad(a.rDeg[2]), 'ZYX');

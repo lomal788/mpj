@@ -127,6 +127,48 @@ def cube_mean(name):
     return [round(float(v), 5) for v in acc / len(meta["files"])]
 
 
+def read_hdr(p):
+    d = open(p, "rb").read()
+    i = d.index(bytes([10, 10]))
+    rest = d[i + 2:]
+    j = rest.index(bytes([10]))
+    dims = rest[:j].decode().split()
+    h, w = int(dims[1]), int(dims[3])
+    data = rest[j + 1:]
+    out = np.zeros((h, w, 4), np.uint8)
+    pos = 0
+    for y in range(h):
+        if data[pos] == 2 and data[pos + 1] == 2:
+            pos += 4
+            for c in range(4):
+                x = 0
+                while x < w:
+                    n = data[pos]
+                    pos += 1
+                    if n > 128:
+                        n -= 128
+                        out[y, x:x + n, c] = data[pos]
+                        pos += 1
+                    else:
+                        out[y, x:x + n, c] = np.frombuffer(data[pos:pos + n], np.uint8)
+                        pos += n
+                    x += n
+        else:
+            out[y] = np.frombuffer(data[pos:pos + w * 4], np.uint8).reshape(w, 4)
+            pos += w * 4
+    e = out[..., 3].astype(int)
+    f = np.where(e > 0, np.ldexp(1.0, e - 136), 0)
+    return out[..., :3] * f[..., None]
+
+
+def cube_hdr_mean(name):
+    fs = [os.path.join(OUT, "tex", f) for f in (load_json(os.path.join(GFX, s, "tex", name + ".json")) for s in ("menu00", "menu_common") if os.path.exists(os.path.join(GFX, s, "tex", name + ".json"))).__next__().get("hdrFiles", [])]
+    if not fs:
+        return 0.0
+    a = np.concatenate([read_hdr(f).reshape(-1, 3) for f in fs])
+    return float((a @ np.array([0.2126, 0.7152, 0.0722])).mean())
+
+
 def parse_obj(p):
     v, idx = [], []
     with open(p, encoding="utf-8") as f:
@@ -269,6 +311,13 @@ def main():
                          "coreRadius": plp["point_light_core_radius"]}],
     }
 
+    common_rad = env["ibl"]["common"][0]
+    base = cube_hdr_mean(common_rad)
+    for t, te in textures.items():
+        if te.get("cube") and t != common_rad and t.endswith("_rad"):
+            m = cube_hdr_mean(t)
+            if m > 0:
+                te["specNorm"] = round(base / m, 5)
     graphs = plaza_graph_web.build()
     for g in graphs:
         for t in g["samplers"].values():

@@ -3,11 +3,14 @@
  * 계약: ../types.ts(A). 갈래 신호(SHARED 합의, docs/shell/plaza_3d.md §5.1):
  *   듣기 'interact:telop' {area, visible, detail?} · 'interact:decide' {result}(3 = 친구 매치 메뉴) · 'interact:pop' {visible, x, y}(레이아웃 좌표) 또는 {visible, ndc:[x,y]} · 'ui:mainLayout' boolean
  *   내기 'ui:friendMenu' boolean · 'ui:stampList' {slot, open} · 'net:remote' {station, slot, chara 'pcNN', pos, quat, mode, speed} · 'net:remoteLeft' {station} · 'net:session' boolean(방 접속 여부가 바뀔 때)
- * 시험값(URL): online=off 이면 가짜 온라인 없음, join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7), first=1.
+ *   대기실(docs/shell/plaza_3d.md §5.2): 내기 'net:lobby' {host, ready} · 'net:started'(PlaySession — 모두 모드 메뉴로), 듣기 'net:playSession'(방장 기구 결정)
+ * 시험값(URL): online=off 이면 가짜 온라인 없음, online=io[&server=http://호스트:포트] = 실제 방 서버(server/main.ts, HTTP + socket.io 바이너리, 기본 = 페이지와 같은 출처), join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7), first=1.
  */
+import * as THREE from 'three';
 import { MgmSound } from '../../mgmcommon';
-import { applyOnlineExtra, CHARA_PC, FakeOnline, ONLINE_FACES, ONLINE_PART, type OnlineAdapter, type OnlineExtra } from '../../online';
+import { applyOnlineExtra, CHARA_PC, defaultCard, FakeOnline, ONLINE_FACES, ONLINE_PART, SocketIoOnline, type OnlineAdapter, type OnlineExtra } from '../../online';
 import { PLAZA_BTN, type PlazaActor, type PlazaContext, type PlazaPad, type PlazaPart, type PlazaPartFactory } from '../types';
+import { PLAZA_CARD_PART, type PlazaCardExtra } from './card';
 import { applyPlazaUiExtra, PLAZA_UI_PART, type PlazaUiExtra } from './data';
 import type { Quat, Vec3 } from './net';
 import { popScreenPos } from './telop';
@@ -15,6 +18,9 @@ import { PlazaUi, type PlazaUiPlayer } from './ui';
 import { PlazaUiView } from './view';
 
 const STICK_ON = 0.5;
+/** 가짜 원격 걷기 몸 크기 = 마리오 bubble_radius·키(plaza_3d.md §8 (B) 맵 충돌) [근사] */
+const FAKE_RADIUS = 0.9;
+const FAKE_HEIGHT = 1.6;
 const DT = Math.fround(1 / 60);
 
 /** PlazaPad(NPAD 비트·스틱 −1..1) → bex 비트(online_page toBex 와 같은 규칙) */
@@ -53,11 +59,13 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
   ctx.overlay.append(canvas);
   const url = (p: string): string => ctx.assetUrl(`mgmcommon/${p}`);
-  const view = await PlazaUiView.create(canvas, url, [ONLINE_PART, ONLINE_FACES, PLAZA_UI_PART]);
+  const view = await PlazaUiView.create(canvas, url, [ONLINE_PART, ONLINE_FACES, PLAZA_UI_PART, PLAZA_CARD_PART]);
   const extra = (await (await fetch(url(PLAZA_UI_PART))).json()) as PlazaUiExtra;
+  const cardExtra = (await (await fetch(url(PLAZA_CARD_PART))).json()) as PlazaCardExtra;
   const onlineExtra = (await (await fetch(url(ONLINE_PART))).json()) as OnlineExtra;
   applyOnlineExtra(view.spec, onlineExtra);
   applyPlazaUiExtra(view.spec, extra);
+  for (const [k, v] of Object.entries(cardExtra.texts)) if (!(k in view.spec.texts)) view.spec.texts[k] = v;
 
   let audio: AudioContext | null = null;
   const buffers = new Map<string, Promise<AudioBuffer | null>>();
@@ -99,20 +107,29 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
     return q.has(k) && Number.isFinite(v) ? v : d;
   };
   const self = locals()[0];
-  const net: OnlineAdapter = new FakeOnline({
+  const selfInfo = { name: self?.name ?? 'Player', chara: self?.chara ?? 0, humans: Math.max(1, locals().filter((p) => !p.isCom).length) };
+  const selfCard = defaultCard(`${selfInfo.name}-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e9).toString(36)}`, selfInfo.name);
+  const net: OnlineAdapter = q.get('online') === 'io' ? new SocketIoOnline({ base: (q.get('server') ?? '').replace(/\/$/, ''), self: { ...selfInfo, card: selfCard } }) : new FakeOnline({
     rooms: q.get('online') === 'off' ? 0 : num('rooms', 7),
     joinInterval: num('join', 3),
     leaveAfter: num('leave', 0),
     error: 'none',
     seed: 20261008,
     matchSec: 4,
-    self: { name: self?.name ?? 'Player', chara: self?.chara ?? 0, humans: Math.max(1, locals().filter((p) => !p.isCom).length) },
+    self: { ...selfInfo, card: selfCard },
     remoteMove: q.get('online') !== 'off',
+    walk: (p, m) => {
+      const col = ctx.world.collider;
+      const pos = new THREE.Vector3(p[0], p[1], p[2]);
+      const mv = col.collide(pos, new THREE.Vector3(m[0], 0, m[1]), FAKE_RADIUS, FAKE_HEIGHT);
+      const g = col.groundHeight(p[0] + mv.x, p[2] + mv.z, p[1]);
+      return g && g.y > p[1] - 1.5 ? [p[0] + mv.x, g.y, p[2] + mv.z] : p;
+    },
     stampEvery: q.get('online') === 'off' ? 0 : num('stamp', 6),
   });
 
   const prevHold = new Map<number, number>();
-  const ui = new PlazaUi({ host: view, extra, net, players: locals, pads: { poll: () => ({ hold: 0, trig: 0 }) }, sound, firstOnline: q.get('first') === '1' });
+  const ui = new PlazaUi({ host: view, extra, net, players: locals, pads: { poll: () => ({ hold: 0, trig: 0 }) }, sound, firstOnline: q.get('first') === '1', card: cardExtra, selfCard });
 
   const offs = [
     ctx.on('interact:telop', (v) => {
@@ -130,6 +147,9 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
     ctx.on('ui:mainLayout', (v) => {
       ui.wantMain = !!v;
     }),
+    ctx.on('net:playSession', () => {
+      ui.playSession();
+    }),
   ];
 
   const lastPos = new Map<number, Vec3>();
@@ -144,13 +164,19 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
     ui.out.length = 0;
     ui.tick(DT, pads);
     const actors = ctx.actors.filter((a: PlazaActor) => (a.kind === 'input' || a.kind === 'follow') && a.slot < 4);
+    const all = ui.takeSendAll();
+    const order = locals()
+      .filter((p) => !p.isCom)
+      .map((p) => p.slot);
     for (const a of actors) {
+      const k = order.indexOf(a.slot);
+      if (k < 0) continue;
       const pos: Vec3 = [a.pos.x, a.pos.y, a.pos.z];
-      const lp = lastPos.get(a.slot) ?? pos;
-      lastPos.set(a.slot, pos);
+      const lp = lastPos.get(k) ?? pos;
+      lastPos.set(k, pos);
       const vel = [(pos[0] - lp[0]) / DT, (pos[1] - lp[1]) / DT, (pos[2] - lp[2]) / DT, 0];
       const quat: Quat = [0, Math.sin(a.yaw / 2), 0, Math.cos(a.yaw / 2)];
-      ui.sendLocal(DT, a.slot, charaIndex(a.chara), vel, pos, quat);
+      ui.sendLocal(DT, k, charaIndex(a.chara), vel, pos, quat, all);
     }
     for (const e of ui.out) {
       if (e.t === 'friendMenu') ctx.emit('ui:friendMenu', e.open);
@@ -158,6 +184,8 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
       else if (e.t === 'remote') ctx.emit('net:remote', { station: e.station, slot: e.slot, chara: CHARA_PC[e.chara] ?? CHARA_PC[0], pos: e.pos, quat: e.quat, mode: e.mode, speed: e.speed });
       else if (e.t === 'remoteLeft') ctx.emit('net:remoteLeft', { station: e.station });
       else if (e.t === 'session') ctx.emit('net:session', e.on);
+      else if (e.t === 'lobby') ctx.emit('net:lobby', { host: e.host, ready: e.ready });
+      else if (e.t === 'started') ctx.emit('net:started', true);
     }
   };
 
@@ -174,11 +202,13 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
       view.begin();
       for (const [inst, m] of ui.drawList()) view.draw(inst, m);
       ui.online?.draw();
+      for (const [inst, m] of ui.cardDrawList()) view.draw(inst, m);
       view.end();
     },
     debug: () => ui.debug(),
     dispose(): void {
       for (const off of offs) off();
+      net.disconnect();
       view.dispose();
       canvas.remove();
       void audio?.close();

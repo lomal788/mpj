@@ -128,6 +128,8 @@ export class InteractSystem {
   private popShown = false;
   private look: THREE.Object3D | null | undefined = undefined;
   online = false;
+  host = false;
+  netReady = false;
   friendMenu = false;
   decided: { result: number; target: string; frame: number }[] = [];
   private returnAt = -1;
@@ -206,7 +208,7 @@ export class InteractSystem {
     this.ctx.emit('ui:mainLayout', false);
     this.ctx.emit('interact:decide', { result, target });
     this.popShown = false;
-    if (result !== RESULT.BALLOON) this.returnAt = this.frames + 1;
+    if (result !== RESULT.BALLOON && result !== RESULT.OVERVIEW) this.returnAt = this.frames + 1;
   }
 
   /** 광장으로 돌아옴(상태 2) */
@@ -231,7 +233,12 @@ export class InteractSystem {
     if (this.friendMenu) return;
     const p = this.player();
     if (!p) return;
-    const j = judge(p.pos, this.pts, this.humans(), this.online);
+    if (this.online && !this.host) {
+      if (this.popShown) this.ctx.emit('interact:pop', { visible: false, x: 0, y: 0 });
+      this.popShown = false;
+      return;
+    }
+    const j = judge(p.pos, this.pts, this.humans(), this.online, this.netReady);
     this.judge = j;
     this.mcReact(j, p);
     const pop = popPosition(p.pos, p.height, this.ctx.world.stage.camera);
@@ -276,12 +283,21 @@ export const createInteract: PlazaPartFactory = async (ctx: PlazaContext): Promi
   const sys = new InteractSystem(ctx, npcSystemOf(ctx));
   registry.set(ctx, sys);
   const offs = [
+    ctx.on('overview:end', () => {
+      if (sys.state === RESULT.OVERVIEW) sys.resume();
+    }),
     ctx.on('ui:friendMenu', (v) => {
       sys.friendMenu = !!v;
       ctx.emit('player:input', !v);
     }),
     ctx.on('net:session', (v) => {
       sys.online = !!v;
+      if (!v && sys.state === RESULT.BALLOON) sys.resume();
+    }),
+    ctx.on('net:lobby', (v) => {
+      const l = v as { host: boolean; ready: boolean };
+      sys.host = !!l.host;
+      sys.netReady = !!l.ready;
     }),
   ];
   return {

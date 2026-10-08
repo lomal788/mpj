@@ -9,3 +9,5 @@ export * from './screen';
 export * from './types';
 export * from './view';
 export * from './widgets';
+export * from './socketio';
+export * from './wire';

@@ -67,6 +67,7 @@ export class OnlineFlow {
   room: RoomState | null = null;
   private inbox: OnlineEvent[] = [];
   private pendingError: string | null = null;
+  private playRequested = false;
   private busy = 0;
   private guideOn: string[] | null = null;
   private firstOnline: boolean;
@@ -532,6 +533,19 @@ export class OnlineFlow {
         this.lobby.finish();
         return 'menu';
       }
+      const started = this.inbox.findIndex((e) => e.t === 'started');
+      if (started >= 0) {
+        const e = this.inbox.splice(started, 1)[0] as Extract<OnlineEvent, { t: 'started' }>;
+        this.mark('playSession');
+        return yield* this.playTail(e.room);
+      }
+      if (this.playRequested) {
+        this.playRequested = false;
+        if (room.host && !this.dialog.working && this.info.life.st === -1) {
+          const r = yield* this.playSession();
+          if (r) return r;
+        }
+      }
       if (this.dialog.working || this.info.life.st !== -1 || !this.lobby.life.idle) continue;
       const t = this.io.trig;
       if (room.host) {
@@ -592,8 +606,18 @@ export class OnlineFlow {
       yield* this.showError('sys_error_B3');
       return 'error';
     }
-    const ready = e.room.members.filter((m) => m.ready).length;
-    if (ready < 2 || e.room.members.length < ready) {
+    return yield* this.playTail(e.room);
+  }
+
+  /** 광장 기구(SelectedBalloonImpl 세션 분기)가 부르는 PlaySession — 대기실 흐름이 다음 틱에 방장이면 playSession [판독 online.md 5.6 정정] */
+  requestPlay(): void {
+    this.playRequested = true;
+  }
+
+  /** PlaySessionFiber 공통 끝(방장·손님 같음, 손님은 메시지 7 = started 로 들어옴) [판독 online.md 5.6 정정] */
+  private *playTail(room: RoomState): Flow<string> {
+    const ready = room.members.filter((m) => m.ready).length;
+    if (ready < 2 || room.members.length < ready) {
       yield* this.showError('sys_error_B3');
       return 'error';
     }

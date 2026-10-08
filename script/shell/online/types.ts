@@ -11,6 +11,37 @@ export interface OnlineSelf {
   /** PlayerCharacterID 0..21 */
   chara: number;
   humans: number;
+  /** 마리오 파티 카드(online.md 5.8) */
+  card?: CardData;
+  /** 이 기기 사람들(슬롯 순, 첫 사람 = name·chara) — 방 서버 프로필(online.md 9.5) */
+  players?: { name: string; chara: number; card?: CardData }[];
+}
+
+/** 카드 스티커 한 칸(online.md 5.8: id ≥ 0x5f 숨김, x·y −32767..32767, rot·scale 0..255) */
+export interface CardSticker {
+  id: number;
+  x: number;
+  y: number;
+  rot: number;
+  scale: number;
+}
+
+/** bq::CardData 의 웹 표현(online.md 5.8) */
+export interface CardData {
+  id: string;
+  name: string;
+  /** 업적 ID, 무효(−1) = im_achieve401_name */
+  achievement: number;
+  rank: number;
+  /** 플레이 시간(초), 0 = 숨김 */
+  time: number;
+  design: number;
+  stickers: CardSticker[];
+}
+
+/** 저장 데이터 없는 새 카드 = GetNetworkPlayerCardData 빈 카드 기본값 [설계, online.md 9.5] */
+export function defaultCard(id: string, name: string): CardData {
+  return { id, name, achievement: -1, rank: 0, time: 0, design: 0, stickers: [] };
 }
 
 export interface RoomMember {
@@ -21,6 +52,9 @@ export interface RoomMember {
   /** 플레이어 데이터 받음(GetNetworkPlayerDataCount 의 상태 2) */
   ready: boolean;
   local: boolean;
+  card?: CardData;
+  /** 스테이션 안 사람 순번(로컬 여러 명, online.md 9.5) */
+  slot?: number;
 }
 
 /** 검색 결과 한 행(online.md 4.8 거르기 뒤) */
@@ -55,7 +89,7 @@ export type OnlineEvent =
   | { t: 'joined'; room: RoomState }
   | { t: 'joinFailed'; reason: JoinFailReason }
   | { t: 'memberJoined'; member: RoomMember }
-  | { t: 'memberReady'; station: string }
+  | { t: 'memberReady'; station: string; card?: CardData }
   | { t: 'memberLeft'; station: string }
   | { t: 'dissolved' }
   | { t: 'started'; room: RoomState }
@@ -87,6 +121,8 @@ export interface OnlineAdapter {
   sendPlayerInfo?(slot: number, chara: number, pos: [number, number, number], quat: [number, number, number, number]): void;
   /** 광장 UiStamp 보내기 [판독 plaza_3d.md §5.1 ②] */
   sendStamp?(slot: number, stamp: number, chara: number): void;
+  /** 온라인 흐름의 self(이 기기 사람들·캐릭터 다시 고르기)를 어댑터와 함께 쓴다(online.md 9.5) */
+  setSelf?(self: OnlineSelf): void;
 }
 
 /** PlayerCharacterID → 얼굴 텍스처 이름(characterlist.json 순서, SHARED [scene]) */

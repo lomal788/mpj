@@ -21,6 +21,7 @@
  *   - FLCT·FLIM·사용자 데이터 애니, 정렬(ali1)·스크롤(scr1) 페인은 다루지 않는다.
  */
 import * as THREE from 'three';
+import { textureFromImage, type UiImage } from '../shell/stage3d/assetLoader';
 import { SCREEN_H, SCREEN_W } from './renderer';
 
 export type Rgba = [number, number, number, number];
@@ -510,7 +511,7 @@ export interface LytResources {
   telop: LytTelopFont | null;
 }
 
-type TexImageSource = HTMLImageElement | HTMLCanvasElement | ImageBitmap;
+type TexImageSource = UiImage | HTMLCanvasElement | ImageBitmap;
 
 /** 레이아웃 그리기(화면 밖 WebGL → HUD 2D 캔버스) */
 export class LytRenderer {
@@ -547,7 +548,7 @@ export class LytRenderer {
     if (t) return t;
     const img = this.res.images.get(name);
     if (!img) return this.white;
-    t = new THREE.Texture(img);
+    t = textureFromImage(img);
     t.flipY = false;
     t.wrapS = WRAP[wrapU] ?? THREE.ClampToEdgeWrapping;
     t.wrapT = WRAP[wrapV] ?? THREE.ClampToEdgeWrapping;

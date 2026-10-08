@@ -52,11 +52,13 @@
 |---|---|
 | `loadModel(name, { visible?, instance? })` | 같은 glb 를 여러 번 올림(MapStructure 의 `Balloon_*_00/_01`, 갈매기 3마리). 두 번째부터 `SkeletonUtils.clone`, 재질 공유. 모델 조회 키 = instance |
 | `assetUrl(path)` | 무대 폴더 기준 URL |
-| `MeshCollider`(`meshCollider.ts`) | `Collider` 구현: 원본 삼각 메시(`{vertices, indices}`)·XZ 2 m 격자. 지면 = 수직선 교점 중 `fromY + COLLIDER_STEP(0.5)` 아래 가장 높은 걸을 수 있는 면(법선 y ≥ cos `COLLIDER_SLOPE_LIMIT_DEG`(45°)), 벽 = 원기둥 대 가파른 면 수평 밀어내기 3회. `merge` 로 여러 개 합침. 계단·경사 값은 PhysX 컨트롤러 미판독 [근사] |
+| `MeshCollider`(`meshCollider.ts`) | `Collider` 구현: 원본 삼각 메시(`{vertices, indices}`)·XZ 2 m 격자. 지면 = 수직선 교점 중 `fromY + COLLIDER_STEP(0.5)` 아래 가장 높은 **위향 면**(ny > 0.05; 아래향 밑판 제외, 가파른 위향 면도 STEP 안이면 디딤), 벽 = 원기둥 대 가파른 면 수평 밀어내기 3회, 아랫면은 발 + STEP 에서 시작하는 반구(PhysX autostep 근사). `merge` 로 여러 개 합침. 계단·경사 값은 PhysX 컨트롤러 미판독 [근사] |
 | 재질 애니(`materialAnim.ts`) | fmab json 값 중 표준 재질이 쓰는 것(texture_srt0..3 → 텍스처 offset/repeat/rotation, material_mul_base_color·emissive 등)을 프레임마다 그 재질에 넣는다. 셰이더 그래프 재질은 graph.ts 유니폼으로 |
 | 셰이더 그래프(`graph.ts`) | 판독 식(manifest `graphs`, tools/analysis/plaza_graph_web.py 가 정리)을 재질 이름(+모델 이름)으로 찾아 three 표준 재질 onBeforeCompile 에 끼움. 이름: uv0..3·c0..2(_C0.._C2)·pos·nrm·worldPos·nrmW / P0..7·C0..3·srtN(uv)·material_*·ENV0..3·mpjMs·T("샘플러", uv)(SNORM 은 2x−1) / Nw·NgW·viewDir·sunDir·Tw·tw·base. 정점 오프셋 world 공간은 모델 행렬 역으로. 조각 식은 emissivemap 뒤 한곳(diffuseColor·roughness·metalness·emissive·normal), ao 는 간접 확산 ×ao·반사 ×min(ao,1). `graphSource(def)` 로 셰이더 조각만 만들 수 있어 시험이 GLSL 컴파일을 확인한다 |
 | 굴절(`patchRefraction`) | static_opt_refraction_enable 1: α = refraction_opacity ↔ rim_opacity·(1−N·V)^rim_power, 확산 ×α + 반사·발광 가산(미리 곱한 알파), 굴절 왜곡 없음 [근사] |
 | shading_type·state_type | 0 = 무조명(`patchUnlit`), 2 = SSS 확산(`patchSss`, sss_curvature·sss_diffusion_map). state 2 = 더하기, 4 = 곱하기 블렌드(`MaterialSetup.blend`) [판독: plaza_3d.md §6.8] |
+| `warmup()` | 숨은·화면 밖 메시까지 compileAsync + initTexture + 한 번 그리기(그림자·후처리) — 첫 등장 렉 제거 |
+| 물·굴절·정점색·안개 | `patchWater`(물 합성 근사)·`patchRefraction`·`patchVertexColor`(mul_vertex_base_color)·`material.fog = static_opt_fog` |
 | 전역 유니폼 `stage.globals` | time(초)·ms(원본 World[0x4] 자리)·sunDir(평행광 방향)·env(env_utility_parameterN, env fmab 가 움직임) |
 | 포스트(`post.ts`) | 원본 bex::gfx 포스트 판독식(plaza_3d.md §6.13): HDR → 블룸(first_down·down 13탭·up 7/9·2/3, 밉 6) → 합성(+블룸·intensity, x = c·exposure + offset, 톤맵 종류 0~4, 비네트, g = t^0.4545898, 3D LUT) → FXAA(마지막 [근사]). `post.set({bloom, lut})` 시험 훅 |
 | 하늘(`sky`) | env.sky: 카메라를 따라가는 하늘 모델(glb, 변환기 --all) + 판독식 ShaderMaterial(시선 방향 → 방위각·천정각 uv, 무조명) |

@@ -9,6 +9,8 @@
  * 바꾼 것:
  * - 텍스처 색인은 무대 manifest.textures(tools/analysis/mgmet_world_assets.py).
  * - 셰이더 그래프(static_opt_shader_graph 1) 재질 [근사]: 그래프 식은 읽지 않고 glb 알베도·라이트맵만 쓴다(docs/shell/mgmet_3d.md §2·§8).
+ * - 국소 반사 큐브(specular_ibl_type 2) + specular_ibl_normalization_enable [근사]: 원본은 국소 큐브를 장면 조도에 맞춰 정규화한다(식 미판독). 웹은
+ *   국소 큐브 평균 휘도를 공통 반사 큐브(menu00_plaza_rad) 평균에 맞추는 배율(manifest textures[].specNorm)을 envMapIntensity 로 곱한다.
  * - 라이트맵 그림자(shadow_texture2d, sdw) [근사]: 원본은 정적 그림자 마스크로 평행광을 가린다고 보고 [추정: 슬롯 이름],
  *   평행광 직접광에 sdw 텍스처의 R 을 곱한다(UV = bake_texture_uv_index).
  * - punchthrough(render_state_display_face·alpha test): 변환기가 glb alphaMode MASK·doubleSided 로 넣은 값을 그대로 쓴다.
@@ -16,6 +18,7 @@
 import * as THREE from 'three';
 import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
+import { loadTexture } from './assetLoader';
 import { applyGraph, type GraphDef, type GraphTex } from './graph';
 import { initParams, patchSrt0 } from './params';
 import type { StageGlobals } from './stage';
@@ -123,31 +126,52 @@ export function patchSss(m: StdMat, curv: THREE.Texture, diff: THREE.Texture, bl
 }
 
 /**
- * static_opt_refraction_enable 1 (굴절) [근사]: 원본은 뒤 장면색을 굴절(uv 오프셋 0.03)해 읽고, 불투명도 = refraction_opacity, refraction_rim 이면 가장자리에서
- * rim_opacity·(1−N·V)^rim_power 쪽으로 섞어 표면색과 합성한다 [판독 sg1: jet_fountain01 p386 "표준 굴절(opacity·rim) 합성, 그 위에 emissive 가산" + 재질 값].
- * 웹은 굴절 왜곡을 빼고 뒤 장면을 그대로 비치게 한다: (확산 + 반사) × α + 발광(가산), 미리 곱한 알파 블렌드(판독 순서: 굴절 합성 → 그 위에 발광).
+ * static_opt_refraction_enable 1 (굴절) — 원본 forward_plus p386(분수 물기둥 jet_fountain01) SASS [판독: analysis/mat/plaza/sass/menu00__forward_plus__p386.fs.txt 330~584]:
+ * 장면 색 버퍼(capture_color_buffer, Layer 핸들 0x570)를 화면 좌표 + 굴절 오프셋으로 읽는다. 오프셋 = refract(시선, N, 1/ior) 의 xy × refraction_uv_offset_scale,
+ * 성분마다 ±refraction_uv_offset_limit 로 자름, 표본 LOD = roughness × Layer[0x4d0]. 불투명도 a = refraction_opacity ↔ rim_opacity 를 (1−N·V)^rim_power 로 섞음,
+ * 출력 = 장면·(1 − a) + 확산·a + 반사(직접·IBL, a 를 곱하지 않음 — 끝부분 r16·r7 은 확산 쪽만, 반사 r0·r33 은 따로 더함) + 발광(c0.r·C0, 그 위 가산).
+ * 웹: three 의 투과 패스(불투명 장면을 transmissionSamplerMap 에 그린 뒤 투과 재질을 그림 = 원본 색 버퍼 캡처와 같은 자리)를 쓰고, transmission_fragment 를 위 식으로 바꾼다.
+ * LOD 는 three getTransmissionSample(거칠기·ior 로 밉 고름)로 [근사: Layer[0x4d0] 값 미확보], 굴절 오프셋의 화면 y 부호는 [추정].
  */
-export function patchRefraction(m: StdMat, opacity: number, rimOpacity: number, rimPower: number, rim: boolean): void {
+export function patchRefraction(m: THREE.MeshPhysicalMaterial, opacity: number, rimOpacity: number, rimPower: number, rim: boolean, ior: number, scale: number, limit: number): void {
   const prev = m.onBeforeCompile;
   const prevKey = m.customProgramCacheKey;
-  m.transparent = true;
-  m.depthWrite = false;
+  m.transparent = false;
+  m.depthWrite = true;
   m.alphaTest = 0;
-  m.blending = THREE.CustomBlending;
-  m.blendEquation = THREE.AddEquation;
-  m.blendSrc = THREE.OneFactor;
-  m.blendDst = THREE.OneMinusSrcAlphaFactor;
+  m.blending = THREE.NormalBlending;
+  m.transmission = 1;
+  m.thickness = 0;
+  m.ior = Math.max(1, Math.min(2.333, ior));
+  const f = (v: number): string => v.toFixed(6);
   m.onBeforeCompile = (sh, r) => {
     prev.call(m, sh, r);
-    const a = rim
-      ? `mix( ${opacity.toFixed(5)}, ${rimOpacity.toFixed(5)}, pow( 1.0 - saturate( dot( normal, normalize( vViewPosition ) ) ), ${rimPower.toFixed(5)} ) )`
-      : opacity.toFixed(5);
+    const a = rim ? `mix( ${f(opacity)}, ${f(rimOpacity)}, pow( 1.0 - saturate( dot( normal, normalize( vViewPosition ) ) ), ${f(rimPower)} ) )` : f(opacity);
     sh.fragmentShader = sh.fragmentShader.replace(
-      '#include <opaque_fragment>',
-      `{ float mpjA = ${a}; outgoingLight = ( totalDiffuse + totalSpecular ) * mpjA + totalEmissiveRadiance; diffuseColor.a = mpjA; }\n#include <opaque_fragment>`,
+      '#include <transmission_fragment>',
+      `#ifdef USE_TRANSMISSION
+{
+  float mpjA = ${a};
+  vec3 mpjR = refract( - normalize( vViewPosition ), normal, ${f(1 / Math.max(ior, 1e-3))} );
+  vec2 mpjOff = clamp( mpjR.xy * ${f(scale)}, vec2( - ${f(limit)} ), vec2( ${f(limit)} ) );
+  vec4 mpjClip = projectionMatrix * vec4( - vViewPosition, 1.0 );
+  vec2 mpjUv = mpjClip.xy / mpjClip.w * 0.5 + 0.5 + mpjOff;
+  vec3 mpjScene = getTransmissionSample( mpjUv, material.roughness, ${f(m.ior)} ).rgb;
+  totalDiffuse = mpjScene * ( 1.0 - mpjA ) + totalDiffuse * mpjA;
+}
+#endif`,
     );
   };
-  m.customProgramCacheKey = () => `${prevKey.call(m)}|mpj-refr:${opacity}:${rimOpacity}:${rimPower}:${rim}`;
+  m.customProgramCacheKey = () => `${prevKey.call(m)}|mpj-refr:${opacity}:${rimOpacity}:${rimPower}:${rim}:${ior}:${scale}:${limit}`;
+}
+
+/** 표준 재질 → 물리 재질(투과 버퍼를 쓰려고) — 표준 필드·userData 를 그대로 옮긴다 */
+export function toPhysical(m: StdMat): THREE.MeshPhysicalMaterial {
+  const p = new THREE.MeshPhysicalMaterial();
+  THREE.MeshStandardMaterial.prototype.copy.call(p, m);
+  p.userData = m.userData;
+  p.name = m.name;
+  return p;
 }
 
 /** static_opt_mul_vertex_base_color 1: 기본색(rgba)에 정점색 _c{index} 를 곱한다 [데이터: 옵션 이름·forward_plus 표준 경로, 판독 sg2 lambert1 "base_color·mul_base_color·c0.rgb, α = c0.a·mul_opacity"] */
@@ -266,7 +290,7 @@ export class MaterialSetup {
         const e = this.index[name];
         if (!e || e.cube || !e.files.length) return null;
         const url = this.assets.url(`tex/${e.files[0]}`);
-        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : await new THREE.TextureLoader().loadAsync(url);
+        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : await loadTexture(url);
         t.flipY = false;
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         if (!e.files[0].endsWith('.hdr') && e.srgb) t.colorSpace = THREE.SRGBColorSpace;
@@ -308,15 +332,21 @@ export class MaterialSetup {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
       const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      for (const m of mats) {
+      for (let mi = 0; mi < mats.length; mi++) {
+        let m = mats[mi];
         const f = fresOf(m);
         if (!f) continue;
+        if (opt(f, 'refraction_enable') === '1' && (m as StdMat).isMeshStandardMaterial && !(m as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial && !this.prepared.has(m)) {
+          m = toPhysical(m as StdMat);
+          if (Array.isArray(mesh.material)) mesh.material[mi] = m;
+          else mesh.material = m;
+        }
         mesh.castShadow = Number(f.renderInfo?.render_info_draw_shadowmap?.[0] ?? 0) >= 1;
         mesh.receiveShadow = opt(f, 'receive_shadow') === '1';
         if (this.prepared.has(m) || !(m as StdMat).isMeshStandardMaterial) continue;
         this.prepared.add(m);
         const mp = initParams(m, f);
-        if (opt(f, 'shader_graph') !== '1' && opt(f, 'texture_srt0') === '1') patchSrt0(m as StdMat, mp);
+        if (opt(f, 'texture_srt0') === '1') patchSrt0(m as StdMat, mp);
         if (opt(f, 'shader_graph') === '1') {
           const cands = this.graphs[f.name ?? m.name] ?? [];
           const def = cands.find((d) => modelName !== undefined && d.models.includes(modelName)) ?? cands[0];
@@ -367,7 +397,10 @@ export class MaterialSetup {
     else if (spec === '2') {
       const name = slotTexture(f, 'local_specular_texturecube');
       const t = name ? await this.localRad(name) : null;
-      if (t) m.envMap = t;
+      if (t) {
+        m.envMap = t;
+        if (opt(f, 'specular_ibl_normalization_enable') === '1') m.envMapIntensity = (name && (this.index[name] as TexEntry & { specNorm?: number })?.specNorm) || 1;
+      }
     }
     this.patch(m, noDirect, irr, sdw, uv);
     if (opt(f, 'mul_vertex_base_color') === '1' && opt(f, 'shader_graph') !== '1') patchVertexColor(m, Number(opt(f, 'mul_vertex_base_color_index') ?? 0));
@@ -379,13 +412,16 @@ export class MaterialSetup {
       const k = opt(f, 'water_muddy_enable') === '1' ? Math.min(1, range >= 10 ? 1 : 1 / Math.max(range, 1)) : 0;
       patchWater(m, (p.material_water_opacity?.value as number | undefined) ?? 1, muddy, k);
     }
-    if (opt(f, 'refraction_enable') === '1')
+    if (opt(f, 'refraction_enable') === '1' && (m as unknown as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial)
       patchRefraction(
-        m,
+        m as unknown as THREE.MeshPhysicalMaterial,
         (p.material_refraction_opacity?.value as number) ?? 0,
         (p.material_refraction_rim_opacity?.value as number) ?? 1,
         (p.material_refraction_rim_power?.value as number) ?? 1,
         opt(f, 'refraction_rim') === '1',
+        (p.material_refraction_ior?.value as number) ?? 1.333,
+        (p.material_refraction_uv_offset_scale?.value as number) ?? 0.03,
+        (p.material_refraction_uv_offset_limit?.value as number) ?? 0.03,
       );
     const shading = opt(f, 'shading_type');
     if (shading === '0') patchUnlit(m);

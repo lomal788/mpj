@@ -45,6 +45,7 @@
  */
 import * as THREE from 'three';
 import type { V3 } from '../../../core/fmath';
+import { loadUiImage, type UiImage } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 import type { PadSource, VibSegment } from '../../../view/input';
 import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from '../../../view/lyt';
@@ -175,16 +176,10 @@ export class Mg1801Ui {
 
   private async load(): Promise<void> {
     const d = await this.assets.json<UiJson>('ui/ui.json');
-    const loadImg = (path: string): Promise<HTMLImageElement> =>
-      new Promise((ok, bad) => {
-        const img = new Image();
-        img.onload = () => ok(img);
-        img.onerror = () => bad(new Error(`UI 그림을 읽지 못했다: ${path}`));
-        img.src = this.assets.url(`ui/${path}`);
-      });
-    const images = new Map<string, HTMLImageElement>();
+    const loadImg = (path: string): Promise<UiImage> => loadUiImage(this.assets.url(`ui/${path}`)).catch(() => Promise.reject(new Error(`UI 그림을 읽지 못했다: ${path}`)));
+    const images = new Map<string, UiImage>();
     await Promise.all(Object.entries(d.textures).map(async ([name, file]) => images.set(name, await loadImg(file))));
-    const fonts = new Map<string, { meta: LytFontAtlas; image: HTMLImageElement }>();
+    const fonts = new Map<string, { meta: LytFontAtlas; image: UiImage }>();
     await Promise.all(Object.entries(d.fonts).map(async ([fam, meta]) => fonts.set(fam, { meta, image: await loadImg(meta.file) })));
     let telop: LytTelopFont | null = null;
     try {

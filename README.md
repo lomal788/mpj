@@ -22,13 +22,24 @@ npm run build        # tsc --noEmit + 배포 빌드 → dist/ (상대 경로라 
 npm run typecheck    # 타입 검사만
 npm run check        # 등록된 게임 로직을 노드에서 두 번 돌려 결정성 확인
 npm run smoke        # 헤드리스 크로미움으로 페이지·게임 실행, 콘솔 오류 확인, test/out/smoke/*.png
+npm run assets       # 소스 assets/ → 압축본 assets-dist/(KTX2·meshopt·Opus/AAC/FLAC, 증분). 배포 빌드가 이것을 싣는다
 ```
+
+에셋 모드: 개발 서버는 소스(`assets/`), 배포 빌드는 압축본(`assets-dist/`)을 읽는다. 어느 쪽이든 `?assets=src|dist` 로 바꿔 볼 수 있고 `?texlod=1` 은 3D 텍스처 위 밉 한 단계를 버린다(모바일 메모리). 설계·기준·수치 [docs/engine/assets_pipeline.md](docs/engine/assets_pipeline.md), 대조 `npx tsx tools/shot_assets.ts`.
 
 조작(첫 사람): WASD/방향키 = 왼쪽 스틱, J = A, K = B, U = X, I = Y, Q = L, E = R, Enter = +, Backspace = −. 게임패드는 표준 매핑을 닌텐도 배치로 읽는다([script/view/input.ts](script/view/input.ts)).
 
 URL 옵션: `?game=<id>` `?seed=<n>` `?com=0111` `?debug=1` `?fast=N` `?mute=1` `?auto=1` `?charselect=1`(시작 전 캐릭터 선택). 시험 훅은 `window.__mpj`(stage, frame, seed, result, error, hold, charselect), `window.__charselect`.
 
 캐릭터 선택 모듈: 에셋 변환 `c:/dev/mpj/.venv/Scripts/python web/tools/analysis/charsel_web_assets.py [ui] [sound] [chara]`, 시험 `npx tsx tools/test_charselect.ts`(상태기계)·`npx tsx tools/check_charselect.ts`(원본 데이터 대조·import 검사)·`npx tsx tools/shot_charselect.ts`(헤드리스).
+
+광장 대기실(프렌드 매치) 실제 방 서버 — ddalkkakrider 와 같은 구조(http 하나에 express API + socket.io 네임스페이스 + 정적 파일), 명세 [docs/shell/online.md](docs/shell/online.md) 9.5·[docs/shell/plaza_3d.md](docs/shell/plaza_3d.md) §5.2:
+
+```sh
+npx tsx server/main.ts --port 8787            # 페이지 + HTTP API(/api/v1/mpj-plaza/*) + socket.io(/mpj-plaza), 번들도 만든다(--watch 고칠 때마다, --external 다른 기기 허용)
+```
+
+두 탭(또는 두 기기 — `--external` 로 켜고 서버 PC 주소)에서 `http://127.0.0.1:8787/index.html?plaza=1&online=io` 를 연다(같은 출처라 `/socket.io/socket.io.js` 를 그대로 읽는다. 개발 서버 51811 페이지에서 다른 출처 서버로 붙는 것은 CORS 를 두지 않아 안 된다). 한쪽은 광장에서 Y(I 키) → 방 만들기 → 4인용 방 → 패스워드 설정 안 함, 다른 쪽은 Y → 방 찾기(오른쪽) → 목록에서 A → "참가하겠습니까?" 예. 서로의 캐릭터가 광장에 나타나 걸어 다니고, 위쪽 대기 텔롭·하단 파티 줄·입장 알림·스탬프·Enter/Backspace(+/−) 멤버 카드를 쓸 수 있다. 방장이 기구 앞에서 A 를 누르면 둘 다 모드 메뉴로 간다. 통신은 방 찾기·만들기·참가 = HTTP, 방 입장부터 소켓(모두 바이너리), 혼자·로컬 플레이만이면 통신 없음. `online=io` 가 없으면 기존 가짜 어댑터(FakeOnline), `&skipsetup=1&chars=pc05&names=Aya` 로 설정 화면을 건너뛸 수 있다. 시험 `npx tsx tools/test_room_server.ts`(바이너리 크기·방 상태·HTTP·소켓·케이스·두 광장 UI), 헤드리스 `npx tsx tools/shot_plaza_room.ts`(두 페이지가 만나 출발까지, test/out/plaza_room/*.png). 카드 에셋 `c:/dev/mpj/.venv/Scripts/python web/tools/analysis/plaza_card_assets.py`.
 
 UI 시험 페이지: http://localhost:51811/ui.html — 셸 화면을 게임 없이 단독으로 띄운다. 화면 선택·1~4P COM·소리 끔·디버그(fps·상태기계·카드 3D 로딩 ms)·결과 표시. URL `?ui=charselect` `?com=0001` `?mute=1` `?auto=1`. 키 J = A, K = B, 방향키·WASD. 스모크 `npx tsx tools/smoke_ui.ts`. 화면 추가는 `script/ui_main.ts` 의 `UIS` 에 등록.
 
@@ -82,7 +93,7 @@ web/
 | vite 기능 | 여기서는 |
 |---|---|
 | `import.meta.env.BASE_URL` / `DEV` | `script/env.ts`의 `BASE`(`'./'`)·`DEV`(esbuild define `__DEV__`) |
-| `publicDir` | `assets/`를 같은 이름으로 내준다(개발: servedir, 배포: dist/assets 복사). 코드는 `${ASSETS}…` |
+| `publicDir` | `assets/`(소스)·`assets-dist/`(압축본)를 같은 이름으로 내준다(개발: servedir, 배포: dist/assets-dist 복사). 코드는 `${ASSETS}…`(모드에 따라 둘 중 하나) |
 | HTML 엔트리(`<script src="*.ts">`) | HTML은 `./bundle/<엔트리>.js`를 건다. 엔트리는 `tools/esbuild_config.ts`의 `ENTRIES` |
 | CSS import | 그대로 import, esbuild가 `bundle/<엔트리>.css`로 낸다. HTML에 `<link>` |
 | `import.meta.glob` | 쓰지 않는다. 게임은 `games/index.ts`에 손으로 등록한다 |

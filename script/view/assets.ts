@@ -3,7 +3,8 @@
  * 같은 경로는 한 번만 읽는다. 진행 표시는 load 단계에서 Progress 로 알린다.
  */
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { createGltfLoader } from '../shell/stage3d/assetLoader';
 import { ASSETS } from '../env';
 import { disposeTree, type Seen } from './dispose';
 
@@ -47,7 +48,7 @@ export class Assets {
 
   gltf(path: string): Promise<GLTF> {
     return this.once(`gltf:${path}`, () => {
-      this.gltfLoader ??= new GLTFLoader();
+      this.gltfLoader ??= createGltfLoader();
       return this.gltfLoader.loadAsync(this.url(path));
     });
   }

@@ -9,6 +9,7 @@
  * 그림자 글꼴이면 모양(알파)만 재질 색으로 칠한다 [추정: 캡처의 안내 아이콘 = 흰 윤곽 + 어두운 바탕].
  */
 import * as THREE from 'three';
+import { assetHooks, type UiImageLike } from './assetHooks';
 import type { LayoutInst, NodeState } from './scene2d';
 import type { FontSpec, Rgba, Spec } from './types';
 
@@ -151,7 +152,7 @@ export class Render2D {
   readonly camera: THREE.OrthographicCamera;
   private readonly quads: Quad[] = [];
   private used = 0;
-  private readonly images = new Map<string, HTMLImageElement | HTMLCanvasElement>();
+  private readonly images = new Map<string, UiImageLike | HTMLCanvasElement>();
   private readonly texCache = new Map<string, THREE.Texture>();
   /** 외부 텍스처(3D 렌더 타깃 등) */
   readonly dynamic = new Map<string, THREE.Texture>();
@@ -188,18 +189,10 @@ export class Render2D {
     const jobs: Promise<void>[] = [];
     const get = (key: string, path: string): void => {
       jobs.push(
-        new Promise<void>((res) => {
-          const img = new Image();
-          img.onload = () => {
-            this.images.set(key, img);
-            res();
-          };
-          img.onerror = () => {
-            console.warn(`charselect: 이미지를 읽지 못했다 ${path}`);
-            res();
-          };
-          img.src = url(path);
-        }),
+        assetHooks.loadUiImage(url(path)).then(
+          (img) => void this.images.set(key, img),
+          () => console.warn(`charselect: 이미지를 읽지 못했다 ${path}`),
+        ),
       );
     };
     for (const [k, p] of Object.entries(this.spec.textures)) get(k, p);
@@ -215,7 +208,7 @@ export class Render2D {
     if (t) return t;
     const img = this.images.get(key);
     if (!img) return this.white;
-    t = new THREE.Texture(img);
+    t = assetHooks.textureFromImage(img);
     t.userData.srgb = this.srgb.has(key);
     t.flipY = false;
     t.wrapS = WRAP[wu] ?? THREE.ClampToEdgeWrapping;

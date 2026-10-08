@@ -36,6 +36,7 @@
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { loadTexture } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 
 const BODY_MAPS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap'] as const;
@@ -174,7 +175,7 @@ export class CharacterTemplate {
 }
 
 function loadTex(url: string): Promise<THREE.Texture> {
-  return new THREE.TextureLoader().loadAsync(url).then((t) => {
+  return loadTexture(url).then((t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.flipY = false;
     t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;

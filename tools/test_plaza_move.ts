@@ -164,6 +164,16 @@ console.log('6. 원본 CollisionMain(삼각 4440) 위 보행');
   ok(m.pos.z > 25.49 - 0.9 - 0.1 && m.pos.z < 25.49 - 0.9 + 0.1, `+Z 로 달리면 중앙 원형 벽(z 25.49)에 반지름 0.9 앞에서 막힘 z=${m.pos.z.toFixed(3)}`);
   near(m.pos.y, -2.266, 1e-3, '벽 앞 0.099 턱(바닥 −2.266)에 올라섬');
   console.log(`   +Z 달리기 10 s → (${m.pos.toArray().map((x) => x.toFixed(3))})`);
+  for (const x of [0, -1, 1]) {
+    const s = new PlazaMover({ radius: 0.9, height: 1.54 }, col);
+    s.place(new THREE.Vector3(x, -2.365, 22.316), 180);
+    let reached = -1;
+    for (let i = 0; i < 360 && reached < 0; i++) {
+      s.tick({ depth: 1, dirX: 0, dirZ: -1, deg: 180 });
+      if (s.pos.z < 9 && s.pos.y >= -0.01) reached = i;
+    }
+    ok(reached >= 0, `계단 오르기 x=${x}: 시작 → 기구 앞(z < 9, y ≥ 0) ${reached >= 0 ? `${(reached / 60).toFixed(2)} s` : `실패 (${s.pos.toArray().map((v) => v.toFixed(2))})`}`);
+  }
 }
 
 console.log('7. 모션 전이(sys_pc.mpat)');
@@ -254,6 +264,27 @@ console.log('8. 추종 카메라(FollowPlayerImpl)');
   const dir = new THREE.Vector3();
   cam2.getWorldDirection(dir);
   ok(dir.z < 0, '카메라는 중심 쪽에서 플레이어(−Z)를 봄');
+}
+
+console.log('8b. 캡처 구도 재검증(내려보는 각 = atan(sin 각), 세로 fov)');
+{
+  const pitch = (q: { at: THREE.Vector3; eye: THREE.Vector3 }): number => THREE.MathUtils.radToDeg(Math.atan2(q.eye.y - q.at.y, Math.hypot(q.eye.x - q.at.x, q.eye.z - q.at.z)));
+  const c = new MenuCameraFollow(param);
+  const p0 = c.pose();
+  near(pitch(p0), THREE.MathUtils.radToDeg(Math.atan(Math.sin((15 * Math.PI) / 180))), 1e-9, '평소 내려보는 각 14.51°');
+  near(Math.hypot(p0.eye.x - p0.at.x, p0.eye.z - p0.at.z), 10, 1e-9, '평소 수평 거리 = 길이 10(cos 곱 없음)');
+  c.target.set(0, -2.365, 14.4);
+  const p10 = c.pose();
+  near(p10.t, 0.4, 1e-9, '캡처 10 구도: z 14.4 → t 0.4');
+  near(pitch(p10), THREE.MathUtils.radToDeg(Math.atan(Math.sin((9 * Math.PI) / 180))), 1e-6, '캡처 10: 내려보는 각 8.9°');
+  near(p10.fovy, 50, 1e-9, '캡처 10: fovy 50');
+  const horizon = 0.5 - 0.5 * Math.tan((pitch(p10) * Math.PI) / 180) / Math.tan((p10.fovy * Math.PI) / 360);
+  ok(horizon > 0.3 && horizon < 0.36, `캡처 10: 수평선 화면 높이 ${horizon.toFixed(3)}(캡처 ≈0.29~0.33)`);
+  c.target.set(0, -2.365, 5);
+  const p11 = c.pose();
+  near(pitch(p11), 0, 1e-9, '캡처 11: 수평 시선(수평선 가운데)');
+  const basket = (2 * Math.atan(2.5 / Math.abs(p11.eye.z))) / (2 * Math.atan(Math.tan((65 * Math.PI) / 360) * (16 / 9)));
+  ok(basket > 0.09 && basket < 0.13, `캡처 11: 바구니(지름 5 m) 화면 폭 비 ${basket.toFixed(3)}(캡처 ≈0.11)`);
 }
 
 console.log('9. 플레이어·카메라 함께(달리며 따라가기)');

@@ -203,8 +203,8 @@ console.log('6. 셰이더 그래프 정의 → GLSL ES 3.00 컴파일(three 표�
   const defs = ['#define STANDARD', '#define USE_UV', '#define USE_MAP', '#define MAP_UV uv', '#define USE_NORMALMAP', '#define USE_NORMALMAP_TANGENTSPACE', '#define NORMALMAP_UV uv', '#define USE_ROUGHNESSMAP', '#define ROUGHNESSMAP_UV uv', '#define USE_SHADOWMAP', '#define SHADOWMAP_TYPE_PCF', '#define USE_FOG', '#define USE_ENVMAP', '#define ENVMAP_TYPE_CUBE_UV', '#define ENVMAP_MODE_REFLECTION', '#define CUBEUV_TEXEL_WIDTH 0.001', '#define CUBEUV_TEXEL_HEIGHT 0.001', '#define CUBEUV_MAX_MIP 8.0'].join('\n');
   const vsPre = `#version 300 es\n#define attribute in\n#define varying out\n#define texture2D texture\nprecision highp float;\nprecision highp int;\n${defs}\nuniform mat4 modelMatrix;\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\nuniform mat4 viewMatrix;\nuniform mat3 normalMatrix;\nuniform vec3 cameraPosition;\nuniform bool isOrthographic;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\n#ifdef USE_UV1\nattribute vec2 uv1;\n#endif\n#ifdef USE_TANGENT\nattribute vec4 tangent;\n#endif\n`;
   const fsPre = `#version 300 es\n#define varying in\nlayout(location = 0) out highp vec4 pc_fragColor;\n#define gl_FragColor pc_fragColor\n#define texture2D texture\n#define textureCube texture\n#define texture2DLodEXT textureLod\n#define textureCubeLodEXT textureLod\nprecision highp float;\nprecision highp int;\n${defs}\nuniform mat4 viewMatrix;\nuniform vec3 cameraPosition;\nuniform bool isOrthographic;\nvec4 linearToOutputTexel( vec4 value ) { return value; }\n`;
-  const wrap = (vs: string, fs: string, tangent: boolean): { vs: string; fs: string } => {
-    const t = tangent ? '#define USE_TANGENT' + String.fromCharCode(10) : '';
+  const wrap = (vs: string, fs: string, tangent: boolean, extra = ''): { vs: string; fs: string } => {
+    const t = (tangent ? '#define USE_TANGENT' + String.fromCharCode(10) : '') + extra;
     return { vs: vsPre.replace('#define STANDARD', `${t}#define STANDARD`) + unroll(nums(resolve(vs))), fs: fsPre.replace('#define STANDARD', `${t}#define STANDARD`) + unroll(nums(resolve(fs))) };
   };
   const build = (src: GraphSource | null, tangent: boolean): { vs: string; fs: string } => {
@@ -217,12 +217,12 @@ console.log('6. 셰이더 그래프 정의 → GLSL ES 3.00 컴파일(three 표�
     }
     return wrap(vs, fs, tangent);
   };
-  const patched = (name: string, fn: (m: THREE.MeshStandardMaterial) => void): { name: string; vs: string; fs: string } => {
-    const m = new THREE.MeshStandardMaterial();
+  const patched = (name: string, fn: (m: THREE.MeshPhysicalMaterial) => void, extra = ''): { name: string; vs: string; fs: string } => {
+    const m = new THREE.MeshPhysicalMaterial();
     fn(m);
     const sh = { vertexShader: THREE.ShaderLib.physical.vertexShader, fragmentShader: THREE.ShaderLib.physical.fragmentShader, uniforms: {} } as unknown as THREE.WebGLProgramParametersWithUniforms;
     m.onBeforeCompile(sh, null as unknown as THREE.WebGLRenderer);
-    return { name, ...wrap(sh.vertexShader, sh.fragmentShader, false) };
+    return { name, ...wrap(sh.vertexShader, sh.fragmentShader, false, extra) };
   };
   const dummy = new THREE.Texture();
   const jobs = [
@@ -230,7 +230,7 @@ console.log('6. 셰이더 그래프 정의 → GLSL ES 3.00 컴파일(three 표�
     patched('(무조명 shading_type 0)', (m) => patchUnlit(m)),
     patched('(SSS shading_type 2)', (m) => patchSss(m, dummy, dummy, 1)),
     patched('(srt0)', (m) => patchSrt0(m, initParams(m, { shader: { options: {} } }))),
-    patched('(굴절 refraction)', (m) => patchRefraction(m, 0, 0.5, 1, true)),
+    patched('(굴절 refraction, 투과 버퍼)', (m) => patchRefraction(m, 0, 0.5, 1, true, 1.333, 0.03, 0.03), '#define PHYSICAL' + String.fromCharCode(10) + '#define USE_TRANSMISSION' + String.fromCharCode(10)),
     patched('(물 합성 water)', (m) => patchWater(m, 0.2, [0.28, 0.43, 0.38], 0.33)),
     patched('(정점색 곱)', (m) => patchVertexColor(m, 0)),
 ...graphs.flatMap((g) => [false, true].map((t) => ({ name: `${g.material}/${g.program}${t ? '+tangent' : ''}`, ...build(graphSource(g), t) })))];

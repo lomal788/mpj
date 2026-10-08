@@ -129,6 +129,8 @@ export interface GameDef<S = unknown, E = unknown, R extends GameResult = GameRe
   hasPractice: boolean;
   /** 게임별 설정(없으면 설정 칸 없음) */
   options?: readonly GameOption[];
+  /** 로직·뷰 코드를 받는다(코드 분할 — 메타만 정적, 몸체는 import()). 있으면 createLogic·createView 전에 한 번 기다린다 */
+  load?(): Promise<void>;
   createLogic(setup: GameSetup): GameLogic<S, E, R>;
   createView(ctx: ViewContext, assets: Assets): GameView<S, E>;
   describeResult(r: R, setup: GameSetup): { head: string; rows: ResultRow[] };

@@ -1,16 +1,16 @@
 {
  "note": "MB 단위(1e6). dist = 압축본(소리는 ogg 만, m4a 는 따로), transferDist = json·glb 는 brotli q9 추정 + 나머지 그대로. gpu = 모든 텍스처를 한 번에 올렸을 때(밉 포함) 추정",
  "total": {
-  "src": 739.47,
-  "dist": 368.65,
+  "src": 739.5,
+  "dist": 368.68,
   "distOgg": 7.31,
   "distM4a": 10.1,
-  "transferSrc": 739.47,
+  "transferSrc": 739.5,
   "transferDist": 308.48,
   "gpuSrc": 3838.84,
   "gpuDesk": 1515.31,
   "gpuMob": 1386.02,
-  "n": 2373
+  "n": 2374
  },
  "folders": {
   "charselect": {
@@ -134,16 +134,16 @@
    "n": 151
   },
   "plaza/world": {
-   "src": 208.01,
-   "dist": 124.19,
+   "src": 208.05,
+   "dist": 124.22,
    "distOgg": 0,
    "distM4a": 0,
-   "transferSrc": 208.01,
-   "transferDist": 95.27,
+   "transferSrc": 208.05,
+   "transferDist": 95.28,
    "gpuSrc": 946.27,
    "gpuDesk": 252.33,
    "gpuMob": 209.45,
-   "n": 794
+   "n": 795
   },
   "setplayer": {
    "src": 2.12,
@@ -208,16 +208,16 @@
    "n": 187
   },
   "json": {
-   "src": 13.15,
-   "dist": 8.83,
+   "src": 13.19,
+   "dist": 8.86,
    "distOgg": 0,
    "distM4a": 0,
-   "transferSrc": 13.15,
-   "transferDist": 0.74,
+   "transferSrc": 13.19,
+   "transferDist": 0.75,
    "gpuSrc": 0,
    "gpuDesk": 0,
    "gpuMob": 0,
-   "n": 145
+   "n": 146
   },
   "copy": {
    "src": 6.14,
@@ -233,6 +233,13 @@
   }
  },
  "codecs": {
+  "color:etc1s": {
+   "n": 244,
+   "src": 92.12,
+   "dist": 23.61,
+   "minPsnr": 28.33,
+   "meanPsnr": 35.2
+  },
   "normal:uastc-rdo": {
    "n": 182,
    "src": 120.36,
@@ -247,13 +254,6 @@
    "minPsnr": 38.08,
    "meanPsnr": 44.23
   },
-  "data:etc1s": {
-   "n": 212,
-   "src": 46.57,
-   "dist": 14.88,
-   "minPsnr": 38.06,
-   "meanPsnr": 42.1
-  },
   "color:uastc-rdo": {
    "n": 51,
    "src": 6.85,
@@ -261,19 +261,19 @@
    "minPsnr": 36.13,
    "meanPsnr": 46.26
   },
+  "data:etc1s": {
+   "n": 212,
+   "src": 46.57,
+   "dist": 14.88,
+   "minPsnr": 38.06,
+   "meanPsnr": 42.1
+  },
   "color:png": {
    "n": 36,
    "src": 0.3,
    "dist": 0.3,
    "minPsnr": null,
    "meanPsnr": 0
-  },
-  "color:etc1s": {
-   "n": 244,
-   "src": 92.12,
-   "dist": 23.61,
-   "minPsnr": 28.33,
-   "meanPsnr": 35.2
   },
   "keep:png": {
    "n": 127,
@@ -341,6 +341,32 @@
  },
  "files": [
   {
+   "src": "charselect/chara/tex/pc01_body_arr_alb_00_a1fbdf4f4624.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc01_body_arr_alb_00_a1fbdf4f4624.ktx2"
+   ],
+   "srcBytes": 1601630,
+   "distBytes": 295319,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 2048,
+   "alpha": true,
+   "psnr": {
+    "RGB": 36.562,
+    "R": 35.693,
+    "G": 42.98,
+    "B": 34.658,
+    "Y": 44.963,
+    "maxErr": 133
+   },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
    "src": "charselect/chara/tex/pc01_body_arr_nml_00_4fe7e542a8a6.png",
    "kind": "tex",
    "out": [
@@ -391,6 +417,60 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc01_eye_arr_alb_00_b864302bfe02.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc01_eye_arr_alb_00_b864302bfe02.ktx2"
+   ],
+   "srcBytes": 16264,
+   "distBytes": 11199,
+   "cls": "color",
+   "codec": "uastc-rdo",
+   "reason": "name",
+   "w": 128,
+   "h": 128,
+   "alpha": true,
+   "psnr": {
+    "RGB": 42.732,
+    "R": 46.012,
+    "G": 43.223,
+    "B": 40.591,
+    "A": 44.057,
+    "Y": 44.85,
+    "maxErr": 36
+   },
+   "tries": [
+    "etc1s:x",
+    "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc02_body_arr_alb_00_1235a7863993.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc02_body_arr_alb_00_1235a7863993.ktx2"
+   ],
+   "srcBytes": 1508656,
+   "distBytes": 274955,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 2048,
+   "alpha": true,
+   "psnr": {
+    "RGB": 37.071,
+    "R": 36.884,
+    "G": 43.37,
+    "B": 34.712,
+    "Y": 45.254,
+    "maxErr": 126
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -445,34 +525,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc01_eye_arr_alb_00_b864302bfe02.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc01_eye_arr_alb_00_b864302bfe02.ktx2"
-   ],
-   "srcBytes": 16264,
-   "distBytes": 11199,
-   "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "name",
-   "w": 128,
-   "h": 128,
-   "alpha": true,
-   "psnr": {
-    "RGB": 42.732,
-    "R": 46.012,
-    "G": 43.223,
-    "B": 40.591,
-    "A": 44.057,
-    "Y": 44.85,
-    "maxErr": 36
-   },
-   "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
-   ]
-  },
-  {
    "src": "charselect/chara/tex/pc02_eye_arr_alb_00_4c1f89ff42cd.png",
    "kind": "tex",
    "out": [
@@ -498,6 +550,32 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc03_body_arr_alb_00_053fca9a1321.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc03_body_arr_alb_00_053fca9a1321.ktx2"
+   ],
+   "srcBytes": 1168496,
+   "distBytes": 240773,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 2048,
+   "alpha": true,
+   "psnr": {
+    "RGB": 36.133,
+    "R": 35.931,
+    "G": 43.376,
+    "B": 33.67,
+    "Y": 45.442,
+    "maxErr": 254
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -599,13 +677,13 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc02_body_arr_alb_00_1235a7863993.png",
+   "src": "charselect/chara/tex/pc04_body_arr_alb_00_a5577d3db55e.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc02_body_arr_alb_00_1235a7863993.ktx2"
+    "charselect/chara/tex/pc04_body_arr_alb_00_a5577d3db55e.ktx2"
    ],
-   "srcBytes": 1508656,
-   "distBytes": 274955,
+   "srcBytes": 1297025,
+   "distBytes": 236389,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -613,12 +691,12 @@
    "h": 2048,
    "alpha": true,
    "psnr": {
-    "RGB": 37.071,
-    "R": 36.884,
-    "G": 43.37,
-    "B": 34.712,
-    "Y": 45.254,
-    "maxErr": 126
+    "RGB": 37.769,
+    "R": 36.898,
+    "G": 43.676,
+    "B": 35.947,
+    "Y": 45.439,
+    "maxErr": 136
    },
    "tries": [
     "etc1s:ok"
@@ -652,51 +730,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc01_body_arr_alb_00_a1fbdf4f4624.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc01_body_arr_alb_00_a1fbdf4f4624.ktx2"
-   ],
-   "srcBytes": 1601630,
-   "distBytes": 295319,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 2048,
-   "alpha": true,
-   "psnr": {
-    "RGB": 36.562,
-    "R": 35.693,
-    "G": 42.98,
-    "B": 34.658,
-    "Y": 44.963,
-    "maxErr": 133
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "charselect/chara/tex/pc04_eyelash_alb_3c897ae730c3.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc04_eyelash_alb_3c897ae730c3.png"
-   ],
-   "srcBytes": 939,
-   "distBytes": 939,
-   "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 64,
-   "h": 128,
-   "alpha": true,
-   "psnr": null,
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "charselect/chara/tex/pc04_eye_arr_alb_00_a389b64a0e85.png",
    "kind": "tex",
    "out": [
@@ -722,6 +755,51 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc04_eyelash_alb_3c897ae730c3.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc04_eyelash_alb_3c897ae730c3.png"
+   ],
+   "srcBytes": 939,
+   "distBytes": 939,
+   "cls": "color",
+   "codec": "png",
+   "reason": "tiny",
+   "w": 64,
+   "h": 128,
+   "alpha": true,
+   "psnr": null,
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc05_body_arr_alb_00_1109105ac67a.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc05_body_arr_alb_00_1109105ac67a.ktx2"
+   ],
+   "srcBytes": 1218293,
+   "distBytes": 253529,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 2048,
+   "alpha": true,
+   "psnr": {
+    "RGB": 35.808,
+    "R": 35.843,
+    "G": 42.849,
+    "B": 33.23,
+    "Y": 45.723,
+    "maxErr": 221
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -776,32 +854,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc03_body_arr_alb_00_053fca9a1321.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc03_body_arr_alb_00_053fca9a1321.ktx2"
-   ],
-   "srcBytes": 1168496,
-   "distBytes": 240773,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 2048,
-   "alpha": true,
-   "psnr": {
-    "RGB": 36.133,
-    "R": 35.931,
-    "G": 43.376,
-    "B": 33.67,
-    "Y": 45.442,
-    "maxErr": 254
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "charselect/chara/tex/pc05_eye_arr_alb_00_b6d6d46e5e1d.png",
    "kind": "tex",
    "out": [
@@ -819,6 +871,32 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc06_body_arr_alb_00_acf106e53f30.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc06_body_arr_alb_00_acf106e53f30.ktx2"
+   ],
+   "srcBytes": 1411771,
+   "distBytes": 272605,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 2048,
+   "alpha": true,
+   "psnr": {
+    "RGB": 34.778,
+    "R": 35.096,
+    "G": 42.441,
+    "B": 31.993,
+    "Y": 44.529,
+    "maxErr": 215
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -873,32 +951,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc04_body_arr_alb_00_a5577d3db55e.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc04_body_arr_alb_00_a5577d3db55e.ktx2"
-   ],
-   "srcBytes": 1297025,
-   "distBytes": 236389,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 2048,
-   "alpha": true,
-   "psnr": {
-    "RGB": 37.769,
-    "R": 36.898,
-    "G": 43.676,
-    "B": 35.947,
-    "Y": 45.439,
-    "maxErr": 136
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "charselect/chara/tex/pc06_eye_arr_alb_00_a25b48ce03b0.png",
    "kind": "tex",
    "out": [
@@ -924,6 +976,32 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc07_body_arr_alb_00_a8ad0f61d14c.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc07_body_arr_alb_00_a8ad0f61d14c.ktx2"
+   ],
+   "srcBytes": 467672,
+   "distBytes": 157143,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 34.89,
+    "R": 32.443,
+    "G": 41.218,
+    "B": 34.847,
+    "Y": 47.047,
+    "maxErr": 181
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -1004,26 +1082,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc07_body_arr_alb_00_a8ad0f61d14c.png",
+   "src": "charselect/chara/tex/pc08_body_alb_8c739cac4d48.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc07_body_arr_alb_00_a8ad0f61d14c.ktx2"
+    "charselect/chara/tex/pc08_body_alb_8c739cac4d48.ktx2"
    ],
-   "srcBytes": 467672,
-   "distBytes": 157143,
+   "srcBytes": 551454,
+   "distBytes": 222481,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 1024,
+   "h": 2048,
    "alpha": false,
    "psnr": {
-    "RGB": 34.89,
-    "R": 32.443,
-    "G": 41.218,
-    "B": 34.847,
-    "Y": 47.047,
-    "maxErr": 181
+    "RGB": 37.511,
+    "R": 36.275,
+    "G": 43.417,
+    "B": 36.005,
+    "Y": 46.783,
+    "maxErr": 132
    },
    "tries": [
     "etc1s:ok"
@@ -1081,26 +1159,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc05_body_arr_alb_00_1109105ac67a.png",
+   "src": "charselect/chara/tex/pc09_body_alb_8fc4dd9e72f3.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc05_body_arr_alb_00_1109105ac67a.ktx2"
+    "charselect/chara/tex/pc09_body_alb_8fc4dd9e72f3.ktx2"
    ],
-   "srcBytes": 1218293,
-   "distBytes": 253529,
+   "srcBytes": 502681,
+   "distBytes": 198255,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
    "h": 2048,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 35.808,
-    "R": 35.843,
-    "G": 42.849,
-    "B": 33.23,
-    "Y": 45.723,
-    "maxErr": 221
+    "RGB": 36.652,
+    "R": 35.439,
+    "G": 44.268,
+    "B": 34.878,
+    "Y": 47.39,
+    "maxErr": 209
    },
    "tries": [
     "etc1s:ok"
@@ -1132,26 +1210,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc08_body_alb_8c739cac4d48.png",
+   "src": "charselect/chara/tex/pc11_body_arr_alb_00_97d79dcf0f8a.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc08_body_alb_8c739cac4d48.ktx2"
+    "charselect/chara/tex/pc11_body_arr_alb_00_97d79dcf0f8a.ktx2"
    ],
-   "srcBytes": 551454,
-   "distBytes": 222481,
+   "srcBytes": 1077707,
+   "distBytes": 222321,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
    "h": 2048,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 37.511,
-    "R": 36.275,
-    "G": 43.417,
-    "B": 36.005,
-    "Y": 46.783,
-    "maxErr": 132
+    "RGB": 36.419,
+    "R": 36.116,
+    "G": 43.854,
+    "B": 33.996,
+    "Y": 45.373,
+    "maxErr": 218
    },
    "tries": [
     "etc1s:ok"
@@ -1209,32 +1287,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc06_body_arr_alb_00_acf106e53f30.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc06_body_arr_alb_00_acf106e53f30.ktx2"
-   ],
-   "srcBytes": 1411771,
-   "distBytes": 272605,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 2048,
-   "alpha": true,
-   "psnr": {
-    "RGB": 34.778,
-    "R": 35.096,
-    "G": 42.441,
-    "B": 31.993,
-    "Y": 44.529,
-    "maxErr": 215
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "charselect/chara/tex/pc11_eye_arr_alb_00_19b126de0922.png",
    "kind": "tex",
    "out": [
@@ -1275,6 +1327,32 @@
    "h": 128,
    "alpha": true,
    "psnr": null,
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc12_body_arr_alb_00_7010cf0fce19.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc12_body_arr_alb_00_7010cf0fce19.ktx2"
+   ],
+   "srcBytes": 1051841,
+   "distBytes": 187187,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 1024,
+   "alpha": true,
+   "psnr": {
+    "RGB": 36.874,
+    "R": 35.483,
+    "G": 41.694,
+    "B": 35.759,
+    "Y": 43.824,
+    "maxErr": 136
+   },
    "tries": [
     "etc1s:ok"
    ]
@@ -1383,26 +1461,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc09_body_alb_8fc4dd9e72f3.png",
+   "src": "charselect/chara/tex/pc13_body_alb_2d7d60dca3fd.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc09_body_alb_8fc4dd9e72f3.ktx2"
+    "charselect/chara/tex/pc13_body_alb_2d7d60dca3fd.ktx2"
    ],
-   "srcBytes": 502681,
-   "distBytes": 198255,
+   "srcBytes": 619679,
+   "distBytes": 174281,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 2048,
+   "h": 1280,
    "alpha": false,
    "psnr": {
-    "RGB": 36.652,
-    "R": 35.439,
-    "G": 44.268,
-    "B": 34.878,
-    "Y": 47.39,
-    "maxErr": 209
+    "RGB": 35.799,
+    "R": 35.352,
+    "G": 43.228,
+    "B": 33.468,
+    "Y": 47.696,
+    "maxErr": 255
    },
    "tries": [
     "etc1s:ok"
@@ -1488,26 +1566,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc13_body_alb_2d7d60dca3fd.png",
+   "src": "charselect/chara/tex/pc14_body_alb_0d8b3899c546.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc13_body_alb_2d7d60dca3fd.ktx2"
+    "charselect/chara/tex/pc14_body_alb_0d8b3899c546.ktx2"
    ],
-   "srcBytes": 619679,
-   "distBytes": 174281,
+   "srcBytes": 1124451,
+   "distBytes": 216323,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 1280,
-   "alpha": false,
+   "h": 2048,
+   "alpha": true,
    "psnr": {
-    "RGB": 35.799,
-    "R": 35.352,
-    "G": 43.228,
-    "B": 33.468,
-    "Y": 47.696,
-    "maxErr": 255
+    "RGB": 39.028,
+    "R": 38.105,
+    "G": 44.216,
+    "B": 37.384,
+    "Y": 45.72,
+    "maxErr": 135
    },
    "tries": [
     "etc1s:ok"
@@ -1565,51 +1643,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc12_body_arr_alb_00_7010cf0fce19.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc12_body_arr_alb_00_7010cf0fce19.ktx2"
-   ],
-   "srcBytes": 1051841,
-   "distBytes": 187187,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
-   "alpha": true,
-   "psnr": {
-    "RGB": 36.874,
-    "R": 35.483,
-    "G": 41.694,
-    "B": 35.759,
-    "Y": 43.824,
-    "maxErr": 136
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "charselect/chara/tex/pc14_eyelash_alb_1654f2f2e083.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc14_eyelash_alb_1654f2f2e083.png"
-   ],
-   "srcBytes": 424,
-   "distBytes": 424,
-   "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 64,
-   "h": 128,
-   "alpha": true,
-   "psnr": null,
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "charselect/chara/tex/pc14_eye_alb_537e5ab39b59.png",
    "kind": "tex",
    "out": [
@@ -1635,6 +1668,51 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc14_eyelash_alb_1654f2f2e083.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc14_eyelash_alb_1654f2f2e083.png"
+   ],
+   "srcBytes": 424,
+   "distBytes": 424,
+   "cls": "color",
+   "codec": "png",
+   "reason": "tiny",
+   "w": 64,
+   "h": 128,
+   "alpha": true,
+   "psnr": null,
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "charselect/chara/tex/pc50_body_alb_c72bbb278bcb.png",
+   "kind": "tex",
+   "out": [
+    "charselect/chara/tex/pc50_body_alb_c72bbb278bcb.ktx2"
+   ],
+   "srcBytes": 2596038,
+   "distBytes": 401312,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 2048,
+   "h": 1024,
+   "alpha": true,
+   "psnr": {
+    "RGB": 35.295,
+    "R": 34.807,
+    "G": 39.901,
+    "B": 33.433,
+    "Y": 41.925,
+    "maxErr": 153
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -1717,26 +1795,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc11_body_arr_alb_00_97d79dcf0f8a.png",
+   "src": "charselect/chara/tex/pc51_body_alb_5ad57008e691.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc11_body_arr_alb_00_97d79dcf0f8a.ktx2"
+    "charselect/chara/tex/pc51_body_alb_5ad57008e691.ktx2"
    ],
-   "srcBytes": 1077707,
-   "distBytes": 222321,
+   "srcBytes": 274586,
+   "distBytes": 58090,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 2048,
+   "w": 512,
+   "h": 1024,
    "alpha": true,
    "psnr": {
-    "RGB": 36.419,
-    "R": 36.116,
-    "G": 43.854,
-    "B": 33.996,
-    "Y": 45.373,
-    "maxErr": 218
+    "RGB": 37.903,
+    "R": 37.34,
+    "G": 43.639,
+    "B": 35.876,
+    "Y": 45.508,
+    "maxErr": 80
    },
    "tries": [
     "etc1s:ok"
@@ -1813,26 +1891,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc51_body_alb_5ad57008e691.png",
+   "src": "charselect/chara/tex/pc52_body_alb_97382de92564.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc51_body_alb_5ad57008e691.ktx2"
+    "charselect/chara/tex/pc52_body_alb_97382de92564.ktx2"
    ],
-   "srcBytes": 274586,
-   "distBytes": 58090,
+   "srcBytes": 450418,
+   "distBytes": 146466,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
+   "w": 1024,
    "h": 1024,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 37.903,
-    "R": 37.34,
-    "G": 43.639,
-    "B": 35.876,
-    "Y": 45.508,
-    "maxErr": 80
+    "RGB": 35.577,
+    "R": 35.249,
+    "G": 43.245,
+    "B": 33.145,
+    "Y": 46.153,
+    "maxErr": 182
    },
    "tries": [
     "etc1s:ok"
@@ -1892,26 +1970,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc14_body_alb_0d8b3899c546.png",
+   "src": "charselect/chara/tex/pc53_body_alb_bc86556dd349.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc14_body_alb_0d8b3899c546.ktx2"
+    "charselect/chara/tex/pc53_body_alb_bc86556dd349.ktx2"
    ],
-   "srcBytes": 1124451,
-   "distBytes": 216323,
+   "srcBytes": 407753,
+   "distBytes": 153836,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 2048,
-   "alpha": true,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 39.028,
-    "R": 38.105,
-    "G": 44.216,
-    "B": 37.384,
-    "Y": 45.72,
-    "maxErr": 135
+    "RGB": 35.191,
+    "R": 34.556,
+    "G": 42.944,
+    "B": 32.951,
+    "Y": 46.755,
+    "maxErr": 198
    },
    "tries": [
     "etc1s:ok"
@@ -1997,26 +2075,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc52_body_alb_97382de92564.png",
+   "src": "charselect/chara/tex/pc54_body_alb_781b0d16bde1.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc52_body_alb_97382de92564.ktx2"
+    "charselect/chara/tex/pc54_body_alb_781b0d16bde1.ktx2"
    ],
-   "srcBytes": 450418,
-   "distBytes": 146466,
+   "srcBytes": 413818,
+   "distBytes": 105793,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "h": 2048,
+   "alpha": true,
    "psnr": {
-    "RGB": 35.577,
-    "R": 35.249,
-    "G": 43.245,
-    "B": 33.145,
-    "Y": 46.153,
-    "maxErr": 182
+    "RGB": 39.53,
+    "R": 38.308,
+    "G": 45.894,
+    "B": 37.933,
+    "Y": 48.754,
+    "maxErr": 86
    },
    "tries": [
     "etc1s:ok"
@@ -2074,26 +2152,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc53_body_alb_bc86556dd349.png",
+   "src": "charselect/chara/tex/pc56_body_arr_alb_00_b760e22a2a79.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc53_body_alb_bc86556dd349.ktx2"
+    "charselect/chara/tex/pc56_body_arr_alb_00_b760e22a2a79.ktx2"
    ],
-   "srcBytes": 407753,
-   "distBytes": 153836,
+   "srcBytes": 810124,
+   "distBytes": 175035,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
    "h": 1024,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 35.191,
-    "R": 34.556,
-    "G": 42.944,
-    "B": 32.951,
-    "Y": 46.755,
-    "maxErr": 198
+    "RGB": 34.3,
+    "R": 33.828,
+    "G": 41.158,
+    "B": 32.049,
+    "Y": 44.1,
+    "maxErr": 168
    },
    "tries": [
     "etc1s:ok"
@@ -2228,26 +2306,26 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc50_body_alb_c72bbb278bcb.png",
+   "src": "charselect/chara/tex/pc61_body_alb_bb238260dcd1.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc50_body_alb_c72bbb278bcb.ktx2"
+    "charselect/chara/tex/pc61_body_alb_bb238260dcd1.ktx2"
    ],
-   "srcBytes": 2596038,
-   "distBytes": 401312,
+   "srcBytes": 268641,
+   "distBytes": 114360,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 2048,
+   "w": 1024,
    "h": 1024,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 35.295,
-    "R": 34.807,
-    "G": 39.901,
-    "B": 33.433,
-    "Y": 41.925,
-    "maxErr": 153
+    "RGB": 37.354,
+    "R": 37.099,
+    "G": 44.693,
+    "B": 34.911,
+    "Y": 48.781,
+    "maxErr": 152
    },
    "tries": [
     "etc1s:ok"
@@ -2305,29 +2383,31 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc56_body_arr_alb_00_b760e22a2a79.png",
+   "src": "charselect/chara/tex/pc61_eye_alb_4b11a0c3335e.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc56_body_arr_alb_00_b760e22a2a79.ktx2"
+    "charselect/chara/tex/pc61_eye_alb_4b11a0c3335e.ktx2"
    ],
-   "srcBytes": 810124,
-   "distBytes": 175035,
+   "srcBytes": 2928,
+   "distBytes": 2832,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "codec": "uastc-rdo",
+   "reason": "name",
+   "w": 64,
+   "h": 64,
    "alpha": true,
    "psnr": {
-    "RGB": 34.3,
-    "R": 33.828,
-    "G": 41.158,
-    "B": 32.049,
-    "Y": 44.1,
-    "maxErr": 168
+    "RGB": 45.181,
+    "R": 46.344,
+    "G": 44.465,
+    "B": 44.946,
+    "A": 42.671,
+    "Y": 45.545,
+    "maxErr": 36
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -2357,13 +2437,13 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc61_body_alb_bb238260dcd1.png",
+   "src": "charselect/chara/tex/pc62_body_alb_025e306b66c5.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc61_body_alb_bb238260dcd1.ktx2"
+    "charselect/chara/tex/pc62_body_alb_025e306b66c5.ktx2"
    ],
-   "srcBytes": 268641,
-   "distBytes": 114360,
+   "srcBytes": 61180,
+   "distBytes": 35773,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -2371,12 +2451,12 @@
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 37.354,
-    "R": 37.099,
-    "G": 44.693,
-    "B": 34.911,
-    "Y": 48.781,
-    "maxErr": 152
+    "RGB": 48.791,
+    "R": 46.604,
+    "G": 53.52,
+    "B": 48.752,
+    "Y": 54.72,
+    "maxErr": 35
    },
    "tries": [
     "etc1s:ok"
@@ -4435,54 +4515,52 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc61_eye_alb_4b11a0c3335e.png",
+   "src": "mg1801/chara/tex/npc002_body_arr_alb_00.png",
    "kind": "tex",
    "out": [
-    "charselect/chara/tex/pc61_eye_alb_4b11a0c3335e.ktx2"
+    "mg1801/chara/tex/npc002_body_arr_alb_00.ktx2"
    ],
-   "srcBytes": 2928,
-   "distBytes": 2832,
-   "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "name",
-   "w": 64,
-   "h": 64,
-   "alpha": true,
-   "psnr": {
-    "RGB": 45.181,
-    "R": 46.344,
-    "G": 44.465,
-    "B": 44.946,
-    "A": 42.671,
-    "Y": 45.545,
-    "maxErr": 36
-   },
-   "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
-   ]
-  },
-  {
-   "src": "charselect/chara/tex/pc54_body_alb_781b0d16bde1.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc54_body_alb_781b0d16bde1.ktx2"
-   ],
-   "srcBytes": 413818,
-   "distBytes": 105793,
+   "srcBytes": 483610,
+   "distBytes": 151168,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 2048,
-   "alpha": true,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 39.53,
-    "R": 38.308,
-    "G": 45.894,
-    "B": 37.933,
-    "Y": 48.754,
-    "maxErr": 86
+    "RGB": 35.721,
+    "R": 35.408,
+    "G": 43.234,
+    "B": 33.295,
+    "Y": 45.664,
+    "maxErr": 198
+   },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "mg1801/chara/tex/npc002_body_arr_alb_03.png",
+   "kind": "tex",
+   "out": [
+    "mg1801/chara/tex/npc002_body_arr_alb_03.ktx2"
+   ],
+   "srcBytes": 538440,
+   "distBytes": 169189,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "name",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 36.325,
+    "R": 35.342,
+    "G": 42.318,
+    "B": 34.579,
+    "Y": 45.43,
+    "maxErr": 148
    },
    "tries": [
     "etc1s:ok"
@@ -6586,32 +6664,6 @@
    ]
   },
   {
-   "src": "charselect/chara/tex/pc62_body_alb_025e306b66c5.png",
-   "kind": "tex",
-   "out": [
-    "charselect/chara/tex/pc62_body_alb_025e306b66c5.ktx2"
-   ],
-   "srcBytes": 61180,
-   "distBytes": 35773,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
-   "psnr": {
-    "RGB": 48.791,
-    "R": 46.604,
-    "G": 53.52,
-    "B": 48.752,
-    "Y": 54.72,
-    "maxErr": 35
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "mg1801/chara/tex/pc62_body_alb.png",
    "kind": "tex",
    "out": [
@@ -6689,6 +6741,32 @@
    ]
   },
   {
+   "src": "mg1801/effect/tex/mg1800_ring02.png",
+   "kind": "tex",
+   "out": [
+    "mg1801/effect/tex/mg1800_ring02.ktx2"
+   ],
+   "srcBytes": 11725,
+   "distBytes": 5366,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "format BC7_SRGB",
+   "w": 128,
+   "h": 128,
+   "alpha": false,
+   "psnr": {
+    "RGB": 37.842,
+    "R": 37.862,
+    "G": 42.625,
+    "B": 35.61,
+    "Y": 44.328,
+    "maxErr": 29
+   },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
    "src": "mg1801/effect/tex/mg1800_success00_ring00.png",
    "kind": "tex",
    "out": [
@@ -6732,32 +6810,6 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
-   ]
-  },
-  {
-   "src": "mg1801/effect/tex/mg1800_ring02.png",
-   "kind": "tex",
-   "out": [
-    "mg1801/effect/tex/mg1800_ring02.ktx2"
-   ],
-   "srcBytes": 11725,
-   "distBytes": 5366,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC7_SRGB",
-   "w": 128,
-   "h": 128,
-   "alpha": false,
-   "psnr": {
-    "RGB": 37.842,
-    "R": 37.862,
-    "G": 42.625,
-    "B": 35.61,
-    "Y": 44.328,
-    "maxErr": 29
-   },
-   "tries": [
-    "etc1s:ok"
    ]
   },
   {
@@ -6813,6 +6865,25 @@
    ]
   },
   {
+   "src": "mg1801/effect/tex/mg1801_bubble00.png",
+   "kind": "tex",
+   "out": [
+    "mg1801/effect/tex/mg1801_bubble00.png"
+   ],
+   "srcBytes": 706,
+   "distBytes": 706,
+   "cls": "color",
+   "codec": "png",
+   "reason": "tiny",
+   "w": 64,
+   "h": 64,
+   "alpha": true,
+   "psnr": null,
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
    "src": "mg1801/effect/tex/mg1801_bubble00_nml.png",
    "kind": "tex",
    "out": [
@@ -6857,22 +6928,23 @@
    ]
   },
   {
-   "src": "mg1801/effect/tex/mg1801_bubble00.png",
+   "src": "mg1801/effect/tex/mg1801_crown00.png",
    "kind": "tex",
    "out": [
-    "mg1801/effect/tex/mg1801_bubble00.png"
+    "mg1801/effect/tex/mg1801_crown00.png"
    ],
-   "srcBytes": 706,
-   "distBytes": 706,
+   "srcBytes": 2973,
+   "distBytes": 2973,
    "cls": "color",
    "codec": "png",
    "reason": "tiny",
-   "w": 64,
+   "w": 128,
    "h": 64,
    "alpha": true,
    "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -6978,46 +7050,54 @@
    ]
   },
   {
-   "src": "mg1801/effect/tex/mg1801_crown00.png",
+   "src": "mg1801/effect/tex/mg1801_shave01.png",
    "kind": "tex",
    "out": [
-    "mg1801/effect/tex/mg1801_crown00.png"
+    "mg1801/effect/tex/mg1801_shave01.ktx2"
    ],
-   "srcBytes": 2973,
-   "distBytes": 2973,
+   "srcBytes": 27886,
+   "distBytes": 16184,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "uastc-rdo",
+   "reason": "format BC3_SRGB",
    "w": 128,
-   "h": 64,
+   "h": 128,
    "alpha": true,
-   "psnr": null,
+   "psnr": {
+    "RGB": 44.088,
+    "R": 44.239,
+    "G": 43.802,
+    "B": 44.239,
+    "A": 36.133,
+    "Y": 44.176,
+    "maxErr": 26
+   },
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
    ]
   },
   {
-   "src": "mg1801/chara/tex/npc002_body_arr_alb_00.png",
+   "src": "mg1801/effect/tex/mg1801_smoke00.png",
    "kind": "tex",
    "out": [
-    "mg1801/chara/tex/npc002_body_arr_alb_00.ktx2"
+    "mg1801/effect/tex/mg1801_smoke00.ktx2"
    ],
-   "srcBytes": 483610,
-   "distBytes": 151168,
+   "srcBytes": 15063,
+   "distBytes": 7297,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "reason": "format BC3_SRGB",
+   "w": 128,
+   "h": 128,
+   "alpha": true,
    "psnr": {
-    "RGB": 35.721,
-    "R": 35.408,
-    "G": 43.234,
-    "B": 33.295,
-    "Y": 45.664,
-    "maxErr": 198
+    "RGB": 42.444,
+    "R": 42.412,
+    "G": 42.508,
+    "B": 42.412,
+    "Y": 43.476,
+    "maxErr": 12
    },
    "tries": [
     "etc1s:ok"
@@ -7075,55 +7155,31 @@
    ]
   },
   {
-   "src": "mg1801/chara/tex/npc002_body_arr_alb_03.png",
+   "src": "mg1801/effect/tex/mg1801_water_land00_01.png",
    "kind": "tex",
    "out": [
-    "mg1801/chara/tex/npc002_body_arr_alb_03.ktx2"
+    "mg1801/effect/tex/mg1801_water_land00_01.ktx2"
    ],
-   "srcBytes": 538440,
-   "distBytes": 169189,
+   "srcBytes": 4477,
+   "distBytes": 4317,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
+   "codec": "uastc-rdo",
+   "reason": "format BC1_SRGB",
+   "w": 64,
+   "h": 64,
    "alpha": false,
    "psnr": {
-    "RGB": 36.325,
-    "R": 35.342,
-    "G": 42.318,
-    "B": 34.579,
-    "Y": 45.43,
-    "maxErr": 148
+    "RGB": 54.522,
+    "R": 52.793,
+    "G": 53.876,
+    "B": 59.069,
+    "A": 100,
+    "Y": 53.92,
+    "maxErr": 10
    },
    "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "mg1801/effect/tex/mg1801_smoke00.png",
-   "kind": "tex",
-   "out": [
-    "mg1801/effect/tex/mg1801_smoke00.ktx2"
-   ],
-   "srcBytes": 15063,
-   "distBytes": 7297,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC3_SRGB",
-   "w": 128,
-   "h": 128,
-   "alpha": true,
-   "psnr": {
-    "RGB": 42.444,
-    "R": 42.412,
-    "G": 42.508,
-    "B": 42.412,
-    "Y": 43.476,
-    "maxErr": 12
-   },
-   "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -7179,6 +7235,27 @@
    ]
   },
   {
+   "src": "mg1801/effect/tex/mg_common_star_00.png",
+   "kind": "tex",
+   "out": [
+    "mg1801/effect/tex/mg_common_star_00.png"
+   ],
+   "srcBytes": 2470,
+   "distBytes": 2470,
+   "cls": "color",
+   "codec": "png",
+   "reason": "tiny",
+   "w": 32,
+   "h": 64,
+   "alpha": true,
+   "psnr": null,
+   "tries": [
+    "etc1s:x",
+    "uastc-rdo:x",
+    "uastc:ok"
+   ]
+  },
+  {
    "src": "mg1801/effect/tex/mg_common_star_01.png",
    "kind": "tex",
    "out": [
@@ -7204,59 +7281,55 @@
    ]
   },
   {
-   "src": "mg1801/effect/tex/mg1801_water_land00_01.png",
+   "src": "mg1801/tex/mg1801_bg00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/effect/tex/mg1801_water_land00_01.ktx2"
+    "mg1801/tex/mg1801_bg00_alb.ktx2"
    ],
-   "srcBytes": 4477,
-   "distBytes": 4317,
+   "srcBytes": 24661,
+   "distBytes": 9730,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC1_SRGB",
-   "w": 64,
-   "h": 64,
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 256,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 54.522,
-    "R": 52.793,
-    "G": 53.876,
-    "B": 59.069,
-    "A": 100,
-    "Y": 53.92,
-    "maxErr": 10
+    "RGB": 40.82,
+    "R": 41.765,
+    "G": 46.143,
+    "B": 38.028,
+    "Y": 48.693,
+    "maxErr": 25
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
-   "src": "mg1801/effect/tex/mg1801_shave01.png",
+   "src": "mg1801/tex/mg1801_cork00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/effect/tex/mg1801_shave01.ktx2"
+    "mg1801/tex/mg1801_cork00_alb.ktx2"
    ],
-   "srcBytes": 27886,
-   "distBytes": 16184,
+   "srcBytes": 306067,
+   "distBytes": 93622,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC3_SRGB",
-   "w": 128,
-   "h": 128,
-   "alpha": true,
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 512,
+   "h": 512,
+   "alpha": false,
    "psnr": {
-    "RGB": 44.088,
-    "R": 44.239,
-    "G": 43.802,
-    "B": 44.239,
-    "A": 36.133,
-    "Y": 44.176,
-    "maxErr": 26
+    "RGB": 37.252,
+    "R": 37.821,
+    "G": 39.574,
+    "B": 35.384,
+    "Y": 40.953,
+    "maxErr": 29
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -7313,26 +7386,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_bg00_alb.png",
+   "src": "mg1801/tex/mg1801_floor00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_bg00_alb.ktx2"
+    "mg1801/tex/mg1801_floor00_alb.ktx2"
    ],
-   "srcBytes": 24661,
-   "distBytes": 9730,
+   "srcBytes": 162953,
+   "distBytes": 65332,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 256,
-   "h": 256,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 40.82,
-    "R": 41.765,
-    "G": 46.143,
-    "B": 38.028,
-    "Y": 48.693,
-    "maxErr": 25
+    "RGB": 38.101,
+    "R": 37.96,
+    "G": 42.016,
+    "B": 36.167,
+    "Y": 43.436,
+    "maxErr": 21
    },
    "tries": [
     "etc1s:ok"
@@ -7390,24 +7463,29 @@
    ]
   },
   {
-   "src": "mg1801/effect/tex/mg_common_star_00.png",
+   "src": "mg1801/tex/mg1801_knife00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/effect/tex/mg_common_star_00.png"
+    "mg1801/tex/mg1801_knife00_alb.ktx2"
    ],
-   "srcBytes": 2470,
-   "distBytes": 2470,
+   "srcBytes": 217590,
+   "distBytes": 65882,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 32,
-   "h": 64,
-   "alpha": true,
-   "psnr": null,
+   "codec": "etc1s",
+   "reason": "glb color",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 42.504,
+    "R": 40.476,
+    "G": 48.414,
+    "B": 41.903,
+    "Y": 49.974,
+    "maxErr": 49
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:x",
-    "uastc:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -7537,52 +7615,52 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_floor00_alb.png",
+   "src": "mg1801/tex/mg1801_map02_lmp.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_floor00_alb.ktx2"
+    "mg1801/tex/mg1801_map02_lmp.ktx2"
    ],
-   "srcBytes": 162953,
-   "distBytes": 65332,
+   "srcBytes": 225373,
+   "distBytes": 51086,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
+   "reason": "format srgb",
    "w": 512,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 38.101,
-    "R": 37.96,
-    "G": 42.016,
-    "B": 36.167,
-    "Y": 43.436,
-    "maxErr": 21
+    "RGB": 37.648,
+    "R": 37.53,
+    "G": 40.695,
+    "B": 35.955,
+    "Y": 41.035,
+    "maxErr": 53
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_cork00_alb.png",
+   "src": "mg1801/tex/mg1801_obj00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_cork00_alb.ktx2"
+    "mg1801/tex/mg1801_obj00_alb.ktx2"
    ],
-   "srcBytes": 306067,
-   "distBytes": 93622,
+   "srcBytes": 494520,
+   "distBytes": 143215,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 37.252,
-    "R": 37.821,
-    "G": 39.574,
-    "B": 35.384,
-    "Y": 40.953,
-    "maxErr": 29
+    "RGB": 32.734,
+    "R": 33.131,
+    "G": 41.93,
+    "B": 29.796,
+    "Y": 45.233,
+    "maxErr": 214
    },
    "tries": [
     "etc1s:ok"
@@ -7667,27 +7745,20 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_map02_lmp.png",
+   "src": "mg1801/tex/mg1801_obj01_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_map02_lmp.ktx2"
+    "mg1801/tex/mg1801_obj01_alb.png"
    ],
-   "srcBytes": 225373,
-   "distBytes": 51086,
+   "srcBytes": 758,
+   "distBytes": 758,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format srgb",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
-   "psnr": {
-    "RGB": 37.648,
-    "R": 37.53,
-    "G": 40.695,
-    "B": 35.955,
-    "Y": 41.035,
-    "maxErr": 53
-   },
+   "codec": "png",
+   "reason": "tiny",
+   "w": 256,
+   "h": 256,
+   "alpha": true,
+   "psnr": null,
    "tries": [
     "etc1s:ok"
    ]
@@ -7712,20 +7783,27 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_obj01_alb.png",
+   "src": "mg1801/tex/mg1801_obj02_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_obj01_alb.png"
+    "mg1801/tex/mg1801_obj02_alb.ktx2"
    ],
-   "srcBytes": 758,
-   "distBytes": 758,
+   "srcBytes": 81540,
+   "distBytes": 27534,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "etc1s",
+   "reason": "glb color",
    "w": 256,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 36.856,
+    "R": 37.472,
+    "G": 40.139,
+    "B": 34.647,
+    "Y": 41.481,
+    "maxErr": 26
+   },
    "tries": [
     "etc1s:ok"
    ]
@@ -7784,26 +7862,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_knife00_alb.png",
+   "src": "mg1801/tex/mg1801_obj03_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_knife00_alb.ktx2"
+    "mg1801/tex/mg1801_obj03_alb.ktx2"
    ],
-   "srcBytes": 217590,
-   "distBytes": 65882,
+   "srcBytes": 13375,
+   "distBytes": 5762,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 42.504,
-    "R": 40.476,
-    "G": 48.414,
-    "B": 41.903,
-    "Y": 49.974,
-    "maxErr": 49
+    "RGB": 32.562,
+    "R": 33.935,
+    "G": 49.176,
+    "B": 29.041,
+    "Y": 51.993,
+    "maxErr": 70
    },
    "tries": [
     "etc1s:ok"
@@ -7863,26 +7941,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_obj02_alb.png",
+   "src": "mg1801/tex/mg1801_obj04_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_obj02_alb.ktx2"
+    "mg1801/tex/mg1801_obj04_alb.ktx2"
    ],
-   "srcBytes": 81540,
-   "distBytes": 27534,
+   "srcBytes": 410915,
+   "distBytes": 133507,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 256,
-   "h": 256,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 36.856,
-    "R": 37.472,
-    "G": 40.139,
-    "B": 34.647,
-    "Y": 41.481,
-    "maxErr": 26
+    "RGB": 36.473,
+    "R": 37.001,
+    "G": 45.677,
+    "B": 33.475,
+    "Y": 47.234,
+    "maxErr": 124
    },
    "tries": [
     "etc1s:ok"
@@ -7942,26 +8020,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_obj03_alb.png",
+   "src": "mg1801/tex/mg1801_obj05_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_obj03_alb.ktx2"
+    "mg1801/tex/mg1801_obj05_alb.ktx2"
    ],
-   "srcBytes": 13375,
-   "distBytes": 5762,
+   "srcBytes": 26926,
+   "distBytes": 16327,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 512,
    "h": 512,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 32.562,
-    "R": 33.935,
-    "G": 49.176,
-    "B": 29.041,
-    "Y": 51.993,
-    "maxErr": 70
+    "RGB": 46.944,
+    "R": 46.016,
+    "G": 49.752,
+    "B": 46.016,
+    "Y": 50.226,
+    "maxErr": 16
    },
    "tries": [
     "etc1s:ok"
@@ -8066,26 +8144,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_obj05_alb.png",
+   "src": "mg1801/tex/mg1801_oil_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_obj05_alb.ktx2"
+    "mg1801/tex/mg1801_oil_alb.ktx2"
    ],
-   "srcBytes": 26926,
-   "distBytes": 16327,
+   "srcBytes": 1712,
+   "distBytes": 1494,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
+   "w": 64,
+   "h": 64,
    "alpha": true,
    "psnr": {
-    "RGB": 46.944,
-    "R": 46.016,
-    "G": 49.752,
-    "B": 46.016,
-    "Y": 50.226,
-    "maxErr": 16
+    "RGB": 41.763,
+    "R": 38.588,
+    "G": 100,
+    "B": 42.11,
+    "Y": 48.131,
+    "maxErr": 3
    },
    "tries": [
     "etc1s:ok"
@@ -8111,29 +8189,31 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_oil_alb.png",
+   "src": "mg1801/tex/mg1801_placemat_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_oil_alb.ktx2"
+    "mg1801/tex/mg1801_placemat_alb.ktx2"
    ],
-   "srcBytes": 1712,
-   "distBytes": 1494,
+   "srcBytes": 1619315,
+   "distBytes": 1015424,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "glb color",
-   "w": 64,
-   "h": 64,
-   "alpha": true,
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 41.763,
-    "R": 38.588,
-    "G": 100,
-    "B": 42.11,
-    "Y": 48.131,
-    "maxErr": 3
+    "RGB": 52.373,
+    "R": 53.623,
+    "G": 53.104,
+    "B": 50.896,
+    "A": 100,
+    "Y": 53.21,
+    "maxErr": 30
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -8191,26 +8271,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_obj00_alb.png",
+   "src": "mg1801/tex/mg1801_placemat_side_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_obj00_alb.ktx2"
+    "mg1801/tex/mg1801_placemat_side_alb.ktx2"
    ],
-   "srcBytes": 494520,
-   "distBytes": 143215,
+   "srcBytes": 34983,
+   "distBytes": 16778,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "w": 128,
+   "h": 512,
+   "alpha": true,
    "psnr": {
-    "RGB": 32.734,
-    "R": 33.131,
-    "G": 41.93,
-    "B": 29.796,
-    "Y": 45.233,
-    "maxErr": 214
+    "RGB": 38.487,
+    "R": 38.84,
+    "G": 40.501,
+    "B": 36.875,
+    "Y": 41.408,
+    "maxErr": 16
    },
    "tries": [
     "etc1s:ok"
@@ -8268,26 +8348,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_placemat_side_alb.png",
+   "src": "mg1801/tex/mg1801_plant00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_placemat_side_alb.ktx2"
+    "mg1801/tex/mg1801_plant00_alb.ktx2"
    ],
-   "srcBytes": 34983,
-   "distBytes": 16778,
+   "srcBytes": 34950,
+   "distBytes": 14067,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 128,
+   "w": 512,
    "h": 512,
    "alpha": true,
    "psnr": {
-    "RGB": 38.487,
-    "R": 38.84,
-    "G": 40.501,
-    "B": 36.875,
-    "Y": 41.408,
-    "maxErr": 16
+    "RGB": 37.313,
+    "R": 38.609,
+    "G": 47.167,
+    "B": 33.98,
+    "Y": 47.75,
+    "maxErr": 42
    },
    "tries": [
     "etc1s:ok"
@@ -8345,26 +8425,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_plant00_alb.png",
+   "src": "mg1801/tex/mg1801_pot00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_plant00_alb.ktx2"
+    "mg1801/tex/mg1801_pot00_alb.ktx2"
    ],
-   "srcBytes": 34950,
-   "distBytes": 14067,
+   "srcBytes": 93370,
+   "distBytes": 53240,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
-   "alpha": true,
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 37.313,
-    "R": 38.609,
-    "G": 47.167,
-    "B": 33.98,
-    "Y": 47.75,
-    "maxErr": 42
+    "RGB": 42.775,
+    "R": 39.025,
+    "G": 47.563,
+    "B": 48.052,
+    "Y": 52.472,
+    "maxErr": 16
    },
    "tries": [
     "etc1s:ok"
@@ -8422,26 +8502,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_obj04_alb.png",
+   "src": "mg1801/tex/mg1801_soup00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_obj04_alb.ktx2"
+    "mg1801/tex/mg1801_soup00_alb.ktx2"
    ],
-   "srcBytes": 410915,
-   "distBytes": 133507,
+   "srcBytes": 280821,
+   "distBytes": 91911,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 36.473,
-    "R": 37.001,
-    "G": 45.677,
-    "B": 33.475,
-    "Y": 47.234,
-    "maxErr": 124
+    "RGB": 33.668,
+    "R": 30.966,
+    "G": 37.795,
+    "B": 34.915,
+    "Y": 40.62,
+    "maxErr": 33
    },
    "tries": [
     "etc1s:ok"
@@ -8525,26 +8605,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_pot00_alb.png",
+   "src": "mg1801/tex/mg1801_tile00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_pot00_alb.ktx2"
+    "mg1801/tex/mg1801_tile00_alb.ktx2"
    ],
-   "srcBytes": 93370,
-   "distBytes": 53240,
+   "srcBytes": 2408,
+   "distBytes": 6462,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 42.775,
-    "R": 39.025,
-    "G": 47.563,
-    "B": 48.052,
-    "Y": 52.472,
-    "maxErr": 16
+    "RGB": 43.989,
+    "R": 43.693,
+    "G": 58.764,
+    "B": 41.21,
+    "Y": 50.683,
+    "maxErr": 15
    },
    "tries": [
     "etc1s:ok"
@@ -8604,26 +8684,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_soup00_alb.png",
+   "src": "mg1801/tex/mg1801_vege_result00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_soup00_alb.ktx2"
+    "mg1801/tex/mg1801_vege_result00_alb.ktx2"
    ],
-   "srcBytes": 280821,
-   "distBytes": 91911,
+   "srcBytes": 428177,
+   "distBytes": 158016,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 33.668,
-    "R": 30.966,
-    "G": 37.795,
-    "B": 34.915,
-    "Y": 40.62,
-    "maxErr": 33
+    "RGB": 38.998,
+    "R": 39.28,
+    "G": 45.988,
+    "B": 36.297,
+    "Y": 47.923,
+    "maxErr": 68
    },
    "tries": [
     "etc1s:ok"
@@ -8681,26 +8761,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_tile00_alb.png",
+   "src": "mg1801/tex/mg1801_vege_result01_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_tile00_alb.ktx2"
+    "mg1801/tex/mg1801_vege_result01_alb.ktx2"
    ],
-   "srcBytes": 2408,
-   "distBytes": 6462,
+   "srcBytes": 129830,
+   "distBytes": 48595,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 512,
    "h": 512,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 43.989,
-    "R": 43.693,
-    "G": 58.764,
-    "B": 41.21,
-    "Y": 50.683,
-    "maxErr": 15
+    "RGB": 39.139,
+    "R": 39.79,
+    "G": 45.318,
+    "B": 36.355,
+    "Y": 46.695,
+    "maxErr": 58
    },
    "tries": [
     "etc1s:ok"
@@ -8758,26 +8838,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vege_result01_alb.png",
+   "src": "mg1801/tex/mg1801_vege_result02_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vege_result01_alb.ktx2"
+    "mg1801/tex/mg1801_vege_result02_alb.ktx2"
    ],
-   "srcBytes": 129830,
-   "distBytes": 48595,
+   "srcBytes": 567087,
+   "distBytes": 172057,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
-   "alpha": true,
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 39.139,
-    "R": 39.79,
-    "G": 45.318,
-    "B": 36.355,
-    "Y": 46.695,
-    "maxErr": 58
+    "RGB": 40.206,
+    "R": 40.54,
+    "G": 46.154,
+    "B": 37.606,
+    "Y": 47.364,
+    "maxErr": 49
    },
    "tries": [
     "etc1s:ok"
@@ -8837,13 +8917,13 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vege_result00_alb.png",
+   "src": "mg1801/tex/mg1801_vege_result04_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vege_result00_alb.ktx2"
+    "mg1801/tex/mg1801_vege_result04_alb.ktx2"
    ],
-   "srcBytes": 428177,
-   "distBytes": 158016,
+   "srcBytes": 558349,
+   "distBytes": 178951,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -8851,12 +8931,12 @@
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 38.998,
-    "R": 39.28,
-    "G": 45.988,
-    "B": 36.297,
-    "Y": 47.923,
-    "maxErr": 68
+    "RGB": 37.995,
+    "R": 36.049,
+    "G": 43.739,
+    "B": 37.32,
+    "Y": 46.432,
+    "maxErr": 99
    },
    "tries": [
     "etc1s:ok"
@@ -8993,26 +9073,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vege_result02_alb.png",
+   "src": "mg1801/tex/mg1801_vegetable01_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vege_result02_alb.ktx2"
+    "mg1801/tex/mg1801_vegetable01_alb.ktx2"
    ],
-   "srcBytes": 567087,
-   "distBytes": 172057,
+   "srcBytes": 207667,
+   "distBytes": 67516,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 40.206,
-    "R": 40.54,
-    "G": 46.154,
-    "B": 37.606,
-    "Y": 47.364,
-    "maxErr": 49
+    "RGB": 39.522,
+    "R": 39.38,
+    "G": 44.37,
+    "B": 37.376,
+    "Y": 45.326,
+    "maxErr": 29
    },
    "tries": [
     "etc1s:ok"
@@ -9070,26 +9150,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vegetable01_alb.png",
+   "src": "mg1801/tex/mg1801_vegetable02_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vegetable01_alb.ktx2"
+    "mg1801/tex/mg1801_vegetable02_alb.ktx2"
    ],
-   "srcBytes": 207667,
-   "distBytes": 67516,
+   "srcBytes": 623990,
+   "distBytes": 159078,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 39.522,
-    "R": 39.38,
-    "G": 44.37,
-    "B": 37.376,
-    "Y": 45.326,
-    "maxErr": 29
+    "RGB": 41.036,
+    "R": 41.445,
+    "G": 46.564,
+    "B": 38.46,
+    "Y": 47.304,
+    "maxErr": 86
    },
    "tries": [
     "etc1s:ok"
@@ -9147,13 +9227,13 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vege_result04_alb.png",
+   "src": "mg1801/tex/mg1801_vegetable03_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vege_result04_alb.ktx2"
+    "mg1801/tex/mg1801_vegetable03_alb.ktx2"
    ],
-   "srcBytes": 558349,
-   "distBytes": 178951,
+   "srcBytes": 633428,
+   "distBytes": 184068,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -9161,12 +9241,12 @@
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 37.995,
-    "R": 36.049,
-    "G": 43.739,
-    "B": 37.32,
-    "Y": 46.432,
-    "maxErr": 99
+    "RGB": 39.526,
+    "R": 38.959,
+    "G": 43.239,
+    "B": 37.956,
+    "Y": 44.337,
+    "maxErr": 70
    },
    "tries": [
     "etc1s:ok"
@@ -9224,13 +9304,13 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vegetable02_alb.png",
+   "src": "mg1801/tex/mg1801_vegetable04_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vegetable02_alb.ktx2"
+    "mg1801/tex/mg1801_vegetable04_alb.ktx2"
    ],
-   "srcBytes": 623990,
-   "distBytes": 159078,
+   "srcBytes": 393295,
+   "distBytes": 164957,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -9238,12 +9318,12 @@
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 41.036,
-    "R": 41.445,
-    "G": 46.564,
-    "B": 38.46,
-    "Y": 47.304,
-    "maxErr": 86
+    "RGB": 38.546,
+    "R": 36.38,
+    "G": 44.281,
+    "B": 38.187,
+    "Y": 48.009,
+    "maxErr": 108
    },
    "tries": [
     "etc1s:ok"
@@ -9380,26 +9460,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vegetable03_alb.png",
+   "src": "mg1801/tex/mg1801_water01_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vegetable03_alb.ktx2"
+    "mg1801/tex/mg1801_water01_alb.ktx2"
    ],
-   "srcBytes": 633428,
-   "distBytes": 184068,
+   "srcBytes": 381754,
+   "distBytes": 133370,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "reason": "format srgb",
+   "w": 512,
+   "h": 512,
+   "alpha": true,
    "psnr": {
-    "RGB": 39.526,
-    "R": 38.959,
-    "G": 43.239,
-    "B": 37.956,
-    "Y": 44.337,
-    "maxErr": 70
+    "RGB": 34.677,
+    "R": 36.801,
+    "G": 41.12,
+    "B": 31.333,
+    "Y": 42.631,
+    "maxErr": 73
    },
    "tries": [
     "etc1s:ok"
@@ -9483,26 +9563,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_vegetable04_alb.png",
+   "src": "mg1801/tex/mg1801_wood00_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_vegetable04_alb.ktx2"
+    "mg1801/tex/mg1801_wood00_alb.ktx2"
    ],
-   "srcBytes": 393295,
-   "distBytes": 164957,
+   "srcBytes": 232662,
+   "distBytes": 67880,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 38.546,
-    "R": 36.38,
-    "G": 44.281,
-    "B": 38.187,
-    "Y": 48.009,
-    "maxErr": 108
+    "RGB": 40.258,
+    "R": 40.58,
+    "G": 44.167,
+    "B": 38.043,
+    "Y": 45.622,
+    "maxErr": 17
    },
    "tries": [
     "etc1s:ok"
@@ -9560,13 +9640,13 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_wood00_alb.png",
+   "src": "mg1801/tex/mg1801_wood01_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_wood00_alb.ktx2"
+    "mg1801/tex/mg1801_wood01_alb.ktx2"
    ],
-   "srcBytes": 232662,
-   "distBytes": 67880,
+   "srcBytes": 243289,
+   "distBytes": 86701,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -9574,12 +9654,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 40.258,
-    "R": 40.58,
-    "G": 44.167,
-    "B": 38.043,
-    "Y": 45.622,
-    "maxErr": 17
+    "RGB": 36.855,
+    "R": 37.756,
+    "G": 39.495,
+    "B": 34.699,
+    "Y": 40.852,
+    "maxErr": 41
    },
    "tries": [
     "etc1s:ok"
@@ -9640,26 +9720,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_water01_alb.png",
+   "src": "mg1801/tex/mg1801_wood02_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_water01_alb.ktx2"
+    "mg1801/tex/mg1801_wood02_alb.ktx2"
    ],
-   "srcBytes": 381754,
-   "distBytes": 133370,
+   "srcBytes": 153625,
+   "distBytes": 52324,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format srgb",
+   "reason": "glb color",
    "w": 512,
    "h": 512,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 34.677,
-    "R": 36.801,
-    "G": 41.12,
-    "B": 31.333,
-    "Y": 42.631,
-    "maxErr": 73
+    "RGB": 40.237,
+    "R": 38.658,
+    "G": 44.255,
+    "B": 39.573,
+    "Y": 45.385,
+    "maxErr": 25
    },
    "tries": [
     "etc1s:ok"
@@ -9705,13 +9785,13 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_wood01_alb.png",
+   "src": "mg1801/tex/mg1801_wood03_alb.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_wood01_alb.ktx2"
+    "mg1801/tex/mg1801_wood03_alb.ktx2"
    ],
-   "srcBytes": 243289,
-   "distBytes": 86701,
+   "srcBytes": 114262,
+   "distBytes": 38293,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
@@ -9719,12 +9799,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 36.855,
-    "R": 37.756,
-    "G": 39.495,
-    "B": 34.699,
-    "Y": 40.852,
-    "maxErr": 41
+    "RGB": 42.246,
+    "R": 40.973,
+    "G": 45.667,
+    "B": 41.437,
+    "Y": 46.661,
+    "maxErr": 14
    },
    "tries": [
     "etc1s:ok"
@@ -27280,26 +27360,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_wood03_alb.png",
+   "src": "plaza/world/chara/tex/npc001_body_alb_5cd6a6f638e2.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_wood03_alb.ktx2"
+    "plaza/world/chara/tex/npc001_body_alb_5cd6a6f638e2.ktx2"
    ],
-   "srcBytes": 114262,
-   "distBytes": 38293,
+   "srcBytes": 246402,
+   "distBytes": 56715,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 512,
-   "h": 512,
-   "alpha": false,
+   "h": 1024,
+   "alpha": true,
    "psnr": {
-    "RGB": 42.246,
-    "R": 40.973,
-    "G": 45.667,
-    "B": 41.437,
-    "Y": 46.661,
-    "maxErr": 14
+    "RGB": 37.302,
+    "R": 36.759,
+    "G": 43.133,
+    "B": 35.245,
+    "Y": 45.686,
+    "maxErr": 84
    },
    "tries": [
     "etc1s:ok"
@@ -27427,26 +27507,26 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_wood02_alb.png",
+   "src": "plaza/world/chara/tex/npc001bd_bandanna_alb_4e7907319b93.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_wood02_alb.ktx2"
+    "plaza/world/chara/tex/npc001bd_bandanna_alb_4e7907319b93.ktx2"
    ],
-   "srcBytes": 153625,
-   "distBytes": 52324,
+   "srcBytes": 48102,
+   "distBytes": 15725,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
+   "w": 256,
+   "h": 256,
+   "alpha": true,
    "psnr": {
-    "RGB": 40.237,
-    "R": 38.658,
-    "G": 44.255,
-    "B": 39.573,
-    "Y": 45.385,
-    "maxErr": 25
+    "RGB": 38.106,
+    "R": 40.555,
+    "G": 44.621,
+    "B": 34.666,
+    "Y": 45.516,
+    "maxErr": 51
    },
    "tries": [
     "etc1s:ok"
@@ -27556,52 +27636,52 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc001bd_bandanna_alb_4e7907319b93.png",
+   "src": "plaza/world/chara/tex/npc002_body_arr_alb_01_e954f9441e27.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc001bd_bandanna_alb_4e7907319b93.ktx2"
+    "plaza/world/chara/tex/npc002_body_arr_alb_01_e954f9441e27.ktx2"
    ],
-   "srcBytes": 48102,
-   "distBytes": 15725,
+   "srcBytes": 480539,
+   "distBytes": 161659,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
-   "w": 256,
-   "h": 256,
-   "alpha": true,
+   "reason": "name",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 38.106,
-    "R": 40.555,
-    "G": 44.621,
-    "B": 34.666,
-    "Y": 45.516,
-    "maxErr": 51
+    "RGB": 36.993,
+    "R": 36.489,
+    "G": 43.617,
+    "B": 34.794,
+    "Y": 45.846,
+    "maxErr": 148
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc001_body_alb_5cd6a6f638e2.png",
+   "src": "plaza/world/chara/tex/npc002_body_arr_alb_02_7b3fa924d099.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc001_body_alb_5cd6a6f638e2.ktx2"
+    "plaza/world/chara/tex/npc002_body_arr_alb_02_7b3fa924d099.ktx2"
    ],
-   "srcBytes": 246402,
-   "distBytes": 56715,
+   "srcBytes": 500035,
+   "distBytes": 162352,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
-   "w": 512,
+   "reason": "name",
+   "w": 1024,
    "h": 1024,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 37.302,
-    "R": 36.759,
-    "G": 43.133,
-    "B": 35.245,
-    "Y": 45.686,
-    "maxErr": 84
+    "RGB": 34.419,
+    "R": 32.552,
+    "G": 42.484,
+    "B": 33.258,
+    "Y": 45.96,
+    "maxErr": 207
    },
    "tries": [
     "etc1s:ok"
@@ -27634,31 +27714,29 @@
    ]
   },
   {
-   "src": "mg1801/tex/mg1801_placemat_alb.png",
+   "src": "plaza/world/chara/tex/npc002_body_arr_alb_04_2318ac2f15af.png",
    "kind": "tex",
    "out": [
-    "mg1801/tex/mg1801_placemat_alb.ktx2"
+    "plaza/world/chara/tex/npc002_body_arr_alb_04_2318ac2f15af.ktx2"
    ],
-   "srcBytes": 1619315,
-   "distBytes": 1015424,
+   "srcBytes": 517030,
+   "distBytes": 161477,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "glb color",
+   "codec": "etc1s",
+   "reason": "name",
    "w": 1024,
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 52.373,
-    "R": 53.623,
-    "G": 53.104,
-    "B": 50.896,
-    "A": 100,
-    "Y": 53.21,
-    "maxErr": 30
+    "RGB": 37.439,
+    "R": 38.232,
+    "G": 44.202,
+    "B": 34.525,
+    "Y": 46.175,
+    "maxErr": 148
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -27715,25 +27793,25 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc002_body_arr_alb_01_e954f9441e27.png",
+   "src": "plaza/world/chara/tex/npc002st_body_alb_6609acd96b50.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc002_body_arr_alb_01_e954f9441e27.ktx2"
+    "plaza/world/chara/tex/npc002st_body_alb_6609acd96b50.ktx2"
    ],
-   "srcBytes": 480539,
-   "distBytes": 161659,
+   "srcBytes": 524869,
+   "distBytes": 167460,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "name",
+   "reason": "glb color",
    "w": 1024,
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 36.993,
-    "R": 36.489,
-    "G": 43.617,
-    "B": 34.794,
-    "Y": 45.846,
+    "RGB": 36.361,
+    "R": 35.366,
+    "G": 42.36,
+    "B": 34.626,
+    "Y": 45.469,
     "maxErr": 148
    },
    "tries": [
@@ -27741,26 +27819,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc002_body_arr_alb_02_7b3fa924d099.png",
+   "src": "plaza/world/chara/tex/npc002st_hat_alb_13ced35624cb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc002_body_arr_alb_02_7b3fa924d099.ktx2"
+    "plaza/world/chara/tex/npc002st_hat_alb_13ced35624cb.ktx2"
    ],
-   "srcBytes": 500035,
-   "distBytes": 162352,
+   "srcBytes": 93650,
+   "distBytes": 32078,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
+   "reason": "glb color",
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 34.419,
-    "R": 32.552,
-    "G": 42.484,
-    "B": 33.258,
-    "Y": 45.96,
-    "maxErr": 207
+    "RGB": 35.972,
+    "R": 38.784,
+    "G": 44.905,
+    "B": 32.264,
+    "Y": 46.798,
+    "maxErr": 209
    },
    "tries": [
     "etc1s:ok"
@@ -27846,52 +27924,52 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc002st_hat_alb_13ced35624cb.png",
+   "src": "plaza/world/chara/tex/npc003_body_arr_alb_00_0f4bca7d06eb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc002st_hat_alb_13ced35624cb.ktx2"
+    "plaza/world/chara/tex/npc003_body_arr_alb_00_0f4bca7d06eb.ktx2"
    ],
-   "srcBytes": 93650,
-   "distBytes": 32078,
+   "srcBytes": 690601,
+   "distBytes": 146669,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
+   "reason": "name",
+   "w": 1024,
+   "h": 1024,
+   "alpha": true,
    "psnr": {
-    "RGB": 35.972,
-    "R": 38.784,
-    "G": 44.905,
-    "B": 32.264,
-    "Y": 46.798,
-    "maxErr": 209
+    "RGB": 34.442,
+    "R": 33.595,
+    "G": 41.928,
+    "B": 32.383,
+    "Y": 45.352,
+    "maxErr": 200
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc002_body_arr_alb_04_2318ac2f15af.png",
+   "src": "plaza/world/chara/tex/npc003_body_arr_alb_01_888e291b432a.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc002_body_arr_alb_04_2318ac2f15af.ktx2"
+    "plaza/world/chara/tex/npc003_body_arr_alb_01_888e291b432a.ktx2"
    ],
-   "srcBytes": 517030,
-   "distBytes": 161477,
+   "srcBytes": 666870,
+   "distBytes": 145472,
    "cls": "color",
    "codec": "etc1s",
    "reason": "name",
    "w": 1024,
    "h": 1024,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 37.439,
-    "R": 38.232,
-    "G": 44.202,
-    "B": 34.525,
-    "Y": 46.175,
-    "maxErr": 148
+    "RGB": 35.222,
+    "R": 35.35,
+    "G": 42.578,
+    "B": 32.562,
+    "Y": 45.05,
+    "maxErr": 200
    },
    "tries": [
     "etc1s:ok"
@@ -28002,29 +28080,31 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc002st_body_alb_6609acd96b50.png",
+   "src": "plaza/world/chara/tex/npc003it00_hat_alb_9b4c4f8e5719.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc002st_body_alb_6609acd96b50.ktx2"
+    "plaza/world/chara/tex/npc003it00_hat_alb_9b4c4f8e5719.ktx2"
    ],
-   "srcBytes": 524869,
-   "distBytes": 167460,
+   "srcBytes": 8039,
+   "distBytes": 14190,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 36.361,
-    "R": 35.366,
-    "G": 42.36,
-    "B": 34.626,
-    "Y": 45.469,
-    "maxErr": 148
+    "RGB": 56.879,
+    "R": 58.117,
+    "G": 56.972,
+    "B": 55.844,
+    "A": 100,
+    "Y": 57.929,
+    "maxErr": 8
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -28073,86 +28153,6 @@
     "G": 38.384,
     "B": 43.249,
     "maxErr": 35
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "plaza/world/chara/tex/npc003it00_hat_alb_9b4c4f8e5719.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/chara/tex/npc003it00_hat_alb_9b4c4f8e5719.ktx2"
-   ],
-   "srcBytes": 8039,
-   "distBytes": 14190,
-   "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "glb color",
-   "w": 512,
-   "h": 256,
-   "alpha": false,
-   "psnr": {
-    "RGB": 56.879,
-    "R": 58.117,
-    "G": 56.972,
-    "B": 55.844,
-    "A": 100,
-    "Y": 57.929,
-    "maxErr": 8
-   },
-   "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
-   ]
-  },
-  {
-   "src": "plaza/world/chara/tex/npc003_body_arr_alb_00_0f4bca7d06eb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/chara/tex/npc003_body_arr_alb_00_0f4bca7d06eb.ktx2"
-   ],
-   "srcBytes": 690601,
-   "distBytes": 146669,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
-   "alpha": true,
-   "psnr": {
-    "RGB": 34.442,
-    "R": 33.595,
-    "G": 41.928,
-    "B": 32.383,
-    "Y": 45.352,
-    "maxErr": 200
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "plaza/world/chara/tex/npc003_body_arr_alb_01_888e291b432a.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/chara/tex/npc003_body_arr_alb_01_888e291b432a.ktx2"
-   ],
-   "srcBytes": 666870,
-   "distBytes": 145472,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
-   "alpha": true,
-   "psnr": {
-    "RGB": 35.222,
-    "R": 35.35,
-    "G": 42.578,
-    "B": 32.562,
-    "Y": 45.05,
-    "maxErr": 200
    },
    "tries": [
     "etc1s:ok"
@@ -28237,6 +28237,84 @@
    ]
   },
   {
+   "src": "plaza/world/chara/tex/npc022_body_arr_alb_03_b59f9b83fd42.png",
+   "kind": "tex",
+   "out": [
+    "plaza/world/chara/tex/npc022_body_arr_alb_03_b59f9b83fd42.ktx2"
+   ],
+   "srcBytes": 453210,
+   "distBytes": 151457,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "name",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 32.304,
+    "R": 34.335,
+    "G": 40.438,
+    "B": 28.84,
+    "Y": 45.338,
+    "maxErr": 255
+   },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "plaza/world/chara/tex/npc022_body_arr_alb_04_4f8056dffa1c.png",
+   "kind": "tex",
+   "out": [
+    "plaza/world/chara/tex/npc022_body_arr_alb_04_4f8056dffa1c.ktx2"
+   ],
+   "srcBytes": 482671,
+   "distBytes": 158311,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "name",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 34.343,
+    "R": 31.557,
+    "G": 40.731,
+    "B": 34.944,
+    "Y": 46.189,
+    "maxErr": 198
+   },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "plaza/world/chara/tex/npc022_body_arr_alb_05_a534fa39c935.png",
+   "kind": "tex",
+   "out": [
+    "plaza/world/chara/tex/npc022_body_arr_alb_05_a534fa39c935.ktx2"
+   ],
+   "srcBytes": 454918,
+   "distBytes": 149611,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "name",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 32.816,
+    "R": 36.087,
+    "G": 43.961,
+    "B": 28.92,
+    "Y": 46.669,
+    "maxErr": 255
+   },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
    "src": "plaza/world/chara/tex/npc022_body_nml_4b9d62972239.png",
    "kind": "tex",
    "out": [
@@ -28290,26 +28368,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc022_body_arr_alb_03_b59f9b83fd42.png",
+   "src": "plaza/world/chara/tex/npc022_eyelid_alb_a6dafa8617ee.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc022_body_arr_alb_03_b59f9b83fd42.ktx2"
+    "plaza/world/chara/tex/npc022_eyelid_alb_a6dafa8617ee.ktx2"
    ],
-   "srcBytes": 453210,
-   "distBytes": 151457,
+   "srcBytes": 116542,
+   "distBytes": 52850,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
+   "reason": "glb color",
+   "w": 4096,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 32.304,
-    "R": 34.335,
-    "G": 40.438,
-    "B": 28.84,
-    "Y": 45.338,
-    "maxErr": 255
+    "RGB": 41.027,
+    "R": 40.003,
+    "G": 48.307,
+    "B": 39.131,
+    "Y": 50.307,
+    "maxErr": 90
    },
    "tries": [
     "etc1s:ok"
@@ -28409,26 +28487,26 @@
    "tries": []
   },
   {
-   "src": "plaza/world/chara/tex/npc022_body_arr_alb_04_4f8056dffa1c.png",
+   "src": "plaza/world/chara/tex/npc022_mouth_alb_1a5e26d4993f.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc022_body_arr_alb_04_4f8056dffa1c.ktx2"
+    "plaza/world/chara/tex/npc022_mouth_alb_1a5e26d4993f.ktx2"
    ],
-   "srcBytes": 482671,
-   "distBytes": 158311,
+   "srcBytes": 24328,
+   "distBytes": 8290,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
+   "reason": "glb color",
+   "w": 512,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 34.343,
-    "R": 31.557,
-    "G": 40.731,
-    "B": 34.944,
-    "Y": 46.189,
-    "maxErr": 198
+    "RGB": 44.64,
+    "R": 45.459,
+    "G": 50.041,
+    "B": 41.891,
+    "Y": 51.646,
+    "maxErr": 16
    },
    "tries": [
     "etc1s:ok"
@@ -28486,26 +28564,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc022_mouth_alb_1a5e26d4993f.png",
+   "src": "plaza/world/chara/tex/npc029_body_alb_8d7cfb8fc3ce.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc022_mouth_alb_1a5e26d4993f.ktx2"
+    "plaza/world/chara/tex/npc029_body_alb_8d7cfb8fc3ce.ktx2"
    ],
-   "srcBytes": 24328,
-   "distBytes": 8290,
+   "srcBytes": 308576,
+   "distBytes": 107160,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 256,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 44.64,
-    "R": 45.459,
-    "G": 50.041,
-    "B": 41.891,
-    "Y": 51.646,
-    "maxErr": 16
+    "RGB": 37.917,
+    "R": 37.278,
+    "G": 44.115,
+    "B": 35.872,
+    "Y": 48.784,
+    "maxErr": 142
    },
    "tries": [
     "etc1s:ok"
@@ -28591,26 +28669,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc022_body_arr_alb_05_a534fa39c935.png",
+   "src": "plaza/world/chara/tex/npc029_eyelid_alb_8252ae8f7518.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc022_body_arr_alb_05_a534fa39c935.ktx2"
+    "plaza/world/chara/tex/npc029_eyelid_alb_8252ae8f7518.ktx2"
    ],
-   "srcBytes": 454918,
-   "distBytes": 149611,
+   "srcBytes": 23403,
+   "distBytes": 10839,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "name",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "reason": "glb color",
+   "w": 512,
+   "h": 128,
+   "alpha": true,
    "psnr": {
-    "RGB": 32.816,
-    "R": 36.087,
-    "G": 43.961,
-    "B": 28.92,
-    "Y": 46.669,
-    "maxErr": 255
+    "RGB": 40.7,
+    "R": 42.007,
+    "G": 47.145,
+    "B": 37.618,
+    "Y": 49.596,
+    "maxErr": 60
    },
    "tries": [
     "etc1s:ok"
@@ -28663,26 +28741,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc022_eyelid_alb_a6dafa8617ee.png",
+   "src": "plaza/world/chara/tex/npc029a_strawhat_alb_273fc0df40d3.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc022_eyelid_alb_a6dafa8617ee.ktx2"
+    "plaza/world/chara/tex/npc029a_strawhat_alb_273fc0df40d3.ktx2"
    ],
-   "srcBytes": 116542,
-   "distBytes": 52850,
+   "srcBytes": 147603,
+   "distBytes": 59481,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 4096,
-   "h": 256,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 41.027,
-    "R": 40.003,
-    "G": 48.307,
-    "B": 39.131,
-    "Y": 50.307,
-    "maxErr": 90
+    "RGB": 38.832,
+    "R": 40.328,
+    "G": 44.824,
+    "B": 35.737,
+    "Y": 46.021,
+    "maxErr": 87
    },
    "tries": [
     "etc1s:ok"
@@ -28742,26 +28820,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc029_eyelid_alb_8252ae8f7518.png",
+   "src": "plaza/world/chara/tex/npc044_body_alb_091305cfe579.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc029_eyelid_alb_8252ae8f7518.ktx2"
+    "plaza/world/chara/tex/npc044_body_alb_091305cfe579.ktx2"
    ],
-   "srcBytes": 23403,
-   "distBytes": 10839,
+   "srcBytes": 770353,
+   "distBytes": 183385,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 128,
+   "w": 1024,
+   "h": 1024,
    "alpha": true,
    "psnr": {
-    "RGB": 40.7,
-    "R": 42.007,
-    "G": 47.145,
-    "B": 37.618,
-    "Y": 49.596,
-    "maxErr": 60
+    "RGB": 36.777,
+    "R": 37.475,
+    "G": 43.305,
+    "B": 33.931,
+    "Y": 44.595,
+    "maxErr": 109
    },
    "tries": [
     "etc1s:ok"
@@ -28841,26 +28919,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc029_body_alb_8d7cfb8fc3ce.png",
+   "src": "plaza/world/chara/tex/npc044_eyelid_alb_2e6c35cf9a5a.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc029_body_alb_8d7cfb8fc3ce.ktx2"
+    "plaza/world/chara/tex/npc044_eyelid_alb_2e6c35cf9a5a.ktx2"
    ],
-   "srcBytes": 308576,
-   "distBytes": 107160,
+   "srcBytes": 46537,
+   "distBytes": 23321,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
    "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "h": 128,
+   "alpha": true,
    "psnr": {
-    "RGB": 37.917,
-    "R": 37.278,
-    "G": 44.115,
-    "B": 35.872,
-    "Y": 48.784,
-    "maxErr": 142
+    "RGB": 34.01,
+    "R": 33.08,
+    "G": 42.943,
+    "B": 31.879,
+    "Y": 46.417,
+    "maxErr": 100
    },
    "tries": [
     "etc1s:ok"
@@ -28945,26 +29023,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc029a_strawhat_alb_273fc0df40d3.png",
+   "src": "plaza/world/chara/tex/npc051_body_alb_7c01a006f9cd.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc029a_strawhat_alb_273fc0df40d3.ktx2"
+    "plaza/world/chara/tex/npc051_body_alb_7c01a006f9cd.ktx2"
    ],
-   "srcBytes": 147603,
-   "distBytes": 59481,
+   "srcBytes": 365575,
+   "distBytes": 157161,
    "cls": "color",
    "codec": "etc1s",
    "reason": "glb color",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 38.832,
-    "R": 40.328,
-    "G": 44.824,
-    "B": 35.737,
-    "Y": 46.021,
-    "maxErr": 87
+    "RGB": 33.404,
+    "R": 32.476,
+    "G": 42.734,
+    "B": 31.242,
+    "Y": 46.852,
+    "maxErr": 222
    },
    "tries": [
     "etc1s:ok"
@@ -29257,29 +29335,31 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc044_eyelid_alb_2e6c35cf9a5a.png",
+   "src": "plaza/world/tex/assets_s_vinyl00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc044_eyelid_alb_2e6c35cf9a5a.ktx2"
+    "plaza/world/tex/assets_s_vinyl00_alb.ktx2"
    ],
-   "srcBytes": 46537,
-   "distBytes": 23321,
+   "srcBytes": 14755,
+   "distBytes": 27630,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 128,
-   "alpha": true,
+   "codec": "uastc-rdo",
+   "reason": "format BC1_SRGB",
+   "w": 512,
+   "h": 256,
+   "alpha": false,
    "psnr": {
-    "RGB": 34.01,
-    "R": 33.08,
-    "G": 42.943,
-    "B": 31.879,
-    "Y": 46.417,
-    "maxErr": 100
+    "RGB": 58.483,
+    "R": 60.147,
+    "G": 60.654,
+    "B": 56.149,
+    "A": 100,
+    "Y": 62.502,
+    "maxErr": 31
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -29571,31 +29651,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/assets_s_vinyl00_alb.png",
+   "src": "plaza/world/tex/bd07_beehive00_00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/assets_s_vinyl00_alb.ktx2"
+    "plaza/world/tex/bd07_beehive00_00_alb.ktx2"
    ],
-   "srcBytes": 14755,
-   "distBytes": 27630,
+   "srcBytes": 668667,
+   "distBytes": 222583,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 256,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 58.483,
-    "R": 60.147,
-    "G": 60.654,
-    "B": 56.149,
-    "A": 100,
-    "Y": 62.502,
-    "maxErr": 31
+    "RGB": 36.547,
+    "R": 37.291,
+    "G": 41.53,
+    "B": 33.899,
+    "Y": 42.704,
+    "maxErr": 103
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -29702,29 +29780,31 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc051_body_alb_7c01a006f9cd.png",
+   "src": "plaza/world/tex/bd07_tableset02_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc051_body_alb_7c01a006f9cd.ktx2"
+    "plaza/world/tex/bd07_tableset02_alb.ktx2"
    ],
-   "srcBytes": 365575,
-   "distBytes": 157161,
+   "srcBytes": 17053,
+   "distBytes": 16378,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
+   "codec": "uastc-rdo",
+   "reason": "format BC1_SRGB",
+   "w": 128,
+   "h": 128,
    "alpha": false,
    "psnr": {
-    "RGB": 33.404,
-    "R": 32.476,
-    "G": 42.734,
-    "B": 31.242,
-    "Y": 46.852,
-    "maxErr": 222
+    "RGB": 48.413,
+    "R": 49.537,
+    "G": 48.32,
+    "B": 47.598,
+    "A": 100,
+    "Y": 49.301,
+    "maxErr": 34
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -29795,26 +29875,26 @@
    ]
   },
   {
-   "src": "plaza/world/chara/tex/npc044_body_alb_091305cfe579.png",
+   "src": "plaza/world/tex/bd_cmn_balloon_basket_bottom_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/chara/tex/npc044_body_alb_091305cfe579.ktx2"
+    "plaza/world/tex/bd_cmn_balloon_basket_bottom_alb.ktx2"
    ],
-   "srcBytes": 770353,
-   "distBytes": 183385,
+   "srcBytes": 82354,
+   "distBytes": 26900,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "glb color",
-   "w": 1024,
-   "h": 1024,
-   "alpha": true,
+   "reason": "format BC1_SRGB",
+   "w": 256,
+   "h": 256,
+   "alpha": false,
    "psnr": {
-    "RGB": 36.777,
-    "R": 37.475,
-    "G": 43.305,
-    "B": 33.931,
-    "Y": 44.595,
-    "maxErr": 109
+    "RGB": 33.098,
+    "R": 34.084,
+    "G": 39.068,
+    "B": 30.198,
+    "Y": 40.635,
+    "maxErr": 44
    },
    "tries": [
     "etc1s:ok"
@@ -29961,57 +30041,55 @@
    ]
   },
   {
-   "src": "plaza/world/tex/bd_cmn_balloon_basket_bottom_alb.png",
+   "src": "plaza/world/tex/fountain00_gold_base_mt_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/bd_cmn_balloon_basket_bottom_alb.ktx2"
+    "plaza/world/tex/fountain00_gold_base_mt_alb.ktx2"
    ],
-   "srcBytes": 82354,
-   "distBytes": 26900,
+   "srcBytes": 182758,
+   "distBytes": 61594,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 256,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 33.098,
-    "R": 34.084,
-    "G": 39.068,
-    "B": 30.198,
-    "Y": 40.635,
-    "maxErr": 44
+    "RGB": 40.396,
+    "R": 41.048,
+    "G": 44.253,
+    "B": 38.021,
+    "Y": 45.504,
+    "maxErr": 24
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/bd07_tableset02_alb.png",
+   "src": "plaza/world/tex/fountain00_mt_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/bd07_tableset02_alb.ktx2"
+    "plaza/world/tex/fountain00_mt_alb.ktx2"
    ],
-   "srcBytes": 17053,
-   "distBytes": 16378,
+   "srcBytes": 177215,
+   "distBytes": 60094,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 128,
-   "h": 128,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 48.413,
-    "R": 49.537,
-    "G": 48.32,
-    "B": 47.598,
-    "A": 100,
-    "Y": 49.301,
-    "maxErr": 34
+    "RGB": 39.47,
+    "R": 41.175,
+    "G": 44.409,
+    "B": 36.451,
+    "Y": 45.658,
+    "maxErr": 75
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -30091,26 +30169,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/fountain00_gold_base_mt_alb.png",
+   "src": "plaza/world/tex/leaf00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/fountain00_gold_base_mt_alb.ktx2"
+    "plaza/world/tex/leaf00_alb.ktx2"
    ],
-   "srcBytes": 182758,
-   "distBytes": 61594,
+   "srcBytes": 100974,
+   "distBytes": 37593,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "reason": "format ASTC8x8_SRGB",
    "w": 512,
    "h": 512,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 40.396,
-    "R": 41.048,
-    "G": 44.253,
-    "B": 38.021,
-    "Y": 45.504,
-    "maxErr": 24
+    "RGB": 38.134,
+    "R": 39.715,
+    "G": 41.835,
+    "B": 35.396,
+    "Y": 43.599,
+    "maxErr": 98
    },
    "tries": [
     "etc1s:ok"
@@ -30195,29 +30273,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/fountain00_mt_alb.png",
+   "src": "plaza/world/tex/menu00_basket00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/fountain00_mt_alb.ktx2"
+    "plaza/world/tex/menu00_basket00_alb.ktx2"
    ],
-   "srcBytes": 177215,
-   "distBytes": 60094,
+   "srcBytes": 18718,
+   "distBytes": 15533,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "w": 128,
+   "h": 128,
    "alpha": false,
    "psnr": {
-    "RGB": 39.47,
-    "R": 41.175,
-    "G": 44.409,
-    "B": 36.451,
-    "Y": 45.658,
-    "maxErr": 75
+    "RGB": 50.296,
+    "R": 48.276,
+    "G": 50.744,
+    "B": 53.256,
+    "A": 100,
+    "Y": 50.351,
+    "maxErr": 35
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -30296,57 +30376,55 @@
    ]
   },
   {
-   "src": "plaza/world/tex/leaf00_alb.png",
+   "src": "plaza/world/tex/menu00_bush00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/leaf00_alb.ktx2"
+    "plaza/world/tex/menu00_bush00_alb.ktx2"
    ],
-   "srcBytes": 100974,
-   "distBytes": 37593,
+   "srcBytes": 193510,
+   "distBytes": 78707,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format ASTC8x8_SRGB",
+   "reason": "format BC3_SRGB",
    "w": 512,
    "h": 512,
    "alpha": true,
    "psnr": {
-    "RGB": 38.134,
-    "R": 39.715,
-    "G": 41.835,
-    "B": 35.396,
-    "Y": 43.599,
-    "maxErr": 98
+    "RGB": 37.208,
+    "R": 36.943,
+    "G": 42.13,
+    "B": 35.126,
+    "Y": 44.132,
+    "maxErr": 38
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_basket00_alb.png",
+   "src": "plaza/world/tex/menu00_bush00_dark_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_basket00_alb.ktx2"
+    "plaza/world/tex/menu00_bush00_dark_alb.ktx2"
    ],
-   "srcBytes": 18718,
-   "distBytes": 15533,
+   "srcBytes": 216776,
+   "distBytes": 80342,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC1_SRGB",
-   "w": 128,
-   "h": 128,
-   "alpha": false,
+   "codec": "etc1s",
+   "reason": "format BC3_SRGB",
+   "w": 512,
+   "h": 512,
+   "alpha": true,
    "psnr": {
-    "RGB": 50.296,
-    "R": 48.276,
-    "G": 50.744,
-    "B": 53.256,
-    "A": 100,
-    "Y": 50.351,
-    "maxErr": 35
+    "RGB": 36.367,
+    "R": 36.888,
+    "G": 39.795,
+    "B": 34.169,
+    "Y": 42.588,
+    "maxErr": 52
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -30429,26 +30507,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/bd07_beehive00_00_alb.png",
+   "src": "plaza/world/tex/menu00_bush_atlas_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/bd07_beehive00_00_alb.ktx2"
+    "plaza/world/tex/menu00_bush_atlas_alb.ktx2"
    ],
-   "srcBytes": 668667,
-   "distBytes": 222583,
+   "srcBytes": 38443,
+   "distBytes": 17853,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
+   "reason": "format BC3_SRGB",
+   "w": 256,
+   "h": 256,
+   "alpha": true,
    "psnr": {
-    "RGB": 36.547,
-    "R": 37.291,
-    "G": 41.53,
-    "B": 33.899,
-    "Y": 42.704,
-    "maxErr": 103
+    "RGB": 32.705,
+    "R": 33.995,
+    "G": 41.053,
+    "B": 29.461,
+    "Y": 43.305,
+    "maxErr": 156
    },
    "tries": [
     "etc1s:ok"
@@ -30546,32 +30624,6 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_bush_atlas_alb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/tex/menu00_bush_atlas_alb.ktx2"
-   ],
-   "srcBytes": 38443,
-   "distBytes": 17853,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC3_SRGB",
-   "w": 256,
-   "h": 256,
-   "alpha": true,
-   "psnr": {
-    "RGB": 32.705,
-    "R": 33.995,
-    "G": 41.053,
-    "B": 29.461,
-    "Y": 43.305,
-    "maxErr": 156
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "plaza/world/tex/menu00_cloud_loop00_rgh.png",
    "kind": "tex",
    "out": [
@@ -30595,6 +30647,26 @@
    },
    "tries": [
     "etc1s:ok"
+   ]
+  },
+  {
+   "src": "plaza/world/tex/menu00_cmn_binoculars00_alb.png",
+   "kind": "tex",
+   "out": [
+    "plaza/world/tex/menu00_cmn_binoculars00_alb.png"
+   ],
+   "srcBytes": 29747,
+   "distBytes": 29747,
+   "cls": "color",
+   "codec": "png",
+   "reason": "tiny",
+   "w": 256,
+   "h": 256,
+   "alpha": true,
+   "psnr": null,
+   "tries": [
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -30689,26 +30761,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_bush00_alb.png",
+   "src": "plaza/world/tex/menu00_concrete_loop_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_bush00_alb.ktx2"
+    "plaza/world/tex/menu00_concrete_loop_alb.ktx2"
    ],
-   "srcBytes": 193510,
-   "distBytes": 78707,
+   "srcBytes": 150442,
+   "distBytes": 30061,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC3_SRGB",
+   "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 37.208,
-    "R": 36.943,
-    "G": 42.13,
-    "B": 35.126,
-    "Y": 44.132,
-    "maxErr": 38
+    "RGB": 44.117,
+    "R": 43.505,
+    "G": 47.456,
+    "B": 42.702,
+    "Y": 47.298,
+    "maxErr": 10
    },
    "tries": [
     "etc1s:ok"
@@ -30791,26 +30863,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_bush00_dark_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_bush00_dark_alb.ktx2"
+    "plaza/world/tex/menu00_deco_balloon00_alb.ktx2"
    ],
-   "srcBytes": 216776,
-   "distBytes": 80342,
+   "srcBytes": 7956,
+   "distBytes": 4298,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC3_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": true,
+   "reason": "format BC1_SRGB",
+   "w": 256,
+   "h": 256,
+   "alpha": false,
    "psnr": {
-    "RGB": 36.367,
-    "R": 36.888,
-    "G": 39.795,
-    "B": 34.169,
-    "Y": 42.588,
-    "maxErr": 52
+    "RGB": 46.859,
+    "R": 46.717,
+    "G": 47.406,
+    "B": 46.504,
+    "Y": 47.974,
+    "maxErr": 9
    },
    "tries": [
     "etc1s:ok"
@@ -30886,29 +30958,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon00_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon01_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon00_alb.ktx2"
+    "plaza/world/tex/menu00_deco_balloon01_alb.png"
    ],
-   "srcBytes": 7956,
-   "distBytes": 4298,
+   "srcBytes": 12352,
+   "distBytes": 12352,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "codec": "png",
+   "reason": "tiny",
    "w": 256,
    "h": 256,
-   "alpha": false,
-   "psnr": {
-    "RGB": 46.859,
-    "R": 46.717,
-    "G": 47.406,
-    "B": 46.504,
-    "Y": 47.974,
-    "maxErr": 9
-   },
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -31013,29 +31079,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_concrete_loop_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon02_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_concrete_loop_alb.ktx2"
+    "plaza/world/tex/menu00_deco_balloon02_alb.png"
    ],
-   "srcBytes": 150442,
-   "distBytes": 30061,
+   "srcBytes": 22733,
+   "distBytes": 22733,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
-   "psnr": {
-    "RGB": 44.117,
-    "R": 43.505,
-    "G": 47.456,
-    "B": 42.702,
-    "Y": 47.298,
-    "maxErr": 10
-   },
+   "codec": "png",
+   "reason": "tiny",
+   "w": 256,
+   "h": 256,
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -31128,13 +31188,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_cmn_binoculars00_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon03_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_cmn_binoculars00_alb.png"
+    "plaza/world/tex/menu00_deco_balloon03_alb.png"
    ],
-   "srcBytes": 29747,
-   "distBytes": 29747,
+   "srcBytes": 12377,
+   "distBytes": 12377,
    "cls": "color",
    "codec": "png",
    "reason": "tiny",
@@ -31360,23 +31420,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon01_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon05_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon01_alb.png"
+    "plaza/world/tex/menu00_deco_balloon05_alb.ktx2"
    ],
-   "srcBytes": 12352,
-   "distBytes": 12352,
+   "srcBytes": 11050,
+   "distBytes": 6499,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
    "w": 256,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 32.712,
+    "R": 33.133,
+    "G": 43.363,
+    "B": 29.687,
+    "Y": 46.811,
+    "maxErr": 93
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -31481,23 +31547,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon02_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon06_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon02_alb.png"
+    "plaza/world/tex/menu00_deco_balloon06_alb.ktx2"
    ],
-   "srcBytes": 22733,
-   "distBytes": 22733,
+   "srcBytes": 94959,
+   "distBytes": 37973,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 256,
-   "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
+   "w": 512,
+   "h": 512,
+   "alpha": false,
+   "psnr": {
+    "RGB": 33.374,
+    "R": 34.595,
+    "G": 43.584,
+    "B": 30.05,
+    "Y": 47.16,
+    "maxErr": 194
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -31602,13 +31674,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon05_alb.png",
+   "src": "plaza/world/tex/menu00_deco_balloon07_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon05_alb.ktx2"
+    "plaza/world/tex/menu00_deco_balloon07_alb.ktx2"
    ],
-   "srcBytes": 11050,
-   "distBytes": 6499,
+   "srcBytes": 31739,
+   "distBytes": 13365,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -31616,12 +31688,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 32.712,
-    "R": 33.133,
-    "G": 43.363,
-    "B": 29.687,
-    "Y": 46.811,
-    "maxErr": 93
+    "RGB": 36.883,
+    "R": 35.096,
+    "G": 43.019,
+    "B": 35.921,
+    "Y": 46.423,
+    "maxErr": 87
    },
    "tries": [
     "etc1s:ok"
@@ -31729,23 +31801,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon03_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon03_alb.png"
+    "plaza/world/tex/menu00_deco_pedestal00_alb.ktx2"
    ],
-   "srcBytes": 12377,
-   "distBytes": 12377,
+   "srcBytes": 56333,
+   "distBytes": 20453,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
    "w": 256,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 38.727,
+    "R": 37.908,
+    "G": 43.907,
+    "B": 36.997,
+    "Y": 45.544,
+    "maxErr": 57
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -31825,13 +31903,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon07_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal01_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon07_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pedestal01_alb.ktx2"
    ],
-   "srcBytes": 31739,
-   "distBytes": 13365,
+   "srcBytes": 42986,
+   "distBytes": 17031,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -31839,12 +31917,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 36.883,
-    "R": 35.096,
-    "G": 43.019,
-    "B": 35.921,
-    "Y": 46.423,
-    "maxErr": 87
+    "RGB": 37.808,
+    "R": 36.355,
+    "G": 43.867,
+    "B": 36.489,
+    "Y": 46.095,
+    "maxErr": 79
    },
    "tries": [
     "etc1s:ok"
@@ -31927,26 +32005,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_balloon06_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal02_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_balloon06_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pedestal02_alb.ktx2"
    ],
-   "srcBytes": 94959,
-   "distBytes": 37973,
+   "srcBytes": 47441,
+   "distBytes": 18429,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "w": 256,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 33.374,
-    "R": 34.595,
-    "G": 43.584,
-    "B": 30.05,
-    "Y": 47.16,
-    "maxErr": 194
+    "RGB": 38.246,
+    "R": 39.477,
+    "G": 43.268,
+    "B": 35.386,
+    "Y": 44.463,
+    "maxErr": 48
    },
    "tries": [
     "etc1s:ok"
@@ -32029,13 +32107,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal00_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal03_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal00_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pedestal03_alb.ktx2"
    ],
-   "srcBytes": 56333,
-   "distBytes": 20453,
+   "srcBytes": 52946,
+   "distBytes": 19591,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32043,11 +32121,11 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 38.727,
-    "R": 37.908,
-    "G": 43.907,
-    "B": 36.997,
-    "Y": 45.544,
+    "RGB": 37.864,
+    "R": 36.057,
+    "G": 42.625,
+    "B": 37.259,
+    "Y": 45.014,
     "maxErr": 57
    },
    "tries": [
@@ -32131,13 +32209,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal01_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal04_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal01_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pedestal04_alb.ktx2"
    ],
-   "srcBytes": 42986,
-   "distBytes": 17031,
+   "srcBytes": 50732,
+   "distBytes": 18382,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32145,12 +32223,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 37.808,
-    "R": 36.355,
-    "G": 43.867,
-    "B": 36.489,
-    "Y": 46.095,
-    "maxErr": 79
+    "RGB": 37.566,
+    "R": 39.499,
+    "G": 43.977,
+    "B": 34.281,
+    "Y": 45.712,
+    "maxErr": 67
    },
    "tries": [
     "etc1s:ok"
@@ -32228,13 +32306,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal02_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal05_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal02_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pedestal05_alb.ktx2"
    ],
-   "srcBytes": 47441,
-   "distBytes": 18429,
+   "srcBytes": 46852,
+   "distBytes": 18485,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32242,12 +32320,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 38.246,
-    "R": 39.477,
-    "G": 43.268,
-    "B": 35.386,
-    "Y": 44.463,
-    "maxErr": 48
+    "RGB": 38.007,
+    "R": 39.45,
+    "G": 43.138,
+    "B": 35.05,
+    "Y": 45.333,
+    "maxErr": 55
    },
    "tries": [
     "etc1s:ok"
@@ -32330,13 +32408,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal03_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pedestal06_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal03_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pedestal06_alb.ktx2"
    ],
-   "srcBytes": 52946,
-   "distBytes": 19591,
+   "srcBytes": 51028,
+   "distBytes": 14730,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32344,12 +32422,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 37.864,
-    "R": 36.057,
-    "G": 42.625,
-    "B": 37.259,
-    "Y": 45.014,
-    "maxErr": 57
+    "RGB": 37.01,
+    "R": 38.08,
+    "G": 44.371,
+    "B": 33.925,
+    "Y": 45.945,
+    "maxErr": 65
    },
    "tries": [
     "etc1s:ok"
@@ -32454,13 +32532,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal04_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal04_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick00_alb.ktx2"
    ],
-   "srcBytes": 50732,
-   "distBytes": 18382,
+   "srcBytes": 34273,
+   "distBytes": 11949,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32468,12 +32546,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 37.566,
-    "R": 39.499,
-    "G": 43.977,
-    "B": 34.281,
-    "Y": 45.712,
-    "maxErr": 67
+    "RGB": 37.661,
+    "R": 35.629,
+    "G": 41.577,
+    "B": 37.674,
+    "Y": 44.049,
+    "maxErr": 90
    },
    "tries": [
     "etc1s:ok"
@@ -32556,13 +32634,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal05_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick01_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal05_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick01_alb.ktx2"
    ],
-   "srcBytes": 46852,
-   "distBytes": 18485,
+   "srcBytes": 31344,
+   "distBytes": 11757,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32570,12 +32648,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 38.007,
-    "R": 39.45,
-    "G": 43.138,
-    "B": 35.05,
-    "Y": 45.333,
-    "maxErr": 55
+    "RGB": 37.165,
+    "R": 36.447,
+    "G": 42.616,
+    "B": 35.303,
+    "Y": 45.959,
+    "maxErr": 97
    },
    "tries": [
     "etc1s:ok"
@@ -32658,29 +32736,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pedestal06_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick02_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pedestal06_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick02_alb.png"
    ],
-   "srcBytes": 51028,
-   "distBytes": 14730,
+   "srcBytes": 42301,
+   "distBytes": 42301,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "codec": "png",
+   "reason": "tiny",
    "w": 256,
    "h": 256,
-   "alpha": false,
-   "psnr": {
-    "RGB": 37.01,
-    "R": 38.08,
-    "G": 44.371,
-    "B": 33.925,
-    "Y": 45.945,
-    "maxErr": 65
-   },
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -32755,29 +32827,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick00_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick03_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick00_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick03_alb.png"
    ],
-   "srcBytes": 34273,
-   "distBytes": 11949,
+   "srcBytes": 28731,
+   "distBytes": 28731,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "codec": "png",
+   "reason": "tiny",
    "w": 256,
    "h": 256,
-   "alpha": false,
-   "psnr": {
-    "RGB": 37.661,
-    "R": 35.629,
-    "G": 41.577,
-    "B": 37.674,
-    "Y": 44.049,
-    "maxErr": 90
-   },
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -32852,13 +32918,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick01_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick04_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick01_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick04_alb.ktx2"
    ],
-   "srcBytes": 31344,
-   "distBytes": 11757,
+   "srcBytes": 46708,
+   "distBytes": 17196,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32866,12 +32932,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 37.165,
-    "R": 36.447,
-    "G": 42.616,
-    "B": 35.303,
-    "Y": 45.959,
-    "maxErr": 97
+    "RGB": 33.098,
+    "R": 35.223,
+    "G": 41.538,
+    "B": 29.589,
+    "Y": 44.45,
+    "maxErr": 122
    },
    "tries": [
     "etc1s:ok"
@@ -32942,13 +33008,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick04_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick05_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick04_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick05_alb.ktx2"
    ],
-   "srcBytes": 46708,
-   "distBytes": 17196,
+   "srcBytes": 43762,
+   "distBytes": 17354,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -32956,12 +33022,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 33.098,
-    "R": 35.223,
-    "G": 41.538,
-    "B": 29.589,
-    "Y": 44.45,
-    "maxErr": 122
+    "RGB": 32.293,
+    "R": 33.848,
+    "G": 41.127,
+    "B": 28.927,
+    "Y": 44.104,
+    "maxErr": 165
    },
    "tries": [
     "etc1s:ok"
@@ -33039,29 +33105,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick05_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick06_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick05_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick06_alb.png"
    ],
-   "srcBytes": 43762,
-   "distBytes": 17354,
+   "srcBytes": 37383,
+   "distBytes": 37383,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "codec": "png",
+   "reason": "tiny",
    "w": 256,
    "h": 256,
-   "alpha": false,
-   "psnr": {
-    "RGB": 32.293,
-    "R": 33.848,
-    "G": 41.127,
-    "B": 28.927,
-    "Y": 44.104,
-    "maxErr": 165
-   },
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -33243,23 +33303,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick02_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick08_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick02_alb.png"
+    "plaza/world/tex/menu00_deco_pick08_alb.ktx2"
    ],
-   "srcBytes": 42301,
-   "distBytes": 42301,
+   "srcBytes": 37244,
+   "distBytes": 13724,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
    "w": 256,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 35.69,
+    "R": 36.421,
+    "G": 42.186,
+    "B": 32.832,
+    "Y": 45.117,
+    "maxErr": 107
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -33322,23 +33388,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick03_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick09_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick03_alb.png"
+    "plaza/world/tex/menu00_deco_pick09_alb.ktx2"
    ],
-   "srcBytes": 28731,
-   "distBytes": 28731,
+   "srcBytes": 47182,
+   "distBytes": 17177,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
    "w": 256,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 38.243,
+    "R": 37.301,
+    "G": 42.29,
+    "B": 36.894,
+    "Y": 44.726,
+    "maxErr": 85
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -33413,26 +33485,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick08_alb.png",
+   "src": "plaza/world/tex/menu00_deco_pick_star_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick08_alb.ktx2"
+    "plaza/world/tex/menu00_deco_pick_star_alb.ktx2"
    ],
-   "srcBytes": 37244,
-   "distBytes": 13724,
+   "srcBytes": 11885,
+   "distBytes": 5091,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 256,
+   "w": 128,
+   "h": 128,
    "alpha": false,
    "psnr": {
-    "RGB": 35.69,
-    "R": 36.421,
-    "G": 42.186,
-    "B": 32.832,
-    "Y": 45.117,
-    "maxErr": 107
+    "RGB": 43.843,
+    "R": 43.598,
+    "G": 44.392,
+    "B": 43.588,
+    "Y": 45.234,
+    "maxErr": 14
    },
    "tries": [
     "etc1s:ok"
@@ -33503,13 +33575,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick_star_alb.png",
+   "src": "plaza/world/tex/menu00_deco_tree03_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick_star_alb.ktx2"
+    "plaza/world/tex/menu00_deco_tree03_alb.ktx2"
    ],
-   "srcBytes": 11885,
-   "distBytes": 5091,
+   "srcBytes": 15586,
+   "distBytes": 6873,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -33517,12 +33589,12 @@
    "h": 128,
    "alpha": false,
    "psnr": {
-    "RGB": 43.843,
-    "R": 43.598,
-    "G": 44.392,
-    "B": 43.588,
-    "Y": 45.234,
-    "maxErr": 14
+    "RGB": 33.165,
+    "R": 30.653,
+    "G": 38.039,
+    "B": 33.664,
+    "Y": 41.392,
+    "maxErr": 52
    },
    "tries": [
     "etc1s:ok"
@@ -33595,13 +33667,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick09_alb.png",
+   "src": "plaza/world/tex/menu00_deco_tree06_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick09_alb.ktx2"
+    "plaza/world/tex/menu00_deco_tree06_alb.ktx2"
    ],
-   "srcBytes": 47182,
-   "distBytes": 17177,
+   "srcBytes": 56241,
+   "distBytes": 20708,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -33609,12 +33681,12 @@
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 38.243,
-    "R": 37.301,
-    "G": 42.29,
-    "B": 36.894,
-    "Y": 44.726,
-    "maxErr": 85
+    "RGB": 34.563,
+    "R": 37.397,
+    "G": 41.772,
+    "B": 30.966,
+    "Y": 42.728,
+    "maxErr": 64
    },
    "tries": [
     "etc1s:ok"
@@ -33730,26 +33802,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_tree03_alb.png",
+   "src": "plaza/world/tex/menu00_equalizer_color.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_tree03_alb.ktx2"
+    "plaza/world/tex/menu00_equalizer_color.ktx2"
    ],
-   "srcBytes": 15586,
-   "distBytes": 6873,
+   "srcBytes": 6302,
+   "distBytes": 4193,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 128,
+   "w": 256,
    "h": 128,
    "alpha": false,
    "psnr": {
-    "RGB": 33.165,
-    "R": 30.653,
-    "G": 38.039,
-    "B": 33.664,
-    "Y": 41.392,
-    "maxErr": 52
+    "RGB": 38.531,
+    "R": 40.334,
+    "G": 44.995,
+    "B": 35.28,
+    "Y": 46.982,
+    "maxErr": 21
    },
    "tries": [
     "etc1s:ok"
@@ -33775,23 +33847,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_pick06_alb.png",
+   "src": "plaza/world/tex/menu00_flagstone_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_pick06_alb.png"
+    "plaza/world/tex/menu00_flagstone_alb.ktx2"
    ],
-   "srcBytes": 37383,
-   "distBytes": 37383,
+   "srcBytes": 89599,
+   "distBytes": 29742,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
    "w": 256,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 33.707,
+    "R": 32.622,
+    "G": 39.562,
+    "B": 32.074,
+    "Y": 41.093,
+    "maxErr": 57
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -33896,26 +33974,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_equalizer_color.png",
+   "src": "plaza/world/tex/menu00_fountain00_emi.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_equalizer_color.ktx2"
+    "plaza/world/tex/menu00_fountain00_emi.ktx2"
    ],
-   "srcBytes": 6302,
-   "distBytes": 4193,
+   "srcBytes": 66266,
+   "distBytes": 25755,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 128,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 38.531,
-    "R": 40.334,
-    "G": 44.995,
-    "B": 35.28,
-    "Y": 46.982,
-    "maxErr": 21
+    "RGB": 38.937,
+    "R": 37.532,
+    "G": 42.604,
+    "B": 38.189,
+    "Y": 44.32,
+    "maxErr": 72
    },
    "tries": [
     "etc1s:ok"
@@ -33999,52 +34077,54 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_deco_tree06_alb.png",
+   "src": "plaza/world/tex/menu00_friend_match_screen00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_deco_tree06_alb.ktx2"
+    "plaza/world/tex/menu00_friend_match_screen00_alb.ktx2"
    ],
-   "srcBytes": 56241,
-   "distBytes": 20708,
+   "srcBytes": 35033,
+   "distBytes": 16944,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
    "w": 256,
-   "h": 256,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 34.563,
-    "R": 37.397,
-    "G": 41.772,
-    "B": 30.966,
-    "Y": 42.728,
-    "maxErr": 64
+    "RGB": 49.465,
+    "R": 52.485,
+    "G": 48.577,
+    "B": 48.413,
+    "A": 100,
+    "Y": 49.365,
+    "maxErr": 9
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_flagstone_alb.png",
+   "src": "plaza/world/tex/menu00_friendmatch_obj00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_flagstone_alb.ktx2"
+    "plaza/world/tex/menu00_friendmatch_obj00_alb.ktx2"
    ],
-   "srcBytes": 89599,
-   "distBytes": 29742,
+   "srcBytes": 135820,
+   "distBytes": 45622,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 256,
-   "alpha": false,
+   "w": 512,
+   "h": 512,
+   "alpha": true,
    "psnr": {
-    "RGB": 33.707,
-    "R": 32.622,
-    "G": 39.562,
-    "B": 32.074,
-    "Y": 41.093,
-    "maxErr": 57
+    "RGB": 33.892,
+    "R": 31.53,
+    "G": 41.363,
+    "B": 33.486,
+    "Y": 46.387,
+    "maxErr": 120
    },
    "tries": [
     "etc1s:ok"
@@ -34142,26 +34222,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_fountain00_emi.png",
+   "src": "plaza/world/tex/menu00_garden_trim_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_fountain00_emi.ktx2"
+    "plaza/world/tex/menu00_garden_trim_alb.ktx2"
    ],
-   "srcBytes": 66266,
-   "distBytes": 25755,
+   "srcBytes": 757759,
+   "distBytes": 196333,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 38.937,
-    "R": 37.532,
-    "G": 42.604,
-    "B": 38.189,
-    "Y": 44.32,
-    "maxErr": 72
+    "RGB": 39.425,
+    "R": 39.435,
+    "G": 43.024,
+    "B": 37.477,
+    "Y": 44.077,
+    "maxErr": 41
    },
    "tries": [
     "etc1s:ok"
@@ -34244,29 +34324,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_friendmatch_obj00_alb.png",
+   "src": "plaza/world/tex/menu00_guide_flag00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_friendmatch_obj00_alb.ktx2"
+    "plaza/world/tex/menu00_guide_flag00_alb.png"
    ],
-   "srcBytes": 135820,
-   "distBytes": 45622,
+   "srcBytes": 25699,
+   "distBytes": 25699,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "codec": "png",
+   "reason": "tiny",
+   "w": 256,
+   "h": 256,
    "alpha": true,
-   "psnr": {
-    "RGB": 33.892,
-    "R": 31.53,
-    "G": 41.363,
-    "B": 33.486,
-    "Y": 46.387,
-    "maxErr": 120
-   },
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -34489,20 +34563,28 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_guide_flag00_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost01_04_flag_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_guide_flag00_alb.png"
+    "plaza/world/tex/menu00_lamppost01_04_flag_alb.ktx2"
    ],
-   "srcBytes": 25699,
-   "distBytes": 25699,
+   "srcBytes": 36440,
+   "distBytes": 61206,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 256,
+   "codec": "uastc-rdo",
+   "reason": "format BC1_SRGB",
+   "w": 512,
    "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "alpha": false,
+   "psnr": {
+    "RGB": 51.746,
+    "R": 52.214,
+    "G": 51.534,
+    "B": 51.524,
+    "A": 100,
+    "Y": 52.339,
+    "maxErr": 28
+   },
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
@@ -34714,29 +34796,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_garden_trim_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost05_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_garden_trim_alb.ktx2"
+    "plaza/world/tex/menu00_lamppost05_alb.ktx2"
    ],
-   "srcBytes": 757759,
-   "distBytes": 196333,
+   "srcBytes": 130071,
+   "distBytes": 167204,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 39.425,
-    "R": 39.435,
-    "G": 43.024,
-    "B": 37.477,
-    "Y": 44.077,
-    "maxErr": 41
+    "RGB": 48.76,
+    "R": 47.586,
+    "G": 49.331,
+    "B": 49.66,
+    "A": 100,
+    "Y": 49.543,
+    "maxErr": 43
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -34838,27 +34922,27 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_friend_match_screen00_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost06_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_friend_match_screen00_alb.ktx2"
+    "plaza/world/tex/menu00_lamppost06_alb.ktx2"
    ],
-   "srcBytes": 35033,
-   "distBytes": 16944,
+   "srcBytes": 118912,
+   "distBytes": 139914,
    "cls": "color",
    "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 49.465,
-    "R": 52.485,
-    "G": 48.577,
-    "B": 48.413,
+    "RGB": 49.971,
+    "R": 49.803,
+    "G": 49.919,
+    "B": 50.201,
     "A": 100,
-    "Y": 49.365,
-    "maxErr": 9
+    "Y": 50.23,
+    "maxErr": 32
    },
    "tries": [
     "etc1s:x",
@@ -34964,31 +35048,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost01_04_flag_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost07_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost01_04_flag_alb.ktx2"
+    "plaza/world/tex/menu00_lamppost07_alb.ktx2"
    ],
-   "srcBytes": 36440,
-   "distBytes": 61206,
+   "srcBytes": 111987,
+   "distBytes": 49065,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
    "w": 512,
-   "h": 256,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 51.746,
-    "R": 52.214,
-    "G": 51.534,
-    "B": 51.524,
-    "A": 100,
-    "Y": 52.339,
-    "maxErr": 28
+    "RGB": 34.559,
+    "R": 35.436,
+    "G": 41.867,
+    "B": 31.555,
+    "Y": 44.976,
+    "maxErr": 112
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -35090,29 +35172,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost07_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost08_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost07_alb.ktx2"
+    "plaza/world/tex/menu00_lamppost08_alb.ktx2"
    ],
-   "srcBytes": 111987,
-   "distBytes": 49065,
+   "srcBytes": 110085,
+   "distBytes": 145607,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 34.559,
-    "R": 35.436,
-    "G": 41.867,
-    "B": 31.555,
-    "Y": 44.976,
-    "maxErr": 112
+    "RGB": 50.723,
+    "R": 50.736,
+    "G": 51.164,
+    "B": 50.31,
+    "A": 100,
+    "Y": 51.444,
+    "maxErr": 39
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -35214,13 +35298,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost06_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost09_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost06_alb.ktx2"
+    "plaza/world/tex/menu00_lamppost09_alb.ktx2"
    ],
-   "srcBytes": 118912,
-   "distBytes": 139914,
+   "srcBytes": 136501,
+   "distBytes": 162409,
    "cls": "color",
    "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
@@ -35228,13 +35312,13 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 49.971,
-    "R": 49.803,
-    "G": 49.919,
-    "B": 50.201,
+    "RGB": 49.799,
+    "R": 51.056,
+    "G": 49.859,
+    "B": 48.779,
     "A": 100,
-    "Y": 50.23,
-    "maxErr": 32
+    "Y": 50.527,
+    "maxErr": 41
    },
    "tries": [
     "etc1s:x",
@@ -35340,31 +35424,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost05_alb.png",
+   "src": "plaza/world/tex/menu00_lamppost10_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost05_alb.ktx2"
+    "plaza/world/tex/menu00_lamppost10_alb.ktx2"
    ],
-   "srcBytes": 130071,
-   "distBytes": 167204,
+   "srcBytes": 104003,
+   "distBytes": 47458,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 48.76,
-    "R": 47.586,
-    "G": 49.331,
-    "B": 49.66,
-    "A": 100,
-    "Y": 49.543,
-    "maxErr": 43
+    "RGB": 33.481,
+    "R": 35.835,
+    "G": 43.302,
+    "B": 29.837,
+    "Y": 45.991,
+    "maxErr": 153
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -35502,29 +35584,31 @@
    "tries": []
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost10_alb.png",
+   "src": "plaza/world/tex/menu00_mode_icon_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost10_alb.ktx2"
+    "plaza/world/tex/menu00_mode_icon_alb.ktx2"
    ],
-   "srcBytes": 104003,
-   "distBytes": 47458,
+   "srcBytes": 286780,
+   "distBytes": 246990,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 512,
+   "codec": "uastc-rdo",
+   "reason": "format BC3_SRGB",
+   "w": 1024,
    "h": 512,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 33.481,
-    "R": 35.835,
-    "G": 43.302,
-    "B": 29.837,
-    "Y": 45.991,
-    "maxErr": 153
+    "RGB": 47.827,
+    "R": 48.348,
+    "G": 49.597,
+    "B": 46.221,
+    "A": 43.804,
+    "Y": 50.733,
+    "maxErr": 48
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -35555,31 +35639,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost08_alb.png",
+   "src": "plaza/world/tex/menu00_quest_cart00_cart_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost08_alb.ktx2"
+    "plaza/world/tex/menu00_quest_cart00_cart_alb.ktx2"
    ],
-   "srcBytes": 110085,
-   "distBytes": 145607,
+   "srcBytes": 195857,
+   "distBytes": 77956,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 50.723,
-    "R": 50.736,
-    "G": 51.164,
-    "B": 50.31,
-    "A": 100,
-    "Y": 51.444,
-    "maxErr": 39
+    "RGB": 36.976,
+    "R": 38.416,
+    "G": 42.243,
+    "B": 33.998,
+    "Y": 43.569,
+    "maxErr": 91
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -35783,31 +35865,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_lamppost09_alb.png",
+   "src": "plaza/world/tex/menu00_quest_cart00_object_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_lamppost09_alb.ktx2"
+    "plaza/world/tex/menu00_quest_cart00_object_alb.ktx2"
    ],
-   "srcBytes": 136501,
-   "distBytes": 162409,
+   "srcBytes": 196482,
+   "distBytes": 76466,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 49.799,
-    "R": 51.056,
-    "G": 49.859,
-    "B": 48.779,
-    "A": 100,
-    "Y": 50.527,
-    "maxErr": 41
+    "RGB": 33.525,
+    "R": 32.865,
+    "G": 40.44,
+    "B": 31.396,
+    "Y": 43.354,
+    "maxErr": 176
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -35986,26 +36066,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_quest_cart00_cart_alb.png",
+   "src": "plaza/world/tex/menu00_quest_rock_circle_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_quest_cart00_cart_alb.ktx2"
+    "plaza/world/tex/menu00_quest_rock_circle_alb.ktx2"
    ],
-   "srcBytes": 195857,
-   "distBytes": 77956,
+   "srcBytes": 888513,
+   "distBytes": 214311,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 36.976,
-    "R": 38.416,
-    "G": 42.243,
-    "B": 33.998,
-    "Y": 43.569,
-    "maxErr": 91
+    "RGB": 38.634,
+    "R": 39.153,
+    "G": 42.597,
+    "B": 36.301,
+    "Y": 43.712,
+    "maxErr": 33
    },
    "tries": [
     "etc1s:ok"
@@ -36243,13 +36323,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_quest_cart00_object_alb.png",
+   "src": "plaza/world/tex/menu00_shop_collection_cabin_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_quest_cart00_object_alb.ktx2"
+    "plaza/world/tex/menu00_shop_collection_cabin_alb.ktx2"
    ],
-   "srcBytes": 196482,
-   "distBytes": 76466,
+   "srcBytes": 145611,
+   "distBytes": 58030,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -36257,12 +36337,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 33.525,
-    "R": 32.865,
-    "G": 40.44,
-    "B": 31.396,
-    "Y": 43.354,
-    "maxErr": 176
+    "RGB": 36.82,
+    "R": 36.345,
+    "G": 42.863,
+    "B": 34.682,
+    "Y": 45.08,
+    "maxErr": 71
    },
    "tries": [
     "etc1s:ok"
@@ -36366,29 +36446,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_collection_cabin_alb.png",
+   "src": "plaza/world/tex/menu00_shop_collection_objects_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_collection_cabin_alb.ktx2"
+    "plaza/world/tex/menu00_shop_collection_objects_alb.ktx2"
    ],
-   "srcBytes": 145611,
-   "distBytes": 58030,
+   "srcBytes": 91765,
+   "distBytes": 128133,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 36.82,
-    "R": 36.345,
-    "G": 42.863,
-    "B": 34.682,
-    "Y": 45.08,
-    "maxErr": 71
+    "RGB": 52.915,
+    "R": 52.457,
+    "G": 52.971,
+    "B": 53.365,
+    "A": 100,
+    "Y": 53.541,
+    "maxErr": 38
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -36495,13 +36577,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_quest_rock_circle_alb.png",
+   "src": "plaza/world/tex/menu00_shop_collection_shelf_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_quest_rock_circle_alb.ktx2"
+    "plaza/world/tex/menu00_shop_collection_shelf_alb.ktx2"
    ],
-   "srcBytes": 888513,
-   "distBytes": 214311,
+   "srcBytes": 456632,
+   "distBytes": 192147,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -36509,12 +36591,12 @@
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 38.634,
-    "R": 39.153,
-    "G": 42.597,
-    "B": 36.301,
-    "Y": 43.712,
-    "maxErr": 33
+    "RGB": 39.389,
+    "R": 40.219,
+    "G": 44.035,
+    "B": 36.762,
+    "Y": 45.463,
+    "maxErr": 42
    },
    "tries": [
     "etc1s:ok"
@@ -36597,13 +36679,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_collection_shelf_alb.png",
+   "src": "plaza/world/tex/menu00_shop_maripacard_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_collection_shelf_alb.ktx2"
+    "plaza/world/tex/menu00_shop_maripacard_alb.ktx2"
    ],
-   "srcBytes": 456632,
-   "distBytes": 192147,
+   "srcBytes": 374583,
+   "distBytes": 152976,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -36611,39 +36693,39 @@
    "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 39.389,
-    "R": 40.219,
-    "G": 44.035,
-    "B": 36.762,
-    "Y": 45.463,
-    "maxErr": 42
+    "RGB": 34.816,
+    "R": 34.803,
+    "G": 42.678,
+    "B": 32.184,
+    "Y": 46.109,
+    "maxErr": 185
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_collection_objects_alb.png",
+   "src": "plaza/world/tex/menu00_shop_maripacard_card00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_collection_objects_alb.ktx2"
+    "plaza/world/tex/menu00_shop_maripacard_card00_alb.ktx2"
    ],
-   "srcBytes": 91765,
-   "distBytes": 128133,
+   "srcBytes": 582002,
+   "distBytes": 461439,
    "cls": "color",
    "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 52.915,
-    "R": 52.457,
-    "G": 52.971,
-    "B": 53.365,
+    "RGB": 52.796,
+    "R": 52.081,
+    "G": 52.745,
+    "B": 53.717,
     "A": 100,
-    "Y": 53.541,
-    "maxErr": 38
+    "Y": 53.397,
+    "maxErr": 43
    },
    "tries": [
     "etc1s:x",
@@ -36746,27 +36828,27 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_mode_icon_alb.png",
+   "src": "plaza/world/tex/menu00_shop_music_stage_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_mode_icon_alb.ktx2"
+    "plaza/world/tex/menu00_shop_music_stage_alb.ktx2"
    ],
-   "srcBytes": 286780,
-   "distBytes": 246990,
+   "srcBytes": 124254,
+   "distBytes": 163166,
    "cls": "color",
    "codec": "uastc-rdo",
-   "reason": "format BC3_SRGB",
-   "w": 1024,
+   "reason": "format BC1_SRGB",
+   "w": 512,
    "h": 512,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 47.827,
-    "R": 48.348,
-    "G": 49.597,
-    "B": 46.221,
-    "A": 43.804,
-    "Y": 50.733,
-    "maxErr": 48
+    "RGB": 49.416,
+    "R": 48.945,
+    "G": 49.82,
+    "B": 49.529,
+    "A": 100,
+    "Y": 50.277,
+    "maxErr": 34
    },
    "tries": [
     "etc1s:x",
@@ -36774,26 +36856,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_maripacard_alb.png",
+   "src": "plaza/world/tex/menu00_shop_music_stage_emi.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_maripacard_alb.ktx2"
+    "plaza/world/tex/menu00_shop_music_stage_emi.ktx2"
    ],
-   "srcBytes": 374583,
-   "distBytes": 152976,
+   "srcBytes": 13342,
+   "distBytes": 6610,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 256,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 34.816,
-    "R": 34.803,
-    "G": 42.678,
-    "B": 32.184,
-    "Y": 46.109,
-    "maxErr": 185
+    "RGB": 42.473,
+    "R": 42.81,
+    "G": 49.256,
+    "B": 39.767,
+    "Y": 50.897,
+    "maxErr": 64
    },
    "tries": [
     "etc1s:ok"
@@ -36903,29 +36985,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_music_stage_emi.png",
+   "src": "plaza/world/tex/menu00_shop_ranking_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_music_stage_emi.ktx2"
+    "plaza/world/tex/menu00_shop_ranking_alb.ktx2"
    ],
-   "srcBytes": 13342,
-   "distBytes": 6610,
+   "srcBytes": 130301,
+   "distBytes": 149088,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 256,
-   "alpha": false,
+   "codec": "uastc-rdo",
+   "reason": "format BC3_SRGB",
+   "w": 512,
+   "h": 512,
+   "alpha": true,
    "psnr": {
-    "RGB": 42.473,
-    "R": 42.81,
-    "G": 49.256,
-    "B": 39.767,
-    "Y": 50.897,
-    "maxErr": 64
+    "RGB": 48.301,
+    "R": 47.925,
+    "G": 48.017,
+    "B": 49.047,
+    "A": 49.739,
+    "Y": 48.612,
+    "maxErr": 45
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -37102,27 +37186,27 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_music_stage_alb.png",
+   "src": "plaza/world/tex/menu00_shop_rock_circle_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_music_stage_alb.ktx2"
+    "plaza/world/tex/menu00_shop_rock_circle_alb.ktx2"
    ],
-   "srcBytes": 124254,
-   "distBytes": 163166,
+   "srcBytes": 1280256,
+   "distBytes": 979312,
    "cls": "color",
    "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 49.416,
-    "R": 48.945,
-    "G": 49.82,
-    "B": 49.529,
+    "RGB": 53.401,
+    "R": 54.311,
+    "G": 53.385,
+    "B": 52.662,
     "A": 100,
-    "Y": 50.277,
-    "maxErr": 34
+    "Y": 53.709,
+    "maxErr": 23
    },
    "tries": [
     "etc1s:x",
@@ -37211,27 +37295,27 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_ranking_alb.png",
+   "src": "plaza/world/tex/menu00_shop_stamp_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_ranking_alb.ktx2"
+    "plaza/world/tex/menu00_shop_stamp_alb.ktx2"
    ],
-   "srcBytes": 130301,
-   "distBytes": 149088,
+   "srcBytes": 390862,
+   "distBytes": 527298,
    "cls": "color",
    "codec": "uastc-rdo",
-   "reason": "format BC3_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": true,
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 48.301,
-    "R": 47.925,
-    "G": 48.017,
-    "B": 49.047,
-    "A": 49.739,
-    "Y": 48.612,
-    "maxErr": 45
+    "RGB": 51.224,
+    "R": 50.734,
+    "G": 50.62,
+    "B": 52.584,
+    "A": 100,
+    "Y": 51.449,
+    "maxErr": 46
    },
    "tries": [
     "etc1s:x",
@@ -37434,34 +37518,6 @@
    "tries": []
   },
   {
-   "src": "plaza/world/tex/menu00_shop_maripacard_card00_alb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/tex/menu00_shop_maripacard_card00_alb.ktx2"
-   ],
-   "srcBytes": 582002,
-   "distBytes": 461439,
-   "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
-   "psnr": {
-    "RGB": 52.796,
-    "R": 52.081,
-    "G": 52.745,
-    "B": 53.717,
-    "A": 100,
-    "Y": 53.397,
-    "maxErr": 43
-   },
-   "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
-   ]
-  },
-  {
    "src": "plaza/world/tex/menu00_sm_island00_alb.png",
    "kind": "tex",
    "out": [
@@ -37483,6 +37539,34 @@
     "A": 100,
     "Y": 48.034,
     "maxErr": 41
+   },
+   "tries": [
+    "etc1s:x",
+    "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "plaza/world/tex/menu00_stage00_mask_alb.png",
+   "kind": "tex",
+   "out": [
+    "plaza/world/tex/menu00_stage00_mask_alb.ktx2"
+   ],
+   "srcBytes": 359011,
+   "distBytes": 356152,
+   "cls": "color",
+   "codec": "uastc-rdo",
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 51.148,
+    "R": 47.843,
+    "G": 51.806,
+    "B": 100,
+    "A": 100,
+    "Y": 53.509,
+    "maxErr": 43
    },
    "tries": [
     "etc1s:x",
@@ -37561,27 +37645,27 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_rock_circle_alb.png",
+   "src": "plaza/world/tex/menu00_stand00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_rock_circle_alb.ktx2"
+    "plaza/world/tex/menu00_stand00_alb.ktx2"
    ],
-   "srcBytes": 1280256,
-   "distBytes": 979312,
+   "srcBytes": 42475,
+   "distBytes": 50810,
    "cls": "color",
    "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 53.401,
-    "R": 54.311,
-    "G": 53.385,
-    "B": 52.662,
+    "RGB": 51.065,
+    "R": 51.077,
+    "G": 52.752,
+    "B": 49.843,
     "A": 100,
-    "Y": 53.709,
-    "maxErr": 23
+    "Y": 52.755,
+    "maxErr": 26
    },
    "tries": [
     "etc1s:x",
@@ -37692,59 +37776,55 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_stand00_alb.png",
+   "src": "plaza/world/tex/menu00_thin_cloud00.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_stand00_alb.ktx2"
+    "plaza/world/tex/menu00_thin_cloud00.ktx2"
    ],
-   "srcBytes": 42475,
-   "distBytes": 50810,
+   "srcBytes": 319945,
+   "distBytes": 117992,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 256,
-   "alpha": false,
+   "codec": "etc1s",
+   "reason": "format BC3_SRGB",
+   "w": 1024,
+   "h": 512,
+   "alpha": true,
    "psnr": {
-    "RGB": 51.065,
-    "R": 51.077,
-    "G": 52.752,
-    "B": 49.843,
-    "A": 100,
-    "Y": 52.755,
-    "maxErr": 26
+    "RGB": 39.454,
+    "R": 38.631,
+    "G": 45.945,
+    "B": 37.503,
+    "Y": 46.825,
+    "maxErr": 38
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_shop_stamp_alb.png",
+   "src": "plaza/world/tex/menu00_topiary_base_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_shop_stamp_alb.ktx2"
+    "plaza/world/tex/menu00_topiary_base_alb.ktx2"
    ],
-   "srcBytes": 390862,
-   "distBytes": 527298,
+   "srcBytes": 160698,
+   "distBytes": 62919,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 51.224,
-    "R": 50.734,
-    "G": 50.62,
-    "B": 52.584,
-    "A": 100,
-    "Y": 51.449,
-    "maxErr": 46
+    "RGB": 36.477,
+    "R": 35.442,
+    "G": 41.898,
+    "B": 34.882,
+    "Y": 46.349,
+    "maxErr": 90
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -37827,29 +37907,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_topiary_base_alb.png",
+   "src": "plaza/world/tex/menu00_topiary_mask_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_topiary_base_alb.ktx2"
+    "plaza/world/tex/menu00_topiary_mask_alb.png"
    ],
-   "srcBytes": 160698,
-   "distBytes": 62919,
+   "srcBytes": 58088,
+   "distBytes": 58088,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
-   "psnr": {
-    "RGB": 36.477,
-    "R": 35.442,
-    "G": 41.898,
-    "B": 34.882,
-    "Y": 46.349,
-    "maxErr": 90
-   },
+   "codec": "png",
+   "reason": "tiny",
+   "w": 256,
+   "h": 256,
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -37878,23 +37952,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_topiary_mask_alb.png",
+   "src": "plaza/world/tex/menu01_balloon00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_topiary_mask_alb.png"
+    "plaza/world/tex/menu01_balloon00_alb.ktx2"
    ],
-   "srcBytes": 58088,
-   "distBytes": 58088,
+   "srcBytes": 514757,
+   "distBytes": 149655,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 256,
-   "h": 256,
-   "alpha": true,
-   "psnr": null,
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 37.439,
+    "R": 38.17,
+    "G": 45.32,
+    "B": 34.446,
+    "Y": 47.497,
+    "maxErr": 121
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -38026,26 +38106,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_thin_cloud00.png",
+   "src": "plaza/world/tex/menu01_balloon01_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_thin_cloud00.ktx2"
+    "plaza/world/tex/menu01_balloon01_alb.ktx2"
    ],
-   "srcBytes": 319945,
-   "distBytes": 117992,
+   "srcBytes": 742106,
+   "distBytes": 216212,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC3_SRGB",
+   "reason": "format BC1_SRGB",
    "w": 1024,
-   "h": 512,
-   "alpha": true,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 39.454,
-    "R": 38.631,
-    "G": 45.945,
-    "B": 37.503,
-    "Y": 46.825,
-    "maxErr": 38
+    "RGB": 32.265,
+    "R": 29.947,
+    "G": 39.637,
+    "B": 31.805,
+    "Y": 43.029,
+    "maxErr": 206
    },
    "tries": [
     "etc1s:ok"
@@ -38179,29 +38259,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_balloon00_alb.png",
+   "src": "plaza/world/tex/menu01_carpet00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_balloon00_alb.ktx2"
+    "plaza/world/tex/menu01_carpet00_alb.ktx2"
    ],
-   "srcBytes": 514757,
-   "distBytes": 149655,
+   "srcBytes": 313365,
+   "distBytes": 224820,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 37.439,
-    "R": 38.17,
-    "G": 45.32,
-    "B": 34.446,
-    "Y": 47.497,
-    "maxErr": 121
+    "RGB": 56.2,
+    "R": 56.629,
+    "G": 55.453,
+    "B": 56.625,
+    "A": 100,
+    "Y": 55.845,
+    "maxErr": 20
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -38287,32 +38369,6 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_balloon01_alb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/tex/menu01_balloon01_alb.ktx2"
-   ],
-   "srcBytes": 742106,
-   "distBytes": 216212,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
-   "psnr": {
-    "RGB": 32.265,
-    "R": 29.947,
-    "G": 39.637,
-    "B": 31.805,
-    "Y": 43.029,
-    "maxErr": 206
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
    "src": "plaza/world/tex/menu01_caustics_alb.png",
    "kind": "tex",
    "out": [
@@ -38338,6 +38394,32 @@
    "tries": [
     "etc1s:x",
     "uastc-rdo:ok"
+   ]
+  },
+  {
+   "src": "plaza/world/tex/menu01_cliff_wall_alb.png",
+   "kind": "tex",
+   "out": [
+    "plaza/world/tex/menu01_cliff_wall_alb.ktx2"
+   ],
+   "srcBytes": 994156,
+   "distBytes": 227764,
+   "cls": "color",
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
+   "psnr": {
+    "RGB": 37.376,
+    "R": 37.994,
+    "G": 39.384,
+    "B": 35.606,
+    "Y": 40.111,
+    "maxErr": 61
+   },
+   "tries": [
+    "etc1s:ok"
    ]
   },
   {
@@ -38422,31 +38504,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu00_stage00_mask_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu00_stage00_mask_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile00_alb.ktx2"
    ],
-   "srcBytes": 359011,
-   "distBytes": 356152,
+   "srcBytes": 380348,
+   "distBytes": 110403,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
    "w": 1024,
-   "h": 1024,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 51.148,
-    "R": 47.843,
-    "G": 51.806,
-    "B": 100,
-    "A": 100,
-    "Y": 53.509,
-    "maxErr": 43
+    "RGB": 39.926,
+    "R": 40.754,
+    "G": 45.32,
+    "B": 37.173,
+    "Y": 46.188,
+    "maxErr": 34
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -38551,31 +38631,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_carpet00_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile01_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_carpet00_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile01_alb.ktx2"
    ],
-   "srcBytes": 313365,
-   "distBytes": 224820,
+   "srcBytes": 369055,
+   "distBytes": 108427,
    "cls": "color",
-   "codec": "uastc-rdo",
+   "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 512,
+   "w": 1024,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 56.2,
-    "R": 56.629,
-    "G": 55.453,
-    "B": 56.625,
-    "A": 100,
-    "Y": 55.845,
-    "maxErr": 20
+    "RGB": 33.402,
+    "R": 30.728,
+    "G": 40.692,
+    "B": 33.568,
+    "Y": 45.71,
+    "maxErr": 104
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -38687,13 +38765,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile00_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile02_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile00_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile02_alb.ktx2"
    ],
-   "srcBytes": 380348,
-   "distBytes": 110403,
+   "srcBytes": 238813,
+   "distBytes": 74036,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -38701,12 +38779,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 39.926,
-    "R": 40.754,
-    "G": 45.32,
-    "B": 37.173,
-    "Y": 46.188,
-    "maxErr": 34
+    "RGB": 39.871,
+    "R": 37.482,
+    "G": 43.67,
+    "B": 40.578,
+    "Y": 45.498,
+    "maxErr": 104
    },
    "tries": [
     "etc1s:ok"
@@ -38814,13 +38892,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile01_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile03_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile01_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile03_alb.ktx2"
    ],
-   "srcBytes": 369055,
-   "distBytes": 108427,
+   "srcBytes": 461212,
+   "distBytes": 123494,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -38828,12 +38906,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 33.402,
-    "R": 30.728,
-    "G": 40.692,
-    "B": 33.568,
-    "Y": 45.71,
-    "maxErr": 104
+    "RGB": 37.774,
+    "R": 37.547,
+    "G": 42.14,
+    "B": 35.786,
+    "Y": 44.001,
+    "maxErr": 58
    },
    "tries": [
     "etc1s:ok"
@@ -38921,26 +38999,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_cliff_wall_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile04_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_cliff_wall_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile04_alb.ktx2"
    ],
-   "srcBytes": 994156,
-   "distBytes": 227764,
+   "srcBytes": 171994,
+   "distBytes": 66412,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "reason": "format BC3_SRGB",
    "w": 1024,
-   "h": 1024,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 37.376,
-    "R": 37.994,
-    "G": 39.384,
-    "B": 35.606,
-    "Y": 40.111,
-    "maxErr": 61
+    "RGB": 36.839,
+    "R": 41.058,
+    "G": 44.859,
+    "B": 32.923,
+    "Y": 46.721,
+    "maxErr": 109
    },
    "tries": [
     "etc1s:ok"
@@ -39029,13 +39107,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile02_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile05_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile02_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile05_alb.ktx2"
    ],
-   "srcBytes": 238813,
-   "distBytes": 74036,
+   "srcBytes": 385164,
+   "distBytes": 111731,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -39043,12 +39121,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 39.871,
-    "R": 37.482,
-    "G": 43.67,
-    "B": 40.578,
-    "Y": 45.498,
-    "maxErr": 104
+    "RGB": 32.123,
+    "R": 35.29,
+    "G": 41.189,
+    "B": 28.332,
+    "Y": 44.11,
+    "maxErr": 142
    },
    "tries": [
     "etc1s:ok"
@@ -39163,26 +39241,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile04_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile06_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile04_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile06_alb.ktx2"
    ],
-   "srcBytes": 171994,
-   "distBytes": 66412,
+   "srcBytes": 560896,
+   "distBytes": 144707,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC3_SRGB",
+   "reason": "format BC1_SRGB",
    "w": 1024,
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 36.839,
-    "R": 41.058,
-    "G": 44.859,
-    "B": 32.923,
-    "Y": 46.721,
-    "maxErr": 109
+    "RGB": 32.238,
+    "R": 33.574,
+    "G": 40.156,
+    "B": 29.009,
+    "Y": 42.161,
+    "maxErr": 82
    },
    "tries": [
     "etc1s:ok"
@@ -39322,13 +39400,13 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile03_alb.png",
+   "src": "plaza/world/tex/menu01_deco_tile07_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile03_alb.ktx2"
+    "plaza/world/tex/menu01_deco_tile07_alb.ktx2"
    ],
-   "srcBytes": 461212,
-   "distBytes": 123494,
+   "srcBytes": 378786,
+   "distBytes": 116376,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
@@ -39336,12 +39414,12 @@
    "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 37.774,
-    "R": 37.547,
-    "G": 42.14,
-    "B": 35.786,
-    "Y": 44.001,
-    "maxErr": 58
+    "RGB": 38.561,
+    "R": 37.815,
+    "G": 44.057,
+    "B": 36.713,
+    "Y": 45.102,
+    "maxErr": 43
    },
    "tries": [
     "etc1s:ok"
@@ -39551,26 +39629,26 @@
    "tries": []
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile05_alb.png",
+   "src": "plaza/world/tex/menu01_grass00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile05_alb.ktx2"
+    "plaza/world/tex/menu01_grass00_alb.ktx2"
    ],
-   "srcBytes": 385164,
-   "distBytes": 111731,
+   "srcBytes": 911444,
+   "distBytes": 246833,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
    "w": 1024,
-   "h": 512,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 32.123,
-    "R": 35.29,
-    "G": 41.189,
-    "B": 28.332,
-    "Y": 44.11,
-    "maxErr": 142
+    "RGB": 36.856,
+    "R": 37.495,
+    "G": 39.918,
+    "B": 34.701,
+    "Y": 42.145,
+    "maxErr": 29
    },
    "tries": [
     "etc1s:ok"
@@ -39710,52 +39788,52 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile07_alb.png",
+   "src": "plaza/world/tex/menu01_grass_card_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile07_alb.ktx2"
+    "plaza/world/tex/menu01_grass_card_alb.ktx2"
    ],
-   "srcBytes": 378786,
-   "distBytes": 116376,
+   "srcBytes": 33903,
+   "distBytes": 26653,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 1024,
+   "reason": "format BC3_SRGB",
+   "w": 512,
    "h": 512,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 38.561,
-    "R": 37.815,
-    "G": 44.057,
-    "B": 36.713,
-    "Y": 45.102,
-    "maxErr": 43
+    "RGB": 51.067,
+    "R": 50.641,
+    "G": 52.069,
+    "B": 50.641,
+    "Y": 52.44,
+    "maxErr": 9
    },
    "tries": [
     "etc1s:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_deco_tile06_alb.png",
+   "src": "plaza/world/tex/menu01_hedge00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_deco_tile06_alb.ktx2"
+    "plaza/world/tex/menu01_hedge00_alb.ktx2"
    ],
-   "srcBytes": 560896,
-   "distBytes": 144707,
+   "srcBytes": 72508,
+   "distBytes": 25229,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 512,
+   "w": 256,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 32.238,
-    "R": 33.574,
-    "G": 40.156,
-    "B": 29.009,
-    "Y": 42.161,
-    "maxErr": 82
+    "RGB": 33.457,
+    "R": 37.165,
+    "G": 40.148,
+    "B": 29.728,
+    "Y": 42.945,
+    "maxErr": 70
    },
    "tries": [
     "etc1s:ok"
@@ -39888,29 +39966,23 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_hedge00_alb.png",
+   "src": "plaza/world/tex/menu01_rainbow_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_hedge00_alb.ktx2"
+    "plaza/world/tex/menu01_rainbow_alb.png"
    ],
-   "srcBytes": 72508,
-   "distBytes": 25229,
+   "srcBytes": 815,
+   "distBytes": 815,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
+   "codec": "png",
+   "reason": "tiny",
    "w": 256,
-   "h": 256,
-   "alpha": false,
-   "psnr": {
-    "RGB": 33.457,
-    "R": 37.165,
-    "G": 40.148,
-    "B": 29.728,
-    "Y": 42.945,
-    "maxErr": 70
-   },
+   "h": 32,
+   "alpha": true,
+   "psnr": null,
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -39939,26 +40011,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_grass_card_alb.png",
+   "src": "plaza/world/tex/menu_cmn_quest_platform00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_grass_card_alb.ktx2"
+    "plaza/world/tex/menu_cmn_quest_platform00_alb.ktx2"
    ],
-   "srcBytes": 33903,
-   "distBytes": 26653,
+   "srcBytes": 485859,
+   "distBytes": 144519,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC3_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": true,
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 51.067,
-    "R": 50.641,
-    "G": 52.069,
-    "B": 50.641,
-    "Y": 52.44,
-    "maxErr": 9
+    "RGB": 35.953,
+    "R": 35.787,
+    "G": 46.105,
+    "B": 33.248,
+    "Y": 48.701,
+    "maxErr": 174
    },
    "tries": [
     "etc1s:ok"
@@ -40068,23 +40140,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_rainbow_alb.png",
+   "src": "plaza/world/tex/menu_cmn_tree00_leaf_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_rainbow_alb.png"
+    "plaza/world/tex/menu_cmn_tree00_leaf_alb.ktx2"
    ],
-   "srcBytes": 815,
-   "distBytes": 815,
+   "srcBytes": 142827,
+   "distBytes": 65906,
    "cls": "color",
-   "codec": "png",
-   "reason": "tiny",
-   "w": 256,
-   "h": 32,
+   "codec": "etc1s",
+   "reason": "format BC3_SRGB",
+   "w": 512,
+   "h": 512,
    "alpha": true,
-   "psnr": null,
+   "psnr": {
+    "RGB": 39.109,
+    "R": 40.622,
+    "G": 45.271,
+    "B": 35.986,
+    "Y": 47.327,
+    "maxErr": 50
+   },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -40164,26 +40242,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu_cmn_tree00_leaf_alb.png",
+   "src": "plaza/world/tex/menu_cmn_tree00_tree_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu_cmn_tree00_leaf_alb.ktx2"
+    "plaza/world/tex/menu_cmn_tree00_tree_alb.ktx2"
    ],
-   "srcBytes": 142827,
-   "distBytes": 65906,
+   "srcBytes": 121714,
+   "distBytes": 41748,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format BC3_SRGB",
+   "reason": "format BC1_SRGB",
    "w": 512,
    "h": 512,
-   "alpha": true,
+   "alpha": false,
    "psnr": {
-    "RGB": 39.109,
-    "R": 40.622,
-    "G": 45.271,
-    "B": 35.986,
-    "Y": 47.327,
-    "maxErr": 50
+    "RGB": 40.775,
+    "R": 39.899,
+    "G": 45.814,
+    "B": 39.121,
+    "Y": 48.178,
+    "maxErr": 30
    },
    "tries": [
     "etc1s:ok"
@@ -40266,26 +40344,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu01_grass00_alb.png",
+   "src": "plaza/world/tex/menu_cmn_tree00_wood_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu01_grass00_alb.ktx2"
+    "plaza/world/tex/menu_cmn_tree00_wood_alb.ktx2"
    ],
-   "srcBytes": 911444,
-   "distBytes": 246833,
+   "srcBytes": 85573,
+   "distBytes": 38713,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 256,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 36.856,
-    "R": 37.495,
-    "G": 39.918,
-    "B": 34.701,
-    "Y": 42.145,
-    "maxErr": 29
+    "RGB": 37.739,
+    "R": 39.567,
+    "G": 42.197,
+    "B": 34.76,
+    "Y": 44.192,
+    "maxErr": 25
    },
    "tries": [
     "etc1s:ok"
@@ -40368,26 +40446,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu_cmn_tree00_tree_alb.png",
+   "src": "plaza/world/tex/mg0122_badminton00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu_cmn_tree00_tree_alb.ktx2"
+    "plaza/world/tex/mg0122_badminton00_alb.ktx2"
    ],
-   "srcBytes": 121714,
-   "distBytes": 41748,
+   "srcBytes": 13913,
+   "distBytes": 11987,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
+   "w": 192,
+   "h": 384,
+   "alpha": true,
    "psnr": {
-    "RGB": 40.775,
-    "R": 39.899,
-    "G": 45.814,
-    "B": 39.121,
-    "Y": 48.178,
-    "maxErr": 30
+    "RGB": 36.593,
+    "R": 35.337,
+    "G": 41.595,
+    "B": 35.294,
+    "Y": 43.053,
+    "maxErr": 78
    },
    "tries": [
     "etc1s:ok"
@@ -40507,26 +40585,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu_cmn_tree00_wood_alb.png",
+   "src": "plaza/world/tex/mg0122_guitar_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu_cmn_tree00_wood_alb.ktx2"
+    "plaza/world/tex/mg0122_guitar_alb.ktx2"
    ],
-   "srcBytes": 85573,
-   "distBytes": 38713,
+   "srcBytes": 129241,
+   "distBytes": 59029,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 256,
+   "w": 512,
    "h": 512,
-   "alpha": false,
+   "alpha": true,
    "psnr": {
-    "RGB": 37.739,
-    "R": 39.567,
-    "G": 42.197,
-    "B": 34.76,
-    "Y": 44.192,
-    "maxErr": 25
+    "RGB": 35.323,
+    "R": 35.016,
+    "G": 42.459,
+    "B": 32.934,
+    "Y": 44.2,
+    "maxErr": 82
    },
    "tries": [
     "etc1s:ok"
@@ -40629,29 +40707,31 @@
    ]
   },
   {
-   "src": "plaza/world/tex/mg0122_badminton00_alb.png",
+   "src": "plaza/world/tex/mg0122_sheet00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/mg0122_badminton00_alb.ktx2"
+    "plaza/world/tex/mg0122_sheet00_alb.ktx2"
    ],
-   "srcBytes": 13913,
-   "distBytes": 11987,
+   "srcBytes": 167328,
+   "distBytes": 129301,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
-   "w": 192,
-   "h": 384,
-   "alpha": true,
+   "w": 512,
+   "h": 512,
+   "alpha": false,
    "psnr": {
-    "RGB": 36.593,
-    "R": 35.337,
-    "G": 41.595,
-    "B": 35.294,
-    "Y": 43.053,
-    "maxErr": 78
+    "RGB": 52.703,
+    "R": 57.887,
+    "G": 52.804,
+    "B": 50.349,
+    "A": 100,
+    "Y": 54.327,
+    "maxErr": 32
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -40682,26 +40762,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/menu_cmn_quest_platform00_alb.png",
+   "src": "plaza/world/tex/mg1403_wood00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/menu_cmn_quest_platform00_alb.ktx2"
+    "plaza/world/tex/mg1403_wood00_alb.ktx2"
    ],
-   "srcBytes": 485859,
-   "distBytes": 144519,
+   "srcBytes": 68849,
+   "distBytes": 25566,
    "cls": "color",
    "codec": "etc1s",
    "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
+   "w": 256,
+   "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 35.953,
-    "R": 35.787,
-    "G": 46.105,
-    "B": 33.248,
-    "Y": 48.701,
-    "maxErr": 174
+    "RGB": 38.872,
+    "R": 38.834,
+    "G": 41.431,
+    "B": 37.298,
+    "Y": 42.881,
+    "maxErr": 17
    },
    "tries": [
     "etc1s:ok"
@@ -40780,55 +40860,59 @@
    ]
   },
   {
-   "src": "plaza/world/tex/mg1403_wood00_alb.png",
+   "src": "plaza/world/tex/mg1405_grass03_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/mg1403_wood00_alb.ktx2"
+    "plaza/world/tex/mg1405_grass03_alb.ktx2"
    ],
-   "srcBytes": 68849,
-   "distBytes": 25566,
+   "srcBytes": 87072,
+   "distBytes": 48124,
    "cls": "color",
-   "codec": "etc1s",
+   "codec": "uastc-rdo",
    "reason": "format BC1_SRGB",
    "w": 256,
    "h": 256,
    "alpha": false,
    "psnr": {
-    "RGB": 38.872,
-    "R": 38.834,
-    "G": 41.431,
-    "B": 37.298,
-    "Y": 42.881,
-    "maxErr": 17
+    "RGB": 47.687,
+    "R": 50.821,
+    "G": 44.743,
+    "B": 50.329,
+    "A": 100,
+    "Y": 46.649,
+    "maxErr": 36
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
-   "src": "plaza/world/tex/mg0122_guitar_alb.png",
+   "src": "plaza/world/tex/mg1405_leaf00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/mg0122_guitar_alb.ktx2"
+    "plaza/world/tex/mg1405_leaf00_alb.ktx2"
    ],
-   "srcBytes": 129241,
-   "distBytes": 59029,
+   "srcBytes": 70409,
+   "distBytes": 45158,
    "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
+   "codec": "uastc-rdo",
+   "reason": "format BC7_SRGB",
+   "w": 256,
+   "h": 256,
    "alpha": true,
    "psnr": {
-    "RGB": 35.323,
-    "R": 35.016,
-    "G": 42.459,
-    "B": 32.934,
-    "Y": 44.2,
-    "maxErr": 82
+    "RGB": 42.124,
+    "R": 42.45,
+    "G": 40.939,
+    "B": 43.323,
+    "A": 42.2,
+    "Y": 43.16,
+    "maxErr": 46
    },
    "tries": [
-    "etc1s:ok"
+    "etc1s:x",
+    "uastc-rdo:ok"
    ]
   },
   {
@@ -41010,31 +41094,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/mg1405_grass03_alb.png",
+   "src": "plaza/world/tex/palm00_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/mg1405_grass03_alb.ktx2"
+    "plaza/world/tex/palm00_alb.ktx2"
    ],
-   "srcBytes": 87072,
-   "distBytes": 48124,
+   "srcBytes": 186496,
+   "distBytes": 49790,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC1_SRGB",
-   "w": 256,
-   "h": 256,
+   "codec": "etc1s",
+   "reason": "format ASTC8x8_SRGB",
+   "w": 512,
+   "h": 512,
    "alpha": false,
    "psnr": {
-    "RGB": 47.687,
-    "R": 50.821,
-    "G": 44.743,
-    "B": 50.329,
-    "A": 100,
-    "Y": 46.649,
-    "maxErr": 36
+    "RGB": 39.158,
+    "R": 38.856,
+    "G": 43.587,
+    "B": 37.207,
+    "Y": 45.297,
+    "maxErr": 26
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -41116,26 +41198,26 @@
    ]
   },
   {
-   "src": "plaza/world/tex/palm00_alb.png",
+   "src": "plaza/world/tex/stage_border_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/palm00_alb.ktx2"
+    "plaza/world/tex/stage_border_alb.ktx2"
    ],
-   "srcBytes": 186496,
-   "distBytes": 49790,
+   "srcBytes": 657392,
+   "distBytes": 183257,
    "cls": "color",
    "codec": "etc1s",
-   "reason": "format ASTC8x8_SRGB",
-   "w": 512,
-   "h": 512,
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
    "alpha": false,
    "psnr": {
-    "RGB": 39.158,
-    "R": 38.856,
-    "G": 43.587,
-    "B": 37.207,
-    "Y": 45.297,
-    "maxErr": 26
+    "RGB": 39.823,
+    "R": 40.17,
+    "G": 43.789,
+    "B": 37.581,
+    "Y": 45.097,
+    "maxErr": 27
    },
    "tries": [
     "etc1s:ok"
@@ -41218,31 +41300,29 @@
    ]
   },
   {
-   "src": "plaza/world/tex/mg1405_leaf00_alb.png",
+   "src": "plaza/world/tex/stage_trim_alb.png",
    "kind": "tex",
    "out": [
-    "plaza/world/tex/mg1405_leaf00_alb.ktx2"
+    "plaza/world/tex/stage_trim_alb.ktx2"
    ],
-   "srcBytes": 70409,
-   "distBytes": 45158,
+   "srcBytes": 400555,
+   "distBytes": 117900,
    "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC7_SRGB",
-   "w": 256,
-   "h": 256,
-   "alpha": true,
+   "codec": "etc1s",
+   "reason": "format BC1_SRGB",
+   "w": 1024,
+   "h": 1024,
+   "alpha": false,
    "psnr": {
-    "RGB": 42.124,
-    "R": 42.45,
-    "G": 40.939,
-    "B": 43.323,
-    "A": 42.2,
-    "Y": 43.16,
-    "maxErr": 46
+    "RGB": 33.548,
+    "R": 32.097,
+    "G": 43.802,
+    "B": 31.762,
+    "Y": 48.573,
+    "maxErr": 159
    },
    "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
+    "etc1s:ok"
    ]
   },
   {
@@ -42014,86 +42094,6 @@
    "h": 8,
    "alpha": true,
    "psnr": null,
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "plaza/world/tex/stage_trim_alb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/tex/stage_trim_alb.ktx2"
-   ],
-   "srcBytes": 400555,
-   "distBytes": 117900,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
-   "psnr": {
-    "RGB": 33.548,
-    "R": 32.097,
-    "G": 43.802,
-    "B": 31.762,
-    "Y": 48.573,
-    "maxErr": 159
-   },
-   "tries": [
-    "etc1s:ok"
-   ]
-  },
-  {
-   "src": "plaza/world/tex/mg0122_sheet00_alb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/tex/mg0122_sheet00_alb.ktx2"
-   ],
-   "srcBytes": 167328,
-   "distBytes": 129301,
-   "cls": "color",
-   "codec": "uastc-rdo",
-   "reason": "format BC1_SRGB",
-   "w": 512,
-   "h": 512,
-   "alpha": false,
-   "psnr": {
-    "RGB": 52.703,
-    "R": 57.887,
-    "G": 52.804,
-    "B": 50.349,
-    "A": 100,
-    "Y": 54.327,
-    "maxErr": 32
-   },
-   "tries": [
-    "etc1s:x",
-    "uastc-rdo:ok"
-   ]
-  },
-  {
-   "src": "plaza/world/tex/stage_border_alb.png",
-   "kind": "tex",
-   "out": [
-    "plaza/world/tex/stage_border_alb.ktx2"
-   ],
-   "srcBytes": 657392,
-   "distBytes": 183257,
-   "cls": "color",
-   "codec": "etc1s",
-   "reason": "format BC1_SRGB",
-   "w": 1024,
-   "h": 1024,
-   "alpha": false,
-   "psnr": {
-    "RGB": 39.823,
-    "R": 40.17,
-    "G": 43.789,
-    "B": 37.581,
-    "Y": 45.097,
-    "maxErr": 27
-   },
    "tries": [
     "etc1s:ok"
    ]
@@ -51085,6 +51085,16 @@
    "srcBytes": 276180,
    "distBytes": 210264,
    "br": 18627
+  },
+  {
+   "src": "plaza/world/plaza_first.json",
+   "kind": "json",
+   "out": [
+    "plaza/world/plaza_first.json"
+   ],
+   "srcBytes": 36624,
+   "distBytes": 29551,
+   "br": 3766
   },
   {
    "src": "setplayer/setplayer.json",

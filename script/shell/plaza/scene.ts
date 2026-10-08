@@ -3,7 +3,7 @@
  * 카메라: stage3d 슬롯(anim > follow) 이 잡지 않은 프레임은 char_start_pos 뒤 고정 시점 [설계: B 의 추종 카메라 전 자리].
  */
 import * as THREE from 'three';
-import type { AssetSource } from '../stage3d';
+import { PLAY_BUDGET_MS, type AssetSource, type StageLoader } from '../stage3d';
 import { PLAZA_PARTS } from './parts';
 import type { PlazaActor, PlazaContext, PlazaExit, PlazaPad, PlazaPart, PlazaPlayerSetup, PlazaSound, PlazaWorld } from './types';
 import { createPlazaWorld } from './world';
@@ -40,6 +40,10 @@ export interface PlazaRunOptions {
   deco?: Partial<PlazaDecoState>;
   onExit(e: PlazaExit): void;
   onProgress?(n: number, total: number, what: string): void;
+  /** 로더 관리자(docs/engine/loader_manager.md §11.4). 없으면 지금처럼 전부 읽고 시작 */
+  loader?: StageLoader;
+  /** glb 안 텍스처도 관리자를 지남(압축 모드) */
+  gltfTextures?: boolean;
 }
 
 export interface PlazaRun {
@@ -55,7 +59,15 @@ export interface PlazaRun {
 }
 
 export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
-  const world = await createPlazaWorld({ canvas: o.canvas, assets: o.worldAssets, deco: o.deco, onProgress: o.onProgress });
+  const world = await createPlazaWorld({
+    canvas: o.canvas,
+    assets: o.worldAssets,
+    deco: o.deco,
+    onProgress: o.onProgress,
+    loader: o.loader,
+    loadMode: o.params.get('loader') === 'seq' ? 'seq' : 'staged',
+    gltfTextures: o.gltfTextures,
+  });
   const stage = world.stage;
   const listeners = new Map<string, Set<(v: unknown) => void>>();
   let exited = false;
@@ -87,6 +99,10 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
   const parts: PlazaPart[] = [];
   for (const p of PLAZA_PARTS) parts.push(await p.create(ctx));
   const warm = o.params.get('nowarm') === '1' ? null : await stage.warmup();
+  stage.budget(PLAY_BUDGET_MS);
+  const me = actors.find((x) => x.kind === 'input');
+  if (me) world.setFocus?.(me.pos);
+  world.startBackground?.();
   const start = world.socket('char_start_pos');
   const look = start ? start.pos.clone() : new THREE.Vector3(0, -2.4, 22.3);
   const cp = world.cameraParam;
@@ -125,6 +141,9 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
         models: stage.loadedModels().length,
         stats: stage.stats,
         warmup: warm,
+        loader: world.loaderDebug?.() ?? null,
+        unprepared: stage.unpreparedVisible(),
+        prep: stage.preparer.stats,
         graphs: { applied: stage.materials.graphStats.applied.length, missing: stage.materials.graphStats.missing },
         camera: { pos: stage.camera.position.toArray(), fov: stage.camera.fov, driven: stage.cameraDriven },
         actors: actors.map((x) => ({ slot: x.slot, kind: x.kind, chara: x.chara, pos: x.pos.toArray(), yaw: x.yaw, motion: x.motion })),

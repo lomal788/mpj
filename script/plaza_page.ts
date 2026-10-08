@@ -1,9 +1,13 @@
 /**
  * 페이지 ↔ 광장(menu00) 3D 모듈(shell/plaza) 연결 — 캔버스·2D 겹·입력(PadSource → PlazaPad)·소리(라벨 표)·60Hz 고정 스텝 루프.
  * 흐름(setplayer → 광장 → 모드 메뉴 → 프리 플레이)은 main.ts `?plaza=1` 이 잇는다(docs/shell/plaza_3d.md §6.9).
+ * 에셋은 앱 로더 관리자(view/appAssets.ts)로 — 광장 무대 단계 로딩(P0 만 기다림), 소리 바이트는 P3 로 미리 받고 디코드는 이 페이지 문맥에서
+ * (docs/engine/loader_manager.md §11.4). 나갈 때 release('plaza')(지우지 않음 — 다시 들어오면 캐시에서).
  */
 import { STICK_MAX, type PadInput } from './core/pad';
-import { ASSETS } from './env';
+import { ASSET_MODE, ASSETS } from './env';
+import { P1, P3 } from './lib/assetcore';
+import { appAssets, assetKeyOf } from './view/appAssets';
 import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from './shell/plaza';
 import { parseDecoParam } from './shell/plaza/deco';
 import type { PadSource } from './view/input';
@@ -73,14 +77,16 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       actx = null;
     }
   }
+  const assets = appAssets();
+  const OWNER = 'plaza';
   const sounds = await loadSounds();
   const buffers = new Map<string, Promise<AudioBuffer | null>>();
   const buffer = (c: AudioContext, url: string): Promise<AudioBuffer | null> => {
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
-        .then((a) => c.decodeAudioData(a))
+      const key = assetKeyOf(url);
+      b = (key ? assets.get<ArrayBuffer>(key, 'bytes', P1, OWNER) : fetch(url).then((r) => r.arrayBuffer()))
+        .then((a) => c.decodeAudioData(a.slice(0)))
         .catch(() => null);
       buffers.set(url, b);
     }
@@ -116,6 +122,8 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     canvas,
     overlay,
     worldAssets: { url: (p) => `${ASSETS}plaza/world/${p}` },
+    loader: { manager: assets, key: (p) => `plaza/world/${p}`, owner: OWNER },
+    gltfTextures: ASSET_MODE === 'dist',
     assetUrl: (p) => `${ASSETS}${p}`,
     players,
     pad: (slot) => cur[slot] ?? null,
@@ -136,6 +144,11 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       cfg.onExit(e);
     },
   });
+
+  for (const s of Object.values(sounds)) {
+    const key = assetKeyOf(s.url);
+    if (key) assets.want(key, 'bytes', P3, OWNER);
+  }
 
   const fit = (): void => {
     const r = stage.getBoundingClientRect();
@@ -194,6 +207,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       ro.disconnect();
       bgm?.src?.stop();
       run.stop();
+      assets.release(OWNER);
       void actx?.close();
       canvas.remove();
       overlay.remove();

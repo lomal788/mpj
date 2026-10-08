@@ -4,10 +4,13 @@
  *
  *   npm run dev                  http://localhost:5181/
  *   npx tsx tools/serve.ts --port 5190
+ *   npx tsx tools/serve.ts --dist        배포 미리보기: web/dist/(npm run build 결과)를 배포 헤더로 내준다(server/static.ts — 사전 압축·immutable·ETag)
  */
+import http from "node:http";
 import path from "node:path";
 import { context } from "esbuild";
-import { DEV_PORT, WEB, options } from "./esbuild_config";
+import { createStaticHandler } from "../server/static";
+import { WEB, options } from "./esbuild_config";
 
 function argValue(name: string): string | null {
   const i = process.argv.indexOf(name);
@@ -15,10 +18,15 @@ function argValue(name: string): string | null {
 }
 
 // const port = Number(argValue('--port') ?? DEV_PORT);
-const port = 51811;
-const ctx = await context(options(true, path.join(WEB, "bundle")));
-await ctx.watch();
-const { hosts, port: realPort } = await ctx.serve({ servedir: WEB, port });
-console.log(
-  `개발 서버: http://localhost:${realPort}/ (네트워크: ${hosts.join(", ")})`,
-);
+const port = Number(argValue("--port") ?? 51811);
+if (process.argv.includes("--dist")) {
+  const handle = createStaticHandler({ root: path.join(WEB, "dist") });
+  http.createServer((req, res) => handle(req, res)).listen(port, () => console.log(`배포 미리보기: http://localhost:${port}/ (web/dist)`));
+} else {
+  const ctx = await context(options(true, path.join(WEB, "bundle")));
+  await ctx.watch();
+  const { hosts, port: realPort } = await ctx.serve({ servedir: WEB, port });
+  console.log(
+    `개발 서버: http://localhost:${realPort}/ (네트워크: ${hosts.join(", ")})`,
+  );
+}

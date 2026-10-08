@@ -91,7 +91,7 @@ export interface SocketPose {
 /** 무대 명세(manifest.json, tools/analysis/mgmet_world_assets.py) */
 export interface StageManifest {
   set: string;
-  models: Record<string, { url: string; bytes: number; vertices: number; triangles: number; bones: number; clips: Record<string, { frames: number; loop: boolean | null; kind: string }> }>;
+  models: Record<string, { url: string; bytes: number; vertices: number; triangles: number; bones: number; clips: Record<string, { frames: number; loop: boolean | null; kind: string }>; tex?: string[] }>;
   /** 재질 텍스처 색인(라이트맵·IBL·셰이더 그래프 입력): 이름 → 파일·sRGB·큐브 */
   textures: Record<string, { files: string[]; srgb: boolean; cube: boolean }>;
   /** fmab/fsnb json 경로: 파일 이름 → 'anim/x.json' */

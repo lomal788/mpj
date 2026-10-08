@@ -12,6 +12,7 @@ import * as THREE from 'three';
 import { FixedClock } from '../script/shell/plaza/scene';
 import { DECO_ITEMS, DECO_TYPE, decoVisible, defaultDecoState, isDefaultDeco, parseDecoParam, setDecoDisplay } from '../script/shell/plaza/deco';
 import type { PlazaLayoutEntry } from '../script/shell/plaza/types';
+import { plazaPlan, type PlazaFirstFile } from '../script/shell/plaza/world';
 import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '../script/shell/stage3d/meshCollider';
 import { graphSource, type GraphDef, type GraphSource } from '../script/shell/stage3d/graph';
 import { patchRefraction, patchSss, patchUnlit, patchVertexColor, patchWater } from '../script/shell/stage3d/material';
@@ -276,7 +277,7 @@ for (const hz of [30, 60, 75, 120, 144, 240]) {
   ok(stall === FixedClock.MAX_STEPS && Math.abs(after - 60) <= 1, `3 초 멈춤 뒤: 그 프레임 ${stall} 스텝(넘친 밀림 버림), 다음 1 초 ${after} 프레임(빨리 감기 없음)`);
 }
 
-console.log('8. import 경계(mgm_common.md §9.1)');
+console.log('8. import 경계(mgm_common.md §9.1 — lib/assetcore·assetcore-three 는 어디서나 허용)');
 const SHELL = join(WEB, 'script', 'shell');
 const scan = (dir: string, allowed: string[]): void => {
   for (const f of readdirSync(dir)) {
@@ -288,13 +289,47 @@ const scan = (dir: string, allowed: string[]): void => {
     if (!f.endsWith('.ts')) continue;
     for (const m of readFileSync(p2, 'utf-8').matchAll(/from '([^']+)'/g)) {
       const spec = m[1];
-      const okSpec = spec === 'three' || spec.startsWith('three/') || (spec.startsWith('.') && allowed.some((a) => resolve(dir, spec).startsWith(join(SHELL, a))));
+      const lib = spec.startsWith('.') && [join(WEB, 'script', 'lib', 'assetcore'), join(WEB, 'script', 'lib', 'assetcore-three')].includes(resolve(dir, spec));
+      const okSpec = spec === 'three' || spec.startsWith('three/') || lib || (spec.startsWith('.') && allowed.some((a) => resolve(dir, spec).startsWith(join(SHELL, a))));
       ok(okSpec, `${p2.slice(WEB.length + 1)} import ${spec}`);
     }
   }
 };
 scan(join(SHELL, 'plaza'), ['plaza', 'stage3d', 'mgmcommon', 'online', 'charselect']);
 scan(join(SHELL, 'stage3d'), ['stage3d']);
+
+console.log('9. 단계 로딩 계획(loader_manager.md §11.4·§11.5 — plaza_first.json)');
+{
+  const first = JSON.parse(readFileSync(join(W, 'plaza_first.json'), 'utf-8')) as PlazaFirstFile;
+  const all = [...layout, ...((man.plaza as { extraLayout?: PlazaLayoutEntry[] }).extraLayout ?? [])];
+  const keySet = new Set(all.map((e) => e.key));
+  ok(first.first.length > 0 && first.first.every((k) => keySet.has(k)), `처음 보이는 것 ${first.first.length}개, 모두 레이아웃 키`);
+  ok(first.first.includes('CentralPlaza') && first.first.includes('Balloon'), '광장 바닥·기구는 처음 보임');
+  ok(['AttachLocater', 'AttachLocaterQuest', 'AttachLocaterDecoNpc'].every((k) => first.hosts.includes(k)), '로케이터 3개는 hosts');
+  const models = all.filter((e) => e.dir === 'model' && man.models[e.fmdb]);
+  ok(models.every((e) => first.bounds[e.key]?.length === 4 || man.models[e.fmdb].triangles === 0), `경계 구 ${Object.keys(first.bounds).length}/${models.length}(삼각형 0 인 경로 로케이터 제외)`);
+  ok(first.start.length === 3 && Math.abs(first.start[2]) > 0, `시작 위치 ${first.start}`);
+  const by = new Map(all.map((e) => [e.key, e]));
+  const d0 = defaultDecoState();
+  const need = new Set<string>();
+  const addN = (k: string): void => {
+    const e = by.get(k);
+    if (!e || need.has(k) || !models.includes(e)) return;
+    need.add(k);
+    if (e.hookKey) addN(e.hookKey);
+  };
+  for (const e of models) if (decoVisible(e, d0)) addN(e.key);
+  const list = all.filter((e) => need.has(e.key));
+  const { pri, order } = plazaPlan(list, by, first);
+  const cnt = [0, 1, 2, 3].map((p) => list.filter((e) => pri.get(e.key) === p).length);
+  console.log(`   기본 장식: 필요 ${list.length} → P0 ${cnt[0]} · P1 ${cnt[1]} · P3 ${cnt[3]}`);
+  ok(cnt[0] > 0 && cnt[0] < list.length, 'P0 은 일부만');
+  ok(pri.get('CentralPlaza') === 0 && pri.get('AttachLocater') === 0, '바닥·로케이터 P0');
+  ok(list.filter((e) => /^Shop/.test(e.key)).every((e) => pri.get(e.key) === 3), '상점 P3');
+  ok(list.every((e) => !e.hookKey || !need.has(e.hookKey) || pri.get(e.hookKey)! <= pri.get(e.key)!), '부착 부모 등급 ≤ 자식');
+  ok(order.every((e, i) => i === 0 || pri.get(order[i - 1].key)! <= pri.get(e.key)!), '순서 = 등급순');
+  ok(list.every((e) => pri.has(e.key)), '필요한 것 모두 등급');
+}
 
 console.log(`${count - fails}/${count}`);
 if (fails) process.exit(1);

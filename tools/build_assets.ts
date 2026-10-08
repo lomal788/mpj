@@ -7,12 +7,15 @@
  *     --force                                     캐시 무시
  *     --jobs 4                                    동시 인코더 수(basisu·ffmpeg 프로세스)
  *     --no-tex | --no-mesh | --no-audio           그 종류는 이전 결과 유지(처음이면 PNG/glb/wav 그대로 복사)
- *     --precompress                               json·glb·hdr·otf 옆에 .br·.gz 를 만든다(정적 서버의 사전 압축 제공용)
+ *     --no-precompress                            .br·.gz 사전 압축을 건너뜀(기본: 해시 이름 옆에 증분으로 만든다 — tools/precompress.ts 규칙)
  *     --prune                                     지금 결과에 없는 dist 파일(옛 산출물)을 지운다 — 사용자가 직접 실행할 때만
  *
  * 산출물
  *   assets-dist/<소스와 같은 경로>   png → .ktx2(또는 png 그대로), wav → .ogg+.m4a 또는 .flac, glb → 같은 이름(meshopt), json → 같은 이름(공백 제거), 그 밖 = 복사
- *   assets-dist/index.json          런타임 이름 바뀜 표 { v, ktx2[], lossy[], flac[] } (shell/stage3d/assetLoader.ts 가 읽음)
+ *                                   (해시 없는 작업본 — 증분 비교·같은 내용 복사의 원본)
+ *   assets-dist/<경로>.<sha256 8>.<확장자>   배포본(내용 해시 이름, 작업본의 복사) + 이득 있으면 .br·.gz. 배포(tools/build.ts)는 이것만 싣는다
+ *   assets-dist/index.json          런타임 표 { v: 2, ktx2[], lossy[], flac[], names{압축본 이름 → 해시 이름} } (shell/stage3d/assetLoader.ts 가 읽음,
+ *                                   형식: docs/engine/loader_manager.md §5.8.2)
  *   assets-dist/report.json         파일별 형식·크기·PSNR·GPU 추정, 폴더별 합
  *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과)
  *   web/vendor/basis/               three 의 Basis 트랜스코더(js·wasm) 정적 복사 — 외부 CDN 금지
@@ -26,6 +29,7 @@ import { fileURLToPath } from 'node:url';
 import { classify, CLASS_RECIPE, encodeTexture, gpuBytes, pngInfo, TEX3D_ROOTS, TEX_RECIPE, type TexHint, type TexPlan, type TexResult } from './assets_tex';
 import { imageSlots, MESH_RECIPE, packGlb, readGlb, type MeshStats } from './assets_mesh';
 import { AUDIO_RECIPE, encodeAudio, type AudioOut } from './assets_audio';
+import { hashedName, PRECOMPRESS, precompressAll } from './precompress';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const SRC = path.join(WEB, 'assets');
@@ -57,6 +61,10 @@ interface Entry {
   tex?: TexResult & { plan: TexPlan };
   mesh?: MeshStats;
   audio?: Omit<AudioOut, 'files'>;
+  /** 압축본 이름 → 해시 이름(배포본) */
+  names?: Record<string, string>;
+  /** 해시 이름 → [.br 바이트, .gz 바이트](0 = 이득 없어 안 만듦) */
+  pre?: Record<string, [number, number]>;
 }
 interface State {
   v: 1;
@@ -351,43 +359,76 @@ async function main(): Promise<void> {
     state.entries[rel] = { rel, kind: 'json', key, srcBytes: fs.statSync(src).size, outs: { [rel]: buf.byteLength }, br: brSize(buf) };
   }
 
+  // 해시 이름(배포본) — 새로 만든 산출물만 내용을 다시 잰다(재사용 항목은 이전 names 가 있고 파일이 있으면 그대로)
+  let hashedNew = 0;
+  for (const e of Object.values(state.entries)) {
+    const outs = Object.keys(e.outs);
+    if (e.names && outs.every((o) => e.names![o] && fs.existsSync(path.join(DIST, e.names![o])))) continue;
+    e.names = {};
+    e.pre = undefined;
+    for (const o of outs) {
+      const n = hashedName(o, crypto.createHash('sha256').update(fs.readFileSync(path.join(DIST, o))).digest('hex').slice(0, 8));
+      if (!fs.existsSync(path.join(DIST, n))) fs.copyFileSync(path.join(DIST, o), path.join(DIST, n));
+      e.names[o] = n;
+    }
+    hashedNew++;
+  }
+  if (hashedNew) console.log(`  해시 이름 ${hashedNew}개 항목`);
+
+  // 사전 압축(해시 이름 옆) — 결정은 항목에 남겨 다음 빌드는 건너뜀
+  if (!flag('--no-precompress')) {
+    const todo: { e: Entry; n: string }[] = [];
+    for (const e of Object.values(state.entries))
+      for (const n of Object.values(e.names ?? {})) {
+        if (!PRECOMPRESS.test(n)) continue;
+        const p = e.pre?.[n];
+        const d = path.join(DIST, n);
+        if (p && (!p[0] || fs.existsSync(`${d}.br`)) && (!p[1] || fs.existsSync(`${d}.gz`))) continue;
+        todo.push({ e, n });
+      }
+    let raw = 0;
+    let br = 0;
+    let done = 0;
+    const byFile = new Map(todo.map((t) => [path.join(DIST, t.n), t]));
+    await precompressAll([...byFile.keys()], Math.max(4, jobs), (f, r) => {
+      const t = byFile.get(f)!;
+      (t.e.pre ??= {})[t.n] = [r.br, r.gz];
+      raw += r.raw;
+      br += r.br || r.raw;
+      if (++done % 200 === 0) console.log(`  사전 압축 ${done}/${todo.length} ${((performance.now() - t0) / 1000).toFixed(0)} s`);
+    });
+    if (todo.length) console.log(`  사전 압축 ${todo.length}개 ${mb(raw)} → br ${mb(br)} MB`);
+  }
+
   // 소스에서 사라진 항목은 버린다(파일은 --prune 때만 지움)
-  const index = { v: 1, ktx2: [] as string[], lossy: [] as string[], flac: [] as string[] };
+  const index = { v: 2, ktx2: [] as string[], lossy: [] as string[], flac: [] as string[], names: {} as Record<string, string> };
+  const names: [string, string][] = [];
   for (const e of Object.values(state.entries)) {
     if (e.kind === 'tex' && Object.keys(e.outs)[0]?.endsWith('.ktx2')) index.ktx2.push(e.rel);
     if (e.kind === 'audio' && e.audio) (e.audio.kind === 'flac' ? index.flac : index.lossy).push(e.rel);
+    names.push(...Object.entries(e.names ?? {}));
   }
   index.ktx2.sort();
   index.lossy.sort();
   index.flac.sort();
+  index.names = Object.fromEntries(names.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)));
   fs.writeFileSync(INDEX, JSON.stringify(index));
   fs.writeFileSync(STATE, JSON.stringify(state));
 
-  // 사전 압축
-  if (flag('--precompress')) {
-    let n = 0;
-    for (const e of Object.values(state.entries))
-      for (const o of Object.keys(e.outs)) {
-        if (!COMPRESSIBLE.test(o)) continue;
-        const d = path.join(DIST, o);
-        const b = fs.readFileSync(d);
-        fs.writeFileSync(`${d}.br`, zlib.brotliCompressSync(b, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11, [zlib.constants.BROTLI_PARAM_LGWIN]: 24 } }));
-        fs.writeFileSync(`${d}.gz`, zlib.gzipSync(b, { level: 9 }));
-        n++;
-      }
-    for (const f of [INDEX]) {
-      const b = fs.readFileSync(f);
-      fs.writeFileSync(`${f}.br`, zlib.brotliCompressSync(b));
-      fs.writeFileSync(`${f}.gz`, zlib.gzipSync(b, { level: 9 }));
-    }
-    console.log(`  사전 압축 ${n}개(.br·.gz)`);
-  }
-
   // 옛 산출물
-  const live = new Set<string>([...Object.values(state.entries).flatMap((e) => Object.keys(e.outs)), 'index.json', 'report.json', 'build-state.json']);
+  const live = new Set<string>(['index.json', 'report.json', 'build-state.json']);
+  for (const e of Object.values(state.entries)) {
+    for (const o of Object.keys(e.outs)) live.add(o);
+    for (const n of Object.values(e.names ?? {})) {
+      live.add(n);
+      const p = e.pre?.[n];
+      if (p?.[0]) live.add(`${n}.br`);
+      if (p?.[1]) live.add(`${n}.gz`);
+    }
+  }
   const orphans = walk(DIST)
     .map((f) => posix(path.relative(DIST, f)))
-    .filter((r) => !live.has(r) && !/\.(br|gz)$/.test(r));
+    .filter((r) => !live.has(r));
   if (orphans.length) {
     if (flag('--prune')) {
       for (const o of orphans) fs.rmSync(path.join(DIST, o));

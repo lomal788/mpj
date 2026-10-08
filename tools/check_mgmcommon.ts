@@ -301,6 +301,7 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
   };
   scan(dir);
   const SHARED = ['charselect/scene2d', 'charselect/render2d', 'charselect/state', 'charselect/types'];
+  const LIB = [join(WEB, 'script/lib/assetcore'), join(WEB, 'script/lib/assetcore-three')];
   for (const f of files) {
     const src = readFileSync(f, 'utf8');
     const depth = f.slice(dir.length + 1).split(/[\\/]/).length - 1;
@@ -309,7 +310,8 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
       const r = resolve(dirname(f), s);
       const inside = s.startsWith('.') && (r === dir || r.startsWith(dir + '\\') || r.startsWith(dir + '/'));
       const shared = SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}`);
-      ok(inside || shared || s === 'three', `${f.slice(dir.length + 1)}: 금지 import '${s}'`);
+      const lib = s.startsWith('.') && LIB.includes(r);
+      ok(inside || shared || lib || s === 'three', `${f.slice(dir.length + 1)}: 금지 import '${s}'`);
     }
   }
   console.log(`   파일 ${files.length}개`);
@@ -322,7 +324,8 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
         const s = m[1] ?? m[2];
         const inside = s.startsWith('./') || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
-        ok(inside || shared || s === 'three', `mgmet/${f}: 금지 import '${s}'`);
+        const lib = s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
+        ok(inside || shared || lib || s === 'three', `mgmet/${f}: 금지 import '${s}'`);
       }
     }
     console.log(`   mgmet 파일 ${met.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
@@ -336,7 +339,8 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
         const s = m[1] ?? m[2];
         const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
-        ok(inside || shared || s === 'three', `mgm01/${f}: 금지 import '${s}'`);
+        const lib = s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
+        ok(inside || shared || lib || s === 'three', `mgm01/${f}: 금지 import '${s}'`);
       }
     }
     console.log(`   mgm01 파일 ${m01.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
@@ -350,7 +354,8 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
         const s = m[1] ?? m[2];
         const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
-        ok(inside || shared || s === 'three', `partyrule/${f}: 금지 import '${s}'`);
+        const lib = s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
+        ok(inside || shared || lib || s === 'three', `partyrule/${f}: 금지 import '${s}'`);
       }
     }
     console.log(`   partyrule 파일 ${prf.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);

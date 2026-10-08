@@ -34,6 +34,7 @@ interface DistIndex {
   ktx2: Set<string>;
   lossy: Set<string>;
   flac: Set<string>;
+  names: Map<string, string>;
 }
 
 let cfg: AssetLoaderConfig = { mode: 'src', srcBase: './assets/', distBase: './assets-dist/', transcoderPath: './vendor/basis/', texLod: 0 };
@@ -41,6 +42,7 @@ let indexP: Promise<DistIndex> | null = null;
 let ktx2: KTX2Loader | null = null;
 let rawFetch: typeof fetch | null = null;
 let opusP: Promise<boolean> | null = null;
+let distNames: Map<string, string> | null = null;
 
 /** 읽은 압축 텍스처 통계(검증·디버그용) */
 export const assetStats = { ktx2: 0, ktx2Bytes: 0, png: 0, gltf: 0 };
@@ -62,13 +64,36 @@ function fetchRaw(url: string): Promise<Response> {
 
 function distIndex(): Promise<DistIndex> {
   indexP ??= fetchRaw(new URL(`${cfg.distBase}index.json`, baseUri()).href)
-    .then((r) => (r.ok ? (r.json() as Promise<{ ktx2?: string[]; lossy?: string[]; flac?: string[] }>) : ({} as { ktx2?: string[]; lossy?: string[]; flac?: string[] })))
+    .then((r) => (r.ok ? (r.json() as Promise<{ ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string> }>) : ({} as { ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string> })))
     .catch((e: unknown) => {
       console.warn('assets-dist/index.json 을 읽지 못했다 — 이름 바뀜 없이 읽는다', e);
-      return {} as { ktx2?: string[]; lossy?: string[]; flac?: string[] };
+      return {} as { ktx2?: string[]; lossy?: string[]; flac?: string[]; names?: Record<string, string> };
     })
-    .then((j) => ({ ktx2: new Set(j.ktx2 ?? []), lossy: new Set(j.lossy ?? []), flac: new Set(j.flac ?? []) }));
+    .then((j) => {
+      const names = new Map(Object.entries(j.names ?? {}));
+      distNames = names;
+      return { ktx2: new Set(j.ktx2 ?? []), lossy: new Set(j.lossy ?? []), flac: new Set(j.flac ?? []), names };
+    });
   return indexP;
+}
+
+/** 압축 모드 해시 표(index.json names)를 읽을 때까지 기다린다. 소스 모드는 바로 끝난다 */
+export function distReady(): Promise<void> {
+  return cfg.mode === 'dist' ? distIndex().then(() => undefined) : Promise.resolve();
+}
+
+/**
+ * 압축본 URL → 해시 붙은 실제 URL(index.json names: 해시 없는 압축본 상대 경로 → 해시 붙은 상대 경로). 동기·멱등: 소스 모드·표를 읽기 전·
+ * 표에 없음·이미 해시 이름이면 그대로. ?query·#hash 는 보존한다. 계약: analysis/notes/SHARED.md [loader-123]↔[loader-6].
+ */
+export function distUrl(url: string): string {
+  if (cfg.mode !== 'dist' || !distNames || distNames.size === 0) return url;
+  const cut = url.search(/[?#]/);
+  const head = cut < 0 ? url : url.slice(0, cut);
+  const rel = distRel(head);
+  const to = rel === null ? undefined : distNames.get(rel);
+  if (!to) return url;
+  return new URL(cfg.distBase + to.split('/').map(encodeURIComponent).join('/'), baseUri()).href + (cut < 0 ? '' : url.slice(cut));
 }
 
 /** URL → 압축본 루트 기준 상대 경로(압축본 밖이면 null) */

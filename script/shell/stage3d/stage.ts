@@ -10,7 +10,10 @@
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { FrameScheduler, P0, P1, type AssetManagerApi } from '../../lib/assetcore';
+import { ScenePreparer, type PrepJob } from '../../lib/assetcore-three';
 import { createGltfLoader } from './assetLoader';
+import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from './assetHandlers';
 import { Clip } from './clip';
 import { fresOf, MaterialSetup } from './material';
 import type { GraphDef } from './graph';
@@ -46,12 +49,43 @@ export interface StageGlobals {
   env: MatParams;
 }
 
+/** 로더 관리자 연결(docs/engine/loader_manager.md §11.4). 없으면 지금처럼 무대마다 직접 읽는다 */
+export interface StageLoader {
+  manager: AssetManagerApi;
+  /** 무대 상대 경로(assets.url 에 넣는 것) → 논리 키 */
+  key(path: string): string;
+  /** 참조 주인 이름(release 용) */
+  owner: string;
+}
+
 export interface StageCreateOptions {
   canvas: HTMLCanvasElement;
   assets: AssetSource;
   manifest?: string;
   antialias?: boolean;
+  loader?: StageLoader;
 }
+
+/** 무대 템플릿: 관리자 캐시의 깨끗한 glTF 장면을 재질까지 복제(MaterialSetup 이 재질을 고쳐 쓰므로 무대 사이에 나누지 않는다) */
+function stageTemplate(src: THREE.Object3D): THREE.Object3D {
+  const root = cloneSkinned(src);
+  const done = new Map<THREE.Material, THREE.Material>();
+  const cl = (m: THREE.Material): THREE.Material => {
+    let c = done.get(m);
+    if (!c) done.set(m, (c = m.clone()));
+    return c;
+  };
+  root.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh && !(o as THREE.Points).isPoints && !(o as THREE.Line).isLine) return;
+    mesh.material = Array.isArray(mesh.material) ? mesh.material.map(cl) : cl(mesh.material);
+  });
+  return root;
+}
+
+/** 첫 로딩 동안 프레임 예산(ms) — 로딩 화면 뒤라 크게, 그래도 매 프레임 양보 [추정] */
+export const LOAD_BUDGET_MS = 50;
+export const PLAY_BUDGET_MS = 4;
 
 class Model implements StageModel {
   readonly clips: Record<string, number> = {};
@@ -121,6 +155,8 @@ export class Stage3D {
   materials!: MaterialSetup;
   readonly stats = { loadMs: 0, models: 0, bytes: 0 };
   private readonly loader = createGltfLoader();
+  readonly scheduler: FrameScheduler;
+  readonly preparer: ScenePreparer;
   private readonly models = new Map<string, Model>();
   private readonly gltfs = new Map<string, Promise<GLTF>>();
   private readonly clipsLive: { step(df: number): void }[] = [];
@@ -147,16 +183,37 @@ export class Stage3D {
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(SHADOW_MAP, SHADOW_MAP);
     this.scene.add(this.sun, this.sun.target);
+    this.scheduler = opts.loader?.manager.scheduler ?? new FrameScheduler({ now: () => performance.now(), tick: (fn) => void requestAnimationFrame(fn) }, PLAY_BUDGET_MS);
+    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: this.scheduler, linear: () => !!this.post });
+  }
+
+  get assetLoader(): StageLoader | null {
+    return this.opts.loader ?? null;
+  }
+
+  /** 프레임 예산(ms) — 첫 로딩 동안 LOAD_BUDGET_MS, 그 뒤 PLAY_BUDGET_MS */
+  budget(ms: number): void {
+    this.scheduler.budgetMs = ms;
+  }
+
+  /** 관리자가 있으면 관리자로(무대 상대 경로), 없으면 fetch 로 json 을 읽는다 */
+  private async json<T>(path: string, pri: number): Promise<T | null> {
+    const l = this.opts.loader;
+    if (l) return l.manager.get<T>(l.key(path), KIND_JSON, pri, l.owner).catch(() => null);
+    const r = await fetch(this.opts.assets.url(path));
+    return r.ok ? ((await r.json()) as T) : null;
   }
 
   static async create(opts: StageCreateOptions): Promise<Stage3D> {
     const s = new Stage3D(opts);
     const t0 = performance.now();
-    const res = await fetch(opts.assets.url(opts.manifest ?? 'manifest.json'));
-    if (!res.ok) throw new Error(`stage3d manifest 를 읽지 못했다: ${res.status}`);
-    s.manifest = (await res.json()) as StageManifest;
+    const man = await s.json<StageManifest>(opts.manifest ?? 'manifest.json', P0);
+    if (!man) throw new Error('stage3d manifest 를 읽지 못했다');
+    s.manifest = man;
     s.env = (s.manifest.env ?? {}) as StageEnv;
     s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {});
+    const l = opts.loader;
+    if (l) s.materials.fetchTexture = (p) => l.manager.get<THREE.Texture>(l.key(p), KIND_TEXTURE, P1, l.owner).then((t) => t.clone());
     s.materials.globals = s.globals;
     for (const d of (s.manifest as unknown as { graphs?: GraphDef[] }).graphs ?? []) (s.materials.graphs[d.material] ??= []).push(d);
     s.applyEnv();
@@ -283,7 +340,7 @@ export class Stage3D {
     return this.opts.assets.url(path);
   }
 
-  async loadModel(name: string, opts: { visible?: boolean; instance?: string } = {}): Promise<StageModel> {
+  async loadModel(name: string, opts: { visible?: boolean; instance?: string; pri?: number } = {}): Promise<StageModel> {
     const id = opts.instance ?? name;
     const have = this.models.get(id);
     if (have) return have;
@@ -292,10 +349,13 @@ export class Stage3D {
     const t0 = performance.now();
     let p = this.gltfs.get(info.url);
     const first = !p;
+    const l = this.opts.loader;
     if (!p) {
-      p = this.loader.loadAsync(this.opts.assets.url(info.url));
+      p = l
+        ? l.manager.get<GLTF>(l.key(info.url), KIND_GLTF, opts.pri ?? P1, l.owner).then((g) => ({ ...g, scene: stageTemplate(g.scene) as THREE.Group }))
+        : this.loader.loadAsync(this.opts.assets.url(info.url));
       this.gltfs.set(info.url, p);
-    }
+    } else if (l && opts.pri !== undefined) l.manager.raise(l.key(info.url), opts.pri);
     const gltf = await p;
     const root = first ? gltf.scene : cloneSkinned(gltf.scene);
     root.name = id;
@@ -315,6 +375,23 @@ export class Stage3D {
 
   prepare(root: THREE.Object3D): Promise<void> {
     return this.materials.prepare(root);
+  }
+
+  /** GPU 준비(텍스처 업로드·셰이더 컴파일·버퍼 업로드)를 프레임 예산으로 — job.promise 가 풀린 뒤에만 보이게 한다(loader_manager.md §11.3) */
+  prepareModel(root: THREE.Object3D, pri: number): PrepJob {
+    return this.preparer.prepare(root, pri);
+  }
+
+  /** 개발·시험: 지금 그려지는(자신과 조상이 모두 보이는) 메시 중 GPU 준비를 안 거친 수 */
+  unpreparedVisible(): { count: number; names: string[] } {
+    const names: string[] = [];
+    const walk = (o: THREE.Object3D): void => {
+      if (!o.visible) return;
+      if (((o as THREE.Mesh).isMesh || (o as THREE.Points).isPoints || (o as THREE.Line).isLine) && !this.preparer.isPrepared(o)) names.push(o.name || o.parent?.name || '?');
+      for (const c of o.children) walk(c);
+    };
+    walk(this.scene);
+    return { count: names.length, names: names.slice(0, 20) };
   }
 
   private matches(o: MaterialOverride, name: string): boolean {
@@ -354,8 +431,7 @@ export class Stage3D {
       const path = this.manifest.anims[file];
       p = (async () => {
         if (!path) return null;
-        const r = await fetch(this.opts.assets.url(path));
-        return r.ok ? ((await r.json()) as FmabJson) : null;
+        return this.json<FmabJson>(path, P1);
       })().catch(() => null);
       p.then((j) => this.fmabs.set(file, j));
       this.fmabLoading.set(file, p);
@@ -485,14 +561,31 @@ export class Stage3D {
   }
 
   /**
-   * 첫 그리기 렉 없애기 [설계]: 숨은 모델·화면 밖 메시까지 잠깐 보이게 해 모든 재질을 compileAsync(장면 전체)하고, 재질 텍스처를 initTexture 로
-   * 올린 뒤 한 번 그린다(그림자 맵·후처리 패스 변형 포함). 끝나면 보임·컬링을 되돌리고 다시 그린다. charselect 준비 순서와 같다.
+   * 첫 그리기 렉 없애기 [설계]: 장면 전체(이미 준비한 메시 제외)를 프레임 예산 작업으로 GPU 준비(텍스처 initTexture 한 장씩 → compileAsync →
+   * 메시 묶음 1×1 업로드, loader_manager.md §11.3) — 첫 로딩 동안 LOAD_BUDGET_MS. 끝에 지금처럼 숨은 모델·화면 밖 메시까지 잠깐 보이게 한 번 그려
+   * (그림자 맵·후처리 패스 변형) 되돌린 뒤 다시 그린다.
    */
   async warmup(): Promise<{ ms: number; textures: number; programs: number }> {
     const t0 = performance.now();
+    const tex0 = this.preparer.stats.textures;
+    const budget = this.scheduler.budgetMs;
+    if (budget < LOAD_BUDGET_MS) this.scheduler.budgetMs = LOAD_BUDGET_MS;
+    try {
+      await this.preparer.prepare(this.scene, P0).promise;
+    } finally {
+      this.scheduler.budgetMs = budget;
+    }
     const shown: THREE.Object3D[] = [];
     const culled: THREE.Object3D[] = [];
+    const held: THREE.Object3D[] = [];
     this.scene.traverse((o) => {
+      if (((o as THREE.Mesh).isMesh || (o as THREE.Points).isPoints || (o as THREE.Line).isLine) && !this.preparer.isPrepared(o)) {
+        if (o.visible) {
+          held.push(o);
+          o.visible = false;
+        }
+        return;
+      }
       if (!o.visible) {
         shown.push(o);
         o.visible = true;
@@ -502,27 +595,16 @@ export class Stage3D {
         o.frustumCulled = false;
       }
     });
-    const texs = new Set<THREE.Texture>();
-    this.scene.traverse((o) => {
-      const mesh = o as THREE.Mesh;
-      if (!mesh.isMesh) return;
-      for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-        for (const v of Object.values(m)) if ((v as THREE.Texture)?.isTexture) texs.add(v as THREE.Texture);
-        const u = (m as THREE.ShaderMaterial).uniforms;
-        if (u) for (const x of Object.values(u)) if ((x?.value as THREE.Texture)?.isTexture) texs.add(x.value as THREE.Texture);
-      }
-    });
     try {
-      await this.renderer.compileAsync(this.scene, this.camera);
-      for (const t of texs) this.renderer.initTexture(t);
       this.render();
     } finally {
       for (const o of shown) o.visible = false;
       for (const o of culled) o.frustumCulled = true;
+      for (const o of held) o.visible = true;
     }
     this.render();
     const programs = (this.renderer.info.programs ?? []).length;
-    return { ms: Math.round(performance.now() - t0), textures: texs.size, programs };
+    return { ms: Math.round(performance.now() - t0), textures: this.preparer.stats.textures - tex0, programs };
   }
 
   render(): void {
@@ -531,6 +613,7 @@ export class Stage3D {
   }
 
   dispose(): void {
+    this.preparer.dispose();
     this.post?.dispose();
     this.materials?.dispose();
     this.scene.traverse((o) => {

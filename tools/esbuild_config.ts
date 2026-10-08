@@ -6,6 +6,8 @@
  *   <root>/bundle/             esbuild 출력(엔트리마다 js + import 한 css)
  *   <root>/assets/             변환한 에셋. 코드에서는 `${BASE}assets/…` 로 읽는다(script/env.ts)
  * 개발은 web/ 를 그대로 내주고(bundle/ 만 생성), 배포는 dist/ 에 html·bundle·assets 를 모은다.
+ * 배포 빌드만 코드 분할 + 해시 이름: bundle/<엔트리>.<해시>.js·css, bundle/chunks/<이름>.<해시>.js(화면별 import() 청크·공용 청크).
+ * html 의 ./bundle/<엔트리>.js 는 tools/build.ts 가 해시 이름으로 고쳐 쓴다. 개발은 한 파일·해시 없음(docs/engine/loader_manager.md §5.8.8).
  */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,5 +45,6 @@ export function options(dev: boolean, outdir: string): BuildOptions {
     minify: !dev,
     logLevel: "info",
     define: { __DEV__: JSON.stringify(dev) },
+    ...(dev ? {} : { splitting: true, entryNames: '[name].[hash]', chunkNames: 'chunks/[name].[hash]', metafile: true }),
   };
 }

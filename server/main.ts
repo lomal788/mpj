@@ -4,6 +4,7 @@
  * 근거: docs/shell/online.md 9.5.
  *
  *   npx tsx server/main.ts --port 8787 [--external] [--watch]
+ *   npx tsx server/main.ts --dist           배포 미리보기: npm run build 결과 web/dist/ 를 배포 헤더(사전 압축·immutable·ETag, server/static.ts)로 내줌, 번들 빌드 안 함
  *   → http://127.0.0.1:8787/index.html?plaza=1&online=io
  */
 import fs from 'node:fs';
@@ -13,6 +14,7 @@ import { pathToFileURL } from 'node:url';
 import { context } from 'esbuild';
 import { options, WEB } from '../tools/esbuild_config';
 import { createApp } from './api';
+import { createStaticHandler } from './static';
 import { createSocket, type Game, type SocketOptions } from './socket';
 import type { Router } from 'express';
 
@@ -67,17 +69,19 @@ export interface PlazaServerOptions {
   games?: Game[];
   routers?: (() => Router)[];
   socket?: SocketOptions;
+  /** web/dist/ 를 배포 헤더로 내줌(번들 빌드 안 함) */
+  dist?: boolean;
 }
 
 export async function startPlazaServer(o: PlazaServerOptions = {}) {
   let dispose: (() => Promise<void>) | null = null;
-  if (o.build !== false) {
+  if (o.build !== false && !o.dist) {
     const ctx = await context({ ...options(true, path.join(WEB, 'bundle')), logLevel: 'warning' });
     await ctx.rebuild();
     if (o.watch) await ctx.watch();
     dispose = () => ctx.dispose();
   }
-  const server = http.createServer(createApp(serveStatic, o.routers));
+  const server = http.createServer(createApp(o.dist ? createStaticHandler({ root: path.join(WEB, 'dist') }) : serveStatic, o.routers));
   const sockets = createSocket(server, { ...(o.games ? { games: o.games } : {}), ...o.socket });
   await new Promise<void>((resolve) => server.listen(o.port ?? PLAZA_PORT, o.host ?? '127.0.0.1', resolve));
   const addr = server.address();
@@ -99,6 +103,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const i = process.argv.indexOf('--port');
   const port = i >= 0 ? Number(process.argv[i + 1]) : PLAZA_PORT;
   const host = process.argv.includes('--external') ? '0.0.0.0' : '127.0.0.1';
-  const s = await startPlazaServer({ port, host, watch: process.argv.includes('--watch') });
+  const s = await startPlazaServer({ port, host, watch: process.argv.includes('--watch'), dist: process.argv.includes('--dist') });
   console.log(`방 서버: ${host}:${s.port} — 페이지 http://127.0.0.1:${s.port}/index.html?plaza=1&online=io (Ctrl+C 로 끝)`);
 }

@@ -235,6 +235,8 @@ export class MaterialSetup {
   readonly graphStats = { applied: [] as string[], missing: [] as string[] };
   chara: IblSet | null = null;
   readonly stats = { textures: 0, bytes: 0 };
+  /** 로더 관리자 끼움점(무대 상대 경로 'tex/<파일>' → 이 무대 전용 텍스처). 없으면 공용 로더로 바로 읽는다 */
+  fetchTexture: ((path: string) => Promise<THREE.Texture>) | null = null;
 
   constructor(
     private readonly assets: AssetSource,
@@ -290,7 +292,7 @@ export class MaterialSetup {
         const e = this.index[name];
         if (!e || e.cube || !e.files.length) return null;
         const url = this.assets.url(`tex/${e.files[0]}`);
-        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : await loadTexture(url);
+        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : this.fetchTexture ? await this.fetchTexture(`tex/${e.files[0]}`) : await loadTexture(url);
         t.flipY = false;
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         if (!e.files[0].endsWith('.hdr') && e.srgb) t.colorSpace = THREE.SRGBColorSpace;

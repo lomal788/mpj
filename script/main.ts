@@ -26,14 +26,20 @@ import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from './view/input';
 import { Renderer } from './view/renderer';
-import { runCharSelect, type CharSelectRun } from './charselect_page';
-import { runMgm01List, type Mgm01ListRun } from './mgm01_page';
-import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
-import { runModeSelect, type ModeSelectRun } from './modeselect_page';
-import { runPlaza, type PlazaPageRun } from './plaza_page';
-import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
+import type { CharSelectRun } from './charselect_page';
+import type { Mgm01ListRun } from './mgm01_page';
+import type { MgmetRun } from './mgmet_page';
+import type { ModeSelectRun } from './modeselect_page';
+import type { PlazaPageRun } from './plaza_page';
+import type { SetPlayerRun } from './setplayer_page';
 import type { MgResultEntry } from './shell/mgmcommon';
 import type { Mgm01PlayRequest } from './shell/mgm01';
+
+const runCharSelect: typeof import('./charselect_page').runCharSelect = async (...a) => (await import('./charselect_page')).runCharSelect(...a);
+const runMgm01List: typeof import('./mgm01_page').runMgm01List = async (...a) => (await import('./mgm01_page')).runMgm01List(...a);
+const runModeSelect: typeof import('./modeselect_page').runModeSelect = async (...a) => (await import('./modeselect_page')).runModeSelect(...a);
+const runPlaza: typeof import('./plaza_page').runPlaza = async (...a) => (await import('./plaza_page')).runPlaza(...a);
+const runSetPlayer: typeof import('./setplayer_page').runSetPlayer = async (...a) => (await import('./setplayer_page')).runSetPlayer(...a);
 
 type Stage = 'idle' | 'loading' | 'running' | 'done' | 'error';
 
@@ -298,6 +304,7 @@ async function start(d: GameDef, setup: GameSetup): Promise<void> {
   );
   const assets = new Assets(d.assetsDir);
   try {
+    await d.load?.();
     logic = d.createLogic(setup);
     view = d.createView({ renderer, hud: hudCtx, audio, setup, pads }, assets);
     view.setFreeCamera?.(freeCam);
@@ -390,13 +397,13 @@ function flowMgm01(): void {
 
 function flowMgmet(): void {
   flowStep('mgmet-loading', null);
-  void runMgmet('hub', stageBox, {
+  void import('./mgmet_page').then(({ runMgmet, mgmetTestValues }) => runMgmet('hub', stageBox, {
     com: flowPlayers.com,
     pads: flowPlayers.pads,
     muted: muteIn.checked,
     test: mgmetTestValues(),
     onDone: (text) => queueMicrotask(() => (text.startsWith('프리 플레이 시작') ? flowMgm01() : flowModeSelect())),
-  }).then((r: MgmetRun) => flowStep('mgmet', r));
+  })).then((r: MgmetRun) => flowStep('mgmet', r));
 }
 
 function flowModeSelect(): void {

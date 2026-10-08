@@ -156,10 +156,10 @@ gltf-transform 의 GLB 쓰기는 이미지를 안에 넣어 버리므로 JSON �
 
 ## 7. 배포 설정 메모(서버)
 
-- `assets-dist/` 의 `.json`·`.glb`·`.hdr`·`.otf` 와 `index.json` 은 brotli(없으면 gzip)로 보내야 §9.1 의 전송량이 된다. `build_assets.ts --precompress` 가 옆에 `.br`·`.gz` 를 만든다 → nginx `brotli_static on; gzip_static on;` 또는 CDN 의 사전 압축 제공.
+- `assets-dist/` 의 `.json`·`.glb`·`.hdr`·`.otf`·(이득 있는)`.flac` 와 `index.json` 은 brotli(없으면 gzip)로 보내야 §9.1 의 전송량이 된다. `build_assets.ts` 가 **기본으로** 해시 이름 옆에 `.br`·`.gz` 를 증분으로 만들고(`--no-precompress` 로 끔), `tools/build.ts` 가 번들·html·index.json·sw.js·vendor 것을 만든다 → `server/static.ts`(배포 미리보기 `server/main.ts --dist`·`tools/serve.ts --dist`)가 그대로 보냄, nginx 면 `brotli_static on; gzip_static on;`. 규칙·측정: [loader_manager.md](loader_manager.md) §5.8.4.
 - `.ktx2`(ETC1S = BasisLZ, UASTC = zstd)·`.ogg`·`.m4a`·`.flac`·`.png` 는 이미 압축돼 있어 서버 압축을 끈다.
 - MIME: `.ktx2` = `image/ktx2`, `.glb` = `model/gltf-binary`, `.wasm` = `application/wasm`(스트리밍 컴파일), `.ogg` = `audio/ogg`, `.m4a` = `audio/mp4`, `.flac` = `audio/flac`.
-- 캐시: 파일 이름에 해시가 없으므로 `Cache-Control: no-cache` + ETag(또는 배포마다 경로 바꾸기). 
+- 캐시(2026-10-08 6단계): 압축본은 내용 해시 이름(`x.<sha256 8>.ktx2`, 표 = `index.json` `names`) → `Cache-Control: public, max-age=31536000, immutable`. `index.html`·`index.json`·`sw.js`·vendor 만 `no-cache` + ETag. 서비스 워커가 해시 파일을 Cache Storage 에 둔다. 상세 [loader_manager.md](loader_manager.md) §5.8.
 - 개발 서버(esbuild serve)는 압축하지 않는다 — 로컬 로드 시간은 디스크·디코드 비용만 본다.
 
 ---

@@ -1,0 +1,1797 @@
+{
+ "v": 1,
+ "source": "tools/plaza_first.ts (CPU 깊이 버퍼, loader_manager.md §11.5)",
+ "first": [
+  "Cloud",
+  "Ocean",
+  "CentralPlaza",
+  "DistantIslands",
+  "FriendMatchObj",
+  "Balloon",
+  "Stage",
+  "QuestCart",
+  "JetFountain",
+  "GrassCard00",
+  "TopiaryBase",
+  "Sculpture_Dft",
+  "Sculpture_Bd01",
+  "Sculpture_Bd04",
+  "Sculpture_Bd05",
+  "Sculpture_Bd06",
+  "Sculpture_Bd07",
+  "Sculpture_Star",
+  "Garland_Dft",
+  "Garland_Bd01",
+  "Garland_Bd04",
+  "Garland_Bd05",
+  "Garland_Bd06",
+  "Garland_Bd07",
+  "Garland_Star",
+  "Garland_Blue",
+  "Garland_Green",
+  "Garland_Yellow",
+  "Fountain_Dft",
+  "Fountain_Bd01",
+  "Fountain_Bd04",
+  "Fountain_Bd05",
+  "Fountain_Bd06",
+  "Fountain_Bd07",
+  "Fountain_Star",
+  "Tree_Dft",
+  "Tree_Bd01",
+  "Tree_Bd04",
+  "Tree_Bd07",
+  "Tree_Star",
+  "Plant_Bd01",
+  "Tile_Dft",
+  "Tile_Bd01",
+  "Tile_Bd04",
+  "Tile_Bd05",
+  "Tile_Bd06",
+  "Tile_Bd07",
+  "Tile_Star",
+  "Tile_LittleStar",
+  "Pick_Mario",
+  "Pick_Luigi",
+  "Pick_Peach",
+  "Pick_Yoshi",
+  "Pick_DK",
+  "Pick_Daisy",
+  "Pick_Wario",
+  "Pick_Waluigi",
+  "Pick_KoopaJr",
+  "Pick_Rosetta",
+  "Deco_A_Rainbow",
+  "Deco_D_Gull00",
+  "Deco_D_Gull01",
+  "Deco_D_Gull02",
+  "bd02Obj",
+  "bd02Obj_lock",
+  "bd03Obj",
+  "bd03Obj_lock",
+  "bd06Obj",
+  "bd06Obj_lock"
+ ],
+ "hosts": [
+  "AttachLocater",
+  "AttachLocaterQuest",
+  "AttachLocaterDecoNpc",
+  "Deco_D_AirGullLocater"
+ ],
+ "start": [
+  0,
+  -2.365,
+  22.316
+ ],
+ "bounds": {
+  "Cloud": [
+   0,
+   138.28,
+   0,
+   852.299
+  ],
+  "AttachLocater": [
+   0,
+   0,
+   0,
+   0.007
+  ],
+  "AttachLocaterQuest": [
+   0,
+   0,
+   0,
+   0.007
+  ],
+  "AttachLocaterDecoNpc": [
+   0,
+   0,
+   0,
+   0.007
+  ],
+  "QuestPlatform": [
+   18.869,
+   -1.482,
+   14.428,
+   1.641
+  ],
+  "Ocean": [
+   0,
+   -185.034,
+   0,
+   1395.556
+  ],
+  "QuestCircle": [
+   18.869,
+   -2.305,
+   14.428,
+   8.731
+  ],
+  "CentralPlaza": [
+   0.133,
+   -15.119,
+   28.456,
+   84.446
+  ],
+  "DistantIslands": [
+   -33.511,
+   -42.324,
+   100.048,
+   517.019
+  ],
+  "FriendMatchObj": [
+   5.064,
+   -0.998,
+   19.8,
+   1.806
+  ],
+  "Balloon": [
+   0,
+   12.206,
+   0,
+   16.364
+  ],
+  "Carpet": [
+   0.001,
+   -2.318,
+   42.283,
+   23.461
+  ],
+  "Stage": [
+   0,
+   -0.094,
+   1.985,
+   22.484
+  ],
+  "ShopCollection": [
+   -17.107,
+   0.313,
+   50.405,
+   6.41
+  ],
+  "ShopCard": [
+   16.949,
+   0.75,
+   50.246,
+   5.441
+  ],
+  "ShopMusic": [
+   0,
+   0.07,
+   57.495,
+   4.356
+  ],
+  "ShopMusicHologram": [
+   -0.024,
+   1.288,
+   57.508,
+   2.202
+  ],
+  "ShopRanking": [
+   -24.262,
+   0.751,
+   33.298,
+   5.032
+  ],
+  "ShopStamp": [
+   23.571,
+   0.855,
+   33.298,
+   5.992
+  ],
+  "QuestCart": [
+   14.261,
+   -0.751,
+   12.826,
+   2.557
+  ],
+  "JetFountain": [
+   0.003,
+   1.247,
+   1.637,
+   19.443
+  ],
+  "GrassCard00": [
+   -2.082,
+   -2.309,
+   27.641,
+   59.841
+  ],
+  "TopiaryBase": [
+   22.484,
+   -2.156,
+   10.821,
+   10.427
+  ],
+  "Sculpture_Dft": [
+   0.006,
+   -1.29,
+   33.656,
+   23.124
+  ],
+  "Sculpture_Bd01": [
+   0.006,
+   -1.218,
+   33.656,
+   23.128
+  ],
+  "Sculpture_Bd04": [
+   0.006,
+   -1.262,
+   33.656,
+   23.126
+  ],
+  "Sculpture_Bd05": [
+   0.006,
+   -1.274,
+   33.656,
+   23.125
+  ],
+  "Sculpture_Bd06": [
+   0.006,
+   -1.264,
+   33.656,
+   23.125
+  ],
+  "Sculpture_Bd07": [
+   0.006,
+   -1.37,
+   33.656,
+   23.12
+  ],
+  "Sculpture_Star": [
+   -0.005,
+   -1.112,
+   33.721,
+   23.312
+  ],
+  "Garland_Dft": [
+   0,
+   0.796,
+   33.792,
+   30.893
+  ],
+  "Garland_Bd01": [
+   -0.005,
+   0.91,
+   38.55,
+   41.084
+  ],
+  "Garland_Bd04": [
+   -0.005,
+   0.808,
+   38.49,
+   41.104
+  ],
+  "Garland_Bd05": [
+   -0.005,
+   0.886,
+   38.561,
+   41.071
+  ],
+  "Garland_Bd06": [
+   -0.005,
+   0.908,
+   38.531,
+   41.1
+  ],
+  "Garland_Bd07": [
+   -0.005,
+   0.886,
+   38.52,
+   41.116
+  ],
+  "Garland_Star": [
+   -0.005,
+   0.814,
+   38.596,
+   41.327
+  ],
+  "Garland_Blue": [
+   -0.005,
+   0.796,
+   38.527,
+   41.06
+  ],
+  "Garland_Green": [
+   -0.005,
+   0.796,
+   38.527,
+   41.06
+  ],
+  "Garland_Yellow": [
+   -0.005,
+   0.796,
+   38.527,
+   41.06
+  ],
+  "Fountain_Dft": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Fountain_Bd01": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Fountain_Bd04": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Fountain_Bd05": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Fountain_Bd06": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Fountain_Bd07": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Fountain_Star": [
+   0,
+   -0.253,
+   33.298,
+   12.801
+  ],
+  "Tree_Dft": [
+   -3.818,
+   2.606,
+   39.249,
+   56.085
+  ],
+  "Tree_Bd01": [
+   -4.677,
+   1.758,
+   39.347,
+   56.061
+  ],
+  "Tree_Bd04": [
+   -3.818,
+   2.269,
+   38.492,
+   56.494
+  ],
+  "Tree_Bd05": [
+   -3.818,
+   2.212,
+   42.321,
+   54.389
+  ],
+  "Tree_Bd06": [
+   -3.818,
+   2.204,
+   40.283,
+   55.49
+  ],
+  "Tree_Bd07": [
+   -4.151,
+   1.743,
+   39.679,
+   56.534
+  ],
+  "Tree_Star": [
+   -3.818,
+   2.606,
+   39.249,
+   56.085
+  ],
+  "Plant_Bd01": [
+   17.554,
+   -0.755,
+   5.495,
+   3.019
+  ],
+  "Plant_Bd04": [
+   27.663,
+   -0.813,
+   16.072,
+   2.188
+  ],
+  "Plant_Bd05": [
+   27.471,
+   -1.042,
+   11.715,
+   2.369
+  ],
+  "Plant_Bd06": [
+   25.772,
+   -0.294,
+   7.941,
+   3.171
+  ],
+  "Plant_Bd07": [
+   21.655,
+   -1.016,
+   5.965,
+   1.581
+  ],
+  "Tile_Dft": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_Bd01": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_Bd04": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_Bd05": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_Bd06": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_Bd07": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_Star": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Tile_LittleStar": [
+   0.001,
+   -2.351,
+   33.298,
+   21.889
+  ],
+  "Balloon_Dft_00": [
+   -27.628,
+   0.459,
+   26.008,
+   3.458
+  ],
+  "Balloon_Dft_01": [
+   27.334,
+   0.459,
+   25.807,
+   3.458
+  ],
+  "Balloon_Bd01_00": [
+   -27.476,
+   0.695,
+   26.008,
+   3.602
+  ],
+  "Balloon_Bd01_01": [
+   27.182,
+   0.695,
+   25.807,
+   3.602
+  ],
+  "Balloon_Bd04_00": [
+   -27.484,
+   0.459,
+   25.829,
+   3.596
+  ],
+  "Balloon_Bd04_01": [
+   27.19,
+   0.459,
+   25.986,
+   3.596
+  ],
+  "Balloon_Bd05_00": [
+   -27.769,
+   0.567,
+   26.008,
+   3.601
+  ],
+  "Balloon_Bd05_01": [
+   27.476,
+   0.567,
+   25.807,
+   3.601
+  ],
+  "Balloon_Bd06_00": [
+   -27.617,
+   0.724,
+   26.008,
+   3.673
+  ],
+  "Balloon_Bd06_01": [
+   27.323,
+   0.724,
+   25.807,
+   3.673
+  ],
+  "Balloon_Bd07_00": [
+   -27.909,
+   0.593,
+   26.008,
+   3.681
+  ],
+  "Balloon_Bd07_01": [
+   27.615,
+   0.593,
+   25.807,
+   3.681
+  ],
+  "Balloon_Star_00": [
+   -27.566,
+   1.005,
+   25.97,
+   3.903
+  ],
+  "Balloon_Star_01": [
+   27.272,
+   1.005,
+   25.845,
+   3.903
+  ],
+  "Balloon_LittleStar_00": [
+   -27.41,
+   0.641,
+   26.008,
+   3.535
+  ],
+  "Balloon_LittleStar_01": [
+   27.117,
+   0.641,
+   25.807,
+   3.535
+  ],
+  "Pick_Mario": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Pick_Luigi": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Pick_Peach": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Pick_Yoshi": [
+   0.001,
+   -0.138,
+   33.724,
+   26.428
+  ],
+  "Pick_DK": [
+   0.001,
+   -0.098,
+   33.724,
+   26.43
+  ],
+  "Pick_Daisy": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Pick_Wario": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Pick_Waluigi": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Pick_KoopaJr": [
+   0.001,
+   -0.121,
+   33.724,
+   26.429
+  ],
+  "Pick_Rosetta": [
+   0.001,
+   -0.158,
+   33.724,
+   26.427
+  ],
+  "Deco_A_Rainbow": [
+   -110.707,
+   -0.31,
+   -186.825,
+   59.856
+  ],
+  "Deco_D_Gull00": [
+   1.511,
+   3.498,
+   -11.185,
+   1.049
+  ],
+  "Deco_D_Gull01": [
+   7.09,
+   1.407,
+   -19.47,
+   1.049
+  ],
+  "Deco_D_Gull02": [
+   24.835,
+   2.921,
+   -13.967,
+   1.049
+  ],
+  "bd02Obj": [
+   28.703,
+   -7.187,
+   -207.969,
+   14.736
+  ],
+  "bd02Obj_lock": [
+   29.889,
+   -9.678,
+   -207.905,
+   9.995
+  ],
+  "bd03Obj": [
+   -113.1,
+   6.711,
+   -232.725,
+   20.701
+  ],
+  "bd03Obj_lock": [
+   -112.1,
+   0.172,
+   -238.365,
+   11.421
+  ],
+  "bd06Obj": [
+   17.223,
+   5.329,
+   -250.797,
+   14.824
+  ],
+  "bd06Obj_lock": [
+   17.185,
+   3.034,
+   -244.424,
+   13.37
+  ]
+ },
+ "tex": {
+  "menu00_cloud00": [
+   "menu00_cloud_loop00_rgh.png",
+   "menu00_cloud_line00_alb.png",
+   "menu00_thin_cloud00.png"
+  ],
+  "menu00_loc_attach00": [],
+  "menu00_loc_ev_quest_start": [],
+  "menu00_loc_deco_npc_attach00": [],
+  "menu_cmn_quest_platform00": [
+   "menu_cmn_quest_platform00_alb.png",
+   "menu_cmn_quest_platform00_rgh__menu_cmn_quest_platform00_mtl.mr.png",
+   "menu_cmn_quest_platform00_nml.png"
+  ],
+  "menu00_ocean00": [],
+  "menu00_quest_circle00": [
+   "menu00_quest_rock_circle_alb.png",
+   "menu00_quest_rock_circle_rgh__none.mr.png",
+   "menu00_quest_rock_circle_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_central_plaza00": [
+   "menu00_stand00_alb.png",
+   "menu00_stand00_rgh__menu00_stand00_mtl.mr.png",
+   "menu00_stand00_nml.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png",
+   "menu00_plaza_ao.png",
+   "menu01_grass00_alb.png",
+   "menu01_grass00_rgh__none.mr.png",
+   "menu01_grass00_nml.png",
+   "menu01_grass00_emi.png",
+   "menu01_cliff_wall_alb.png",
+   "menu01_cliff_wall_rgh__none.mr.png",
+   "menu01_cliff_wall_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush00_dark_alb.png",
+   "menu00_quest_mode_entrance_alb.png",
+   "menu00_quest_mode_entrance_rgh__none.mr.png",
+   "menu00_stage_floor_diamond_nml.png",
+   "menu00_shop_rock_circle_alb.png",
+   "menu00_shop_rock_circle_rgh__none.mr.png",
+   "menu00_shop_rock_circle_nml.png"
+  ],
+  "menu00_island_small00": [
+   "menu00_sm_island00_alb.png",
+   "menu00_mode_icon_alb.png"
+  ],
+  "menu00_friendmatch_obj00": [
+   "menu00_friendmatch_obj00_alb.png",
+   "menu00_friendmatch_obj00_rgh__menu00_friendmatch_obj00_mtl.mr.png",
+   "menu00_friendmatch_obj00_nml.png",
+   "menu00_friend_match_screen00_alb.png"
+  ],
+  "menu_cmn_balloon00": [
+   "bd_cmn_balloon_basket_bottom_alb.png",
+   "bd_cmn_balloon_basket_bottom_rgh__none.mr.png",
+   "bd_cmn_balloon_basket_bottom_nml.png",
+   "menu01_balloon00_alb.png",
+   "menu01_balloon00_rgh__menu01_balloon00_mtl.mr.png",
+   "menu01_balloon00_nml.png",
+   "menu01_balloon00_ao.png",
+   "menu01_balloon01_alb.png",
+   "menu01_balloon01_rgh__menu01_balloon01_mtl.mr.png",
+   "menu01_balloon01_nml.png"
+  ],
+  "menu00_carpet00": [
+   "menu01_carpet00_alb.png",
+   "menu01_carpet00_rgh__none.mr.png",
+   "menu01_carpet00_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_stage00": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "stage_trim_alb.png",
+   "stage_trim_rgh__stage_trim_mtl.mr.png",
+   "stage_trim_nml.png",
+   "menu00_flagstone_alb.png",
+   "menu00_flagstone_rgh__none.mr.png",
+   "menu00_flagstone_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_plaza_ao.png",
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png"
+  ],
+  "menu00_shop_collection": [
+   "menu00_shop_collection_cabin_alb.png",
+   "menu00_shop_collection_cabin_rgh__menu00_shop_collection_cabin_mtl.mr.png",
+   "menu00_shop_collection_cabin_nml.png",
+   "menu00_shop_collection_objects_nml.png",
+   "menu00_shop_collection_objects_alb.png",
+   "menu00_shop_collection_objects_rgh__menu00_shop_collection_objects_mtl.mr.png",
+   "menu00_shop_collection_shelf_alb.png",
+   "menu00_shop_collection_shelf_rgh__none.mr.png",
+   "menu00_shop_collection_shelf_nml.png"
+  ],
+  "menu00_shop_maripacard": [
+   "menu00_shop_maripacard_alb.png",
+   "menu00_shop_maripacard_rgh__none.mr.png",
+   "menu00_shop_maripacard_nml.png",
+   "menu00_shop_maripacard_card00_alb.png"
+  ],
+  "menu00_shop_music": [
+   "menu00_shop_music_stage_alb.png",
+   "menu00_shop_music_stage_rgh__menu00_shop_music_stage_mtl.mr.png",
+   "menu00_shop_music_stage_nml.png",
+   "menu00_shop_music_stage_emi.png",
+   "menu00_equalizer_color.png"
+  ],
+  "menu00_shop_music_hologram": [
+   "menu00_shop_music_hologram_nml.png",
+   "menu00_lighttube_noise.png"
+  ],
+  "menu00_shop_ranking": [
+   "menu00_shop_ranking_alb.png",
+   "menu00_shop_ranking_rgh__menu00_shop_ranking_mtl.mr.png",
+   "menu00_shop_ranking_nml.png",
+   "menu00_shop_ranking_monitor_base_alb.png"
+  ],
+  "menu00_shop_stamp": [
+   "menu00_shop_stamp_alb.png",
+   "menu00_shop_stamp_rgh__none.mr.png",
+   "menu00_shop_stamp_nml.png",
+   "menu00_shop_stamp_monitor_base_alb.png",
+   "menu00_shop_stamp_monitor_chara.png",
+   "menu00_shop_stamp_monitor_circle.png",
+   "menu00_shop_stamp_monitor_dot.png"
+  ],
+  "menu00_quest_cart00": [
+   "menu00_quest_cart00_cart_alb.png",
+   "menu00_quest_cart00_cart_rgh__menu00_quest_cart00_cart_mtl.mr.png",
+   "menu00_quest_cart00_cart_nml.png",
+   "menu00_quest_cart00_leaf_alb.png",
+   "menu00_quest_cart00_leaf_rgh__none.mr.png",
+   "menu00_quest_cart00_leaf_nml.png",
+   "menu00_quest_cart00_object_alb.png",
+   "menu00_quest_cart00_object_rgh__menu00_quest_cart00_object_mtl.mr.png",
+   "menu00_quest_cart00_object_nml.png"
+  ],
+  "menu00_jet_fountain00": [
+   "menu00_fountain_water_nml.png"
+  ],
+  "menu00_grasscard00": [
+   "menu01_grass_card_alb.png"
+  ],
+  "menu00_topiary_base": [
+   "menu00_topiary_base_alb.png",
+   "menu00_topiary_base_rgh__none.mr.png",
+   "menu00_topiary_base_nml.png"
+  ],
+  "menu00_deco_pedestal00": [
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png",
+   "menu00_deco_pedestal00_alb.png",
+   "menu00_deco_pedestal00_rgh__none.mr.png",
+   "menu00_deco_pedestal00_nml.png"
+  ],
+  "menu00_deco_pedestal01": [
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png",
+   "menu00_deco_pedestal01_alb.png",
+   "menu00_deco_pedestal01_rgh__none.mr.png",
+   "menu00_deco_pedestal01_nml.png",
+   "menu00_deco_pedestal00_alb.png",
+   "menu00_deco_pedestal00_rgh__none.mr.png",
+   "menu00_deco_pedestal00_nml.png"
+  ],
+  "menu00_deco_pedestal02": [
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png",
+   "menu00_deco_pedestal02_alb.png",
+   "menu00_deco_pedestal02_rgh__none.mr.png",
+   "menu00_deco_pedestal02_nml.png",
+   "menu00_deco_pedestal00_alb.png",
+   "menu00_deco_pedestal00_rgh__none.mr.png",
+   "menu00_deco_pedestal00_nml.png"
+  ],
+  "menu00_deco_pedestal03": [
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png",
+   "menu00_deco_pedestal03_alb.png",
+   "menu00_deco_pedestal03_rgh__none.mr.png",
+   "menu00_deco_pedestal03_nml.png",
+   "menu00_deco_pedestal00_alb.png",
+   "menu00_deco_pedestal00_rgh__none.mr.png",
+   "menu00_deco_pedestal00_nml.png"
+  ],
+  "menu00_deco_pedestal04": [
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png",
+   "menu00_deco_pedestal04_alb.png",
+   "menu00_deco_pedestal04_rgh__none.mr.png",
+   "menu00_deco_pedestal04_nml.png",
+   "menu00_deco_pedestal00_alb.png",
+   "menu00_deco_pedestal00_rgh__none.mr.png",
+   "menu00_deco_pedestal00_nml.png"
+  ],
+  "menu00_deco_pedestal05": [
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png",
+   "menu00_deco_pedestal05_alb.png",
+   "menu00_deco_pedestal05_rgh__none.mr.png",
+   "menu00_deco_pedestal05_nml.png",
+   "menu00_deco_pedestal00_alb.png",
+   "menu00_deco_pedestal00_rgh__none.mr.png",
+   "menu00_deco_pedestal00_nml.png"
+  ],
+  "menu00_deco_pedestal06": [
+   "menu00_deco_pedestal06_alb.png",
+   "menu00_deco_pedestal06_rgh__menu00_deco_pedestal06_mtl.mr.png",
+   "menu00_deco_pedestal06_nml.png",
+   "stage_border_alb.png",
+   "stage_border_rgh__none.mr.png",
+   "stage_border_nml.png"
+  ],
+  "menu00_deco_lamppost01": [
+   "menu00_lamppost01_04_flag_alb.png",
+   "menu00_lamppost01_04_flag_rgh__none.mr.png",
+   "menu00_lamppost01_04_flag_nml.png",
+   "menu00_lamppost01_04_post_alb.png",
+   "menu00_lamppost01_04_post_rgh__menu00_lamppost01_04_post_mtl.mr.png",
+   "menu00_lamppost01_04_post_nml.png"
+  ],
+  "menu00_deco_lamppost05": [
+   "menu00_lamppost05_alb.png",
+   "menu00_lamppost05_rgh__menu00_lamppost05_mtl.mr.png",
+   "menu00_lamppost05_nml.png"
+  ],
+  "menu00_deco_lamppost06": [
+   "menu00_lamppost06_alb.png",
+   "menu00_lamppost06_rgh__menu00_lamppost06_mtl.mr.png",
+   "menu00_lamppost06_nml.png"
+  ],
+  "menu00_deco_lamppost07": [
+   "menu00_lamppost07_alb.png",
+   "menu00_lamppost07_rgh__menu00_lamppost07_mtl.mr.png",
+   "menu00_lamppost07_nml.png"
+  ],
+  "menu00_deco_lamppost08": [
+   "menu00_lamppost08_alb.png",
+   "menu00_lamppost08_rgh__menu00_lamppost08_mtl.mr.png",
+   "menu00_lamppost08_nml.png"
+  ],
+  "menu00_deco_lamppost09": [
+   "menu00_lamppost09_alb.png",
+   "menu00_lamppost09_rgh__menu00_lamppost09_mtl.mr.png",
+   "menu00_lamppost09_nml.png"
+  ],
+  "menu00_deco_lamppost10": [
+   "menu00_lamppost10_alb.png",
+   "menu00_lamppost10_rgh__menu00_lamppost10_mtl.mr.png",
+   "menu00_lamppost10_nml.png"
+  ],
+  "menu00_deco_lamppost02": [
+   "menu00_lamppost01_04_flag_alb.png",
+   "menu00_lamppost01_04_flag_rgh__none.mr.png",
+   "menu00_lamppost01_04_flag_nml.png",
+   "menu00_lamppost01_04_post_alb.png",
+   "menu00_lamppost01_04_post_rgh__menu00_lamppost01_04_post_mtl.mr.png",
+   "menu00_lamppost01_04_post_nml.png"
+  ],
+  "menu00_deco_lamppost03": [
+   "menu00_lamppost01_04_flag_alb.png",
+   "menu00_lamppost01_04_flag_rgh__none.mr.png",
+   "menu00_lamppost01_04_flag_nml.png",
+   "menu00_lamppost01_04_post_alb.png",
+   "menu00_lamppost01_04_post_rgh__menu00_lamppost01_04_post_mtl.mr.png",
+   "menu00_lamppost01_04_post_nml.png"
+  ],
+  "menu00_deco_lamppost04": [
+   "menu00_lamppost01_04_flag_alb.png",
+   "menu00_lamppost01_04_flag_rgh__none.mr.png",
+   "menu00_lamppost01_04_flag_nml.png",
+   "menu00_lamppost01_04_post_alb.png",
+   "menu00_lamppost01_04_post_rgh__menu00_lamppost01_04_post_mtl.mr.png",
+   "menu00_lamppost01_04_post_nml.png"
+  ],
+  "menu00_deco_fountain00": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_fountain01": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_fountain02": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_fountain03": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_fountain04": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_fountain05": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_fountain06": [
+   "menu01_caustics_alb.png",
+   "menu00_concrete_loop_nml.png",
+   "fountain00_gold_base_mt_alb.png",
+   "fountain00_mt_rgh__none.mr.png",
+   "fountain00_mt_nml.png",
+   "menu00_fountain00_emi.png",
+   "menu00_bush00_alb.png",
+   "menu00_bush00_rgh__none.mr.png",
+   "menu00_bush00_nml.png",
+   "menu00_bush_atlas_alb.png",
+   "menu00_bush_atlas_rgh__none.mr.png",
+   "menu00_bush_atlas_nml.png",
+   "menu00_concrete_loop_alb.png",
+   "menu00_concrete_loop_rgh__none.mr.png",
+   "menu00_garden_trim_alb.png",
+   "menu00_garden_trim_rgh__none.mr.png",
+   "menu00_garden_trim_nml.png"
+  ],
+  "menu00_deco_tree00": [
+   "menu_cmn_tree00_leaf_alb.png",
+   "menu_cmn_tree00_leaf_rgh__none.mr.png",
+   "menu_cmn_tree00_leaf_nml.png",
+   "menu_cmn_tree00_tree_alb.png",
+   "menu_cmn_tree00_tree_rgh__none.mr.png",
+   "menu_cmn_tree00_tree_nml.png",
+   "menu_cmn_tree00_wood_alb.png",
+   "menu_cmn_tree00_wood_rgh__none.mr.png",
+   "menu_cmn_tree00_wood_nml.png"
+  ],
+  "menu00_deco_tree01": [
+   "palm00_alb.png",
+   "palm00_rgh__none.mr.png",
+   "palm00_nml.png",
+   "leaf00_alb.png",
+   "leaf00_rgh__none.mr.png",
+   "leaf00_nml.png"
+  ],
+  "menu00_deco_tree02": [
+   "bd04_tent00_alb.png",
+   "bd04_tent00_rgh__bd04_tent00_mtl.mr.png",
+   "bd04_tent00_nml.png",
+   "menu_cmn_tree00_leaf_alb.png",
+   "menu_cmn_tree00_leaf_rgh__none.mr.png",
+   "menu_cmn_tree00_leaf_nml.png",
+   "menu_cmn_tree00_tree_alb.png",
+   "menu_cmn_tree00_tree_rgh__none.mr.png",
+   "menu_cmn_tree00_tree_nml.png",
+   "menu_cmn_tree00_wood_alb.png",
+   "menu_cmn_tree00_wood_rgh__none.mr.png",
+   "menu_cmn_tree00_wood_nml.png"
+  ],
+  "menu00_deco_tree03": [
+   "menu00_deco_tree03_alb.png",
+   "menu00_deco_tree03_rgh__none.mr.png",
+   "menu00_deco_tree03_nml.png",
+   "menu_cmn_tree00_leaf_alb.png",
+   "menu_cmn_tree00_leaf_rgh__none.mr.png",
+   "menu_cmn_tree00_leaf_nml.png",
+   "menu_cmn_tree00_tree_alb.png",
+   "menu_cmn_tree00_tree_rgh__none.mr.png",
+   "menu_cmn_tree00_tree_nml.png",
+   "menu_cmn_tree00_wood_alb.png",
+   "menu_cmn_tree00_wood_rgh__none.mr.png",
+   "menu_cmn_tree00_wood_nml.png"
+  ],
+  "menu00_deco_tree04": [
+   "menu_cmn_tree00_leaf_alb.png",
+   "menu_cmn_tree00_leaf_rgh__none.mr.png",
+   "menu_cmn_tree00_leaf_nml.png",
+   "menu_cmn_tree00_tree_alb.png",
+   "menu_cmn_tree00_tree_rgh__none.mr.png",
+   "menu_cmn_tree00_tree_nml.png",
+   "menu_cmn_tree00_wood_alb.png",
+   "menu_cmn_tree00_wood_rgh__none.mr.png",
+   "menu_cmn_tree00_wood_nml.png",
+   "obj04_dokan_r_alb.png",
+   "obj04_dokan_rgh__obj04_dokan_mtl.mr.png"
+  ],
+  "menu00_deco_tree05": [
+   "bd07_tableset02_alb.png",
+   "bd07_tableset02_rgh__none.mr.png",
+   "bd07_tableset02_nml.png",
+   "mg1405_grass03_alb.png",
+   "mg1405_leaf00_alb.png",
+   "mg1405_leaf00_rgh__none.mr.png",
+   "mg1405_leaf00_nml.png",
+   "mg1403_wood00_alb.png",
+   "mg1403_wood00_rgh__none.mr.png",
+   "mg1403_wood00_nml.png"
+  ],
+  "menu00_deco_tree06": [
+   "menu00_deco_tree06_alb.png",
+   "menu00_deco_tree06_rgh__menu00_deco_tree06_mtl.mr.png",
+   "menu00_deco_tree06_nml.png",
+   "menu_cmn_tree00_leaf_alb.png",
+   "menu_cmn_tree00_leaf_rgh__none.mr.png",
+   "menu_cmn_tree00_leaf_nml.png",
+   "menu_cmn_tree00_tree_alb.png",
+   "menu_cmn_tree00_tree_rgh__none.mr.png",
+   "menu_cmn_tree00_tree_nml.png",
+   "menu_cmn_tree00_wood_alb.png",
+   "menu_cmn_tree00_wood_rgh__none.mr.png",
+   "menu_cmn_tree00_wood_nml.png"
+  ],
+  "menu00_deco_topiary_tasunon": [
+   "menu01_hedge01_alb.png",
+   "menu01_hedge01_nml.png",
+   "menu01_hedge00_alb.png",
+   "menu01_hedge00_rgh__none.mr.png",
+   "menu01_hedge00_nml.png"
+  ],
+  "menu00_deco_topiary_bosskk": [
+   "menu01_hedge01_alb.png",
+   "menu01_hedge01_nml.png",
+   "menu01_hedge00_alb.png",
+   "menu01_hedge00_rgh__none.mr.png",
+   "menu01_hedge00_nml.png"
+  ],
+  "menu00_deco_topiary_poo": [
+   "menu01_hedge01_alb.png",
+   "menu01_hedge01_nml.png",
+   "menu01_hedge00_alb.png",
+   "menu01_hedge00_rgh__none.mr.png",
+   "menu01_hedge00_nml.png"
+  ],
+  "menu00_deco_topiary_koopa": [
+   "menu01_hedge01_alb.png",
+   "menu01_hedge01_nml.png",
+   "menu01_hedge00_alb.png",
+   "menu01_hedge00_rgh__none.mr.png",
+   "menu01_hedge00_nml.png"
+  ],
+  "menu00_deco_topiary_hacchin": [
+   "menu01_hedge01_alb.png",
+   "menu01_hedge01_nml.png",
+   "menu01_hedge00_alb.png",
+   "menu01_hedge00_rgh__none.mr.png",
+   "menu01_hedge00_nml.png",
+   "menu00_topiary_base_alb.png",
+   "menu00_topiary_base_rgh__none.mr.png",
+   "menu00_topiary_base_nml.png"
+  ],
+  "menu00_deco_tile00": [
+   "menu01_deco_tile00_alb.png",
+   "menu01_deco_tile00_rgh__none.mr.png",
+   "menu01_deco_tile00_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile01": [
+   "menu01_deco_tile01_alb.png",
+   "menu01_deco_tile01_rgh__none.mr.png",
+   "menu01_deco_tile01_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile02": [
+   "menu01_deco_tile02_alb.png",
+   "menu01_deco_tile02_rgh__none.mr.png",
+   "menu01_deco_tile02_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile03": [
+   "menu01_deco_tile03_alb.png",
+   "menu01_deco_tile03_rgh__none.mr.png",
+   "menu01_deco_tile03_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile04": [
+   "menu01_deco_tile04_alb.png",
+   "menu01_deco_tile04_rgh__none.mr.png",
+   "menu01_deco_tile04_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile05": [
+   "menu01_deco_tile05_alb.png",
+   "menu01_deco_tile05_rgh__none.mr.png",
+   "menu01_deco_tile05_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile06": [
+   "menu01_deco_tile06_alb.png",
+   "menu01_deco_tile06_rgh__menu01_deco_tile06_mtl.mr.png",
+   "menu01_deco_tile06_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_tile07": [
+   "menu01_deco_tile07_alb.png",
+   "menu01_deco_tile07_rgh__none.mr.png",
+   "menu01_deco_tile07_nml.png",
+   "menu00_plaza_ao.png"
+  ],
+  "menu00_deco_balloon00": [
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png"
+  ],
+  "menu00_deco_balloon01": [
+   "menu00_deco_balloon01_alb.png",
+   "menu00_deco_balloon01_rgh__menu00_deco_balloon01_mtl.mr.png",
+   "menu00_deco_balloon01_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png",
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png"
+  ],
+  "menu00_deco_balloon02": [
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png",
+   "menu00_deco_balloon02_alb.png",
+   "menu00_deco_balloon02_rgh__menu00_deco_balloon02_mtl.mr.png",
+   "menu00_deco_balloon02_nml.png"
+  ],
+  "menu00_deco_balloon03": [
+   "menu00_deco_balloon03_alb.png",
+   "menu00_deco_balloon03_rgh__menu00_deco_balloon03_mtl.mr.png",
+   "menu00_deco_balloon03_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png",
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png"
+  ],
+  "menu00_deco_balloon04": [
+   "menu00_deco_balloon04_alb.png",
+   "menu00_deco_balloon04_rgh__menu00_deco_balloon04_mtl.mr.png",
+   "menu00_deco_balloon04_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png",
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png"
+  ],
+  "menu00_deco_balloon05": [
+   "menu00_deco_balloon05_alb.png",
+   "menu00_deco_balloon05_rgh__menu00_deco_balloon05_mtl.mr.png",
+   "menu00_deco_balloon05_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png",
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png"
+  ],
+  "menu00_deco_balloon06": [
+   "menu00_deco_balloon06_alb.png",
+   "menu00_deco_balloon06_rgh__menu00_deco_balloon06_mtl.mr.png",
+   "menu00_deco_balloon06_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png"
+  ],
+  "menu00_deco_balloon07": [
+   "menu00_deco_balloon07_alb.png",
+   "menu00_deco_balloon07_rgh__menu00_deco_balloon07_mtl.mr.png",
+   "menu00_deco_balloon07_nml.png",
+   "menu00_renga_block_rope_alb.png",
+   "menu00_renga_block_rope_rgh__none.mr.png",
+   "menu00_renga_block_rope_nml.png",
+   "menu00_deco_balloon00_alb.png",
+   "menu00_deco_balloon00_rgh__none.mr.png",
+   "menu00_deco_balloon00_nml.png"
+  ],
+  "menu00_deco_pick00": [
+   "menu00_deco_pick00_alb.png",
+   "menu00_deco_pick00_rgh__none.mr.png",
+   "menu00_deco_pick00_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick01": [
+   "menu00_deco_pick01_alb.png",
+   "menu00_deco_pick01_rgh__none.mr.png",
+   "menu00_deco_pick01_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick02": [
+   "menu00_deco_pick02_alb.png",
+   "menu00_deco_pick02_rgh__none.mr.png",
+   "menu00_deco_pick02_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick03": [
+   "menu00_deco_pick03_alb.png",
+   "menu00_deco_pick03_rgh__none.mr.png",
+   "menu00_deco_pick03_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick04": [
+   "menu00_deco_pick04_alb.png",
+   "menu00_deco_pick04_rgh__none.mr.png",
+   "menu00_deco_pick04_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick05": [
+   "menu00_deco_pick05_alb.png",
+   "menu00_deco_pick05_rgh__none.mr.png",
+   "menu00_deco_pick05_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick06": [
+   "menu00_deco_pick06_alb.png",
+   "menu00_deco_pick06_rgh__none.mr.png",
+   "menu00_deco_pick06_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick07": [
+   "menu00_deco_pick07_alb.png",
+   "menu00_deco_pick07_rgh__none.mr.png",
+   "menu00_deco_pick07_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick08": [
+   "menu00_deco_pick08_alb.png",
+   "menu00_deco_pick08_rgh__none.mr.png",
+   "menu00_deco_pick08_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_pick09": [
+   "menu00_deco_pick09_alb.png",
+   "menu00_deco_pick09_rgh__none.mr.png",
+   "menu00_deco_pick09_nml.png",
+   "menu00_deco_pick_star_alb.png",
+   "menu00_deco_pick_star_rgh__none.mr.png",
+   "menu00_deco_pick_star_nml.png"
+  ],
+  "menu00_deco_rainbow": [
+   "menu01_rainbow_alb.png"
+  ],
+  "air_gull": [],
+  "menu00_gull": [
+   "menu00_gull_alb.png",
+   "menu00_gull_nml.png"
+  ],
+  "menu00_bg_bd02_obj00": [
+   "menu00_mode_icon_alb.png"
+  ],
+  "menu00_bg_bd02_obj01": [
+   "menu00_mode_icon_alb.png"
+  ],
+  "menu00_bg_bd03_obj00": [
+   "menu00_mode_icon_alb.png"
+  ],
+  "menu00_bg_bd03_obj01": [
+   "menu00_mode_icon_alb.png"
+  ],
+  "menu00_bg_bd06_obj00": [
+   "menu00_mode_icon_alb.png"
+  ],
+  "menu00_bg_bd06_obj01": [
+   "menu00_mode_icon_alb.png"
+  ],
+  "air_npc03": [],
+  "air_npc04": [],
+  "air_npc05": []
+ },
+ "cameras": [
+  {
+   "p": 1,
+   "frame": 1,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 1,
+   "frame": 10,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 1,
+   "frame": 30,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 1,
+   "frame": 60,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 1,
+   "frame": 120,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 2,
+   "frame": 1,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 2,
+   "frame": 10,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 2,
+   "frame": 30,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 2,
+   "frame": 60,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 2,
+   "frame": 120,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 3,
+   "frame": 1,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 3,
+   "frame": 10,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 3,
+   "frame": 30,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 3,
+   "frame": 60,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 3,
+   "frame": 120,
+   "eye": [
+    0,
+    2.723,
+    32.316
+   ],
+   "at": [
+    0,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 4,
+   "frame": 1,
+   "eye": [
+    -0.002,
+    2.723,
+    32.315
+   ],
+   "at": [
+    -0.035,
+    0.135,
+    22.316
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 4,
+   "frame": 10,
+   "eye": [
+    -0.01,
+    2.723,
+    32.313
+   ],
+   "at": [
+    -0.163,
+    0.135,
+    22.315
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 4,
+   "frame": 30,
+   "eye": [
+    -0.01,
+    2.723,
+    32.313
+   ],
+   "at": [
+    -0.163,
+    0.135,
+    22.315
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 4,
+   "frame": 60,
+   "eye": [
+    -0.01,
+    2.723,
+    32.313
+   ],
+   "at": [
+    -0.163,
+    0.135,
+    22.315
+   ],
+   "fovy": 40
+  },
+  {
+   "p": 4,
+   "frame": 120,
+   "eye": [
+    -0.01,
+    2.723,
+    32.313
+   ],
+   "at": [
+    -0.163,
+    0.135,
+    22.315
+   ],
+   "fovy": 40
+  }
+ ]
+}

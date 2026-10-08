@@ -31,6 +31,7 @@ const games = only.length ? GAMES.filter((g) => only.includes(g.id)) : GAMES;
 if (games.length === 0) console.log(GAMES.length === 0 ? '등록된 게임이 없다(script/games/index.ts).' : `없는 게임: ${only.join(', ')}`);
 let bad = 0;
 for (const def of games) {
+  await def.load?.();
   const setup: GameSetup = { players: [0, 1, 2, 3].map((i) => ({ char: `pc0${i + 1}`, isCom: true, comLevel: 0 })), seed, practice: false };
   const a = run(def, setup);
   const b = run(def, setup);

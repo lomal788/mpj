@@ -11,9 +11,10 @@
  *   읽는 곳이 없어(main·mg1801 전수 검색) mg1801 CPU 에 영향이 없다 — 설정으로 두지 않는다.
  */
 import { type GameDef, type GameOption, readOptions } from '../../game';
-import { Mg1801Game, type Mg1801Options } from './logic/game';
+import type { Mg1801Options } from './logic/game';
 import type { Mg1801Event, Mg1801Result, Mg1801State } from './state';
-import { Mg1801View } from './view';
+
+let body: typeof import('./body') | null = null;
 
 const OPTIONS: readonly GameOption[] = [
   {
@@ -89,8 +90,11 @@ export const mg1801Game: GameDef<Mg1801State, Mg1801Event, Mg1801Result> = {
   players: 4,
   hasPractice: false,
   options: OPTIONS,
-  createLogic: (setup) => new Mg1801Game(setup, mg1801Options(setup.options)),
-  createView: (ctx, assets) => new Mg1801View(ctx, assets),
+  load: async () => {
+    body ??= await import('./body');
+  },
+  createLogic: (setup) => new body!.Mg1801Game(setup, mg1801Options(setup.options)),
+  createView: (ctx, assets) => new body!.Mg1801View(ctx, assets),
   describeResult(r, setup) {
     return {
       head: `결과(${MODE_NAME[r.mode ?? 0]}) — 팀 ${r.achieved}/${r.totalPoint}점, 달성률 ${r.rate.toFixed(1)}%, 별 판정 ${r.starJudge} (수프 mg1801_soup0${r.starJudge})`,

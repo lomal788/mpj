@@ -1,6 +1,6 @@
 # 공용 로더 관리자 — 우선순위·공용 캐시·프레임 예산·미리 받기
 
-2026-10-08. 상태: **분석·설계 문서(구현 전)**. 압축 형식·소스/배포 분리는 [assets_pipeline.md](assets_pipeline.md), 입력은 [input_web.md](input_web.md). 표기: [실측] 이 저장소에서 잰 값, [코드] 현재 코드 확인, [추정] 계산·경험치, [설계] 웹 결정, **사용자 확인 필요** = 기본값을 정해 두고 진행할 곳.
+2026-10-08. 상태: **1·2·3단계 구현(§11 구현 설계, §12 구현 결과·실측)**, 4·5·7단계 설계만, 6단계는 [loader-6] 담당. 압축 형식·소스/배포 분리는 [assets_pipeline.md](assets_pipeline.md), 입력은 [input_web.md](input_web.md). 표기: [실측] 이 저장소에서 잰 값, [코드] 현재 코드 확인, [추정] 계산·경험치, [설계] 웹 결정, **사용자 확인 필요** = 기본값을 정해 두고 진행할 곳.
 
 ---
 
@@ -92,7 +92,7 @@
 | R9 | 영구 캐시(Cache Storage) + 해시 파일 이름, 개발(src) 모드는 캐시 우회 |
 | R10 | 관리자 자체는 매 프레임 할당 0 |
 | R11 | 통계(개발 페이지·시험) |
-| R12 | 셸 경계 유지: 셸은 관리자 **인터페이스**만 받는다(mgm_common.md §9.1 — stage3d 폴더 안에 둠, assetLoader 와 같은 자리) |
+| R12 | 셸 경계 유지: 셸은 관리자 **인터페이스**만 받는다. 정정(구현): 관리자 코어는 stage3d 가 아니라 **import 0 인 `script/lib/assetcore/`**, three 어댑터는 `script/lib/assetcore-three/`(three·코어만) — 두 폴더는 어디서나 import 가능(mgm_common.md §9.1 예외, §11.1) |
 
 ---
 
@@ -173,13 +173,144 @@
 - "한 번 읽은 것은 계속 들고 있는다"는 PC 에서는 사실상 그대로(예산이 충분), 모바일에서는 GPU 만 예산 안에서. 원본 Switch 도 장면마다 메모리를 비운다 [추정].
 - **사용자 확인 필요**: 모바일 GPU 예산 기본값, `?texlod=1` 자동 적용 조건(assets_pipeline §3.4).
 
-### 5.8 영구 캐시·해시 (R9)
+### 5.8 영구 캐시·해시 (R9) — 6단계 구체 설계
 
-- 빌드(`build_assets.ts`)가 이미 원본 sha1 을 계산한다 → 압축본 파일 이름에 내용 해시를 붙이고 `index.json` 에 "논리 키 → 해시 이름" 표.
-- 해시 이름 파일은 `Cache-Control: immutable, max-age=1년` + 서비스 워커가 Cache Storage 에 넣는다. 새 배포 = 새 index.json 만 받아 바뀐 파일만 다시 받음.
-- JS 번들도 화면별로 나누고(코드 분할) 해시 이름. 지금 10 MB 한 덩어리 → 광장 진입에 mg1801 코드가 필요 없음.
-- brotli 11 로 미리 압축한 `.br` 를 함께 두고 서버가 그대로 보냄(실행 중 압축 비용 0).
-- **개발(src) 모드**: 해시·서비스 워커 끔, 매번 원본 파일(개발 페이지에서 고친 것이 바로 보이게).
+요약: **내용 해시 이름 + immutable 헤더 + 서비스 워커(Cache Storage) + brotli 사전 압축 + 화면별 코드 분할**. 새 npm 의존성 없음(해시 = node `crypto`, 압축 = node `zlib`, 코드 분할 = 이미 쓰는 esbuild `splitting`, 서비스 워커 = 손으로 쓴 독립 JS 한 파일). 개발(src) 모드는 전부 끔.
+
+#### 5.8.1 파일 이름 규칙 [설계]
+
+| 대상 | 이름 | 만드는 곳 |
+|---|---|---|
+| 압축본 에셋 | 마지막 확장자 앞에 `.<내용 sha256 앞 8 hex>` — `plaza/world/tex/a.ktx2` → `plaza/world/tex/a.3f2c9a1b.ktx2`, `x.fmab.json` → `x.fmab.<h>.json` | `tools/build_assets.ts`(증분: 새로 만든 산출물만 해시를 다시 잼) |
+| JS·CSS 진입점 | `bundle/main.<esbuild 해시 8자>.js`·`.css` | `tools/build.ts`(esbuild `entryNames: '[name].[hash]'`) |
+| 코드 분할 청크 | `bundle/chunks/<이름>.<해시>.js` | esbuild `chunkNames` |
+| 해시 없음(늘 재검증) | `index.html`·`ui.html`·`sw.js`·`assets-dist/index.json`·`vendor/basis/*`(three 트랜스코더 2개 — KTX2Loader 가 경로를 직접 만듦) | — |
+
+- `assets-dist/` 에는 해시 없는 이름(작업본 — 증분 빌드의 비교·같은 내용 복사 원본)과 해시 이름(배포본)이 **둘 다** 있다. 해시 없는 파일은 다음 빌드가 덮어쓸 수 있어 하드 링크가 아니라 복사로 둔다(디스크 약 2배, 배포 `dist/` 에는 해시 이름만 실림). 옛 해시 파일은 `--prune`(사용자 실행) 때만 지운다.
+- 해시는 **산출물 내용**으로 잰다(원본 sha1 이 아님): 인코더 설정만 바뀌어도 URL 이 바뀌어야 immutable 이 안전하다.
+- glb 안의 이미지 uri(`../tex/a.ktx2`, 207/253 개가 외부 참조)는 고치지 않는다 — 런타임 URL 바꾸기(5.8.3)가 처리. 그래서 텍스처 하나가 바뀌어도 그 텍스처만 새 URL 이고 glb 는 그대로 캐시에 남는다.
+
+#### 5.8.2 `assets-dist/index.json` v2 [설계 — loader-123 과 합의, SHARED.md]
+
+```json
+{ "v": 2,
+  "ktx2": ["<소스 상대 경로 .png>", …], "lossy": ["<.wav>", …], "flac": ["<.wav>", …],
+  "names": { "<압축본 상대 경로(해시 없음, 확장자 바꾼 뒤)>": "<해시 붙은 압축본 상대 경로>", … },
+  "bundle": ["bundle/main.ABCD2345.js", "bundle/chunks/…", …] }
+```
+
+| 필드 | 뜻 | 누가 씀 |
+|---|---|---|
+| `ktx2`·`lossy`·`flac` | v1 과 같음(소스 이름 → 압축본 확장자 바꾸기) | `assetLoader.ts` `ktx2UrlFor`·`audioUrlFor` |
+| `names` | 확장자를 바꾼 뒤의 압축본 이름 → 해시 이름. 표에 없으면 그대로 | `assetLoader.ts` `distUrl`(loader-123) |
+| `bundle` | 배포 빌드(`build.ts`)가 `dist/assets-dist/index.json` 에만 넣는 해시 청크 목록 | 서비스 워커의 옛 캐시 정리 |
+
+- 크기 [실측]: 2,496 항목 표 → index.json 309 KB(brotli 31 KB, gzip 43 KB). 재방문엔 304(바디 0).
+- v1 만 아는 코드는 `names` 를 무시하므로 해시 없는 작업본 경로(개발 서버 `?assets=dist`)에서는 계속 돈다. 배포(`dist/`)에는 해시 이름만 있으므로 `names` 를 써야 한다.
+
+#### 5.8.3 런타임 URL 바꾸기 [설계]
+
+```
+논리 URL(소스 이름, 예 ./assets-dist/plaza/a.png)
+ → ktx2UrlFor / audioUrlFor (v1 규칙: .png→.ktx2, .wav→.ogg|.m4a|.flac)
+ → distUrl (names: 해시 이름)          ← 동기·멱등(이미 해시 이름이거나 표에 없으면 그대로), src 모드 = 항등
+ → 실제 요청
+```
+
+- **캐시 키는 해시 없는 논리 URL**(관리자 코어·형식 처리기), 네트워크 요청 직전에만 `distUrl`. 코어는 이 함수를 바깥에서 꽂는다(import 0).
+- 요청 경로가 여러 갈래(페이지의 `fetch`, three FileLoader·ImageBitmapLoader 의 `fetch`, ImageLoader·`new Image()` 의 `img.src`, KTX2Loader)라 **두 곳의 얇은 shim** 이 모두 덮는다 — `script/cache/urlShim.ts`(import 0): 전역 `fetch`(문자열·URL·`Request`)와 `HTMLImageElement.prototype.src` 설정자. 페이지 코드(배경 `new Image()` 8곳 등)는 고치지 않는다.
+- 설치 순서(`view/assetMode.ts`, dist 모드에서만): ① 내 shim(→ `distUrl`) ② 기존 `installFetchShim`(.wav → 압축본, 그 안의 `fetch` 가 ①을 지남) ③ **top-level await `distReady()`** — 표가 오기 전에는 어떤 페이지 코드도 돌지 않으므로 동기 `distUrl` 이 늘 표를 갖는다. index.json 자체 요청은 ①을 지나지만 표에 없어 그대로(그래서 `distUrl` 안에서 기다리면 안 됨).
+
+#### 5.8.4 사전 압축 [실측 → 규칙]
+
+| 확장자 | 표본 brotli 비율(q9) | 결정 |
+|---|---|---|
+| json | 9.0 % | `.br`·`.gz` |
+| glb(meshopt) | 45.6 % | `.br`·`.gz` |
+| hdr | 38.2 % | `.br`·`.gz` |
+| otf·md | 56~61 % | `.br`·`.gz` |
+| flac | 전체 88 %(47/65 개가 10 % 넘게 줆, 합 −0.44 MB) | 규칙대로(이득 있는 파일만) |
+| ktx2 | 전체 1,285 개 219.8 MB → 219.5 MB(−0.12 MB) | **안 함**(Basis 자체 압축 — ETC1S·UASTC+zstd) |
+| png·ogg·m4a | 98~99 % | **안 함** |
+| js·css·html·wasm·index.json·sw.js | 배포 빌드 35개 2,244 KB → br 604 KB(27 %) | `.br`·`.gz` |
+
+- 규칙: 위 "함" 확장자 중 **압축본이 원본의 95 % 이하이고 64 B 이상 줄 때만** 파일을 둔다(아니면 서버가 원본을 그대로). brotli 품질 11·창 24, gzip 9.
+- 에셋은 `build_assets.ts` 가 해시 이름 옆에 만든다(증분 — 해시 이름이 같으면 이미 있는 `.br` 를 씀, 결정은 `build-state.json` 에 기록). 번들·html·index.json·sw.js·vendor 는 `build.ts` 가 매번 만든다(작음).
+- 서버는 `Accept-Encoding` 에 `br` 가 있고 `.br` 가 있으면 그것, 아니면 `gzip` + `.gz`, 아니면 원본. 헤더 `Content-Encoding`, `Vary: Accept-Encoding`(변형 파일이 있을 때), `Content-Type` 은 **원본 확장자**로.
+
+#### 5.8.5 캐시 헤더 [설계] (`server/static.ts` — 배포 미리보기·운영 서버 공용)
+
+| 경로 | Cache-Control | ETag / 304 |
+|---|---|---|
+| 해시 이름(`.<8 hex>.<ext>`, `.<esbuild 8자>.js/css/map`) | `public, max-age=31536000, immutable` | 있음 |
+| `index.html`·`ui.html`·`sw.js`·`assets-dist/index.json`·vendor·그 밖 | `no-cache` | 있음(`"<크기 16진>-<mtime 16진>"`, 변형은 `-br`·`-gz` 덧붙임), `If-None-Match` 맞으면 304 |
+| 개발 서버(`npm run dev`, `server/main.ts` 기본) | 지금처럼(esbuild serve / `no-cache`) | — |
+
+MIME: html·js(`text/javascript`)·css·json·map·png·jpg·webp·svg·ktx2(`image/ktx2`)·glb(`model/gltf-binary`)·bin·wasm(`application/wasm`)·ogg(`audio/ogg`)·m4a(`audio/mp4`)·flac(`audio/flac`)·wav·hdr·otf(`font/otf`)·ttf·md·txt.
+
+#### 5.8.6 서비스 워커 [설계] (`script/cache/sw.js` → 배포 `dist/sw.js`, 독립 JS 한 파일)
+
+| 요청 | 전략 |
+|---|---|
+| 해시 이름(정규식 — 5.8.5 와 같음), 같은 출처 GET | **cache-first**: Cache Storage → 없으면 네트워크(HTTP 캐시 immutable 이면 디스크) → 200·basic 이면 넣음 |
+| 이동(html)·`assets-dist/index.json` | **network-first**: 네트워크(no-cache → 304 면 바디 0) → 성공이면 Cache Storage 갱신 → 실패면 캐시(오프라인) |
+| 그 밖(vendor·API·socket.io·`?assets=src` 의 소스 에셋) | 손대지 않음(브라우저 기본) |
+
+- 등록: 배포 빌드 + `assets=dist` 일 때만, 페이지 `load` 뒤(첫 실행 대역폭과 겹치지 않게). `skipWaiting` + `clients.claim` — 첫 실행 중 나중에 받는 것(지연 받기)부터 바로 Cache Storage 에 들어간다.
+- `?assets=src`·개발 서버: 등록 안 함, 이미 있으면 `unregister`(`script/cache/swClient.ts`, import 0).
+- 저장소가 막힌 환경(시크릿·사파리 개인 정보·용량 초과·`serviceWorker` 없음): 모든 `caches.*` 호출을 try/catch, 실패하면 그냥 네트워크 응답을 돌려준다 → 페이지는 HTTP 캐시만으로 정상 동작. 등록 실패도 무시(콘솔 경고 1줄).
+- 설정은 파일 머리 상수 3개(`CACHE` 이름, `MANIFEST` 경로, 해시 정규식)와 `liveUrls(manifest)` 함수 하나 — ddalkkakrider 등 다른 게임은 이 넷만 바꿔 쓴다.
+
+#### 5.8.7 업데이트 흐름 [설계]
+
+1. 새 배포: 바뀐 에셋만 새 해시 이름, 안 바뀐 것은 같은 이름. `index.html`·`index.json` 이 새 이름들을 가리킨다.
+2. 다음 방문: html·index.json 은 network-first(재검증) → 새 표. 표에 있는 이름 중 Cache Storage 에 있는 것은 0 바이트, 새 이름만 받는다.
+3. 정리: SW 가 새 `index.json` 을 받을 때마다 `liveUrls`(names 값 + bundle) 밖의 **해시 이름** 항목을 Cache Storage 에서 지운다(html·index.json 항목은 그대로). 이미 열려 있는 옛 탭이 옛 청크를 더 요청하면 네트워크로 간다(서버에 옛 파일이 없으면 실패 — 배포 서버가 직전 배포 파일을 한동안 남겨 두면 안전, **사용자 확인 필요**).
+4. `sw.js` 자체가 바뀌면 브라우저가 새 SW 를 설치·즉시 활성(`skipWaiting`). 캐시 이름(`CACHE`)을 바꾸면 옛 캐시 전체를 activate 에서 지운다(형식 바꿀 때만).
+
+#### 5.8.8 코드 분할 경계 [설계]
+
+| 묶음 | 내용 | 언제 받나 |
+|---|---|---|
+| `main` 진입 | 페이지 조립(main.ts)·설정 패널·three(공용)·게임 목록 메타(제목·설정 칸) | 처음 |
+| 화면 청크 | `setplayer_page`·`plaza_page`·`modeselect_page`·`mgmet_page`·`mgm01_page`·`charselect_page` 각각(+그 셸) | 그 화면에 들어갈 때 `import()` |
+| 게임 청크 | `games/<id>` 의 로직·뷰(mg1801 137 KB) | 그 게임을 시작할 때(`GameDef.load?()`) |
+| 공용 청크 | 둘 이상이 쓰는 셸(mgmcommon·stage3d·three 일부) | esbuild 가 자동으로 뽑음 |
+
+- `main.ts` 의 `run*` import 는 타입만 정적으로 두고 실행은 `import()`(최소 Edit). `ui_main.ts`(시험 페이지)는 그대로.
+- 게임 목록: `GameDef` 에 선택 항목 `load?(): Promise<void>` 를 더해 메타(id·제목·설정)는 정적, 로직·뷰는 `load()` 뒤에 생긴다. `main.ts start()`·`tools/check_logic.ts` 가 `createLogic` 전에 `await def.load?.()` 한 줄.
+- 개발 빌드는 분할·해시 없이 지금처럼 한 파일(`bundle/main.js`) — `import()` 는 esbuild 가 같은 파일 안에서 풀어 준다.
+
+#### 5.8.9 개발(src) 모드
+
+- `npm run dev`·`server/main.ts`(기본)·`?assets=src`: 해시 이름을 쓰지 않음(소스 `assets/` 그대로), 서비스 워커 등록 안 함 + 있으면 해제, 번들 분할·해시 없음. 고친 파일이 새로 고침에 바로 보인다.
+- 개발 서버에서 `?assets=dist`: 해시 표를 쓰지만(작업본·해시본 둘 다 있으므로 어느 쪽이든 동작) SW 는 없음.
+
+#### 5.8.10 ddalkkakrider 로 옮길 때 ([loader_manager_ddalkkakrider.md](loader_manager_ddalkkakrider.md) §1·§4-6)
+
+- `server/static.ts`(node 내장만, 프로젝트 import 0) → 그쪽 `no-cache`·ETag 없음 문제를 그대로 해결(해시 이름 immutable + 나머지 ETag/304 + 사전 압축).
+- `script/cache/sw.js`·`swClient.ts`·`urlShim.ts`(import 0) → 머리 상수와 `liveUrls` 만 바꿈.
+- 해시 이름 붙이기는 그쪽 빌드에 `hashedName(rel, sha256 8)` + `names` 표 쓰기만 더하면 된다(`tools/build_assets.ts` 의 해당 부분).
+
+#### 5.8.11 결과 [실측] (2026-10-08)
+
+**구현 파일**: `tools/build_assets.ts`(해시 이름·`names`·증분 사전 압축), `tools/precompress.ts`(새, `hashedName`·`.br/.gz`), `tools/build.ts`·`tools/esbuild_config.ts`(분할·해시·html 고쳐 쓰기·배포 index 의 `bundle`), `server/static.ts`(새), `server/main.ts --dist`·`tools/serve.ts --dist`(배포 미리보기), `script/cache/{urlShim.ts,swClient.ts,sw.js}`(새, import 0), `script/view/assetMode.ts`(shim·SW·TLA), `script/main.ts`(화면 `import()`), `script/game.ts`(`load?()`), `script/games/mg1801/{index.ts,body.ts}`, `tools/check_logic.ts`(`await load`), 시험 `tools/test_build_cache.ts`(새).
+
+| 항목 | 전 | 후 |
+|---|---|---|
+| 첫 실행에 내려받는 JS(광장 `?plaza=1` 진입까지) | `main.js` 한 덩어리 1,291.5 KB(서버가 압축 없이 보냄) | 18 파일 1,021.7 KB → **br 263.8 KB**(mg1801 몸체 189 KB·mgm01·mgmet·charselect·modeselect 화면 빠짐) |
+| 시작(진입점 정적 닫힘) | 같음 | 8 파일 682.5 KB(br 158.1 KB) — 거의 three |
+| main 쪽 전체 JS | 1,291.5 KB | 1,299.4 KB(br 341.5 KB) — 나뉘기만 함 |
+| 에셋 사전 압축 | 없음(`--precompress` 선택, 꺼져 있었음) | 546 파일 114.2 MB → br 43.8 MB(−70.4 MB). 압축본 전체 386.1 → 전송 315.7 MB |
+| 에셋 빌드 증분(바뀐 것 없음) | — | 4 s(해시·사전 압축 결정 재사용). 처음 해시·압축 한 번 115 s |
+| 광장 첫 방문 전송(헤드리스, 광장 준비 + 8 s 지연 받기 포함) | — | 742 요청 97.3 MB(js 253 KB·index.json 30 KB·vendor 212 KB, br 응답 148개) |
+| **두 번째 방문(새로 고침)** | 전부 재검증 | **5 요청 모두 304, 바디 0 B**(html·index.json·sw.js·basis js·wasm). 해시 이름 737~739개는 Cache Storage 에서 |
+| 세 번째 방문 | — | 두 번째와 같음 |
+| 콘솔 오류 | — | 0 |
+
+- 헤드리스: `server/static.ts` 로 `dist/` 를 내주는 node 서버(서버 쪽에서 바이트를 셈) + Playwright 크로미움 임시 영구 프로필(SwiftShader). 광장까지 시간(32~35 s)은 같은 PC 에서 다른 에이전트의 헤드리스 측정이 함께 돌아 비교 불가(경합 없을 때 11.8~13.6 s). 로컬이라 시간은 전송이 아니라 트랜스코드·컴파일이 정한다 — 전송량만 본다.
+- 측정 중 발견·수정: ① 첫 방문에 워커가 페이지를 잡기 전에 받은 번들·첫 에셋은 Cache Storage 에 없어 HTTP 캐시에만 의존 → 메모리 HTTP 캐시(비영구 문맥)에서는 밀려나 두 번째 방문에 다시 받음(13 요청 0.45 MB). `swClient.ts` 가 잡힌 뒤·15 s 뒤에 받은 URL 목록을 넘기고 워커가 force-cache 로 옮겨 담게 함 → 0 B. ② 긴 경로의 프로필(MAX_PATH 초과)에서는 Cache Storage `put` 이 "Entry already exists" 로 실패 — 이때도 페이지는 정상(오류 0, HTTP 캐시만), 저장소가 막힌 환경의 실제 예.
+- 남은 재검증 요청: `vendor/basis/*` 2개(KTX2Loader 가 경로를 직접 만들어 해시 이름을 못 씀 — 304 라 바디 0).
 
 ### 5.9 관리자 자체의 할당 0 (R10)
 
@@ -202,6 +333,8 @@ interface AssetManager {
 ```
 
 셸·게임은 이 인터페이스만 받는다(R12). 형식별 처리(KTX2·meshopt·소리·json)는 `assetLoader.ts` 함수를 관리자가 부른다.
+
+정정(구현, §11.2): `renderer` 는 인터페이스에서 뺐다(코어는 three 를 모른다 — 렌더러는 4단계에서 three 어댑터/앱 쪽이 갖는다). `get` 은 `get(key, kind, pri?, owner?)`, 묶음은 `defineBundle`/`wantBundle`/`whenBundle`, `frame()` 대신 주입한 `tick`(rAF)으로 스스로 돈다(바깥에서 `frame()` 을 불러도 됨).
 
 ---
 
@@ -236,7 +369,7 @@ interface AssetManager {
 | 캐릭터 선택 진입 | 52 MB(22명 전부) | 커서 1명 + 화면 UI [추정 5~10 MB] |
 | 화면 전환 로딩 문구 | 있음(modeselect·plaza) | 없음(흐름 예측으로 다 받아 둠, 4G 기준) |
 | 프레임 끊김(새 모델 등장) | 측정 없음 | 50 ms 넘는 프레임 0(이동 중) |
-| 두 번째 실행 받는 양 | 전부 재검증 | index.json 하나 |
+| 두 번째 실행 받는 양 | 전부 재검증 | index.json 하나 → **[실측 6단계] 304 5개, 바디 0 B**(§5.8.11) |
 
 시험: Chrome `Network.emulateNetworkConditions`(4G 9 Mbps·RTT 170 ms, 3G 1.6 Mbps)로 헤드리스 1회, 프레임 시간 기록, "보이는데 준비 안 된 모델 수" 0 확인.
 
@@ -264,7 +397,7 @@ interface AssetManager {
 | 3 | 광장 P0/P1/P3 묶음 + 첫 화면 목록 도구(§6.1) + 차례 받기 → 동시 | 1~1.5 h |
 | 4 | 앱 하나의 렌더러: 광장(무대 + UI 오버레이 합치기) → 캐릭터 선택 → 2D 화면들 | 2~3 h |
 | 5 | 흐름 예측 표 + 캐릭터 선택 지연 받기 + Preview3D 캐시 공용화 | 1 h |
-| 6 | 해시 이름·서비스 워커·brotli 사전 압축·코드 분할 | 1~1.5 h |
+| 6 | 해시 이름·서비스 워커·brotli 사전 압축·코드 분할 — **구현됨(§5.8, 결과 §5.8.11)** | 1~1.5 h |
 | 7 | 매 프레임 할당 정리(측정 기반, 관리자 밖 코드) | 1 h |
 | 검증 | 상태 시험(큐 순서·올리기·예산·해제) + 망 제한 헤드리스 1회 | 0.5 h |
 
@@ -278,3 +411,130 @@ interface AssetManager {
 2. 모바일 GPU 예산 600 MB·PC 2 GB, `?texlod` 자동 적용 조건(§5.7).
 3. 예측 미리 받기 범위: 기본 = 표 전체, 데이터 절약이면 바로 다음 화면만(§5.5).
 4. 렌더러 하나로 합치기(§5.6)를 광장부터 단계적으로 — 범위가 커서 가장 먼저 동의가 필요한 항목.
+5. (3단계 구현) 1P 외 플레이어·NPC(약 18 MB)·광장 2D UI(약 25 MB, 카드·스탬프 포함)는 이번에 **지금처럼 첫 화면 전에 받음**. NPC 는 다른 부품(기구 MC 등)이 생성 때 모델을 쓰고, UI(Render2D)는 텍스처가 없으면 흰 사각형을 그려 "준비 끝에만 보이기"를 레이아웃 단위로 먼저 만들어야 한다 → 다음 단계로 미룸(기본값: 지금 방식 유지).
+6. P1/P3 경계 40 m·올리기 거리 25 m·첫 화면 예산 무제한·이후 4 ms 는 [추정] 기본값.
+7. 늦게 나온 모델이 "나타나는" 것 자체(원본은 장면 시작 때 다 있음): 시작 카메라에 안 보이는 것만 늦추므로 보통은 보이지 않지만, 느린 망에서 1P 가 빨리 움직이면 먼 장식이 뒤늦게 나타날 수 있다 — 원본 동일을 더 원하면 P1 까지 첫 화면 전에 받는 선택지(`plaza:p1` 을 막음으로).
+8. (6단계) 배포 서버가 직전 배포의 해시 파일을 한동안 남길지(열려 있던 옛 탭이 옛 청크를 요청할 때 404 방지) — 기본: `dist/` 를 통째로 바꿈(남기지 않음), SW 캐시에 있으면 그것을 씀(§5.8.7).
+9. (6단계) `assets-dist/` 는 작업본 + 해시본 복사로 디스크 약 2배(배포 `dist/` 는 해시본만). 옛 해시본은 `build_assets.ts --prune` 를 사용자가 돌릴 때만 지움.
+10. (6단계) `npm run build` 는 첫 단계 `tsc` 가 기존 `tools/serve.ts` 오류 2개(쓰지 않는 `DEV_PORT`·`argValue`)로 멈춘다 — 6단계 확인은 `npx tsx tools/build.ts` 로 했다. 두 줄을 지우거나 쓰면 풀림(사용자 결정). → **해결(2026-10-08, 사용자 지시)**: `port = Number(argValue("--port") ?? 51811)`, import 에서 `DEV_PORT` 제거. `npm run build` 통과.
+11. (6단계) `vendor/basis` 트랜스코더 2개는 해시 이름이 아니라 재방문마다 304 재검증(바디 0). 해시로 하려면 transcoderPath 를 배포 때 해시 폴더로 바꾸는 작은 변경 필요.
+
+---
+
+## 11. 구현 설계 — 1·2·3단계 [설계, 구현 전에 먼저 적음]
+
+### 11.1 3층 구조와 의존 방향 (사용자·조정자 지시)
+
+"다른 게임에 복사해서 그대로 쓸 수 있게" — 의존은 **코어 ← three 어댑터 ← mpj 전용** 한 방향.
+
+| 층 | 위치 | import 허용 | 내용 |
+|---|---|---|---|
+| 1 코어 | `script/lib/assetcore/` | **없음**(외부 라이브러리·three·프로젝트 파일·DOM 타입 모두 금지) | 논리 키 캐시(Promise 공유·중복 제거), P0~P3 링 큐(올리기), 동시 받기·풀기 수 제한, 단계 상태, 참조 수·owner release, 바이트·GPU 예산 숫자·LRU 후보, 묶음, 통계 숫자, 프레임 예산 스케줄러, json·bytes 처리기 |
+| 2 three 어댑터 | `script/lib/assetcore-three/` | `three` 와 코어만 | 프레임 예산 GPU 준비(`initTexture`·`compileAsync`·1×1 렌더 업로드)와 "준비 끝에만 보이기", 일반 glTF 처리기(로더 인스턴스 주입), 일반 텍스처 처리기(읽기 함수 주입), glTF 안 텍스처를 관리자로 돌리는 로더 대리 객체 |
+| 3 mpj 전용 | `script/shell/stage3d/assetHandlers.ts`, `script/view/appAssets.ts`, stage3d·plaza 연결, `tools/plaza_first.ts` | 프로젝트 의존 허용 | `assetLoader.ts` 의 압축/원본 모드·KTX2·meshopt·소리, 앱 관리자 인스턴스(키 → URL resolver), stage3d 연결, 광장 묶음·`plaza_first.json` |
+
+- 코어가 바깥에서 받는 것(생성 때 주입): `now()`(시계), `tick(fn)`(rAF), `io.fetch(url)`(받기 — `ok·status·arrayBuffer()·json()·text()` 만 쓰는 작은 인터페이스), `resolve(key, kind)`(논리 키 → URL). 저장소(Cache Storage)는 6단계가 서비스 워커로 하므로 코어에 두지 않는다.
+- 셸 경계(mgm_common.md §9.1)에 예외 추가: **import 0 인 코어 폴더와 three·코어만 쓰는 어댑터 폴더는 어디서나 import 가능**. 시험: 코어 폴더 import 0, 어댑터 폴더 import ⊂ {`three`, 코어} (`tools/test_assetcore.ts`·`test_plaza_world.ts` 8절).
+- ddalkkakrider 로 옮길 때: 코어·어댑터 폴더를 그대로 복사(어댑터는 three r180 기준), 3층만 새로(자체 JSON 모델 처리기·PNG·ogg). 번들이 둘이면 관리자 인스턴스를 `globalThis` 에 두면 된다 — mpj 도 `globalThis.__mpjAssetManager` 에 둔다(문맥과 무관한 데이터만 담는 규칙은 loader_manager_ddalkkakrider.md §3).
+
+### 11.2 코어 API
+
+```ts
+createAssetManager({ env: { now, tick?, io? }, resolve, handlers, maxFetch=6, maxDecode=2, budgetMs=4, gpuBudget, byteBudget })
+mgr.get(key, kind, pri = P1, owner?)  → Promise<값>      // 준비 끝(ready)에 풀림. 같은 키는 같은 Promise
+mgr.want(key, kind, pri, owner?)                        // 미리 받기(기다리지 않음, Promise 도 안 만듦)
+mgr.raise(key, pri)                                     // 올리기만(낮추지 않음), 할당 0
+mgr.peek(key) / mgr.state(key)                          // 동기 조회
+mgr.release(owner)                                      // refs 만 내림(지우지 않음)
+mgr.defineBundle(name, keys, kinds) / wantBundle(name, pri, owner?) / whenBundle(name) / bundleReady(name)
+mgr.gpuCandidates(out, needBytes) / mgr.trim()          // LRU 후보 계산(refs 0·ready, 오래 안 쓴 순) / 예산 넘으면 처리기 dispose 호출
+mgr.scheduler: FrameScheduler                           // add(task, pri)·raise(task, pri)·budgetMs·frame()
+mgr.stats                                               // 숫자 필드만(요청·적중·받기·바이트·풀기·준비·실패·동시 최대·프레임 처리 수·예산 초과 프레임 등)
+```
+
+- 처리기 = `{ kind, fetch(url, key, io) → raw, decode?(raw, key) → 값, upload?(값, step, key) → DONE|MORE|WAIT, dispose?(값, key), bytes?(raw), gpuBytes?(값), keepRaw? }`. 처리기 하나를 바꿔도 코어는 무수정.
+- 상태: idle → queued → fetching → decoding → uploading → ready (실패 failed, GPU 내림 evicted = 값은 남음, 다시 get 하면 upload 만 다시).
+- 우선순위: P0 이 큐·진행 중에 하나라도 있으면 P2·P3 은 새로 시작하지 않는다(P1 은 시작 — 단 같은 큐에서 P0 이 늘 먼저 뽑힌다). 우선순위 없이 부른 get 의 기본은 **P1** — 모델 준비 중 안에서 부르는 텍스처 요청이 P0 막기에 걸려 서로 기다리는 일(교착)을 막는다.
+- 할당 0: 큐는 등급별 링(가득 차면 2배로 늘림 — 늘 때만 할당), 항목 객체는 키당 하나, 완료 콜백은 항목 생성 때 한 번 bind, 스케줄러는 작업 객체의 `run()` 반환값으로 분기(클로저 없음). 올리기는 "게으른 삭제"(링에서 빼지 않고 새 등급 링에 넣고, 꺼낼 때 등급이 다르면 건너뜀).
+- 프레임 예산: 매 tick 에서 `budgetMs` 안에서 작업 단위를 꺼내 `run()`. 단위 하나가 예산보다 커도 그 프레임에 하나는 한다. WAIT 는 같은 등급 끝으로 다시 넣고 그 프레임에 한 바퀴만 돈다.
+
+### 11.3 2단계 — 준비 끝에만 보이기 (three 어댑터 `ScenePreparer`)
+
+- `preparer.prepare(root, pri)` → 작업(job, `promise` 가 준비 끝에 풀림). 단계: ① 텍스처 `initTexture` 한 장 = 한 단위 ② `compileAsync(root, camera, 무대 장면)` 1회 시작(KHR_parallel_shader_compile 이면 비동기 완료) → 끝날 때까지 WAIT ③ 메시 32개 = 한 단위로 1×1 렌더 타깃에 그려 버퍼·VAO·뼈 텍스처를 올림(ddalkkakrider `prepareScene` 과 같은 방법).
+- ③ 의 그리기는 **카메라 레이어**(31)로 그 묶음 메시만 그린다(무대의 빛도 레이어 31 을 켜 둠 — 빛 수가 다르면 셰이더 키가 달라져 다시 컴파일). 그리는 동안만 부모까지 보이게·컬링 끄기·그림자 맵 갱신 끄기, 같은 동기 구간에서 되돌리므로 화면에는 나오지 않는다.
+- 렌더 타깃이 셰이더 키를 바꾼다(타깃이 있으면 선형 색공간·톤맵 없음). 무대가 후처리(RT 에 그림)를 쓰면 컴파일·업로드도 1×1 RT 에서, 아니면 캔버스 1×1 가위(scissor)로 [코드 확인: three r180 getParameters]. 정정: 지금의 `warmup()` 은 RT 없이 compileAsync 해서 후처리 무대에서는 캔버스용 변형을 컴파일했다(실제 그리기용은 뒤의 `render()` 가 동기 컴파일).
+- 이미 준비한 메시·텍스처는 WeakSet 으로 건너뜀. `stage.warmup()` = 장면 전체를 한 작업으로(이미 준비한 것 제외) **첫 로딩 동안 큰 예산**(사실상 무제한)으로 돌리고, 끝에 지금처럼 숨은 것까지 보이게 한 번 그려(그림자 깊이 재질 변형) 되돌린다. 첫 화면 뒤 예산 = 4 ms.
+- 광장 무대 모델: `visible:false` 로 올림 → 부착·기본 애니 → `prepare` 끝 → 장식 보임 규칙대로 보이기. `applyVisibility`·`setDeco` 도 준비 끝난 모델만 건드린다.
+
+### 11.4 3단계 — 광장 단계 로딩
+
+- 키 = `web/assets/` 기준 소스 경로(예 `plaza/world/model/menu00_central_plaza00.glb`, `plaza/world/tex/x.png`). mpj resolver = `ASSETS + key`(모드별 루트), 해시 이름은 6단계 shim 이 fetch 직전에 입힌다(SHARED 계약, `assetLoader.distUrl`).
+- glTF 캐시 값은 **깨끗한 원본(템플릿)** — 무대는 처음 쓸 때 재질까지 복제한 "무대 템플릿"을 만들고(MaterialSetup 이 재질을 고쳐 쓰므로 무대 사이 공유 금지), 그 뒤는 지금처럼 `cloneSkinned`. 텍스처 캐시 값도 깨끗한 원본, 쓰는 쪽은 `clone()`(GPU 데이터는 three source 공유).
+- 압축 모드에서 glTF 안 텍스처(`../tex/*.ktx2`)는 KTX2 로더 대리 객체가 관리자 `texture` 로 받는다(MaterialSetup 의 같은 텍스처와 한 번만 받음). 소스 모드는 GLTFLoader 기본 그대로(ImageBitmap 경로 — 결과가 PNG TextureLoader 와 미세하게 다를 수 있어 바꾸지 않음).
+- 묶음: `plaza:p0` = 충돌 json + (plaza_first.json 의 처음 보이는 모델 ∩ 장식 보임) + 로케이터(소켓 주인 `AttachLocater*`)·부착 부모 + 그 모델들의 텍스처. 하늘·IBL·LUT·포스트는 무대 생성에서 막고 받음(지금 그대로). 1P 캐릭터·NPC·UI 는 부품 생성에서 막고 받음(지금 그대로 — §10 5 참고). `plaza:p1` = 나머지 중 상점이 아니고 시작 위치에서 (거리 − 반지름) ≤ 40 m, 거리순. `plaza:p3` = 상점(`Shop*`) + 40 m 밖(거리순) + 덜 쓰는 소리(바이트만 받아 둠). 광장 보기 클립(fsnb 1개)·카드 UI 는 부품 생성 때 그대로 읽는다(overview.ts·plaza/ui — 다른 갈래 파일, §10 5).
+- 차례 받기 → P0 의 `ensure` 를 한꺼번에 시작(큐가 순서를 정함), `load()` 는 P0 의 ensure(준비 끝 포함)만 기다린다. 부착 모델은 `ensure` 안에서 부모를 먼저 기다리는 규칙 그대로(단 부모의 GPU 준비 끝이 아니라 "읽힘"까지만 기다림).
+- 정정(구현 중): P1·P3 은 **첫 화면 뒤(`warmup` 끝)에** 시작한다(`world.startBackground()`). P0 뒤에도 부품 생성(1P·NPC·UI, 관리자 밖)이 첫 화면을 막고 있어 그 사이 P1/P3 이 망을 나눠 쓰면 첫 화면이 늦어진다.
+- 늦게 나온 모델의 기본 클립·fmab 시작 프레임 = `a.frame + (stage.frame − 무대 시작 프레임) × speed` [설계: 처음부터 다 있었다면 그 프레임]. 정정: 지금은 `startFrame = a.frame` 고정(로드 중 `stage.frame` 이 0 이라 문제가 없었음).
+- 다가가면 올리기: 0.5 s(30 프레임)마다 1P 위치와 아직 준비 안 된 모델의 경계 구(plaza_first.json `bounds`)를 비교해 (거리 − 반지름) < 25 m 면 그 모델의 glb·텍스처 키·준비 작업을 P0 로 올린다(미리 만든 배열만 돎, 할당 0).
+- 문구 "광장 읽는 중 n/total" = P0 진행만(n/total 의 total = P0 모델 수 + 충돌 1). 문구 제거는 흐름 예측(5단계) 뒤 — 지금은 유지.
+- 비교용 `?loader=seq`: 이전 방식 재현(모든 모델 P0·차례 받기·끝에 한꺼번에 보이기) — 실측 전/후 비교에만 쓴다.
+
+### 11.5 "처음 보이는 것" 도구 (`tools/plaza_first.ts`, 노드)
+
+- 헤드리스 없이 노드에서: 소스 glb(비압축)를 읽어 노드 계층·부착(hookKey/hookNode, 배율 상속 = world.ts 의 `node.add`)·스킨(쉬는 자세, 관절 × 역바인드)으로 월드 삼각형을 만들고, CPU 깊이 버퍼(480×270)에 물체 번호로 그린다.
+- 시작 카메라 = 1P 시작 소켓 `pc_plaza_balloon_pos_p{1..4}_pc00`(player.ts 의 시작 규칙) 각각에서 `MenuCameraFollow`(camera.ts 그대로 import)를 1·10·30·60·120 프레임 돌린 자세의 합집합, 16:9, 화각 여유 10%.
+- 가림: 불투명 재질만 깊이를 쓴다. 반투명·알파 마스크 재질과 장식 항목(보임 규칙이 있는 것 — 같은 자리 변형끼리 서로 가리지 않게)은 깊이를 쓰지 않고 검사만(보수적: 목록이 넓어지는 쪽).
+- 출력 `assets/plaza/world/plaza_first.json` = `{ v, first: key[], hosts: key[], bounds: {key: [cx,cy,cz,r]}, tex: {모델: glb 가 참조하는 png[]}, cameras }`. 정정(실측 뒤): 미리 받는 텍스처는 manifest `models[].tex`(928장 — 원본 재질의 쓰지 않는 mtl·rgh 등 포함)가 아니라 glb 가 실제로 참조하는 것(633장)만 — manifest 목록으로 미리 받았더니 전체 받은 양이 7.5 MB 늘었다(§12) — 변환기 출력 옆 새 파일(기존 파일 무수정). 장식 보임 규칙은 실행 때 필터.
+
+---
+
+## 12. 구현 결과·실측 (1·2·3단계, 2026-10-08)
+
+### 12.1 파일
+
+| 층 | 파일 | 내용 |
+|---|---|---|
+| 1 코어 | `script/lib/assetcore/index.ts`(새, **import 0**) | `createAssetManager`·`AssetManager`(`AssetManagerApi`)·`FrameScheduler`·`Ring`·`jsonHandler`·`bytesHandler`·`textHandler`, 상수 P0~P3·ST_*·RUN_* |
+| 2 three 어댑터 | `script/lib/assetcore-three/index.ts`(새, import = `three` + 코어) | `ScenePreparer`·`PrepJob`(§11.3), `gltfHandler(로더)`, `textureHandler(읽기 함수)`, `managedTextureLoader`(glb 안 텍스처 대리), `textureBytes` |
+| 3 mpj | `script/shell/stage3d/assetHandlers.ts`(새) | assetLoader 의 createGltfLoader·loadTexture·ktx2Loader 를 처리기로(압축 모드 glb 안 KTX2 → 관리자), meshopt 워커 2 |
+| 3 mpj | `script/view/appAssets.ts`(새) | 앱 인스턴스(`globalThis.__mpjAssetManager`), 키 = assets 기준 소스 경로, resolver = ASSETS + 키, `assetKeyOf(url)` |
+| 3 mpj | `stage3d/stage.ts`·`material.ts`·`types.ts`·`index.ts`, `assetLoader.ts`(distUrl·distReady — [loader-6] 계약) | `StageLoader` 연결(manifest·fmab json, glb = 무대 템플릿 복제, MaterialSetup 텍스처 끼움점), `prepareModel`·`warmup` 쪼개기·`budget`·`unpreparedVisible` |
+| 3 mpj | `plaza/world.ts`·`scene.ts`·`types.ts`, `plaza_page.ts` | 단계 로딩(`plazaPlan`·묶음·`startBackground`·다가가면 올리기·늦은 클립 시작 프레임), 페이지 = 앱 관리자·소리 바이트 P3·`release('plaza')` |
+| 도구 | `tools/plaza_first.ts` → `assets/plaza/world/plaza_first.json`(새 파일만, 원본 변환 출력 무수정) | §11.5 CPU 깊이 버퍼. 처음 보이는 것 69/107 항목, 로케이터·부모 4, 카메라 20, glb 참조 텍스처 601장 |
+| 시험 | `tools/test_assetcore.ts`(새), `test_plaza_world.ts` 8·9절, `check_mgmcommon.ts`·`test_setplayer.ts` 경계 | 코어 47, 광장 무대 429(+11) |
+| 측정 | `tools/measure_loader.ts`(새) | §7 망 제한 헤드리스(이전 방식 `?loader=seq` ↔ 단계 로딩) |
+
+경계: `docs/shell/mgm_common.md` §9.1 에 공용 라이브러리 예외 추가(코어·어댑터 폴더는 어디서나 import). 의존 0 확인 = `test_assetcore` 8절(코어 폴더 import 0 + `window·document·performance·requestAnimationFrame·Response·globalThis` 직접 사용 없음, 어댑터 import ⊂ {three, 코어}).
+
+### 12.2 계획(기본 장식, 압축본 크기)
+
+| 등급 | 모델 |
+|---|---|
+| P0 | 22(바닥·바다·구름·먼 섬·기구·무대·분수·친구 매치·퀘스트 카트·기본 장식·bd 잠금 표지·로케이터 3) |
+| P1 | 8(퀘스트 발판·원·카펫·장식 풍선 2·비행 경로 3) |
+| P3 | 6(상점 Shop* 6) + 소리 바이트 |
+
+### 12.3 실측 [실측 — `tools/measure_loader.ts`, Chrome 헤드리스, 4G 9 Mbps·RTT 170 ms, 압축본, 새 캐시]
+
+| 항목 | 이전 방식(`?loader=seq`) | 단계 로딩 | 비고 |
+|---|---|---|---|
+| 첫 프레임(페이지 시각) | 151.3 s | **120.3 s**(−31 s, −20%) | 번들 받기 ~15 s 포함 |
+| 첫 프레임 전 받은 양 | 111.4 MB | **99.8 MB**(−11.6 MB) | 뒤에서 +12.0 MB → 합 111.9 MB(이전과 같음 — 중복 받기 없음) |
+| 광장 무대 모델 단계(load) | 65.7 s(36 모델 전부) | **39.1 s**(P0 22) | 나머지 81 s 는 부품(1P·플레이어·NPC·UI, 관리자 밖) |
+| warmup(첫 화면 막는 GPU 준비) | 2516 ms(텍스처 461·프로그램 105) | 630 ms(텍스처 289·프로그램 78, 나머지는 모델별로 이미/나중) | |
+| 보이는데 준비 안 된 모델 수(최대) | 0 | **0** | 25 s 동안 250 ms 마다(1P 앞으로 걷기 포함) |
+| 그려지는데 GPU 준비 안 거친 메시(최대) | 0 | **0** | |
+| 다가가면 P0 로 올림 | — | 6 회 | |
+| 콘솔 오류 | 0 | **0** | |
+| 프레임 > 50 ms | 16/16 | 21/21 | **판단 불가**: 헤드리스 GPU 가 SwiftShader(중앙값 1.3~1.8 s/프레임). GPU 플래그(d3d11)는 렌더러가 죽어 못 씀. 관리자 스케줄러 자체: 86 프레임 중 예산 초과 31, 최대 1740 ms(SwiftShader 의 동기 컴파일·1×1 렌더) |
+
+- 첫 시도의 단계 로딩은 manifest `models[].tex`(쓰지 않는 mtl·rgh 포함 928장)를 미리 받아 첫 화면 전 105.1 MB·전체 119.0 MB 였다 → glb 참조 텍스처만(§11.5 정정)으로 고친 뒤 위 수치.
+- 측정 중 도구 쪽 문제 2건(tsx 의 `__name` 보조 함수가 페이지 안 스크립트에서 없음 → 문자열 스크립트로, 포트 겹침)으로 헤드리스를 여러 번 띄웠다. 앱 코드 문제는 아니었다.
+
+### 12.4 남은 것 (다음 단계)
+
+1. **첫 화면을 막는 나머지 81 s**(4G 기준)는 부품 생성: 1P·COM 플레이어(Preview3D)·NPC(약 18 MB)·광장 UI(Render2D 가 명세 텍스처 전부, 약 25 MB). 효과가 가장 큰 다음 일 = NPC 를 P1(가까운 것부터, 준비 끝에만 보이기)·UI 를 레이아웃 단위 준비(준비 안 된 레이아웃은 그리지 않음 — 지금은 흰 사각형)로. §10 5.
+2. 프레임 끊김은 실제 GPU 브라우저에서 재야 한다(4 ms 예산·P1/P3 뒤 받기 중 glb 풀기는 메인 스레드 — meshopt 는 워커).
+3. 4단계(렌더러 하나) 전이라 GPU 준비는 무대(렌더러)마다 다시 한다. 코어 캐시(L1·L2)는 이미 앱 공용이라 광장 재진입은 받기 없이 캐시에서 나와야 한다 [설계 — 재진입은 이번에 재지 않음].
+4. **흐름 예측 미리 받기(§5.5)**: 플레이어 설정·캐릭터 선택 화면에 있는 동안 `plaza:p0` 를 P2 로 받아 두면 광장 진입 대기가 그 화면 체류 시간 뒤로 숨는다 — "로딩을 보이지 않음" 목표에 가장 직접적. 1 과 묶어 다음 갈래로 [조정자 제안].
+5. **6단계 URL 가로채기 정리**: `script/cache/urlShim.ts` 가 전역 `fetch`·`HTMLImageElement.src` 를 가로채 해시 이름을 입힌다(페이지 `new Image()` 8곳 무수정 목적). 코어 resolver 가 생겼으므로 읽기를 관리자로 옮기며 가로채기 범위를 줄인다 — 숨은 전역 결합 축소(사용자 원칙: 얽매이지 않게) [조정자 제안].

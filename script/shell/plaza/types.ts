@@ -92,6 +92,12 @@ export interface PlazaWorld {
   setDeco(state: Partial<PlazaDecoState>): Promise<void>;
   addUpdater(u: { update(df: number, frame: number): void }): () => void;
   readonly frame: number;
+  /** 단계 로딩: 다가가면 올리기의 기준 위치(1P 발, 매 프레임 바뀌는 같은 객체) — docs/engine/loader_manager.md §11.4 */
+  setFocus?(pos: THREE.Vector3): void;
+  /** 단계 로딩: P1·P3 뒤 받기 시작(첫 화면 뒤) */
+  startBackground?(): void;
+  /** 개발·시험: 단계 로딩 상태 */
+  loaderDebug?(): Record<string, unknown>;
 }
 
 /** 무대 위 움직이는 사람(플레이어·따라가기·원격). B·C 가 ctx.actors 에 넣고 서로·D 가 읽는다 */

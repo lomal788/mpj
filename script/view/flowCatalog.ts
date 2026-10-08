@@ -4,7 +4,7 @@
  * 여러 화면 공용 그림·효과음은 명세가 ../common/… 로 가리켜 normPath 뒤 같은 키 common/…(docs/engine/common_assets.md),
  * 글꼴 = 명세 fonts {dir, chars} → 공용 font/fcpx.json·<FFNT>/glyphs.json(json) + chars 가 든 원본 시트 font/<FFNT>/<n>.png(uiimage, docs/engine/font_assets.md),
  * Preview3D(캐릭터 선택·광장 플레이어·NPC) = 모델 glb·모션 glb(anims)·motions·눈·눈꺼풀 — 공용 assets/chara/ 라 세 화면이 같은 키(docs/engine/chara_assets.md),
- * 광장 무대 = world.ts plazaP0Paths(World 와 같은 규칙).
+ * 광장 무대 = world.ts plazaP0Paths(World 와 같은 규칙). 화면 BGM = 'bgm:<라벨>' → common/sound/bgm.json 의 파일 첫 조각(docs/engine/04_sound.md §12.14).
  * 명세 json 은 받은 json 함수(관리자 json, 묶음 등급)로 읽고 고치지 않는다. 동적 import 로만 불러 진입 청크를 키우지 않는다.
  */
 import { FCPX_FILE, sheetsFor, tablePath, type FcpxTable, type FontRef, type FontTable } from '../shell/charselect/fontTable';
@@ -17,6 +17,7 @@ import type { PlazaLayoutEntry } from '../shell/plaza/types';
 import { plazaP0Paths, type PlazaFirstFile } from '../shell/plaza/world';
 import { ONLINE_FACES, ONLINE_PART } from '../shell/online/screen';
 import type { FlowJson, FlowKeys } from './flow';
+import { BGM_SPEC_PATH } from './screenBgm';
 
 export interface FlowCatalogOptions {
   /** 압축 모드: glb 안 텍스처도 관리자를 지남 → 광장 P0 모델 텍스처를 묶음에 넣음 */
@@ -142,6 +143,13 @@ export async function flowKeys(bundle: string, json: FlowJson, o: FlowCatalogOpt
     const pc = bundle.slice('plaza:player:'.length);
     const c = s.chars.find((x) => x.pc === pc) ?? s.chars[0];
     return [['plaza/player/spec.json', 'json'], ...charaFiles('plaza/player/', c)];
+  }
+  if (bundle.startsWith('bgm:')) {
+    const j = await json<{ bgm: Record<string, { file: string }> }>(BGM_SPEC_PATH);
+    const e = j.bgm[bundle.slice(4)];
+    if (!e) return null;
+    const k = normPath(BGM_SPEC_PATH.replace(/[^/]+$/, '') + e.file);
+    return [[BGM_SPEC_PATH, 'json'], [o.bgmKey?.(k) ?? k, 'bytes']];
   }
   if (bundle.startsWith('game:')) {
     const dir = o.gameDir?.(bundle.slice(5));

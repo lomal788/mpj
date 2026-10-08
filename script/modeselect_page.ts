@@ -4,6 +4,7 @@
  */
 import { ASSETS } from './env';
 import { appFlow } from './view/appFlow';
+import { appBgm } from './view/bgm';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { assetHooks } from './shell/charselect/assetHooks';
 import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from './shell/modeselect';
@@ -116,10 +117,12 @@ export async function runModeSelect(
     },
     onFinished(decided) {
       done = true;
+      appBgm().exit('modeselect', decided ? 'decided' : 'cancel');
       run.stop();
       cfg.onDone(decided ? result : null);
     },
   });
+  void appBgm().enter('modeselect', cfg.muted);
   let raf = 0;
   let last = performance.now();
   let acc = 0;

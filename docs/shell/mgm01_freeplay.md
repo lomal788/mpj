@@ -467,6 +467,8 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 | 승패 표 닫기 | CANCEL; scroll은 SE 호출 없음 |
 | 화면 시작/복귀 | Start/Continue BGM4; MgStart StopBGM3·PlayBGM5; flag4와 MGTransSound는 old §8.2 |
 
+→ 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
+
 [판독] enum→실제 사운드 label, 텍스트 삽입 메커니즘, 공용 창 애니 완료 판정은 기존 mgm_common §6.8·6.9·7 참조다. 모든 애니 frameSize가 같은 UI tick/실제 초라는 원본 실행 주장은 하지 않는다.
 
 정정(2026-10-07): 위 SE 표 "목록 이동/결정/잠금"의 결정은 `SQ_SE_MGM01_DEC` 이고 잠금은 `SQ_SE_SYS_ERROR` 다(§6.2 정정 줄). 승패 표 열기 `SQ_SE_MGM01_DECI_S`+FX 를 더한다.

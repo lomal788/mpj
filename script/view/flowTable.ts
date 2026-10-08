@@ -29,8 +29,8 @@ const PLAZA_NEXT = (pri: number, next: boolean): FlowPredict[] => [
 export const FLOW_TABLE: Readonly<Record<FlowScreen, FlowEntry>> = {
   boot: { own: ['setplayer'], predict: [] },
   setplayer: {
-    own: ['setplayer'],
-    predict: [{ bundle: 'charselect', pri: P2, next: true }, { bundle: 'char:first', pri: P2, next: true }, { bundle: 'charselect:sound', pri: P2, next: true }, ...PLAZA_NEXT(P3, false)],
+    own: ['setplayer', 'bgm:SM_BGM_TITLE'],
+    predict: [{ bundle: 'bgm:SM_BGM_MENU', pri: P3, next: false }, { bundle: 'charselect', pri: P2, next: true }, { bundle: 'char:first', pri: P2, next: true }, { bundle: 'charselect:sound', pri: P2, next: true }, ...PLAZA_NEXT(P3, false)],
   },
   charselect: {
     own: ['charselect'],
@@ -38,16 +38,16 @@ export const FLOW_TABLE: Readonly<Record<FlowScreen, FlowEntry>> = {
     states: { 'decided:*': [{ bundle: 'plaza:player:{v}', pri: P2, next: true }, ...PLAZA_NEXT(P2, true)] },
   },
   plaza: {
-    own: ['plaza:p0', 'plaza:ui', 'plaza:npc', 'plaza:player:{chars}'],
-    predict: [{ bundle: 'modeselect', pri: P3, next: true }],
+    own: ['plaza:p0', 'plaza:ui', 'plaza:npc', 'plaza:player:{chars}', 'bgm:SM_BGM_MENU'],
+    predict: [{ bundle: 'modeselect', pri: P3, next: true }, { bundle: 'bgm:SM_BGM_MENU_MAP', pri: P3, next: true }],
     states: { 'area:balloon': [{ bundle: 'modeselect', pri: P2, next: true }] },
   },
   modeselect: {
-    own: ['modeselect'],
+    own: ['modeselect', 'bgm:SM_BGM_MENU_MAP'],
     predict: [],
-    states: { 'cursor:mgm': [{ bundle: 'mgmet', pri: P2, next: true }], 'cursor:*': [{ bundle: 'plaza:p0', pri: P2, next: true }] },
+    states: { 'cursor:mgm': [{ bundle: 'mgmet', pri: P2, next: true }, { bundle: 'bgm:SM_JIN_MGMET_OPENING', pri: P2, next: true }, { bundle: 'bgm:SM_BGM_MGMET_ENTRANCE_JMP', pri: P2, next: true }], 'cursor:*': [{ bundle: 'plaza:p0', pri: P2, next: true }] },
   },
-  mgmet: { own: ['mgmet'], predict: [{ bundle: 'mgm01', pri: P2, next: true }, { bundle: 'modeselect', pri: P3, next: false }] },
-  mgm01: { own: ['mgm01'], predict: [], states: { 'game:*': [{ bundle: 'game:{v}', pri: P2, next: true }] } },
-  game: { own: [], predict: [{ bundle: 'mgm01', pri: P3, next: true }] },
+  mgmet: { own: ['mgmet', 'bgm:SM_JIN_MGMET_OPENING', 'bgm:SM_BGM_MGMET_ENTRANCE_JMP'], predict: [{ bundle: 'mgm01', pri: P2, next: true }, { bundle: 'bgm:SM_BGM_MGM01_FREEPLAY', pri: P2, next: true }, { bundle: 'modeselect', pri: P3, next: false }] },
+  mgm01: { own: ['mgm01', 'bgm:SM_BGM_MGM01_FREEPLAY', 'bgm:SM_JIN_MGM01_FREEPLAY_ENDSTINGER'], predict: [], states: { 'game:*': [{ bundle: 'game:{v}', pri: P2, next: true }] } },
+  game: { own: [], predict: [{ bundle: 'mgm01', pri: P3, next: true }, { bundle: 'bgm:SM_BGM_MGM01_FREEPLAY', pri: P3, next: true }] },
 };

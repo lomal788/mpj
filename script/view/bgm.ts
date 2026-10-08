@@ -4,11 +4,15 @@
  * - 원본 모드: wav 통째 bytes → 같은 배치(planBgm)로 PCM 을 잘라 AudioBuffer(디코드 없음, 무손실).
  *   압축 모드인데 조각이 없거나 반복 값이 index 와 다르면 통파일을 풀어 같은 일정으로(대체 경로).
  * - BgmChannel: 페이지 BGM 하나(같은 라벨이 돌고 있으면 그대로, 페이드 정지). bgmPrefetchKey: 미리 받기 목록에 넣을 첫 조각 키.
+ * - appBgm(): 페이지 흐름 전체에 하나인 BGM 채널(공유 AudioContext) — 화면을 바꿔도 같은 라벨이면 끊기지 않음. 곡 = assets/common/sound/bgm.json,
+ *   화면 규칙 = screenBgm.ts(docs/engine/04_sound.md §12.14).
  */
 import { P1, P2 } from '../lib/assetcore';
 import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, sameLoop, validLoop, type BgmContext, type BgmLoaded, type BgmPlan, type BgmSource } from '../lib/bgmstream';
 import { distStream } from '../shell/stage3d/assetLoader';
+import { ASSETS } from '../env';
 import { appAssets, assetKeyOf } from './appAssets';
+import { BGM_SPEC_PATH, SCREEN_BGM, type BgmScreen } from './screenBgm';
 
 /** 반복: 초 구간 | 'all'(파일 전체) | null(한 번) */
 export type BgmLoop = { startSec: number; endSec: number } | 'all' | null;
@@ -105,16 +109,29 @@ export function playBgmStream(ctx: BaseAudioContext, source: BgmSource, o: { des
 }
 
 /** 페이지 BGM 하나 — 원본 SoundManager::PlayBgm/StopBgm 자리(핸들 하나) */
+export type BgmSourceFactory = (ctx: AudioContext, url: string, loop: BgmLoop, owner?: string) => BgmSource;
+
 export class BgmChannel {
   private cur: { label: string; s: BgmStream } | null = null;
 
   constructor(
     private readonly ctx: () => AudioContext | null,
     private readonly owner?: string,
+    private readonly source: BgmSourceFactory = bgmSource,
   ) {}
 
   get label(): string | null {
     return this.cur?.label ?? null;
+  }
+
+  /** 지금 곡이 돌고 있음(한 번 곡이 끝나면 거짓) */
+  alive(): boolean {
+    return !!this.cur && this.cur.s.alive();
+  }
+
+  /** 지금 스트림(시험·디버그) */
+  get stream(): BgmStream | null {
+    return this.cur?.s ?? null;
   }
 
   /** 같은 라벨이 돌고 있으면 그대로 둔다. url 이 없으면(명세에 파일 없음) 앞 곡만 멈춘다 */
@@ -124,7 +141,7 @@ export class BgmChannel {
     const c = this.ctx();
     if (!c || !url) return;
     if (c.state === 'suspended') void c.resume().catch(() => undefined);
-    this.cur = { label, s: playBgmStream(c, bgmSource(c, url, o.loop, this.owner), { gain: o.gain }) };
+    this.cur = { label, s: playBgmStream(c, this.source(c, url, o.loop, this.owner), { gain: o.gain }) };
   }
 
   stop(fade = 0): void {
@@ -146,4 +163,121 @@ export function mgmBgmHooks(
     },
     bgmStop: (fade) => ch.stop(fade),
   };
+}
+
+// ---------------------------------------------------------------- 앱 BGM 채널(화면 사이 이어 재생)
+
+export interface BgmSpecEntry {
+  file: string;
+  gain: number;
+  loopStart?: number;
+  loopEnd?: number;
+}
+export type BgmSpecMap = Record<string, BgmSpecEntry & { url: string }>;
+
+export interface AppBgmDeps {
+  ctx(): AudioContext | null;
+  spec(): Promise<BgmSpecMap>;
+  source?: BgmSourceFactory;
+}
+
+/** bgm.json → 라벨별 명세(url = common/sound 기준) */
+export function loadBgmSpec(fetchJson: (path: string) => Promise<unknown> = (p) => fetch(`${ASSETS}${p}`).then((r) => r.json())): Promise<BgmSpecMap> {
+  const base = BGM_SPEC_PATH.replace(/[^/]+$/, '');
+  return fetchJson(BGM_SPEC_PATH).then((j) => {
+    const out: BgmSpecMap = {};
+    for (const [k, v] of Object.entries((j as { bgm?: Record<string, BgmSpecEntry> }).bgm ?? {})) out[k] = { ...v, url: `${ASSETS}${base}${v.file}` };
+    return out;
+  });
+}
+
+export class AppBgm {
+  readonly ch: BgmChannel;
+  /** 시험·디버그: 요청 기록(t = AudioContext 시각) */
+  readonly log: { t: number; k: 'play' | 'stop'; label: string | null; fade?: number }[] = [];
+  private want: string | null = null;
+
+  constructor(private readonly deps: AppBgmDeps) {
+    this.ch = new BgmChannel(() => deps.ctx(), 'bgm', deps.source);
+  }
+
+  /** 틀기로 한 라벨(받는 중 포함) */
+  get label(): string | null {
+    return this.want;
+  }
+
+  private now(): number {
+    return this.deps.ctx()?.currentTime ?? 0;
+  }
+
+  /** 원본 PlayBgm: 같은 라벨이 돌고 있거나 받는 중이면 그대로, 아니면 앞 곡을 즉시 끊고 새로 */
+  play(label: string, muted = false): Promise<void> {
+    if (muted) return Promise.resolve();
+    if (this.want === label && (this.ch.label !== label || this.ch.alive())) return Promise.resolve();
+    this.want = label;
+    this.log.push({ t: this.now(), k: 'play', label });
+    return this.deps.spec().then(
+      (spec) => {
+        if (this.want !== label) return;
+        const s = spec[label];
+        if (!s) {
+          console.warn(`BGM 명세에 없는 라벨: ${label}`);
+          return;
+        }
+        const loop = typeof s.loopStart === 'number' && typeof s.loopEnd === 'number' ? { startSec: s.loopStart, endSec: s.loopEnd } : null;
+        this.ch.play(label, s.url, { gain: s.gain, loop });
+      },
+      (e: unknown) => console.warn('BGM 명세를 읽지 못했다', e),
+    );
+  }
+
+  /** 원본 StopBgm(preset) — fade 초 */
+  stop(fade: number): void {
+    if (this.want === null && !this.ch.label) return;
+    this.log.push({ t: this.now(), k: 'stop', label: this.want, fade });
+    this.want = null;
+    this.ch.stop(fade);
+  }
+
+  /** 화면 시작(SCREEN_BGM.enter) */
+  enter(screen: BgmScreen, muted = false): Promise<void> {
+    const l = SCREEN_BGM[screen].enter;
+    return l ? this.play(l, muted) : Promise.resolve();
+  }
+
+  /** 화면 나가기(SCREEN_BGM.exit[kind]: 초 = 페이드 정지, null·없음 = 이어 재생) */
+  exit(screen: BgmScreen, kind: string): void {
+    const f = (SCREEN_BGM[screen].exit as Record<string, number | null>)[kind];
+    if (typeof f === 'number') this.stop(f);
+  }
+
+  /** MgmSound 어댑터 고리(PlayBgm·StopBgm → 이 채널) */
+  hooks(muted: boolean): { bgm(label: string, url: string | null): void; bgmStop(fade: number): void } {
+    return {
+      bgm: (label) => void this.play(label, muted),
+      bgmStop: (fade) => this.stop(fade),
+    };
+  }
+}
+
+/** 페이지 흐름 전체에 하나(번들이 나뉘어도 globalThis 로 공유) */
+export function appBgm(): AppBgm {
+  const G = globalThis as { __mpjBgm?: AppBgm };
+  if (G.__mpjBgm) return G.__mpjBgm;
+  let ctx: AudioContext | null = null;
+  let spec: Promise<BgmSpecMap> | null = null;
+  G.__mpjBgm = new AppBgm({
+    ctx() {
+      if (!ctx && typeof AudioContext !== 'undefined') {
+        try {
+          ctx = new AudioContext();
+        } catch {
+          ctx = null;
+        }
+      }
+      return ctx;
+    },
+    spec: () => (spec ??= loadBgmSpec()),
+  });
+  return G.__mpjBgm;
 }

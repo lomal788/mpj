@@ -1,10 +1,13 @@
+확정 수준 표기: **[실행]** 원본 실행 확인, **[판독]** 원본 코드 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**.
+이 문서에 [실행]은 없다. 재구현 계산은 "재구현 계산"으로 따로 적는다.
+
 # menu00 — 광장(Party Plaza) 3D 규모·막힘 조사와 구현 지시서
 
-2026-10-08. 상태: **조사·계획만 함(웹 코드 수정 없음).** 사용자 결정으로 항구 3D([mgmet_3d.md](mgmet_3d.md))를 멈추고 **광장을 구현**한다. 목표는 **index.html 에서 광장을 띄우고 헤드리스 촬영으로 동작을 확인**하는 것이다(§6.4).
+2026-10-08. 광장 웹 구현과 기존 판독 결과를 기록한다. 이번 보완은 원본 코드·명령·데이터와 현재 웹 소스 대조만 수행했고, 원본 실행·포팅 코드 수정은 하지 않았다. 항구 3D([mgmet_3d.md](mgmet_3d.md)) 중단 결정은 유지한다.
 공용 3D 무대는 [stage3d.md](stage3d.md)(`web/script/shell/stage3d/`)를 그대로 쓴다. 온라인 대기실은 [online.md](online.md), 대화상자는 [dialog_box.md](dialog_box.md), 공용 창·안내·메시지는 [mgm_common.md](mgm_common.md)를 따른다.
 
-근거 표기: [데이터] = 추출 파일을 도구로 센 값, [판독] = 디컴파일 C, [추정] = 이름·값으로 짐작한 것, [미확정] = 근거 없음, [설계] = 웹이 정한 것.
-판독 근거 C(이번에 새로 뽑음, INDEX 갱신함): `analysis/decomp/plaza_menu00_world.c`(166함수: Player·PlayerManager·ComPlayerUtil·ComFollowPlayer·ComMenuCamera·CameraManager·ParameterManager·MapManager), `plaza_menu00_npc_seq.c`(143: NpcManager·NonPlayerCharacter·Kinopio 등·SequenceMainMenu·SequenceBalloon·SequenceFront·Scene::BeginScene), `plaza_menu00_ui.c`(72: ComUiPlayerStatus*·ComUiLocationTelop·ComUiMainMenuLayout). 전체 원본은 `ghidra_work/online/out/menu00.nro.c`(심볼 있음, 3458함수). 이번 조사에서 Ghidra 를 새로 돌리지는 않았다.
+[설계]·[근사]는 웹 선택, [측정]은 웹·변환 산출물·사용자 제공 캡처 대조다. 공통 엔진은 [engine/README.md](../engine/README.md)의 기존 확정 결과를 재사용한다.
+기존 판독 근거 C: `analysis/decomp/plaza_menu00_world.c`(166함수: Player·PlayerManager·ComPlayerUtil·ComFollowPlayer·ComMenuCamera·CameraManager·ParameterManager·MapManager), `plaza_menu00_npc_seq.c`(143: NpcManager·NonPlayerCharacter·Kinopio 등·SequenceMainMenu·SequenceBalloon·SequenceFront·Scene::BeginScene), `plaza_menu00_ui.c`(72: ComUiPlayerStatus*·ComUiLocationTelop·ComUiMainMenuLayout). 전체 원본은 `ghidra_work/online/out/menu00.nro.c`(심볼 있음, 3458함수). 이번 조사에서 Ghidra 를 새로 돌리지는 않았다.
 
 **menu01 과의 관계**: modeselect.md 6.2 의 "menu01 3D 맵 월드 모델 117개"는 **광장이 아니다**. menu01 은 기구를 타고 가는 **모드 선택 섬 월드**다(섬 island00~04, `menu01_loc_ev_start_*`). 그 장면의 카메라는 커서·팬(`menu01::ComMenuCamera::Focus/Pan/Shortcut`)으로만 움직이고, 플레이어 입력 이동은 없다(`SetInputControlEnabled`·`ComFollowPlayer` 호출 0) [판독]. 그래서 이 문서의 범위 밖이다.
 
@@ -50,24 +53,26 @@
 
 ## 2. 원본 동작 요약 (구현 기준)
 
+→ 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
+
 - **플레이어 자유 이동**: 로컬 1번(PlayerManager 슬롯 0)만 입력을 받는다. `PlayerManager::Start` @0x7100041060 이 슬롯 0 의 `ComFollowPlayer` 를 떼고 `ComPlayerUtil::StartInputControl` @0x710003f3f0 → `actor::ComActor::SetInputControlEnabled(true)` + `CallAction(Idle)` 을 부른다 [판독]. 이동은 main 엔진 `actor::ComActor`(레버 → 걷기/달리기·선회·중력·접지)가 맡는다. 레버는 카메라 기준이다(`Player::Player` @0x7100042980: `SetLeverCamera(CameraManager::GetCamera)`) [판독].
 - **다른 로컬 플레이어**: 모두 `ComFollowPlayer` 로 **바로 앞 슬롯을 따라 걷는다**(`SetupLocalPlayer` @0x7100040a90 가 모든 로컬 슬롯에 붙이고 Start 가 0번에서만 떼며 슬롯 i 의 대상을 슬롯 i−1 로 둔다) [판독]. **CPU(PlayerType 1)는 광장에 만들지 않는다**(`SequenceMainMenu::Setup` @0x7100059700 의 GetPlayerList 반복이 PlayerType≠1·IsLocal 만 SetupLocalPlayer, 정정 — plaza-C §6.10) [판독]. §3.3 규칙대로 움직인다.
-- **온라인 다른 사람**: `ComPlayerUtil::ReceiveMessageImpl` @0x710003fbd0 이 움직이는 동안(수평 속도² > 0.1) 0.2 s 마다 `SendRemotePlayerInfo`(위치·회전·캐릭터)를 보낸다. 받는 쪽 `PlayerManager::OnReceive` @0x71000421e0 은 거리가 5 를 넘으면 순간이동, 1 이하면 회전만 보간, 그 사이는 `ComActorAutoInterpolation` 으로 위치·회전을 보간한다 [판독].
-- **상호작용**: `SequenceMainMenu::MainImpl` @0x710005a170 이 매 프레임 1번 위치로 `MapManager::GetArea` @0x710001a434 를 부른다. z < 18 이고 −9 < x < 9 이면 기구 앞 영역이고, 아니면 로케이터 0 기준 각도 구간(70·110·160·200·245·290·330°)으로 영역을 나눈다. 영역이 바뀌면 `ComUiLocationTelop::SetArea` 로 장소 이름(`im_mn_balloon_name`·`im_mn_guide_name`·`im_mn02~06_name`·`im_mn_friend_name`)과 설명을 띄운다. 다가가기 판정은 거리 **< 3**(가까운 대상 2곳)과 **< 7**(상점 6곳)이다. 판정되면 대상 위 `ComUiPopGuide`(아이콘 1, 회전 −45°, 화면 위치 = 머리 높이 PCHeight×0.8 투영 + 70 px)가 뜨고, A 를 누르면 `SQ_SE_SYS_DECI` 와 함께 선택 처리로 간다. 영역 1 에서는 MC 키노피오가 플레이어를 바라본다(`LookAtEntity`) [판독]. 결과 값 ↔ 대상·영역 번호는 §6.10 ① 에서 어셈블리로 확정했다(정정: PopGuide 는 대상 위가 아니라 **1번 머리 위**에 뜬다 — 투영점이 1번 위치 + PCHeight×0.8) [판독].
+- **온라인 다른 사람**: `ComPlayerUtil::ReceiveMessageImpl` @0x710003fbd0 이 움직이는 동안(속도 4성분 제곱합 > 0.1) 0.2 s 마다 `SendRemotePlayerInfo`(위치·회전·캐릭터)를 보낸다. 받는 쪽 `PlayerManager::OnReceive` @0x71000421e0 은 거리가 5 를 넘으면 순간이동, 1 이하면 회전만 보간, 그 사이는 `ComActorAutoInterpolation` 으로 위치·회전을 보간한다 [판독].
+- **상호작용**: `SequenceMainMenu::MainImpl` @0x710005a170 이 매 프레임 1번 위치로 `MapManager::GetArea` @0x710001a434 를 부른다. z < 18 이고 −9 < x < 9 이면 기구 앞 영역이고, 아니면 로케이터 0 기준 각도 구간(70·110·160·200·245·290·330°)으로 영역을 나눈다. 오프라인·호스트는 매 프레임 `ComUiLocationTelop::SetArea` 로 장소 이름(`im_mn_balloon_name`·`im_mn_guide_name`·`im_mn02~06_name`·`im_mn_friend_name`)과 설명을 띄운다. 다가가기 판정은 거리 **< 3**(가까운 대상 2곳)과 **< 7**(상점 6곳)이다. 판정되면 1번 머리 위 `ComUiPopGuide`(아이콘 1, 회전 −45°, 화면 위치 = 1번 위치 + (0, PCHeight×0.8, 0) 투영, x에 +70 px)가 뜨고, A 를 누르면 `SQ_SE_SYS_DECI` 와 함께 선택 처리로 간다. 영역 1 에서는 MC 키노피오가 플레이어를 바라본다(`LookAtEntity`) [판독]. 결과 값 ↔ 대상·영역 번호와 세션 분기는 §6.10 ① [판독].
 - **기구 → 다음 장면**: 기구 선택 → `SequenceBalloon::TakeOffImpl` @0x71000470d0(안내 `ComUiGuide00`, 페이드) → `MapManager::PlayBalloonTakeOff`(`pos_balloon_takeoff` 500f + 카메라 `ev_balloon_start_cut00/01`, 이때 `CollisionMain` 을 끈다) → `CallSceneImpl` @0x7100047628: 오프라인이면 `RequestCallScene(GetScene())`(모드 선택 = menu01), 방이 있으면 `NetworkManager::PlaySession`(online.md 5.6) [판독].
-- **카메라**: `ComMenuCamera::FollowPlayerImpl` @0x7100003de0 은 CameraParam 의 MainMenu 값(목표 높이 +2.5, 거리 10, 각도 15°, fov 40, 추종 속도 0.01)과 MainBalloon 값(+8, 18, 0°, 65)을 섞는다. 섞는 비율 t = clamp((z − 9)/−9 + 1)이라 기구(원점) 쪽으로 갈수록 기구 카메라가 된다. 거리·각도·fov 를 선형 보간하고 sin·cos 로 위치를 정한다(fov 1~2000 클램프) [판독: 식 형태. 보간 대상 축이 z 인지는 [추정]].
+- **카메라**: `ComMenuCamera::FollowPlayerImpl` @0x7100003de0 은 CameraParam 의 MainMenu 값(목표 높이 +2.5, 거리 10, 각도 15°, fov 40, 추종 속도 0.01)과 MainBalloon 값(+8, 18, 0°, 65)을 섞는다. `GetArea(T)==0`일 때 카메라 목표 T의 z로 t = clamp((T.z − 9)/−9 + 1, 0, 1)을 구한다. 눈 = 목표 + (수평 단위 방향, y=sin(각))×거리(cos 곱 없음), 세로 fov를 보간하며 near=1·far=2000이다(§3.5) [판독].
 
 ## 3. 자유 이동·충돌 근거
 
-### 3.1 이동 규칙 — `actor::ComActor` 기본값 [판독: mg0912.md §4.6·§6, 판독자 D]
-menu00 은 속도 설정 함수를 부르지 않는다(`Set*Speed`·`SetTurning*` 호출 0, 데이터 json 에도 없음). 그래서 엔진 기본값을 쓴다고 본다. **걷기 2 / 달리기 6 m/s**, 레버 깊이 0.8 이상이면 달리기, 0 초과 0.8 미만이면 걷기, 0 이면 Idle(main LAB_7100012454). **땅 선회 360°/s, 각도 차가 85° 이상이면 빠른 선회 1100°/s**. 중력 9.8·배율 1, 낙하 최대 49. 접지 한계 `SetGroundedLimit(−2.5)` [판독: 0xc0200000]. `ComPlayerUtil` 은 접지되어 있으면 중력 배율 0, 공중이면 1 로 둔다 [판독].
+### 3.1 이동 규칙 — `actor::ComActor`·ActorParam [판독: mg0912.md §4.6·§6, §3.5]
+main `ComMatter`가 `common/data/actorparam.json` 값을 액터에 적용하고, menu00은 이를 다시 덮지 않는다(`Set*Speed`·`SetTurning*` 호출 0). **걷기 2 / 달리기 6 m/s**, 레버 깊이 0.8 이상이면 달리기, 0 초과 0.8 미만이면 걷기, 0 이면 Idle(main LAB_7100012454). **땅 선회 360°/s, 각도 차가 85° 이상이면 빠른 선회 1100°/s**. 중력 9.8·배율 1, 낙하 최대 49. 접지 한계 `SetGroundedLimit(−2.5)` [판독: 0xc0200000]. `ComPlayerUtil` 은 접지되어 있으면 중력 배율 0, 공중이면 1 로 둔다 [판독].
 캐릭터 13번(KOOPA)만 몸통 구 2개를 더 붙인다(반지름 1.0, 오프셋 y 1.2, 0.1). 발 IK 충돌 마스크도 있지만 웹은 생략한다.
 
 ### 3.2 충돌·지면 — **원본 데이터 있음**
 - MapStructure `CollisionMain` = `menu00_central_plaza_col.nbmap` → `72cbf…apx`. **PhysX 삼각 메시(BVH33) 정점 2,666·삼각형 4,440**, 범위 x −28.7~28.8, y −3.6~13.4, z −11.5~62.0. 월드 변환은 항등이다 [데이터]. 이미 `scene_apx.py` 로 obj 까지 바꿔 두었다: `extracted/converted/scene/apx/menu~menu00__menu__menu00__map__72cbf6799dc022826ea52ed8ed6d9c3f.obj`.
 - `CollisionFirst` = `start_ev_col` → `8fd1…apx`(40정점·76삼각, z 17.3~28.9). 첫 진입 이벤트 동안만 쓰는 막이다(`GetCollisionModel("CollisionFirst")`, menu00.nro.c:67425) [판독+추정].
 - 속성 attr = [0,4,4,0](06_scene_data §3.3 충돌 컴포넌트) [데이터]. 지면 위 y 는 약 −2.4(로케이터 높이와 같음).
-- 웹: obj 삼각형으로 stage3d `Collider` 를 구현한다. 지면 = 아래 방향 광선, 벽 = 캡슐(반지름은 캐릭터 data `bubble_radius` 0.9 [추정]) 대 삼각형 밀어내기·미끄러짐. PhysX 캐릭터 컨트롤러의 계단 높이·경사 한계는 [미확정]이고 근사한다.
+- 웹: obj 삼각형으로 stage3d `Collider` 를 구현한다. 지면 = 아래 방향 광선, 벽 = 캡슐(반지름은 캐릭터 data `bubble_radius` 0.9 [추정]) 대 삼각형 밀어내기·미끄러짐. 원본 충돌 형상·CCT 사용 여부와 계단 설정은 §7 [미확정]; 웹 STEP=0.5는 근사다.
 
 ### 3.3 따라가기(로컬 2~4P) — `ComFollowPlayer::ReceiveMessageImpl` @0x710003fec0 [판독]
 대상(앞 사람) 위치를 원형 버퍼에 쌓는다(직전 점과 0.6 넘게 떨어지면 새 점). 거리가 **2.6 을 넘으면** 쌓인 점들을 따라 `ComActorAutoInterpolation::Start`(점마다 `CastRay` 로 머리 +1.0 높이에서 가시성 확인), **2.0 미만이면 Stop**. 대상 = 바로 앞 슬롯(줄 서기, 확정). 세부(버퍼 5칸·광선 1.3 m·속도 6)는 §6.10 ②.
@@ -124,20 +129,9 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
   - **−/+ 는 카메라 줌이 아니다** [판독]: menu00 에 줌·카메라 파라미터 쓰기 코드가 없다(`zoom`·`SetCameraParam` 0, `GetCameraParam` 은 매 프레임 json 값을 이름으로 읽기만). `0x3000`(PLUS|MINUS) 입력은 `SequenceMainMenu::MainImpl` 에서 **세션 중일 때만** 파이버(@0x7100060a40 호스트 / @0x7100061360 손님) = `ComUiCardViewer::ClearCardData` → 멤버마다 `GetNetworkPlayerCardData`·`AddCardData` → `Start` = **멤버 카드(방 정보) 보기**다. 그 밖 0x3000 은 기구 출발 건너뛰기(TakeOffImpl)뿐. 캡처 10·11 오른쪽 위 "−/+" 는 이 안내(D 갈래 UI)다. 원본에서 확대·축소처럼 보이는 것은 **기구 앞 섞기**(목표 z 18 → 9 에서 fov 40 → 65, 길이 10 → 18, 높이 +2.5 → +8, 각 15° → 0°)이고, 오른쪽 스틱 등 사용자 카메라 조작은 없다. 높은 전경은 X "광장 보기"(OverView, overview.ts §6.14 ⑧).
   - 캡처 대조: **11.png**(기구 앞, 수평 시선) = t = 1: 내려보는 각 0 → 수평선이 화면 가운데(캡처 410/778 ≈ 0.53) ✓, 눈 (0, T.y+8, 27)·주시 (0, T.y+8, 9)·세로 fov 65 → 기구 바구니(지름 약 5 m, 거리 약 27 m) 화면 폭의 약 11% ✓. **10.png** = 1번(와리오)이 계단 앞 z ≈ 14.4 인 섞임 t ≈ 0.4: 각 9° → 내려보는 각 8.9°·fov 51 → 수평선 높이 화면 위에서 약 0.33(캡처 먼 언덕 ≈ 0.29) ✓ — 평소값(14.5°·fov 40)이면 0.145 로 맞지 않는다. 눈은 별 분수 중심 `camera00_pos`(분수 반지름 약 7.5, 충돌 원형 벽 z 25.49) 쪽 10~14 m 라 분수 별 조각상 뒤에서 기구 쪽을 본다 ✓. **6.png**(계단 앞 근경)도 같은 섞임 구간. 캡처는 가로가 잘리거나 크기가 바뀐 영상이라 화소 단위 대조는 [측정: 비율만].
 
-## 4. 막힘 요소 (아예 막히는 것만)
+## 4. 막힘 요소 (기존 판독 결과 재사용)
 
-| # | 후보 | 막히나 | 근거 | 대안·추가 판독 |
-|---|---|---|---|---|
-| ① | 충돌 데이터 해석 | **안 막힘** | [데이터] apx 삼각 메시 obj 변환 끝, nbmap 변환 끝 | Collider 구현만 남음 |
-| ② | 이동 속도·선회·모션 전이 | **안 막힘**(값 출처 하나 미확정) | [판독] menu00 은 엔진 기본값(§3.1). 걷기/달리기 문턱은 mg0912 판독 | 플레이어 엔티티를 만드는 main `bq::ComMatter`(MatterType 2)가 속도를 덮는지 **15분**. 레버 가감속(+0x1c0/0x1d0, 매 프레임 0 으로 되돌림) = 즉시 반영으로 근사 |
-| ③ | 지면 보정 함수 `SetGroundedAdjustFunc` 람다 | 조금 막힘 | [판독] Player 생성자가 람다를 넘김(내용 미판독) | **10분**. 전에는 광선 지면 y 로 바로 맞춤 |
-| ④ | `GetArea` 반환값(구간 → 영역 번호) | 조금 막힘 | [판독] 경계값은 보이지만 Ghidra 가 반환값을 잃음 | 어셈블리 **10분**. 전에는 각도 순서대로 1~8 로 [추정] |
-| ⑤ | 상호작용 대상 ↔ 결과 값(6 기구, 7~0xC 상점, 3 퀘스트) | 조금 막힘 | [판독] 거리 3/7 판정, 대상 위치 출처는 `MapManager::GetPosNodeLocater` 계열 | **15분**. 전에는 소켓 이름으로 짝지음(`attach_shop_*`·`balloon_pos`·`attach_quest_cart00`) [추정] |
-| ⑥ | NPC 11종 ↔ 배치 소켓·행동 | 안 막힘(짝만 [추정]) | [판독] `NpcManager::SetupMC/Kameck/CardShopStaff/DataHouseStaff/StampShopStaff`, 장식 NPC `MapManager::ActivateDecoNpcB/C/E`, Kinopio `Welcome/Walk/Talk/FragSwing/TakeOffIdle` | 짝 판독 **20분**. 전에는 MC = 키노피오(`mc_plaza_default_pos`), 하늘 = 파타파타 `air_npcNN` 경로, 땅 쌍 = 노코노코 배드민턴 등 |
-| ⑦ | 원본 네트워크 | 범위 밖 | online.md: 실제 서버 없음 | `FakeOnline` 에 가짜 원격 위치 스트림을 더한다(0.2 s 간격, §2 규칙) [설계] |
-| ⑧ | 스탬프(채팅 말풍선) `bq::UiStamp`(main) | 범위 결정 필요 | [판독] `ComUiPlayerStatusMgr` 의 `x_null_stamp` 칸에 `UiStamp::Add/In/Out/SetConstraint`, 데이터 `UiStampData`(텍스처·글자색·라벨) | 원본에 가장 가깝게 **구현 쪽으로 진행**하고 §8 에 남긴다. main UiStamp 판독 30분 + 구현 45분(D 갈래) |
-
-**결론**: 맵·이동·충돌·CPU 이동·NPC·카메라·기구 진입을 아예 막는 요소는 없다. 충돌은 원본 삼각 메시를 그대로 쓰고, 이동은 엔진 기본값과 판독한 규칙으로 맞춘다. 짧은 판독 4건(②③④⑤, 약 50분)과 NPC 짝(20분)은 구현 갈래 안에서 처리한다.
+초기 조사 후보 ② 속도 출처·③ 지면 보정은 §3.5, ④ 영역 번호·⑤ 결과 값·⑥ NPC 짝은 §6.10, ⑧ 스탬프·UI 부품은 §5.1에서 해소됐다. 공용 충돌은 `MeshCollider`, 실제 방은 HTTP + socket.io로 구현돼 있다(§5.2·online.md 9.5~9.6). 남은 원본 수치·그래픽 연결부는 §7, 웹 근사·미구현은 §8에 적는다.
 
 ## 5. 광장 2D UI (사용자 추가 범위)
 
@@ -145,11 +139,11 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 | UI | 원본 | 레이아웃·라벨 | 웹 재사용 / 새로 |
 |---|---|---|---|
-| **하단 파티 줄** | `ComUiPlayerStatusMgr` @0x71000806c0·`SetPlayers` @0x7100080a30, 칸마다 `ComUiPlayerStatus`(`SetCharacterId` → `x_face`) / 빈 칸 `ComUiPlayerStatusEmpty` | `menu/menu_common/layout.lyt` 의 `mncom_base_status_00`(목록 `x_null_list`, 스탬프 `x_null_stamp`) + 부품 `mncom_status_00/01`, 손님 이름 `im_guest00_name` [판독][데이터] | **새로**: mncom 레이아웃 덤프가 아직 없다(partyrule 시험이 "덤프 없는 mncom_* 건너뜀") → `ui_lyt.py` 로 menu_common 덤프부터. 얼굴·이름 칸은 charselect·online 의 `sys_username`·`sys_face` 세터 규칙을 그대로 쓴다 |
+| **하단 파티 줄** | `ComUiPlayerStatusMgr` @0x71000806c0·`SetPlayers` @0x7100080a30, 칸마다 `ComUiPlayerStatus`(`SetCharacterId` → `x_face`) / 빈 칸 `ComUiPlayerStatusEmpty` | `menu/menu_common/layout.lyt` 의 `mncom_base_status_00`(목록 `x_null_list`, 스탬프 `x_null_stamp`) + 부품 `mncom_status_00/01`, 손님 이름 `im_guest00_name` [판독][데이터] | **구현**: menu_common 덤프·얼굴·이름 세터는 §5.1 ①. charselect·online의 `sys_username`·`sys_face` 규칙 재사용 |
 | **파티 입장** | 온라인 참가 → `UiNoticeModule::RegisterNotice`·`SetJoinPlayerName`(18·3회 호출) + 3D 캐릭터 등장(`SetupLocalPlayer`/원격 `Player` 생성) + 하단 줄 `SetPlayers` 갱신 | `sys_notice_00/01`, `Notice_JoinSession` | **재사용**: online `widgets.ts` 알림(online.md 9.3 정정: `x_pict` 숨김·`x_text_00`, in → 2 s → out, `SQ_SE_SYS_NOTICE`) |
 | **상단 알림·대기 텔롭** | `UiNoticeModule`(상단 알림) + `ComUiNetLobbySessionStatus`(대기 N/4 ↔ 출발 가능) | `mn00_base_lobby_00`/`mn00_tlp_lobby_00` | **재사용**: `web/script/shell/online/`(텔롭·알림·안내 글자). 광장 장면 위에 얹기만 |
-| 장소 텔롭 | `ComUiLocationTelop` @0x7100073740/`SetArea` @0x7100073ac8 | `menu/menu00/layout.lyt`(부품 [추정] `mn00_text_plaza_00`), in/normal/out, `x_icon_new`, 설명 `x_null_text_mess` | **새로**(작음). 메시지 라벨 §2 |
-| 다가가기 안내 | `bq::ComUiPopGuide`(main) | bq Parts [미확정: 부품 이름] | **새로**: 위치 규칙은 §2. 그림은 mgmcommon 안내 부품으로 근사 |
+| 장소 텔롭 | `ComUiLocationTelop` @0x7100073740/`SetArea` @0x7100073ac8 | `menu/menu00/layout.lyt`의 `mn00_text_plaza_00` [판독 §5.1 ③], in/normal/out, `x_icon_new`, 설명 `x_null_text_mess` | **새로**(작음). 메시지 라벨 §2 |
+| 다가가기 안내 | `bq::ComUiPopGuide`(main) | bq Parts `sys_guide_pop_00` [판독 §5.1 ④] | **새로**: 위치 규칙은 §2. 그림은 원본 `sys_guide_pop_00` |
 | 하단 버튼 안내 | `ComUiGuide00`·GuideTop/Bottom/Online | `sys_guide_*`(charselect 와 같음) | **재사용**: mgmcommon 안내 |
 | 친구 매치 메뉴·방 목록·대화상자 | online.md 그대로 | | **재사용**: online 모듈 + mgmcommon `dialogBox.ts` |
 
@@ -172,11 +166,11 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 **③ 장소 텔롭 `ComUiLocationTelop`** [판독 @0x7100073740·SetArea @0x7100073ac8, 어셈블리 문자열]: 레이아웃 `mn00_text_plaza_00`(menu00 lyt, in/normal/out, 그리기 순위 0x400). 제목 `x_text_title` = `mn00_mainMenu_ui_name`(Text0 삽입 = 이름 라벨) 후 `A_alignment_00` 정렬, 설명 `x_text_mess` = `mn00_mainMenu_ui_detail`(Text0 = 설명 라벨), `SetVisibleDetail` = `x_null_text_mess`. AREA → 이름/설명: 0 기구 `im_mn_balloon_*`, 1 `im_mn_guide_*`, 2~6 `im_mn02~06_*`(스탬프 숍·카드 숍·뮤직 숍·데이터 하우스·랭킹), 7 `im_mn_friend_*`, 8 `im_mode19_name`/`im_mn_quest_detail`, −1 = 아무것도 안 함. `x_icon_new` = 2~6 의 새 항목 여부(저장 데이터) — 웹은 저장이 없어 숨김.
 
-**④ 다가가기 안내 `bq::ComUiPopGuide`** [판독 main @0x710027a194~]: 레이아웃 **`sys_guide_pop_00`**(bq Parts, `x_baloon`·`x_icon_btn`=sys_icon_btn_00, 순위 0x8800). SetIcon(1) = `x_icon_btn_right`(A 위치)만 보임, SetPopRotateZ(−45) = `x_baloon` 회전 −45°·`x_icon_btn` +45°. In = "in"(상태 1) → 끝나면 "normal" + `x_icon_btn` "normal"(2), Out = "out"(3) → 끝나면 숨김(0). 위치(MainImpl) = 대상 머리(PCHeight×0.8) 뷰포트 투영 → 레이아웃 좌표 (x·960 + 70, y·540).
+**④ 다가가기 안내 `bq::ComUiPopGuide`** [판독 main @0x710027a194~]: 레이아웃 **`sys_guide_pop_00`**(bq Parts, `x_baloon`·`x_icon_btn`=sys_icon_btn_00, 순위 0x8800). SetIcon(1) = `x_icon_btn_right`(A 위치)만 보임, SetPopRotateZ(−45) = `x_baloon` 회전 −45°·`x_icon_btn` +45°. In = "in"(상태 1) → 끝나면 "normal" + `x_icon_btn` "normal"(2), Out = "out"(3) → 끝나면 숨김(0). 위치(MainImpl) = 1번 위치 + (0, PCHeight×0.8, 0) 뷰포트 투영 → 레이아웃 좌표 (x·960 + 70, y·540).
 
 **⑤ 온라인 안내 `ComUiOnlineGuide`**(UiGuideOnline, `mn00_friend_guide_00`): `x_text_btn` = `mn01_mainMenu_ctrl_friend_btn`(E001 = Y), `x_text_friend` = "친구", `x_text_guide` = `mn00_mainMenu_ctrl_look`("X 광장 보기"), In 때 `null_friend`·`x_btn` 보임 = 사람 수 < 4. 세션 중이면 Out [판독 MainImpl].
 
-**⑥ 위치 동기** [판독 `ComPlayerUtil::ReceiveMessageImpl` @0x710003fbd0·`SendRemotePlayerInfo` @0x710003fd64·`PlayerManager::OnReceive` @0x71000421e0]: 로컬 슬롯 < 4 만, 타이머 ≤ 0 이고 **속도 벡터 제곱합(4성분) > 0.1** 이면 보내고 타이머 = 0.2, 아니면 타이머 −= Δt(멈춰 있으면 타이머 0 유지 → 다시 움직이는 순간 바로 보냄). 보내는 값 = 스테이션·슬롯·캐릭터·위치·회전(쿼터니언), 세션 연결·스테이션 ≥ 2 일 때만. 받는 쪽: 처음 보는 (스테이션, 슬롯) 이면 그 캐릭터로 Player 를 만들고 위치·회전을 바로 놓음(첫 표시 플래그면 기본 소켓). 그 뒤 거리 > 5 순간이동, ≤ 1 회전만 `ComActorAutoInterpolation`, 사이 = 위치·회전 보간. 보간 시간은 [미확정] → 웹은 다음 수신 간격 0.2 s 동안 선형(위치)·구면(회전) [근사].
+**⑥ 위치 동기** [판독 `ComPlayerUtil::ReceiveMessageImpl` @0x710003fbd0·`SendRemotePlayerInfo` @0x710003fd64·`PlayerManager::OnReceive` @0x71000421e0]: 로컬 슬롯 < 4 만, 타이머 ≤ 0 이고 **속도 벡터 제곱합(4성분) > 0.1** 이면 보내고 타이머 = 0.2, 아니면 타이머 −= Δt(멈춰 있으면 타이머 0 유지 → 다시 움직이는 순간 바로 보냄). 보내는 값 = 스테이션·슬롯·캐릭터·위치·회전(쿼터니언), 세션 연결·스테이션 ≥ 2 일 때만. 받는 쪽: 처음 보는 (스테이션, 슬롯) 이면 그 캐릭터로 Player 를 만들고 위치·회전을 바로 놓음(첫 표시 플래그면 기본 소켓). 그 뒤 거리 > 5 순간이동, ≤ 1 회전만 `ComActorAutoInterpolation`, 사이 = 위치·회전 보간. **0.2 s는 송신 주기이며 원본 보간 시간이 아니다** [판독]. 수신 분기의 PLT(menu00 @0x710004275c~0x7100042804, GOT +0x1d9710/+0x1d9718)는 `Start(Vector3f,Quaternion)` / `Start(Quaternion)`이다. main @0x710002023c·@0x7100020628은 목표를 +0x40/+0x50에 저장하고 위치/회전 플래그 +0x60/+0x61을 켠다; 시간 인자는 없다. 위치 진행은 §6.10 ②의 이동 속도 6과 도착 판정, 회전은 §3.5의 액터 선회 규칙을 재사용한다. 웹은 `ui/net.ts RemoteActor`가 0.2 s 선형·slerp로 매 틱 목표를 만들고(`ui/ui.ts:389~391`), `follow.ts`가 그 목표를 다시 `PlazaMover`로 따라간다(이동 속도에 따라 Walk/Run, 지면 보정). **웹의 두 단계 보간은 [근사]**다.
 
 **웹 모듈(D)** `web/script/shell/plaza/ui/`: `status.ts`(①, 순수 상태) · `stamp.ts`(②, 순수 상태) · `telop.ts`(③④⑤ 순수 상태) · `net.ts`(⑥ 보내기 타이머·받기 보간, 순수) · `view.ts`(그리기: 투명 WebGL 캔버스 + charselect Render2D, online `OnlineScreen` 을 같은 캔버스에 얹음) · `part.ts`(PlazaPart `createPlazaUi`) · `index.ts`. 에셋 `web/assets/plaza/ui/plaza_ui.json`(+tex/font/sound) ← `web/tools/analysis/plaza_ui_assets.py`(online_web_assets.py 방식). 갈래 신호(SHARED 합의): D 가 듣는 것 `interact:telop` {area, visible, detail}·`interact:pop` {x, y, visible}(레이아웃 좌표)·`ui:mainLayout` boolean, D 가 내는 것 `ui:friendMenu` boolean(친구 매치 메뉴 열림 = 이동 멈춤)·`ui:stampList` {slot, open}·`net:remote` {station, slot, chara, pos, quat, mode}(원격 표시용 목표, C 가 그림).
 
@@ -218,7 +212,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | 2 | 무대: 맵 로딩·루프 애니(바다·분수·상점·하늘 NPC 경로·갈매기·풍선)·환경, `?plaza=1` 페이지 골격 | stage3d.md | 45분 |
 | 3 | Collider(지면 광선 + 캡슐 미끄러짐) + `test_stage3d` | §3.2 | 45분 |
 | 4 | 플레이어 이동: 레버(카메라 기준) → 걷기/달리기·선회·중력·접지, co_idle/walk/run 전이 + 판독 ②③ | §3.1, mg0912.md §4.6·§6, `plaza_menu00_world.c` | 60분 |
-| 5 | 추종 카메라(CameraParam 섞기) + 따라가기(CPU·2~4P) | §2·§3.3·§3.4 | 45분 |
+| 5 | 추종 카메라(CameraParam 섞기) + 따라가기(로컬 사람 2~4P) | §2·§3.3·§3.4 | 45분 |
 | 6 | NPC 배치·대기 애니(11종, MC 시선) + 판독 ⑥ | §1.2, `plaza_menu00_npc_seq.c` | 60분 |
 | 7 | 상호작용: 영역·거리 판정·PopGuide·장소 텔롭 + 판독 ④⑤ | §2, `plaza_menu00_npc_seq.c`(MainImpl)·`plaza_menu00_ui.c` | 45분 |
 | 8 | 기구 출발 연출(카메라 cut00/01·takeoff 500f·충돌 끔) → 모드 메뉴·프리 플레이 연결 | §2 | 45분 |
@@ -241,12 +235,12 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 임계 경로: A(2.5시간) → 통합 10(45분). B·C·D 는 A 의 manifest 계약만 받으면 같이 간다. **병렬 약 3.5시간**.
 
 ### 6.4 마지막 확인 = index.html 헤드리스 촬영 (tools/shot_plaza.ts, 1회)
-`index.html?plaza=1&fast=…` 로 ① 맵 로딩 직후 전경, ② 1번 레버 이동(걷기·달리기 모션), ③ CPU 2~4P 따라가기, ④ 상점 앞 PopGuide·장소 텔롭, ⑤ 가짜 온라인 입장 → 상단 알림 + 하단 파티 줄 + 대기 텔롭, ⑥ 기구 접근(카메라 섞임) → 출발 컷 → 모드 메뉴. 콘솔 오류 0. 원본 실행과의 수치 대조는 `test_plaza.ts` 에서 먼저 끝낸다(헤드리스는 마지막).
+`index.html?plaza=1&fast=…` 로 ① 맵 로딩 직후 전경, ② 1번 레버 이동(걷기·달리기 모션), ③ 로컬 사람 2~4P 따라가기, ④ 상점 앞 PopGuide·장소 텔롭, ⑤ 가짜 온라인 입장 → 상단 알림 + 하단 파티 줄 + 대기 텔롭, ⑥ 기구 접근(카메라 섞임) → 출발 컷 → 모드 메뉴. 콘솔 오류 0. `test_plaza.ts`는 판독값을 이용한 재구현 시험이며 원본 실행 확인이 아니다(헤드리스는 웹 촬영).
 
 ### 6.5 A 계약 — `web/script/shell/plaza/` (plaza-A, 2026-10-08) [설계]
 
 - 파일: `types.ts`(계약)·`world.ts`(무대)·`deco.ts`(장식 규칙 §6.6)·`scene.ts`(실행기 `startPlaza`)·`parts.ts`(부품 목록)·`index.ts`. 페이지 `web/script/plaza_page.ts`.
-- **무대 로드 완료** = `createPlazaWorld()`(scene.ts `startPlaza` 안)가 돌려준 시점: 보이는 모델 전부·충돌·기본 루프 애니(fskb 클립·fmab)·부착이 끝난 상태.
+- **현재 무대 로드 완료** = `createPlazaWorld()` 반환 시 충돌·P0 모델/부착/GPU 준비 완료. 나머지는 관리자 등급에 따라 뒤에 나타나고, 애니는 무대 시작 프레임으로 맞춘다(`world.ts`, [loader_manager.md](../engine/loader_manager.md) §11.4·§14.9 재사용). 전체 모델을 기다리는 옛 계약은 `loadMode:'seq'` 경로.
 - **부품**: 갈래마다 `PlazaPartFactory = (ctx) => Promise<PlazaPart>` 를 자기 파일에서 내보내고 `parts.ts` 의 `PLAZA_PARTS` 에 자기 줄만 더한다(순서 = update 순서: B player·camera → C follow·npc·interact·balloon → D ui). `PlazaPart{ name, update?(df, frame), afterRender?(), resize?(), debug?(), dispose?() }`.
 - **ctx**(`PlazaContext`): `world`, `players`(slot·pcNN·isCom·local·name), `actors`(B·C 가 넣는 움직이는 사람 목록: 발 위치·yaw·속도·모션·키), `pad(slot)`(NPAD 비트 + 스틱 −1..1), `sound{se,bgm}`, `overlay`(2D 겹), `assetUrl(web/assets 기준)`, `params`, `on/emit`(갈래 사이 사건 `'<갈래>:<사건>'`), `exit({k:'balloon'|'session'|'cancel'})`.
 - **world**(`PlazaWorld`): `stage`(Stage3D), `collider`(원본 CollisionMain), `cameraParam`(CameraParam.json), `layout`(MapStructure 111항목), `deco`, `entry(key)`, `socket(name)`, `pcSocket(kind,p,pc)` = `pc_plaza_<kind>_pos_p<p>_pc<NN>`(MapManager::GetAttachSocketPc* 이름 규칙 [판독]), `play(key, clip, opts)`, `setCollisionEnabled('CollisionMain', on)`(PlayBalloonTakeOff 가 끔 [판독 @0x710001bcd8]), `setDeco()`, `addUpdater()`.
@@ -269,11 +263,13 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 - 나오는 것: `model/*.glb`(MapStructure model 항목 94종: menu00 92 + 기구·퀘스트 받침 2, 하늘 `menu00_sky.glb`), `tex/*`(그 모델이 쓰는 이미지 + 재질 색인 텍스처 + env 큐브·LUT), `anim/*.json`(fmab·env fmab·fsnb), `collision.json`(CollisionMain 2,666/4,440 + CollisionFirst 40/76, obj 그대로), `manifest.json`(StageManifest + `plaza{layout, cameraParam, collision, defaultAnims}` + `env`).
 - **텍스처**: KTX2 도구(basisu)가 없어 PNG/HDR 그대로. 최대 변 1024 로 줄인다(해당 1장, 2048² → 1024² [근사]). 그 밖은 원본 해상도. 목표 = 처음 보이는 세트(장식 기본) 로드 ≤ 100 MB, 로컬 서버 15 s 안 [설계]. 실측은 §6.12.
 - **env**(07 규칙 재사용): 빛 방향 = overwrite 회전 (−50°, −40°, 0°) → 빛 쪽 (−0.4132, 0.7660, 0.4924) [재구현 계산, mg1801 검산 일치], 색 (1.3338, 1.2702, 1.0658) × π [근사: 07 관례]. 그림자 캐스케이드 3·near 0.1·far 100·offset 1000 → 단일 맵 근사(07 §9.4). IBL: env 샘플러 순서 [_a0.._a2,_a5.._a7] = [menu01_ibl_rad, menu01_ibl_irr, menu01_fog, windnoise00, menu00_plaza_rad, menu00_plaza_irr] → 공통·캐릭터 확산 = `menu00_plaza_irr`, 반사 = `menu00_plaza_rad`, mip 안개 큐브 = `menu01_ibl_irr`, `env_sg_utility_texture2d0` = `windnoise00`(셰이더 그래프 바람) [데이터]. mip 안개 200~800·세기 0.8, 색 = 안개 큐브 평균 [근사: three 선형 Fog, 세기는 끝 거리 늘림]. `env_utility_parameter0/1` = (6,0.7,2,0.125)/(3.5,0.8,−66,0.01), `menu00_env00.fmab`(900f 루프)가 parameter1 .x 5~10·.y 0~2·.w 0.0025~0.01 을 움직인다 [데이터] → 셰이더 그래프 유니폼으로 넘긴다(§6.8).
-- **포스트**(`menu00_post`): 톤맵 종류 **3**, exposure 0.99·offset −0.01·scale 1, 3D LUT `menu00_lut_00`(16³, 256×16 띠) 색 보정 켜짐, 블룸 threshold 0.7·intensity 3·spread 2·clip 5, FXAA 0.1666/0.08333/0.75, DOF·모션 블러 끔, utility_parameter0 (0.75,1,1,1) [데이터]. 웹 = mg1801 post.ts 순서(HDR → 블룸 → 톤맵 → LUT → FXAA)를 stage3d 로 옮겨 쓴다. 톤맵 곡선 종류 3 은 posteffect_amalgam0.bnsh 미판독이라 [근사](mg1801 과 같은 Neutral), LUT 는 sRGB 출력 뒤 3D 조회 [추정: 순서].
+- **포스트**(`menu00_post`): 톤맵 종류 **3**, exposure 0.99·offset −0.01·scale 1, 3D LUT `menu00_lut_00`(16³, 256×16 띠) 색 보정 켜짐, 블룸 threshold 0.7·intensity 3·spread 2·clip 5, FXAA 0.1666/0.08333/0.75, DOF·모션 블러 끔, utility_parameter0 (0.75,1,1,1) [데이터]. 원본 합성·톤맵 3·블룸·LUT는 §6.13에서 판독 완료. 웹 `stage3d/post.ts`는 그 식을 쓰며 FXAA만 마지막 LDR 단계에 둔다 [근사].
 - **하늘**(`menu00_sky`, container/skybox, 셰이더 그래프 skybox 2824417686, 텍스처 `menu00_sky` 1000×250 Wrap/Mirror, param0 (−0.1, 0.05, 1, 1)): 카메라를 따라가는 상자로 그린다. 그래프 식은 §6.8 판독 대상.
 - **점광원** `menu00_shop_collection_pointlight00`(반지름 2.8·core 1.35·색 (2.5,1.767,0.479), 위치 (−16.26, 0.50, 49.56)) → three PointLight(distance 2.8) [근사: 감쇠식].
 - **맵 애니 전부**: fskb(맵 모델 클립, glb 에 구움) + fmab(+env)를 원본 프레임 시간축으로 돈다. 표준 재질의 fmab 값(`texture_srt0..3`, 재질 색 등)은 stage3d 재질 애니가 프레임마다 재질에 넣는다; 셰이더 그래프 재질의 sg_utility 값은 그래프 재질 유니폼으로 [설계].
-- **충돌**: `collision.json` → stage3d `MeshCollider`(XZ 2 m 격자). 지면 = 수직선 교점 중 발 + STEP(0.5) 아래 가장 높은 걸을 수 있는 면(법선 y ≥ cos 45°), 벽 = 원기둥(반지름·키) 대 가파른 면 수평 밀어내기 3회 반복. STEP·경사 45° 는 PhysX 컨트롤러 값 미판독이라 [근사].
+- **충돌**: `collision.json` → stage3d `MeshCollider`(XZ 2 m 격자). 지면 = 수직선 교점 중 발 + STEP(0.5) 아래 가장 높은 위향 면(n.y > 0.05, 가파른 챌판도 허용). 벽 = |n.y| < cos 45°인 면에 반구 아랫면을 적용해 수평 밀어내기 3회 반복(§6.14 #13). STEP·벽 문턱은 웹 근사이며 원본 PhysX 컨트롤러 기본값으로 확정한 것이 아니다.
+
+- **음악 상점 박자** [판독·데이터]: `MapManager::Create` menu00 @0x7100008fbc~0x7100008fd4가 `ShopMusic`에 별칭 `beat` → `menu/menu00/model/menu00_shop_music`를 `AddAnim`으로 등록한다(기존 `plaza_menu00_c_dis.c`). `SoundManager::Update` @0x710007051c는 유효 BGM 핸들의 `GetBeatCount(0)` 하위 바이트를 signed 값으로 비교/저장하고, 값이 바뀌며 bit7=0일 때 `PlayMusicHouseBeat` @0x7100020148를 호출한다. 이 함수의 MapModel 가상 +0x1b0은 `ModelBase::PlayAnimForce` @0x7100027300이며 인자는 `"beat"`; 속도 변경이 아니라 같은 모션도 다시 시작하는 경로다(모션 슬롯은 09_character §6.4 재사용). 본체 fskb=600f·loop=true, fmab=600f·loop=false, 홀로그램 fmab=600f·loop=true [데이터: glb extras·변환 anim JSON]. 웹 `manifest.plaza.defaultAnims.ShopMusic`은 둘 다 loop=true·speed=1로 계속 돌리며 박자 재시작 연결이 없다 [근사]. BGM 라벨·3D 층은 04_sound §12.14 참조.
 
 ### 6.8 셰이더 그래프 재질 판독 (plaza-A-sg1·sg2 보조 판독) [판독: SASS]
 - 광장 모델 재질 273개 중 `static_opt_shader_graph = 1` 149개, 고유 재질 70개(모델별 옵션 변형 포함 75항목) [데이터]. 셰이더 팩 `_menu/menu00.bnbshpk`·`menu_common.bnbshpk` → `bnbshpk_split.py` → `bfsha_dump` → 재질별 프로그램(forward_plus 62 + 하늘 container p0) → `web/tools/analysis/plaza_graph_sass.py`(sass_dis 경로 래퍼) → `analysis/mat/plaza/sass/*.txt`. 식 = `analysis/mat/plaza_graph_1.json`(34재질+하늘+shading_type 0/2, sg1)·`plaza_graph_2.json`(36재질, sg2), 줄 번호 근거 포함.
@@ -426,26 +422,28 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 ## 7. 미확정
 
+속도·빈 지면 보정 함수·카메라 섞기·앞 슬롯 따라가기·영역/결과·NPC 배치·UI 부품 이름은 기존 판독으로 확정(§3.5·§5.1·§6.10). 음악 상점 박자·광장 보기 안내·원격 이동 연결도 각 기존 절에 반영했다. 공통 엔진 미확정은 다시 분석하지 않았다.
+
 | 항목 | 필요한 근거 |
 |---|---|
-| ~~플레이어 ComActor 속도를 main `bq::ComMatter`(MatterType 2)가 덮는지~~ → 덮지만 땅 값은 같음(§3.5 ②, plaza-B) | 해결 |
-| 레버 카메라 변환(ComActorPad +0xc0 가상함수 +0x30)·`Util::InterpolateRot` 세부 | main @0x710001e8b8 의 +0xc0 대상, @0x71000367f0 (B 는 수평 앞·오른쪽 회전과 각속도 상한으로 진행) |
-| 플레이어 맵 충돌 형상(반지름) | ComMatter 가 만드는 HitShape (B 는 characterlist `bubble_radius` [추정]) |
-| ~~따라가기 대상(1번인지 앞 슬롯인지)~~ → 바로 앞 슬롯(§6.10 ②, plaza-C) | 해결 |
-| ~~GetArea 반환 번호, 상호작용 결과 값 ↔ 대상~~ → §6.10 ① 어셈블리로 확정(plaza-C) | 해결 |
-| ~~NPC ↔ 소켓 ↔ 행동 짝, 장식 NPC B/C/E 조건~~ → §6.10 ③(MapManager::Create 어셈블리, IsDisplay 0x3F/0x40/0x41, plaza-C) | 해결 |
-| ~~카메라 섞기 축(z), FollowSpeed 0.01 적용 식~~ → §3.5 어셈블리 판독으로 해결(plaza-B) | 해결 |
-| PhysX 컨트롤러 계단·경사 한계 | main 액터 충돌 쪽 (근사로 진행) |
-| `ComUiPopGuide`·장소 텔롭 부품 이름 | main PopGuide, menu00 layout 덤프 대조 |
+| 레버 카메라 변환·`Util::InterpolateRot` | main @0x710001e8b8의 ComActorPad +0xc0 객체 생성/vtable +0x30, @0x71000367f0의 각속도 적용식. 웹 수평 앞·오른쪽 변환은 §3.5의 [추정] 유지 |
+| 추종식의 Camera +0xa0 의미 | §3.5 명령에서 읽는 x/z 성분은 확정. 공통 Camera 월드 행렬 설정 함수에서 +0xa0가 z축인지 확인해야 “지난 프레임 카메라 앞” 해석을 [판독]으로 올릴 수 있음 |
+| 플레이어 기본 충돌 형상·계단 | `ComMatter` MatterType 2 설정(main `FUN_71002b2e00`)의 HitShape 생성→`SetSourceCapsule/Sphere` 인자·층과 `DefaultAdjustCharacterVsMap` 연결. `bubble_radius`가 그 반지름인지, CCT가 실제 쓰이는지부터 필요; 웹 STEP=0.5를 원본 stepOffset으로 취급하지 않음 |
+| 새 저장의 장식·보드 배경 초기값 | main `DecoItemData` @0x710023aaa0 계열의 새 저장 초기화 호출자/초기 저장 바이트. `IsDefault` 마스크와 `ApplyBgBd`는 확정이지만 display 6개·UnlockBd=0 초기화는 §6.6 [추정] |
+| 그래프 UBO·기본 텍스처 | §6.8의 Layer[0x120/0x130]·World[0x4/0xe0/0xf0]에 쓰는 CPU 바인딩, 미할당 sampler의 실제 대체 텍스처가 필요. env 값만으로 의미를 확정하지 않음 |
+| 공용 포스트·반사 정규화 | §6.13 first_down sampler 6의 바인딩(main `FUN_71000acf00` 패스·`FUN_710007741c` UBO), `specular_ibl_normalization_enable`의 반사 UBO 생성식이 필요. 기존 셰이더 식 재판독은 하지 않음 |
+| 스탬프·파티 줄 | §5.1의 정렬 `FUN_7100084460` 비교 키, 목록 입력 `FUN_710035c9b4`의 B 분기, 결정 콜백 +0x3f0 대상, `SQ_SE_STAMP_PC` 로컬 변수 2 소비처가 필요. 글리프/레이아웃 존재만으로 입력 처리까지 확정하지 않음 |
+| NPC 자동 부착·재질 번호 변경 | NPC용 `ComMatter` 자동 부착 조건과 해당 액터의 `material_utility_integer_parameter0` 쓰기 경로. 광장 코드의 명시적 부착은 §6.10 ③ 확정; 자동 부착 없음은 아직 [추정] |
+| 물기둥 패스·파라미터 | §6.14 #14c의 Layer[0x4a4/0x4d0] 공급값·capture 패스 순서·스텐실 상태. **사용자 결정으로 물기둥 아랫부분 추가 판독·근사는 중단**; 현재 식을 유지 |
 
 ## 8. 사용자 확인 필요 (진행은 원본 쪽으로 이미 정함 — 갈래들이 여기에 덧붙인다)
 
 | 항목 | 정한 것 | 이유·근거 |
 |---|---|---|
-| 스탬프(채팅 말풍선) 구현 여부 | **구현한다**(하단 파티 줄 `x_null_stamp`, 가짜 온라인 멤버가 보냄) | 원본 하단 UI 의 일부 [판독 §4 ⑧]. 실제 네트워크가 없으니 보내는 쪽은 가짜 어댑터 [설계] |
+| 스탬프(채팅 말풍선) 구현 여부 | 하단 파티 줄 `x_null_stamp`에 구현, 실제 방의 원격 스탬프와 FakeOnline 시험값 지원 | 원본 하단 UI 규칙 §5.1 ② [판독]. 실제 방 서버는 §5.2·online.md 9.5~9.6 |
 | 장식 세트 | **111항목 전부 원본 규칙(ApplyDecoItem·DecoItemData·ApplyBgBd)으로 구현**, 처음 값 = 기본 6개(`_Dft`, 풍선 2개 포함 모델 7) display·보드 배경 모두 잠김. `?deco=all` 등 시험값 | §6.6 [판독]. 새 저장 초기화 함수는 못 찾아 처음 값만 [추정] (조정자 지시로 "기본 세트만" 결정을 고침) |
 | 퀘스트·상점·데이터하우스·음악·랭킹 선택 | 다가가기 안내·텔롭까지만 하고, 들어가는 화면은 없음(A 는 무시) | 사용자가 정한 범위 밖(이벤트·NPC 대화) |
-| 첫 진입 연출(`SequenceFront`·`CollisionFirst`·intro 카메라) | 건너뛰고 `char_start_pos` 에서 바로 조작 | 범위 밖 이벤트. 막(`CollisionFirst`)도 쓰지 않음 |
+| 첫 진입 연출(`SequenceFront`·`CollisionFirst`·intro 카메라) | 건너뛰고 `pc_plaza_balloon_pos_p<사람 수>_pc00`에서 바로 조작(§3.5) | 범위 밖 이벤트. 막(`CollisionFirst`)도 쓰지 않음 |
 | 진입 경로 | `index.html?plaza=1` → 광장 → 기구 → 모드 메뉴 → 미니게임 항구 프리 플레이 목록 → 게임 | 원본 흐름(기구 → menu01 모드 선택). menu01 3D 섬 월드는 기존 modeselect 2D 화면(임시 배경)으로 대신 [근사] |
 | VFX(분수·장식 FX) | 후순위(0x43 분수 별 FX 포함) | 막힘 아님, 용량·시간 |
 | 셰이더 그래프 재질 | **판독해서 식대로 구현**(§6.8), 못 끝낸 것만 [근사] 목록 | 조정자 지시(원본 일치 우선) |
@@ -460,18 +458,18 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (A) 물기둥 아랫부분 | 판독식 그대로(위·아래 같은 식, 정점색 g 로 잡음만 섞음) — 원본 6/7.png 처럼 아랫부분이 거의 안 보이게 하는 근사는 넣지 않음 | 원본 화면과 다름(#14c 남은 차이). 식 밖 원인(스텐실·캡처 LOD 등) 미확정. **사용자 결정(2026-10-08): 현재 상태로 확정, 추가 근사·판독 안 함** |
 | ~~(A) fmab·fskb 커브 반복(Repeat)~~ → 해결 | 변환기 `Curves.cs` 를 원본 wrap 규칙(Repeat·Mirror)으로 고치고 광장 결함 파일을 모두 다시 만듦: fmab 6개(물기둥·중앙 분수 물·무대 물·바다·바다 op·광장 본체, Repeat 커브 32개)와 물기둥 glb(fskb — glb JSON·메타는 같고 애니 접근자 304 바이트만 바뀜). `extracted/converted/graphics/menu00` 사본·`assets-dist`(build_assets 증분) 갱신 | 상태 시험 test_plaza_world 10절: 원본 커브 덤프의 Repeat 32개가 구간 끝 뒤에도 주기대로 반복, 바다·중앙 분수가 한 주기 뒤에도 값이 변함 [측정: 다시 만들기 전 끝값 고정 트랙 중앙 분수 16/18·무대 물 8/13·바다 1/2]. 광장 밖 같은 결함(사용자 결정 2026-10-08 — 전부 다시 만듦): menu_common `menu_cmn_balloon00.fmab`(3)·`menu_cmn_quest_platform00_ev_quest_start_cut02.fskb`(1), mgm00 `mgm04_result00_banana00/01_shake00a.fskb`(63씩), mgm01 `mgm01_sea00.fmab`(4), mgmet `mgmet_map01.fskb`(8)·`mgmet_sea00.fmab`(1)·`mgmet_sea00_op_c01.fmab`(1)·`mgmet_vehicle00.fskb`(7), mg1801 `mg1801_water00.fmab`(2) — 괄호 = 해당 커브 수. 캐릭터 모션 fskb 는 표본 300개에 0 [데이터]. 다시 만든 곳: `menu_cmn_balloon00.fmab`·`menu_cmn_quest_platform00.glb` → extracted menu_common + web plaza/world, `mg1801_water00.fmab` → extracted mg1801 + web mg1801/model, mgmet 4개(map01·vehicle00 glb, sea00·sea00_op_c01 fmab) → extracted mgmet 만(web 은 mgmet 3D 를 아직 안 씀), mgm00 바나나·mgm01 바다 → 변환 산출물이 아예 없어 갱신할 사본 없음(다음 변환 때 자동 반영). glb 4개 모두 glb JSON·메타 같고 바뀐 바이트는 전부 애니 접근자 안(퀘스트 발판 855·map01 7542·vehicle00 895). assets-dist 증분 갱신. 시험: 공용 검사 `tools/anim_repeat.ts`(한 주기 사이 두 프레임 값이 같은지, 범위 밖이면 구간 앞뒤가 끝값 고정이 아닌지) — test_plaza_world 11절(기구·퀘스트 발판), test_mg1801(물), test_mgmet 6절(extracted 산출물), test_mgm01 11절(바다·바나나는 변환기를 그 자리에서 돌려 test/out/anim_repeat/ 에 구움, 바나나는 같은 뼈를 가진 요시 모델에 붙임) |
 | (A) 물 표면(water_enable: 바다·분수 물·무대 물) | 물 합성 근사(§6.14 ④): 탁함 k = 상수(바다 1, 그 밖 1/muddy_range) | 물 깊이·수중 장면 굴절 없음 [근사] |
-| (A) 광장 보기(OverView) | overview.ts 가 카메라·대기·해제, interact.ts 는 결과 13 에서 `overview:end` 까지 상태 유지 후 resume(작은 Edit) | OverViewImpl [판독]. 안내 ComUiGuide00(pos 0x11, 라벨 = 레지스터 인자 미판독)·더킹 FX 트리거는 아직 없음 |
+| (A) 광장 보기(OverView) | overview.ts 가 카메라·대기·해제, interact.ts 는 결과 13 에서 `overview:end` 까지 상태 유지 후 resume(작은 Edit) | OverViewImpl [판독]. 안내 = `ComUiGuide00`, `SetGuidePos(0x11)`, `SetMessageLabel("sys_ctrl_back")`, `In(false)` [판독 menu00 @0x710005f9d8~0x710005fa08]. 시작/끝 FX = `ST_DUCKING_START_LOOKMENU` / `ST_DUCKING_FINISH_LOOKMENU`(@0x710005f954~0x710005f960·0x710005fadc~0x710005fae4). 현재 `overview.ts`는 카메라·B/X 해제·취소 SE만 구현; 안내·ducking은 미구현 |
 | (A) 국소 반사 정규화 | 국소 큐브 평균 휘도를 공통 반사 큐브 평균에 맞춤(specNorm) | specular_ibl_normalization 식 미판독 [근사] |
 | (A) 캐릭터 충돌 반지름 0.9 와 계단 | 자동 오르기 근사(발 + STEP 반구)로 계단을 오르게 함 | 반지름은 B 의 [추정](bubble_radius). 원본 컨트롤러 반지름·stepOffset 미판독 [근사] |
-| (A) 첫 그리기 준비(warmup) | 로드 때 전부 미리 컴파일(로드 +약 10 s) | 렉 없애기 우선 [설계]. 더 줄이려면 재질 변형 수를 줄이거나 단계별 준비 |
+| (A) 첫 그리기 준비 | 현재 앱은 P0 준비·앱 수명 렌더러 재사용·등급별 나머지 로딩 | [loader_manager.md](../engine/loader_manager.md) §11.4·§14.9의 기존 구현 결과 재사용. §6.14 #16의 전부 warmup(+약 10 s)은 이전 구현 측정 |
 | (A) 그림자 범위 | 캐스케이드 둘째 경계 38.4 m 까지 맵 하나 | 원본 캐스케이드 3·정적 EVSM [근사] |
 | (A) 가짜 원격 멤버 위치 | 수신 위치를 지면에 맞춤·낙하 보정 | 가짜 걷기 원이 장애물을 지남(online/fake.ts, D) [설계] |
 | (C) 장식 소품 애니 | MapManager::Create 가 애니 이름을 넘기는 것만 튼다(npc00_obj·npc07_obj·npc02_obj·air_npc03~05). glb 에 묶여 온 다른 클립(비치볼 `menu00_ast_beachball00_anm00`)은 틀지 않음 | 원본 코드·main 에 그 이름이 없음 [판독+데이터, §6.14 #15]. 그 클립은 보드 장면용 월드 좌표라 틀면 공이 하늘을 120 m/s 로 돈다 |
 | (A) 광장 애니 재생 속도 | 클립·fmab 모두 실시간 1 초 = 60 프레임(속도 1) | 원본 애니 모듈 진행량 = delta × 60 × 슬롯 속도 [판독 §6.14 #15]. 원본 실기에서 갈매기·하늘 NPC 가 더 느려 보이면 사용자 확인 필요(코드상 근거는 없음) |
 | (A) 비행 파타파타 경로 | air_npc03~05 를 AttachLocaterDecoNpc/attach_air_npc03~05 에 늘 붙여 1000f 루프(뼈 npc03~05_anim 을 C 가 getSocket) | C 판독 표(§6.10 장식 NPC C). MapStructure 밖 — manifest.plaza.extraLayout [판독+설계] |
-| (A) 충돌 계단 0.5·경사 45° | PhysX 컨트롤러 기본값 자리 | 원본 값 미판독 [근사] |
+| (A) 충돌 계단 0.5·벽 경사 45° | 웹 STEP와 벽 제외 문턱(지면은 n.y>0.05) | 원본 접지 법선 0.7071 판독(§3.5)과 웹 디딤 판정은 별개. CCT 사용·stepOffset은 §7 [미확정] |
 | (A) 블룸 세기 | ~~mg1801 대응 UnrealBloom~~ → 판독식(§6.13)으로 바꿔 해결 | 화면 바램 원인이었음 [측정] |
-| (A) 음악 상점 기본 애니 | `menu00_shop_music` 클립·fmab 를 루프로 돈다 | MapStructure anim 이 비어 있고 `PlayMusicHouseBeat` 가 박자에 맞춰 속도를 바꾸는 것으로 보임(세부 미판독) [추정] |
+| (A) 음악 상점 기본 애니 | 웹은 `menu00_shop_music` 클립·fmab를 속도 1로 계속 반복 | **원본은 BGM 박자 변화마다 `PlayAnimForce("beat")` 재시작**(§6.7). 속도 변경 추정은 철회. 본체 fmab 원본 loop=false인데 웹 명세 loop=true이며 박자 연동도 없어 [근사]; 홀로그램은 별도 루프 |
 | (A) 친구 매치 오브제 처음 | startup 클립·fmab 0 프레임 정지(오프라인 Sleep 처음 상태) | `MapManager::Update`·`PlayFriendObj_Sleep` [판독]: 네트워크 상태 0 이면 boot_s/boot_m 프레임 0·속도 0 |
 | (A) index.html 흐름의 항구 | 모드 메뉴에서 미니게임(key mgm) → 기존 항구 2D 페이지(`runMgmet` hub) → 프리 플레이 시작이면 목록 | 원본 흐름 mgm → mgmet → mgm01. 항구 3D 는 사용자 결정으로 중단 상태라 2D 판 |
 
@@ -491,19 +489,19 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (D) 수신 차단(`smp_oneList_ctrl_muteCheck` "−/+ 스탬프 수신") | 글자만 보이고 기능 없음 | 범위 밖(설정 저장) [설계] |
 | (D) 가짜 온라인 멤버 스탬프·이동 | FakeOnline 옵션 `stampEvery`(초, 0 = 없음)·`remoteMove`(원격 멤버가 0.2 s 마다 위치 보냄) | 실제 네트워크 없음 [설계] |
 | (D) 대기실 입력 | 대기실(방 안) 동안 online 흐름의 Y·X·B·+ 를 그대로 쓰고 **A(출발)는 막음**(출발 = 기구, C) | online.md 9.3 의 "A = 출발" 은 광장 없는 대역이었음 [설계]. 대기실 버튼 ↔ 동작은 online.md 11 ② 미확정 그대로 |
-| (D) 위치 보간 시간 | 0.2 s 선형(위치)·slerp(회전) | `ComActorAutoInterpolation` 시간 [미확정] → 보내는 간격과 같게 [근사] |
+| (D) 원격 이동 | `ui/net.ts`의 0.2 s 선형·slerp → 매 틱 `net:remote` → `follow.ts PlazaMover` | 원본은 시간 인자 없는 `ComActorAutoInterpolation::Start`(§5.1 ⑥). 0.2 s는 송신 주기; 웹의 두 단계 보간은 [근사] |
 | (D) 스탬프 소리 | 없음(SQ_SE_STAMP_* 사건만 냄) | 소리가 `subarc_voi_stamp.fsst` 하위 묶음(캐릭터 목소리, 로컬 변수 0 = 캐릭터 번호) — sound_seq.py 가 상주 fspj 만 렌더 [미확정: 하위 묶음 렌더 도구 필요] |
 | (C) CPU 의 광장 등장 | **안 나옴**(사람만: 1번 조작 + 2~4P 따라가기). 지시서의 "CPU 따라가기" 를 원본대로 고침 | `SequenceMainMenu::Setup`·MainImpl 의 GetPlayerList 반복이 PlayerType≠1·IsLocal 만 SetupLocalPlayer [판독]. B 의 시작 소켓 p<사람 수> 도 COM 을 빼야 원본과 같음(B 는 COM 포함으로 추정 — SHARED 로 알림) |
 | (C) 장식 NPC 묶음 B·C·E | **처음부터 셋 다 보임**(`?decoNpc=` 로 고름, 예 `?decoNpc=` 빈 값 = 없음) | 원본은 장식 아이템 0x3F/0x40/0x41 을 얻어 표시해야 보인다(`ApplyDecoItem` IsDisplay) [판독]. 새 저장이면 안 보이지만, 사용자 지시("장식·NPC 는 모두 원본처럼 보이고 애니메이션 다")로 얻은 상태를 기본으로 [설계] |
 | (C) 상점 직원 반응 New/Bye | 항상 Bye(co_bye00) | 새 표시(IsVisibleNewIcon*)는 저장 데이터 기준 → 없음 [판독+설계] |
-| (C) 결정 뒤 기구 외 화면 | `interact:decide` 만 내고 다음 프레임 광장 복귀(가이드 대화·상점·퀘스트·랭킹·뮤직·데이터 하우스·OverView 화면 없음). 친구 매치(3)는 D 가 메뉴를 염 | §8 "안내까지만" 결정과 같음 |
+| (C) 결정 뒤 기구 외 화면 | 가이드·상점·퀘스트·랭킹·뮤직·데이터 하우스는 `interact:decide` 뒤 다음 프레임 복귀. 친구 매치(3)는 메뉴를 열고, 광장 보기(13)는 `overview:end`까지 유지 | 가이드 원본 전용 흐름은 [plaza_guide.md](plaza_guide.md), 광장 보기는 §6.14 #8. 현재 `interact.ts`의 결과 13 예외를 반영 |
 | (C) NPC 부착 모델 | 코드가 명시적으로 붙이는 것만(Group04 npc01 노코노코 모자). 파타파타 캡·해머 브로스 망치 등은 안 붙임 | menu00 이 `NPCAttachModelFilePath` 로 한 번만 직접 붙임 → ComMatter 자동 부착은 없다고 봄 [추정: ComMatter(NPC) 부착 규칙 미판독] |
 | (C) NPC 몸 충돌(캡슐 반지름 0.5, 층 1) | 웹은 넣지 않음(1번이 NPC 를 통과) | B 의 이동기는 맵 충돌만 씀. 액터끼리 충돌은 B 이동기 범위 [미구현, B 협의] |
 | (C) 기구 출발 첫 페이드 시간 | 1.0 s | 어셈블리 확인(정정) [판독]. 정정(plaza-B): 선택 때 1번이 `balloon_pos` 를 보는 회전(`PlayerManager::LookAt(pos, false)`)은 **구현함** — balloon.ts `begin()` 이 `player:input` false(PlayerManager::Stop) + `player:lookAt` {target: balloon_pos} 를 내고 player.ts 가 §3.5 LookAt 규칙으로 돈다 |
 | (C) 출발 카메라 컷 near | fsnb near 0.01 대신 **0.3**, far 1000·fov·위치·EulerZXY(three 'YXZ')는 그대로 | 원본은 ApplyNearAndFar(기본 켬)로 0.01 이지만 웹 24비트 깊이에서 near 0.01 이면 바다·섬·원경이 깜빡임(z 싸움). 컷 카메라는 물체에서 수 m 이상 떨어져 있어 잘림 차이 없음 [근사] |
 | (C) 출발 건너뛰기 | 두 번째 출발부터 `sys_ctrl_skip` 안내·+/− 건너뛰기(첫 출발 때 브라우저 저장소에 메뉴 비트 기록) | 원본 메뉴 저장값 비트 0 [판독]. 저장 = localStorage `mpj.plaza.menuData0` [설계] |
 | (C) 화면 페이드 | ctx.overlay 위 검은 막(불투명도 선형) | `bq::WipeModule` 와이프 종류·곡선 미판독 [근사] |
-| (C) 따라가기 이동 | 목표 쪽 수평 단위 방향을 B `PlazaMover` 의 깊이 1 레버로(달리기 6 = AutoInterpolation 기본 6.0), 도착하면 목표 위치로 맞춤 | AutoInterpolation 이 ComActor 를 움직이는 경로(레버 대체인지 직접 이동인지) 미판독 [근사] |
+| (C) 따라가기 이동 | 목표 쪽 수평 단위 방향을 B `PlazaMover`의 깊이 1 레버로, 도착하면 목표 위치로 맞춤 | `ComActor::GetMoveLever` main @0x7100013500이 진행 중 `Calculate` 결과로 입력 레버를 대체(§3.5 기존 판독). 속도 6·도착 판정은 §6.10 ② [판독]; 웹 충돌은 [근사] |
 | (C) NPC 셰이더 그래프 | §6.11 판독 식대로(색 층·눈 합성·쿠리보 UV·틴트). 림·SSS·노멀 배열은 생략 | plaza-C-sg [판독], 생략분 [근사] |
 | (room) 세션 중 기구 선택 | 오프라인 출발 연출 없이 바로 PlaySession → 모두 0.5 s 페이드 아웃 → 1.0 s → 모드 메뉴 | `SelectedBalloonImpl`·`PlaySessionFiber` [판독, online.md 5.6 정정]. WaitSync(1) 는 서버 `started` 방송 한 번으로 맞춤 [근사] |
 | (room) 모드 메뉴 이후 | 방 연결은 광장을 나가면 끊고, 모드 메뉴는 기존 오프라인 화면 | menu01 온라인 동기(플레이어 Work·WaitSync)는 범위 밖 [설계] |

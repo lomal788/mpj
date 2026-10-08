@@ -278,6 +278,8 @@ freePlay:
 
 [판독] BGM 호출 지점: `InitOp`=0, `StartEventFlow`=1, 앞 안내 완료 후 아직 BGM 없을 때=2, 오프닝 스킵/프리 플레이 출발 `StopBgm(2)`. 이름 표·프리셋·메시지 보이스 처리는 → mgm_common §6.9·7, message_window §7. A 페이지 SE=`SQ_SE_SYS_MES_PROC`, 일반 설명 B=`SQ_SE_SYS_CANCEL`.
 
+→ 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
+
 ## 8. 다른 기능과의 상호작용·저장되는 값
 
 | 값/영역 [판독] | 쓰는 지점·조건 | 읽는 지점/효과 |

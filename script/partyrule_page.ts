@@ -9,6 +9,7 @@ import { assetHooks } from './shell/charselect/assetHooks';
 import { MgmSound, MgmView } from './shell/mgmcommon';
 import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from './shell/partyrule';
 import type { PadSource } from './view/input';
+import { appBgm } from './view/bgm';
 
 const STICK_ON = 0.5 * STICK_MAX;
 const DT = Math.fround(1 / 60);
@@ -237,6 +238,7 @@ export async function runPartyRule(
     view.end();
   };
   render();
+  void appBgm().enter('partyrule', cfg.muted);
   let done = false;
   let raf = 0;
   let last = performance.now();
@@ -256,6 +258,7 @@ export async function runPartyRule(
       }
       if (screen.finished) {
         done = true;
+        appBgm().exit('partyrule', screen.flow.stack[screen.flow.stack.length - 1] === 14 ? 'start' : 'back');
         cfg.onDone(describe());
       }
     }

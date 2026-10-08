@@ -14,7 +14,7 @@ import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayer
 import { parseDecoParam } from './shell/plaza/deco';
 import { AREA } from './shell/plaza/interact';
 import { appFlow } from './view/appFlow';
-import { BgmChannel } from './view/bgm';
+import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 import { plazaGl, plazaGlEnabled } from './view/plazaGl';
 
@@ -100,7 +100,6 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     }
     return b;
   };
-  const bgm = new BgmChannel(() => actx, OWNER);
   const play = (label: string): void => {
     const s = sounds[label];
     if (!actx || !s) return;
@@ -136,9 +135,8 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     sound: {
       se: (label) => play(label),
       bgm: (label) => {
-        bgm.stop(0);
-        const s = label ? sounds[label] : undefined;
-        if (label && s) bgm.play(label, s.url, { gain: s.gain, loop: 'all' });
+        if (label) void appBgm().play(label, cfg.muted);
+        else appBgm().exit('plaza', 'balloon');
       },
     },
     params: cfg.params,
@@ -147,6 +145,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     onExit: (e) => {
       if (exited) return;
       exited = true;
+      appBgm().exit('plaza', e.k);
       cfg.onExit(e);
     },
   }).catch((e: unknown) => {
@@ -154,6 +153,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     throw e;
   });
   gl?.entered();
+  void appBgm().enter('plaza', cfg.muted);
 
   for (const s of Object.values(sounds)) {
     const key = assetKeyOf(s.url);
@@ -222,7 +222,6 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       cancelAnimationFrame(raf);
       ro.disconnect();
       offArea();
-      bgm.stop(0);
       if (gl) gl.leave(run.world.stage.scene, () => run.stop());
       else run.stop();
       assets.release(OWNER);

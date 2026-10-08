@@ -331,7 +331,7 @@ const index = JSON.parse(fs.readFileSync(path.join(DIST, 'index.json'), 'utf8'))
 console.log('\n# 1. 조각 배치 (빌드 index ↔ planBgm, 반복 경계)');
 {
   const streams = Object.entries(index.streams ?? {});
-  ok(streams.length >= 2 && !!index.streams['charselect/sound/SM_BGM_MENU_MAP.wav'], `index.json streams ${streams.length}곡(캐릭터 선택 BGM 포함)`);
+  ok(streams.length >= 2 && !!index.streams['common/sound/SM_BGM_MENU_MAP.wav'], `index.json streams ${streams.length}곡(캐릭터 선택 BGM 포함)`);
   let bad = '';
   for (const [rel, p] of streams) {
     const { w } = readWav(rel);
@@ -350,7 +350,7 @@ console.log('\n# 1. 조각 배치 (빌드 index ↔ planBgm, 반복 경계)');
     }
   }
   ok(!bad, '모든 곡: 빌드 배치 = 런타임 planBgm, 인트로 [0,Ls)·본체 [Ls,Le) 빈틈 없이, 파일 길이 = 패드+본문+패드, 조각이 lossy·해시 표에 있음', bad);
-  const m = index.streams['charselect/sound/SM_BGM_MENU_MAP.wav'];
+  const m = index.streams['common/sound/SM_BGM_MENU_MAP.wav'];
   ok(!!m && m.loop?.[0] === 114688 && m.loop?.[1] === 2561415 && m.chunks[m.intro].start === 114688, 'SM_BGM_MENU_MAP 반복 [114688, 2561415) = 명세 loopStart 2.389333 s·loopEnd 53.3628125 s × 48000, 본체 첫 조각이 Ls 에서 시작', JSON.stringify(m?.loop));
   const g = index.streams['mg1801/sound/bgm/SQ_BGM_RC_GENERIC_120.wav'];
   ok(!!g && g.loop?.[0] === 480000 && g.loop?.[1] === 864000, 'SQ_BGM_RC_GENERIC_120 반복 [10 s, 18 s) = [480000, 864000)', JSON.stringify(g?.loop));
@@ -391,7 +391,7 @@ async function lossless(rel: string, loop: [number, number] | null, sec: number,
   ok(s.stats.maxDecodedBytes <= bound, `${label}: 메모리 상한 — 풀린 PCM 최대 ${(s.stats.maxDecodedBytes / 1e6).toFixed(2)} MB ≤ (창 6 s + 조각 최대 ${maxCore.toFixed(2)} s × 2 + 펌프 0.25 s + 패드) ${(bound / 1e6).toFixed(2)} MB — 곡 길이와 무관(통파일 ${(whole / 1e6).toFixed(2)} MB)`);
   if (!loop) ok(s.finished && maxErr(out, expAbs.map((x) => x.map(() => 0)), anchorF + plan.frames, frames) === 0, `${label}: 반복 없는 곡은 끝에서 끝남(뒤 무음)`);
 }
-await lossless('charselect/sound/SM_BGM_MENU_MAP.wav', [114688, 2561415], 112, 'SM_BGM_MENU_MAP(인트로 + 2바퀴)');
+await lossless('common/sound/SM_BGM_MENU_MAP.wav', [114688, 2561415], 112, 'SM_BGM_MENU_MAP(인트로 + 2바퀴)');
 await lossless('mg1801/sound/bgm/SQ_BGM_RC_GENERIC_120.wav', [480000, 864000], 40, 'SQ_BGM_RC_GENERIC_120(반복 8 s, 3바퀴)');
 await lossless('mg1801/sound/bgm/SQ_BGM_RC_CALIBRATION_120.wav', [192000, 288000], 14, 'SQ_BGM_RC_CALIBRATION_120(본체 조각 1개 되풀이)');
 await lossless('mg1801/sound/bgm/SQ_BGM_MG1801_A_120.wav', null, 44, 'SQ_BGM_MG1801_A_120(반복 없음)');
@@ -400,7 +400,7 @@ for (const r of memRows) info(r);
 // ================================================================ 3. 늦은 노드·늦은 조각
 console.log('\n# 3. 늦은 시작 노드·늦게 풀린 조각');
 {
-  const rel = 'charselect/sound/SM_BGM_MENU_MAP.wav';
+  const rel = 'common/sound/SM_BGM_MENU_MAP.wav';
   const { w } = readWav(rel);
   const ctx = new FCtx(48000);
   const source = srcSource(w, [114688, 2561415]);
@@ -564,7 +564,7 @@ function bestLag(a: Float32Array[], b: Float32Array[], from: number, to: number,
   }
   return best;
 }
-await codec('charselect/sound/SM_BGM_MENU_MAP.wav', 60, 'SM_BGM_MENU_MAP');
+await codec('common/sound/SM_BGM_MENU_MAP.wav', 60, 'SM_BGM_MENU_MAP');
 await codec('mg1801/sound/bgm/SQ_BGM_RC_GENERIC_120.wav', 30, 'SQ_BGM_RC_GENERIC_120');
 await codec('mg1801/sound/bgm/SQ_BGM_MG1801_A_120.wav', 42, 'SQ_BGM_MG1801_A_120');
 

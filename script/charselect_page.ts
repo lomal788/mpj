@@ -9,7 +9,7 @@ import { createCharSelect, type CharSelectHandle } from './shell/charselect';
 import { P1 } from './lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
 import { appFlow } from './view/appFlow';
-import { BgmChannel } from './view/bgm';
+import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -38,7 +38,7 @@ export interface CharSelectRun {
 }
 
 /** stage 안에 캔버스를 만들어 캐릭터 선택을 돌린다. 끝나면 onDone(pcNN 목록 | null = 취소) */
-export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; names?: string[]; onDone(chars: string[] | null): void }): Promise<CharSelectRun> {
+export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; names?: string[]; bgm?: boolean; onDone(chars: string[] | null): void }): Promise<CharSelectRun> {
   const flow = appFlow();
   flow.enter('charselect');
   const canvas = document.createElement('canvas');
@@ -88,7 +88,6 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     voiceToken.set(slot, t);
     return t;
   };
-  const bgm = new BgmChannel(() => ctx);
   const playVoice = (url: string, gain: number, slot: number): void => {
     if (!ctx) return;
     const c = live(ctx);
@@ -104,12 +103,13 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
       voices.set(slot, src);
     });
   };
-  const playBgm = (label: string, url: string, gain: number, loopStart: number, loopEnd: number): void => {
-    if (!ctx || bgm.label === label) return;
-    live(ctx);
-    bgm.play(label, url, { gain, loop: { startSec: loopStart, endSec: loopEnd } });
+  // BGM = 앱 채널(같은 라벨이면 이어 재생, docs/engine/04_sound.md §12.14). 인원 설정 안(cfg.bgm === false)은 타이틀 곡을 건드리지 않음
+  const playBgm = (label: string): void => {
+    if (cfg.bgm !== false) void appBgm().play(label, cfg.muted);
   };
-  const stopBgm = (fade: number): void => bgm.stop(fade);
+  const stopBgm = (fade: number): void => {
+    if (cfg.bgm !== false) appBgm().stop(fade);
+  };
   const playSe = (url: string, gain: number, x?: number): void => {
     if (!ctx) return;
     const c = live(ctx);

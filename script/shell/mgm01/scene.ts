@@ -2,6 +2,7 @@
  * 프리 플레이 화면 상태기계 — DecideMinigameFlow(0 처음·2 목록·3 승패 표·4 개별 설정·5 자이로·6/7 연출 정리·8 한 판 호출·9 끝)를 한 Fiber 로 묶는다.
  * 한 판은 Mgm01PlayRequest 를 바깥(call)으로 내고 장면이 버려진다. 돌아오면(returned) 결과 기록·ContinueFlow(선택 복원, resume1 → 목록).
  * 근거: docs/shell/mgm01_freeplay.md 3.1·3.2(Enter/Continue)·5.2·5.5(전이·안내·SE)·8.3·8.4(호출·복귀 계약). 웹 결정 9.2.
+ * BGM(docs/engine/04_sound.md §12.14): Start/ContinueFlow PlayBgm(4), MgStartFlow 맨 앞 StopBgm(3)+PlayBgm(5), ExitFlow StopBgm(2).
  */
 import { pushResult, type MgmSave, type MgmWork, type MgResultEntry } from '../mgmcommon/contracts';
 import { FiberRunner, waitTime, type Flow } from '../mgmcommon/fiber';
@@ -81,6 +82,7 @@ export class Mgm01Scene {
       pushResult(work, returned);
       this.log.push({ type: 'record', entry: returned, round: work.round });
     }
+    deps.sound.playBgm(4);
     this.refreshLock();
     this.guide = new MgmGuide(deps.view, 17, 'sys_ctrl_back');
     this.list = new ListScreen(deps.view, {
@@ -191,6 +193,8 @@ export class Mgm01Scene {
           this.go(9);
           break;
         case 8: {
+          d.sound.stopBgm(3);
+          d.sound.playBgm(5);
           yield* waitTime(MG_START_WAIT, () => d.dt ?? Math.fround(1 / 60));
           const req = this.request!;
           d.work.freeplaySelect = { filter: this.enumNo, index: this.index, id: req.id, fromFavorite: this.enumNo === FILTER.MgFavorite };
@@ -202,6 +206,7 @@ export class Mgm01Scene {
         }
         case 9:
           this.log.push({ type: 'exit' });
+          d.sound.stopBgm(2);
           d.exit();
           return;
         default:

@@ -1,5 +1,5 @@
 확정 수준 표기: **[실행]** 원본 실행 확인, **[판독]** 원본 코드 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**.
-이 문서에 [실행]은 없다. 재구현 계산은 수행하지 않았다.
+이 문서에 [실행]은 없다. 재구현 계산은 해당 항목에 따로 표시했다.
 
 # menu00 — 가이드 키노피오 상호작용
 
@@ -28,6 +28,8 @@
 | 원본 명령 이미지 | [menu00.nro](../../../extracted/romfs/nro/NX_Release/menu00.nro), [main.decomp.bin](../../../extracted/exefs/main.decomp.bin).C가 잃은 인자·반환값은 ARM64 명령으로 확인 |
 | 위치/배치 | [plaza_menu00_world.c](../../../analysis/decomp/plaza_menu00_world.c): `GetAttachSocketPcFront` 10078행/menu00 @`0x710001b2b4`; 기존 영역 판독은 [plaza_menu00_c_dis.c](../../../analysis/decomp/plaza_menu00_c_dis.c) |
 | 대화·화자 속성 | `extracted/message/koKR/{im_menu,menu01_main}.json`, 원본 `extracted/bea/message~koKR.nx.bea/mess/bin/koKR/menu01_main.msbt`의 ATR1, `message~mess.nx.bea/mess/bin/bq.msbp`의 속성 정의 |
+| 말꼬리·페이지 초기화 | [msgwin_main_all.c](../../../analysis/decomp/msgwin_main_all.c): main `FUN_71003161d0`·`FUN_7100318b50`·`FUN_7100318e30`·`FUN_7100318ff4`·`FUN_7100316fb0`; 레이아웃 `extracted/converted/ui/bq_Parts/sys_meswin_talk_choices_00.*` |
+| 가이드 보이스 | `extracted/bea/bq.nx.bea/common/ftrg/vo_message.ftrg`, [AddonAudioProject.fspj](../../../extracted/bea/_ResidentAudio.nx.bea/_Resident/AddonAudioProject.fspj)의 시퀀스·뱅크·파형; 포맷은 기존 [04_sound.md](../engine/04_sound.md) §4 재사용 |
 
 ## 2. 접근과 대화 시작
 
@@ -47,6 +49,32 @@
 5. `IsWorking`이 끝날 때까지 기다린 뒤 MC `Idle(0.3)`, 결과를 분기한다. 기다리는 대상은 글자 완료만이 아니라 창의 동작 종료다.
 
 **[판독·데이터]** 본문 두 라벨의 ATR은 `WT_Taking`(철자 그대로, Talking 창), `CH_NPC022_YELLOW`(속성 번호 **11**), `Position=Default`, `Emotion=Default`, `WindowInfo=WI_None`, OffsetX/Y=0. 따라서 공통 `sys_meswin_talk_choices_00`와 **3D MC를 가리키는 말꼬리**가 필요하다. `CharacterData[11]`의 VoiceID도 `CH_NPC022_YELLOW`다. 같은 보이스를 쓰는 별도 “가이드(사회자)” 레코드 [1]과 혼동하지 않는다. 선택지 라벨들은 `WT_Empty`지만 창은 본문 속성으로 선택한다.
+
+### 2.1 가이드 창과 말꼬리
+
+**[판독·데이터]** 위 두 본문은 Default 위치이므로 `FUN_7100315fe0`가 자동 배치(+0x50f)를 켠다. `FUN_71003161d0`는 매 프레임 MC **엔티티 원점+높이**를 투영한다. 높이 `h`는 `CharacterData::NPCHeight`(main @`0x71001d6d18`), 즉 NPC 데이터의 height × 엔티티 scale.y다. `common/data/characterlist.json`의 NPC `KINOPIO`/Number 22는 **height=1.2**. 머리 본이나 깃발 끝 좌표를 사용하지 않는다.
+
+- 투영은 `LytPosFrom3DPos(...,0,0)`(main @`0x71001caec0`): Renderer **scene 0 / graphics layer 0**의 Viewport DrawCamera·scissor를 사용하고, 1920×1080 기준 중앙 원점·위쪽 +Y 좌표로 반환한다. 창 배치용 점은 `P(MC.pos+(0,h,0))`다.
+- 창 엔티티 좌표는 `(P.x−win_base.x, P.y+win_base.height/2+60)`. 이후 `FUN_7100318b50`가 실제 `x_bd_00`의 폭 W·높이 H·로컬 위치 bx/by로 **x를 [−(1920−W)/2−bx, +(1920−W)/2−bx], y를 [−(1080−H)/2−by, +(1080−H)/2−by]**에 제한하고 페이지 offset을 더한다. 가이드 ATR offset은 0이다.
+- `sys_meswin_talk_choices_00` 데이터: `win_base=(-184,0), size=(796,256)`, `x_bd_00=(0,−64), size=(1300,490)`. **W=1300 고정으로 구현하면 안 된다.** 배치 전 `FUN_710032018c`가 선택지 실측 너비로 경계를 갱신한다: 가장 긴 선택지 글자 폭을 T라 하면 선택창 폭 w=`max(232,min(748,T+130))`; 직전 창 엔티티 x≥0일 때 W=`1300−2×(748−w)`, 음수이면 1300. T 측정은 기존 공통 폰트/텍스트 레이아웃을 사용한다.
+- **재구현 계산:** 위 기본 페인 값을 식에 대입한 창 배치 보정은 `(P.x+184,P.y+188)`, y 제한은 **[−231,359]**다. x 제한은 갱신된 W에 따라 달라진다.
+
+**[판독]** 말꼬리는 별도 점 `P(MC.pos+(0,h/2,0))`과 **보정 후 창 엔티티 위치+win_base 로컬 위치** 사이 방향을 정규화하고 `atan2(y,x)`로 고른다. `x_l_00..11`·`x_r_00..11`을 모두 숨긴 뒤 한 페인만 켠다(`FUN_71003161d0`·`FUN_7100318ff4`). 각도 범위와 선택 페인은 다음과 같다(각도는 +X 기준, +Y 쪽이 양수).
+
+| 양의 각도 θ | 페인 | 음의 각도 θ | 페인 |
+|---|---|---|---|
+| 0≤θ<15° | x_r_02 | −15°<θ<0 | x_r_03 |
+| 15≤θ<30° | x_r_11 | −30°<θ≤−15° | x_r_10 |
+| 30≤θ<50° | x_r_01 | −50°<θ≤−30° | x_r_04 |
+| 50≤θ<70° | x_r_08 | −70°<θ≤−50° | x_r_09 |
+| 70≤θ<95° | x_r_06 | −85°<θ≤−70° | x_r_07 |
+| 95≤θ<110° | x_l_06 | −110°<θ≤−85° | x_l_07 |
+| 110≤θ<130° | x_l_08 | −130°<θ≤−110° | x_l_09 |
+| 130≤θ<150° | x_l_01 | −150°<θ≤−130° | x_l_04 |
+| 150≤θ<165° | x_l_11 | −165°<θ≤−150° | x_l_10 |
+| 165≤θ<180° | x_l_02 | −180°≤θ≤−165° | x_l_03 |
+
+**[판독·데이터]** θ=+180°도 x_l_03으로 간다. 방향 선택은 페이지 초기화 `FUN_7100316fb0`의 +0x512=1에서 **한 번** 수행한 뒤 플래그를 지운다. `FUN_7100318e30`가 매 프레임 방향을 다시 계산하게 하는 `TalkTailDirAuto` 목록에는 테스트 라벨만 있고 가이드 두 라벨은 없다. 따라서 **창 위치는 매 프레임 추종하되 말꼬리 방향은 페이지 동안 유지**한다. MC weak handle이 없으면 x_l_05를 보이는 대체 경로지만, 가이드는 MC를 명시적으로 연결한다.
 
 ## 3. 선택지와 재진입
 
@@ -127,6 +155,17 @@
 **[판독]** 일반 가이드 대화에는 전용 카메라 컷/확대 호출이 없다. 추종 카메라가 남고 플레이어는 정지한다. 인원수·멤버 변경에서만 카메라 Stop/재개·페이드가 있으며, **새 씬으로 RequestCallScene 하지 않고 현재 광장 씬 안의 UI 컴포넌트**를 교체한다.
 소리는 접근 A의 `SQ_SE_SYS_DECI`, 마지막 칸/B의 `SQ_SE_SYS_CANCEL`, 옵션 화면 시작/끝 FX 두 라벨, 메시지 공통 넘김·커서·화자 보이스가 연결된다. 메시지 ducking·보이스 선택은 기존 message_window/04_sound 명세를 쓴다. 가이드 전용 새 BGM/보상 징글 호출은 이 함수에 없다.
 
+**[판독·데이터] 가이드 본문 보이스:** 공통 message_window §6.5의 키 선택 규칙에 아래 실제 ATR을 적용한다. `mn01_mainMenu_mw_setting`(koKR ATR 레코드 38)의 VoiceKey는 빈 문자열이므로 **선택형 Default의 `VoiceKey_Choices=VO_MV_QUESTION`**을 쓴다. `mn01_mainMenu_mw_message`(레코드 43)의 VoiceKey는 **`VO_MV_ETC_04`**로 지정되어 감정 기본값보다 우선한다. `GetAttrVoiceKeyText`의 문자열 위치는 ATR1 본문+레코드 첫 u32 offset이다(main `FUN_71001df824` → `FUN_71004e4610`); 일반/선택형이라는 이유로 두 번째 키를 QUESTION으로 바꾸면 안 된다.
+
+| 본문 | 트리거 → 사운드 | 고정 시퀀스·파형 근거 |
+|---|---|---|
+| 설정 4지선다 | `VO_MV_QUESTION` → `SQ_VOI_NPC022_MV_QUESTION` | vo_message.ftrg의 노란 키노피오 항목 @파일 0xb8ac; sound 6022, FSEQ 시작 0x9ac, prg 12·note 60 → BNK_VOI_NPC022의 파형 49 |
+| 속도 3지선다 | `VO_MV_ETC_04` → `SQ_VOI_NPC022_MV_ETC_04` | 같은 그룹 @파일 0x7dd00; sound 6005, FSEQ 시작 0x8e0, prg 6·note 63 → 같은 뱅크의 파형 0 |
+
+**[판독·데이터]** 두 음원은 Resident `AddonAudioProject.fspj`의 FSEQ fileId 46·bank 47(fileId 165)·waveArchive 47(fileId 253)에 있다. 각 FTRG 자원은 하나이며 `PlayOffsetSec=0`, 해당 FSEQ 경로에도 wait/랜덤/조건 분기 없이 위 note를 낸다. **이 두 호출에 임의의 _01~03 변형을 고르는 처리는 없다.** 페이지 초기화 `FUN_7100316fb0`가 본문 출력 시작 후 `FUN_710031fe30`에서 보이스를 요청한다. 속도 커서 변경(`FUN_71003197d0` → `FUN_710031a310`·`FUN_71003235a8`)은 글자 출력만 다시 시작하고 보이스는 다시 요청하지 않는다.
+
+**[데이터]** 같은 Talking 선택창의 BFLAN은 본문 `in` **5프레임**, 선택지 `in_choice` **30프레임**, `out` **5프레임**이다. 본문/선택지 그룹 알파를 바꾸며 out은 말꼬리 그룹 `null_02`도 첫 1프레임에 숨긴다. 애니 종료·선택 입력 허용 순서는 기존 message_window 상태기계를 재사용한다.
+
 **[판독]** 그만둔다/B는 상태 **2**·초기 커서 **0**으로 복귀시키고 MC `Turn(Y=0)` → `Idle(0.3)` 후 반환한다.MC 복귀 회전 완료를 추가로 기다리지는 않는다. 재진입한 `MainImpl`이 `StartMainMenuCamera`, `PlayerManager::Start`, MC Idle, 메인 UI 생성/Start를 수행하고 거리 안내를 다시 평가한다. 가이드 상호작용의 영구 진행·첫 대화·해금 플래그는 확인되지 않았고, 변경하는 것은 로컬 플레이어 작업 데이터와 메시지 속도 저장값이다.
 
 ## 6. 현재 웹과 필요한 연결
@@ -139,17 +178,16 @@
 | 대화 수명 | `decide`가 `interact:decide {result:5,target:'guide'}`를 내고 **다음 프레임 `resume`**. 상태 5 처리 부품은 [parts.ts](../../script/shell/plaza/parts.ts)에 없음.UI `decide`는 결과 3만 처리([ui.ts](../../script/shell/plaza/ui/ui.ts)) | 메뉴 종료까지 상태 5·플레이어 입력 정지 유지, 재진입 커서 3/종료 커서 0 |
 | 첫 선회·Talk | 접근 FragSwing·머리 시선과 클립 등록까지 있음 | 몸 TurnLookAt/완료 대기, Talk/Idle, 종료 Y=0 |
 | 메뉴 데이터 | [plaza_ui.json](../../assets/plaza/ui/plaza_ui.json)에 장소 이름/설명만 있음.mgmcommon spec·mgm01/mgmet 추가 데이터에도 **위 대화 9개 라벨 없음** | menu01_main 9라벨·ATR, 선택지 원본 순서, 화자 11 |
-| Talking 창 | 공통 MessageWindow에 선택지 API는 있음. 현재 mgmcommon/plaza 명세에 **`sys_meswin_talk_*` 레이아웃 없음** | 기존 Parts.lyt `sys_meswin_talk_choices_00`와 참조 부품, MC 엔티티/카메라 투영·말꼬리 연결. 공통 상태기계는 재사용 |
+| Talking 창 | 공통 MessageWindow에 선택지 API는 있음. 현재 mgmcommon/plaza 명세에 **`sys_meswin_talk_*` 레이아웃 없음** | 기존 Parts.lyt `sys_meswin_talk_choices_00`와 참조 부품, §2.1의 MC 높이·카메라 투영·실측 경계·페이지별 말꼬리 연결. 공통 상태기계는 재사용 |
 | 설정 화면 | `setplayer`·`charselect`는 별도 화면 구현이 있음 | §4의 호출 인자·취소 복원·BaseCharacterID·광장 플레이어 재배치·카메라 대상 교체 |
 | 메시지 속도 | 공통 `MessageWindow.setSpeed`는 있음. 속도 sample mode/선택 라벨에 따른 재출력 API는 없음 | sample mode on/off, 커서 미리보기, 0/1/2 매핑·저장 대기, B 취소 불가 |
-| 페이드·소리 | 가이드 옵션 분기의 수명/ducking 처리는 없음 | 두 설정 화면의 1.0 s 페이드·옵션 ducking·공통 메시지 소리 어댑터 |
+| 페이드·소리 | 가이드 옵션 분기의 수명/ducking 처리는 없음 | 두 설정 화면의 1.0 s 페이드·옵션 ducking·§5의 두 고정 보이스와 공통 소리 어댑터 |
 
 NPC 모델/모션/깃발은 이미 변환되어 있으므로 다시 추출할 필요가 없다. 추가 데이터는 위 메시지/ATR·Talking 선택창과 참조 부품이며, 모델 경로·폰트·메시지 파서·패드 비트·캐릭터 잠금·인원 UI를 별도로 재분석하지 않는다.
 
 ## 7. 남은 미확정과 검증 범위
 
-- **[미확정]** Talking 말꼬리의 정확한 3D→2D 앵커·화면 가장자리 처리. 공통 문서에서도 범위 밖인 `FUN_71003161d0` 연결이며, 이 문서에서는 원본의 MC `SetCharacterEntity`와 창 데이터까지만 확정했다.
-- **[미확정]** Default 감정에서 실제 재생되는 보이스 변형/타이밍은 message_window §6.5의 기존 미확정으로 유지한다.
-- **[미확정]** 선회/페이드/말꼬리와 속도 미리보기의 시각 결과는 원본 실행 대조가 필요하다. 코드의 상태·값·취소 허용 분기는 위 판독 근거와 구분해서 검증한다.
+- **[미확정]** 선회·페이드·창/말꼬리의 최종 화면과 속도 미리보기의 원본 일치. 필요한 근거는 같은 인원·캐릭터·언어에서 **A 진입→각 설정의 결정/취소→자동 메뉴 재표시→종료**, 속도 커서 이동, 화면 가장자리 접근을 담은 원본 프레임 캡처와 당시 카메라/MC 위치·scale·선택지 실측 폭·활성 말꼬리 페인이다. §2.1의 계산과 BFLAN 프레임 값은 화면 확인 결과가 아니다.
+- **[미확정]** 보이스 요청과 실제 청취 시작 사이의 프레임 지연·최종 음량·동시 음원 억제. 두 키와 고정 파형은 §5로 확정했지만 실제 믹서 결과까지 확정하지 않는다. 필요한 근거는 원본 A 진입/속도 진입/커서 이동/메뉴 재표시의 오디오·프레임 동시 기록 및 사운드 핸들 재생/억제 기록이다. 공통 FX 그래프·믹서의 미판독 부분은 05_ui_input §10·04_sound의 남은 범위를 참조한다.
 
-검증은 기존 문서 재사용, 원본 C 및 필요한 호출 인자의 ARM64 판독, 한국어 JSON/원본 MSBT ATR·NPC 변환 명세 확인, 현재 웹 소스와 에셋 명세 대조에 한정했다. 원본 실행·웹 실행·빌드·포팅·기존 파일/스테이징 수정은 하지 않았다.
+검증 범위는 원본 C·ARM64 정적 판독, koKR MSBT ATR 문자열과 JSON·캐릭터 높이·Talking BFLYT/BFLAN·FTRG·Resident FSEQ/뱅크/파형 데이터 확인, 현재 웹 소스/에셋 대조다. 원본·웹 실행이나 빌드 검증은 하지 않았다. 이 보완에서는 `plaza_guide.md`만 수정했고 코드·다른 문서·에셋·스테이징은 변경하지 않았다.

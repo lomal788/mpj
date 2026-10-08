@@ -734,5 +734,59 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 | AAC(구형 iOS 대체) 조각 음질 | 통파일과 같은 160 kbps | 조각만 192 kbps 로 올리면 통파일과 비슷해질 것 [추정] |
 | 조각 길이·창 | 4 s·창 6 s·패드 80 ms·교차 10 ms | 첫 조각을 2 s 로 줄이면 시작 받는 양 절반(요청 수 +1) |
 | 리듬 BGM 첫 조각 미리 풀기 | BPM 120 곡 6개(9.8 MB)를 로드 때 | 고른 BPM 곡만 풀기(메모리 ↓, 다른 BPM 은 요청 때) |
-| BGM 이 없는 화면들 | 고리만(모드 선택·인원 설정·프리 플레이·온라인은 BGM 코드·파일 없음) | 원본 BGM 라벨·BFSTM 반복 값을 명세에 넣으면 같은 재생기로 바로 스트리밍 |
-| 리전 스트림(`*_JMP`) | 미구현(지금 웹 BGM 에 없음) | 조각 배치를 리전 목록으로 넓히기 |
+| BGM 이 없는 화면들 | ~~고리만~~ → §12.14 로 연결(2026-10-08) | — |
+| 리전 스트림(`*_JMP`) | 미구현. 2026-10-08 부터 항구 입구 곡(`*_ENTRANCE_JMP`)이 웹에 들어와 REG_MAIN 을 반복 구간으로 근사(§12.14.4) | 조각 배치를 리전 목록으로 넓히기 |
+
+→ 정정(2026-10-08): "BGM 이 없는 화면들"은 §12.14 로 모두 연결했다.
+
+### 12.14 화면별 원본 BGM [판독 2026-10-08]
+
+근거: 호출 지점 역어셈블 `analysis/decomp/bgm_callsites_dis.c`(도구 `web/tools/analysis/bgm_callsites.py` — `bl` 앞 `mov w1, #N` = FadeTimePreset·BGM 종류) [판독: 어셈블리], menu00 `SoundManager` C `analysis/decomp/bgm_menu00_sound.c`, menu01 `charsel_menu01_sound.c`, main `bgm_main_mgmscene.c`(`MinigameModeScene::CleanupScene`), 볼륨 = fspj, 반복 = BFSTM 헤더. 페이드 초 = FadeTimePreset(mgm_common.md 6.9: 0 = 0.1, 2 = 0.7, 3 = 0.2, 4 = 1.4, 6 = 0.5 s). 모든 원본 재생은 `Play(…, 0.0, label)` = 페이드 인 없음.
+
+#### 12.14.1 곡 [데이터]
+
+| 라벨 | 볼륨(/127) → gain | 길이 | 반복 [Ls, Le) 표본 (초) |
+|---|---|---|---|
+| `SM_BGM_TITLE` | 40 → 0.315 | 53.310 s | 501,760 → 2,558,901 (10.453 → 53.310) |
+| `SM_BGM_MENU` | 28 → 0.2205 | 53.363 s | 114,688 → 2,561,414 (2.389 → 53.363) |
+| `SM_BGM_MENU_MAP` | 33 → 0.2598 | 53.363 s | 114,688 → 2,561,415 |
+| `SM_BGM_MATCHING` | 35 → 0.2756 | 34.091 s | 100,352 → 1,636,354 (2.091 → 34.091) |
+| `SM_JIN_MGMET_OPENING` | 46 → 0.3622 | 9.658 s | 없음(한 번) |
+| `SM_BGM_MGMET_ENTRANCE_JMP`·`_NOINTRO_JMP`(같은 파일) | 29 → 0.2283 | 파일 89.548 s | 리전 REG_MAIN 176,883 → 2,303,656 (3.685 → 47.993) 을 반복 구간으로 [추정] |
+| `SM_BGM_MGM01_FREEPLAY` | 53 → 0.4173 | 65.050 s | 286,720 → 3,122,412 (5.973 → 65.050) |
+| `SM_JIN_MGM01_FREEPLAY_ENDSTINGER` | 36 → 0.2835 | 2.992 s | 없음 |
+
+#### 12.14.2 화면별 재생·전환 [판독]
+
+| 웹 화면 | 원본 | 시작 | 전환·정지 |
+|---|---|---|---|
+| 인원 설정(광장 앞) | menu00 `SequenceFront::SettingPlayerImpl` — 타이틀(op `ComUiTitle::In`)의 `SM_BGM_TITLE` 이 이어짐 | `SM_BGM_TITLE`(웹은 타이틀 화면이 없어 여기서 처음부터) | `~SequenceFront` `StopBgmTitle(2)` **0.7 s** |
+| 캐릭터 선택(인원 설정 안) | 같은 `ComUiSettingPlayer` | 바꾸지 않음(TITLE 이어짐) | — |
+| 광장 | menu00 `SequenceMainMenu::MainImpl`·`SequenceEntrance` → `PlayBgmMenu`(핸들 없을 때만) | `SM_BGM_MENU` (+ 3D 층 `SM_BGM_MENU_RHYTHM` — 웹 생략, 12.14.3) | 기구 `TakeOffImpl` `StopBgm(2)` **0.7 s**, 세션 출발 `PlaySessionFiber` `StopBgm(6)` **0.5 s** |
+| 모드 선택 | menu01 `SequenceManager::Initialize` → `PlayBgm`(핸들 없을 때만) | `SM_BGM_MENU_MAP` | 모드 결정 `StartAnimImpl` `StopBgm(6)` **0.5 s**(Pa 만 4 = 1.4 s), 광장으로 `CheckExitImpl` 6 = **0.5 s** |
+| 캐릭터 선택·파티 규칙(모드 메뉴 쪽) | menu01 같은 장면 | `SM_BGM_MENU_MAP` **이어 재생**(끊지 않음) | 출발 `StartAnimImpl` 6 = **0.5 s**(charselect.md 12.3 의 근사 0.5 s 와 같음), 뒤로 = 이어짐 |
+| 온라인 friend·대기실 | menu00 광장 위 UI | `SM_BGM_MENU` 이어짐 | 광장과 같음 |
+| 온라인 world | matching00 `Scene::GameFlow` | `SM_BGM_MATCHING` | `Scene::StopBgm`·`CleanupGame` `Stop_Preset(2)` **0.7 s** |
+| 항구 | mgmet `InitOp` `PlayBgm(0)`, `StartEventFlow` `PlayBgm(1)`, `ModeSelectCameraIdle` `IsPlayBgm()` 거짓이면 `PlayBgm(2)` | 첫 방문 `SM_JIN_MGMET_OPENING` → `ENTRANCE_JMP`(징글 즉시 끊음), 프리 플레이에서 돌아오면 `ENTRANCE_NOINTRO_JMP` | 프리 플레이 출발 `FreeplayAfterFlow` `StopBgm(2)` **0.7 s**, 장면 떠남 `CleanupScene` `Stop_Preset(2)` **0.7 s** |
+| 프리 플레이 | mgm01 `StartFlow`·`ContinueFlow` `PlayBgm(4)`, `MgStartFlow` `StopBgm(3)`+`PlayBgm(5)`, `ExitFlow` `StopBgm(2)` | `SM_BGM_MGM01_FREEPLAY`(한 판 뒤에도 처음부터) | 한 판 출발 **0.2 s** + `SM_JIN_MGM01_FREEPLAY_ENDSTINGER`, 항구로 **0.7 s** |
+
+- 같은 곡 이어 재생: menu00 `PlayBgmMenu`·menu01 `PlayBgm` 은 핸들이 붙어 있으면 다시 틀지 않는다 → menu01 안 화면들(모드 선택·캐릭터 선택·파티 규칙)은 곡이 이어진다. 장면이 바뀌면 앞 장면이 먼저 멈춘다. 웹은 흐름 전체에 BGM 채널 하나(`view/bgm.ts` `appBgm()`, 공유 AudioContext)를 두고 같은 라벨이면 그대로 둔다.
+- 광장 곡은 시간대·장식으로 바뀌지 않는다: `PlayBgmMenu` 는 고정 라벨만 쓴다 [판독]. 바뀌는 건 음악 상점에서 고른 곡(`SequenceMusic`)뿐 — 웹 범위 밖.
+
+#### 12.14.3 웹 연결 [설계]
+
+- 곡 명세: `assets/common/sound/bgm.json`(라벨 → file·gain·loopStart/loopEnd 초) + wav. 캐릭터 선택 명세 `bgm.file` 도 `../common/sound/SM_BGM_MENU_MAP.wav`(한 파일). 변환 도구 `web/tools/analysis/shell_bgm_assets.py`.
+- 화면 규칙: `script/view/screenBgm.ts` `SCREEN_BGM`(위 표의 시작 라벨·나가기 페이드)을 페이지가 쓴다. 항구·프리 플레이는 MgmSound `playBgm(kind)` → `mgmBgmHooks` → `appBgm()`.
+- 미리 받기: `flowCatalog` 묶음 `bgm:<라벨>`(첫 조각), `flowTable` 의 화면 own/predict.
+
+검증 [실행 2026-10-08]: `npx tsx tools/test_shell_bgm.ts` 62/62 — 라벨 9개 → 명세·소스·압축본(통파일·조각) 없는 파일 0, 반복 = BFSTM 헤더(항구 = 리전 REG_MAIN)·빌드 index 반복 일치, gain = 볼륨/127, 가짜 AudioContext 로 화면 25단계 전환(같은 장면 안 이어 재생 = 같은 스트림, 새 곡 = 조각 0 부터 지금 + 0.06 s, 페이드 0.7/0.5/0.2 s·즉시 끊김이 판독값과 같음), 미리 받기 `bgm:<라벨>` = 첫 조각 키·flowTable. 페이지 콘솔 확인 1회(광장 dist·인원 설정 dist·모드 선택 src): 오류·4xx 0, BGM 조각 200.
+
+#### 12.14.4 사용자 확인 필요
+
+| 항목 | 정한 것 |
+|---|---|
+| 웹 인원 설정의 곡 | 원본처럼 `SM_BGM_TITLE`(타이틀 화면이 없어 설정 시작에서 처음부터) |
+| 항구 `*_JMP` 리전 곡 | 리전 판독·구현 안 함. REG_MAIN 구간을 반복 구간으로 씀(인트로 3.685 s 1회 → REG_MAIN 반복) [추정]. NOINTRO 도 같은 명세(인트로부터) |
+| 광장 3D 층 `SM_BGM_MENU_RHYTHM`(음악 상점 위치 Play3D, 볼륨 27) | 생략 — 2D `SM_BGM_MENU` 만 |
+| 덕킹(인원 설정 `ST_DUCKING_ON_SETTING`, 프렌드 메뉴, 메시지 창 0x0d·0x13) | 생략 |
+| 흐름 끝(취소)·ui.html 화면 바꾸기 | 0.5 s 페이드로 멈춤 [설계] |

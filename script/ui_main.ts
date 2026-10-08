@@ -17,6 +17,8 @@ import { partyRuleTestValues, runPartyRule, type PartyRuleRun } from './partyrul
 import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
 import { onlineTestValues, runOnline, type OnlineRun } from './online_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
+import { appBgm } from './view/bgm';
+import { FLOW_END_FADE } from './view/screenBgm';
 
 interface UiRun {
   stop(): void;
@@ -244,6 +246,7 @@ const stop = (): void => {
   token++;
   cur?.stop();
   cur = null;
+  appBgm().stop(FLOW_END_FADE);
   dbg.textContent = '';
 };
 

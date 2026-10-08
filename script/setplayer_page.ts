@@ -4,6 +4,7 @@
  * 근거: docs/shell/setplayer.md 9.3~9.5. 컨트롤러 지원 애플릿·유저 선택·소프트웨어 키보드는 원본이 시스템 UI 라 이 화면은 [설계].
  */
 import { runCharSelect, type CharSelectRun } from './charselect_page';
+import { appBgm } from './view/bgm';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { assetHooks } from './shell/charselect/assetHooks';
 import { ASSETS } from './env';
@@ -208,6 +209,7 @@ export async function runSetPlayer(
           .map((s, i) => `${s.pid + 1}P ${s.type === 'human' ? `사람(${s.controller ?? '-'}${s.linked ? ', 연동' : ''}) ${s.displayName}` : `COM ${s.displayName}`}${chosen ? ` ${chosen[i]}` : ''}`)
           .join('  ');
 
+  void appBgm().enter('setplayer', cfg.muted);
   const handle: SetPlayerHandle = await createSetPlayer({
     canvas,
     assets: { url: (p) => `${ASSETS}mgmcommon/${p}` },
@@ -247,6 +249,7 @@ export async function runSetPlayer(
         pads: r.slots.map((s) => (s.type === 'human' && s.controller ? controllers.source(s.controller) : null)),
         names: r.slots.map((s) => s.displayName),
         muted: cfg.muted,
+        bgm: false,
         onDone: (chars) => {
           charRun = null;
           canvas.style.visibility = '';
@@ -258,6 +261,7 @@ export async function runSetPlayer(
     },
     onDone: (r) => {
       finished = true;
+      appBgm().exit('setplayer', r.cancelled ? 'cancel' : 'done');
       cfg.onResult?.(r, chosen, r.slots.map((sl) => (sl.type === 'human' && sl.controller ? controllers.source(sl.controller) : null)));
       cfg.onDone(summary(r));
     },

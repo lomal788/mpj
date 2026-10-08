@@ -387,10 +387,10 @@ def build_bgm(spec):
     label = "SM_BGM_MENU_MAP"
     src = ROOT / "extracted" / "romfs" / "stream" / f"{label}.dspadpcm.bfstm"
     info = sound_bfstm.info(src)
-    out = DST / "sound" / f"{label}.wav"
+    out = DST.parent / "common" / "sound" / f"{label}.wav"
     sound_bfstm.decode(src, out)
     rate = info["sampleRate"]
-    spec["bgm"] = {"label": label, "file": f"sound/{label}.wav", "gain": round(33 / 127, 4), "rate": rate,
+    spec["bgm"] = {"label": label, "file": f"../common/sound/{label}.wav", "gain": round(33 / 127, 4), "rate": rate,
                    "loopStart": info["loopStart"] / rate, "loopEnd": info["frames"] / rate,
                    "evidence": "[판독] menu01 SequenceManager::Initialize → SoundManager::PlayBgm, [데이터] fsar 볼륨 33·BFSTM 루프"}
     print(label, out.stat().st_size, "B", spec["bgm"])

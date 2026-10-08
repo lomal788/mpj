@@ -25,6 +25,7 @@ import {
   type SettingOutcome,
 } from './shell/mgm01';
 import { appFlow } from './view/appFlow';
+import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -192,6 +193,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
   const catSounds = Object.fromEntries(Object.entries(catalog.json.sounds).map(([k, v]) => [k, { ...v, file: `../${v.file}` }]));
   const sound = new MgmSound({ ...view.spec.sounds, ...catSounds }, view.url, {
     play: (_l, url, gain) => playSe(url, gain),
+    ...appBgm().hooks(cfg.muted),
   });
 
   let raf = 0;
@@ -252,6 +254,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
       view.dispose();
       canvas.remove();
       overlay.remove();
+      appBgm().exit('mgm01', 'leave');
       const c = actx;
       setTimeout(() => void c?.close(), 300);
     },

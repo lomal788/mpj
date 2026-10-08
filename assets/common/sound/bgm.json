@@ -1,0 +1,83 @@
+{
+ "version": 1,
+ "source": "Super Mario Party Jamboree US v0 — web/tools/analysis/shell_bgm_assets.py, 명세 docs/engine/04_sound.md §12.14",
+ "bgm": {
+  "SM_BGM_TITLE": {
+   "file": "SM_BGM_TITLE.wav",
+   "gain": 0.315,
+   "rate": 48000,
+   "frames": 2558901,
+   "loopStart": 10.453333333333333,
+   "loopEnd": 53.3104375,
+   "evidence": "[판독] op ComUiTitle::In 재생 → menu00 SequenceFront 이어짐, ~SequenceFront StopBgmTitle(2), [데이터] fspj 볼륨 40·BFSTM SM_BGM_TITLE"
+  },
+  "SM_BGM_MENU": {
+   "file": "SM_BGM_MENU.wav",
+   "gain": 0.2205,
+   "rate": 48000,
+   "frames": 2561414,
+   "loopStart": 2.3893333333333335,
+   "loopEnd": 53.362791666666666,
+   "evidence": "[판독] menu00 SoundManager::PlayBgmMenu (2D 층), [데이터] fspj 볼륨 28·BFSTM SM_BGM_MENU"
+  },
+  "SM_BGM_MENU_MAP": {
+   "file": "SM_BGM_MENU_MAP.wav",
+   "gain": 0.2598,
+   "rate": 48000,
+   "frames": 2561415,
+   "loopStart": 2.3893333333333335,
+   "loopEnd": 53.3628125,
+   "evidence": "[판독] menu01 SequenceManager::Initialize → SoundManager::PlayBgm, [데이터] fspj 볼륨 33·BFSTM SM_BGM_MENU_MAP"
+  },
+  "SM_BGM_MATCHING": {
+   "file": "SM_BGM_MATCHING.wav",
+   "gain": 0.2756,
+   "rate": 48000,
+   "frames": 1636354,
+   "loopStart": 2.0906666666666665,
+   "loopEnd": 34.09070833333333,
+   "evidence": "[판독] matching00 Scene::GameFlow, [데이터] fspj 볼륨 35·BFSTM SM_BGM_MATCHING"
+  },
+  "SM_JIN_MGMET_OPENING": {
+   "file": "SM_JIN_MGMET_OPENING.wav",
+   "gain": 0.3622,
+   "rate": 48000,
+   "frames": 463607,
+   "evidence": "[판독] mgmet InitOp PlayBgm(0), [데이터] fspj 볼륨 46·BFSTM SM_JIN_MGMET_OPENING"
+  },
+  "SM_BGM_MGMET_ENTRANCE_JMP": {
+   "file": "SM_BGM_MGMET_ENTRANCE_JMP.wav",
+   "gain": 0.2283,
+   "rate": 48000,
+   "frames": 4298313,
+   "loopStart": 3.6850625,
+   "loopEnd": 47.99283333333333,
+   "evidence": "[판독] mgmet StartEventFlow PlayBgm(1); 반복 = 리전 REG_MAIN [추정], [데이터] fspj 볼륨 29·BFSTM SM_BGM_MGMET_ENTRANCE_JMP"
+  },
+  "SM_BGM_MGMET_ENTRANCE_NOINTRO_JMP": {
+   "file": "SM_BGM_MGMET_ENTRANCE_JMP.wav",
+   "gain": 0.2283,
+   "rate": 48000,
+   "frames": 4298313,
+   "loopStart": 3.6850625,
+   "loopEnd": 47.99283333333333,
+   "evidence": "[판독] mgmet ModeSelectCameraIdle PlayBgm(2) (IsPlayBgm 거짓일 때); 같은 파일, 인트로 건너뛰기는 미구현, [데이터] fspj 볼륨 29·BFSTM SM_BGM_MGMET_ENTRANCE_JMP"
+  },
+  "SM_BGM_MGM01_FREEPLAY": {
+   "file": "SM_BGM_MGM01_FREEPLAY.wav",
+   "gain": 0.4173,
+   "rate": 48000,
+   "frames": 3122412,
+   "loopStart": 5.973333333333334,
+   "loopEnd": 65.05025,
+   "evidence": "[판독] mgm01 StartFlow·ContinueFlow PlayBgm(4), [데이터] fspj 볼륨 53·BFSTM SM_BGM_MGM01_FREEPLAY"
+  },
+  "SM_JIN_MGM01_FREEPLAY_ENDSTINGER": {
+   "file": "SM_JIN_MGM01_FREEPLAY_ENDSTINGER.wav",
+   "gain": 0.2835,
+   "rate": 48000,
+   "frames": 143636,
+   "evidence": "[판독] mgm01 MgStartFlow PlayBgm(5), [데이터] fspj 볼륨 36·BFSTM SM_JIN_MGM01_FREEPLAY_ENDSTINGER"
+  }
+ }
+}

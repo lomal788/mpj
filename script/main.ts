@@ -23,6 +23,7 @@ import { type GameDef, type GameLogic, type GameSetup, type GameView, type Playe
 import { GAMES } from './games';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
+import { FLOW_END_FADE } from './view/screenBgm';
 import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from './view/input';
@@ -353,6 +354,7 @@ const flowStep = (name: string, r: FlowRun | null): void => {
 
 const endFlow = (text: string): void => {
   flowStep('end', null);
+  void import('./view/bgm').then((m) => m.appBgm().stop(FLOW_END_FADE));
   plazaPage = null;
   glCanvas.style.visibility = hudCanvas.style.visibility = '';
   startBtn.disabled = false;

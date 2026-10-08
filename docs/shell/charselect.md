@@ -520,6 +520,8 @@ createCharSelect(opts): Promise<{ step(): void; render(): void; dispose(): void;
 
 ### 12.3 배경음악 [판독][데이터]
 
+→ 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
+
 - 캐릭터 선택은 menu01 장면 안의 `ComUiSettingPlayer` 단계다. BGM 은 장면 시작(`menu01::SequenceManager::Initialize` 끝)에서 `SoundManager::PlayBgm` → `SoundModule::Play("SM_BGM_MENU_MAP")` 로 이미 돌고 있고, 접속 UI 동안 그대로 이어진다. UI 를 띄울 때 `DuckingAmb(1)`(환경음 덕킹), 닫을 때 `DuckingAmb(0)` [판독 menu01 SequenceModeSelect::MapMenuImpl·BinocularMenuImpl·SequenceStartPaMode::CheckPlayerCountImpl].
 - 정지: 다음 장면으로 갈 때 `SoundManager::StopBgm` → `SoundHandle::Stop_Preset(FadeTimePreset)`(프리셋 값은 레지스터 인자라 [미확정]) [판독 SequenceStart*::CallSceneImpl 등 13곳].
 - 데이터: `SM_BGM_MENU_MAP` = 스트림(fileId 298, `romfs/stream/SM_BGM_MENU_MAP.dspadpcm.bfstm`), 볼륨 33/127, DSP-ADPCM 스테레오 48 kHz, 전체 2,561,415 샘플(53.36 s), **루프 114,688 → 2,561,415 샘플(2.389 s → 53.363 s)** [데이터 sound_bfstm info].

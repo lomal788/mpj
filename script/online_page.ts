@@ -11,6 +11,7 @@ import { assetHooks } from './shell/charselect/assetHooks';
 import { MgmSound, MgmView } from './shell/mgmcommon';
 import { applyOnlineExtra, FakeOnline, ONLINE_FACES, ONLINE_PART, OnlineScreen, type FakeError, type OnlineEntry, type OnlineExtra } from './shell/online';
 import type { PadSource } from './view/input';
+import { appBgm } from './view/bgm';
 
 const STICK_ON = 0.5 * STICK_MAX;
 const DT = Math.fround(1 / 60);
@@ -209,6 +210,7 @@ export async function runOnline(stage: HTMLElement, cfg: { pads: (PadSource | nu
     screen.draw();
     view.end();
   };
+  void appBgm().enter(t.entry === 'world' ? 'onlineWorld' : 'onlineFriend', cfg.muted);
   render();
   let done = false;
   let stopped = false;
@@ -231,6 +233,7 @@ export async function runOnline(stage: HTMLElement, cfg: { pads: (PadSource | nu
       }
       if (screen.finished) {
         done = true;
+        appBgm().exit(t.entry === 'world' ? 'onlineWorld' : 'onlineFriend', 'done');
         cfg.onDone(describe());
       }
     }

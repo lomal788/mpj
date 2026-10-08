@@ -9,7 +9,7 @@ import { assetHooks } from './shell/charselect/assetHooks';
 import { createWork, MemorySave, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
 import { MgmetHowtoView } from './shell/mgmet/howto';
-import { BgmChannel, mgmBgmHooks } from './view/bgm';
+import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -193,8 +193,7 @@ export async function runMgmet(
     },
     () => players,
   );
-  const bgm = new BgmChannel(() => ctx);
-  const sound = new MgmSound(view.spec.sounds, view.url, { play: (_l, u, gain, x) => playSe(u, gain, x), ...mgmBgmHooks(bgm, view.spec.sounds) });
+  const sound = new MgmSound(view.spec.sounds, view.url, { play: (_l, u, gain, x) => playSe(u, gain, x), ...appBgm().hooks(cfg.muted) });
   const msg = new MessageWindow(view, input, sound);
   const flow = new MessageFlow(() => msg, { operator: () => input.operator, dt: () => Math.fround(1 / 60) });
   flow.initialize();
@@ -285,7 +284,7 @@ export async function runMgmet(
       done = true;
       view.dispose();
       canvas.remove();
-      bgm.stop(0);
+      appBgm().exit('mgmet', 'leave');
       const c = ctx;
       setTimeout(() => void c?.close(), 300);
     },

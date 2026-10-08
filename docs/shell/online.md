@@ -270,6 +270,8 @@ guide = host ? [info, invite(if members < max), dismiss] : [leave]
 
 소리: SQ_SE_SYS_DECI·CURSOR·CANCEL·DECI_S·DECI_LR·CANCEL_S·DECI_L, SQ_SE_SYS_ONLIN_PLY_RNDMATCH, SQ_SE_MATCHING00_MBR_LST·BD_RULE, SQ_SE_MENU00_TRANSITION_WHO; BGM SM_BGM_MATCHING(스트림), 덕킹 ST_DUCKING_START/FINISH_FRIEND [판독].
 
+→ 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
+
 ## 8. 다른 기능과의 상호작용
 - 방에 있는 동안 메뉴 Work 의 로컬 플레이어가 원격 플레이어로 채워지고, 프리 플레이 항구 등은 "온라인 접속 중에는 플레이할 수 없습니다."(mgm01_ui_announce01) [데이터].
 - 재입장: 방 만들기·참가 때 `ReentryData::SetPassWard`, 매칭 시작 때 보드 Work 저장(재입장 허용 = 호스트 이어받기 가능) — 재입장 흐름(sys_reentry_*)은 범위 밖 [판독: 호출만].

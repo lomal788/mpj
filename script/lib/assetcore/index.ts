@@ -314,6 +314,8 @@ export interface AssetManagerApi {
   get<V = unknown>(key: string, kind: string, pri?: number, owner?: string): Promise<V>;
   want(key: string, kind: string, pri: number, owner?: string): void;
   raise(key: string, pri: number): void;
+  lower(key: string, pri: number): void;
+  drop(key: string): void;
   peek<V = unknown>(key: string): V | undefined;
   state(key: string): number;
   release(owner: string): void;
@@ -468,6 +470,36 @@ export class AssetManager implements AssetManagerApi {
   raise(key: string, pri: number): void {
     const e = this.entries.get(key);
     if (e) this.raiseEntry(e, clampPri(pri));
+  }
+
+  /** 내리기: 아직 시작 전(받기 큐·풀기 큐)인 항목만 낮은 등급 큐 뒤로. 진행 중·끝난 항목은 그대로 */
+  lower(key: string, pri: number): void {
+    const e = this.entries.get(key);
+    const p = clampPri(pri);
+    if (!e || p <= e.pri) return;
+    if (e.state === ST_QUEUED) {
+      if (e.pri === P0) this.stats.p0Active--;
+      e.pri = p;
+      e.qGen++;
+      this.fetchQ[p].push(e, e.qGen);
+      this.pump();
+    } else if (e.inDecodeQ) {
+      if (e.pri === P0) this.stats.p0Active--;
+      e.pri = p;
+      e.qGen++;
+      this.decodeQ[p].push(e, e.qGen);
+      this.pump();
+    }
+  }
+
+  /** 받기 큐에서 뺀다(시작 전 항목만 — idle 로, 걸린 Promise 는 다시 요청되면 풀린다). 진행 중·끝난 항목은 그대로 */
+  drop(key: string): void {
+    const e = this.entries.get(key);
+    if (!e || e.state !== ST_QUEUED) return;
+    if (e.pri === P0) this.stats.p0Active--;
+    e.state = ST_IDLE;
+    e.qGen++;
+    this.pump();
   }
 
   peek<V = unknown>(key: string): V | undefined {

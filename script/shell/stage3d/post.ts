@@ -11,6 +11,8 @@
  * - LUT: 16³ 을 graphics_bntx 가 256×16 띠로 푼 것(가로 = 파랑 조각 16장, 조각 안 x = 빨강, y = 초록 [데이터]). 3D 표본(반 텍셀 보정 없음)을
  *   띠에서 똑같이 흉내 낸다(조각 안은 쌍선형, 파랑은 두 조각 섞기). LUT 바이트를 그대로 내보낸다.
  * - [근사] FXAA 를 원본은 합성 첫 단계(장면 HDR)에, 웹은 마지막(LDR)에 한다. first_down 의 두 번째 표본(샘플러 6, min(b + 0.5, a))은 같은 표본으로 본다.
+ * - precompile(): 프로그램 미리 컴파일(docs/engine/loader_manager.md §14.5). 셰이더 키는 그리는 곳(RT = 선형·톤맵 없음 / 화면 = 출력 색공간)에 따라 달라서
+ *   블룸·(FXAA 앞) 합성은 RT 를 걸고, 마지막 단계(FXAA 또는 합성)는 화면으로 compileAsync 한다. 렌더 타깃은 되돌린다.
  */
 import * as THREE from 'three';
 import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
@@ -272,6 +274,32 @@ export class PostChain {
       this.fxaaMat.uniforms.tDiffuse.value = this.ldr.texture;
       this.pass(this.fxaaMat, null);
     } else this.pass(this.comp, null);
+  }
+
+  precompile(): Promise<unknown> {
+    const gl = this.gl;
+    const prev = gl.getRenderTarget();
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute([-1, 3, 0, -1, -1, 0, 3, -1, 0], 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 2, 0, 0, 2, 0], 2));
+    const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const group = (ms: THREE.Material[]): THREE.Scene => {
+      const s = new THREE.Scene();
+      for (const m of ms) s.add(new THREE.Mesh(geo, m));
+      return s;
+    };
+    const mid: THREE.Material[] = [this.first, this.downMat, this.upMat];
+    if (this.p.fxaa) mid.push(this.comp);
+    const jobs: Promise<unknown>[] = [];
+    try {
+      gl.setRenderTarget(this.ldr);
+      jobs.push(gl.compileAsync(group(mid), cam));
+      gl.setRenderTarget(null);
+      jobs.push(gl.compileAsync(group([this.p.fxaa ? this.fxaaMat : this.comp]), cam));
+    } finally {
+      gl.setRenderTarget(prev);
+    }
+    return Promise.all(jobs).finally(() => geo.dispose());
   }
 
   dispose(): void {

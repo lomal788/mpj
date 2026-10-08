@@ -6,6 +6,9 @@
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { createCharSelect, type CharSelectHandle } from './shell/charselect';
+import { P1 } from './lib/assetcore';
+import { appAssets, assetKeyOf } from './view/appAssets';
+import { appFlow } from './view/appFlow';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -35,6 +38,8 @@ export interface CharSelectRun {
 
 /** stage 안에 캔버스를 만들어 캐릭터 선택을 돌린다. 끝나면 onDone(pcNN 목록 | null = 취소) */
 export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; names?: string[]; onDone(chars: string[] | null): void }): Promise<CharSelectRun> {
+  const flow = appFlow();
+  flow.enter('charselect');
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
@@ -63,9 +68,9 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
   const buffer = (c: AudioContext, url: string): Promise<AudioBuffer | null> => {
     let b = buffers.get(url);
     if (!b) {
-      b = fetch(url)
-        .then((r) => r.arrayBuffer())
-        .then((a) => c.decodeAudioData(a))
+      const key = assetKeyOf(url);
+      b = (key ? appAssets().get<ArrayBuffer>(key, 'bytes', P1) : fetch(url).then((r) => r.arrayBuffer()))
+        .then((a) => c.decodeAudioData(a.slice(0)))
         .catch(() => null);
       buffers.set(url, b);
     }
@@ -171,6 +176,9 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     },
     onDecided(result) {
       chosen = result.map((c) => handle.spec.chars[c]?.pc ?? 'pc01');
+      const humanChars = chosen.filter((_, i) => !cfg.com[i]);
+      flow.state('charselect', 'decided', humanChars);
+      if (humanChars[0]) flow.hint('chara1P', humanChars[0]);
     },
     onFinished(decided) {
       done = true;

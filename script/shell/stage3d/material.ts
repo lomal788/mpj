@@ -18,6 +18,9 @@
  *   투과 버퍼에 먼저 그려 한 겹이 더 비친다(docs/shell/plaza_3d.md §6.14 #14c).
  * - capture_color_buffer_type ≠ 0 인 비굴절 재질(분수 물줄기 등) [추정: 캡처 전에 그린다]: 혼합은 그대로 두고 불투명 목록 맨 끝(CAPTURE_ORDER)에서
  *   깊이 쓰기 없이 그려 투과 버퍼(원본 캡처 자리)에 들어가게 한다(#14c).
+ * - dispose(keepManaged): 앱 수명 렌더러면 로더 관리자 캐시에서 온 복제(fetchTexture, managed)는 남긴다 — GPU 텍스처가 source 에 남아 재진입 때 다시
+ *   올리지 않는다(docs/engine/loader_manager.md §14.3). share(IblShare) = 렌더러 하나가 같이 쓰는 PMREM 생성기·IBL 큐브 캐시 — 있으면 IBL 을 무대마다 다시
+ *   만들지 않고(HDR 읽기·PMREM 렌더·그 셰이더 컴파일 없음) dispose 때 버리지 않는다.
  */
 import * as THREE from 'three';
 import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
@@ -38,6 +41,11 @@ export interface TexEntry {
 export interface IblSet {
   rad: THREE.Texture;
   irr: THREE.CubeTexture | null;
+}
+
+export interface IblShare {
+  pmrem: THREE.PMREMGenerator;
+  cubes: Map<string, Promise<IblSet | null>>;
 }
 
 type StdMat = THREE.MeshStandardMaterial;
@@ -233,10 +241,11 @@ export function patchWater(m: StdMat, opacity: number, muddy: [number, number, n
 
 export class MaterialSetup {
   private readonly textures = new Map<string, Promise<THREE.Texture | null>>();
-  private readonly cubes = new Map<string, Promise<IblSet | null>>();
+  private readonly cubes: Map<string, Promise<IblSet | null>>;
   private readonly prepared = new WeakSet<THREE.Material>();
   private readonly pmrem: THREE.PMREMGenerator;
   private readonly owned: THREE.Texture[] = [];
+  private readonly managed = new WeakSet<THREE.Texture>();
   private readonly targets: THREE.WebGLRenderTarget[] = [];
   common: IblSet | null = null;
   globals: StageGlobals | null = null;
@@ -252,8 +261,10 @@ export class MaterialSetup {
     private readonly assets: AssetSource,
     gl: THREE.WebGLRenderer,
     private readonly index: Record<string, TexEntry>,
+    private readonly share?: IblShare,
   ) {
-    this.pmrem = new THREE.PMREMGenerator(gl);
+    this.pmrem = share?.pmrem ?? new THREE.PMREMGenerator(gl);
+    this.cubes = share?.cubes ?? new Map();
   }
 
   async loadIbl(common: [string, string], chara: [string, string] | null): Promise<void> {
@@ -278,12 +289,12 @@ export class MaterialSetup {
         const cube = await loader.loadAsync(radFiles.map((f) => this.assets.url(`tex/${f}`)));
         const target = this.pmrem.fromCubemap(cube);
         cube.dispose();
-        this.targets.push(target);
+        if (!this.share) this.targets.push(target);
         let irrCube: THREE.CubeTexture | null = null;
         const irrFiles = irr ? this.cubeFiles(irr) : null;
         if (irrFiles) {
           irrCube = await loader.loadAsync(irrFiles.map((f) => this.assets.url(`tex/${f}`)));
-          this.owned.push(irrCube);
+          if (!this.share) this.owned.push(irrCube);
         }
         return { rad: target.texture, irr: irrCube };
       })().catch((e) => {
@@ -303,6 +314,7 @@ export class MaterialSetup {
         if (!e || e.cube || !e.files.length) return null;
         const url = this.assets.url(`tex/${e.files[0]}`);
         const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : this.fetchTexture ? await this.fetchTexture(`tex/${e.files[0]}`) : await loadTexture(url);
+        if (this.fetchTexture && !e.files[0].endsWith('.hdr')) this.managed.add(t);
         t.flipY = false;
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         if (!e.files[0].endsWith('.hdr') && e.srgb) t.colorSpace = THREE.SRGBColorSpace;
@@ -493,9 +505,9 @@ export class MaterialSetup {
     m.customProgramCacheKey = () => `${prevKey.call(m)}|${key}`;
   }
 
-  dispose(): void {
-    for (const t of this.owned) t.dispose();
+  dispose(keepManaged = false): void {
+    for (const t of this.owned) if (!keepManaged || !this.managed.has(t)) t.dispose();
     for (const t of this.targets) t.dispose();
-    this.pmrem.dispose();
+    if (!this.share) this.pmrem.dispose();
   }
 }

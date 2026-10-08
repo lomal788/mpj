@@ -6,16 +6,23 @@
  * - 평행광 세기 = 원본 색 × π [근사: mg1801 과 같은 단위 관례]. 그림자맵 하나로 카메라 근처 절두체 조각을 덮는다 [근사: 원본 캐스케이드].
  * - 안개 [근사]: env 의 거리 안개(시작·끝·색)를 three Fog(선형)로.
  * - 톤맵·포스트(post00 블룸 등)는 넣지 않는다 [근사].
+ * 앱 수명 렌더러(gpu 옵션 StageGpu = 렌더러 + 업로드 기록, docs/engine/loader_manager.md §14.3): 렌더러를 만들지도 버리지도 않고, dispose 때 관리자 캐시 몫
+ *   (glTF 템플릿과 같이 쓰는 기하·관리자 텍스처 복제)의 GPU 데이터를 남긴다. 무대 전용(준비 RT·HDR·뼈 텍스처)만 버린다. keep = 렌더러 수명 물건 —
+ *   env 가 같으면 무대마다 같은 것: 후처리 체인('post:<값>')·하늘('sky:<모델>')·IBL(PMREM 생성기 + 큐브 캐시 'ibl') — 다시 만들지 않고 dispose 하지 않는다.
+ *   ShaderMaterial 은 마지막 재질이 dispose 되면 three 가 셰이더 단계 번호를 지워 같은 코드라도 프로그램 키가 바뀌므로(WebGLShaderCache) 재질째 들고 있어야
+ *   재진입 컴파일이 0 이다.
+ * 등급 바닥(PriorityFloor, §14.5): value 보다 높은(작은) 등급 요청은 value 로 낮춰 부르고 [키|작업, 원래 등급] 을 적어 둔다. lower(to) 때 무대가 적어 둔 것을
+ *   원래 등급으로 올린다. 기본 P0 = 바닥 없음.
  */
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { FrameScheduler, P0, P1, type AssetManagerApi } from '../../lib/assetcore';
-import { ScenePreparer, type PrepJob } from '../../lib/assetcore-three';
+import { ScenePreparer, type PrepJob, type UploadRecord } from '../../lib/assetcore-three';
 import { createGltfLoader } from './assetLoader';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from './assetHandlers';
 import { Clip } from './clip';
-import { fresOf, MaterialSetup } from './material';
+import { fresOf, MaterialSetup, type IblShare } from './material';
 import type { GraphDef } from './graph';
 import { emptyParams, FmabPlayer, type MatParams } from './params';
 import { PostChain, type PostParams } from './post';
@@ -58,12 +65,45 @@ export interface StageLoader {
   owner: string;
 }
 
+export interface StageGpu {
+  renderer: THREE.WebGLRenderer;
+  uploads: UploadRecord;
+  keep: Map<string, unknown>;
+}
+
+export class PriorityFloor {
+  readonly keys: [string, number][] = [];
+  readonly jobs: [PrepJob, number][] = [];
+  private readonly hooks: ((to: number) => void)[] = [];
+  constructor(public value: number = P0) {}
+
+  key(k: string, p: number): number {
+    if (p >= this.value) return p;
+    this.keys.push([k, p]);
+    return this.value;
+  }
+
+  onLower(fn: (to: number) => void): void {
+    this.hooks.push(fn);
+  }
+
+  lower(to: number = P0): void {
+    if (to >= this.value) return;
+    this.value = to;
+    for (const h of this.hooks) h(to);
+    this.keys.length = 0;
+    this.jobs.length = 0;
+  }
+}
+
 export interface StageCreateOptions {
   canvas: HTMLCanvasElement;
   assets: AssetSource;
   manifest?: string;
   antialias?: boolean;
   loader?: StageLoader;
+  gpu?: StageGpu;
+  floor?: PriorityFloor;
 }
 
 /** 무대 템플릿: 관리자 캐시의 깨끗한 glTF 장면을 재질까지 복제(MaterialSetup 이 재질을 고쳐 쓰므로 무대 사이에 나누지 않는다) */
@@ -159,6 +199,9 @@ export class Stage3D {
   readonly preparer: ScenePreparer;
   private readonly models = new Map<string, Model>();
   private readonly gltfs = new Map<string, Promise<GLTF>>();
+  private readonly sharedGeo = new WeakSet<THREE.BufferGeometry>();
+  readonly floor: PriorityFloor;
+  readonly keep: Map<string, unknown> | null;
   private readonly clipsLive: { step(df: number): void }[] = [];
   readonly globals: StageGlobals = { time: { value: 0 }, ms: { value: 0 }, sunDir: { value: new THREE.Vector3(0, 1, 0) }, env: emptyParams() };
   post: PostChain | null = null;
@@ -175,7 +218,7 @@ export class Stage3D {
   private shadowOffset = 500;
 
   private constructor(private readonly opts: StageCreateOptions) {
-    this.renderer = new THREE.WebGLRenderer({ canvas: opts.canvas, antialias: opts.antialias ?? true });
+    this.renderer = opts.gpu?.renderer ?? new THREE.WebGLRenderer({ canvas: opts.canvas, antialias: opts.antialias ?? true });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -184,7 +227,14 @@ export class Stage3D {
     this.sun.shadow.mapSize.set(SHADOW_MAP, SHADOW_MAP);
     this.scene.add(this.sun, this.sun.target);
     this.scheduler = opts.loader?.manager.scheduler ?? new FrameScheduler({ now: () => performance.now(), tick: (fn) => void requestAnimationFrame(fn) }, PLAY_BUDGET_MS);
-    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: this.scheduler, linear: () => !!this.post });
+    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: this.scheduler, linear: () => !!this.post, uploads: opts.gpu?.uploads });
+    this.floor = opts.floor ?? new PriorityFloor(P0);
+    this.keep = opts.gpu?.keep ?? null;
+    this.floor.onLower(() => {
+      const l = this.opts.loader;
+      for (const [k, p] of this.floor.keys) l?.manager.raise(k, p);
+      for (const [j, p] of this.floor.jobs) this.preparer.raise(j, p);
+    });
   }
 
   get assetLoader(): StageLoader | null {
@@ -199,7 +249,10 @@ export class Stage3D {
   /** 관리자가 있으면 관리자로(무대 상대 경로), 없으면 fetch 로 json 을 읽는다 */
   private async json<T>(path: string, pri: number): Promise<T | null> {
     const l = this.opts.loader;
-    if (l) return l.manager.get<T>(l.key(path), KIND_JSON, pri, l.owner).catch(() => null);
+    if (l) {
+      const k = l.key(path);
+      return l.manager.get<T>(k, KIND_JSON, this.floor.key(k, pri), l.owner).catch(() => null);
+    }
     const r = await fetch(this.opts.assets.url(path));
     return r.ok ? ((await r.json()) as T) : null;
   }
@@ -211,9 +264,16 @@ export class Stage3D {
     if (!man) throw new Error('stage3d manifest 를 읽지 못했다');
     s.manifest = man;
     s.env = (s.manifest.env ?? {}) as StageEnv;
-    s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {});
+    const keep = s.keep;
+    let ibl = keep?.get('ibl') as IblShare | undefined;
+    if (keep && !ibl) keep.set('ibl', (ibl = { pmrem: new THREE.PMREMGenerator(s.renderer), cubes: new Map() }));
+    s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {}, ibl);
     const l = opts.loader;
-    if (l) s.materials.fetchTexture = (p) => l.manager.get<THREE.Texture>(l.key(p), KIND_TEXTURE, P1, l.owner).then((t) => t.clone());
+    if (l)
+      s.materials.fetchTexture = (p) => {
+        const k = l.key(p);
+        return l.manager.get<THREE.Texture>(k, KIND_TEXTURE, s.floor.key(k, P1), l.owner).then((t) => t.clone());
+      };
     s.materials.globals = s.globals;
     for (const d of (s.manifest as unknown as { graphs?: GraphDef[] }).graphs ?? []) (s.materials.graphs[d.material] ??= []).push(d);
     s.applyEnv();
@@ -257,7 +317,10 @@ export class Stage3D {
       l.position.set(...pl.position);
       this.scene.add(l);
     }
-    if (e.post) {
+    const postKey = e.post ? `post:${JSON.stringify(e.post)}` : '';
+    const keptPost = this.keep?.get(postKey) as PostChain | undefined;
+    if (keptPost) this.post = keptPost;
+    else if (e.post) {
       const lut = e.post.lut ? await this.materials.texture(e.post.lut) : null;
       if (lut) {
         lut.colorSpace = THREE.NoColorSpace;
@@ -267,8 +330,14 @@ export class Stage3D {
         lut.needsUpdate = true;
       }
       this.post = new PostChain(this.renderer, e.post, lut);
+      this.keep?.set(postKey, this.post);
     }
-    if (e.sky) {
+    const skyKey = e.sky ? `sky:${e.sky.model}:${e.sky.texture ?? ''}` : '';
+    const keptSky = this.keep?.get(skyKey) as THREE.Object3D | undefined;
+    if (keptSky) {
+      this.sky = keptSky;
+      this.scene.add(keptSky);
+    } else if (e.sky) {
       const tex = e.sky.texture ? await this.materials.texture(e.sky.texture) : null;
       if (tex) {
         tex.wrapS = THREE.RepeatWrapping;
@@ -291,6 +360,7 @@ export class Stage3D {
       mesh.frustumCulled = false;
       this.sky = mesh;
       this.scene.add(mesh);
+      this.keep?.set(skyKey, mesh);
     }
   }
 
@@ -351,11 +421,18 @@ export class Stage3D {
     const first = !p;
     const l = this.opts.loader;
     if (!p) {
+      const k = l?.key(info.url) ?? '';
       p = l
-        ? l.manager.get<GLTF>(l.key(info.url), KIND_GLTF, opts.pri ?? P1, l.owner).then((g) => ({ ...g, scene: stageTemplate(g.scene) as THREE.Group }))
+        ? l.manager.get<GLTF>(k, KIND_GLTF, this.floor.key(k, opts.pri ?? P1), l.owner).then((g) => {
+            g.scene.traverse((o) => {
+              const geo = (o as THREE.Mesh).geometry;
+              if (geo) this.sharedGeo.add(geo);
+            });
+            return { ...g, scene: stageTemplate(g.scene) as THREE.Group };
+          })
         : this.loader.loadAsync(this.opts.assets.url(info.url));
       this.gltfs.set(info.url, p);
-    } else if (l && opts.pri !== undefined) l.manager.raise(l.key(info.url), opts.pri);
+    } else if (l && opts.pri !== undefined) l.manager.raise(l.key(info.url), this.floor.key(l.key(info.url), opts.pri));
     const gltf = await p;
     const root = first ? gltf.scene : cloneSkinned(gltf.scene);
     root.name = id;
@@ -379,7 +456,10 @@ export class Stage3D {
 
   /** GPU 준비(텍스처 업로드·셰이더 컴파일·버퍼 업로드)를 프레임 예산으로 — job.promise 가 풀린 뒤에만 보이게 한다(loader_manager.md §11.3) */
   prepareModel(root: THREE.Object3D, pri: number): PrepJob {
-    return this.preparer.prepare(root, pri);
+    const f = this.floor;
+    const job = this.preparer.prepare(root, pri < f.value ? f.value : pri);
+    if (pri < f.value) f.jobs.push([job, pri]);
+    return job;
   }
 
   /** 개발·시험: 지금 그려지는(자신과 조상이 모두 보이는) 메시 중 GPU 준비를 안 거친 수 */
@@ -613,15 +693,20 @@ export class Stage3D {
   }
 
   dispose(): void {
+    const keep = !!this.opts.gpu;
     this.preparer.dispose();
-    this.post?.dispose();
-    this.materials?.dispose();
+    if (!keep) this.post?.dispose();
+    if (keep) this.sky?.removeFromParent();
+    this.materials?.dispose(keep);
+    const skeletons = new Set<THREE.Skeleton>();
     this.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
+      if (keep && (o as THREE.SkinnedMesh).isSkinnedMesh) skeletons.add((o as THREE.SkinnedMesh).skeleton);
       if (!mesh.isMesh) return;
-      mesh.geometry.dispose();
+      if (!keep || !this.sharedGeo.has(mesh.geometry)) mesh.geometry.dispose();
       for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) m.dispose();
     });
-    this.renderer.dispose();
+    for (const sk of skeletons) sk.dispose();
+    if (!keep) this.renderer.dispose();
   }
 }

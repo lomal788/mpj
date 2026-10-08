@@ -3,6 +3,7 @@
  *   bex 비트: A 0x1, B 0x2, 0x8(취소에 같이 쓰임, Y [추정]), 십자 아래 0x400·위 0x800, 스틱 위 0x20000·아래 0x80000 (docs/shell/modeselect.md 5절)
  */
 import { ASSETS } from './env';
+import { appFlow } from './view/appFlow';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from './shell/modeselect';
 import type { PadSource } from './view/input';
@@ -122,6 +123,7 @@ export async function runModeSelect(
   let raf = 0;
   let last = performance.now();
   let acc = 0;
+  let cursor = -1;
   const loop = (now: number): void => {
     acc += Math.min(250, now - last);
     last = now;
@@ -130,6 +132,11 @@ export async function runModeSelect(
       handle.step();
       acc -= 1000 / 60;
       n++;
+    }
+    if (handle.state.cursor !== cursor) {
+      cursor = handle.state.cursor;
+      const key = handle.spec.modes[cursor]?.key;
+      if (key) appFlow().state('modeselect', 'cursor', key);
     }
     if (!done) {
       handle.render();

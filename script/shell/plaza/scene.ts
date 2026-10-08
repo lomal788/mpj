@@ -1,9 +1,10 @@
 /**
  * 광장 장면 실행기 — 무대(world) 를 만들고 PlazaContext 를 꾸려 PLAZA_PARTS 를 붙인 뒤, 페이지가 부르는 step/render 로 돌린다.
  * 카메라: stage3d 슬롯(anim > follow) 이 잡지 않은 프레임은 char_start_pos 뒤 고정 시점 [설계: B 의 추종 카메라 전 자리].
+ * 앱 수명 렌더러(docs/engine/loader_manager.md §14): gpu 를 받으면 무대가 그 렌더러를 쓰고, world 를 받으면(앞 화면에서 미리 만든 것) 새로 만들지 않는다.
  */
 import * as THREE from 'three';
-import { PLAY_BUDGET_MS, type AssetSource, type StageLoader } from '../stage3d';
+import { PLAY_BUDGET_MS, type AssetSource, type StageGpu, type StageLoader } from '../stage3d';
 import { PLAZA_PARTS } from './parts';
 import type { PlazaActor, PlazaContext, PlazaExit, PlazaPad, PlazaPart, PlazaPlayerSetup, PlazaSound, PlazaWorld } from './types';
 import { createPlazaWorld } from './world';
@@ -44,6 +45,8 @@ export interface PlazaRunOptions {
   loader?: StageLoader;
   /** glb 안 텍스처도 관리자를 지남(압축 모드) */
   gltfTextures?: boolean;
+  gpu?: StageGpu;
+  world?: Promise<PlazaWorld>;
 }
 
 export interface PlazaRun {
@@ -59,8 +62,9 @@ export interface PlazaRun {
 }
 
 export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
-  const world = await createPlazaWorld({
+  const world = o.world ? await o.world : await createPlazaWorld({
     canvas: o.canvas,
+    gpu: o.gpu,
     assets: o.worldAssets,
     deco: o.deco,
     onProgress: o.onProgress,

@@ -616,6 +616,8 @@ createCharSelect(opts): Promise<{ step(): void; render(): void; dispose(): void;
 
 - 정정(2026-10-07, 사용자 지적 "동키콩 → 랜덤/잠긴 칸이면 캐릭터가 멈춰 버림"): 카드 렌더 타깃이 `samples: 4`(MSAA)라 three 가 멀티샘플 → 텍스처 resolve 를 `render()` 안에서만 한다. 모델이 없을 때 `clear()` 만 하고 `render()` 를 건너뛰어 텍스처에 이전 캐릭터 마지막 프레임이 남았다. 원본 규칙(5.5: 랜덤·잠김 = 모델 지우고 비움)대로 비우려면 빈 장면도 매 프레임 `render()` 한다(`preview3d.ts` render). [실행: 코드 분석, three r180 동작]
 
+- 정정(2026-10-08, 로더 관리자 §13): 앱 페이지에서는 3D 미리 준비의 **받기·풀기**를 `assetHooks.broker`(앱 로더 관리자)가 맡는다 — 진입 때 사람 커서 캐릭터만(등급 0), 그다음 커서 이웃 칸(2), 나머지(3, 데이터 절약이면 안 받음). 커서가 움직이면 새 커서 캐릭터를 올리고 빠진 캐릭터를 내린다. 브로커가 없으면(시험·단독 페이지) 이 절의 방식(동시 2개, 커서 거리순) 그대로. GPU 단계·슬롯 요청 번호·랜덤·잠김 칸·결정 모션·보이스 요청 번호는 무변경, 소리 바이트도 관리자 경유(디코드는 페이지). docs/engine/loader_manager.md §13.4.
+
 ### 12.11 몸 재질 셰이더 그래프 판독 — 캐서린 "배까지 전부 분홍"·22명 _C1/_C2 규칙 (2026-10-07, 코드 수정 전에 기록)
 
 **판독 방법(새로 연 경로)** [판독]: 캐릭터 셰이더 팩 `extracted/bea/chara~pcNN.nx.bea/_chara/pcNN.bnbshpk` → `bnbshpk_split.py`(FSHA: fluid·forward_plus·container) → `bfsha_dump model/match`(재질 옵션 = glb `extras.fres.shader.options`, 입력 `analysis/mat/charsel_mats_in.json`) → 몸 재질 프로그램 고르기(`analysis/mat/prog/match.json`) → envydis gm107 디스어셈블 + 이름 주석 `sass_dis.py` → `analysis/mat/sass/pcNN__forward_plus__pK.{vs,fs}.txt`(24 프로그램). 도구는 F:/dev/mps 판(hsmg402 판독 때 만든 것)을 `web/tools/analysis/`·`tools/envydis_build/` 로 복사해 썼다. mpj 판은 텍스처가 **바인드리스**(`tex b`, 핸들 = Material UBO 앞 0x10 + 0x10 × 샘플러 위치)라 `sass_dis.py` 에 `Material.@샘플러` 주석을 더했다(pc13: 0x210 = `sg_utility_texture2darray0` 이 `array t2d` 로 읽히는 것으로 위치 규칙 확인).

@@ -22,6 +22,7 @@ import { DEV } from './env';
 import { type GameDef, type GameLogic, type GameSetup, type GameView, type PlayerSetup, readOptions } from './game';
 import { GAMES } from './games';
 import { Assets } from './view/assets';
+import { appFlow } from './view/appFlow';
 import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from './view/input';
@@ -64,6 +65,8 @@ interface Hook {
   /** ?plaza=1 흐름 단계(setplayer·plaza·modeselect·mgmet·mgm01·game·end)와 광장 실행기 debug */
   flow?: string;
   plaza?: () => Record<string, unknown> | null;
+  /** 광장 P0 진행(n/total 항목) — 화면 문구 대신(loader_manager.md §13.5) */
+  plazaLoad?: string;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -363,6 +366,7 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
   for (const c of others) c.style.visibility = 'hidden';
   glCanvas.style.visibility = hudCanvas.style.visibility = '';
   hook.flow = 'game';
+  appFlow().enter('game');
   chosenChars = flowPlayers.chars;
   const setup: GameSetup = { ...readSetup(), players: flowPlayers.com.map((c, i) => ({ char: flowPlayers.chars[i] ?? `pc0${i + 1}`, isCom: c, comLevel: req.cpu ?? 0 })) };
   await start(d, setup);
@@ -386,6 +390,7 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
 
 function flowMgm01(): void {
   flowStep('mgm01-loading', null);
+  appFlow().enter('mgm01');
   void runMgm01List(stageBox, {
     com: flowPlayers.com,
     pads: flowPlayers.pads,
@@ -397,6 +402,7 @@ function flowMgm01(): void {
 
 function flowMgmet(): void {
   flowStep('mgmet-loading', null);
+  appFlow().enter('mgmet');
   void import('./mgmet_page').then(({ runMgmet, mgmetTestValues }) => runMgmet('hub', stageBox, {
     com: flowPlayers.com,
     pads: flowPlayers.pads,
@@ -408,6 +414,7 @@ function flowMgmet(): void {
 
 function flowModeSelect(): void {
   flowStep('modeselect-loading', null);
+  appFlow().enter('modeselect');
   void runModeSelect(stageBox, {
     pad: flowPlayers.pads[0] ?? null,
     muted: muteIn.checked,
@@ -417,7 +424,7 @@ function flowModeSelect(): void {
 
 function flowPlaza(): void {
   flowStep('plaza-loading', null);
-  setMsg('광장 읽는 중…');
+  appFlow().enter('plaza', { chars: flowPlayers.chars.filter((_, i) => !flowPlayers.com[i]) });
   void runPlaza(stageBox, {
     com: flowPlayers.com,
     chars: flowPlayers.chars,
@@ -425,7 +432,7 @@ function flowPlaza(): void {
     pads: flowPlayers.pads,
     muted: muteIn.checked,
     params: q,
-    onProgress: (n, total, what) => hook.flow === 'plaza-loading' && setMsg(`광장 읽는 중 ${n}/${total}\n${what}`),
+    onProgress: (n, total, what) => void (hook.flow === 'plaza-loading' && (hook.plazaLoad = `${n}/${total} ${what}`)),
     onExit: (e) =>
       queueMicrotask(() => {
         plazaPage = null;
@@ -448,6 +455,7 @@ function flowPlaza(): void {
 
 function plazaFlow(): void {
   flowStep('setplayer', null);
+  appFlow().enter('setplayer');
   startBtn.disabled = true;
   glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
   const com = comIns.map((c) => c.checked);
@@ -629,6 +637,8 @@ const loop = (): void => {
 };
 requestAnimationFrame(loop);
 
+if (q.get('plaza') === '1') appFlow().enter('boot');
+if (q.get('plaza') === '1') void import('./view/plazaGl').then((m) => m.installPlazaGl());
 if (q.get('auto') === '1' && GAMES.length > 0) startBtn.click();
 
 if (DEV) new EventSource('/esbuild').addEventListener('change', () => location.reload());

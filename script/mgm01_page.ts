@@ -23,6 +23,7 @@ import {
   type Mgm01Player,
   type SettingOutcome,
 } from './shell/mgm01';
+import { appFlow } from './view/appFlow';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -550,6 +551,15 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
   const calls: Mgm01PlayRequest[] = [];
   let scene: Mgm01Scene | null = null;
   let phase = '시작';
+  let cursorGame: string | undefined;
+  const noteCursor = (sc: Mgm01Scene): void => {
+    const l = sc.list.state;
+    const id = l.ids[l.cursor];
+    const name = id === undefined ? undefined : catalog.game(id)?.name;
+    if (name === cursorGame) return;
+    cursorGame = name;
+    if (name) appFlow().state('mgm01', 'game', name);
+  };
   let stack: SceneStack;
   const factory = async (name: string, _ctx: unknown, args: unknown, returned?: unknown): Promise<MgmSceneInstance> => {
     if (name === 'minigame') {
@@ -601,7 +611,14 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
     );
     scene = sc;
     phase = '프리 플레이';
-    return { step: () => sc.step(), render: () => sc.draw(), dispose: () => {} };
+    return {
+      step: () => {
+        sc.step();
+        noteCursor(sc);
+      },
+      render: () => sc.draw(),
+      dispose: () => {},
+    };
   };
   stack = new SceneStack(factory, save, work, () => {
     phase = '끝';

@@ -19,6 +19,9 @@
  * - 슬롯마다 요청 번호: 최신 요청만 붙이고, 모션 시간축(지금 모션·다음·노드 프레임)은 모델 없이도 흘려 붙일 때 그대로 재생한다.
  * - 시작 프레임: 이전 노드가 없거나 루프면 이름에 "_idle" 이 든 모션은 난수(0..frames−1), 아니면 0(09 §6.4). 블렌드: 노드가 있으면 0.1 s [추정].
  * - 깜빡임 프레임 = 본 모션 노드 프레임(AnimationNodeBundle), 묶음 없는 모션에서는 멈춰 기본값으로.
+ * docs/engine/loader_manager.md §13: assetHooks.broker(앱 로더 관리자)가 있으면 받기·풀기를 관리자에 맡긴다 — prefetch(order, now, near) 의
+ *   앞 now 명 = 등급 0(커서), 다음 near 명 = 2(주변 칸), 나머지 = 3(lite 면 안 받음). 커서에서 빠진 캐릭터는 내리고, dispose 때 시작 전 요청은 뺀다.
+ *   같은 URL 은 다른 Preview3D(광장 플레이어·NPC)·흐름 예측과 한 번만 받는다. GPU 단계(조립·컴파일·텍스처·한 번 그리기)는 지금처럼 이 인스턴스가 한다.
  */
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -102,6 +105,8 @@ interface Prep {
   warm: THREE.Object3D | null;
   textures: THREE.Texture[];
   stat: PrepStat;
+  /** 관리자에 요청한 등급(-1 = 아직) */
+  pri: number;
 }
 
 /** 미리 준비 구간별 메인 스레드 시간(ms) — docs 12.10 */
@@ -181,12 +186,17 @@ function stepAt(steps: [number, number][], f: number): number {
 
 const wrap = (f: number, n: number | undefined): number => (n && n > 0 ? f % n : f);
 
-async function loadTex(url: string): Promise<THREE.Texture> {
-  const t = await assetHooks.loadTexture(url);
+function eyeTex(t: THREE.Texture): THREE.Texture {
   t.flipY = false;
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
+
+async function loadTex(url: string): Promise<THREE.Texture> {
+  return eyeTex(await assetHooks.loadTexture(url));
+}
+
+type FileKind = 'gltf' | 'json' | 'texture';
 
 export class Preview3D {
   private readonly loader = assetHooks.createGltfLoader();
@@ -263,6 +273,7 @@ export class Preview3D {
         loaded: null,
         warm: null,
         textures: [],
+        pri: -1,
         stat: { pc: c.pc, fetchMs: 0, buildMs: 0, compileMs: 0, compileWaitMs: 0, texCount: 0, texMs: 0, texMaxMs: 0, warmMs: 0, doneAt: 0 },
       };
       this.preps.set(c.pc, p);
@@ -270,23 +281,68 @@ export class Preview3D {
     return p;
   }
 
-  /** 미리 준비 순서(캐릭터 표 번호, 앞일수록 먼저). 화면이 커서에 가까운 순으로 넘긴다 */
-  prefetch(order: number[]): void {
+  /**
+   * 미리 준비 순서(캐릭터 표 번호, 앞일수록 먼저). 화면이 커서에 가까운 순으로 넘긴다.
+   * 관리자가 있으면 앞 now 명은 등급 0, 다음 near 명은 2, 나머지는 3(lite 면 요청 안 함). 등급 0 에서 빠진 캐릭터는 내린다
+   */
+  prefetch(order: number[], now = order.length, near = 0): void {
     this.order = order.slice();
     for (const i of order) this.prep(i);
+    const b = assetHooks.broker;
+    if (!b) return;
+    const upto = b.lite() ? Math.min(order.length, now + near) : order.length;
+    const want = new Map<Prep, number>();
+    for (let k = 0; k < upto; k++) {
+      const p = this.prep(order[k]);
+      if (p && !want.has(p)) want.set(p, k < now ? 0 : k < now + near ? 2 : 3);
+    }
+    for (const p of this.preps.values()) {
+      const to = want.get(p) ?? 3;
+      if (p.pri >= 0 && to > p.pri) this.setPri(p, to);
+    }
+    for (const [p, pri] of want) this.request(p, pri);
   }
 
-  private startLoad(p: Prep): void {
+  private files(c: CharaSpec): [string, FileKind][] {
+    const f: [string, FileKind][] = [[this.url(c.glb!), 'gltf']];
+    if (c.motions) f.push([this.url(c.motions), 'json']);
+    if (c.eye?.tex) f.push([this.url(c.eye.tex), 'texture']);
+    if (c.eye?.lid) f.push([this.url(c.eye.lid.tex), 'texture']);
+    return f;
+  }
+
+  private request(p: Prep, pri: number): void {
+    if (p.state === 'queued') this.startLoad(p, pri);
+    else if (p.pri >= 0 && pri < p.pri) this.setPri(p, pri);
+  }
+
+  /** 아직 받는 중인 캐릭터의 등급을 바꾼다(올리기 = want, 내리기 = lower) */
+  private setPri(p: Prep, pri: number): void {
+    const b = assetHooks.broker;
+    const up = pri < p.pri;
+    p.pri = pri;
+    if (!b || p.state !== 'loading') return;
+    for (const [u, k] of this.files(p.c)) {
+      if (up) b.want(u, k, pri);
+      else b.lower(u, pri);
+    }
+  }
+
+  private startLoad(p: Prep, pri = 0): void {
     const c = p.c;
     p.state = 'loading';
+    p.pri = pri;
     this.loading++;
     const t0 = performance.now();
+    const b = assetHooks.broker;
+    const viaBroker = <T>(url: string, kind: FileKind, direct: () => Promise<T>): Promise<T> => (b?.get(url, kind, pri) as Promise<T> | null) ?? direct();
+    const tex = (url: string): Promise<THREE.Texture> => viaBroker<THREE.Texture | null>(url, 'texture', () => Promise.resolve(null)).then((t) => (t ? eyeTex(t.clone()) : loadTex(url)));
     void (async () => {
       const [gltf, motions, eyeMap, lidMap] = await Promise.all([
-        this.loader.loadAsync(this.url(c.glb!)),
-        c.motions ? fetch(this.url(c.motions)).then((r) => r.json() as Promise<MotionTable>) : Promise.resolve({} as MotionTable),
-        c.eye?.tex ? loadTex(this.url(c.eye.tex)) : Promise.resolve(null),
-        c.eye?.lid ? loadTex(this.url(c.eye.lid.tex)) : Promise.resolve(null),
+        viaBroker(this.url(c.glb!), 'gltf', () => this.loader.loadAsync(this.url(c.glb!))) as Promise<GLTF>,
+        c.motions ? viaBroker(this.url(c.motions), 'json', () => fetch(this.url(c.motions!)).then((r) => r.json() as Promise<MotionTable>)) : Promise.resolve({} as MotionTable),
+        c.eye?.tex ? tex(this.url(c.eye.tex)) : Promise.resolve(null),
+        c.eye?.lid ? tex(this.url(c.eye.lid.tex)) : Promise.resolve(null),
       ]);
       return { gltf, motions, eyeMap, lidMap, ms: performance.now() - t0 };
     })()
@@ -306,10 +362,11 @@ export class Preview3D {
   private pump(gl: THREE.WebGLRenderer): void {
     const want = this.slots.filter((s) => s.shown && !s.root).map((s) => s.chara);
     const seq = [...want, ...this.order];
-    for (const i of seq) {
-      if (this.loading >= 2) break;
+    const b = assetHooks.broker;
+    for (const i of b ? want : seq) {
+      if (!b && this.loading >= 2) break;
       const p = this.prep(i);
-      if (p?.state === 'queued') this.startLoad(p);
+      if (p?.state === 'queued') this.startLoad(p, 0);
     }
     for (const i of seq) {
       const p = this.prep(i);
@@ -673,6 +730,8 @@ export class Preview3D {
   dispose(): void {
     this.disposeSlots();
     this.warmRt.dispose();
+    const b = assetHooks.broker;
+    if (b) for (const p of this.preps.values()) if (p.state === 'loading' && p.pri >= 2) for (const [u] of this.files(p.c)) b.drop(u);
   }
 }
 

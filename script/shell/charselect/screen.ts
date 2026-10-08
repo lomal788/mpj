@@ -1,6 +1,7 @@
 /**
  * 캐릭터 선택 화면 컨트롤러 — 상태기계(state.ts) 사건을 명세 레이아웃(scene2d)·3D 카드(preview3d)·어댑터(소리·진동)로 옮긴다.
  * 레이아웃 조립·그리기 순서·문구는 docs/shell/charselect.md 3.1·5·6·7 [판독·데이터]. 엔진층(script/core·games·view)을 쓰지 않는다.
+ * 3D 미리 받기 등급(커서 → 주변 칸 → 나머지)은 charaTiers — docs/engine/loader_manager.md §13.4.
  */
 import * as THREE from 'three';
 import { Preview3D, type LoadStat, type PrepStat } from './preview3d';
@@ -27,6 +28,35 @@ export interface CharSelectHandle {
   readonly loadStats: readonly LoadStat[];
   /** 카드 3D 미리 준비 구간별 메인 스레드 시간(docs 12.10) */
   readonly prepStats: readonly PrepStat[];
+}
+
+/**
+ * 3D 미리 받기 순서·등급(loader_manager.md §13.4): 사람 커서 캐릭터(랜덤 칸 제외) → 사람 커서 이웃 칸(가장 가까운 두 칸 거리 × 1.6 안, 대각 포함) → 나머지.
+ * 각 묶음 안은 가장 가까운 커서(랜덤 칸·COM 커서 포함)와의 거리순. open = 받을 수 있는 캐릭터(잠김 제외)
+ */
+export function charaTiers(
+  btnXY: ReadonlyMap<number, readonly [number, number]>,
+  cursors: readonly number[],
+  human: readonly number[],
+  open: readonly number[],
+): { order: number[]; now: number; near: number } {
+  let pitch2 = Infinity;
+  for (const [a, pa] of btnXY) for (const [b, pb] of btnXY) if (a !== b) pitch2 = Math.min(pitch2, (pa[0] - pb[0]) ** 2 + (pa[1] - pb[1]) ** 2);
+  const cur = cursors.map((c) => btnXY.get(c)).filter((v): v is readonly [number, number] => !!v);
+  const d = (c: number): number => {
+    const q = btnXY.get(c);
+    return q && cur.length ? Math.min(...cur.map(([x, y]) => (x - q[0]) ** 2 + (y - q[1]) ** 2)) : 0;
+  };
+  const hum = human.map((c) => btnXY.get(c)).filter((v): v is readonly [number, number] => !!v);
+  const nearHuman = (c: number): boolean => {
+    const q = btnXY.get(c);
+    return !!q && hum.some(([x, y]) => (x - q[0]) ** 2 + (y - q[1]) ** 2 <= pitch2 * 1.6 * 1.6);
+  };
+  const mine = new Set(human.filter((c) => c !== RANDOM && open.includes(c)));
+  const near = open.filter((c) => !mine.has(c) && nearHuman(c));
+  const rest = open.filter((c) => !mine.has(c) && !near.includes(c));
+  const byD = (a: number, b: number): number => d(a) - d(b);
+  return { order: [...[...mine].sort(byD), ...near.sort(byD), ...rest.sort(byD)], now: mine.size, near: near.length };
 }
 
 export async function createCharSelect(opts: CharSelectOptions & { controller?: string[] }): Promise<CharSelectHandle> {
@@ -142,24 +172,22 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     return m ? [1, 0, m[2], 0, 1, m[5]] : [1, 0, 0, 0, 1, -296];
   };
 
-  // 3D 미리 준비 순서(docs 12.10): 지금 커서 칸(랜덤 칸 포함)에 가까운 캐릭터부터, 잠긴 캐릭터 제외
+  // 3D 미리 준비 순서(docs 12.10): 지금 커서 칸(랜덤 칸 포함)에 가까운 캐릭터부터, 잠긴 캐릭터 제외.
   const btnXY = new Map<number, [number, number]>();
   for (const c of [...chars.map((x) => x.index), RANDOM]) {
     const m = nodeMatrix(layouts.grid, btnPath(c));
     if (m) btnXY.set(c, [m[2], m[5]]);
   }
   const prefetch = (): void => {
-    const cur = state.players.map((p) => btnXY.get(p.cursor)).filter((v): v is [number, number] => !!v);
-    const d = (c: number): number => {
-      const q = btnXY.get(c);
-      return q && cur.length ? Math.min(...cur.map(([x, y]) => (x - q[0]) ** 2 + (y - q[1]) ** 2)) : 0;
-    };
-    p3d.prefetch(
-      chars
-        .map((c) => c.index)
-        .filter((c) => !isLocked(c))
-        .sort((a, b) => d(a) - d(b)),
+    const open = chars.map((c) => c.index).filter((c) => !isLocked(c));
+    const human = state.players.filter((p) => p.type === 0 && !isLocked(p.cursor)).map((p) => p.cursor);
+    const t = charaTiers(
+      btnXY,
+      state.players.map((p) => p.cursor),
+      human,
+      open,
     );
+    p3d.prefetch(t.order, t.now, t.near);
   };
 
   const handle = (ev: CharSelectEvent[]): void => {

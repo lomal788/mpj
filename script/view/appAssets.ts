@@ -8,20 +8,16 @@ import './assetMode';
 import { ASSETS } from '../env';
 import { createAssetManager, type AssetManager } from '../lib/assetcore';
 import { createMpjHandlers } from '../shell/stage3d/assetHandlers';
+import { assetKeyFrom } from './assetKey';
 
 const G = globalThis as { __mpjAssetManager?: AssetManager };
 
-const root = (): string => new URL(ASSETS, typeof document !== 'undefined' ? document.baseURI : 'http://localhost/').href;
+const pageBase = (): string => (typeof document !== 'undefined' ? document.baseURI : 'http://localhost/');
+const root = (): string => new URL(ASSETS, pageBase()).href;
 
 /** URL(소스·압축본, 해시 이름 포함) → 논리 키. 에셋 루트 밖이면 null. 압축본 .ktx2 는 소스 .png 키로 */
 export function assetKeyOf(url: string): string | null {
-  const b = root();
-  const u = new URL(url, b);
-  const href = u.origin + u.pathname;
-  if (!href.startsWith(b)) return null;
-  return decodeURIComponent(href.slice(b.length))
-    .replace(/\.[0-9a-f]{8}(\.[^./]+)$/, '$1')
-    .replace(/\.ktx2$/i, '.png');
+  return assetKeyFrom(url, pageBase(), root());
 }
 
 export function appAssets(): AssetManager {

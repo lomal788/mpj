@@ -6,11 +6,14 @@
  * 단계 로딩(docs/engine/loader_manager.md §11.4): 로더 관리자가 있으면 plaza_first.json(tools/plaza_first.ts)로 P0(처음 보이는 것·로케이터·부착 부모)/
  * P1(시작에서 40 m 안, 거리순)/P3(그 밖)을 정해 모든 모델을 한꺼번에 요청하고 P0 만 기다린다. 모델은 GPU 준비가 끝난 뒤에만 보인다.
  * 늦게 나온 모델의 기본 클립·fmab 은 무대 시작부터 돌았을 프레임으로 맞춘다. 1P 가 다가가면(0.5 s 마다 25 m) 그 모델을 P0 로 올린다.
+ * 미리 준비(loader_manager.md §14.5): 앱 수명 렌더러(gpu, 없으면 무대가 캔버스에 새로 만듦)·등급 바닥(floor — 미리 준비 = P2, 관리자 요청을 바닥보다 높게
+ *   부르지 않음, 진입 때 lower)·조립 속도 조절(pace — 모델 조립 전에 기다림, 미리 준비 = 프레임마다 하나, null 이면 바로)·GPU 준비 예산(budgetMs,
+ *   기본 LOAD_BUDGET_MS)을 받는다.
  */
 import * as THREE from 'three';
 import { P0, P1, P3 } from '../../lib/assetcore';
 import type { PrepJob } from '../../lib/assetcore-three';
-import { LOAD_BUDGET_MS, MeshCollider, Stage3D, type AssetSource, type ClipHandle, type ClipOptions, type Collider, type MeshColliderData, type SocketPose, type StageLoader, type StageModel } from '../stage3d';
+import { LOAD_BUDGET_MS, MeshCollider, Stage3D, type PriorityFloor, type StageGpu, type AssetSource, type ClipHandle, type ClipOptions, type Collider, type MeshColliderData, type SocketPose, type StageLoader, type StageModel } from '../stage3d';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '../stage3d/assetHandlers';
 import { decoVisible, defaultDecoState } from './deco';
 import type { PlazaCameraParam, PlazaDecoState, PlazaLayoutEntry, PlazaWorld } from './types';
@@ -26,6 +29,10 @@ export interface PlazaWorldOptions {
   loader?: StageLoader;
   /** 'seq' = 이전 방식 재현(모든 모델 P0·차례 받기·끝에 한꺼번에 보이기) — 실측 비교용 ?loader=seq */
   loadMode?: 'staged' | 'seq';
+  gpu?: StageGpu;
+  floor?: PriorityFloor;
+  budgetMs?: number;
+  pace?: () => Promise<void> | null;
   /** glb 안 텍스처도 관리자를 지남(압축 모드) — 그러면 모델 텍스처를 모델 등급으로 미리 받는다 */
   gltfTextures?: boolean;
 }
@@ -97,6 +104,45 @@ export function plazaPlan(list: readonly PlazaLayoutEntry[], byKey: ReadonlyMap<
   return { pri, order: [...list].sort((a, b) => pri.get(a.key)! - pri.get(b.key)! || dist(a.key) - dist(b.key)) };
 }
 
+/**
+ * 광장 진입 전 미리 받기용 P0 목록(loader_manager.md §13.3) — World.needed·plan·assetKeysOf·defineBundles(plaza:p0)와 같은 규칙을 무대 없이.
+ * 돌려주는 경로는 plaza/world/ 기준: 충돌·plaza_first.json(json) + P0 모델 glb(gltf) + withTex 면 glb 참조 텍스처(texture).
+ */
+export function plazaP0Paths(
+  models: Readonly<Record<string, { url: string }>>,
+  ext: { layout: readonly PlazaLayoutEntry[]; extraLayout?: readonly PlazaLayoutEntry[]; collision: string },
+  first: PlazaFirstFile,
+  deco: PlazaDecoState,
+  withTex: boolean,
+): [string, string][] {
+  const all = [...ext.layout, ...(ext.extraLayout ?? [])];
+  const byKey = new Map(all.map((e) => [e.key, e]));
+  const isModel = (e: PlazaLayoutEntry): boolean => e.dir === 'model' && !!models[e.fmdb];
+  const want = new Set<string>();
+  const add = (k: string): void => {
+    const e = byKey.get(k);
+    if (!e || want.has(k) || !isModel(e)) return;
+    want.add(k);
+    if (e.hookKey) add(e.hookKey);
+  };
+  for (const e of all) if (isModel(e) && decoVisible(e, deco)) add(e.key);
+  const r = plazaPlan(
+    all.filter((e) => want.has(e.key)),
+    byKey,
+    first,
+  );
+  const out: [string, string][] = [
+    [ext.collision, KIND_JSON],
+    ['plaza_first.json', KIND_JSON],
+  ];
+  for (const e of r.order) {
+    if (r.pri.get(e.key) !== P0) continue;
+    out.push([models[e.fmdb].url, KIND_GLTF]);
+    if (withTex) for (const t of first.tex?.[e.fmdb] ?? []) out.push([`tex/${t}`, KIND_TEXTURE]);
+  }
+  return out;
+}
+
 class OffCollider implements Collider {
   groundHeight(): null {
     return null;
@@ -135,7 +181,7 @@ class World implements PlazaWorld {
     readonly stage: Stage3D,
     private readonly ext: PlazaManifestExt,
     deco: PlazaDecoState,
-    private readonly opts: Pick<PlazaWorldOptions, 'loadMode' | 'gltfTextures'> = {},
+    private readonly opts: Pick<PlazaWorldOptions, 'loadMode' | 'gltfTextures' | 'pace'> = {},
   ) {
     this.deco = deco;
     this.collider = this.off;
@@ -175,7 +221,7 @@ class World implements PlazaWorld {
 
   private async json<T>(path: string): Promise<T | null> {
     const l = this.stage.assetLoader;
-    if (l) return l.manager.get<T>(l.key(path), KIND_JSON, P0, l.owner).catch(() => null);
+    if (l) return l.manager.get<T>(l.key(path), KIND_JSON, this.stage.floor.key(l.key(path), P0), l.owner).catch(() => null);
     const r = await fetch(this.stage.assetUrl(path));
     return r.ok ? ((await r.json()) as T) : null;
   }
@@ -258,8 +304,9 @@ class World implements PlazaWorld {
     const l = this.stage.assetLoader;
     const keys = this.assetKeysOf(e);
     if (!l || !keys.length) return;
-    l.manager.want(keys[0], KIND_GLTF, pr, l.owner);
-    for (let i = 1; i < keys.length; i++) l.manager.want(keys[i], KIND_TEXTURE, pr, l.owner);
+    const f = this.stage.floor;
+    l.manager.want(keys[0], KIND_GLTF, f.key(keys[0], pr), l.owner);
+    for (let i = 1; i < keys.length; i++) l.manager.want(keys[i], KIND_TEXTURE, f.key(keys[i], pr), l.owner);
   }
 
   /** 묶음 plaza:p0·p1·p3(관리자 진행 조회용 — 요청은 want 가 이미 함) */
@@ -326,9 +373,11 @@ class World implements PlazaWorld {
     this.pri.set(key, pr);
     const l = this.stage.assetLoader;
     const keys = this.assetKeys.get(key);
-    if (l && keys) for (let i = 0; i < keys.length; i++) l.manager.raise(keys[i], pr);
+    const f = this.stage.floor;
+    if (l && keys) for (let i = 0; i < keys.length; i++) l.manager.raise(keys[i], f.key(keys[i], pr));
     const j = this.jobs.get(key);
-    if (j) this.stage.preparer.raise(j, pr);
+    if (j && pr >= f.value) this.stage.preparer.raise(j, pr);
+    else if (j) f.jobs.push([j, pr]);
     const h = this.byKey.get(key)?.hookKey;
     if (h) this.raise(h, pr);
   }
@@ -368,6 +417,8 @@ class World implements PlazaWorld {
       void this.ensure(e.hookKey, this.pri.get(key) ?? pri, gate).catch(() => null);
       host = (await this.loaded.get(e.hookKey)) ?? null;
     }
+    const wait = this.opts.pace?.();
+    if (wait) await wait;
     const m = await this.stage.loadModel(e.fmdb, { visible: false, instance: e.key, pri: this.pri.get(key) ?? pri });
     if (e.hookKey) {
       const node = host?.root.getObjectByName(e.hookNode);
@@ -470,14 +521,14 @@ export function attachToSocket(node: THREE.Object3D, obj: THREE.Object3D): void 
 
 /** 무대 만들기 → 보이는 모델·충돌·기본 애니 전부 올린 뒤 돌려준다(= 무대 로드 완료) */
 export async function createPlazaWorld(opts: PlazaWorldOptions): Promise<PlazaWorld> {
-  const stage = await Stage3D.create({ canvas: opts.canvas, assets: opts.assets, loader: opts.loader });
-  stage.budget(LOAD_BUDGET_MS);
+  const stage = await Stage3D.create({ canvas: opts.canvas, assets: opts.assets, loader: opts.loader, gpu: opts.gpu, floor: opts.floor });
+  stage.budget(opts.budgetMs ?? LOAD_BUDGET_MS);
   const ext = (stage.manifest as unknown as { plaza: PlazaManifestExt }).plaza;
   if (!ext) throw new Error('광장 manifest 에 plaza 절이 없다');
   const deco = defaultDecoState();
   if (opts.deco?.display) deco.display = [...opts.deco.display];
   if (opts.deco?.unlockBd !== undefined) deco.unlockBd = opts.deco.unlockBd;
-  const w = new World(stage, ext, deco, { loadMode: opts.loadMode, gltfTextures: opts.gltfTextures });
+  const w = new World(stage, ext, deco, { loadMode: opts.loadMode, gltfTextures: opts.gltfTextures, pace: opts.pace });
   await w.load(opts.onProgress);
   return w;
 }

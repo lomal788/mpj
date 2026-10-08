@@ -1,6 +1,6 @@
 # 공용 로더 관리자 — 우선순위·공용 캐시·프레임 예산·미리 받기
 
-2026-10-08. 상태: **1·2·3단계 구현(§11 구현 설계, §12 구현 결과·실측)**, 4·5·7단계 설계만, 6단계는 [loader-6] 담당. 압축 형식·소스/배포 분리는 [assets_pipeline.md](assets_pipeline.md), 입력은 [input_web.md](input_web.md). 표기: [실측] 이 저장소에서 잰 값, [코드] 현재 코드 확인, [추정] 계산·경험치, [설계] 웹 결정, **사용자 확인 필요** = 기본값을 정해 두고 진행할 곳.
+2026-10-08. 상태: **1·2·3단계 구현(§11 구현 설계, §12 구현 결과·실측)**, **5단계(흐름 예측·캐릭터 선택 커서 우선) 구현(§13)**, 4단계는 **광장만 구현(§14)**, 7단계 설계만, 6단계는 [loader-6] 담당. 압축 형식·소스/배포 분리는 [assets_pipeline.md](assets_pipeline.md), 입력은 [input_web.md](input_web.md). 표기: [실측] 이 저장소에서 잰 값, [코드] 현재 코드 확인, [추정] 계산·경험치, [설계] 웹 결정, **사용자 확인 필요** = 기본값을 정해 두고 진행할 곳.
 
 ---
 
@@ -396,7 +396,7 @@ interface AssetManager {
 | 2 | 프레임 예산 스케줄러 + "준비 끝에만 보이기" + stage3d `warmup` 쪼개기 | 1 h |
 | 3 | 광장 P0/P1/P3 묶음 + 첫 화면 목록 도구(§6.1) + 차례 받기 → 동시 | 1~1.5 h |
 | 4 | 앱 하나의 렌더러: 광장(무대 + UI 오버레이 합치기) → 캐릭터 선택 → 2D 화면들 | 2~3 h |
-| 5 | 흐름 예측 표 + 캐릭터 선택 지연 받기 + Preview3D 캐시 공용화 | 1 h |
+| 5 | 흐름 예측 표 + 캐릭터 선택 지연 받기 + Preview3D 캐시 공용화 — **구현됨(§13, 받기·CPU 풀기까지)** | 1 h |
 | 6 | 해시 이름·서비스 워커·brotli 사전 압축·코드 분할 — **구현됨(§5.8, 결과 §5.8.11)** | 1~1.5 h |
 | 7 | 매 프레임 할당 정리(측정 기반, 관리자 밖 코드) | 1 h |
 | 검증 | 상태 시험(큐 순서·올리기·예산·해제) + 망 제한 헤드리스 1회 | 0.5 h |
@@ -418,6 +418,12 @@ interface AssetManager {
 9. (6단계) `assets-dist/` 는 작업본 + 해시본 복사로 디스크 약 2배(배포 `dist/` 는 해시본만). 옛 해시본은 `build_assets.ts --prune` 를 사용자가 돌릴 때만 지움.
 10. (6단계) `npm run build` 는 첫 단계 `tsc` 가 기존 `tools/serve.ts` 오류 2개(쓰지 않는 `DEV_PORT`·`argValue`)로 멈춘다 — 6단계 확인은 `npx tsx tools/build.ts` 로 했다. 두 줄을 지우거나 쓰면 풀림(사용자 결정). → **해결(2026-10-08, 사용자 지시)**: `port = Number(argValue("--port") ?? 51811)`, import 에서 `DEV_PORT` 제거. `npm run build` 통과.
 11. (6단계) `vendor/basis` 트랜스코더 2개는 해시 이름이 아니라 재방문마다 304 재검증(바디 0). 해시로 하려면 transcoderPath 를 배포 때 해시 폴더로 바꾸는 작은 변경 필요.
+12. (§13) 미니게임 미리 받기는 코드 청크 + `manifest.json` 까지만 — 게임 에셋 목록(모델·소리 파일 표)이 없어 커서 미니게임의 에셋은 아직 미리 받지 못한다. `GameDef` 에 선택 항목(예: 미리 받을 키 목록)을 더하는 다음 단계 필요.
+13. (§13) 4G 에서 광장 첫 화면 몫 77 MB(무대 P0 31·UI 26.5·NPC 16·플레이어 3.7)는 메뉴 체류 약 20 s 안에 숨길 수 없다(진입 때 10 %) — 그동안은 앞 화면이 끝난 검은 화면(원본 페이드)이 길어진다. 줄이는 순서 제안: 광장 UI 레이아웃 단위 지연 → NPC 를 P1 로.
+14. (§13) "1P 지난번 캐릭터": 웹은 고른 캐릭터를 저장하지 않아 캐릭터 선택 처음 커서가 늘 표 0번(마리오, state.start `initial ?? i`)이다. 원본은 이전 캐릭터(FUN_710033e620)라 저장(localStorage)해 `initial` 로 넘기는 것이 원본에 더 가깝다 — 화면 동작이 바뀌므로 이번에는 안 함(예측은 지금 규칙 = 마리오).
+15. (§13) 주변 칸 = 사람 커서에서 격자 간격 × 1.6 안(8 이웃), 체류 시간(인원 설정 8 s·캐릭터 선택 10 s) [추정 기본값]. `?charselect=1`(개발용, 게임으로 바로 감)에서도 광장 예측이 나간다(그 경로에서는 쓰지 않는 망 사용).
+16. (§13) 2D 그림이 관리자 캐시를 쓰게 되어 한 번 실패한 그림은 그 세션 동안 실패로 남는다(전: 화면에 들어갈 때마다 다시 시도). glb 안 텍스처는 대리 로더가 P1 로 요청하므로 P2·P3 glb 를 푸는 중 새 화면 P0 와 잠깐 망을 나눠 쓴다.
+17. (4단계 광장, [plaza-gl]) GPU 예산 비율·모바일 판정, 첫 미리 준비의 IBL PMREM 한 덩어리, 1P 캐릭터·NPC 미리 컴파일 범위, 모드 메뉴에서의 미리 조립 — §14.10.
 
 ---
 
@@ -538,3 +544,319 @@ mgr.stats                                               // 숫자 필드만(요�
 3. 4단계(렌더러 하나) 전이라 GPU 준비는 무대(렌더러)마다 다시 한다. 코어 캐시(L1·L2)는 이미 앱 공용이라 광장 재진입은 받기 없이 캐시에서 나와야 한다 [설계 — 재진입은 이번에 재지 않음].
 4. **흐름 예측 미리 받기(§5.5)**: 플레이어 설정·캐릭터 선택 화면에 있는 동안 `plaza:p0` 를 P2 로 받아 두면 광장 진입 대기가 그 화면 체류 시간 뒤로 숨는다 — "로딩을 보이지 않음" 목표에 가장 직접적. 1 과 묶어 다음 갈래로 [조정자 제안].
 5. **6단계 URL 가로채기 정리**: `script/cache/urlShim.ts` 가 전역 `fetch`·`HTMLImageElement.src` 를 가로채 해시 이름을 입힌다(페이지 `new Image()` 8곳 무수정 목적). 코어 resolver 가 생겼으므로 읽기를 관리자로 옮기며 가로채기 범위를 줄인다 — 숨은 전역 결합 축소(사용자 원칙: 얽매이지 않게) [조정자 제안].
+
+---
+
+## 13. 흐름 예측 미리 받기·캐릭터 선택 커서 우선 (5단계 일부) [설계 — 구현 전에 먼저 적음]
+
+목표(사용자): "스위치에서 시작하면 인원 설정·캐릭터 선택 화면이 바로 뜨듯이" — 처음 실행 말고는 로딩이 보이지 않게. 사람이 메뉴를 고르는 동안 다음 화면을 미리 받는다.
+범위: **받기 + CPU 풀기**까지(이 절). GPU 업로드·셰이더 컴파일·렌더러 하나로 합치기는 [plaza-gl] §14 — 이 절의 사건(§13.6)에 맞춰 시작한다.
+
+### 13.1 처리기별로 앞 화면에서 미리 할 수 있는 일 [코드 확인]
+
+| 처리기(kind) | 앞 화면에서 끝나는 것(CPU) | 그 화면 렌더러가 생긴 뒤 하는 것 |
+|---|---|---|
+| `json` | 받기 + `JSON.parse`(값 공유, 쓰는 쪽은 고치지 않음) | — |
+| `bytes`(소리) | 받기(압축본 ogg/m4a/flac 바이트) | `decodeAudioData` — 화면마다 `AudioContext` 가 따로라 페이지가 함(지금 그대로) |
+| `gltf` | 받기 + `parseAsync`(meshopt 풀기 = 워커 2, 장면 그래프·BufferGeometry·AnimationClip 생성, glb 안 텍스처 = 아래 `texture`) | 복제(`cloneSkinned`)·재질 조립·`compileAsync`·버퍼 업로드(무대 ScenePreparer / Preview3D 준비 단계) |
+| `texture` | 받기 + KTX2 트랜스코드(워커 4, 결과 = CompressedTexture 밉 데이터) / 소스 모드 PNG 는 Image 디코드 | `initTexture`(GPU 업로드) |
+| `uiimage`(새, 2D 레이아웃 그림) | 받기 + KTX2 트랜스코드 / PNG Image | Render2D 가 `textureFromImage` 로 텍스처를 만들어 첫 그리기에 업로드 |
+| 코드 청크(`import()`) | 받기 + 모듈 평가 | — |
+
+- KTX2 트랜스코더는 렌더러 없이 형식 지원을 잠깐 만든 문맥으로 정한다(`assetLoader.ts detectSupport`) → 앞 화면에서 트랜스코드해도 결과가 같다.
+- 값은 앱 하나의 관리자 캐시(L1·L2)에 남으므로 화면(렌더러)이 바뀌어도 받기·풀기는 다시 하지 않는다. GPU 쪽만 렌더러마다 다시 한다(4단계 전).
+
+### 13.2 흐름 예측 표 (`script/view/flowTable.ts`, 데이터)
+
+화면 키: `boot`(페이지 열림) · `setplayer` · `charselect` · `plaza` · `modeselect` · `mgmet` · `mgm01` · `game`. 묶음은 13.3.
+
+| 지금 화면 | 들어갈 때 P0 로 올리는 것(자기 묶음) | 미리 받을 것 | "지금 상태" 알림 → 더 받을 것 |
+|---|---|---|---|
+| boot | `setplayer`(인원 설정 2D — 가장 먼저) | — | — |
+| setplayer | `setplayer` | `charselect`(2D) P2 · `char:first`(1P 커서 캐릭터 3D) P2 · `charselect:sound` P2 → (P2 준비 끝 뒤) `plaza:p0`·`plaza:ui`·`plaza:npc` P3 | — |
+| charselect | `charselect` + 커서 캐릭터(Preview3D 가 P0) | 주변 칸 P2·나머지 P3(Preview3D, 13.4) · `plaza:p0`·`plaza:ui`·`plaza:npc` P3 | `decided` = 고른 캐릭터 → `plaza:player:<pc>` P2, `plaza:p0`·`ui`·`npc` P2 로 올림 |
+| plaza | `plaza:p0`·`plaza:ui`·`plaza:npc`·`plaza:player:<사람 캐릭터>` | `modeselect` P3 | 1P 가 기구 구역(AREA.BALLOON)에 들어감 → `modeselect` P2 |
+| modeselect | `modeselect` | — | 커서 = `mgm` → `mgmet` P2, 그 밖 → `plaza:p0` P2(이미 캐시) |
+| mgmet | `mgmet` | `mgm01` P2 · `modeselect` P3 | — |
+| mgm01 | `mgm01` | — | 커서 미니게임 → `game:<이름>` P2(코드 청크 + manifest) |
+| game | — | `mgm01` P3 | — |
+
+- 등급 규칙: **바로 다음 화면 P2, 두 화면 뒤·지금 화면의 유휴 P3**. 캐릭터 선택 화면만 예외: 결정 전에는 광장이 P3(주변 칸 P2 보다 뒤, 나머지 캐릭터보다 앞 — 같은 P3 링에서 먼저 들어감), 결정하면 P2.
+  - 주변 칸이 P1 이 아닌 이유: 코어 규칙상 P1 은 P0 이 진행 중이어도 새로 시작한다(glb 안 텍스처가 P1 이라 막으면 서로 기다림 — §11.2). 주변 칸을 P1 로 두면 진입 때 커서 캐릭터와 망을 나눠 쓴다.
+- 데이터 절약(`navigator.connection.saveData`)·느린 망(`effectiveType` = slow-2g·2g·3g)이면 **lite**: 표의 "바로 다음 화면" 표시(`next`)가 있는 예측만, 캐릭터 선택의 나머지 캐릭터(P3)는 받지 않는다. 시험·비교용 `?prefetch=full|lite|off`(off = 예측 없음, 자기 묶음만).
+- 같은 묶음을 다시 요청하면 올리기만 한다(낮추지 않음). 이미 받은 것은 그대로 쓴다(관리자 캐시).
+- 예측은 자기 묶음 키가 정해져 P0 로 요청된 뒤에, 등급 순(P2 묶음 준비 끝 → P3)으로 낸다(13.8 정정).
+
+### 13.3 묶음 (`script/view/flowCatalog.ts`, 키 = `web/assets/` 기준 소스 경로)
+
+| 묶음 | 키 만드는 법(명세 json 은 관리자 `json` 으로 그 등급에 읽음) |
+|---|---|
+| `setplayer` | `mgmcommon/spec.json` + `../setplayer/setplayer.json` 합친 textures·fonts 그림(`uiimage`) + `charselect/spec.json`(이름 표) |
+| `charselect` | `charselect/spec.json` textures·fonts(`uiimage`) |
+| `charselect:sound` | SE·BGM·보이스(`bytes`) — 화면 안에서는 페이지가 같은 키를 P1 로 받아 디코드 |
+| `char:first` / `char:<pc>` | charselect 캐릭터 glb(`gltf`)·motions(`json`)·눈·눈꺼풀(`texture`) — Preview3D 가 요청하는 키와 같음. first = 1P 처음 커서(state.start 규칙: `initial ?? 0`, 잠김 아님 → 표 0 번) |
+| `plaza:p0` | `plaza/world/manifest.json` + 충돌·`plaza_first.json` + `plazaPlan` 의 P0 모델 glb(+ 압축 모드면 glb 참조 텍스처) — `world.ts plazaP0Paths`(World 와 같은 규칙, 기본 장식) |
+| `plaza:ui` | `mgmcommon/spec.json` + online·faces·plaza_ui·plaza_card 부품 합친 그림(`uiimage`) — 광장 UI(PlazaUiView)와 같은 키 |
+| `plaza:npc` | `plaza/world/chara/spec.json` 중 `NPC_MODEL` 모델의 glb·motions·눈(NPC Preview3D 와 같은 키) |
+| `plaza:player:<pc>` | `plaza/player/spec.json` 그 캐릭터 glb·motions·눈 |
+| `modeselect`·`mgmet`·`mgm01` | 각 화면 명세(+부품) 그림(`uiimage`) |
+| `game:<이름>` | `GameDef.load()`(코드 청크) + `<assetsDir>manifest.json`. 게임 에셋 목록은 아직 없음(§10 12) |
+
+- 2D 화면 그림은 `assetHooks.loadUiImage` 를 관리자 `uiimage`(P0)로 돌려(브로커 설치 때) **모든 Render2D 화면이 같은 캐시**를 쓴다 → 미리 받은 그림은 화면 진입 때 바로 나온다, 다시 들어가도 0. 화면이 직접 `fetch` 하는 명세 json 은 그대로(HTTP 캐시 적중 — 관리자 json 값은 공유라 화면이 고칠 수 있는 객체를 넘기지 않음).
+- 키 종류가 겹치면(같은 키를 다른 kind 로) 코어가 던지므로 브로커는 그때 관리자 밖(직접 읽기)으로 돌아간다.
+
+### 13.4 캐릭터 선택 커서 우선 (`screen.ts prefetch` → `preview3d.ts`)
+
+- `assetHooks.broker`(앱이 꽂음, 없으면 지금 방식 = 동시 2개 차례 읽기): Preview3D 의 glb·motions·눈 텍스처를 URL → 키로 관리자에 맡긴다. 값은 공유(glb = 복제해서 씀, 눈 텍스처 = `clone()` 뒤 flipY·sRGB).
+- `prefetch(order, now, near)`: 사람 커서 캐릭터(랜덤·잠김 칸 제외) = 등급 0, 커서에서 격자 간격 × 1.6 안(대각 포함 8 이웃) = 2, 그 밖 = 3(lite 면 요청 안 함). 잠긴 칸은 지금처럼 목록에서 뺀다.
+- 커서가 움직이면: 새 커서 캐릭터를 0 으로 **올리고**, 0 에서 빠진 캐릭터는 2 또는 3 으로 **내린다**(코어 `lower` — 아직 시작 전인 요청만 낮은 등급 큐 뒤로; 이미 받는 중이면 그대로 끝냄). → 커서를 빠르게 여러 칸 옮겨도 마지막 커서 캐릭터가 앞 커서들 뒤에서 기다리지 않는다.
+- 화면을 나갈 때(dispose) 등급 2·3 으로 아직 시작 전인 요청은 큐에서 뺀다(코어 `drop`) — 광장 뒤 받기(P3)가 캐릭터 선택 나머지 36 MB 뒤에서 기다리지 않게.
+- GPU 단계(숨은 무대 조립·compileAsync·initTexture·한 번 그리기, 한 프레임에 하나)·슬롯 요청 번호·랜덤·잠김 칸 비움·결정 모션 시간축·보이스 요청 번호(charselect.md §12.10)는 그대로. 받기 전에 커서가 간 칸은 지금처럼 준비되면 바로 붙는다(pump 가 보이는 슬롯 캐릭터를 등급 0 으로).
+- 같은 키 공유: 광장 플레이어(`plaza/player/…`)·NPC(`plaza/world/chara/…`) Preview3D 도 같은 브로커를 지나므로 흐름 예측(`plaza:player:<pc>`·`plaza:npc`)과 한 번만 받는다. 캐릭터 선택 모델(`charselect/chara/…`)과 광장 플레이어 모델은 **다른 파일**이라(변환 출력이 다름) 키를 나눠 쓰지 않는다.
+
+### 13.5 시작 순서·로딩 문구
+
+- 페이지가 열리면(`?plaza=1`) `boot` → 인원 설정 2D 를 P0 으로 가장 먼저. 3D 화면용(캐릭터·광장) 받기는 P2/P3 라 P0(첫 화면 그림)이 하나라도 남아 있으면 시작하지 않는다.
+- `main.ts` 의 "광장 읽는 중 n/total" 문구를 없앤다. 준비가 끝나 있으면 바로 진입하고, 덜 됐으면 앞 화면이 끝난 검은(페이드 아웃) 화면을 유지한다(§2.3·§10 1). 진행 수는 시험 훅(`hook.flow`)으로만.
+
+### 13.6 사건 계약 ([plaza-gl] §14 와 — SHARED.md)
+
+`appFlow()`(`script/view/appFlow.ts`, `globalThis.__mpjFlow` 하나)의 `on(fn): () => void`.
+
+| 사건 | 언제 |
+|---|---|
+| `{ type: 'enter', screen }` | 화면 진입 — 자기 묶음을 P0 로 요청한 직후 |
+| `{ type: 'predict', screen, bundle, pri }` | 다음 화면 묶음 키가 정해져 요청됨(P2/P3, 등급이 바뀔 때마다). 키 = `flow.keys(bundle)` → `[키, kind][]` |
+| `{ type: 'ready', bundle }` | 묶음 키 전부 관리자 ready(받기 + CPU 풀기 끝) |
+| `{ type: 'hint', key, value }` | 받기와 무관한 알림 — `chara1P` = 캐릭터 선택에서 결정한 1P(첫 사람) 캐릭터 pcNN([plaza-gl] 요청, 그 재질 미리 컴파일용) |
+
+광장 GPU 미리 준비 시작 = `ready` 의 `bundle === 'plaza:p0'`(값은 `appAssets().peek(key)`). 구독 함수는 동기로 불리고 던지면 무시한다.
+
+### 13.7 시험 (`tools/test_prefetch.ts`, 노드 — 헤드리스 없음)
+
+- 가짜 시계 + 가짜 망(RTT + 대역폭을 동시 요청이 똑같이 나눠 씀), 응답 크기 = 압축본(`assets-dist`) 실제 파일 크기, json 은 실제 명세 내용. 처리기는 같은 kind 의 가짜(glb 풀기 = 실제 glb 의 이미지 참조를 `texture` 로 P1 요청 — mpj 대리 로더와 같은 동작). 흐름(`flow.ts`·`flowTable.ts`·`flowCatalog.ts`)·코어·Preview3D 요청 규칙은 실제 코드.
+- 시나리오: 열림 → 인원 설정(체류 가정) → 캐릭터 선택(커서 이동·결정) → 광장. 확인: 요청 순서·등급 올리기/내리기, 화면 진입 때 그 화면 묶음의 받은 바이트 비율, lite 범위, 캐릭터 선택 진입 때 받는 양(커서만), 같은 키 중복 받기 0.
+
+### 13.8 구현 결과 [실측 — 노드 시험 `tools/test_prefetch.ts`, 2026-10-08]
+
+**파일**: 새 `script/view/flowTable.ts`(표)·`flow.ts`(FlowPrefetch)·`flowCatalog.ts`(묶음 키, 동적 import)·`appFlow.ts`(앱 인스턴스·브로커·모드), `tools/test_prefetch.ts`. 수정: `lib/assetcore/index.ts`(`lower`·`drop` 두 메서드 — import 0 유지), `stage3d/assetHandlers.ts`(`uiimage` 처리기), `charselect/assetHooks.ts`(`broker` 끼움점)·`preview3d.ts`(관리자 경유·등급·내리기·dispose 때 빼기)·`screen.ts`(`charaTiers`), `plaza/world.ts`(`plazaP0Paths` 추가만, World 무변경), 페이지 `main.ts`(enter 줄·문구 제거)·`charselect_page.ts`(enter·결정 알림·소리 바이트 관리자 경유)·`setplayer_page.ts`(취소 때 enter)·`modeselect_page.ts`·`mgm01_page.ts`(커서 알림)·`plaza_page.ts`(기구 구역 알림).
+
+정정(구현 중, 13.2·13.3 반영):
+- 예측은 **자기 묶음 키가 정해진 뒤**에 낸다 — 자기 묶음 명세 json(P0)이 끝나는 순간 P0 가 비어 P2 명세 json 이 먼저 시작했다(시험 100 Mbps lite 에서 −436 ms).
+- 표의 예측은 **등급 순**(P2 묶음 준비 끝 → P3) — 코어는 P2 가 받는 중이어도 P3 를 시작해, 4G 에서 캐릭터 선택 진입 때 미리 받은 비율이 84 % 에 그쳤다 → 100 %.
+- 주변 칸은 **사람 커서 기준**(COM 커서 기준까지 넣으면 9칸) — 순서(거리)는 지금처럼 모든 커서 기준.
+- 캐릭터 선택 소리(SE·BGM·보이스 1.65 MB)는 2D 묶음에서 떼어 `charselect:sound`(설정 화면에서 P2), 화면 안에서는 페이지가 P1 로(관리자 바이트 → `decodeAudioData`, 광장과 같은 키 공유).
+- 묶음 키 중복 제거(광장 P0 의 모델끼리 같은 텍스처).
+
+**묶음 크기**(압축본, glb 안 텍스처 포함): setplayer 3.48 MB · charselect 2D 0.68 · charselect:sound 1.65 · 캐릭터 한 명 0.47~4.53(마리오 3.43, 잠기지 않은 20명 40.93) · plaza:p0 31.11 · plaza:ui 26.52 · plaza:npc 15.95 · plaza:player(마리오) 3.67 · modeselect 1.63 · mgmet 12.17 · mgm01 20.83(그림만).
+
+**캐릭터 선택 진입 때 받는 양**: 전 = 잠기지 않은 20명 전부 요청(40.93 MB, 동시 2개 차례) + 2D·소리 → 후 = 2D 0.68 + 커서 캐릭터 1명(마리오 3.43) — 예측 없음(off)에서 진입~커서 준비 동안 실제 받은 양 3.96 MB, 그 밖 키 0. 예측 있음(full·lite)이면 설정 화면에서 이미 받아 **진입 때 0 MB**.
+
+**흐름 시나리오**(사람 체류 가정: 인원 설정 8 s, 캐릭터 선택 = 3·4·4.3 s 에 오른쪽 이동, 10 s 에 결정, 결정 → 광장 1.5 s):
+
+| 망 | 모드 | 인원 설정 첫 화면 | 캐릭터 선택 진입: 미리 받음 / 2D·커서 3D 대기 | 커서 이동 뒤 그 캐릭터 대기(3회) | 광장 진입: 미리 받음 / 대기(받기만) |
+|---|---|---|---|---|---|
+| 4G 9 Mbps·RTT 170 ms | full | 5.18 s | 100 % / 0·0 s | 미완·4.40·3.71 s | 10 % / 64.7 s |
+| | lite | 5.18 s | 100 % / 0·0 s | 5.98·5.63·5.66 s | 5 % / 69.3 s |
+| | off(예측 없음) | 5.18 s | 0 % / 1.92·5.32 s | 6.98·미완·4.95 s | 1 % / 71.8 s |
+| 100 Mbps·RTT 20 ms | full | 0.53 s | 100 % / 0·0 s | 0·0·0 s | **100 % / 0 s** |
+| | lite | 0.53 s | 100 % / 0·0 s | 0·0.03·0.22 s | 100 % / 0 s |
+| | off | 0.53 s | 0 % / 0.22·0.53 s | 0·0·0 s | 1 % / 6.38 s |
+
+- 확인(104/104): 인원 설정 2D(P0)가 끝나기 전 P2·P3 받기 시작 0, 진입~커서 준비 동안 화면 2D·커서 캐릭터 밖 받기 0, 커서에서 빠진 캐릭터 내림, 광장 P0 묶음 P3(설정) → P2(결정) → P0(진입), lite = 설정 화면에서 광장 예측 없음·먼 칸 캐릭터 요청 0, off = P0 만, **같은 키 중복 받기 0**(6 시나리오 전부), 광장 P0 모델 22(§12.2 와 같음), 묶음 파일 전부 존재.
+- "미완" = 다음 이동·결정 전에 끝나지 않았고 그 뒤 내려지거나 빠짐(정상).
+
+**기대 효과 계산**: 광장 진입 전 메뉴 체류 ≈ 8 + 10 + 1.5 = 19.5 s.
+- 100 Mbps(12.5 MB/s): 체류 동안 약 244 MB 를 받을 수 있다. 캐릭터 선택(2D·소리·커서·주변 ≈ 15 MB) + 광장 4묶음 77.3 MB = 약 92 MB → **광장 진입 대기 6.4 s → 0 s**(받기 기준). 캐릭터 선택은 진입·커서 이동 모두 0.
+- 4G(1.125 MB/s): 체류 동안 약 22 MB. 캐릭터 선택 몫(약 6 MB)은 설정 화면 8 s 안에 끝나 **진입 대기 5.3 s → 0**, 하지만 광장 77.3 MB 는 숨길 수 없다(진입 때 10 %, 대기 71.8 → 64.7 s, −7 s). 4G 에서 광장 대기를 없애려면 광장 첫 화면 몫 자체를 줄여야 한다 — 가장 큰 것이 광장 UI 26.5 MB(합친 명세의 그림 전부: 온라인·카드·얼굴 포함, 레이아웃 단위 지연 §10 5)와 P0 무대 31 MB.
+- GPU 준비(업로드·컴파일)는 이 수치에 없다 — [plaza-gl] §14 가 `ready('plaza:p0')` 사건으로 앞 화면에서 한다.
+
+---
+
+## 14. 4단계 — 광장 렌더러 하나 (광장만) [설계 — 구현 전에 먼저 적음, [plaza-gl]]
+
+사용자 지시: "그러면 광장 부분만 해 봐." 렌더링 **코드**(stage3d·render2d·mgmcommon)는 이미 공용이지만, 실행 중 **렌더러 인스턴스(WebGL 문맥)** 는 화면마다 새로 만들고 나갈 때 버린다. 그래서 앞 화면에 있는 동안 광장의 셰이더 컴파일·GPU 업로드를 미리 할 수 없다. 이번에는 광장만 바꾸고, 다른 화면(인원 설정·캐릭터 선택·모드 메뉴·미니게임)은 지금처럼 자기 렌더러를 쓴다(§8 "화면 하나씩").
+
+### 14.1 구조 전/후
+
+| 항목 | 전 | 후 |
+|---|---|---|
+| 광장 문맥 | 2개 — 무대(`stage3d/stage.ts`) + UI 투명 렌더러(`plaza/ui/view.ts`, 1920×1080·MSAA) | **1개** — 무대 렌더러에 UI 를 3D 다음 패스로 그림 |
+| 광장 렌더러 수명 | 광장 화면(들어갈 때 만들고 나갈 때 dispose) | **앱 수명**(`view/plazaGl.ts` 가 처음 필요할 때 1번 만듦, 나갈 때 캔버스만 뗌) |
+| 광장 재진입(기구 → 모드 메뉴 → 광장 복귀 등) | 새 문맥 → 텍스처·버퍼를 다시 올리고 프로그램을 다시 컴파일 | 같은 문맥 → 같은 키 프로그램 컴파일 0, 관리자 캐시 텍스처·모델 버퍼 업로드 0(§14.3) |
+| 앞 화면(인원 설정·캐릭터 선택·모드 메뉴)에서 | 받기·풀기만([flow-prefetch] §13) | + 광장 렌더러(화면 밖 캔버스)에서 광장 P0 GPU 준비(§14.5) |
+| 다른 화면 | 자기 렌더러 | **그대로**(무수정). 광장 렌더러와 동시에 문맥 2~3개(§14.6) |
+
+### 14.2 앱 수명 광장 렌더러 `PlazaGl` (`script/view/plazaGl.ts`, mpj 3층)
+
+- 앱에 하나(`globalThis.__mpjPlazaGl`). 캔버스(`jw-gl`)와 `WebGLRenderer({ antialias: true })`(무대가 만들던 것과 같은 옵션)를 **처음 필요할 때 한 번** 만든다(미리 준비 또는 광장 진입).
+- 광장 진입: `attach(stage)` 로 캔버스를 화면 상자에 붙인다. 크기는 페이지 ResizeObserver 가 맞춘다.
+- 광장 나감: `leave()` 순서 = 프로그램 고정(§14.3) → 부품·무대 dispose → 캔버스 떼기. 렌더러는 dispose 하지 않는다.
+- 내림(`drop()`): `renderer.dispose()` + `forceContextLoss()`. GPU 예산을 넘을 때(§14.6)와 문맥을 잃었을 때만 한다. 그다음 진입은 새 렌더러(지금과 같은 비용).
+- 의존: 정적 import 는 three·`appAssets`·`appFlow`(흐름 사건 구독)뿐이다. 광장 무대 코드(`shell/plaza`)는 미리 준비가 시작될 때 동적 import 한다(코드 분할 유지, §5.8.8). 시험용으로 캔버스·렌더러·world 만들기를 주입할 수 있다.
+
+### 14.3 재진입 때 남기는 것 — 무대 `gpu` 모드 (`Stage3D` 옵션 `gpu: { renderer, uploads, keep }`)
+
+무대가 렌더러를 받으면(앱 수명), 렌더러를 만들지도 버리지도 않고 **관리자 캐시 몫 GPU 데이터**도 버리지 않는다.
+
+| 대상 | 전(나갈 때) | 후(나갈 때) | 근거 [코드: three r180] |
+|---|---|---|---|
+| 셰이더 프로그램 | 재질 dispose → `usedTimes` 0 → 삭제 | `PlazaGl.leave()` 가 부품·무대 dispose **전에** `renderer.info.programs` 전부를 한 번씩 고정한다(`usedTimes + 1`, 이미 고정한 것은 건너뜀). 재질을 버려도 프로그램은 남고, 다음 무대의 같은 키 재질은 `acquireProgram` 이 찾아 쓴다(컴파일 0). 캐릭터·NPC·UI·후처리·PMREM 프로그램도 같이 남는다. 그림자 깊이 재질은 렌더러의 `shadowMap` 안에 있어 원래 남는다 | `WebGLPrograms.acquireProgram`(cacheKey)·`releaseProgram`, `WebGLInfo.programs`(타입 공개) |
+| 관리자 캐시 텍스처의 복제 | `MaterialSetup.dispose` 가 복제를 dispose → source 의 GL 텍스처 `usedTimes` 0 → 삭제 | 관리자에서 온 복제(`fetchTexture`)는 dispose 하지 않는다 → GL 텍스처가 source 에 남음 | `WebGLTextures._sources`(source → cacheKey → GL 텍스처) |
+| 같은 source 다시 올리기 | — | `Texture.clone()`(`copy` 끝의 `needsUpdate = true`)과 `MaterialSetup.texture()` 의 `needsUpdate` 는 **source.version 을 올려서**, 다음 사용 때 같은 그림을 다시 올린다(지금도 무대 안에서 늦게 만든 복제는 다시 올림). 그래서 `ScenePreparer` 에 옵션 `uploads` 를 둔다(렌더러 하나에 하나, WeakMap source → {올린 version, data}). `initTexture` 전에 source 가 같고 **data 객체도 같은데** version 만 올라 있으면, 기록한 version 으로 되돌린다 → 업로드 0. GL 텍스처가 이미 지워졌다면 three 가 새 텍스처를 만들며 강제 업로드(`forceUpload`)하므로 되돌려도 안전하다 | `uploadTexture`: `source.version !== sourceProperties.__version` 또는 `forceUpload` 일 때만 올림 |
+| 모델 기하(관리자 glTF 템플릿과 같이 씀) | 무대가 모든 메시 geometry 를 dispose(캐시 템플릿 버퍼까지 내림) | 관리자 템플릿의 geometry 는 dispose 하지 않는다(버퍼·VAO 남음). 무대 전용 기하(하늘 상자 등)만 dispose | `WebGLGeometries`·`WebGLBindingStates`(geometry.id × program.id) |
+| 뼈 텍스처 | 렌더러와 같이 사라짐 | 무대 장면의 `SkinnedMesh.skeleton.dispose()`(복제마다 skeleton 이 새로 생김) | — |
+| 후처리 체인(`PostChain` — RT·재질 6개)·하늘(상자·재질)·IBL(PMREM 생성기·큐브 캐시)·광장 UI 그리기(`PlazaUiView` — 명세·그림·UI RT·재질) | dispose(다음 진입에 HDR 읽기·PMREM 렌더·재질 다시 만듦) | **렌더러 수명 `keep`** 에 두고 다시 씀(env 값·부품 목록이 같으면 같은 것). dispose 하지 않음 | 아래 "정정" |
+| 준비 1×1 RT, HDR 로 직접 읽은 텍스처 | dispose | 그대로 dispose | — |
+| 부품(1P·COM 플레이어·NPC)의 자기 자원 | 부품 dispose | 그대로(부품 코드 무수정, 프로그램만 고정으로 남음) | — |
+
+- **정정(구현 중, 시험으로 찾음)**: 프로그램 고정만으로는 `ShaderMaterial`(후처리·하늘·UI·PMREM)이 다시 컴파일된다. three 는 같은 셰이더 코드를 쓰는 마지막 재질이 dispose 되면 셰이더 단계 번호(`WebGLShaderCache`)를 지우고, 다음 재질은 새 번호를 받아 **프로그램 키가 달라진다**(`getProgramCacheKey` 의 `customVertexShaderID`). 가짜 렌더러에 이 규칙을 넣자 재진입 새 컴파일이 7 이었다(후처리 5·UI 2). → 그 물건들을 재질째 렌더러 수명 `keep`(`Map`, 렌더러마다 새로·`drop` 때 dispose)에 두어 0 으로 만들었다. 덤으로 재진입 때 IBL HDR 읽기·PMREM 렌더·후처리 RT 할당·UI 그림 디코드·업로드도 없어진다. 표준 재질(`onBeforeCompile` 패치 포함)은 `shaderID` 키라 고정만으로 된다.
+
+- 원본 동일성: 그리는 내용과 순서는 같다. 바뀌는 것은 GPU 데이터를 언제 올리고 언제 지우는지뿐이다.
+- 문맥을 잃으면(`webglcontextlost`) three 가 복구 때 상태를 새로 만들고, 쓰는 순간 다시 올린다. `uploads` 기록은 렌더러마다 새로 만든다(내림·문맥 잃음 뒤 비움).
+
+### 14.4 광장 안 문맥 2 → 1 (UI 합성)
+
+| 단계 | 렌더 타깃 | 내용 |
+|---|---|---|
+| 1 무대 | 후처리 RT → … → 화면 | 지금 그대로: 장면(HalfFloat 선형) → 블룸 → 노출·톤맵·비네트·감마·LUT → FXAA → **화면**(`post.ts`). 후처리는 3D 에만 |
+| 2 UI 레이아웃 | UI 선형 RT(1920×1080 HalfFloat, MSAA 4) | 지금 그대로(Render2D 장면을 투명으로 지우고 그림) |
+| 3 UI 내보내기 | **UI 8비트 RT**(1920×1080 RGBA8, 새) | 지금 투명 캔버스에 쓰던 셰이더 그대로: `c = rgb / a` → sRGB → `(s·a, a)`(프리멀티) |
+| 4 합성 | 화면(무대 렌더러 기본 버퍼) | 3 의 RT 를 전체 화면 사각형으로 그림. 섞기 `ONE, ONE_MINUS_SRC_ALPHA`(프리멀티 over), 지우지 않음 |
+
+- 근거: 지금은 브라우저가 프리멀티 알파 캔버스(UI, `premultipliedAlpha: true`)를 불투명 캔버스(무대) 위에 `결과 = ui + (1 − a)·무대` 로 합성한다. 8비트 sRGB 값끼리 섞고, 1920×1080 캔버스를 화면 크기로 늘린다. 4 는 같은 식을 같은 8비트 값(3 의 RGBA8)에 쌍선형 표본으로 적용한다 → 결과는 반올림 ±1 안에서 같다 [추정 — 사용자 눈 확인 목록에 넣음].
+- 3 을 화면에 바로 그리지 않는 이유: UI 선형 RT 를 화면 크기로 표본하면 가장자리 거르기 순서가 달라진다. 지금은 "sRGB 로 바꾼 뒤 늘림"이고, 바로 그리면 "늘린 뒤 sRGB"가 된다. RGBA8 RT 하나(8.3 MB)가 늘지만, UI 문맥의 기본 버퍼(1920×1080 RGBA + MSAA 4 + 깊이, 약 50 MB [추정])가 없어져 메모리는 준다.
+- 공유 렌더러 상태는 바꾼 뒤 되돌린다: `autoClear`(UI 동안 false), 지우기 색·알파, 렌더 타깃. 무대의 지우기 색(env.clear)과 톤맵(NoToneMapping)은 건드리지 않는다.
+- 위에 덮이는 DOM: 기구 페이드(`balloon.ts Fade`, z-index 50)는 지금도 UI 캔버스 위에 있다 → 오버레이에 그대로 있어 순서가 같다.
+- render2d 는 이미 `render(gl)` 로 렌더러를 받는다. `PlazaUiView.create(renderer, url, parts)` 로 바꿔 무대 렌더러를 주입한다(새 렌더러·캔버스를 만들지 않음).
+- 앱 수명 렌더러면 UI 부품(`ui/part.ts`)이 `PlazaUiView` 를 `stage.keep('plaza-ui')` 에 두고 재진입 때 그대로 쓴다(§14.3 정정). 명세 덧붙이기(online·plaza_ui·card extra)는 없는 키만 넣어 여러 번 불러도 같다 [코드 확인].
+
+### 14.5 앞 화면에서 미리 준비 (`PlazaGl.prewarm`)
+
+- **언제**: [flow-prefetch] 사건 `{ type: 'ready', bundle: 'plaza:p0' }`(받기 + CPU 풀기 끝, §13.6). 인원 설정·캐릭터 선택·모드 메뉴 어디서든, 광장 화면 밖일 때. 광장 무대 코드는 이때 동적 import 한다.
+- **무엇을**: 광장 world 를 광장 렌더러(화면 밖 캔버스 — DOM 에 붙지 않음)에 **실제로 만든다**.
+  1. 무대(manifest·IBL·하늘·후처리)
+  2. P0 모델(템플릿 복제·재질·부착·기본 애니)
+  3. GPU 준비(`ScenePreparer`: 텍스처 `initTexture` 한 장씩 → `compileAsync` → 1×1 버퍼 업로드)
+  4. 후처리 프로그램 미리 컴파일(`PostChain.precompile`, RT 단계와 화면 단계를 각자의 셰이더 키로)
+  
+  진입하면 이 world 를 그대로 넘겨받는다(같은 재질 객체라 키가 어긋날 일이 없다).
+- **앞 화면이 끊기지 않게**:
+  - 등급 바닥 P2: 미리 준비 중의 관리자 `get/want` 는 P2 보다 높게 부르지 않는다(`PriorityFloor`, 무대·world 공용) → 캐릭터 선택 커서(P0)를 막지 않는다.
+  - CPU 조립 속도 조절: 모델 조립(복제·재질·부착)을 **프레임마다 하나**씩 한다(`pace`). P0 22 모델이 한꺼번에 풀려 한 프레임을 길게 잡지 않게 하려는 것이다.
+  - GPU 단위는 앱 공용 스케줄러(`appAssets().scheduler`)에서 예산 **2 ms**(§5.4 모바일 값)로 돈다. 단위 하나는 예산을 넘어도 한다(큰 텍스처 한 장, `compileAsync` 시작 한 번 — KHR_parallel_shader_compile 이 있으면 컴파일은 비동기).
+  - 무대 IBL HDR 큐브(관리자 밖 `HDRCubeTextureLoader`)는 지금처럼 직접 받는다(작음).
+- **진입 때**: `take()` 가 바닥을 P0 로 내리면서 남은 키와 준비 작업을 계획 등급(P0)으로 올린다. 속도 조절을 풀고, 예산을 50 ms(첫 화면 로딩)로 둔다. 진행 문구는 남은 P0 만 센다. 미리 준비가 덜 끝났으면 거기서부터 이어서 한다.
+- **진입 때 남는 일**:
+  1. 부품 만들기 — 1P·COM 플레이어(Preview3D)·NPC·UI 레이아웃(그림 업로드는 첫 그리기 때)
+  2. 그 부품들의 프로그램 컴파일(첫 진입만, 재진입은 고정으로 0)
+  3. `warmup` 의 숨김 포함 전체 그리기 1회(그림자 깊이 재질 변형 — 렌더러 안에 남으므로 첫 진입만)
+  4. 미리 준비 중 끝나지 않은 나머지
+- **1P 캐릭터 프로그램(선택)**: 결정 뒤 사건 `ready` 의 `plaza:player:<pc>`(§13.2)가 오면, world 미리 준비 뒤에 그 캐릭터를 `PlazaCharaLoader` 로 광장 장면에 숨겨 올리고 GPU 준비(컴파일)를 한다. 진입한 부품이 같은 키 프로그램을 쓰기 시작한 뒤 버린다. 값은 [flow-prefetch] 브로커 캐시에 있어 다시 받지 않는다. NPC 는 부품(`createNpcs`)이 ctx 에 묶여 있어 이번에는 미리 컴파일하지 않는다(첫 진입 때 컴파일, 재진입은 0).
+- 미리 만든 world 를 쓰지 않고 흐름이 끝나면(설정 취소) 들고 있다가 다음 진입 때 쓴다.
+- 미리 준비하지 않는 경우: `?loader=seq`(비교용), `?nowarm=1`, `?plazagl=0`(이 단계 끄기 — 이전 방식 비교용).
+
+### 14.6 문맥 수·GPU 메모리 (§5.7 예산)
+
+| 화면 | 문맥 [코드] |
+|---|---|
+| 인원 설정 | 설정(MgmView) + 광장(화면 밖, 미리 준비가 시작됐으면) = 2 |
+| 캐릭터 선택 | 설정(숨김, 살아 있음) + 캐릭터 선택 + 광장 = 3 |
+| 광장 | **1**(전 2) |
+| 모드 메뉴 | 모드 메뉴 + 광장(들고 있음) = 2 |
+| mgmet·프리 플레이 목록 | 그 화면 + 광장 = 2 |
+| 미니게임 | 게임(`view/renderer.ts`) + HUD(`lyt.ts` 화면 밖) + 광장 = 3 |
+
+- 상한 [추정 — 브라우저 구현값]: 크롬 데스크톱·안드로이드는 페이지당 활성 문맥 16개(넘으면 가장 오래된 것을 잃음), 사파리(iOS)도 수 개~16 수준, 파이어폭스는 더 크다. 최대 3개라 상한과는 거리가 멀다. 모바일에서 문제가 되는 것은 개수보다 **메모리**다.
+- GPU 메모리 [추정 — `assets-dist/report.json` 의 파일별 GPU 추정, 밉 포함]:
+  - 광장 P0 미리 준비 = 모델 22·텍스처 119장 ≈ PC 73 MB / 모바일 60 MB + 버퍼(glb 10 MB 안팎) + 렌더 타깃(화면 밖이라 작음).
+  - 광장을 다 돈 뒤 들고 있는 양 = 무대 텍스처(전부 489장, PC 173 MB / 모바일 145 MB) + 기하. 부품 몫은 나갈 때 지운다.
+  - 실측 광장 전체(살아 있는 합, RT 포함)는 413.5 MB(assets_pipeline §9.3).
+- **예산 규칙**(나갈 때 `leave()` 가 판단):
+  - 들고 있을 양 = 광장 장면 + `keep` 의 하늘·UI 그리기 장면의 텍스처(source 하나에 한 번, `textureBytes`) + 기하 바이트. 렌더 타깃(후처리 HDR·블룸 밉·UI 1920×1080 두 장 — 1080p 에서 약 50~80 MB [추정])은 셈에 넣지 않았다(과소 추정 쪽).
+  - 예산 = §5.7 GPU(PC 2 GB / 모바일 `deviceMemory ≤ 4` 600 MB) × **0.6**. 나머지 0.4 는 다음 화면 몫이다(가장 큰 미니게임 mg1801 ≈ 100~200 MB).
+  - 넘으면 `drop()`(문맥째 버림 → 다음 진입은 지금과 같은 비용).
+  - 미리 준비는 P0 만 한다(P1·P3 은 진입 뒤 지금처럼).
+- **사용자 확인 필요**: 0.6 비율, 모바일 판정(`deviceMemory ≤ 4`), 모바일에서 광장을 다 돈 뒤(≈ 300 MB 이상) 들고 있을지(지금 기본 = 예산 안이면 들고 있음).
+
+### 14.7 시험 (`tools/test_plaza_gl.ts`, 노드 — 헤드리스 없음)
+
+**가짜 렌더러**는 three 의 프로그램 캐시(cacheKey → 프로그램, `usedTimes`, `info.programs`)와 텍스처 업로드 규칙(source × cacheKey → GL 텍스처, `source.version` 비교, 강제 업로드)을 흉내 낸다. 그 위에서 실제 코드(`ScenePreparer`·`FrameScheduler`·`Stage3D` dispose·`PostChain.render`·`PlazaUiView.end`·`PlazaGl`)를 돌린다.
+
+| 확인 | 기대 |
+|---|---|
+| 광장 3회 진입(붙이기·나가기) | 새 렌더러 1(재진입 0), 캔버스 같음, 살아 있는 문맥 1, UI 용 렌더러 0 |
+| 미리 준비(예산 2 ms, 가짜 시계) | 프레임당 쓴 시간 ≤ 예산 + 단위 하나. 미리 준비된 프로그램·텍스처 수 = 장면의 고유 키·source 수. 진입 때 남은 일 = 새 부품 몫만 |
+| 재진입(새 무대 + 새 복제 텍스처 + 새 재질) | 새 컴파일 0, 텍스처 업로드 0(되돌린 version 수 = 복제 수), 관리자 텍스처·기하 dispose 0, 무대 전용(하늘·RT)은 dispose 함 |
+| 등급 바닥 | 미리 준비 중 요청 등급 ≥ P2, 진입 뒤 P0 로 올림 |
+| 그리기 순서 | 후처리의 마지막 화면 쓰기(FXAA) → UI 선형 RT → UI 8비트 RT → 화면 합성(프리멀티 섞기, 지우기 없음). 렌더러 상태(autoClear·지우기 색·타깃) 되돌림 |
+| 예산 | 들고 있을 양이 예산 × 0.6 을 넘으면 내림(다음 진입 때 새 렌더러 1개 더) |
+
+### 14.8 사용자가 직접 볼 것(헤드리스 대신)
+
+1. 광장 첫 화면: 하단 파티 줄·텔롭·안내 글자 가장자리·반투명 판이 전과 같은가(UI 합성 경로가 바뀜).
+2. 기구 페이드: 검은 막이 UI 까지 덮는가(전과 같아야 함).
+3. 블룸·LUT 색이 UI 에 번지지 않는가(UI 는 후처리 뒤).
+4. 기구 → 모드 메뉴 → 광장 복귀: 복귀 대기가 첫 진입보다 짧은가, 화면이 같은가.
+5. 인원 설정·캐릭터 선택에서 커서·모델 회전이 끊기지 않는가(뒤에서 광장 준비 중).
+6. 창 크기 바꾸기·전체 화면: UI 위치·크기가 3D 와 맞는가.
+
+### 14.9 구현 결과 (2026-10-08) [시험: `tools/test_plaza_gl.ts` 60/60 — 가짜 렌더러, 수치는 시험 장면 기준]
+
+**파일**
+
+| 층 | 파일 | 바꾼 것 |
+|---|---|---|
+| 2 three 어댑터 | `lib/assetcore-three/index.ts` | `ScenePreparer` 옵션 `uploads`(source → 올린 version·data) — 같은 data 면 version 되돌림, `stats.reused` |
+| 3 mpj | `view/plazaGl.ts`(새) | `PlazaGl`(앱 수명 캔버스·렌더러·`uploads`·`keep`, enter/leave/pin/drop, 예산), `worldStarter(env)`(미리 준비·진입 공용 world 만들기 규칙), `FramePacer`, `sceneGpuBytes`, `installPlazaGl()`(흐름 사건 구독) |
+| 3 mpj | `shell/stage3d/stage.ts` | `StageGpu`(렌더러·uploads·keep) 주입, `PriorityFloor`(등급 바닥·내릴 때 올리기), gpu 모드 dispose(관리자 템플릿 기하·관리자 텍스처 복제·keep 물건 남김, 뼈 텍스처 버림), 후처리·하늘 keep |
+| 3 mpj | `shell/stage3d/material.ts` | `IblShare`(PMREM 생성기·IBL 큐브 캐시 공유), `dispose(keepManaged)` |
+| 3 mpj | `shell/stage3d/post.ts` | `precompile()`(RT 단계·화면 단계 셰이더 키로 compileAsync) |
+| 3 mpj | `shell/plaza/world.ts` | 옵션 `gpu`·`floor`·`budgetMs`·`pace`, 관리자 요청·준비 작업에 바닥 적용 |
+| 3 mpj | `shell/plaza/scene.ts` | 옵션 `gpu`·`world`(미리 만든 것 넘겨받기) |
+| 3 mpj | `shell/plaza/ui/view.ts`·`ui/part.ts` | UI 문맥 없앰 — 무대 렌더러에 3D 다음 패스(선형 RT → 8비트 RT → 화면 프리멀티 합성), `keep('plaza-ui')` |
+| 3 mpj | `shell/plaza/player.ts` | `PlazaCharaLoader.load` 선택 인자 `tick`(1P 캐릭터 미리 컴파일을 프레임마다) |
+| 페이지 | `plaza_page.ts` | 캔버스 = `plazaGl().enter`, 나갈 때 `gl.leave(장면, () => run.stop())`, `?plazagl=0` 이면 이전 방식 |
+| 페이지 | `main.ts` | 1줄: `?plaza=1` 이면 `installPlazaGl()`(동적 import) |
+| 시험 | `tools/test_plaza_gl.ts`(새) | §14.7 |
+
+**시험 수치**(가짜 렌더러, 시험 장면 = P0 모델 2·재질 4·라이트맵 2, 후처리 켬, 1P 캐릭터·UI 부품 흉내)
+
+| 단계 | 새 컴파일 | 텍스처 업로드 | 기하 업로드 | 비고 |
+|---|---|---|---|---|
+| 미리 준비(화면 밖) | 8(무대 2·후처리 5·1P 캐릭터 1) | 7 | 5 | 9 프레임, 스케줄러 프레임당 최대 3.0 ms(예산 2 + 단위 하나), 관리자 요청 9건 전부 ≥ P2, P0 모델 조립은 프레임마다 하나 |
+| 첫 진입(미리 준비 넘겨받음) | **2**(UI 내보내기·합성) | **1**(1P 캐릭터 자기 텍스처) | 4(캐릭터·UI·후처리 사각형) | world 기다림 1 프레임 |
+| 재진입(미리 준비 없음, 같은 렌더러) | **0** | **1**(캐릭터 자기 텍스처) | **1** | 복제 version 되돌림 2(라이트맵), 템플릿 기하 다시 올림 0, 새 렌더러 0 |
+| 비교: 이전 방식 재진입(새 문맥) | 10 | 7 | 8 | |
+
+- 나가기: 프로그램 10개 고정·삭제 0, 관리자 템플릿 기하 dispose 0, GL 텍스처 삭제 = 캐릭터 1장, 렌더러 dispose 0·문맥 1, 캔버스만 뗌.
+- 그리기 순서: FXAA(화면) → UI 레이아웃(UI 선형 RT) → UI 내보내기(8비트 RT) → 합성(화면, `ONE, ONE_MINUS_SRC_ALPHA`), UI 패스 동안 화면 지우기 0·autoClear 끔, 끝에 autoClear·타깃·무대 지우기 색 되돌림.
+- 예산: 들고 있을 양 > 예산 × 0.6 → dispose + forceContextLoss, 다음 진입 새 렌더러 1. 문맥을 잃었으면 다음 진입 때 버리고 새로. 광장 안에서는 미리 준비 안 함.
+- 정적: 광장 셸에서 `new THREE.WebGLRenderer(` 0, 무대는 `gpu` 가 있으면 만들지 않음, 코어 import 0·어댑터 import ⊂ {three, 코어}, `plazaGl.ts` 정적 import = three·lib·env.
+
+**실제 광장 데이터로 본 미리 준비 양**(`plazaP0Paths` + `assets-dist/report.json`, [추정]): P0 모델 22·glb 참조 텍스처 119장 ≈ GPU PC 73.1 MB / 모바일 59.9 MB(+ MaterialSetup 이 이름으로 읽는 텍스처·버퍼). 무대 텍스처 전부는 489장 172.6 MB(PC). 프로그램 수는 실제 브라우저에서만 셀 수 있다 — §12.3 의 첫 진입 warmup(텍스처 289·프로그램 78, SwiftShader)이 미리 준비 + 부품 몫으로 나뉜다.
+
+**진입 때 남는 일**(실제, [추정]):
+
+| | 첫 진입(미리 준비 끝남) | 재진입 |
+|---|---|---|
+| 무대 P0 모델 받기·조립·GPU 준비 | 0 | 무대 조립(CPU: 템플릿 복제·재질) — 받기·업로드·컴파일 0 |
+| IBL·후처리·하늘·UI 그리기 | 0(UI 는 진입 때 만들고 UI 그림 업로드는 첫 그리기 때) | 0(keep) |
+| 부품: 1P·COM 플레이어·NPC(Preview3D 읽기·준비) | 있음(받기는 [flow-prefetch] 가 미리) | 있음(프로그램 0, 텍스처는 Preview3D 가 매번 새로 만들면 업로드) |
+| 그림자 깊이 재질 변형 | 첫 진입 1회 | 0 |
+| 전체 그리기 1회(warmup) | 있음 | 있음(가벼움) |
+
+### 14.10 사용자 확인 필요 (이 단계)
+
+1. GPU 예산 비율 0.6·모바일 판정(`deviceMemory ≤ 4` → 600 MB)·모바일에서 광장 전체(≈ 300 MB 이상)를 들고 있을지 — 지금 기본은 예산 안이면 들고 있음(§14.6). 들고 있을 양 추정에 렌더 타깃(50~80 MB)은 빠져 있다.
+2. 첫 미리 준비 때 IBL PMREM 생성(셰이더 3개 동기 컴파일 + 블러 패스)은 한 덩어리라 인원 설정·캐릭터 선택 화면에서 한 번 수십 ms 끊길 수 있다 [추정] — 피하려면 IBL 을 진입 때로 미뤄야 하는데, 그러면 무대 재질 키(환경 맵 유무)가 달라져 미리 컴파일이 쓸모없어진다. 지금은 미리 준비에 둠.
+3. 1P 캐릭터 미리 컴파일은 [flow-prefetch] 의 `hint('chara1P')` 또는 `ready('plaza:player:<pc>')` 가 올 때만(결정 뒤 — 진입 직전이라 시간이 짧다). NPC 는 미리 컴파일하지 않음(부품이 ctx 에 묶임) — 첫 진입 때 컴파일, 재진입 0.
+4. 미리 준비는 `ready('plaza:p0')` 가 앱에서 처음 한 번 올 때만 한다(같은 묶음을 다시 요청하면 사건이 없음). 모드 메뉴 → 광장 복귀는 미리 준비 없이 같은 렌더러로(컴파일·업로드 0) — 모드 메뉴에서도 world 를 미리 조립할지는 선택.
+5. UI 합성 결과가 전과 같은지(반올림 ±1 [추정])는 브라우저에서 눈으로 — §14.8 목록.
+
+**검증 전체**: `test_plaza_gl` 60/60 + 기존 시험 24개 전부 통과(test_plaza_world 437·test_plaza_ui 129·test_prefetch 104·test_room_server 232·check_mgmcommon 12954 등), `tsc` 오류 0, `npm run build` 통과. 헤드리스는 띄우지 않았다(§14.8 목록을 사용자가 직접 본다).
+
+### 13.9 회귀 수정 — 2D 그림 404(assets/assets) (2026-10-08, 조정자)
+- 증상(사용자): 인원 설정·캐릭터 선택 2D 가 텍스처 없이 단색 사각형, 광장 로딩 안 됨.
+- 원인: `view/appAssets.ts assetKeyOf` 가 상대 URL(`assets/mgmcommon/…`)을 **에셋 루트 기준**으로 풀어 키가 `assets/mgmcommon/…` 가 되고, resolver(루트 + 키)가 `assets/assets/…` 를 요청 → 404. 노드 시험은 가짜 fetch 라 URL 해석 경로를 타지 않아 못 잡음.
+- 수정: 상대 URL 은 페이지 기준(`document.baseURI`)으로 푼다. 순수 함수 `view/assetKey.ts assetKeyFrom` 로 빼고 `test_prefetch` 7절(4건)에 회귀 시험. 실제 페이지 콘솔 확인 1회: 인원 설정·광장 404 0, 오류 0.

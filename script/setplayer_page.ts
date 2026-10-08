@@ -7,6 +7,7 @@ import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { ASSETS } from './env';
 import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from './shell/setplayer';
+import { appFlow } from './view/appFlow';
 import { GamepadPad, type KeyboardPad, type PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -250,6 +251,7 @@ export async function runSetPlayer(
           charRun = null;
           canvas.style.visibility = '';
           chosen = chars;
+          if (!chars) appFlow().enter('setplayer');
           handle.resolveCharSelect(chars !== null);
         },
       }).then((cr) => (charRun = cr));

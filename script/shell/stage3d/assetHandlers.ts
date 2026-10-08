@@ -5,6 +5,7 @@
  * - gltf: createGltfLoader(meshopt·압축 모드 KTX2) 의 parseAsync. 압축 모드에서 glb 안 텍스처(../tex/*.ktx2)는 KTX2 로더 자리에 대리 객체를 끼워
  *   관리자 texture 로 받는다(MaterialSetup 이 같은 텍스처를 읽어도 한 번만). 소스 모드는 GLTFLoader 기본(ImageBitmap) 그대로.
  * - texture: loadTexture(압축 모드면 KTX2, 아니면 PNG TextureLoader) — 값은 깨끗한 원본, 쓰는 쪽이 clone.
+ * - uiimage: 2D 레이아웃 그림 loadUiImage(압축 모드 KTX2 트랜스코드 / PNG Image) — 값은 공유, 쓰는 쪽(render2d)이 텍스처를 새로 만든다(loader_manager.md §13).
  * - json·bytes: 코어 처리기(받기는 env.io = 전역 fetch → 압축 모드 소리 이름 바꿈·해시 이름 shim 을 지난다).
  * - meshopt 풀기는 워커 2개로(같은 wasm 이라 결과 동일, 메인 스레드 멈춤만 줄임).
  */
@@ -12,12 +13,13 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import type { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { bytesHandler, jsonHandler, type AssetHandler, type AssetManagerApi } from '../../lib/assetcore';
 import { gltfHandler, managedTextureLoader, textureHandler } from '../../lib/assetcore-three';
-import { assetMode, createGltfLoader, ktx2Loader, loadTexture } from './assetLoader';
+import { assetMode, createGltfLoader, ktx2Loader, loadTexture, loadUiImage } from './assetLoader';
 
 export const KIND_GLTF = 'gltf';
 export const KIND_TEXTURE = 'texture';
 export const KIND_JSON = 'json';
 export const KIND_BYTES = 'bytes';
+export const KIND_UI_IMAGE = 'uiimage';
 
 export interface MpjHandlerOptions {
   manager(): AssetManagerApi;
@@ -40,7 +42,7 @@ export function createMpjHandlers(o: MpjHandlerOptions): AssetHandler<any, any>[
     }, ktx2Loader());
     gl.setKTX2Loader(proxy as unknown as KTX2Loader);
   }
-  return [gltfHandler(gl, KIND_GLTF), textureHandler(loadTexture, KIND_TEXTURE), jsonHandler(KIND_JSON), bytesHandler(KIND_BYTES)];
+  return [gltfHandler(gl, KIND_GLTF), textureHandler(loadTexture, KIND_TEXTURE), jsonHandler(KIND_JSON), bytesHandler(KIND_BYTES), { kind: KIND_UI_IMAGE, fetch: (url: string) => loadUiImage(url) }];
 }
 
 /** 압축 모드에서 이 키의 텍스처가 glb 안 참조로도 관리자를 지나는가(=미리 받아도 두 번 받지 않음) */

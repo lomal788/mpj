@@ -1,4 +1,4 @@
-export { Stage3D, LOAD_BUDGET_MS, PLAY_BUDGET_MS, type StageCreateOptions, type StageEnv, type StageLoader } from './stage';
+export { Stage3D, LOAD_BUDGET_MS, PLAY_BUDGET_MS, PriorityFloor, type StageCreateOptions, type StageEnv, type StageGpu, type StageLoader } from './stage';
 export { MaterialSetup, fresOf, opt, slotTexture } from './material';
 export { Clip } from './clip';
 export { MeshCollider, COLLIDER_STEP, COLLIDER_SLOPE_LIMIT_DEG, type MeshColliderData } from './meshCollider';

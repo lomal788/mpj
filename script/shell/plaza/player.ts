@@ -1,6 +1,7 @@
 /**
  * 광장 1번 플레이어 자유 이동(B) — main actor::ComActor 땅 이동을 ComMatter 값(actorparam.json)으로 재현. docs/shell/plaza_3d.md §3.5.
  * 캐릭터 모델·몸/눈 셰이더 그래프·모션 = charselect Preview3D(같은 파이프라인), 에셋 web/assets/plaza/player(tools/analysis/plaza_player_assets.py).
+ * PlazaCharaLoader.load 의 tick = Preview3D 준비 단계 사이 기다림(기본 setTimeout 0, 광장 렌더러 미리 준비는 프레임마다 — docs/engine/loader_manager.md §14.5).
  */
 import * as THREE from 'three';
 import type { Collider } from '../stage3d';
@@ -283,7 +284,7 @@ export class PlazaCharaLoader {
     return this.spec.chars.find((c) => c.pc === pc) ?? null;
   }
 
-  async load(pc: string, renderer: THREE.WebGLRenderer, prepare: (root: THREE.Object3D) => Promise<void>, rand?: (n: number) => number): Promise<PlazaChara> {
+  async load(pc: string, renderer: THREE.WebGLRenderer, prepare: (root: THREE.Object3D) => Promise<void>, rand?: (n: number) => number, tick?: () => Promise<void>): Promise<PlazaChara> {
     const c = this.find(pc) ?? this.spec.chars[0];
     const idx = this.spec.chars.indexOf(c);
     const preview = new Preview3D({ chars: this.spec.chars, env: this.spec.env } as unknown as Spec, this.url, rand);
@@ -294,7 +295,7 @@ export class PlazaCharaLoader {
     while (!preview.slots[0].root) {
       if (performance.now() - t0 > 60000) throw new Error(`plaza player 모델 준비 시간 초과: ${c.pc}`);
       preview.render(renderer);
-      await new Promise((res) => setTimeout(res, 0));
+      await (tick ? tick() : new Promise((res) => setTimeout(res, 0)));
     }
     const ch = new PlazaChara(preview, c, this.spec.transit);
     ch.motion = preview.slots[0].current;

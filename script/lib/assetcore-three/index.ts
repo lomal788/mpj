@@ -7,6 +7,9 @@
  * - 셰이더 키는 렌더 타깃 유무(선형 색공간·톤맵)와 빛 수에 따라 달라진다: 장면을 RT 에 그리면(후처리) 1×1 RT 에서, 아니면 캔버스 1×1 가위로 준비하고,
  *   무대의 빛에도 준비 레이어를 켜 둔다(three r180 WebGLPrograms.getParameters·WebGLRenderer.projectObject).
  * - glTF·텍스처 처리기: 로더 인스턴스·읽기 함수는 바깥에서 주입한다. 텍스처 캐시 값은 깨끗한 원본, 쓰는 쪽은 clone()(GPU 데이터는 source 공유).
+ * - 렌더러를 오래 들고 쓸 때(uploads 기록): clone()·needsUpdate 는 source.version 을 올려 같은 그림을 다시 올리게 한다 — 이미 올린 source 가
+ *   같은 data 객체 그대로면 initTexture 전에 올린 version 으로 되돌린다(GL 텍스처가 지워졌으면 three 가 강제 업로드). docs/engine/loader_manager.md §14.3.
+ *   UploadRecord = source → {올린 version, data}, 같은 렌더러를 쓰는 준비기들이 하나를 같이 쓴다(PreparerOptions.uploads, 없으면 되돌리지 않음).
  */
 import * as THREE from 'three';
 import { RUN_DONE, RUN_MORE, RUN_WAIT, type AssetHandler, type AssetIo, type FrameScheduler, type SchedTask } from '../assetcore';
@@ -89,7 +92,10 @@ export interface PreparerOptions {
   layer?: number;
   /** 업로드 렌더 한 단위의 메시 수 */
   meshesPerUnit?: number;
+  uploads?: UploadRecord;
 }
+
+export type UploadRecord = WeakMap<object, { v: number; data: unknown }>;
 
 const PH_COLLECT = 0;
 const PH_TEXTURES = 1;
@@ -146,7 +152,7 @@ export class PrepJob implements SchedTask {
 const isDrawable = (o: THREE.Object3D): boolean => !!((o as THREE.Mesh).isMesh || (o as THREE.Points).isPoints || (o as THREE.Line).isLine || (o as THREE.Sprite).isSprite);
 
 export class ScenePreparer {
-  readonly stats = { jobs: 0, done: 0, textures: 0, compiles: 0, meshes: 0, units: 0, errors: 0 };
+  readonly stats = { jobs: 0, done: 0, textures: 0, compiles: 0, meshes: 0, units: 0, errors: 0, reused: 0 };
   private readonly meshDone = new WeakSet<THREE.Object3D>();
   private readonly texDone = new WeakSet<THREE.Texture>();
   private readonly live = new Set<PrepJob>();
@@ -224,7 +230,15 @@ export class ScenePreparer {
           if (!this.texDone.has(t)) {
             this.texDone.add(t);
             if (t.version > 0) {
+              const up = this.o.uploads;
+              const src = t.source as { version: number; data: unknown };
+              const was = up?.get(src);
+              if (was && was.data === src.data && src.version !== was.v) {
+                src.version = was.v;
+                this.stats.reused++;
+              }
               this.o.renderer.initTexture(t);
+              if (up) up.set(src, { v: src.version, data: src.data });
               this.stats.textures++;
             }
           }

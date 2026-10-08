@@ -6,6 +6,8 @@
  *   대기실(docs/shell/plaza_3d.md §5.2): 내기 'net:lobby' {host, ready} · 'net:started'(PlaySession — 모두 모드 메뉴로), 듣기 'net:playSession'(방장 기구 결정)
  * 온라인(docs/shell/online.md 9.5·9.6): 기본 = 실제 방 서버(SocketIoOnline, HTTP + socket.io 바이너리, 페이지와 같은 출처 — npm run dev·server/main.ts), server=http://호스트:포트 로 바꿈.
  * 시험값(URL): online=fake = 가짜 온라인(시험·데모: join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7)), online=off = 가짜·방 없음, first=1.
+ * 그리기: 무대 렌더러 하나로 3D(후처리 포함) 다음 패스(afterRender)에 그린다 — UI 전용 캔버스·문맥 없음(docs/engine/loader_manager.md §14.4).
+ *   앱 수명 렌더러(stage.keep)면 그리기 객체(PlazaUiView — 명세·그림·텍스처·셰이더)를 렌더러에 두고 다시 들어오면 그대로 쓴다(덧붙이기 extra 는 없는 키만 넣어 여러 번 불러도 같음).
  */
 import * as THREE from 'three';
 import { MgmSound } from '../../mgmcommon';
@@ -56,11 +58,11 @@ const charaIndex = (pc: string): number => Math.max(0, (CHARA_PC as readonly str
 
 export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promise<PlazaPart> => {
   const q = ctx.params;
-  const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
-  ctx.overlay.append(canvas);
   const url = (p: string): string => ctx.assetUrl(`mgmcommon/${p}`);
-  const view = await PlazaUiView.create(canvas, url, [ONLINE_PART, ONLINE_FACES, PLAZA_UI_PART, PLAZA_CARD_PART]);
+  const keep = ctx.world.stage.keep;
+  const kept = keep?.get('plaza-ui') as PlazaUiView | undefined;
+  const view = kept ?? (await PlazaUiView.create(ctx.world.stage.renderer, url, [ONLINE_PART, ONLINE_FACES, PLAZA_UI_PART, PLAZA_CARD_PART]));
+  if (!kept) keep?.set('plaza-ui', view);
   const extra = (await (await fetch(url(PLAZA_UI_PART))).json()) as PlazaUiExtra;
   const cardExtra = (await (await fetch(url(PLAZA_CARD_PART))).json()) as PlazaCardExtra;
   const onlineExtra = (await (await fetch(url(ONLINE_PART))).json()) as OnlineExtra;
@@ -211,8 +213,7 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
     dispose(): void {
       for (const off of offs) off();
       net.disconnect();
-      view.dispose();
-      canvas.remove();
+      if (!keep) view.dispose();
       void audio?.close();
     },
   };

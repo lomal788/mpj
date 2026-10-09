@@ -39,7 +39,7 @@
 
 1. 장면별 에셋 도구(`web/tools/analysis/<장면>_world_assets.py`): `graphics_convert.py` 세트 → `web/assets/<장면>/world/{model,tex,anim,manifest.json}`, 텍스처 축소(용량 대책)·env 값(env/dir_light/post 컨테이너 dump → `manifest.env`)을 고르는 부분. 아직 하나도 없다.
 2. 시험 `web/tools/test_stage3d.ts`(로드 목록·소켓 좌표·클립 길이·import 경계) — 없음.
-3. 페이지(자유 시점 카메라)·ui.html 항목 — 없음.
+3. 페이지(자유 시점 카메라)·dev/ui.html 항목 — 없음.
 4. 실제 렌더 확인 전이라 sdw 패치·IBL 큐브 면 순서·그림자 범위는 화면으로 검증 필요.
 5. ~~광장 전용: Collider 구현~~ → §5 `MeshCollider`(plaza-A). 추종 카메라(follow 슬롯 driver)는 plaza B 갈래.
 6. 1번 "페이지·시험 없음" → 광장 페이지(`plaza_page.ts`, index.html?plaza=1)·`test_plaza_world.ts` 로 처음 실제 화면에서 돌림(2026-10-08 짧은 확인 1회).

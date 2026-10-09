@@ -275,7 +275,7 @@ createModeSelect(opts: {
 | 타입 | `npx tsc --noEmit` | 새 오류 0 (기존 tools/serve.ts 미사용 변수 2개만) | |
 | 기존 | `test_charselect` 55/55, `check_charselect` 2207/2207, `test_mg1801` 실패 0 | 안 깨짐 | |
 | 빌드 | `npx tsx tools/build.ts` | dist 생성(assets/modeselect 포함) | |
-| 헤드리스 | `npx tsx tools/shot_modeselect.ts` (ui.html?ui=modeselect&auto=1&mute=1) | 2회(아래). 마지막 회: 콘솔 오류 0, 결과 문자열 "bd (마리오 파티, 버튼 0, 다음 2)", 스크린샷 `test/out/modeselect/01_start.png`·`02_rhythm.png`·`03_press_capture_pose.png`, 나란히 비교 `compare_capture.png` | 웹 실행 |
+| 헤드리스 | `npx tsx tools/shot_modeselect.ts` (dev/ui?ui=modeselect&auto=1&mute=1) | 2회(아래). 마지막 회: 콘솔 오류 0, 결과 문자열 "bd (마리오 파티, 버튼 0, 다음 2)", 스크린샷 `test/out/modeselect/01_start.png`·`02_rhythm.png`·`03_press_capture_pose.png`, 나란히 비교 `compare_capture.png` | 웹 실행 |
 
 헤드리스 1회차에서 6.1 의 두 규칙(정점색 전체·컬러 글리프)과 비교 그림 합성 배율 버그(캔버스 스크린샷이 CSS 크기)가 드러나 문서(6.1)를 먼저 고친 뒤 코드를 고치고 2회차로 확인했다.
 2회차 캡처 대조(같은 영역, 캡처 좌표): 선택 버튼 캡처 (230,254,96) / 웹 (224,255,95), 지도 바다 (40,146,242) / (42,147,247), 사진 창 테두리 (75,170,217) / (65,166,217) — 버튼 배치·조이콘 3개·지도·꼬리 달린 사진 창·두 줄 설명·노란 별 위치가 맞는다.

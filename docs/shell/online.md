@@ -281,7 +281,7 @@ guide = host ? [info, invite(if members < max), dismiss] : [leave]
 ## 9. 웹 포팅 구조와 구현 순서
 
 ### 9.1 위치·의존
-`web/script/shell/online/`(엔진 독립). import 경계 = [mgm_common.md](mgm_common.md) 9.1(같은 폴더·`../mgmcommon/*`·charselect 공개 모듈·three). 페이지 어댑터 `web/script/online_page.ts`, ui.html `UIS` 항목 `online`. 에셋 `web/assets/online/online.json`(+tex/font/sound) ← `web/tools/analysis/online_web_assets.py`(partyrule_web_assets 방식, mgmcommon `Bundle` 재사용). 얼굴 = `assets/mgm01/faces.json`.
+`web/script/shell/online/`(엔진 독립). import 경계 = [mgm_common.md](mgm_common.md) 9.1(같은 폴더·`../mgmcommon/*`·charselect 공개 모듈·three). 페이지 어댑터 `web/script/online_page.ts`, dev/ui.html `UIS` 항목 `online`. 에셋 `web/assets/online/online.json`(+tex/font/sound) ← `web/tools/analysis/online_web_assets.py`(partyrule_web_assets 방식, mgmcommon `Bundle` 재사용). 얼굴 = `assets/mgm01/faces.json`.
 
 ### 9.2 네트워크 어댑터 계약 [설계 — 나중에 WebSocket 방 서버로 구현할 인터페이스]
 화면은 **어댑터만** 본다. 요청은 즉시 반환하고 결과는 사건으로 온다(원본 파이버의 "요청 → 결과 폴링"과 같은 모양). 사건은 화면 틱 시작에 `poll()` 로 한꺼번에 받는다.

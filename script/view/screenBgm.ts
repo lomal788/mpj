@@ -6,7 +6,7 @@ import { fadeTime } from '../shell/mgmcommon/sound';
 
 export const BGM_SPEC_PATH = 'common/sound/bgm.json';
 
-/** 흐름 끝(취소·광장 나감)·ui.html 화면 바꾸기 [설계] */
+/** 흐름 끝(취소·광장 나감)·dev/ui.html 화면 바꾸기 [설계] */
 export const FLOW_END_FADE = 0.5;
 
 export interface ScreenBgmRule {

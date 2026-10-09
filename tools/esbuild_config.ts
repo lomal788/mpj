@@ -21,11 +21,11 @@ export const WEB = path.resolve(
 /** 페이지 엔트리: 이름 → 스크립트. 이름이 bundle/<이름>.js 가 된다 */
 export const ENTRIES: Record<string, string> = {
   main: "script/main.ts",
-  ui: "script/ui_main.ts",
+  ui: "script/dev/ui_main.ts",
 };
 
 /** 배포 때 dist/ 로 복사할 HTML */
-export const PAGES = ["index.html", "ui.html"];
+export const PAGES = ["index.html", "dev/ui.html"];
 
 export const DEV_PORT = 5181;
 

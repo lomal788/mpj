@@ -590,7 +590,7 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 ### 9.1 구현 계약 — 개별 설정·필터(장르) (2026-10-07)
 
-코드 `web/script/shell/mgm01/`(공개 진입점 `index.ts`), 데이터 `web/assets/mgm01/catalog.json` ← `web/tools/analysis/mgm01_web_assets.py`, 페이지 `web/script/mgm01_page.ts`(ui.html `mgm01-setting`·`mgm01-filter`), 시험 `web/tools/test_mgm01.ts`. 공용 부품은 [mgm_common.md](mgm_common.md) 9.6 그대로 쓴다(MgmWindow·MenuGrid·MgmInput·MgmSound·FiberRunner·MgmWork/MgmSave). 위 표의 제안 이름과의 대응: `catalog.ts`(그대로), `settingView.ts`(순수)+`settingScreen.ts`(창), `listFilter.ts`(listView 의 필터 부분, 순수)+`filterScreen.ts`(머리 줄만), `types.ts`(호출 계약 `Mgm01PlayRequest`). `state.ts`(DecideMinigameFlow)·`listView.ts` 본체·`sessionAdapter.ts` 는 아직 없다.
+코드 `web/script/shell/mgm01/`(공개 진입점 `index.ts`), 데이터 `web/assets/mgm01/catalog.json` ← `web/tools/analysis/mgm01_web_assets.py`, 페이지 `web/script/mgm01_page.ts`(dev/ui.html `mgm01-setting`·`mgm01-filter`), 시험 `web/tools/test_mgm01.ts`. 공용 부품은 [mgm_common.md](mgm_common.md) 9.6 그대로 쓴다(MgmWindow·MenuGrid·MgmInput·MgmSound·FiberRunner·MgmWork/MgmSave). 위 표의 제안 이름과의 대응: `catalog.ts`(그대로), `settingView.ts`(순수)+`settingScreen.ts`(창), `listFilter.ts`(listView 의 필터 부분, 순수)+`filterScreen.ts`(머리 줄만), `types.ts`(호출 계약 `Mgm01PlayRequest`). `state.ts`(DecideMinigameFlow)·`listView.ts` 본체·`sessionAdapter.ts` 는 아직 없다.
 
 | 항목 | 웹 결정 | 근거 수준 |
 |---|---|---|
@@ -618,7 +618,7 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 ### 9.2 구현 계약 — 목록 본체·DecideMinigameFlow 상태기계·썸네일 (2026-10-07)
 
-코드 `web/script/shell/mgm01/{listView,listScreen,scene}.ts`(index export), 썸네일 `web/assets/mgm01/thumbs.json`·`thumb/`(§7.1), 페이지 `web/script/mgm01_page.ts` `runMgm01List`(ui.html `mgm01-list`), 시험 `web/tools/test_mgm01.ts` 8~10절. 위 9.1 의 "그리지 않은 것" 중 미리보기·썸네일은 이번에 넣었다(설정 화면 작은 수정).
+코드 `web/script/shell/mgm01/{listView,listScreen,scene}.ts`(index export), 썸네일 `web/assets/mgm01/thumbs.json`·`thumb/`(§7.1), 페이지 `web/script/mgm01_page.ts` `runMgm01List`(dev/ui.html `mgm01-list`), 시험 `web/tools/test_mgm01.ts` 8~10절. 위 9.1 의 "그리지 않은 것" 중 미리보기·썸네일은 이번에 넣었다(설정 화면 작은 수정).
 
 | 항목 | 웹 결정 | 근거 수준 |
 |---|---|---|
@@ -637,8 +637,8 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 | 랜덤 안내(UIOmakaseGuide 2칸) | 공용 `MgmGuide` 가 1칸 판이라 그리지 않음 | [미구현] |
 | 설정 화면 수정(작게) | 큰 그림 `x_thum_00`·미리보기 8칸(§6.7 오프셋 표) 썸네일, 게임 넘김 때 `x_preview`·`x_cursor_LR` 부품 left/right_select 와 그 끝에 미리보기 다시 넣기, 게임 넘김 SE `SQ_SE_MGM01_DECI_LR`(PlaySe2D 위치는 생략), 기록 페인 정정(00 = 횟수·01 = 하이 스코어), 보일 때 NEW 소비 훅 `onShow(id)` | [판독: 어셈블리 §6.7] / 입력 막지 않음은 [설계] |
 | 승패 표 수정(작게) | 열 `x_parts_NN/x_thumbnail` 칸1 = 썸네일(생성자 선택 인자 `thumb(id)`) | [판독 §6.7] |
-| ui.html 한 판 | 가짜 자식 장면: 즉시 결과(승패 무작위, judge 1, 사람 아닌 칸 포함 4바이트 0/1) + save 선두 u16 +1(최대 999) 후 ret | [설계] — 실제 연결은 D 파트(mg1801) |
-| 시험값 시작 필터 | `startEnum`(ui.html `filter=`) 이 있으면 상태 0 의 MgAll 대신 그 필터 | [설계: 시험용] |
+| dev/ui.html 한 판 | 가짜 자식 장면: 즉시 결과(승패 무작위, judge 1, 사람 아닌 칸 포함 4바이트 0/1) + save 선두 u16 +1(최대 999) 후 ret | [설계] — 실제 연결은 D 파트(mg1801) |
+| 시험값 시작 필터 | `startEnum`(dev/ui.html `filter=`) 이 있으면 상태 0 의 MgAll 대신 그 필터 | [설계: 시험용] |
 
 [실행: 시험] 검증(2026-10-07): `npx tsx tools/test_mgm01.ts` 271/271(8절 순수 상태: 위치→페인 표가 레이아웃 좌표상 행 우선 순서인지, 끝 행 Q 보정·반복 막힘, 결정/잠금/랜덤/승패 표/취소/필터/빈 즐겨찾기/NEW 13틱 소비; 9절 실제 명세: 3형식 창 페인·x_win_0S·썸네일 칸1 키·mgboss 자리·말풍선 문구·112 이름 글자가 `bqfont_small` 에 전부·썸네일 113장 파일/sRGB; 10절 상태기계: 0→2→4→2(커서 복원·in 애니 없음)→3→2→4→5→6→8→호출, 복귀 Round·결과 기록·ContinueFlow 같은 칸, 승패 표 열 썸네일, B→7→9). 6절 기대값 2줄은 위 6.7 정정(기록 페인)으로 고쳤다. 기존 시험 전체·check_mgmcommon(mgm01 import 경계 포함) 통과, tsc 기존 serve.ts 2개만, 빌드 통과. 헤드리스 `npx tsx tools/shot_mgm01.ts list` 콘솔 오류 0(`test/out/mgm01/11~18_*.png`: 112칸·접속 중 리듬 잠금 안내·보스 잠금 자리·4인 대전 32칸 형식·보스 15칸 형식·설정 진입(큰 그림·미리보기)·설정 B 복귀·승패 표·가짜 한 판 뒤 복귀). reason0(보스 자리) 결정은 안내 문구가 없어(§7 표 reason0 = null) 안내 창이 뜨지 않는 것이 원본 그대로다.
 
@@ -710,4 +710,4 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 ### 9.x 구현 기록 — 승패 표·잠금 안내 단독 화면 (2026-10-07)
 
-[설계] `script/shell/mgm01/historyScreen.ts`(HistoryState → `mgm01_history_title_00`·`mgm01_history_00` 공용 창, 열 `x_parts_NN/x_history_PP` 에 win_normal/normal, 얼굴 `x_face_0P/x_face_pc128` 칸 1 = `face_128_pcNN^u`, 승리 수 `num/x_text_0P` = `mgm01_ui_countWin` Number0, 기록 0 이면 `x_no_history` 표시)·`announceScreen.ts`(AnnounceState → `mgm01_mes_announce_00`). 얼굴 텍스처는 charselect 변환물을 가리키는 조각 `assets/mgm01/faces.json`(`web/tools/analysis/mgm01_faces_part.py`). 미니게임 썸네일(`x_thumbnail`)은 아직 변환하지 않아 원래 텍스처, 스크롤바 `x_scr_mgm` 은 노드가 비어 위치만 계산. 시험 `tools/test_mgmscreens.ts`, 확인 `ui.html?ui=mgm01-history&rounds=N` · `ui=mgm01-announce`.
+[설계] `script/shell/mgm01/historyScreen.ts`(HistoryState → `mgm01_history_title_00`·`mgm01_history_00` 공용 창, 열 `x_parts_NN/x_history_PP` 에 win_normal/normal, 얼굴 `x_face_0P/x_face_pc128` 칸 1 = `face_128_pcNN^u`, 승리 수 `num/x_text_0P` = `mgm01_ui_countWin` Number0, 기록 0 이면 `x_no_history` 표시)·`announceScreen.ts`(AnnounceState → `mgm01_mes_announce_00`). 얼굴 텍스처는 charselect 변환물을 가리키는 조각 `assets/mgm01/faces.json`(`web/tools/analysis/mgm01_faces_part.py`). 미니게임 썸네일(`x_thumbnail`)은 아직 변환하지 않아 원래 텍스처, 스크롤바 `x_scr_mgm` 은 노드가 비어 위치만 계산. 시험 `tools/test_mgmscreens.ts`, 확인 `dev/ui?ui=mgm01-history&rounds=N` · `ui=mgm01-announce`.

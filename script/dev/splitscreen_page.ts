@@ -1,21 +1,21 @@
 /**
  * UI 시험 항목 "분할 화면" — 분할 화면 공용 런타임(lib/splitscreen·splitscreen-three·splitscreen-dom)을 미니게임 장면(shell/mgstage) 위에서 본다.
  * 설계·조작: docs/engine/10_split_screen.md §9.7. 게임 로직 없음 — 장면·카메라 클립만.
- * URL: ui.html?ui=splitscreen&mg=mg0508|mg0102|mg0122 (기본 mg0508: 2×1, mg0102·mg0122: 2×2)
+ * URL: dev/ui?ui=splitscreen&mg=mg0508|mg0102|mg0122 (기본 mg0508: 2×1, mg0102·mg0122: 2×2)
  * 키: S = 전체(focus0) ↔ 균등 분할, 1~4 = 그 화면 focus, T = 전환 시간 0 / 0.5 / 1 초, G = 다음 게임.
  * 레이어 카메라: 0 = 장면 게임 카메라 클립(무대 anim 슬롯), 1 = 다른 원본 클립, 2·3 = 레이어 0 자세를 월드 Y 축으로 90°·270° 돌린 것(보기용, 원본 아님).
  * 한 rAF = 무대 update 1회 + 카메라 갱신 + 분할 고정 스텝(1/60, 최대 4) + 레이어별 그리기(renderSplit) + 분할선 DOM.
  */
 import * as THREE from 'three';
-import { STEP_MS } from './core/clock';
-import { ASSETS } from './env';
-import { P0 } from './lib/assetcore';
-import { SplitScreen, STEP_SEC } from './lib/splitscreen';
-import { DomDividingLines } from './lib/splitscreen-dom';
-import { createMgStage, mgStageKey, MgCamera, parseFsnb, type MgStage } from './shell/mgstage';
-import { distUrl } from './shell/stage3d/assetLoader';
-import { gltfTexturesManaged, KIND_JSON } from './shell/stage3d/assetHandlers';
-import { appAssets } from './view/appAssets';
+import { STEP_MS } from '../core/clock';
+import { ASSETS } from '../env';
+import { P0 } from '../lib/assetcore';
+import { SplitScreen, STEP_SEC } from '../lib/splitscreen';
+import { DomDividingLines } from '../lib/splitscreen-dom';
+import { createMgStage, mgStageKey, MgCamera, parseFsnb, type MgStage } from '../shell/mgstage';
+import { distUrl } from '../shell/stage3d/assetLoader';
+import { gltfTexturesManaged, KIND_JSON } from '../shell/stage3d/assetHandlers';
+import { appAssets } from '../view/appAssets';
 
 export interface SplitScreenPageRun {
   readonly split: SplitScreen;

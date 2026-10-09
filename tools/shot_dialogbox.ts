@@ -1,6 +1,6 @@
 /**
- * 공용 대화상자·메시지 선택지 헤드리스 확인(마지막 1회) — ui.html?ui=mgmet 항구에서 B → 나가기 확인(메시지 창 선택지) → B(아니요와 같음) → 다시 B → 위 → A(예),
- * ui.html?ui=online 의 패스워드 확인 대화상자(공용 dialogBox 로 옮긴 뒤)를 찍는다. 결과: test/out/dialogbox/*.png (온라인 이전 그림 = test/out/online/03_password_dialog.png)
+ * 공용 대화상자·메시지 선택지 헤드리스 확인(마지막 1회) — dev/ui?ui=mgmet 항구에서 B → 나가기 확인(메시지 창 선택지) → B(아니요와 같음) → 다시 B → 위 → A(예),
+ * dev/ui?ui=online 의 패스워드 확인 대화상자(공용 dialogBox 로 옮긴 뒤)를 찍는다. 결과: test/out/dialogbox/*.png (온라인 이전 그림 = test/out/online/03_password_dialog.png)
  *
  *   npx tsx tools/shot_dialogbox.ts
  */
@@ -25,7 +25,7 @@ try {
   {
     const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
     watch(page);
-    await page.goto(`${server.url}ui.html?ui=mgmet&mute=1&auto=1&com=0111&sp=4&first=1&again=1`);
+    await page.goto(`${server.url}dev/ui?ui=mgmet&mute=1&auto=1&com=0111&sp=4&first=1&again=1`);
     await page.waitForFunction('!!window.__mgmet', null, { timeout: T });
     await page.evaluate(() => document.querySelector<HTMLInputElement>('.jw-ui-dbg')?.click());
     const H = 'window.__mgmet.hub';
@@ -60,7 +60,7 @@ try {
     const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
     watch(page);
     const S = 'window.__online.screen';
-    await page.goto(`${server.url}ui.html?ui=online&entry=friend&join=2&mute=1&auto=1`);
+    await page.goto(`${server.url}dev/ui?ui=online&entry=friend&join=2&mute=1&auto=1`);
     await page.waitForFunction('!!window.__online', null, { timeout: T });
     const until = (js: string): Promise<unknown> => page.waitForFunction(js, null, { timeout: T, polling: 200 });
     const press = (b: number): Promise<unknown> => page.evaluate(`window.__online.press(${b})`);

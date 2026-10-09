@@ -112,7 +112,7 @@
 - `sceneOut()`: 단계 4(`FadeOut(White, 1.0)` 끝까지). 이미 닫혀 있거나 로직 소유자가 잡고 있으면 바로 끝난다(두 번 덮지 않음). 흐름에 거는 순서는 §6.1.
 - `logicWipe()` = `new LogicTransition(appTransition())`.
 - 부팅 상태(2026-10-09 사용자 결정 = 원본대로): `installTransition` 이 `bootTransition()` = `cover(Black)` 로 **Black 으로 덮인 채** 시작한다. 첫 화면이 준비되면 `sceneIn` 이 `FadeIn(마지막 종류 = Black, 1.0)`. 첫 화면 준비가 늦어도 로딩 표시는 하지 않는다(덮인 화면 유지 = loader_manager.md §2.3 과 같은 방침). 화면 상자 안 안내 글자(`.jw-msg`)는 덮개 아래에 있어 덮인 동안 보이지 않는다 — 오류·흐름 끝은 `sceneIn` 으로 연다.
-- `ui.html` 개별 화면도 **같은 규칙**: 부팅 Black 덮음 → 화면 준비 뒤 `sceneIn`. 화면 바꾸기(시작 버튼) = `sceneOut` → 이전 화면 정리 → 새 화면 준비 → `sceneIn`. 화면이 스스로 끝나면 다음 시작까지 덮인 채(원본도 다음 장면까지 덮개 유지). '그만' 버튼 = `sceneOut` → 정리 → `sceneIn`(빈 무대와 안내 글자를 보이려는 시험 페이지 편의 [웹]). 판단: ui.html 은 시험 페이지지만 화면마다 원본 장면 하나를 그대로 띄우는 곳이라, 장면 들고 남을 앱 흐름과 같게 두어야 화면별 전환을 거기서 확인할 수 있다.
+- `dev/ui.html` 개별 화면도 **같은 규칙**: 부팅 Black 덮음 → 화면 준비 뒤 `sceneIn`. 화면 바꾸기(시작 버튼) = `sceneOut` → 이전 화면 정리 → 새 화면 준비 → `sceneIn`. 화면이 스스로 끝나면 다음 시작까지 덮인 채(원본도 다음 장면까지 덮개 유지). '그만' 버튼 = `sceneOut` → 정리 → `sceneIn`(빈 무대와 안내 글자를 보이려는 시험 페이지 편의 [웹]). 판단: dev/ui.html 은 시험 페이지지만 화면마다 원본 장면 하나를 그대로 띄우는 곳이라, 장면 들고 남을 앱 흐름과 같게 두어야 화면별 전환을 거기서 확인할 수 있다.
 
 ## 6. 이전 표(전 → 후)
 
@@ -146,7 +146,7 @@
 | 게임 → 목록 | `playFromList` 끝 | `sceneOut`(mg1801 자체 와이프로 덮였으면 바로) 뒤 `dispose()` | 목록 다시 보일 때 |
 | 목록 → 항구 | main `onDone` | `sceneOut` | 항구 |
 | `?charselect=1` 캐릭터 선택 → 게임 | charselect `onFinished` | `sceneOut` | `start()` |
-| ui.html 화면 바꾸기 | `start()` | `sceneOut` → `stop()` | 새 화면 준비 뒤 |
+| dev/ui.html 화면 바꾸기 | `start()` | `sceneOut` → `stop()` | 새 화면 준비 뒤 |
 
 - 자체 와이프 장면(광장 기구·모드 선택 결정·미니게임 틀·결과 무대·mg1801)은 끝에 이미 덮였거나 로직 소유자가 잡고 있어 sceneOut 이 새로 덮지 않는다(이중 덮기 0, test_transition 11절).
 - 전환당 프레임: 열린 장면 끝 → 20(out) + 준비 시간 + 20(in). 자체 와이프 장면 → 자체 길이 + 0 + 20.

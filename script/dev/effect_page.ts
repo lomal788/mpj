@@ -2,12 +2,12 @@
  * UI 시험 항목 "이펙트 런타임" — 공용 이펙트 런타임(lib/effect·lib/effect-three·view/effect.ts)을 이미터셋 하나로 본다. 설계: docs/engine/08_effects.md §14.9.
  * 패널: 이미터셋 고르기, 재생·정지(Stop false = 즉시 kill / true = fade)·반복, 원본 스위치(끄면 RULES_WEB, 다시 만듦), 부착 대상(없음·원 궤도 물체),
  *       이미터별 입자 수·사건 로그(create·start·emit·stop·release·missing).
- * URL: ui.html?ui=effect&set=mg1801_water_entry00&original=0
+ * URL: dev/ui?ui=effect&set=mg1801_water_entry00&original=0
  * 화면 모양 확인은 사용자가 직접.
  */
 import * as THREE from 'three';
-import { Assets } from './view/assets';
-import { MpjEffects, assetsLoader } from './view/effect';
+import { Assets } from '../view/assets';
+import { MpjEffects, assetsLoader } from '../view/effect';
 
 export interface EffectPageRun {
   readonly fx: () => MpjEffects | null;

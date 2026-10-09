@@ -2,15 +2,15 @@
  * 페이지 ↔ 미니게임 항구 단독 화면(승패 표·잠금 안내·플레이 방법) 연결 — mgmcommon_page.ts 와 같은 어댑터·60Hz 고정 스텝 루프.
  * 시험값(URL): ?rounds=N 승패 기록 판 수(기본 12, 0 = 기록 없음), ?first=0 플레이 방법 다시 보기(B 로 끝낼 수 있음), ?howto=1~6 종류.
  */
-import { ASSETS } from './env';
-import { shellSound } from './view/sound';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from './shell/mgmcommon';
-import { AnnounceScreen } from './shell/mgm01/announceScreen';
-import { HistoryScreen } from './shell/mgm01/historyScreen';
-import { historyFromRing, writeRing } from './shell/mgm01/historyView';
-import { MgmetHowtoView } from './shell/mgmet/howto';
-import type { PadSource } from './view/input';
+import { ASSETS } from '../env';
+import { shellSound } from '../view/sound';
+import { NPAD, STICK_MAX, type PadInput } from '../core/pad';
+import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from '../shell/mgmcommon';
+import { AnnounceScreen } from '../shell/mgm01/announceScreen';
+import { HistoryScreen } from '../shell/mgm01/historyScreen';
+import { historyFromRing, writeRing } from '../shell/mgm01/historyView';
+import { MgmetHowtoView } from '../shell/mgmet/howto';
+import type { PadSource } from '../view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
 const DT = Math.fround(1 / 60);

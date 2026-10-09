@@ -184,7 +184,7 @@
 | 압축본 에셋 | 마지막 확장자 앞에 `.<내용 sha256 앞 8 hex>` — `plaza/world/tex/a.ktx2` → `plaza/world/tex/a.3f2c9a1b.ktx2`, `x.fmab.json` → `x.fmab.<h>.json` | `tools/build_assets.ts`(증분: 새로 만든 산출물만 해시를 다시 잼) |
 | JS·CSS 진입점 | `bundle/main.<esbuild 해시 8자>.js`·`.css` | `tools/build.ts`(esbuild `entryNames: '[name].[hash]'`) |
 | 코드 분할 청크 | `bundle/chunks/<이름>.<해시>.js` | esbuild `chunkNames` |
-| 해시 없음(늘 재검증) | `index.html`·`ui.html`·`sw.js`·`assets-dist/index.json`·`vendor/basis/*`(three 트랜스코더 2개 — KTX2Loader 가 경로를 직접 만듦) | — |
+| 해시 없음(늘 재검증) | `index.html`·`dev/ui.html`·`sw.js`·`assets-dist/index.json`·`vendor/basis/*`(three 트랜스코더 2개 — KTX2Loader 가 경로를 직접 만듦) | — |
 
 - `assets-dist/` 에는 해시 없는 이름(작업본 — 증분 빌드의 비교·같은 내용 복사 원본)과 해시 이름(배포본)이 **둘 다** 있다. 해시 없는 파일은 다음 빌드가 덮어쓸 수 있어 하드 링크가 아니라 복사로 둔다(디스크 약 2배, 배포 `dist/` 에는 해시 이름만 실림). 옛 해시 파일은 `--prune`(사용자 실행) 때만 지운다.
 - 해시는 **산출물 내용**으로 잰다(원본 sha1 이 아님): 인코더 설정만 바뀌어도 URL 이 바뀌어야 immutable 이 안전하다.
@@ -244,7 +244,7 @@
 | 경로 | Cache-Control | ETag / 304 |
 |---|---|---|
 | 해시 이름(`.<8 hex>.<ext>`, `.<esbuild 8자>.js/css/map`) | `public, max-age=31536000, immutable` | 있음 |
-| `index.html`·`ui.html`·`sw.js`·`assets-dist/index.json`·vendor·그 밖 | `no-cache` | 있음(`"<크기 16진>-<mtime 16진>"`, 변형은 `-br`·`-gz` 덧붙임), `If-None-Match` 맞으면 304 |
+| `index.html`·`dev/ui.html`·`sw.js`·`assets-dist/index.json`·vendor·그 밖 | `no-cache` | 있음(`"<크기 16진>-<mtime 16진>"`, 변형은 `-br`·`-gz` 덧붙임), `If-None-Match` 맞으면 304 |
 | 개발 서버(`npm run dev`, `server/main.ts` 기본) | 지금처럼(esbuild serve / `no-cache`) | — |
 
 MIME: html·js(`text/javascript`)·css·json·map·png·jpg·webp·svg·ktx2(`image/ktx2`)·glb(`model/gltf-binary`)·bin·wasm(`application/wasm`)·ogg(`audio/ogg`)·m4a(`audio/mp4`)·flac(`audio/flac`)·wav·hdr·otf(`font/otf`)·ttf·md·txt.

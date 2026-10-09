@@ -397,7 +397,7 @@ console.log('11) 부팅 덮음·장면 들고 남(sceneOut → 정리 → sceneI
     ['script/main.ts', /onDone: \(\) => void sceneOut\(\)\.then\(\(\) => \(got \? flowPlaza/],
     ['script/main.ts', /onExit: \(e\) =>\s*void sceneOut\(\)\.then/],
     ['script/main.ts', /flowRun\?\.stop\(\);\s*flowRun = r;\s*if \(r\) sceneIn\(\);/],
-    ['script/ui_main.ts', /await sceneOut\(\);\s*stop\(\);/],
+    ['script/dev/ui_main.ts', /await sceneOut\(\);\s*stop\(\);/],
   ];
   for (const [p, re] of pages) ok(re.test(src(p)), `${p}: 정리 전에 sceneOut / 준비 뒤 sceneIn`, String(re));
 }

@@ -1,6 +1,6 @@
 /**
- * 공용 UI·메시지 창 데모 헤드리스 확인(1회) — ui.html?ui=mgmcommon&auto=1&mute=1 로 열어 메시지 흐름·자동 흐름·공용 창(텔롭)·공용 메뉴를 차례로
- * 지나며 스크린샷·콘솔 오류·결과 문자열을 본다. 입력은 window.__mgmcommon.press(bex 비트)(script/mgmcommon_page.ts). 결과: test/out/mgmcommon/*.png
+ * 공용 UI·메시지 창 데모 헤드리스 확인(1회) — dev/ui?ui=mgmcommon&auto=1&mute=1 로 열어 메시지 흐름·자동 흐름·공용 창(텔롭)·공용 메뉴를 차례로
+ * 지나며 스크린샷·콘솔 오류·결과 문자열을 본다. 입력은 window.__mgmcommon.press(bex 비트)(script/dev/mgmcommon_page.ts). 결과: test/out/mgmcommon/*.png
  *
  *   npx tsx tools/shot_mgmcommon.ts
  */
@@ -39,7 +39,7 @@ try {
     if (m.type() === 'error') errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto(`${server.url}ui.html?ui=mgmcommon&mute=1&auto=1&com=0111`);
+  await page.goto(`${server.url}dev/ui?ui=mgmcommon&mute=1&auto=1&com=0111`);
   await page.waitForFunction(() => !!(window as unknown as W).__mgmcommon, null, { timeout: 60000 });
   await page.evaluate(() => document.querySelector<HTMLInputElement>('.jw-ui-dbg')?.click());
   const canvas = page.locator('canvas.jw-gl').last();

@@ -69,7 +69,7 @@ script/view/save.ts            (mpj 연결) mpj 섹션 정의·옛 키 마이그
 | 셸(`shell/*`) | 저장을 **구조 인터페이스로만** 받는다: `MgmSaveBacking`(contracts.ts), `PlazaSave`(plaza/types.ts), `setMessageSpeedSource`(messageWindow) | `lib/save`·`view/save` import 금지(mgm_common 9.1 경계 그대로) |
 
 - 다른 게임(ddalkkakrider 포털 등)은 `lib/save` + `lib/save-localstorage` 를 그대로 쓰고 자기 섹션만 등록한다.
-- 앱 전체 싱글턴은 `view/save.ts::appSave()` 하나. `main.ts`(index.html)·`ui_main.ts`(ui.html)가 시작할 때 한 번 부른다(메시지 속도 원천 설치).
+- 앱 전체 싱글턴은 `view/save.ts::appSave()` 하나. `main.ts`(index.html)·`ui_main.ts`(dev/ui.html)가 시작할 때 한 번 부른다(메시지 속도 원천 설치).
 
 ## 4. 웹 저장 문서 [설계]
 
@@ -154,7 +154,7 @@ process()        : 대기 해제 → 문서 직렬화 → 마지막으로 쓴 �
 | mgmet_page 허브 Save | 매번 새 MemorySave, 저장 없음 | **같은 `appSave().mgm`** → 첫 안내·opSkip·플레이 횟수가 목록과 공유되고 요청 때 기록 |
 | balloon.ts 기구 건너뛰기 | localStorage `mpj.plaza.menuData0` 직접 | `ctx.save?.menuBit(0)`·`setMenuBit(0,true)`+`request()`(plaza_page 가 `appSave().plaza` 를 꽂음, 없으면 끔) |
 | `MemorySave`(contracts.ts) | 자기 Map | `MgmSaveBacking` 구조 인터페이스를 본다(기본 = 메모리). 공개 `MgmSave`·`saveRequests`·`onSave`·`toJSON/fromJSON` 유지, `isProcessing()` 추가 |
-| 플레이 횟수 +1 | 결과가 돌아오면 목록 페이지(`settlePlayResult`) | 실제 한 판: 단계 11 `save` 사건 → mgrun `save.playCount(참가자)` → `commitPlayCount`(사람·참가·세이브 있는 칸만). `settlePlayResult(…, countedByScene=true)` 는 다시 세지 않음. 가짜 한 판(ui.html 단독)은 그대로 |
+| 플레이 횟수 +1 | 결과가 돌아오면 목록 페이지(`settlePlayResult`) | 실제 한 판: 단계 11 `save` 사건 → mgrun `save.playCount(참가자)` → `commitPlayCount`(사람·참가·세이브 있는 칸만). `settlePlayResult(…, countedByScene=true)` 는 다시 세지 않음. 가짜 한 판(dev/ui.html 단독)은 그대로 |
 | 메시지 속도 | `setSpeed` 부르는 곳 0 | `setMessageSpeedSource(() => appSave().messageSpeed())`: 모든 MessageWindow 가 생성·start·update 때 원천 값을 `st.speed` 에 둔다(페이지 시작 때 Typer 가 읽음 = 원본 페이지 시작마다 SystemData 읽기). `setSpeed(s)` 는 창별 덮어쓰기(원본 `+0x90/+0x94`) |
 
 ## 8. 메시지 속도 연결 범위
@@ -188,4 +188,4 @@ process()        : 대기 해제 → 문서 직렬화 → 마지막으로 쓴 �
 - 가이드 메시지 속도 화면 UI(§8).
 - 원본 저장 범위 중 웹에 없는 것: 보드·퀘스트·카드·스탬프·업적·보상·기록(MGRecorder) 섹션 — 해당 기능을 만들 때 섹션 등록.
 - 세션 Work(MinigameModeWork)는 저장이 아니므로 허브·목록이 아직 따로 만든다(이번 범위 밖).
-- 검증(2026-10-09): `tools/test_save.ts` 65/65(문서 7·마이그레이션 15·수명 6·실패 9·공유 6·commit 6·결정성 2(3,246 틱 같음)·메시지 속도 9·경계 5). 기존 노드 시험 전체(test_* 38개 + check_mgmcommon·check_logic·check_charselect·check_modeselect) 기대값 변경 없이 통과. `tsc`·`npm run build` 통과. :51811 페이지 1회(헤드리스, 촬영 없음): 옛 키 3개 → `mpj.save` 한 번 생성·옛 키 남음·실행 패널 COM 값 복원·ui.html 목록 화면 콘솔 오류 0·4xx 0.
+- 검증(2026-10-09): `tools/test_save.ts` 65/65(문서 7·마이그레이션 15·수명 6·실패 9·공유 6·commit 6·결정성 2(3,246 틱 같음)·메시지 속도 9·경계 5). 기존 노드 시험 전체(test_* 38개 + check_mgmcommon·check_logic·check_charselect·check_modeselect) 기대값 변경 없이 통과. `tsc`·`npm run build` 통과. :51811 페이지 1회(헤드리스, 촬영 없음): 옛 키 3개 → `mpj.save` 한 번 생성·옛 키 남음·실행 패널 COM 값 복원·dev/ui.html 목록 화면 콘솔 오류 0·4xx 0.

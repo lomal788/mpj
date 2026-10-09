@@ -10,6 +10,7 @@
  */
 import http from "node:http";
 import os from "node:os";
+import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { context } from "esbuild";
@@ -48,7 +49,12 @@ export async function startDevServer(o: { port?: number; host?: string; dist?: b
     const ctx = await context({ ...options(true, path.join(WEB, "bundle")), logLevel: "warning" });
     await ctx.watch();
     const es = await ctx.serve({ servedir: WEB, host: "127.0.0.1" });
-    fallback = proxyTo(es.port);
+    const proxy = proxyTo(es.port);
+    fallback = (req, res) => {
+      const u = new URL(req.url ?? "/", "http://localhost");
+      if (!path.extname(u.pathname) && !u.pathname.endsWith("/") && fs.existsSync(path.join(WEB, `${decodeURIComponent(u.pathname)}.html`))) req.url = `${u.pathname}.html${u.search}`;
+      proxy(req, res);
+    };
     dispose = () => ctx.dispose();
   }
   const server = http.createServer(createApp(fallback));

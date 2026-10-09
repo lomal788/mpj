@@ -1,5 +1,5 @@
 /**
- * 미니게임 항구 화면 헤드리스 확인(1회) — ui.html?ui=mgmet(인사 → 액티비티 선택 → 이동 → 결정 → 첫 설명 → 규칙 → 출발)과 ui=mgmet-rule(COM 없음)을 열어
+ * 미니게임 항구 화면 헤드리스 확인(1회) — dev/ui?ui=mgmet(인사 → 액티비티 선택 → 이동 → 결정 → 첫 설명 → 규칙 → 출발)과 ui=mgmet-rule(COM 없음)을 열어
  * 스크린샷·콘솔 오류·결과 문자열을 본다. 입력은 window.__mgmet.press(bex 비트)(script/mgmet_page.ts). 결과: test/out/mgmet/*.png
  *
  *   npx tsx tools/shot_mgmet.ts
@@ -54,7 +54,7 @@ async function open(url: string): Promise<{ page: Page; shot: (n: string) => Pro
 }
 try {
   {
-    const { page, shot } = await open('ui.html?ui=mgmet&mute=1&auto=1&com=0111&sp=0');
+    const { page, shot } = await open('dev/ui?ui=mgmet&mute=1&auto=1&com=0111&sp=0');
     for (let p = 0; p < 3; p++) {
       await until(page, 'h.seq === 4 && h.o.msg.isNextInputWait() && h.o.msg.st.arrow');
       if (p === 0) await shot('01_greeting');
@@ -96,7 +96,7 @@ try {
     await page.close();
   }
   {
-    const { page, shot } = await open('ui.html?ui=mgmet-rule&mute=1&auto=1&com=0000&first=1');
+    const { page, shot } = await open('dev/ui?ui=mgmet-rule&mute=1&auto=1&com=0000&first=1');
     await until(page, "h.phase === '규칙 설정' && !h.rule.win.life.opening");
     await page.waitForTimeout(300);
     await shot('07_rule_nocpu');

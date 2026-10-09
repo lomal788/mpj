@@ -1,5 +1,5 @@
 /**
- * 모드 선택 화면 헤드리스 확인(1회) — ui.html?ui=modeselect&auto=1&mute=1 로 열어 원본 캡처(마리오 파티에서 A 를 누른 press 프레임)와 같은 구도를 만들고
+ * 모드 선택 화면 헤드리스 확인(1회) — dev/ui?ui=modeselect&auto=1&mute=1 로 열어 원본 캡처(마리오 파티에서 A 를 누른 press 프레임)와 같은 구도를 만들고
  * 스크린샷·콘솔 오류·결과 문자열을 본다. 입력은 window.__modeselect.press(bex 비트)(script/modeselect_page.ts). 결과: test/out/modeselect/*.png
  *
  *   npx tsx tools/shot_modeselect.ts
@@ -40,7 +40,7 @@ try {
     if (m.type() === 'error') errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto(`${server.url}ui.html?ui=modeselect&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/ui?ui=modeselect&mute=1&auto=1`);
   await page.waitForFunction(() => !!(window as unknown as W).__modeselect, null, { timeout: 60000 });
   await page.evaluate(() => {
     const d = document.querySelector<HTMLInputElement>('.jw-ui-dbg');
@@ -60,7 +60,7 @@ try {
   await page.waitForFunction(() => (document.querySelector('.jw-ui-result')?.textContent ?? '') !== '', null, { timeout: 60000 });
   console.log('결과', await page.evaluate(() => document.querySelector('.jw-ui-result')?.textContent));
   // backdrop 경로 시험(docs 6.2): 원본 장면 그림이 없어 광장 썸네일(mn01_pict_mode_08, 원본 에셋)을 **시험용 대역**으로 넣는다 — 실제 배경 아님
-  await page.goto(`${server.url}ui.html?ui=modeselect&mute=1&auto=1&bg=assets/modeselect/tex/mn01_pict_mode_08_o.png`);
+  await page.goto(`${server.url}dev/ui?ui=modeselect&mute=1&auto=1&bg=assets/modeselect/tex/mn01_pict_mode_08_o.png`);
   await page.waitForFunction(() => !!(window as unknown as W).__modeselect, null, { timeout: 60000 });
   await wait(page, 40);
   await press(page, A, 25);

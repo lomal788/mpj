@@ -1,5 +1,5 @@
 /**
- * 프리 플레이 개별 설정·필터 화면 헤드리스 확인(마지막 1회) — ui.html?ui=mgm01-setting / mgm01-filter 를 열어 입력을 넣고 스크린샷·콘솔 오류·결과 문자열을 본다.
+ * 프리 플레이 개별 설정·필터 화면 헤드리스 확인(마지막 1회) — dev/ui?ui=mgm01-setting / mgm01-filter 를 열어 입력을 넣고 스크린샷·콘솔 오류·결과 문자열을 본다.
  * 입력은 window.__mgm01.press(bex 비트)(script/mgm01_page.ts). 결과: test/out/mgm01/*.png
  *
  *   npx tsx tools/shot_mgm01.ts        (설정·필터·목록 전체 흐름)
@@ -41,7 +41,7 @@ try {
   };
 
   if (ONLY !== 'list') {
-  await page.goto(`${server.url}ui.html?ui=mgm01-setting&mute=1&auto=1&com=0111&mg=mg0106&cpu=1`);
+  await page.goto(`${server.url}dev/ui?ui=mgm01-setting&mute=1&auto=1&com=0111&mg=mg0106&cpu=1`);
   await until(page, "r.phase === '설정' && r.screen.win.life.visible && !r.screen.win.life.opening");
   await page.waitForTimeout(400);
   await shot('01_setting_mg0106');
@@ -65,12 +65,12 @@ try {
   await page.waitForFunction(() => (document.querySelector('.jw-ui-result')?.textContent ?? '') !== '', null, { timeout: 60000 });
   console.log('결과(설정)', await result(page));
 
-  await page.goto(`${server.url}ui.html?ui=mgm01-setting&mute=1&auto=1&com=0000&mg=mg0501`);
+  await page.goto(`${server.url}dev/ui?ui=mgm01-setting&mute=1&auto=1&com=0000&mg=mg0501`);
   await until(page, "r.phase === '설정' && r.screen.win.life.visible && !r.screen.win.life.opening");
   await page.waitForTimeout(400);
   await shot('04_setting_4p');
 
-  await page.goto(`${server.url}ui.html?ui=mgm01-filter&mute=1&auto=1&com=0111&fav=mg0101,mg0203`);
+  await page.goto(`${server.url}dev/ui?ui=mgm01-filter&mute=1&auto=1&com=0111&fav=mg0101,mg0203`);
   await until(page, "r.phase === '필터' && r.screen.win.life.visible && !r.screen.win.life.opening");
   await page.waitForTimeout(300);
   await shot('05_filter_all');
@@ -97,7 +97,7 @@ try {
     await canvas.screenshot({ path: path.join(OUT, `${name}.png`) });
   };
   const listIdle = "s.state === 2 && s.list.state.phase === 'idle' && s.list.win.life.visible && !s.list.win.life.opening";
-  await page.goto(`${server.url}ui.html?ui=mgm01-list&mute=1&auto=1&com=0111&save=0&connected=1&new=mg0101,mg0122&fav=mg0103&played=mg0106:7&rounds=11`);
+  await page.goto(`${server.url}dev/ui?ui=mgm01-list&mute=1&auto=1&com=0111&save=0&connected=1&new=mg0101,mg0122&fav=mg0103&played=mg0106:7&rounds=11`);
   await L(listIdle, 60000);
   await page.waitForTimeout(300);
   await shotL('11_list_all_112');

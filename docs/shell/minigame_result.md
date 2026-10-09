@@ -638,7 +638,7 @@ suffix는 `mg/mgResult/env/result_cam_<suffix>.fsnb`다. P는 위치, Aim은 조
 
 ### 12.7 시험 페이지·화면 확인 체크 목록
 
-`ui.html?ui=mgresult&auto=1` + URL 옵션(`mgresult_page.ts` 머리): `mgr`=vs4|2vs2|1vs3|1vs1|coin|coin-team|chara|charank|boss|quest|bossrush, `wl`=플레이어별 승패 글자(1 승·0 패·2 무, 글자 수 = 인원), `coin`=5,0,2,0, `pcs`=pc01,pc02,…, `team`=0011, `order`=0123, `camtype`=0|1, `campat`=-1|0|1, `theme`=pc14(+ `judge`=1), `seed`=주사위 씨앗, `off`=x,y,z. 텔롭·코인·주사위 눈·BGM 은 오른쪽 아래 글자 칸, 와이프는 공용 화면 전환(out White·in 마지막 종류, 속도 — [../engine/15_transition.md](../engine/15_transition.md)).
+`dev/ui?ui=mgresult&auto=1` + URL 옵션(`mgresult_page.ts` 머리): `mgr`=vs4|2vs2|1vs3|1vs1|coin|coin-team|chara|charank|boss|quest|bossrush, `wl`=플레이어별 승패 글자(1 승·0 패·2 무, 글자 수 = 인원), `coin`=5,0,2,0, `pcs`=pc01,pc02,…, `team`=0011, `order`=0123, `camtype`=0|1, `campat`=-1|0|1, `theme`=pc14(+ `judge`=1), `seed`=주사위 씨앗, `off`=x,y,z. 텔롭·코인·주사위 눈·BGM 은 오른쪽 아래 글자 칸, 와이프는 공용 화면 전환(out White·in 마지막 종류, 속도 — [../engine/15_transition.md](../engine/15_transition.md)).
 
 사용자가 볼 것:
 1. `mgr=vs4&wl=1000` — 1P 가 앞 가운데, 나머지 셋이 뒤에 비스듬한 한 줄. 카메라가 멀리서 1P 쪽으로 다가와 멈춘다(약 5초). 90 프레임 무렵 "텔롭 7 WinRightBottom".

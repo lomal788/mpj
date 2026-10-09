@@ -167,7 +167,7 @@ GPU 대여 종료 시 target·viewport·scissor/test·autoClear 및 clearColor/d
 | `script/shell/stage3d/post.ts` | `PostChain.render(scene, camera, region?)` — 선택 인자 `region`(출력 target·viewport·scissor) 추가. 인자가 없으면 지금과 같은 출력 | 기존 그대로 |
 | `script/shell/mgstage/` | `MgStage.renderSplit(list, cameras, opts?)` — 무대 장면·후처리로 어댑터 호출. `update` 는 부르지 않는다 | + `../../lib/splitscreen`·`../../lib/splitscreen-three` |
 | `script/shell/mgscene/` | 틀이 `SplitScreen` 하나를 갖고 `ctx.split` 으로 게임에 준다. 틀 step 의 UI 틱에서 `split.step(MG_DT)` | + `../../lib/splitscreen`(import 0 코어, lib 예외 — transition 과 같은 규칙) |
-| `script/splitscreen_page.ts` | ui.html 항목 "분할 화면" 보기 페이지 | 페이지 |
+| `script/splitscreen_page.ts` | dev/ui.html 항목 "분할 화면" 보기 페이지 | 페이지 |
 | `assets/splitscreen/lines.json` | 원본 `bq.nx.bea/Parts.lyt` 의 `sys_dividing_lines` bflyt·in/out/normal bflan 정리본 ← `tools/analysis/splitscreen_web_assets.py`(mgscene 변환기 함수 재사용). 그림 `sys_dividing_line^s`(8×8, 열 3·4 만 불투명 흰색 [데이터])는 공용 규칙대로 `assets/common/tex/sys_dividing_line_s.png` | — |
 
 ### 9.2 코어 API (`lib/splitscreen`)
@@ -247,7 +247,7 @@ class SplitRenderer {
 - **결과 무대(`shell/mgresult`)**: 수정 없음. 틀이 focus0 로 돌리고, 어댑터가 매 프레임 renderer 상태를 되돌리므로 결과 무대의 전체 화면 그리기에 viewport/scissor 가 남지 않는다.
 - **mg0122 캡처 자리**: 코어 `MG0122_CAPTURE = { perCamera: [960, 540], extra: [1920, 1080], extraCamera: 0 }`, 어댑터 `capture({ layer, target, type, flags, post?, onDone? })` = 다음 `render` 끝에 그 레이어 draw 카메라로 target 전체에 한 번 그리고(기본 후처리 없음) `onDone`. 복사 시점·포스트 포함·type0/flags1·3 의미는 §5 [미확정] 그대로, 사진 판정은 게임 포팅 때 붙인다.
 
-### 9.7 보기 페이지 (`ui.html?ui=splitscreen`)
+### 9.7 보기 페이지 (`dev/ui?ui=splitscreen`)
 
 `mgstage` 장면 위에 분할 런타임을 그대로 쓴다. `?mg=mg0508|mg0102|mg0122`(기본 mg0508), 단추·키로 바꾼다. 레이어 카메라는 서로 다르게 둔다: 레이어 0 = 장면 카메라 클립(`mg.camera.game`, 무대 anim 슬롯), 레이어 1 = 다른 원본 클립, 레이어 2·3 = 레이어 0 자세를 월드 원점 Y 축으로 90°·270° 돌린 것(보기용, 원본 아님). 각 레이어 왼쪽 위에 카메라 이름을 보기 전용 DOM 글로 띄운다.
 

@@ -431,7 +431,7 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 | `web/script/shell/mgscene/` | **순수 로직**(three·DOM 없음): 장면 흐름·텔롭·타이머·상태 얼굴·와이프·스킵 안내·MGUiMgr·MGSound·엔딩·표·결과 무대 계약 | import 0(같은 폴더만). mgm_common §9.1 셸 경계를 지킨다(core·view·games 금지). 난수·패드는 인터페이스로 받는다 |
 | `web/script/view/mgsceneUi.ts` | 2D 그리기: 로직의 UI 상태 → `view/lyt.ts` LayoutInstance·LytRenderer(텔롭 OTF 글꼴·부품 지원, mg1801 과 같은 재생기) | view 쪽이라 `view/lyt.ts`·`shell/charselect/fontSheet` 사용 가능 |
 | `web/script/view/mgsceneSound.ts` | 소리 사건 → AudioOut(SE·보이스 wav) + `appBgm()`(공용 징글) + 게임 BGM 채널(`BgmChannel`) | |
-| `web/script/mgscene_page.ts` | ui.html 항목 "미니게임 공용 틀": 페이지 루프(FixedClock 1/60, rAF 당 최대 4스텝), 더미 게임 | |
+| `web/script/mgscene_page.ts` | dev/ui.html 항목 "미니게임 공용 틀": 페이지 루프(FixedClock 1/60, rAF 당 최대 4스텝), 더미 게임 | |
 | `web/script/games/mgdummy/` | 시험용 더미 게임(틀만 확인하는 최소 3D) | |
 | `web/assets/mgscene/` | `ui.json`(레이아웃·애니·텍스트·글꼴 참조·텔롭 OTF), `tables.json`(MGSetting·MGList·MgSound 필요한 열), `sound/`(틀 소리 명세) ← `web/tools/analysis/mgscene_web_assets.py` | 공용 sys_* 그림은 `assets/common/tex`, SQ_SE_SYS_* 는 `assets/common/sound`(common_shared.py), 글꼴은 `assets/font` |
 
@@ -576,7 +576,7 @@ mg1801 로직(`games/mg1801/logic/game.ts`)은 이미 MinigameFlow 8~13 을 자�
 3. 매 프레임: `game.sound = view.observe(t)` → `scene.tick()`(게이트가 열면 한 프레임) → `view.onStep(game.state, game.events)` + 틀 사건 → `MgSceneSound` → 그리기 `view.render(state)` 뒤 틀 2D `MgSceneUi.draw(scene.layers())`.
 4. 끝 = `scene.stage === STAGE_END`(단계 0x13). 결과 = 12.12.4.
 
-실행 경로: `index.html?game=<id>`(패널 시작)과 광장 → 프리 플레이 목록의 `playFromList` 가 같은 `start()` → `createMgRun` 을 쓴다. 시험 페이지 `ui.html?ui=mgscene&game=mg1801` 도 등록 게임을 같은 호스트로 돌린다(사운드 관측 없음 = 로직 프레임 모델, 끝나면 기록 byte 를 글로 보인다). `game` 이 없으면 예전처럼 더미 게임이다.
+실행 경로: `index.html?game=<id>`(패널 시작)과 광장 → 프리 플레이 목록의 `playFromList` 가 같은 `start()` → `createMgRun` 을 쓴다. 시험 페이지 `dev/ui?ui=mgscene&game=mg1801` 도 등록 게임을 같은 호스트로 돌린다(사운드 관측 없음 = 로직 프레임 모델, 끝나면 기록 byte 를 글로 보인다). `game` 이 없으면 예전처럼 더미 게임이다.
 
 끼움점: 게임 에셋은 `assetsDir`(게임 manifest), 틀 에셋은 `assets/mgscene/`(tables·ui·sound)를 호스트가 판마다 읽는다. 화면 전환은 `MgSceneSetup.wipe = logicWipe()`(앱 전환이 로직 전환을 비춘다, [../engine/15_transition.md](../engine/15_transition.md)) — 장면 시작 단계 3 FadeIn(마지막 종류), 나갈 때 단계 16 FadeOut(White, 1.0).
 
@@ -638,7 +638,7 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
   - 그 밖: judge 0 이면 PlayerList 순(PlayerID 순 [추정: 목록 종류 1])의 `GetMinigameRank` byte, judge ≠ 0 이면 `GetMinigameWinLose` byte(−1 = 0xFF). 이 값들은 게임이 OnEndingInit 까지 `ctx.setRank/setWinLose` 로 쓴 PlayerWork 값이다(초기 −1, `FUN_71001f1e20`).
 - judge(프리 플레이) = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60: `SetGameJudgeType(GameRule ≠ 7 && GameRule ≠ 0)` [판독, analysis/decomp/mgmet_main_work.c] → `freePlayJudgeType(rule)`. 같은 값을 `MgSceneSetup.judgeType`(결과 무대)에도 넘긴다.
 - mg1801(GameRule 10 Rhythm, judge 1) → **`[2, 2, 2, 2]`**. 승패 표 점수는 `byte == (judge ≠ 0)` 일 때만 오르므로 리듬 게임은 승을 주지 않는다(원본 그대로). 옛 웹은 표시 순위 0 → 1 이라 네 명 모두 승 1 을 기록했다.
-- 실패: 미등록 게임·몸체/에셋 로딩 실패·실행 중 오류·중단은 `play()` 가 **null** 을 돌려주고, 목록(`mgm01_page`)은 기록·Round·플레이 횟수를 건드리지 않고 돌아온다. 시험용 `fakeResult`(Math.random 승자)는 `cfg.play` 가 없는 ui.html 단독 시험에서만 쓴다.
+- 실패: 미등록 게임·몸체/에셋 로딩 실패·실행 중 오류·중단은 `play()` 가 **null** 을 돌려주고, 목록(`mgm01_page`)은 기록·Round·플레이 횟수를 건드리지 않고 돌아온다. 시험용 `fakeResult`(Math.random 승자)는 `cfg.play` 가 없는 dev/ui.html 단독 시험에서만 쓴다.
 - 플레이 횟수(MG save head +1): 원본은 이 장면의 `save`(단계 11·16, `FUN_71002dbb80`)가 쓴다. 웹은 결과가 돌아온 때 목록 페이지가 +1(최대 999) 한다 [근사: 세이브 사건 처리 자리 미구현].
 
 #### 12.12.5 설정 전달 (프리 플레이 → setup)

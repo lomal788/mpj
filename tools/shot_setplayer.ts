@@ -1,5 +1,5 @@
 /**
- * 플레이어 설정 흐름 헤드리스 확인(1회) — ui.html?ui=setplayer 로 열어 인원(2명)·컨트롤러 연결 대체·유저 단계·캐릭터 선택 이어짐을 찍고
+ * 플레이어 설정 흐름 헤드리스 확인(1회) — dev/ui?ui=setplayer 로 열어 인원(2명)·컨트롤러 연결 대체·유저 단계·캐릭터 선택 이어짐을 찍고
  * 콘솔 오류를 모은다. 게임패드는 navigator.getGamepads 가짜 1개(Joy-Con L+R 이름)로 넣는다. 결과: test/out/setplayer/*.png
  *
  *   npx tsx tools/shot_setplayer.ts
@@ -32,7 +32,7 @@ try {
     "{ const pad = { index: 0, id: 'Joy-Con L+R (fake)', connected: true, buttons: Array.from({ length: 17 }, function () { return { pressed: false, value: 0 }; }), axes: [0, 0, 0, 0] };" +
       " Object.defineProperty(navigator, 'getGamepads', { value: function () { return [pad]; } }); }",
   );
-  await page.goto(`${server.url}ui.html?ui=setplayer&com=0111&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/ui?ui=setplayer&com=0111&mute=1&auto=1`);
   await page.waitForFunction('!!window.__setplayer', null, { timeout: 120000 });
   await until(page, `${F}.step === 0 && ${F}.uiState === 1 && ${S}.handle.title.visible`);
   await press(page, 'kb', 0x200);

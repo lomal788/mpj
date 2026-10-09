@@ -1,5 +1,5 @@
 /**
- * ui.html 스모크 — ?ui=charselect&auto=1 로 열어 화면이 뜨고 콘솔 오류가 없는지 본다. 결과: test/out/ui_smoke.png
+ * dev/ui 스모크 — ?ui=charselect&auto=1 로 열어 화면이 뜨고 콘솔 오류가 없는지 본다. 결과: test/out/ui_smoke.png
  *
  *   npx tsx tools/smoke_ui.ts
  */
@@ -16,7 +16,7 @@ try {
     if (m.type() === 'error') errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto(`${server.url}ui.html?ui=charselect&com=0001&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/ui?ui=charselect&com=0001&mute=1&auto=1`);
   await page.waitForFunction('!!window.__charselect && window.__charselect.handle.state.frame > 120', null, { timeout: 120000 });
   await page.screenshot({ path: path.join(WEB, 'test', 'out', 'ui_smoke.png') });
   console.log('debug', await page.evaluate('document.querySelector(".jw-ui-debug").textContent'));

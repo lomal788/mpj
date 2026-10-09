@@ -6,9 +6,9 @@
  *   ④ 공용 메뉴 mgm01_base_freeplay_00 + 항목 레이아웃 mgm01_thum_00 15개(x_filter_02 의 x_thum_02_NN 에 SetConstraint), 3행×5열 격자, 안내 Back·HowTo
  *   bex 비트: A 0x1, B 0x2, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10)
  */
-import { ASSETS } from './env';
-import { shellSound } from './view/sound';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { ASSETS } from '../env';
+import { shellSound } from '../view/sound';
+import { NPAD, STICK_MAX, type PadInput } from '../core/pad';
 import {
   FiberRunner,
   MessageFlow,
@@ -26,8 +26,8 @@ import {
   waitUntil,
   type Flow,
   type MgmPlayer,
-} from './shell/mgmcommon';
-import type { PadSource } from './view/input';
+} from '../shell/mgmcommon';
+import type { PadSource } from '../view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
 const DT = Math.fround(1 / 60);

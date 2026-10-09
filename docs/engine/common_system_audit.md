@@ -287,7 +287,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 |---|---|---|
 | 게임 | `script/games/index.ts::GAMES` → `mg1801Game` | `script/main.ts`, `games/mg1801/{logic,view}` |
 | 더미 | `script/games/mgdummy/logic.ts::createDummyGame`, `view.ts` | `mgscene` 계약 시험 |
-| 페이지 | `tools/esbuild_config.ts::ENTRIES`: `main`, `ui`; `PAGES`: `index.html`, `ui.html` | 게임 진입점·셸 시험 진입점 |
+| 페이지 | `tools/esbuild_config.ts::ENTRIES`: `main`, `ui`; `PAGES`: `index.html`, `dev/ui.html` | 게임 진입점·셸 시험 진입점 |
 | UI | `script/ui_main.ts::UIS` | 17개: `charselect`, `modeselect`, `mgmcommon`, `mgm01-history`, `mgm01-announce`, `mgmet-howto`, `mgm01-setting`, `mgm01-filter`, `mgmet`, `mgmet-rule`, `partyrule`, `setplayer`, `online`, `mgm01-list`, `mgresult`, `mgscene`, `mgstage` |
 | 광장 | `script/plaza_page.ts`, `script/shell/plaza` | main.ts:427~489 flowPlaza·flowPlayers 연결 |
 | 셸 | `script/shell` | 13개: `charselect`, `mgm01`, `mgmcommon`, `mgmet`, `mgresult`, `mgscene`, `mgstage`, `modeselect`, `online`, `partyrule`, `plaza`, `setplayer`, `stage3d` |

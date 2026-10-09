@@ -105,7 +105,8 @@ export function createStaticHandler(o: StaticOptions): (req: http.IncomingMessag
       return true;
     }
     if (rel.endsWith('/')) rel += index;
-    const file = path.resolve(root, `.${rel}`);
+    let file = path.resolve(root, `.${rel}`);
+    if (!path.extname(file) && !statFile(file) && statFile(`${file}.html`)) file = `${file}.html`;
     const st = file.startsWith(root + path.sep) ? statFile(file) : null;
     if (!st) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-cache' }).end('Not found');

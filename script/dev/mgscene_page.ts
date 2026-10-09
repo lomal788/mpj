@@ -1,28 +1,28 @@
 /**
  * UI 시험 항목 "미니게임 공용 틀" — 시험용 더미 게임(games/mgdummy)을 공용 틀(shell/mgscene)에 올려 한 판을 처음부터 결과까지 돌린다.
  * 루프: 고정 1/60 스텝(rAF 한 번에 최대 4스텝), 스텝은 프레임 게이트(로컬)가 열 때만 진행, 그리기(3D → 틀 2D)는 매 rAF.
- * URL(ui.html?ui=mgscene&…): mg=mg0101(MGSetting·MgSound 표 행), inst=1(설명 화면 안 실행 반복), endtime=N(시험용: GameEndTime 덮어쓰기, 원본 아님),
+ * URL(dev/ui?ui=mgscene&…): mg=mg0101(MGSetting·MgSound 표 행), inst=1(설명 화면 안 실행 반복), endtime=N(시험용: GameEndTime 덮어쓰기, 원본 아님),
  *   main=N(더미 본편 프레임, 0 = 끝없음 → 종료 타이머 만료로 끝), opening=N(더미 오프닝 프레임), result3d=1(SetPlayer → 결과 3D 무대 shell/mgresult), seed=N.
  * 키: J = A(사람 점수), Enter = +(오프닝 건너뛰기). 설계: docs/shell/minigame_scene.md §12.
  */
-import { BexRandModule } from './core/rng';
-import { FPS, STEP_MS } from './core/clock';
-import { ASSETS } from './env';
-import type { GameSetup, GameView } from './game';
-import { GAMES } from './games';
-import { createDummyGame } from './games/mgdummy/logic';
-import { createMgRun } from './mgrun';
-import { DummyView } from './games/mgdummy/view';
-import { localGate, MgScene, mgUiData, STAGE_END, STAGE_NAME, type MgPadInput, type MgSettingRow, type MgTables } from './shell/mgscene';
-import { createResultStage } from './shell/mgresult';
-import { logicWipe } from './view/appTransition';
-import { Assets } from './view/assets';
-import { AudioOut } from './view/audio';
-import { appBgm } from './view/bgm';
-import type { PadSource } from './view/input';
-import { MgSceneSound } from './view/mgsceneSound';
-import { MgSceneUi, type MgSceneUiJson } from './view/mgsceneUi';
-import { Renderer } from './view/renderer';
+import { BexRandModule } from '../core/rng';
+import { FPS, STEP_MS } from '../core/clock';
+import { ASSETS } from '../env';
+import type { GameSetup, GameView } from '../game';
+import { GAMES } from '../games';
+import { createDummyGame } from '../games/mgdummy/logic';
+import { createMgRun } from '../mgrun';
+import { DummyView } from '../games/mgdummy/view';
+import { localGate, MgScene, mgUiData, STAGE_END, STAGE_NAME, type MgPadInput, type MgSettingRow, type MgTables } from '../shell/mgscene';
+import { createResultStage } from '../shell/mgresult';
+import { logicWipe } from '../view/appTransition';
+import { Assets } from '../view/assets';
+import { AudioOut } from '../view/audio';
+import { appBgm } from '../view/bgm';
+import type { PadSource } from '../view/input';
+import { MgSceneSound } from '../view/mgsceneSound';
+import { MgSceneUi, type MgSceneUiJson } from '../view/mgsceneUi';
+import { Renderer } from '../view/renderer';
 
 export interface MgScenePageRun {
   readonly scene: MgScene;

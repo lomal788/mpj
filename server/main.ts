@@ -48,8 +48,9 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse): void 
       return;
     }
     const rel = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
-    const p = path.resolve(WEB, `.${rel}`);
+    let p = path.resolve(WEB, `.${rel}`);
     if (!p.startsWith(WEB + path.sep) && p !== WEB) throw new Error('outside');
+    if (!path.extname(p) && !fs.existsSync(p) && fs.existsSync(`${p}.html`)) p = `${p}.html`;
     const stat = fs.statSync(p);
     if (!stat.isFile()) throw new Error('not file');
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(p)] ?? 'application/octet-stream', 'Content-Length': stat.size, 'Cache-Control': 'no-cache' });

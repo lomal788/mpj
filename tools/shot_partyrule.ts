@@ -1,5 +1,5 @@
 /**
- * 파티 규칙 화면 헤드리스 확인(1회) — ui.html 로 열어 사용자 캡처 두 장과 같은 구도(멤버 설정 핸디캡 행·규칙 확인 선택지)와
+ * 파티 규칙 화면 헤드리스 확인(1회) — dev/ui.html 로 열어 사용자 캡처 두 장과 같은 구도(멤버 설정 핸디캡 행·규칙 확인 선택지)와
  * 플레이 방법 설정을 찍고 콘솔 오류를 모은다. 결과: test/out/partyrule/*.png
  *
  *   npx tsx tools/shot_partyrule.ts
@@ -16,7 +16,7 @@ const browser = await chromium.launch({ executablePath: findChromium(), args: ['
 const errors: string[] = [];
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 async function open(page: Page, q: string): Promise<void> {
-  await page.goto(`${server.url}ui.html?ui=partyrule&com=0001&${q}&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/ui?ui=partyrule&com=0001&${q}&mute=1&auto=1`);
   await page.waitForFunction('!!window.__partyrule', null, { timeout: 120000 });
   await sleep(3000);
 }

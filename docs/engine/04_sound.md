@@ -789,7 +789,7 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 | 항구 `*_JMP` 리전 곡 | 리전 판독·구현 안 함. REG_MAIN 구간을 반복 구간으로 씀(인트로 3.685 s 1회 → REG_MAIN 반복) [추정]. NOINTRO 도 같은 명세(인트로부터) |
 | 광장 3D 층 `SM_BGM_MENU_RHYTHM`(음악 상점 위치 Play3D, 볼륨 27) | 생략 — 2D `SM_BGM_MENU` 만 |
 | 덕킹(인원 설정 `ST_DUCKING_ON_SETTING`, 프렌드 메뉴, 메시지 창 0x0d·0x13) | 생략 |
-| 흐름 끝(취소)·ui.html 화면 바꾸기 | 0.5 s 페이드로 멈춤 [설계] |
+| 흐름 끝(취소)·dev/ui.html 화면 바꾸기 | 0.5 s 페이드로 멈춤 [설계] |
 
 ---
 
@@ -806,7 +806,7 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 | mpj 연결 | `script/view/sound.ts` | 코어·어댑터·`view/audio`·`view/bgm`·`view/appAssets` | `soundSystem(audio)` = `AudioOut` 하나에 코어·어댑터 하나(같은 페이지의 틀 소리·게임 소리가 핸들·그룹·한도를 같이 쓴다). 디코드 캐시 = 로더 관리자 `bytes`(압축 모드 소리 이름 바꿈 shim 통과) + 전역 디코드 맵 하나. 처리기 `buffer`·`bgmstream`(§12 재생기), 시퀀서 처리기는 소비자가 꽂는다 |
 | 소비자 | `view/mgsceneSound.ts`(틀 소리 `MgSceneSound`), `games/rhythm/view/sound.ts`(`RmSoundMap`, mg1801 view 가 씀), `view/character.ts` `routeCharacterEvents`(se·voice 라벨 사건) | — | 사건 → 코어 `play/stop/stopGroup` |
 | 로직(사건만) | `shell/mgscene/sound.ts`(`MgSound`), `games/rhythm/soundMan.ts`(`RmSoundMan`) | 코어 표만(`fadeTimeSec`) | 원본 MGSound·RmSoundMan 상태 → 사건. 소리 재생·핸들은 모른다 |
-| 보기 | `script/sound_page.ts`(`ui.html?ui=sound`) | — | 라벨 재생·정지, 그룹, 덕킹, 3D 위치, 원본 스위치, 핸들 목록·사건 로그 |
+| 보기 | `script/sound_page.ts`(`dev/ui?ui=sound`) | — | 라벨 재생·정지, 그룹, 덕킹, 3D 위치, 원본 스위치, 핸들 목록·사건 로그 |
 
 `view/audio.ts` `AudioOut`(버스·`load`·`play`·`track`·`stopAll`·`setMuted`)은 그대로다 — 셸 화면이 계속 쓸 수 있다. `calc3d`·`Listener3d`·`Sound3dInfo`·`SOUND3D_MANAGER`·`Ambient3d` 는 코어로 옮기고 `view/audio.ts` 가 같은 이름으로 다시 내보낸다.
 
@@ -933,7 +933,7 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 
 즉 같은 페이지의 AudioOut 하나 안에서는 이전에도 URL 캐시가 있어 줄지 않았고, **AudioOut 을 새로 만드는 경로**(ui 시험 페이지 `mgscene`·`character`, 판마다 새 컨텍스트)에서 다시 받기·풀기가 0 이 됐다. 받기는 이제 로더 관리자 `bytes` 를 지나므로 미리 받기·다른 화면이 같은 키를 받았으면 그것을 쓴다. BGM 조각(§12)은 원본 모드 골든에서 풀기가 없어 이 표에 없다.
 
-기존 노드 시험(일괄 1회): `test_mg1801` 97/0·`test_mgscene` 79/79·`check_logic` mg1801 3,245 프레임 같음·`test_bgm_stream` 43/43·`test_character` 135/135(일괄 때 GC 측정 1건 실패, 단독 재실행 통과 — 이전 작업들과 같은 현상)·`test_effect` 106/106·`character_golden`·`effect_golden` 기준과 같음, 나머지 전부 통과. `test_room_server` 255/256 — 광장 원격 달리기 틱별 오차(실시간 소켓 타이밍, 소리 코드를 부르지 않음)로 단독 재실행도 같음. `tsc`·`npm run build` 통과. 받는 경로(통파일 = 로더 관리자 bytes)가 바뀌어 :51811 페이지 콘솔 확인 1회(촬영 없음): `ui.html?ui=sound&auto=1`·`ui.html?ui=mgscene&game=mg1801&auto=1` 콘솔 오류 0·4xx 0(swiftshader GL 경고만), 소리 요청 76개.
+기존 노드 시험(일괄 1회): `test_mg1801` 97/0·`test_mgscene` 79/79·`check_logic` mg1801 3,245 프레임 같음·`test_bgm_stream` 43/43·`test_character` 135/135(일괄 때 GC 측정 1건 실패, 단독 재실행 통과 — 이전 작업들과 같은 현상)·`test_effect` 106/106·`character_golden`·`effect_golden` 기준과 같음, 나머지 전부 통과. `test_room_server` 255/256 — 광장 원격 달리기 틱별 오차(실시간 소켓 타이밍, 소리 코드를 부르지 않음)로 단독 재실행도 같음. `tsc`·`npm run build` 통과. 받는 경로(통파일 = 로더 관리자 bytes)가 바뀌어 :51811 페이지 콘솔 확인 1회(촬영 없음): `dev/ui?ui=sound&auto=1`·`dev/ui?ui=mgscene&game=mg1801&auto=1` 콘솔 오류 0·4xx 0(swiftshader GL 경고만), 소리 요청 76개.
 
 ### 13.8 자리만 둔 것
 

@@ -221,9 +221,9 @@ ConfirmReturnSceneFlow @0x7100059fa0:
 - `confirmReturnSceneFlow()`: 6.3 의사코드 그대로 공용 `MessageWindow` 선택지 API(`setChoiceCount`·`setChoiceLabel`·`setChoiceDeciSe`·`setChoiceDeciVib`·`setCancelEnable`·`setInitialChoice`·`choiceResult`)를 쓴다. 새 UI 를 만들지 않는다.
 - 공용 메시지 창 보강(작은 것만): ① `CHOICE_ALIGN` 에 `sys_meswin_choices_00`(ali1 = model_choices 와 같은 바이트 [데이터]) 추가, ② 선택지 결정 때 진동 사건(`deciVib` 또는 `bv_vib_sys_deci`, owner) — SetDecideChoice [판독].
 
-### 9.3 ui.html
+### 9.3 dev/ui.html
 
-`ui.html?ui=mgmet` 항구 화면에서 액티비티 선택(상태 7) 중 B → 메시지 창 "…나갈까요?" + 예/아니요(세로, 기본 아니요). 위/아래로 이동, A 결정, B = 아니요와 같음. 예 → 허브 끝(결과 exit), 아니요 → 제목·안내 다시.
+`dev/ui?ui=mgmet` 항구 화면에서 액티비티 선택(상태 7) 중 B → 메시지 창 "…나갈까요?" + 예/아니요(세로, 기본 아니요). 위/아래로 이동, A 결정, B = 아니요와 같음. 예 → 허브 끝(결과 exit), 아니요 → 제목·안내 다시.
 
 ## 10. 검증 코드·실행 결과·기대값
 

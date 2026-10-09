@@ -1,6 +1,6 @@
 /**
  * 프리 플레이 한 판이 돌아올 때의 결과 정리 — 실제 실행(cfg.play)이 있으면 그 결과만 쓴다(실패·미등록 = null → 기록·Round·플레이 횟수 그대로),
- * 시험용 가짜 결과는 실제 실행이 없을 때(ui.html 단독)만. 플레이 횟수 +1(최대 999)은 원본처럼 한 판 장면의 save 사건(단계 11, mgrun commitPlayCount — docs/engine/16_save.md)이 하고,
+ * 시험용 가짜 결과는 실제 실행이 없을 때(dev/ui.html 단독)만. 플레이 횟수 +1(최대 999)은 원본처럼 한 판 장면의 save 사건(단계 11, mgrun commitPlayCount — docs/engine/16_save.md)이 하고,
  * 여기서는 장면이 세지 않은 결과(countedByScene 거짓)일 때만 센다.
  * 계약: docs/shell/minigame_scene.md §12.12.4.
  */

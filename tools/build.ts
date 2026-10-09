@@ -43,6 +43,7 @@ for (const [o, meta] of Object.entries(built.metafile?.outputs ?? {})) {
 for (const page of PAGES) {
   let html = fs.readFileSync(path.join(WEB, page), 'utf8');
   for (const [from, to] of swap) html = html.split(from).join(to);
+  fs.mkdirSync(path.dirname(path.join(DIST, page)), { recursive: true });
   fs.writeFileSync(path.join(DIST, page), html);
 }
 fs.copyFileSync(path.join(WEB, 'script', 'cache', 'sw.js'), path.join(DIST, 'sw.js'));

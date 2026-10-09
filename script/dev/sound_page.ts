@@ -3,16 +3,16 @@
  * 소비자: 리듬 RmSoundMap(assets/mg1801/manifest.json — 시퀀스·스트림·렌더 BGM·프리셋 치환·3D·플레이어 한도)과 틀 MgSceneSound(assets/mgscene/sound/sound.json).
  * 패널: 라벨 재생·3D 재생(위치)·라벨 정지, 리듬 마스터·OP, 세팅 프리셋, 그룹 정지(그룹·페이드), 덕킹(0x0d·0x13), 원본 스위치(끄면 RULES_WEB, AudioOut 을 새로 만듦),
  *       살아 있는 핸들 목록·명령 로그(start·stop·gain·pan·local).
- * URL: ui.html?ui=sound&original=0&label=SQ_SE_MG1801_JUST
+ * URL: dev/ui?ui=sound&original=0&label=SQ_SE_MG1801_JUST
  * 소리 확인은 사용자가 직접.
  */
 import * as THREE from 'three';
-import { RULES_ORIGINAL, RULES_WEB, soundDefaults, type SoundCmd } from './lib/sound';
-import { RmSoundMap } from './games/rhythm/view/sound';
-import { Assets } from './view/assets';
-import { AudioOut } from './view/audio';
-import { MgSceneSound } from './view/mgsceneSound';
-import { soundSystem, type MpjSound } from './view/sound';
+import { RULES_ORIGINAL, RULES_WEB, soundDefaults, type SoundCmd } from '../lib/sound';
+import { RmSoundMap } from '../games/rhythm/view/sound';
+import { Assets } from '../view/assets';
+import { AudioOut } from '../view/audio';
+import { MgSceneSound } from '../view/mgsceneSound';
+import { soundSystem, type MpjSound } from '../view/sound';
 
 export interface SoundPageRun {
   readonly sys: () => MpjSound | null;

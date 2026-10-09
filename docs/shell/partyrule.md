@@ -316,7 +316,7 @@ C 는 switch 본문이 빠져 있어(case 마다 break 만) 어셈블리로 확�
 | 스타트! 이후 | 결과 칸에 설정값 표시, 화면 정지(조이콘 확인·출발 연출 없음) | 범위 밖 |
 | 진동·보이스 | 사건만 | mgmcommon 과 같음 |
 | 시험값 | URL `?humans=3`(사람 수, 나머지 COM)·`?step=member|check|rule`(시작 단계)·`?turn=`·`?bonus=`·`?handi=`·`?flag20=`·`?flag22=`·`?board=` | 페이지 시험 |
-| 정정(구현): 시험값 | 사람/CPU 는 ui.html 의 1~4P COM 칸(모두 COM 이면 1P 사람), 나머지는 패널 "파티 규칙 시험값" 또는 URL `step`·`turn`·`bonus`·`handi=0,0,0,0`·`level`·`fast`·`inst`·`gyro`·`vote`·`flag20`·`flag22`·`board`·`champ`. 결과 칸 = 단계가 바뀔 때마다 설정값 요약, 스타트! 때 최종값 | `?humans` 대신 기존 COM 칸을 씀 |
+| 정정(구현): 시험값 | 사람/CPU 는 dev/ui.html 의 1~4P COM 칸(모두 COM 이면 1P 사람), 나머지는 패널 "파티 규칙 시험값" 또는 URL `step`·`turn`·`bonus`·`handi=0,0,0,0`·`level`·`fast`·`inst`·`gyro`·`vote`·`flag20`·`flag22`·`board`·`champ`. 결과 칸 = 단계가 바뀔 때마다 설정값 요약, 스타트! 때 최종값 | `?humans` 대신 기존 COM 칸을 씀 |
 | 안내(ComUiGuide00) 위치 | 판 레이아웃의 `x_guide_pos_00`(멤버 `x_parts_list/…`, 플레이 방법 `x_parts_win/…`) 위치에 공용 MgmGuide(오른쪽 정렬) | SetConstraint(레이아웃)·SetGuideAlignment(2) [판독], Constraint 계산식 [미확정] |
 | CPU 글자 그림자 | `x_text_CPU` 와 `x_text_CPU_shadow` 에 같은 문구 | 생성자는 `x_text_CPU` 만 SetMessageLabel [판독], 그림자 짝 자동 처리 [추정: 메시지 창의 "%s_shadow" 와 같은 방식] |
 | 행 편집 파이버 진행 시점 | 판 Update 의 UpdateCursor 앞에서 한 걸음 | FiberLite 를 누가 언제 돌리는지 [미확정] |

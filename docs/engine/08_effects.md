@@ -1243,8 +1243,8 @@ core.step(); core.view.set(cameraViewMatrix); core.sync();  // pools[k].order[0.
 - 캐릭터 FTRG fx 키 `<KEY>_Stop` = 같은 키 이펙트의 Stop(true)로 본 것은 키 이름 규칙 [추정]. 웹 자료에 캐릭터 fx eset(bq 상주 `fx_*`, `bd00_*`)이 없어 지금은 경고만 난다 — 변환 범위 결정 필요.
 - 이름 충돌 등록 순서(mg/mg1801 → mg/mg1800 → libca/mg_common)는 §11 #8 [미확정]이다(mg1801 이 쓰는 이름은 충돌 없음).
 - 원본 공유 xorshift seed 원천의 초기 상태는 미판독 → 고정 주입 씨앗(결정성 규칙). 원본과 같은 난수 열은 기대할 수 없다.
-- billboard 4 원본 변환으로 물결 판이 위(+Y)를 향하고 displaySide 1 컬링이 켜졌다. 화면 확인은 사용자가 직접(`ui.html?ui=effect`).
+- billboard 4 원본 변환으로 물결 판이 위(+Y)를 향하고 displaySide 1 컬링이 켜졌다. 화면 확인은 사용자가 직접(`dev/ui?ui=effect`).
 
-### 14.9 보기 페이지(`ui.html?ui=effect`)
+### 14.9 보기 페이지(`dev/ui?ui=effect`)
 
 `script/effect_page.ts`: 이미터셋 고르기, 재생·정지(Stop false/true)·반복, 원본 스위치(다시 만듦), 부착 대상(없음·원 궤도 물체), 이미터별 입자 수·사건 로그. URL `&set=mg1801_water_entry00&original=0`. 화면 확인은 사용자가 직접.

@@ -1,5 +1,5 @@
 /**
- * 승패 표·잠금 안내·플레이 방법 단독 화면 헤드리스 확인(1회) — ui.html 로 열어 스크린샷·콘솔 오류. 결과: test/out/mgmscreens/*.png
+ * 승패 표·잠금 안내·플레이 방법 단독 화면 헤드리스 확인(1회) — dev/ui.html 로 열어 스크린샷·콘솔 오류. 결과: test/out/mgmscreens/*.png
  *
  *   npx tsx tools/shot_mgmscreens.ts
  */
@@ -15,7 +15,7 @@ const browser = await chromium.launch({ executablePath: findChromium(), args: ['
 const errors: string[] = [];
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 async function open(page: Page, q: string): Promise<void> {
-  await page.goto(`${server.url}ui.html?${q}&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/ui?${q}&mute=1&auto=1`);
   await page.waitForFunction('!!window.__mgmscreen', null, { timeout: 120000 });
   await sleep(2500);
 }

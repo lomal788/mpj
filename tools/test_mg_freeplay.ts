@@ -64,7 +64,7 @@ await mg1801Game.load?.();
   };
   ok(settlePlayResult(save, r.id, true, e, fake) === e && save.minigame(r.id).head === head0 + 1 && fakeCalls === 0, '실제 결과 → 그대로, 플레이 횟수 +1, 가짜 결과 안 씀');
   ok(settlePlayResult(save, r.id, true, null, fake) === null && save.minigame(r.id).head === head0 + 1 && fakeCalls === 0, '실패(null) → null(가짜 결과로 바꾸지 않음), 플레이 횟수 그대로');
-  ok(settlePlayResult(save, r.id, false, null, fake)?.results.join() === '1,0,0,0' && fakeCalls === 1, '실제 실행 훅이 없을 때(ui.html 단독)만 가짜 결과');
+  ok(settlePlayResult(save, r.id, false, null, fake)?.results.join() === '1,0,0,0' && fakeCalls === 1, '실제 실행 훅이 없을 때(dev/ui 단독)만 가짜 결과');
 }
 {
   ok(!GAMES.some((g) => g.id === 'mg0101'), '미등록 게임(mg0101)은 등록 목록에 없다 → main.playFromList 가 null');

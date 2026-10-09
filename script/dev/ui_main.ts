@@ -1,20 +1,20 @@
 /**
- * UI 시험 페이지(ui.html) — 셸 화면(shell/*)을 게임 없이 단독으로 띄워 시험한다.
+ * UI 시험 페이지(dev/ui.html) — 셸 화면(shell/*)을 게임 없이 단독으로 띄워 시험한다.
  * URL: ?ui=charselect  화면 id(UIS)
  *      ?com=0001       플레이어별 COM(1) / 사람(0)
  *      ?mute=1         소리 끔
  *      ?auto=1         열자마자 시작
  */
-import './style.css';
-import './view/assetMode';
-import { runCharSelect, type CharSelectRun } from './charselect_page';
-import { runModeSelect, type ModeSelectRun } from './modeselect_page';
+import '../style.css';
+import '../view/assetMode';
+import { runCharSelect, type CharSelectRun } from '../charselect_page';
+import { runModeSelect, type ModeSelectRun } from '../modeselect_page';
 import { runMgmCommonDemo, type MgmCommonRun } from './mgmcommon_page';
 import { runMgmScreen, type MgmScreenRun } from './mgmscreens_page';
-import { runMgm01Filter, runMgm01List, runMgm01Setting, type Mgm01ListRun, type Mgm01Run } from './mgm01_page';
-import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
+import { runMgm01Filter, runMgm01List, runMgm01Setting, type Mgm01ListRun, type Mgm01Run } from '../mgm01_page';
+import { mgmetTestValues, runMgmet, type MgmetRun } from '../mgmet_page';
 import { partyRuleTestValues, runPartyRule, type PartyRuleRun } from './partyrule_page';
-import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
+import { runSetPlayer, type SetPlayerRun } from '../setplayer_page';
 import { onlineTestValues, runOnline, type OnlineRun } from './online_page';
 import { runMgResult, type MgResultRun } from './mgresult_page';
 import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
@@ -23,11 +23,11 @@ import { runSplitScreenPage, type SplitScreenPageRun } from './splitscreen_page'
 import { runCharacterPage, type CharacterPageRun } from './character_page';
 import { runEffectPage, type EffectPageRun } from './effect_page';
 import { runSoundPage, type SoundPageRun } from './sound_page';
-import { KeyboardPad, padSourcesFor } from './view/input';
-import { appBgm } from './view/bgm';
-import { appSave } from './view/save';
-import { installTransition, sceneIn, sceneOut } from './view/appTransition';
-import { FLOW_END_FADE } from './view/screenBgm';
+import { KeyboardPad, padSourcesFor } from '../view/input';
+import { appBgm } from '../view/bgm';
+import { appSave } from '../view/save';
+import { installTransition, sceneIn, sceneOut } from '../view/appTransition';
+import { FLOW_END_FADE } from '../view/screenBgm';
 
 interface UiRun {
   stop(): void;

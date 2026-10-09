@@ -1,5 +1,5 @@
 /**
- * 온라인 화면 헤드리스 확인(마지막 1회) — ui.html?ui=online 으로 열어 방 만들기/찾기 메뉴·방 종류·방 목록·대기실(방장, 입장 뒤)·전 세계 매칭을 찍고
+ * 온라인 화면 헤드리스 확인(마지막 1회) — dev/ui?ui=online 으로 열어 방 만들기/찾기 메뉴·방 종류·방 목록·대기실(방장, 입장 뒤)·전 세계 매칭을 찍고
  * 콘솔 오류를 모은다. 결과: test/out/online/*.png
  *
  *   npx tsx tools/shot_online.ts
@@ -17,7 +17,7 @@ const errors: string[] = [];
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 const S = 'window.__online.screen';
 async function open(page: Page, q: string): Promise<void> {
-  await page.goto(`${server.url}ui.html?ui=online&${q}&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/ui?ui=online&${q}&mute=1&auto=1`);
   await page.waitForFunction('!!window.__online', null, { timeout: 120000 });
 }
 const press = (page: Page, bits: number): Promise<unknown> => page.evaluate(`window.__online.press(${bits})`);

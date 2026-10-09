@@ -2,16 +2,16 @@
  * UI 시험 항목 "캐릭터 런타임" — 공용 캐릭터 런타임(lib/character·lib/character-three·view/character.ts)을 캐릭터 하나로 본다. 설계: docs/engine/09_character.md §14.5.
  * 패널: 캐릭터 고르기, 모션 목록 재생(블렌드 초·속도·같은 모션 다시·다음 모션), 원본 스위치(모션 전이·시선), 시선 대상(드래그·자동 원·없음),
  *       발소리 지면(co_ground), 사건 로그(SE·보이스·진동·이펙트 — 모션 프레임 이벤트 FTRG).
- * URL: ui.html?ui=character&pc=pc01&motion=co_walk00&original=0
+ * URL: dev/ui?ui=character&pc=pc01&motion=co_walk00&original=0
  * 화면 모양 확인은 사용자가 직접. 소리 = mgscene 사운드 표에 있는 라벨만 들린다(없는 라벨은 로그만).
  */
 import * as THREE from 'three';
-import type { CharacterEvent } from './lib/character';
-import type { PadSource } from './view/input';
-import { AudioOut } from './view/audio';
-import { Assets } from './view/assets';
-import { MgSceneSound } from './view/mgsceneSound';
-import { createCharacter, routeCharacterEvents, type MpjCharacter } from './view/character';
+import type { CharacterEvent } from '../lib/character';
+import type { PadSource } from '../view/input';
+import { AudioOut } from '../view/audio';
+import { Assets } from '../view/assets';
+import { MgSceneSound } from '../view/mgsceneSound';
+import { createCharacter, routeCharacterEvents, type MpjCharacter } from '../view/character';
 
 export interface CharacterPageRun {
   readonly chara: () => MpjCharacter | null;

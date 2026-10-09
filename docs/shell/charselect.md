@@ -418,7 +418,7 @@ c 가 잠김 또는 22(랜덤): win/x_text_chara 숨김, 모델 없음 → 끝 (
 | `screen.ts` | 컨트롤러: 상태기계 사건 → 레이아웃 애니·텍스트·카드·소리. `createCharSelect()` |
 | `index.ts` | 공개 진입점 |
 
-페이지 연결(모듈 밖): `script/charselect_page.ts`(페이지 입력 → bex 비트 어댑터, WebAudio SE, 60Hz 루프), `script/main.ts` `?charselect=1`(시작 버튼 → 캐릭터 선택 → 고른 pcNN 을 `GameSetup.players[i].char` 로 넘겨 게임 시작, 취소면 시작 안 함), `ui.html` + `script/ui_main.ts`(UI 시험 페이지: 셸 화면 목록 `UIS` 에서 골라 게임 없이 단독 실행, 1~4P COM·소리·디버그·결과 표시, `?ui=charselect&com=0001&mute=1&auto=1`, 스모크 `tools/smoke_ui.ts`). 시험 `tools/test_charselect.ts`·`tools/check_charselect.ts`·`tools/shot_charselect.ts`.
+페이지 연결(모듈 밖): `script/charselect_page.ts`(페이지 입력 → bex 비트 어댑터, WebAudio SE, 60Hz 루프), `script/main.ts` `?charselect=1`(시작 버튼 → 캐릭터 선택 → 고른 pcNN 을 `GameSetup.players[i].char` 로 넘겨 게임 시작, 취소면 시작 안 함), `dev/ui.html` + `script/ui_main.ts`(UI 시험 페이지: 셸 화면 목록 `UIS` 에서 골라 게임 없이 단독 실행, 1~4P COM·소리·디버그·결과 표시, `?ui=charselect&com=0001&mute=1&auto=1`, 스모크 `tools/smoke_ui.ts`). 시험 `tools/test_charselect.ts`·`tools/check_charselect.ts`·`tools/shot_charselect.ts`.
 
 에셋 `web/assets/charselect/`: `spec.json`(레이아웃·재질·애니·폰트 메트릭·텍스트·캐릭터 표·소리 표), `tex/*.png`, `font/*.png`, `chara/<pcNN>/*.glb`, `sound/*.wav`. 변환 `web/tools/analysis/charsel_web_assets.py`(원본 → 명세, 픽셀·값 그대로).
 

@@ -1,15 +1,15 @@
 /**
- * 페이지 ↔ 마리오 파티(보드) 파티 규칙 화면(shell/partyrule) 연결 — mgmscreens_page.ts 와 같은 어댑터(입력·소리·에셋)·60Hz 고정 스텝 루프, ui.html 시험값 패널.
+ * 페이지 ↔ 마리오 파티(보드) 파티 규칙 화면(shell/partyrule) 연결 — mgmscreens_page.ts 와 같은 어댑터(입력·소리·에셋)·60Hz 고정 스텝 루프, dev/ui.html 시험값 패널.
  * 시험값(패널 또는 URL): step=checkMember|member|check|rule(시작 단계), turn=10|12|15|20|25|30, bonus=0|1|2, handi=0,0,0,0, level=0~3(COM 난이도),
  * fast=1, inst=0, gyro=0, vote=1, flag20=1, flag22=1, board=0~6, champ=1. 사람/CPU = 패널 COM 칸. 배경 ?bg=none|URL(기본 modeselect/backdrop_temp.png).
  */
-import { ASSETS } from './env';
-import { shellSound } from './view/sound';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { MgmSound, MgmView } from './shell/mgmcommon';
-import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from './shell/partyrule';
-import type { PadSource } from './view/input';
-import { appBgm } from './view/bgm';
+import { ASSETS } from '../env';
+import { shellSound } from '../view/sound';
+import { NPAD, STICK_MAX, type PadInput } from '../core/pad';
+import { MgmSound, MgmView } from '../shell/mgmcommon';
+import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from '../shell/partyrule';
+import type { PadSource } from '../view/input';
+import { appBgm } from '../view/bgm';
 
 const STICK_ON = 0.5 * STICK_MAX;
 const DT = Math.fround(1 / 60);

@@ -902,7 +902,7 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 | `games/mg1801/view/character.ts` | 부분 | 머리·눈 계산 = 코어 `HeadLook`·`EyeLook('blend')`·어댑터 `HeadView`. 포즈(로직이 준 프레임 직접 샘플·MPAT a 프레임 섞기)·재질(종횡비 UV)·깜빡임은 그대로 — 게임 로직 프레임 소유 구조와 재질이 달라 다음 단계 | 같음(2판 전체) |
 | 공용 리듬 틀 `games/rhythm/`·mg1801 logic `resultMotion` | 미룸 | 로직이 모션 이름·프레임을 정하는 구조(화면은 mg1801 view). 이전 대상 아님 | — |
 
-### 14.5 보기 페이지(`ui.html?ui=character`)
+### 14.5 보기 페이지(`dev/ui?ui=character`)
 
 캐릭터 고르기(22명), 모션 목록 재생(블렌드 초·속도·같은 모션 다시·다음 모션), 원본 스위치 체크(다시 읽음), 시선 대상(드래그·자동 원·카메라·없음, 머리/눈 켬), 발소리 지면, 사건 로그(SE·보이스·진동·이펙트, 모션@프레임·키→라벨·지면·조건). URL `&pc=pc02&motion=co_walk00&original=0`(원본 규칙 끄기, 기본 켬). 소리는 mgscene 사운드 표에 있는 라벨만 들린다(캐릭터 SE·보이스 파일은 아직 웹 에셋에 없음 — 로그만). 화면 확인은 사용자가 직접.
 

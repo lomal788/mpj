@@ -237,7 +237,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | 원본 공용 계층 | `main.nso`: `bq`, `bex`, `ca`, `actor`, `nn::bezel`, `sb`, `wl` | [데이터] 이름·주소 인덱스 분류; [미확정] 게임별 호출 |
 | 원본 실행 환경 | `sdk`, `subsdk0`, `rtld`, `boot.nbinit`, BEA·메시지·게임 데이터 | 기존 명세 재사용; [미확정] 플랫폼·Lua·영상 계약 |
 | 웹 등록 게임 | `script/app/minigame/index.ts`의 `mg1801` 1개 | [판독] 등록 배열 |
-| 웹 게임 디렉터리 | `script/app/minigame/mg1801`, `script/app/minigame/mgdummy` 2개 | [판독] `mgdummy::createDummyGame`: 원본 대응 없는 `app/minigame/frame/scene` 시험용, GAMES 미등록 |
+| 웹 게임 디렉터리 | `script/app/minigame/mg1801`, `script/dev/game/mgdummy` 2개 | [판독] `mgdummy::createDummyGame`: 원본 대응 없는 `app/minigame/frame/scene` 시험용, GAMES 미등록 |
 | 웹 카탈로그 | `script/app/scene/mode/freeplay/catalog.ts`, 112게임 | [판독] 목록·필터 데이터 |
 | 분석 문서 | 미니게임 22개 + `rc_stage01` 1개 | [데이터] 문서 목록 |
 | 웹 셸·기반 | `script/game/core` 6파일, `script/shell` 13디렉터리, `script/game/lib` 3디렉터리, `script/view`, `script/cache`, 페이지 진입점 | [데이터] `script` TypeScript 213파일; 소비자 연결: §1~§5 |
@@ -286,7 +286,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | 종류 | 등록·정의 | 실제 경로·확인 범위 |
 |---|---|---|
 | 게임 | `script/app/minigame/index.ts::GAMES` → `mg1801Game` | `script/main.ts`, `app/minigame/mg1801/{logic,view}` |
-| 더미 | `script/app/minigame/mgdummy/logic.ts::createDummyGame`, `view.ts` | `mgscene` 계약 시험 |
+| 더미 | `script/dev/game/mgdummy/logic.ts::createDummyGame`, `view.ts` | `mgscene` 계약 시험 |
 | 페이지 | `tools/esbuild_config.ts::ENTRIES`: `main`, `ui`; `PAGES`: `index.html`, `dev/ui.html` | 게임 진입점·셸 시험 진입점 |
 | UI | `script/ui_main.ts::UIS` | 17개: `charselect`, `modeselect`, `mgmcommon`, `mgm01-history`, `mgm01-announce`, `mgmet-howto`, `mgm01-setting`, `mgm01-filter`, `mgmet`, `mgmet-rule`, `partyrule`, `setplayer`, `online`, `mgm01-list`, `mgresult`, `mgscene`, `mgstage` |
 | 광장 | `script/plaza_page.ts`, `script/app/scene/world/plaza` | main.ts:427~489 flowPlaza·flowPlayers 연결 |

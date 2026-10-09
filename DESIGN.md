@@ -93,7 +93,7 @@ script/
       frame/       한 판 틀(mgscene) · 결과(mgresult) · 장면 로더(mgstage)        (원본 main bq::MinigameScene·MGResult)
       kit/         계열 공통: rhythm · [athlon · kb · patapata …]                (원본 main ca::rm·ca::coin_athlon·ca::kb·sb)
       mg####/      게임 하나 = 폴더 하나, 평평하게. mps 게임은 mps_ 접두어
-  dev/         시험 페이지(script/dev + dev/ui.html, 주소 /dev/ui)
+  dev/         시험 페이지(script/dev + dev/ui.html, 주소 /dev/ui), dev/game = 시험용 가짜 게임(mgdummy, 등록표에 없음). 별칭 `@dev`, app 은 dev 를 부르지 않는다
 ```
 `[ ]` = 아직 없는 자리. 규칙상 위치가 정해져 있다.
 
@@ -173,7 +173,7 @@ ID → 모듈은 `app/flow` 등록표가 정한다(원본 장면 이름표 `@0x7
 
 ### 10.7 지금 상태와 남은 이동
 
-- 됨: `game/core`·`game/lib`(별칭 `@game`), `app/scene/{menu,world}`, `script/dev`, 공용 폴더 2개 — 옛 `shell/mgmcommon` → `app/common/ui`, 옛 `shell/stage3d` → `app/common/render3d`(별칭 `@app/common`), 미니게임 — 옛 `scene/minigame/{mgscene,mgresult,mgstage}` → `app/minigame/frame/{scene,result,stage}`, 옛 `mgm01` → `app/scene/mode/freeplay`, 옛 `games/rhythm` → `app/minigame/kit/rhythm`, 옛 `games/{mg1801,mgdummy}` → `app/minigame/{mg1801,mgdummy}`, 옛 `games/index.ts` → `app/minigame/index.ts`(게임 등록표, 별칭 `@app/minigame`).
+- 됨: `game/core`·`game/lib`(별칭 `@game`), `app/scene/{menu,world}`, `script/dev`, 공용 폴더 2개 — 옛 `shell/mgmcommon` → `app/common/ui`, 옛 `shell/stage3d` → `app/common/render3d`(별칭 `@app/common`), 미니게임 — 옛 `scene/minigame/{mgscene,mgresult,mgstage}` → `app/minigame/frame/{scene,result,stage}`, 옛 `mgm01` → `app/scene/mode/freeplay`, 옛 `games/rhythm` → `app/minigame/kit/rhythm`, 옛 `games/mg1801` → `app/minigame/mg1801`, 옛 `games/mgdummy` → `dev/game/mgdummy`(시험용), 옛 `games/index.ts` → `app/minigame/index.ts`(게임 등록표, 별칭 `@app/minigame`).
 - 남음: `view/`·페이지 파일·`main.ts`·`mgrun.ts`(→ `app/minigame/frame`)·`game.ts`(게임 계약 → `app/minigame/frame`)·`env.ts` → `app/common`·`app/flow`·`app/main.ts`.
 - 화면끼리의 직접 import(광장 → 캐릭터 선택 미리보기, 결과 무대 → 광장 시선 등)는 `app/common` 으로 올려 없앤다.
 - 장면 계약·요청 API·Work(10.5)는 아직 없다. 지금은 프리 플레이 목록만 `SceneStack`(Call/Return)·`MgmWork` 를 쓰고, 나머지 흐름은 `main.ts` 함수(`flowPlaza`·`flowMgmet`·`playFromList` …)가 직접 잇는다. 허브·목록 Work 가 따로 노는 감사 문서 P1 항목(규칙 캐시·복귀 지점)도 Work 통일로 같이 푼다.

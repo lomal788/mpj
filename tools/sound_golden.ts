@@ -928,7 +928,7 @@ export async function runSoundGolden(rules?: 'web' | 'original', only?: string):
     Mg1801Harness: (await import('./mg_node_host')).Mg1801Harness,
     NodeMgRun: (await import('./mg_node_host')).NodeMgRun,
     mg1801Options: (await import('@app/minigame/mg1801/index')).mg1801Options,
-    createDummyGame: (await import('@app/minigame/mgdummy/logic')).createDummyGame,
+    createDummyGame: (await import('@dev/game/mgdummy/logic')).createDummyGame,
     ...(await shellMods()),
     THREE,
   };

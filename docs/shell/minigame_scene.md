@@ -432,7 +432,7 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 | `web/script/view/mgsceneUi.ts` | 2D 그리기: 로직의 UI 상태 → `view/lyt.ts` LayoutInstance·LytRenderer(텔롭 OTF 글꼴·부품 지원, mg1801 과 같은 재생기) | view 쪽이라 `view/lyt.ts`·`app/scene/menu/charselect/fontSheet` 사용 가능 |
 | `web/script/view/mgsceneSound.ts` | 소리 사건 → AudioOut(SE·보이스 wav) + `appBgm()`(공용 징글) + 게임 BGM 채널(`BgmChannel`) | |
 | `web/script/mgscene_page.ts` | dev/ui.html 항목 "미니게임 공용 틀": 페이지 루프(FixedClock 1/60, rAF 당 최대 4스텝), 더미 게임 | |
-| `web/script/app/minigame/mgdummy/` | 시험용 더미 게임(틀만 확인하는 최소 3D) | |
+| `web/script/dev/game/mgdummy/` | 시험용 더미 게임(틀만 확인하는 최소 3D) | |
 | `web/assets/mgscene/` | `ui.json`(레이아웃·애니·텍스트·글꼴 참조·텔롭 OTF), `tables.json`(MGSetting·MGList·MgSound 필요한 열), `sound/`(틀 소리 명세) ← `web/tools/analysis/mgscene_web_assets.py` | 공용 sys_* 그림은 `assets/common/tex`, SQ_SE_SYS_* 는 `assets/common/sound`(common_shared.py), 글꼴은 `assets/font` |
 
 2D 렌더러 선택: 원본 텔롭 글자(`bqfont_telop`)가 **스케일러블 OTF** 라 charselect `render2d`(FFNT 시트 전용)로는 그릴 수 없다. 그래서 mg1801 이 이미 같은 레이아웃(`sys_tlp_start_00`·`sys_tlp_finish_00`)을 그리는 `view/lyt.ts` 를 쓴다(새 렌더러를 만들지 않음). 합성 순서는 광장과 같다: **게임 3D(후처리 포함) → 결과 무대 3D(갈래 A 일 때 게임 3D 대신) → 틀 2D**. 지금 2D 는 lyt.ts 방식(공유 화면 밖 문맥 → HUD 캔버스)이고, 광장식 한 문맥 패스로 옮기는 것은 렌더러가 하나로 모일 때 한다.

@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BexRandModule } from '@game/core/rng';
-import { createDummyGame } from '@app/minigame/mgdummy/logic';
+import { createDummyGame } from '@dev/game/mgdummy/logic';
 import {
   localGate,
   MgScene,
@@ -446,7 +446,7 @@ let finishTicks = 0;
   );
   ok(d.ok && d.ended, '결정성: 더미 게임 같은 seed·입력 기록 두 번 → 매 틱 상태 해시 같음(끝까지)', `${d.ticks} 틱 ${d.firstDiff}`);
   const root = path.join(WEB, 'script');
-  const st = staticLogicCheck([path.join(root, 'app/minigame/frame/scene'), path.join(root, 'app/minigame/mgdummy/logic.ts'), path.join(root, 'game/lib/transition/index.ts'), path.join(root, 'game/lib/splitscreen'), path.join(root, 'game/lib/sound')]);
+  const st = staticLogicCheck([path.join(root, 'app/minigame/frame/scene'), path.join(root, 'dev/game/mgdummy/logic.ts'), path.join(root, 'game/lib/transition/index.ts'), path.join(root, 'game/lib/splitscreen'), path.join(root, 'game/lib/sound')]);
   ok(st.bad.length === 0 && st.files >= 10, `정적 검사: 틀·더미 로직 ${st.files} 파일에 Math.random·벽시계·직접 입력·DOM 없음`, st.bad.join(' '));
 }
 

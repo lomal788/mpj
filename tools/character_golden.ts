@@ -24,8 +24,8 @@ import type { ResultStageHostExt, ResultStageInputExt } from '../script/shell/mg
 import { CharacterActor, CharacterTemplate, type CharaInfo } from '../script/games/mg1801/view/character';
 import { Mg1801Harness } from './mg_node_host';
 import { mg1801Options } from '../script/games/mg1801';
-import { emptyPad } from '../script/core/pad';
-import { characterDefaults, HEAD_RULES_WEB, RULES_WEB } from '../script/lib/character';
+import { emptyPad } from '@game/core/pad';
+import { characterDefaults, HEAD_RULES_WEB, RULES_WEB } from '@game/lib/character';
 import type { Assets } from '../script/view/assets';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

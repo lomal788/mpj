@@ -540,7 +540,7 @@ suffix는 `mg/mgResult/env/result_cam_<suffix>.fsnb`다. P는 위치, Aim은 조
 | `types.ts` | 틀 계약 `shell/mgscene/resultContract.ts` 를 그대로 다시 내보내고 선택 확장(`ResultStageInputExt`·`ResultStageHostExt`·`ResultStageExt`)을 더한다 |
 | `index.ts` | 공개 진입점 |
 
-- import 는 같은 폴더·`three`·`../charselect/preview3d`·`../charselect/types`·`../plaza/heading`·`../mgscene/resultContract` 만(시험 8이 검사). `script/core·games·view` 금지(셸 경계).
+- import 는 같은 폴더·`three`·`../charselect/preview3d`·`../charselect/types`·`../plaza/heading`·`../mgscene/resultContract` 만(시험 8이 검사). `script/game/core·games·view` 금지(셸 경계).
 - 페이지 `web/script/mgresult_page.ts`(시험 호스트), `ui_main.ts` 항목 `mgresult`.
 
 ### 12.2 입력·출력 계약

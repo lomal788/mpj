@@ -9,7 +9,7 @@
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { dirname, posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createAssetManager, jsonHandler, P0, P1, P2, P3, ST_IDLE, ST_QUEUED, ST_READY, type AssetHandler, type AssetIo, type AssetManager, type FetchLike } from '../script/lib/assetcore';
+import { createAssetManager, jsonHandler, P0, P1, P2, P3, ST_IDLE, ST_QUEUED, ST_READY, type AssetHandler, type AssetIo, type AssetManager, type FetchLike } from '@game/lib/assetcore';
 import { assetHooks } from '../script/shell/charselect/assetHooks';
 import { Preview3D } from '../script/shell/charselect/preview3d';
 import { nodeMatrix } from '../script/shell/charselect/render2d';

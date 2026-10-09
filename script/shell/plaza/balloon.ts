@@ -6,7 +6,7 @@
  * 세션 중 방장은 연출 없이 'net:playSession'(NetworkManager::PlaySession), 'net:started'(방장·손님 PlaySessionFiber) → 0.5 s 페이드 아웃 → 1.0 s → {k:'session'} (online.md 5.6 정정).
  */
 import * as THREE from 'three';
-import { appTransition, LogicTransition, WIPE_WHITE } from '../../lib/transition';
+import { appTransition, LogicTransition, WIPE_WHITE } from '@game/lib/transition';
 import type { CameraDriver, ClipHandle } from '../stage3d';
 import { followSystemOf } from './follow';
 import { RESULT } from './interact';

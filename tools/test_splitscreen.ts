@@ -38,8 +38,8 @@ import {
   viewportPx,
   type FrustumFix,
   type PerspectiveFix,
-} from '../script/lib/splitscreen';
-import { SplitRenderer, type PostRegion, type RegionPost, type SplitGl } from '../script/lib/splitscreen-three';
+} from '@game/lib/splitscreen';
+import { SplitRenderer, type PostRegion, type RegionPost, type SplitGl } from '@game/lib/splitscreen-three';
 import { PostChain, type PostParams } from '../script/shell/stage3d/post';
 import { localGate, MgScene, mgUiData, type MgTables, type ResultStage } from '../script/shell/mgscene';
 
@@ -554,12 +554,12 @@ console.log('10) import 경계');
 {
   const read = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8');
   const imps = (src: string): string[] => [...src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)].map((m) => m[1] ?? m[2]);
-  const coreFiles = fs.readdirSync(path.join(WEB, 'script/lib/splitscreen'));
+  const coreFiles = fs.readdirSync(path.join(WEB, 'script/game/lib/splitscreen'));
   eq(coreFiles, ['index.ts'], '코어 = 한 파일');
-  eq(imps(read('script/lib/splitscreen/index.ts')), [], '코어 lib/splitscreen import 0');
-  eq([...new Set(imps(read('script/lib/splitscreen-three/index.ts')))].sort(), ['../splitscreen', 'three'], 'three 어댑터 = three + 코어만');
-  eq(imps(read('script/lib/splitscreen-dom/index.ts')), ['../splitscreen'], 'DOM 어댑터 = 코어만');
-  ok(!/\btransition\s*:/.test(read('script/lib/splitscreen-dom/index.ts')), 'DOM 어댑터: CSS transition 안 씀');
+  eq(imps(read('script/game/lib/splitscreen/index.ts')), [], '코어 lib/splitscreen import 0');
+  eq([...new Set(imps(read('script/game/lib/splitscreen-three/index.ts')))].sort(), ['../splitscreen', 'three'], 'three 어댑터 = three + 코어만');
+  eq(imps(read('script/game/lib/splitscreen-dom/index.ts')), ['../splitscreen'], 'DOM 어댑터 = 코어만');
+  ok(!/\btransition\s*:/.test(read('script/game/lib/splitscreen-dom/index.ts')), 'DOM 어댑터: CSS transition 안 씀');
 }
 
 console.log('11) 할당 0');

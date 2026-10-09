@@ -6,13 +6,13 @@
  * 런타임(shell/stage3d/assetLoader.ts)은 Opus 를 디코드할 수 있으면 .ogg, 아니면 .m4a 를 읽는다(구형 iOS Safari).
  * 둘 다 인코더 앞 지연(Opus pre-skip, AAC 프라이밍)을 컨테이너에 적어 디코더가 잘라내므로 시작 시각이 원본과 같다(검증: §8).
  * BGM(명세가 BGM 라벨로 가리키는 wav)은 통파일에 더해 스트리밍 조각 <이름>.bgm/NNN.ogg|.m4a 를 만든다 — 배치는 런타임과 같은
- * script/lib/bgmstream planBgm·chunkSpans, PCM 은 소스 표본 바이트 그대로 ffmpeg stdin(docs/engine/04_sound.md §12).
+ * script/game/lib/bgmstream planBgm·chunkSpans, PCM 은 소스 표본 바이트 그대로 ffmpeg stdin(docs/engine/04_sound.md §12).
  */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { BGM_CHUNK_SEC, BGM_PAD, BGM_PLAN_V, bgmChunkKey, chunkSpans, parseWav, planBgm, type BgmPlan } from '../script/lib/bgmstream';
+import { BGM_CHUNK_SEC, BGM_PAD, BGM_PLAN_V, bgmChunkKey, chunkSpans, parseWav, planBgm, type BgmPlan } from '../script/game/lib/bgmstream';
 
 export const AUDIO_RECIPE = 'audio-v1';
 /** BGM 조각 설정 — 바뀌면 BGM 만 다시 만든다 */

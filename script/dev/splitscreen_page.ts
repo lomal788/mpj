@@ -7,11 +7,11 @@
  * 한 rAF = 무대 update 1회 + 카메라 갱신 + 분할 고정 스텝(1/60, 최대 4) + 레이어별 그리기(renderSplit) + 분할선 DOM.
  */
 import * as THREE from 'three';
-import { STEP_MS } from '../core/clock';
+import { STEP_MS } from '@game/core/clock';
 import { ASSETS } from '../env';
-import { P0 } from '../lib/assetcore';
-import { SplitScreen, STEP_SEC } from '../lib/splitscreen';
-import { DomDividingLines } from '../lib/splitscreen-dom';
+import { P0 } from '@game/lib/assetcore';
+import { SplitScreen, STEP_SEC } from '@game/lib/splitscreen';
+import { DomDividingLines } from '@game/lib/splitscreen-dom';
 import { createMgStage, mgStageKey, MgCamera, parseFsnb, type MgStage } from '../shell/mgstage';
 import { distUrl } from '../shell/stage3d/assetLoader';
 import { gltfTexturesManaged, KIND_JSON } from '../shell/stage3d/assetHandlers';

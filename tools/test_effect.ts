@@ -31,7 +31,7 @@ import {
   type EffectsJson,
   type EmitterDef,
   type MatrixSource,
-} from '../script/lib/effect';
+} from '@game/lib/effect';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let count = 0;
@@ -527,9 +527,9 @@ console.log('11) import 경계·할당 0');
 await (async (): Promise<void> => {
   const read = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8');
   const imps = (s: string): string[] => [...s.matchAll(/^import[^'"]*['"]([^'"]+)['"]/gm)].map((m) => m[1]);
-  eq(imps(read('script/lib/effect/index.ts')), [], '코어 import 0');
-  ok(!/\b(THREE|document|window|Math\.random|performance\.now|Date\.now)\b/.test(read('script/lib/effect/index.ts').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')), '코어에 three·DOM·Math.random·벽시계 없음');
-  eq([...new Set(imps(read('script/lib/effect-three/index.ts')))].sort(), ['../effect', 'three'], 'three 어댑터 = three + 코어만');
+  eq(imps(read('script/game/lib/effect/index.ts')), [], '코어 import 0');
+  ok(!/\b(THREE|document|window|Math\.random|performance\.now|Date\.now)\b/.test(read('script/game/lib/effect/index.ts').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')), '코어에 three·DOM·Math.random·벽시계 없음');
+  eq([...new Set(imps(read('script/game/lib/effect-three/index.ts')))].sort(), ['../effect', 'three'], 'three 어댑터 = three + 코어만');
   const c = mkCore();
   const hs = [play(c, 'mg1801_steam00', 0, 0, 0, false), play(c, 'mg1801_steam01', 0, 0, 2, false)];
   for (let k = 0; k < 20000; k++) {

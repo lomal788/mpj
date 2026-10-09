@@ -434,7 +434,7 @@ console.log('10. import 경계 (mgm_common.md 9.1 과 같음)');
   for (const f of readdirSync(dir).filter((x) => x.endsWith('.ts'))) {
     for (const m of readFileSync(join(dir, f), 'utf8').matchAll(/from '([^']+)'/g)) {
       const p = m[1];
-      const okImp = p.startsWith('./') || p === '../mgmcommon' || p.startsWith('../charselect/') || p === '../charselect' || p === 'three' || p === '../../lib/assetcore' || p === '../../lib/assetcore-three';
+      const okImp = p.startsWith('./') || p === '../mgmcommon' || p.startsWith('../charselect/') || p === '../charselect' || p === 'three' || p === '@game/lib/assetcore' || p === '@game/lib/assetcore-three';
       if (!okImp) bad.push(`${f}: ${p}`);
     }
   }

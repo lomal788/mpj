@@ -5,8 +5,8 @@
  * groupStop 은 원본 규칙(기본)에서 코어 그룹 소속으로 같은 코어의 모든 핸들을 멈추고, 웹 규칙에서는 틀 BGM·징글 채널만 멈춘다(04_sound.md §13.4).
  */
 import type { MgSceneEvent } from '../shell/mgscene';
-import { SoundCatalog } from '../lib/sound';
-import type { BufferPayload } from '../lib/sound-webaudio';
+import { SoundCatalog } from '@game/lib/sound';
+import type { BufferPayload } from '@game/lib/sound-webaudio';
 import type { Assets } from './assets';
 import type { AudioOut, Bus } from './audio';
 import { enterSoundScene, soundSystem, type MpjSound, type StreamPayload } from './sound';

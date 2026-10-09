@@ -4,7 +4,7 @@
  * PlazaCharaLoader.load 의 tick = Preview3D 준비 단계 사이 기다림(기본 setTimeout 0, 광장 렌더러 미리 준비는 프레임마다 — docs/engine/loader_manager.md §14.5).
  */
 import * as THREE from 'three';
-import { characterDefaults, mpatBlendCompat, type MpatRow } from '../../lib/character';
+import { characterDefaults, mpatBlendCompat, type MpatRow } from '@game/lib/character';
 import type { Collider } from '../stage3d';
 import type { Spec } from '../charselect';
 import { mpatTables, Preview3D } from '../charselect/preview3d';

@@ -4,7 +4,7 @@
  */
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
-import { NPAD, STICK_MAX, type PadInput } from '../core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from '../shell/mgmcommon';
 import { AnnounceScreen } from '../shell/mgm01/announceScreen';
 import { HistoryScreen } from '../shell/mgm01/historyScreen';

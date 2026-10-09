@@ -16,7 +16,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
-import { createAssetManager, P0, P1, P2, P3, type AssetHandler, type AssetManagerApi } from '../script/lib/assetcore';
+import { createAssetManager, P0, P1, P2, P3, type AssetHandler, type AssetManagerApi } from '@game/lib/assetcore';
 import { Render2D } from '../script/shell/charselect/render2d';
 import type { Spec } from '../script/shell/charselect/types';
 import { parseDecoParam, defaultDecoState } from '../script/shell/plaza/deco';
@@ -753,12 +753,12 @@ console.log('9. 코드 경계·문맥 수(정적)');
   eq(makers, [], '광장 셸(UI 포함)에서 렌더러 만들기 0');
   ok(/opts\.gpu\?\.renderer \?\? new THREE\.WebGLRenderer\(/.test(src('script/shell/stage3d/stage.ts')), '무대는 gpu 렌더러가 있으면 만들지 않음');
   ok(/plazaGl\(\)/.test(src('script/plaza_page.ts')) && /gl\.leave\(/.test(src('script/plaza_page.ts')), '광장 페이지 = 앱 수명 렌더러 사용');
-  const core = src('script/lib/assetcore/index.ts');
+  const core = src('script/game/lib/assetcore/index.ts');
   eq((core.match(/^import /gm) ?? []).length, 0, '코어 import 0');
-  const adapterImports = [...src('script/lib/assetcore-three/index.ts').matchAll(/from '([^']+)'/g)].map((m) => m[1]);
+  const adapterImports = [...src('script/game/lib/assetcore-three/index.ts').matchAll(/from '([^']+)'/g)].map((m) => m[1]);
   ok(adapterImports.every((m) => m === 'three' || m === '../assetcore'), `어댑터 import ⊂ {three, 코어}: ${adapterImports.join(',')}`);
   const glStatic = [...src('script/view/plazaGl.ts').matchAll(/^import (?!type).* from '([^']+)'/gm)].map((m) => m[1]);
-  ok(glStatic.every((m) => ['three', '../lib/assetcore', '../lib/assetcore-three', '../env'].includes(m)), `plazaGl 정적 import = three·lib·env 만(광장 코드는 동적): ${glStatic.join(',')}`);
+  ok(glStatic.every((m) => ['three', '@game/lib/assetcore', '@game/lib/assetcore-three', '../env'].includes(m)), `plazaGl 정적 import = three·lib·env 만(광장 코드는 동적): ${glStatic.join(',')}`);
 }
 
 console.log('10. 실제 광장 데이터 — P0 미리 준비 양(보고용)');

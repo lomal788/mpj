@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bgmChunkKey, parseWav, planBgm, type BgmPlan, type BgmSource } from '../script/lib/bgmstream';
+import { bgmChunkKey, parseWav, planBgm, type BgmPlan, type BgmSource } from '@game/lib/bgmstream';
 import { MGM_BGM_KIND, MgmSound } from '../script/shell/mgmcommon/sound';
 import { AppBgm, type BgmSpecMap } from '../script/view/bgm';
 import { flowKeys, normPath } from '../script/view/flowCatalog';

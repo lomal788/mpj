@@ -4,7 +4,7 @@
  *   bex 비트 [판독: docs/shell/charselect.md 4절]: A 0x1, B 0x2, 십자 왼 0x100·오 0x200·아래 0x400·위 0x800, 스틱 왼 0x10000·위 0x20000·오 0x40000·아래 0x80000
  */
 import { ASSETS } from './env';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { createCharSelect, type CharSelectHandle } from './shell/charselect';
 import { appFlow } from './view/appFlow';
 import { sceneOut } from './view/appTransition';

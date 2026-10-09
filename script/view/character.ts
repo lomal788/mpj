@@ -23,8 +23,8 @@ import {
   type CharacterEvent,
   type FtrgSource,
   type PlayOptions,
-} from '../lib/character';
-import { HeadView, type HeadTarget } from '../lib/character-three';
+} from '@game/lib/character';
+import { HeadView, type HeadTarget } from '@game/lib/character-three';
 import { Preview3D } from '../shell/charselect/preview3d';
 import type { CharaSpec, Spec } from '../shell/charselect/types';
 import { ASSETS } from '../env';

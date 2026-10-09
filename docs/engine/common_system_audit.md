@@ -240,7 +240,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | 웹 게임 디렉터리 | `script/games/mg1801`, `script/games/mgdummy` 2개 | [판독] `mgdummy::createDummyGame`: 원본 대응 없는 `shell/mgscene` 시험용, GAMES 미등록 |
 | 웹 카탈로그 | `script/shell/mgm01/catalog.ts`, 112게임 | [판독] 목록·필터 데이터 |
 | 분석 문서 | 미니게임 22개 + `rc_stage01` 1개 | [데이터] 문서 목록 |
-| 웹 셸·기반 | `script/core` 6파일, `script/shell` 13디렉터리, `script/lib` 3디렉터리, `script/view`, `script/cache`, 페이지 진입점 | [데이터] `script` TypeScript 213파일; 소비자 연결: §1~§5 |
+| 웹 셸·기반 | `script/game/core` 6파일, `script/shell` 13디렉터리, `script/game/lib` 3디렉터리, `script/view`, `script/cache`, 페이지 진입점 | [데이터] `script` TypeScript 213파일; 소비자 연결: §1~§5 |
 | 서버·도구 | `server`, `tools/analysis`, 빌드·압축·검증 도구 | [판독] `server/games.ts`: `mpj-plaza` 1서비스 등록 |
 | 기존 문서 | 최초 `docs` MD 68파일 | [데이터] 제목·범주 목록; 관련 명세 재사용 |
 
@@ -291,7 +291,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | UI | `script/ui_main.ts::UIS` | 17개: `charselect`, `modeselect`, `mgmcommon`, `mgm01-history`, `mgm01-announce`, `mgmet-howto`, `mgm01-setting`, `mgm01-filter`, `mgmet`, `mgmet-rule`, `partyrule`, `setplayer`, `online`, `mgm01-list`, `mgresult`, `mgscene`, `mgstage` |
 | 광장 | `script/plaza_page.ts`, `script/shell/plaza` | main.ts:427~489 flowPlaza·flowPlayers 연결 |
 | 셸 | `script/shell` | 13개: `charselect`, `mgm01`, `mgmcommon`, `mgmet`, `mgresult`, `mgscene`, `mgstage`, `modeselect`, `online`, `partyrule`, `plaza`, `setplayer`, `stage3d` |
-| 웹 기반 | `script/lib/{assetcore,assetcore-three,bgmstream}`, `script/cache`, `script/view`, `script/core` | 캐시·로딩·스트리밍·공통 계산 |
+| 웹 기반 | `script/game/lib/{assetcore,assetcore-three,bgmstream}`, `script/cache`, `script/view`, `script/game/core` | 캐시·로딩·스트리밍·공통 계산 |
 | 서버 | `server/games.ts::games/routers` → `server/games/mpj-plaza` | 광장 방 서비스 |
 
 ## 8. 미확정 분석

@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { PadInput } from '../script/core/pad';
+import type { PadInput } from '@game/core/pad';
 import type { GameDef, GameSetup, SoundSnapshot } from '../script/game';
 import { Mg1801Logic, type Mg1801Game, type Mg1801Options } from '../script/games/mg1801/logic/game';
 import { createMgRun, type MgRun } from '../script/mgrun';

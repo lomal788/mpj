@@ -8,7 +8,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { MT19937 } from '../script/core/rng';
+import { MT19937 } from '@game/core/rng';
 import * as L from '../script/shell/mgresult/logic';
 import { charaFiles, stageFiles } from '../script/shell/mgresult/stage';
 import type { MgResultSpec, ResultStageInputExt } from '../script/shell/mgresult/types';

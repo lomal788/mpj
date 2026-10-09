@@ -8,7 +8,7 @@
  */
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, pushResult, SceneStack, type Flow, type MgmPlayer, type MgmSceneInstance, type MgResultEntry, type MgmWork } from './shell/mgmcommon';
 import {
   FilterScreen,

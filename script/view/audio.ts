@@ -109,4 +109,4 @@ export function appAudio(): AudioOut | null {
   return G.__mpjAudio;
 }
 
-export { calc3d, SOUND3D_MANAGER, type Ambient3d, type Listener3d, type Sound3dInfo } from '../lib/sound';
+export { calc3d, SOUND3D_MANAGER, type Ambient3d, type Listener3d, type Sound3dInfo } from '@game/lib/sound';

@@ -7,8 +7,8 @@
  * - sceneOut(): 단계 4(장면 바꾸기 요청 → FadeOut(White, 1.0) 끝까지) — 이미 닫혀 있으면 바로.
  * - logicWipe(): 로직 시간으로 진행하는 소유자(항구·결과 무대·모드 선택·미니게임 틀)의 Transition — 처음 쓸 때 앱 상태를 이어받고 앱이 그것을 비춘다(release = 끝).
  */
-import { appTransition, LogicTransition, Transition, TransitionDriver, WIPE_BLACK, WIPE_WHITE } from '../lib/transition';
-import { DomWipe } from '../lib/transition-dom';
+import { appTransition, LogicTransition, Transition, TransitionDriver, WIPE_BLACK, WIPE_WHITE } from '@game/lib/transition';
+import { DomWipe } from '@game/lib/transition-dom';
 
 const G = globalThis as { __transitionView?: { wipe: DomWipe; driver: TransitionDriver } };
 

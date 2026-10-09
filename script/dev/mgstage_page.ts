@@ -7,7 +7,7 @@
  * 에셋은 앱 로더 관리자(view/appAssets.ts) — 압축/원본 모드 그대로. 나갈 때 release(지우지 않음).
  */
 import { ASSETS } from '../env';
-import { P0 } from '../lib/assetcore';
+import { P0 } from '@game/lib/assetcore';
 import { createMgStage, mgStageKey, type MgCameraHandle, type MgStage } from '../shell/mgstage';
 import { gltfTexturesManaged } from '../shell/stage3d/assetHandlers';
 import { appAssets } from '../view/appAssets';

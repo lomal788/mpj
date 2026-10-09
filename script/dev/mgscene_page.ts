@@ -5,8 +5,8 @@
  *   main=N(더미 본편 프레임, 0 = 끝없음 → 종료 타이머 만료로 끝), opening=N(더미 오프닝 프레임), result3d=1(SetPlayer → 결과 3D 무대 shell/mgresult), seed=N.
  * 키: J = A(사람 점수), Enter = +(오프닝 건너뛰기). 설계: docs/shell/minigame_scene.md §12.
  */
-import { BexRandModule } from '../core/rng';
-import { FPS, STEP_MS } from '../core/clock';
+import { BexRandModule } from '@game/core/rng';
+import { FPS, STEP_MS } from '@game/core/clock';
 import { ASSETS } from '../env';
 import type { GameSetup, GameView } from '../game';
 import { GAMES } from '../games';

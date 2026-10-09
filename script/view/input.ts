@@ -4,8 +4,8 @@
  * - 게임패드(표준 매핑): 0=B 1=A 2=Y 3=X (닌텐도 배치: 아래=B, 오른쪽=A), 4=L 5=R 6=ZL 7=ZR 8=− 9=+ 12~15=십자, 축 0·1·2·3=스틱.
  * 사람 플레이어는 슬롯 순서대로 패드 0, 1, … 를 받고 첫 사람은 키보드도 함께 쓴다.
  */
-import { NPAD, STICK_MAX, emptyPad, type PadInput } from '../core/pad';
-import { GamepadVibrator, type RumbleActuator } from '../lib/vibration-gamepad';
+import { NPAD, STICK_MAX, emptyPad, type PadInput } from '@game/core/pad';
+import { GamepadVibrator, type RumbleActuator } from '@game/lib/vibration-gamepad';
 
 /** 진동 포락선 한 구간: ms 동안 dual-rumble 세기(0..1). strong = 저역 모터, weak = 고역 모터 */
 export interface VibSegment {

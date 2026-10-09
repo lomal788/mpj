@@ -13,7 +13,7 @@ import type { MessageWindow } from '../mgmcommon/messageWindow';
 import type { MgmSound } from '../mgmcommon/sound';
 import type { MgmDrawHost } from '../mgmcommon/window';
 import { ActivityTitle } from './activityTitle';
-import { Transition } from '../../lib/transition';
+import { Transition } from '@game/lib/transition';
 import { FreePlayInfo } from './freePlayInfo';
 import { commitFreePlay, freePlayConfig, type FreePlayCommit } from './ruleConfig';
 import { RuleConfigView } from './ruleConfigView';

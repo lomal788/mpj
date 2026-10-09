@@ -2,8 +2,8 @@
  * 플레이어 4명 — 원본 mg1801::PlayerManImpl [판독: Initialize @0x7100009fc0, SetupCpuMiss @0x710000a110,
  * Update @0x710000a9f0, ReceiveState @0x710000aa48].
  */
-import { F } from '../../../core/fmath';
-import type { Pads } from '../../../core/pad';
+import { F } from '@game/core/fmath';
+import type { Pads } from '@game/core/pad';
 import { FAST, JUST, SLOW } from './obj';
 import { Player } from './player';
 import type { World } from './world';

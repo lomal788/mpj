@@ -47,12 +47,12 @@
  *   얼굴 재질(바탕 × 얼굴 투영 텍스처)은 두 텍스처 곱, 메시지 태그 [1:0:NNcd] = 변수 NN 의 정수.
  */
 import * as THREE from 'three';
-import { appTransition, CLOSED, CLOSING, OPEN, OPENING, Transition, WIPE_WHITE } from '../../../lib/transition';
-import type { V3 } from '../../../core/fmath';
+import { appTransition, CLOSED, CLOSING, OPEN, OPENING, Transition, WIPE_WHITE } from '@game/lib/transition';
+import type { V3 } from '@game/core/fmath';
 import { resolveSpecFonts } from '../../../shell/charselect/fontSheet';
 import { loadUiImage, type UiImage } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
-import { envelopeSamples, envelopeWeb50, vibDefaults } from '../../../lib/vibration';
+import { envelopeSamples, envelopeWeb50, vibDefaults } from '@game/lib/vibration';
 import type { PadSource, VibSegment } from '../../../view/input';
 import { playVibration } from '../../../view/vibration';
 import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from '../../../view/lyt';

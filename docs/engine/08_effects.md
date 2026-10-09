@@ -1136,8 +1136,8 @@ for (const fx of effects) {
 
 | 계층 | 파일 | import | 하는 일 |
 |---|---|---|---|
-| 코어 | `script/lib/effect/index.ts` | 0(three·DOM·프로젝트 파일 없음) | `EffectRegistry`(§3.3 해석·등록 순서), `EffectCore`(bex::Effect 목록: Create·Start·Stop(bool)·StopImmediately·SetPosition/Rotation/Scale·SetSelfDestroy·SetLayerVisibilityBit·SetAnimationSpeed·Attach, 핸들 = 칸 + 세대), `ParticlePool`(이미터 정의 하나의 입자 배열 — 모든 인스턴스가 공유하는 링 버퍼), `EmitterRt`(정의마다 미리 계산: 키 표·최대 입자 수 §6.1 식 4·raw 플래그), 난수(`Lcg`·`Xorshift128`·N/Q 표·`sinCpu`), 정렬 key(`packDepth`). 숫자·사건만 낸다 |
-| three 어댑터 | `script/lib/effect-three/index.ts` | three + 코어 | `EffectView`: effects.json·텍스처·프리미티브 읽기(`EffectLoader` 끼움점), 풀마다 InstancedBufferGeometry 하나에 코어 출력(월드 위치·크기·회전·색 2개·나이·수명·UV 난수·fade·기저)을 그리기 순서대로 올림. 셰이더는 billboard 0/3/4 변환·UV 애니·조각 합성·알파 시험만(입자 운동 없음). blend·depth·cull·FS 변형은 규칙에 따름 |
+| 코어 | `script/game/lib/effect/index.ts` | 0(three·DOM·프로젝트 파일 없음) | `EffectRegistry`(§3.3 해석·등록 순서), `EffectCore`(bex::Effect 목록: Create·Start·Stop(bool)·StopImmediately·SetPosition/Rotation/Scale·SetSelfDestroy·SetLayerVisibilityBit·SetAnimationSpeed·Attach, 핸들 = 칸 + 세대), `ParticlePool`(이미터 정의 하나의 입자 배열 — 모든 인스턴스가 공유하는 링 버퍼), `EmitterRt`(정의마다 미리 계산: 키 표·최대 입자 수 §6.1 식 4·raw 플래그), 난수(`Lcg`·`Xorshift128`·N/Q 표·`sinCpu`), 정렬 key(`packDepth`). 숫자·사건만 낸다 |
+| three 어댑터 | `script/game/lib/effect-three/index.ts` | three + 코어 | `EffectView`: effects.json·텍스처·프리미티브 읽기(`EffectLoader` 끼움점), 풀마다 InstancedBufferGeometry 하나에 코어 출력(월드 위치·크기·회전·색 2개·나이·수명·UV 난수·fade·기저)을 그리기 순서대로 올림. 셰이더는 billboard 0/3/4 변환·UV 애니·조각 합성·알파 시험만(입자 운동 없음). blend·depth·cull·FS 변형은 규칙에 따름 |
 | mpj 연결 | `script/view/effect.ts` | 코어·어댑터·셸 | `MpjEffects`/`createEffectSystem(parent, {loader})`, `assetsLoader(Assets)`(json·gltf = Assets 캐시, 텍스처 = stage3d `loadTexture`), `play(name, pos, {scale, selfDestroy, layer, rate, attach})`, `showCommonEffect(id, pos)`(CMN_EFFECT_ID), `objectSource(obj)`(Attach 행렬 원천), `routeCharacterFx(ch, fx)`(캐릭터 FTRG fx 사건 연결) |
 | 게임 | `script/games/mg1801/view/effects.ts` | mpj 연결 | `EffectSystem` 이름·생성자·공개 메서드(load·spawn·start·stop·update·dispose·activeCount) 유지, 내부만 공용 런타임 |
 

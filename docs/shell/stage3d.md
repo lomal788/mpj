@@ -5,7 +5,7 @@
 
 ## 1. import 경계
 
-[mgm_common.md](mgm_common.md) §9.1 과 같다: 같은 폴더·`three` 만. `script/core·games·view·game.ts·env.ts` 금지. 바깥은 `./stage3d` 의 `index.ts` 만 import 한다. 에셋 URL 은 페이지가 `AssetSource{url(path)}` 로 넣는다.
+[mgm_common.md](mgm_common.md) §9.1 과 같다: 같은 폴더·`three` 만. `script/game/core·games·view·game.ts·env.ts` 금지. 바깥은 `./stage3d` 의 `index.ts` 만 import 한다. 에셋 URL 은 페이지가 `AssetSource{url(path)}` 로 넣는다.
 
 ## 2. 계약 (`types.ts`, `stage.ts`)
 

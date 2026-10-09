@@ -8,7 +8,7 @@
 **[참고 이미지]** 사용자 캡처(`2.png`, 화면 x 530~1920 구간을 0.716배로 자른 것)와 대조. 자체 도구·변환 실행은 **[실행: 변환]**처럼 따로 적는다.
 주소는 SwitchLoader 기본 베이스 0x7100000000 기준 main NSO(`main @0x…`)다.
 
-이 화면은 mp4·mpj·mps 공용 엔진으로 합칠 때 다시 쓰려고 **게임 엔진층(script/core·script/games·view/lyt.ts)에 기대지 않는 독립 모듈**로 만든다(9절).
+이 화면은 mp4·mpj·mps 공용 엔진으로 합칠 때 다시 쓰려고 **게임 엔진층(script/game/core·script/games·view/lyt.ts)에 기대지 않는 독립 모듈**로 만든다(9절).
 
 ---
 
@@ -402,7 +402,7 @@ c 가 잠김 또는 22(랜덤): win/x_text_chara 숨김, 모델 없음 → 끝 (
 
 ### 9.1 원칙
 
-- 위치 `web/script/shell/charselect/`. import 허용: 같은 폴더, `three`, `three/examples/jsm/loaders/GLTFLoader.js`. **금지**: `script/core`, `script/games`, `script/view`, `script/game.ts`, `script/env.ts`. 검사 도구가 import 그래프를 확인한다.
+- 위치 `web/script/shell/charselect/`. import 허용: 같은 폴더, `three`, `three/examples/jsm/loaders/GLTFLoader.js`. **금지**: `script/game/core`, `script/games`, `script/view`, `script/game.ts`, `script/env.ts`. 검사 도구가 import 그래프를 확인한다.
 - 원본 레이아웃 재생기(view/lyt.ts)를 쓰지 않는다. 변환기가 원본 bflyt/bflan 을 **자체 명세 JSON**(노드 트리·재질·애니 곡선, 자체 필드 이름)으로 바꾸고, 모듈 안의 작은 2D 렌더러가 그 명세를 그린다.
 - 입력·소리·에셋 경로·난수·잠금 플래그는 어댑터로 받는다.
 

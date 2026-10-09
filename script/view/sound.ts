@@ -6,10 +6,10 @@
  * 전역 하나(globalThis, 표본율마다) — 같은 파일을 소비자·판·AudioOut 마다 다시 받고 풀지 않는다.
  * 처리기: buffer(통파일·파형), bgmstream(§12 재생기 — view/bgm.ts 그대로). 시퀀서 처리기는 소비자가 꽂는다(리듬 = 전역 변수를 같이 쓰는 SeqEngine).
  */
-import { P1 } from '../lib/assetcore';
-import { vibDefaults } from '../lib/vibration';
-import { DUCKING_PRESET, pan2d, SoundCatalog, SoundCore, SoundRandom, soundDefaults, type PlayOpts, type SoundMeta, type SoundRules } from '../lib/sound';
-import { DecodeCache, WebAudioSoundOut, bufferVoiceFactory, type BufferPayload, type Voice, type VoiceFactory } from '../lib/sound-webaudio';
+import { P1 } from '@game/lib/assetcore';
+import { vibDefaults } from '@game/lib/vibration';
+import { DUCKING_PRESET, pan2d, SoundCatalog, SoundCore, SoundRandom, soundDefaults, type PlayOpts, type SoundMeta, type SoundRules } from '@game/lib/sound';
+import { DecodeCache, WebAudioSoundOut, bufferVoiceFactory, type BufferPayload, type Voice, type VoiceFactory } from '@game/lib/sound-webaudio';
 import type { MgmSoundAdapter } from '../shell/mgmcommon/types';
 import { appAssets, assetKeyOf } from './appAssets';
 import { appAudio, type AudioOut } from './audio';

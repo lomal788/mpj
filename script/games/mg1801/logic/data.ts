@@ -2,7 +2,7 @@
  * mg1801 상수표 — 원본 static 표와 Scene::Params 기본값. 근거는 docs/minigame/mg1801.md 4절.
  * 손으로 값을 바꾸지 않는다(원본에서 다시 뽑을 때만 고친다).
  */
-import { F, f32FromBits } from '../../../core/fmath';
+import { F, f32FromBits } from '@game/core/fmath';
 
 /** VEGETABLE_ID 순서 [데이터: Obj::ApplyCutBoneVisible::bone_vegetable_head_name] */
 export const VEG_NAMES = ['tomato', 'potato', 'eggplant', 'carrot', 'mushroom'] as const;

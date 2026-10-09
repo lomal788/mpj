@@ -39,8 +39,8 @@ import {
   type SoundDef,
   type SoundMeta,
   type SoundRules,
-} from '../script/lib/sound';
-import { DecodeCache, WebAudioSoundOut, bufferVoiceFactory, type Voice } from '../script/lib/sound-webaudio';
+} from '@game/lib/sound';
+import { DecodeCache, WebAudioSoundOut, bufferVoiceFactory, type Voice } from '@game/lib/sound-webaudio';
 import * as audioMod from '../script/view/audio';
 import { GOLDEN_SHA256, GOLDEN_SHA256_WEB } from './sound_golden';
 
@@ -437,12 +437,12 @@ console.log('9) import 경계·정적 검사');
   const read = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8');
   const imps = (s: string): string[] => [...s.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)].map((m) => m[1]);
   const code = (s: string): string => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1');
-  const core = code(read('script/lib/sound/index.ts'));
+  const core = code(read('script/game/lib/sound/index.ts'));
   eq(imps(core), [], 'lib/sound import 0');
-  eq([...new Set(imps(read('script/lib/sound-webaudio/index.ts')))], ['../sound'], 'lib/sound-webaudio = 코어만');
+  eq([...new Set(imps(read('script/game/lib/sound-webaudio/index.ts')))], ['../sound'], 'lib/sound-webaudio = 코어만');
   const bad = ['Math.random', 'performance.now', 'Date.now', 'new Date', 'document.', 'window.', 'requestAnimationFrame', 'setTimeout', 'setInterval'].filter((w) => core.includes(w));
   eq(bad, [], '코어: Math.random·벽시계·DOM·타이머 없음');
-  ok(imps(read('script/shell/mgscene/sound.ts')).includes('../../lib/sound'), '틀 로직 MgSound → 코어 표(fadeTimeSec)');
+  ok(imps(read('script/shell/mgscene/sound.ts')).includes('@game/lib/sound'), '틀 로직 MgSound → 코어 표(fadeTimeSec)');
   const rh = read('script/games/rhythm/view/sound.ts');
   ok(!/\bthis\.handles\b|\badmit\(|calc3d\(/.test(rh) && rh.includes('soundSystem('), '리듬 RmSoundMap: 자체 핸들·한도·3D 없음 → 코어(soundSystem)');
   const mg = code(read('script/view/mgsceneSound.ts'));
@@ -633,8 +633,8 @@ await (async () => {
 /* ---------------------------------------------------------------- 13 */
 console.log('13) 진동 재생기·장면 퇴장·Play2D 팬(3차, 04 §13.12·05 §11)');
 await (async () => {
-  const vib = await import('../script/lib/vibration');
-  const vgp = await import('../script/lib/vibration-gamepad');
+  const vib = await import('@game/lib/vibration');
+  const vgp = await import('@game/lib/vibration-gamepad');
   const t = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/common/vib/vib.json'), 'utf8'));
   eq([t.vb.VB_MGMET_SELECT_DECI, t.vb.VB_MGMET_SELECT_CUR], ['bv_vib_sys_deci', 'bv_vib_sys_cursor'], 'VB_ 키 → 라벨(vb_pc_base.ftrg 자원 경로)');
   eq(t.define.bv_vib_sys_skip, ['bv_vib_sys_deci', 0.5, 1, 1, 96, 0], '정의: bv_vib_sys_skip = 설정 bv_vib_sys_deci·Gain_Master 0.5·priority 96(vibration.msgpack)');
@@ -688,10 +688,10 @@ await (async () => {
 
   const read = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8');
   const imps = (s: string): string[] => [...s.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)].map((m) => m[1]);
-  eq(imps(read('script/lib/vibration/index.ts')), [], 'lib/vibration import 0');
-  eq([...new Set(imps(read('script/lib/vibration-gamepad/index.ts')))], ['../vibration'], 'lib/vibration-gamepad = 진동 코어만');
+  eq(imps(read('script/game/lib/vibration/index.ts')), [], 'lib/vibration import 0');
+  eq([...new Set(imps(read('script/game/lib/vibration-gamepad/index.ts')))], ['../vibration'], 'lib/vibration-gamepad = 진동 코어만');
   const libs = ['lib/sound', 'lib/sound-webaudio', 'lib/vibration', 'lib/vibration-gamepad'];
-  const bad = libs.flatMap((l) => imps(read(`script/${l}/index.ts`)).filter((m) => /view|shell|games|vibration$/.test(m) && !(l === 'lib/vibration-gamepad' && m === '../vibration')).map((m) => `${l}: ${m}`));
+  const bad = libs.flatMap((l) => imps(read(`script/game/${l}/index.ts`)).filter((m) => /view|shell|games|vibration$/.test(m) && !(l === 'lib/vibration-gamepad' && m === '../vibration')).map((m) => `${l}: ${m}`));
   eq(bad, [], '공용 lib 는 mpj(view·shell·games)를 부르지 않고, lib/sound 는 진동을 부르지 않는다(사건으로만)');
 })();
 

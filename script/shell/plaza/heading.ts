@@ -6,8 +6,8 @@
  * 계산은 공용 캐릭터 런타임(lib/character HeadLook·lib/character-three HeadView, 09 §14) — 이 파일은 광장 쪽 이름(head_* 필드·enabled)을 잇는다.
  */
 import * as THREE from 'three';
-import { characterDefaults, HeadLook, headInput } from '../../lib/character';
-import { HeadView, type HeadTarget as Target } from '../../lib/character-three';
+import { characterDefaults, HeadLook, headInput } from '@game/lib/character';
+import { HeadView, type HeadTarget as Target } from '@game/lib/character-three';
 
 export interface HeadParams {
   head_min_x?: number | null;

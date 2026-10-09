@@ -7,7 +7,7 @@
  * 소리 확인은 사용자가 직접.
  */
 import * as THREE from 'three';
-import { RULES_ORIGINAL, RULES_WEB, soundDefaults, type SoundCmd } from '../lib/sound';
+import { RULES_ORIGINAL, RULES_WEB, soundDefaults, type SoundCmd } from '@game/lib/sound';
 import { RmSoundMap } from '../games/rhythm/view/sound';
 import { Assets } from '../view/assets';
 import { AudioOut } from '../view/audio';

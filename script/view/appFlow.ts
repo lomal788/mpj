@@ -8,7 +8,7 @@
  */
 import { ASSET_MODE } from '../env';
 import { GAMES } from '../games';
-import { P0, P1 } from '../lib/assetcore';
+import { P0, P1 } from '@game/lib/assetcore';
 import { assetHooks, type UiImageLike } from '../shell/charselect/assetHooks';
 import { KIND_BYTES, KIND_UI_IMAGE } from '../shell/stage3d/assetHandlers';
 import { appAssets, assetKeyOf } from './appAssets';

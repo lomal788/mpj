@@ -6,8 +6,8 @@
  * 웹은 같은 자리에서 "A 버튼을 이번 프레임에 누름"도 휘두름으로 본다. 가속도 값이 들어오면 원본 식을 그대로 쓴다.
  * 쿨다운·판정·CPU 는 원본 그대로다.
  */
-import { F, type V3, v3 } from '../../../core/fmath';
-import { NPAD, type Pads } from '../../../core/pad';
+import { F, type V3, v3 } from '@game/core/fmath';
+import { NPAD, type Pads } from '@game/core/pad';
 import type { PlayerView } from '../state';
 import { IDLE_MOTION_FRAMES, LOOK_EXCEPTIONS, PLAYER_CHARACTER_IDS, STOOLS, SWING_MOTION_FRAMES, SWING_SE_FRAME } from './data';
 import type { JudgeData } from './objectMan';

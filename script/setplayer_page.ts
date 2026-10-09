@@ -6,7 +6,7 @@
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { appBgm } from './view/bgm';
 import { shellSound } from './view/sound';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { ASSETS } from './env';
 import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from './shell/setplayer';
 import { appFlow } from './view/appFlow';

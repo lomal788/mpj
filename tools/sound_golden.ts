@@ -907,9 +907,9 @@ export const SCENARIOS = ['mg1801_normal', 'mg1801_long180', 'mgscene_dummy', 'm
 /** 시나리오를 돌려 이름 → 기록 줄. 받기·풀기 횟수도 */
 export async function runSoundGolden(rules?: 'web' | 'original', only?: string): Promise<{ lines: Map<string, string[]>; fetches: Map<string, number>; decodes: Map<string, number> }> {
   install();
-  const core = (await import('../script/lib/sound' as string).catch(() => null)) as Any;
+  const core = (await import('@game/lib/sound' as string).catch(() => null)) as Any;
   if (core && rules) core.soundDefaults.rules = rules === 'web' ? core.RULES_WEB : core.RULES_ORIGINAL;
-  const vib = (await import('../script/lib/vibration' as string).catch(() => null)) as Any;
+  const vib = (await import('@game/lib/vibration' as string).catch(() => null)) as Any;
   if (vib && rules) vib.vibDefaults.rules = rules === 'web' ? vib.VIB_RULES_WEB : vib.VIB_RULES_ORIGINAL;
   /* GOLDEN_ITEMS=random,groups → 웹 규칙에서 그 항목만 원본으로(항목별 차이 확인) */
   if (core && process.env.GOLDEN_ITEMS) {

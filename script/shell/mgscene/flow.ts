@@ -4,8 +4,8 @@
  * 한 프레임(tick, 게이트가 열린 때만 step): 입력 → game.update → MGSound 갱신 → OnGameSequenceBefore → 처리기 1개 → After →
  *   바뀌면 하위 0·OnSetGameSequence → (7~9) 종료 타이머 검사 → UI 틱(§12.4 순서 [추정]).
  */
-import { FADE_TIME_PRESET } from '../../lib/sound';
-import { SplitScreen } from '../../lib/splitscreen';
+import { FADE_TIME_PRESET } from '@game/lib/sound';
+import { SplitScreen } from '@game/lib/splitscreen';
 import type { FrameGate } from './gate';
 import type { ResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
 import { DEFAULT_RESULT_OPTIONS } from './resultContract';

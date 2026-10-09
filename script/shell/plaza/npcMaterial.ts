@@ -9,7 +9,7 @@
  * spec.layers 경로 = 명세 폴더 기준 상대 경로(공용 assets/chara/tex, docs/engine/chara_assets.md §5).
  */
 import * as THREE from 'three';
-import { EyeLook } from '../../lib/character';
+import { EyeLook } from '@game/lib/character';
 import { loadTextureInto } from '../stage3d/assetLoader';
 import type { Heading } from './heading';
 

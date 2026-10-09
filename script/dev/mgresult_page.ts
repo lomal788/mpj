@@ -8,10 +8,10 @@
  */
 import * as THREE from 'three';
 import { ASSETS } from '../env';
-import { MT19937 } from '../core/rng';
+import { MT19937 } from '@game/core/rng';
 import { createResultStage, type ResultStageEvent, type ResultStageExt, type ResultStageInputExt } from '../shell/mgresult';
 import { DEFAULT_RESULT_OPTIONS } from '../shell/mgscene/resultContract';
-import { WIPE_WHITE } from '../lib/transition';
+import { WIPE_WHITE } from '@game/lib/transition';
 import { logicWipe } from '../view/appTransition';
 
 export interface MgResultRun {

@@ -7,7 +7,7 @@
  */
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
-import { NPAD, STICK_MAX, type PadInput } from '../core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { MgmSound, MgmView } from '../shell/mgmcommon';
 import { applyOnlineExtra, FakeOnline, ONLINE_FACES, ONLINE_PART, OnlineScreen, type FakeError, type OnlineEntry, type OnlineExtra } from '../shell/online';
 import type { PadSource } from '../view/input';

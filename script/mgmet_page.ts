@@ -5,7 +5,7 @@
  */
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { createWork, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
 import { MgmetHowtoView } from './shell/mgmet/howto';

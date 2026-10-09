@@ -1,6 +1,6 @@
 # 15. 화면 전환(와이프·페이드) 공용 모듈
 
-화면마다 따로 만들던 페이드·와이프를 원본 `bq::WipeModule` 하나로 모았다. 코어는 `script/lib/transition/`(import 0)이고, 그리기는 DOM 어댑터 `script/lib/transition-dom/`이 맡는다. mpj 앱 연결은 `script/view/appTransition.ts`, 시험은 `tools/test_transition.ts`다.
+화면마다 따로 만들던 페이드·와이프를 원본 `bq::WipeModule` 하나로 모았다. 코어는 `script/game/lib/transition/`(import 0)이고, 그리기는 DOM 어댑터 `script/game/lib/transition-dom/`이 맡는다. mpj 앱 연결은 `script/view/appTransition.ts`, 시험은 `tools/test_transition.ts`다.
 
 ## 1. 원본 계약 [판독]
 
@@ -66,7 +66,7 @@
 | `main.ts`·`ui_main.ts` 흐름 | 없음(바로 바꿈) | — | — | — |
 | `charselect/preview3d.ts`·`types.ts`, `mgmcommon/types.ts`, `charselect_page.ts` | **해당 없음**: 모션 crossfade·BGM 페이드다 | — | — | — |
 
-## 3. 코어 API(`script/lib/transition/index.ts`, import 0, 할당 0)
+## 3. 코어 API(`script/game/lib/transition/index.ts`, import 0, 할당 0)
 
 - 상수: `WIPE_BLACK/WHITE/CROSSFADE/LOADING`, 상태 `OPEN 0 · CLOSING 1 · CLOSED 2 · OPENING 3`, `WIPE_FRAMES`·`WIPE_KEYS`(원본 키), `hermite(keys, f)`.
 - `class Transition`

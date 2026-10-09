@@ -3,8 +3,8 @@
  * 좌표는 원본 월드 단위(레인 간격 2, 레인 x = lane·2 − 3, 채소 등장 y = 7.5, 판정 시점 y = 1.5, 플레이어 z = −2).
  * 각도는 라디안(오일러 XYZ), 조각 회전만 도(원본 CutObj 식 그대로). 시간은 초.
  */
-import type { V3 } from '../../core/fmath';
-import type { GameEvent } from '../../core/events';
+import type { V3 } from '@game/core/fmath';
+import type { GameEvent } from '@game/core/events';
 import type { GameResult } from '../../game';
 import type { Phase, RmEvent, RmSceneState } from '../rhythm/types';
 

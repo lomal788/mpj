@@ -17,8 +17,8 @@
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
-import { FrameScheduler, P0, P1, type AssetManagerApi } from '../../lib/assetcore';
-import { ScenePreparer, type PrepJob, type UploadRecord } from '../../lib/assetcore-three';
+import { FrameScheduler, P0, P1, type AssetManagerApi } from '@game/lib/assetcore';
+import { ScenePreparer, type PrepJob, type UploadRecord } from '@game/lib/assetcore-three';
 import { createGltfLoader } from './assetLoader';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from './assetHandlers';
 import { Clip } from './clip';

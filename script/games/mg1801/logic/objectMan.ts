@@ -3,7 +3,7 @@
  * JudgeInput @0x71000044d0, SendHitJudge @0x7100004640, PushResultVegetable @0x71000046a0, GetHeadTarget @0x71000047e0,
  * Update @0x7100004920].
  */
-import { F, type V3 } from '../../../core/fmath';
+import { F, type V3 } from '@game/core/fmath';
 import type { LaneCount } from '../state';
 import type { ChartRow } from './chart';
 import { POOL_PER_TYPE } from './data';

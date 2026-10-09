@@ -31,7 +31,7 @@ import { fileURLToPath } from 'node:url';
 import { classify, CLASS_RECIPE, encodeTexture, gpuBytes, isTex3d, pngInfo, TEX_RECIPE, type TexHint, type TexPlan, type TexResult } from './assets_tex';
 import { imageSlots, MESH_RECIPE, packGlb, readGlb, type MeshStats } from './assets_mesh';
 import { AUDIO_RECIPE, audioKind, BGM_RECIPE, encodeAudio, wavInfo, type AudioOut } from './assets_audio';
-import { bgmChunkKey, sameLoop, validLoop, type BgmPlan } from '../script/lib/bgmstream';
+import { bgmChunkKey, sameLoop, validLoop, type BgmPlan } from '@game/lib/bgmstream';
 import { hashedName, PRECOMPRESS, precompressAll } from './precompress';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

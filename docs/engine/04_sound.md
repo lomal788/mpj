@@ -648,7 +648,7 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 
 근거: 원본 동일성의 핵심은 (1) 반복 표본 정확, (2) 리듬 BGM 시작 시각이 오디오 시계로 정해짐이다. 둘 다 `AudioBufferSourceNode` 예약만 지금 코드와 같은 시계를 쓴다.
 
-### 12.4 조각 배치 (`script/lib/bgmstream` `planBgm`, 빌드·런타임 공용)
+### 12.4 조각 배치 (`script/game/lib/bgmstream` `planBgm`, 빌드·런타임 공용)
 
 - 구간: 반복 있으면 인트로 [0, Ls) 와 반복 본체 [Ls, Le), 없으면 [0, frames). Ls·Le 는 명세의 초 값 × rate 를 반올림한 표본(BFSTM 원값과 같음).
 - 구간마다 4 s(= 192,000 표본 @48 kHz) 조각. 개수 = max(1, round(구간 / 4 s)), 마지막 조각이 나머지를 품는다(2~6 s).
@@ -695,7 +695,7 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 
 | 층 | 파일 | 일 |
 |---|---|---|
-| 재생기(엔진·앱 독립, import 0) | `script/lib/bgmstream/index.ts` | 배치 `planBgm`·조각 PCM 범위 `chunkSpans`·wav 헤더·`BgmStream` 일정 |
+| 재생기(엔진·앱 독립, import 0) | `script/game/lib/bgmstream/index.ts` | 배치 `planBgm`·조각 PCM 범위 `chunkSpans`·wav 헤더·`BgmStream` 일정 |
 | 앱 어댑터 | `script/view/bgm.ts` | 소스 만들기(압축 = 조각 bytes 키 → decodeAudioData, 원본 = wav PCM 자르기), `BgmChannel`(라벨 하나 재생·페이드), 미리 받기 키 |
 | 페이지 | `charselect_page.ts`(SM_BGM_MENU_MAP, 결정 때 0.5 s 페이드), `plaza_page.ts`(광장 `sound.bgm` 고리 — 지금은 풍선의 정지 `bgm(null)` 만 부름), `mgmet_page.ts`(MgmSound `bgm`/`bgmStop` 고리 — hub 의 PlayBgm, 명세에 BGM 파일이 아직 없어 소리 없음), `games/mg1801/view/sound.ts`(렌더 BGM) | 공용 재생기 하나로 |
 | 미리 받기 | `view/flowCatalog.ts` `charselect:sound`(옵션 `bgmKey` ← `appFlow.ts` `bgmPrefetchKey`) | BGM 은 첫 조각 키만(원본 모드는 wav) |
@@ -801,8 +801,8 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 
 | 층 | 파일 | import | 하는 일 |
 |---|---|---|---|
-| 코어 | `script/lib/sound/index.ts` | 0 | 라벨 → 정의 해석(세팅 프리셋 치환), SoundHandle(칸 + 세대)·수명, 플레이어 한도·우선순위, 소리 그룹 소속(정지·덕킹), FadeTimePreset 표, 3D 계산(§6.7, `view/audio.ts` 에서 옮김), 시퀀스 엔진 난수(LCG). **숫자·명령만** 낸다. 시간(오디오 시각)·난수는 주입, `Math.random`·벽시계 없음 |
-| WebAudio 어댑터 | `script/lib/sound-webaudio/index.ts` | 코어만 | 명령 → 핸들 하나 = `GainNode`(핸들 음량: 3D·덕킹·SetVolume) → (팬이 있을 때만 `StereoPannerNode`) → 버스. 소리 재생 자체는 **목소리 처리기**(꽂기): 내장 `buffer`(AudioBufferSourceNode, 반복·늦은 시작), 디코드 캐시 `DecodeCache`(받기·풀기 주입) |
+| 코어 | `script/game/lib/sound/index.ts` | 0 | 라벨 → 정의 해석(세팅 프리셋 치환), SoundHandle(칸 + 세대)·수명, 플레이어 한도·우선순위, 소리 그룹 소속(정지·덕킹), FadeTimePreset 표, 3D 계산(§6.7, `view/audio.ts` 에서 옮김), 시퀀스 엔진 난수(LCG). **숫자·명령만** 낸다. 시간(오디오 시각)·난수는 주입, `Math.random`·벽시계 없음 |
+| WebAudio 어댑터 | `script/game/lib/sound-webaudio/index.ts` | 코어만 | 명령 → 핸들 하나 = `GainNode`(핸들 음량: 3D·덕킹·SetVolume) → (팬이 있을 때만 `StereoPannerNode`) → 버스. 소리 재생 자체는 **목소리 처리기**(꽂기): 내장 `buffer`(AudioBufferSourceNode, 반복·늦은 시작), 디코드 캐시 `DecodeCache`(받기·풀기 주입) |
 | mpj 연결 | `script/view/sound.ts` | 코어·어댑터·`view/audio`·`view/bgm`·`view/appAssets` | `soundSystem(audio)` = `AudioOut` 하나에 코어·어댑터 하나(같은 페이지의 틀 소리·게임 소리가 핸들·그룹·한도를 같이 쓴다). 디코드 캐시 = 로더 관리자 `bytes`(압축 모드 소리 이름 바꿈 shim 통과) + 전역 디코드 맵 하나. 처리기 `buffer`·`bgmstream`(§12 재생기), 시퀀서 처리기는 소비자가 꽂는다 |
 | 소비자 | `view/mgsceneSound.ts`(틀 소리 `MgSceneSound`), `games/rhythm/view/sound.ts`(`RmSoundMap`, mg1801 view 가 씀), `view/character.ts` `routeCharacterEvents`(se·voice 라벨 사건) | — | 사건 → 코어 `play/stop/stopGroup` |
 | 로직(사건만) | `shell/mgscene/sound.ts`(`MgSound`), `games/rhythm/soundMan.ts`(`RmSoundMan`) | 코어 표만(`fadeTimeSec`) | 원본 MGSound·RmSoundMan 상태 → 사건. 소리 재생·핸들은 모른다 |

@@ -6,7 +6,7 @@
  * 화면 모양 확인은 사용자가 직접. 소리 = mgscene 사운드 표에 있는 라벨만 들린다(없는 라벨은 로그만).
  */
 import * as THREE from 'three';
-import type { CharacterEvent } from '../lib/character';
+import type { CharacterEvent } from '@game/lib/character';
 import type { PadSource } from '../view/input';
 import { AudioOut } from '../view/audio';
 import { Assets } from '../view/assets';

@@ -312,7 +312,7 @@ async function main(): Promise<void> {
   const full = process.argv.includes('full');
   const only = process.argv.slice(3).find((a) => a !== 'full');
   if (process.env.GOLDEN_RULES) {
-    const lib = await import('../script/lib/effect').catch(() => null);
+    const lib = await import('../script/game/lib/effect').catch(() => null);
     if (lib) lib.effectDefaults.rules = process.env.GOLDEN_RULES === 'web' ? lib.RULES_WEB : lib.RULES_ORIGINAL;
   }
   if (out) fs.mkdirSync(out, { recursive: true });

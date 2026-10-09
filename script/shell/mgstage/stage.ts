@@ -6,10 +6,10 @@
  * 게임 로직 API: 소켓 조회·카메라 클립 재생·모델 보임/애니·배치 밖 모델·충돌 데이터(형상만 — 런타임은 다른 갈래)·결과 무대 world.
  */
 import * as THREE from 'three';
-import { P0, P1, P3 } from '../../lib/assetcore';
-import type { PrepJob } from '../../lib/assetcore-three';
-import type { SplitScreenLayerList } from '../../lib/splitscreen';
-import { SplitRenderer, type SplitRenderOptions } from '../../lib/splitscreen-three';
+import { P0, P1, P3 } from '@game/lib/assetcore';
+import type { PrepJob } from '@game/lib/assetcore-three';
+import type { SplitScreenLayerList } from '@game/lib/splitscreen';
+import { SplitRenderer, type SplitRenderOptions } from '@game/lib/splitscreen-three';
 import { attachToSocket } from '../plaza/world';
 import { LOAD_BUDGET_MS, Stage3D, type AssetSource, type ClipHandle, type ClipOptions, type PriorityFloor, type SocketPose, type StageGpu, type StageLoader, type StageModel } from '../stage3d';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '../stage3d/assetHandlers';

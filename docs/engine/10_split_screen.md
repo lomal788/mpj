@@ -161,9 +161,9 @@ GPU 대여 종료 시 target·viewport·scissor/test·autoClear 및 clearColor/d
 
 | 폴더 | 내용 | import |
 |---|---|---|
-| `script/lib/splitscreen/` | **코어**: Param·SplitTo·SetParam/AnimationTo 보간·IsFinished/IsSplitting(§2·§3), viewport float/scissor 정수 절삭·GL y 변환(§2), 보정 aspect/FOV(§4), 분할선 경계 모으기·병합·pane 배치·in/out 알파(§6), 3D→HUD 식(§6), mg0122 캡처 RT 크기 상수(§5). 시간은 호출자가 `step(dt)`로 넣는다(기본 f32 1/60). 매 스텝 할당 0 | **0**(외부·three·DOM·프로젝트 파일 없음, 한 파일) |
-| `script/lib/splitscreen-three/` | **three 어댑터**: 한 번 갱신한 장면을 레이어마다 viewport/scissor·draw용 보정 카메라로 그림, clear 정책, 레이어 영역 후처리 호출, renderer 상태 복구, 레이어별 3D→HUD 투영, 캡처 요청 자리 | `three` + 코어만 |
-| `script/lib/splitscreen-dom/` | **분할선 DOM**: 원본 `sys_dividing_lines` pane 26개를 div 로, 코어가 정한 위치·길이·회전·알파를 style 에 쓴다 | 코어만 |
+| `script/game/lib/splitscreen/` | **코어**: Param·SplitTo·SetParam/AnimationTo 보간·IsFinished/IsSplitting(§2·§3), viewport float/scissor 정수 절삭·GL y 변환(§2), 보정 aspect/FOV(§4), 분할선 경계 모으기·병합·pane 배치·in/out 알파(§6), 3D→HUD 식(§6), mg0122 캡처 RT 크기 상수(§5). 시간은 호출자가 `step(dt)`로 넣는다(기본 f32 1/60). 매 스텝 할당 0 | **0**(외부·three·DOM·프로젝트 파일 없음, 한 파일) |
+| `script/game/lib/splitscreen-three/` | **three 어댑터**: 한 번 갱신한 장면을 레이어마다 viewport/scissor·draw용 보정 카메라로 그림, clear 정책, 레이어 영역 후처리 호출, renderer 상태 복구, 레이어별 3D→HUD 투영, 캡처 요청 자리 | `three` + 코어만 |
+| `script/game/lib/splitscreen-dom/` | **분할선 DOM**: 원본 `sys_dividing_lines` pane 26개를 div 로, 코어가 정한 위치·길이·회전·알파를 style 에 쓴다 | 코어만 |
 | `script/shell/stage3d/post.ts` | `PostChain.render(scene, camera, region?)` — 선택 인자 `region`(출력 target·viewport·scissor) 추가. 인자가 없으면 지금과 같은 출력 | 기존 그대로 |
 | `script/shell/mgstage/` | `MgStage.renderSplit(list, cameras, opts?)` — 무대 장면·후처리로 어댑터 호출. `update` 는 부르지 않는다 | + `../../lib/splitscreen`·`../../lib/splitscreen-three` |
 | `script/shell/mgscene/` | 틀이 `SplitScreen` 하나를 갖고 `ctx.split` 으로 게임에 준다. 틀 step 의 UI 틱에서 `split.step(MG_DT)` | + `../../lib/splitscreen`(import 0 코어, lib 예외 — transition 과 같은 규칙) |

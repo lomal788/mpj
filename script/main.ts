@@ -17,11 +17,11 @@
  */
 import './style.css';
 import './view/assetMode';
-import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from './core/clock';
+import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from '@game/core/clock';
 import { DEV } from './env';
 import { type GameDef, type GameLogic, type GameSetup, type GameView, type PlayerSetup, readOptions } from './game';
 import { GAMES } from './games';
-import type { LogicTransition } from './lib/transition';
+import type { LogicTransition } from '@game/lib/transition';
 import { createMgRun, freePlaySetup, localSeed, type MgRun, type MgRunSave } from './mgrun';
 import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from './shell/mgscene';
 import { Assets } from './view/assets';

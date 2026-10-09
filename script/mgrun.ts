@@ -3,9 +3,9 @@
  * → GameDef.createLogic(MgGame) → 공용 틀 MgScene(게이트) 조립, 한 tick 진행, 끝난 뒤 모드 결과 기록 한 칸(SetMinigameResult 계약).
  * seed 는 게임이 아니라 호스트가 판 시작에 한 번 만든다(localSeed: 주어진 값 또는 무작위 한 번). 계약: docs/shell/minigame_scene.md §12.12.
  */
-import { BexRandModule } from './core/rng';
+import { BexRandModule } from '@game/core/rng';
 import type { GameDef, GameLogic, GameSetup, PlayerSetup, SoundSnapshot } from './game';
-import type { Transition } from './lib/transition';
+import type { Transition } from '@game/lib/transition';
 import {
   freePlayJudgeType,
   MgScene,

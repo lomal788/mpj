@@ -1,6 +1,6 @@
 /**
  * BGM 스트리밍 시험(노드, 헤드리스 없음). 설계: docs/engine/04_sound.md §12.
- * 실제 코드: 재생기 script/lib/bgmstream(배치·조각 PCM·일정), 빌드 산출물 assets-dist(조각 .ogg/.m4a·index.json streams).
+ * 실제 코드: 재생기 script/game/lib/bgmstream(배치·조각 PCM·일정), 빌드 산출물 assets-dist(조각 .ogg/.m4a·index.json streams).
  * 가짜: AudioContext(예약 기록 + 표본 단위 렌더 — 시작 = when 이상 첫 프레임, 멈춤 = when 미만 프레임, 이득 자동화 set·linearRamp).
  * 원본 모드 소스 = view/bgm.ts 원본 경로와 같은 조합(parseWav·planBgm·chunkSpans·fillPcm), 압축 모드 소스 = 조각 파일을 ffmpeg 로 풀어(브라우저 디코더 대리).
  *
@@ -10,7 +10,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, planItem, type BgmContext, type BgmLoaded, type BgmPlan, type BgmScheduled, type BgmSource, type WavPcm } from '../script/lib/bgmstream';
+import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, planItem, type BgmContext, type BgmLoaded, type BgmPlan, type BgmScheduled, type BgmSource, type WavPcm } from '@game/lib/bgmstream';
 import { ffmpegPath } from './assets_audio';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

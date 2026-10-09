@@ -11,8 +11,8 @@
  *   기본 LOAD_BUDGET_MS)을 받는다.
  */
 import * as THREE from 'three';
-import { P0, P1, P3 } from '../../lib/assetcore';
-import type { PrepJob } from '../../lib/assetcore-three';
+import { P0, P1, P3 } from '@game/lib/assetcore';
+import type { PrepJob } from '@game/lib/assetcore-three';
 import { LOAD_BUDGET_MS, MeshCollider, Stage3D, type PriorityFloor, type StageGpu, type AssetSource, type ClipHandle, type ClipOptions, type Collider, type MeshColliderData, type SocketPose, type StageLoader, type StageModel } from '../stage3d';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '../stage3d/assetHandlers';
 import { decoVisible, defaultDecoState } from './deco';

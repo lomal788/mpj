@@ -691,7 +691,7 @@ FX 트리거의 애니 프레임 이벤트는 "프레임 f를 지나는 순간" 
 | `script/games/mg1801/view/character.ts` | 모델 인스턴스·모션/shape 채널·blink·시선·칼 부착. MPAT 프레임 표를 사용하지만 이전 포즈 고정과 재질 보정은 원본과 차이가 있음 |
 | `script/shell/charselect/preview3d.ts` | 캐릭터 선택·광장에서 공유하는 몸/눈 셰이더·본 표시·모션 화면 |
 | `assets/chara/pcNN/` | 공용 모델·텍스처·`motion/<name>.glb`·`motions.json`; 22명 및 NPC 공용화 결과는 [chara_assets §9](chara_assets.md) |
-| `tools/analysis/character_verify/motion_ref.ts` | §6.7의 과거 기준 계산. 범용 `script/core/motion.ts`는 아직 없음 |
+| `tools/analysis/character_verify/motion_ref.ts` | §6.7의 과거 기준 계산. 범용 `script/game/core/motion.ts`는 아직 없음 |
 
 원본 동등성을 맞출 계약은 `{clip,frame,speed,prevClip,prevFrame,blendSeconds,blendElapsedSeconds}`다. 초 단위 전이와 계속 진행하는 이전 노드, mpat의 시작 프레임 덮기, `modelAnimationSpeed`를 현재 코드에 자동으로 구현됐다고 간주하지 않는다.
 
@@ -848,8 +848,8 @@ MSYS_NO_PATHCONV=1 ./tools/ghidra_12.1.2_PUBLIC/support/analyzeHeadless.bat c:/d
 
 | 계층 | 파일 | import | 하는 일 |
 |---|---|---|---|
-| 코어 | `script/lib/character/index.ts` | 0(three·DOM·프로젝트 파일 없음) | `MotionSlot`(§6.3~6.6: 같은 모션 판정·리스너 시작 프레임/블렌드/속도·mpat a/b·α/β·dt×60×slotSpeed×modelSpeed f32 진행·FrameMax·큐·본/shape 전이 clamp 가중치), `HeadLook`(§6.8 머리: 최단 회전→가중치 slerp→YZX 자름→ZYX→모드 4 따라가기, 뒤 40°/60°·데드존·턱·목은 스위치), `EyeLook`(§6.8 눈 UV), `FtrgCursor`·`FtrgBank`(05 §7.5: 슬롯 문맥·최초/정·역/루프 횟수·소스 ref·키 행·가중 선택), `CharacterCore`(주 슬롯+시선+눈+이벤트+`FaceSlot`·`PhysicsSlot` 자리). 숫자·사건만 낸다 |
-| three 어댑터 | `script/lib/character-three/index.ts` | three + 코어 | `CharacterView`(복제 모델의 뼈 포즈: 웹 이전 믹서 경로 / 원본 직접 샘플 경로, 깜빡임 묶음, 뼈 보임→메시 보임), `HeadView`(head_aimcont 되돌림·대상 방향을 부모/캐릭터 공간으로·chin·neck_roll) |
+| 코어 | `script/game/lib/character/index.ts` | 0(three·DOM·프로젝트 파일 없음) | `MotionSlot`(§6.3~6.6: 같은 모션 판정·리스너 시작 프레임/블렌드/속도·mpat a/b·α/β·dt×60×slotSpeed×modelSpeed f32 진행·FrameMax·큐·본/shape 전이 clamp 가중치), `HeadLook`(§6.8 머리: 최단 회전→가중치 slerp→YZX 자름→ZYX→모드 4 따라가기, 뒤 40°/60°·데드존·턱·목은 스위치), `EyeLook`(§6.8 눈 UV), `FtrgCursor`·`FtrgBank`(05 §7.5: 슬롯 문맥·최초/정·역/루프 횟수·소스 ref·키 행·가중 선택), `CharacterCore`(주 슬롯+시선+눈+이벤트+`FaceSlot`·`PhysicsSlot` 자리). 숫자·사건만 낸다 |
+| three 어댑터 | `script/game/lib/character-three/index.ts` | three + 코어 | `CharacterView`(복제 모델의 뼈 포즈: 웹 이전 믹서 경로 / 원본 직접 샘플 경로, 깜빡임 묶음, 뼈 보임→메시 보임), `HeadView`(head_aimcont 되돌림·대상 방향을 부모/캐릭터 공간으로·chin·neck_roll) |
 | mpj 연결 | `script/view/character.ts` | 코어·어댑터·셸 | `createCharacter(pc, {...})`: 공용 에셋 경로, 캐릭터 선택 `Preview3D` 한 칸(로더 관리자 broker 받기·GPU 미리 준비·몸/눈 셰이더 그래프)을 빌림, characterlist 시선 값. `routeCharacterEvents`: se·voice → mgscene 사운드(`MgSceneSound.onEvents`, bgmstream 아님), vib → 장면 진동 표(없으면 Gamepad rumble), fx → 사건만(소비자 비움) |
 
 - 재질은 어댑터가 만들지 않는다. 셰이더 그래프는 소비자 끼움점이 건다: PC = `shell/charselect/preview3d.ts`의 몸·눈 그래프(기존 그대로), 광장 NPC = `shell/plaza/npcMaterial.ts`, mg1801 = 자기 재질(§14.4 미룸).

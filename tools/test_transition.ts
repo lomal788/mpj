@@ -24,7 +24,7 @@ import {
   WIPE_KEYS,
   WIPE_NAMES,
   WIPE_WHITE,
-} from '../script/lib/transition';
+} from '@game/lib/transition';
 import { MgWipe } from '../script/shell/mgscene/ui';
 import { TAKEOFF } from '../script/shell/plaza/balloon';
 import { SEC as RESULT_SEC } from '../script/shell/mgresult/logic';
@@ -265,7 +265,7 @@ console.log('8) DOM 어댑터(가짜 document) — opacity·visibility·backgrou
   };
   const hadDoc = 'document' in g;
   g.document = { createElement: () => mk() };
-  const { DomWipe } = await import('../script/lib/transition-dom');
+  const { DomWipe } = await import('@game/lib/transition-dom');
   const parent = mk() as unknown as HTMLElement;
   const d = new DomWipe({ parent });
   const s = d.el.style as unknown as Record<string, string>;
@@ -299,11 +299,11 @@ console.log('8) DOM 어댑터(가짜 document) — opacity·visibility·backgrou
 
 console.log('9) 코어 import 0 · 어댑터는 코어만');
 {
-  const core = fs.readFileSync(path.join(WEB, 'script/lib/transition/index.ts'), 'utf8');
+  const core = fs.readFileSync(path.join(WEB, 'script/game/lib/transition/index.ts'), 'utf8');
   const imps = [...core.matchAll(/(?:^|\n)\s*(?:import|export)[^'"\n]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)|require\(/g)];
   eq(imps.length, 0, '코어 lib/transition import 0');
   ok(!/\b(document|window|HTMLElement|requestAnimationFrame|performance)\b/.test(core.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')), '코어에 DOM·전역 시계 이름 없음(시계는 주입)');
-  const dom = fs.readFileSync(path.join(WEB, 'script/lib/transition-dom/index.ts'), 'utf8');
+  const dom = fs.readFileSync(path.join(WEB, 'script/game/lib/transition-dom/index.ts'), 'utf8');
   const di = [...dom.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]/g)].map((m) => m[1]);
   eq(di, ['../transition'], 'DOM 어댑터 import = 코어만');
   ok(!/transition\s*:|transitionDuration|@keyframes|animation\s*:/.test(dom), 'DOM 어댑터는 CSS transition·animation 을 쓰지 않음');

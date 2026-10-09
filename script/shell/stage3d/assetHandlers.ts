@@ -11,8 +11,8 @@
  */
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import type { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
-import { bytesHandler, jsonHandler, type AssetHandler, type AssetManagerApi } from '../../lib/assetcore';
-import { gltfHandler, managedTextureLoader, textureHandler } from '../../lib/assetcore-three';
+import { bytesHandler, jsonHandler, type AssetHandler, type AssetManagerApi } from '@game/lib/assetcore';
+import { gltfHandler, managedTextureLoader, textureHandler } from '@game/lib/assetcore-three';
 import { assetMode, createGltfLoader, ktx2Loader, loadTexture, loadUiImage } from './assetLoader';
 
 export const KIND_GLTF = 'gltf';

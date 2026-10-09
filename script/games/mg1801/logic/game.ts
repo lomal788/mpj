@@ -21,11 +21,11 @@
  * - 리믹스 BGM(SQ_BGM_RC_REMIX)의 L0=1 시점은 mg18xx A·C 와 같은 "시작 2박 뒤"로 둔다 [추정].
  * - 원본 결과 점수판(FUN_7100448610)을 시작한 프레임을 state.resultPanelFrame 에 남기고, 점수판 람다가 끝날 때(RESULT_PANEL_FRAMES 뒤) done.
  */
-import { F } from '../../../core/fmath';
-import { Pads, type PadInput } from '../../../core/pad';
-import type { RandModule } from '../../../core/rng';
+import { F } from '@game/core/fmath';
+import { Pads, type PadInput } from '@game/core/pad';
+import type { RandModule } from '@game/core/rng';
 import type { GameLogic, GameSetup } from '../../../game';
-import { CLOSED, CLOSING, OPENING, type Transition } from '../../../lib/transition';
+import { CLOSED, CLOSING, OPENING, type Transition } from '@game/lib/transition';
 import type { MgPlaySettings, MgSceneContext } from '../../../shell/mgscene';
 import { type RmConfig, type RmOptions, resolveRmConfig } from '../../rhythm/gameWork';
 import { RmMgGame } from '../../rhythm/mgGame';

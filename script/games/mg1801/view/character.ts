@@ -38,8 +38,8 @@
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
-import { characterDefaults, EyeLook, HeadLook, headInput } from '../../../lib/character';
-import { HeadView } from '../../../lib/character-three';
+import { characterDefaults, EyeLook, HeadLook, headInput } from '@game/lib/character';
+import { HeadView } from '@game/lib/character-three';
 import { loadTexture } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 

@@ -16,8 +16,8 @@
  *   (env = 모듈·관리자·프레임 tick·에셋 루트) — 기본 env 는 DOM·관리자·광장 코드를 동적 import 한다(진입 청크를 키우지 않게, 노드에서 이 파일을 읽을 수 있게).
  */
 import * as THREE from 'three';
-import { P0, P2, type AssetManagerApi } from '../lib/assetcore';
-import { textureBytes, type UploadRecord } from '../lib/assetcore-three';
+import { P0, P2, type AssetManagerApi } from '@game/lib/assetcore';
+import { textureBytes, type UploadRecord } from '@game/lib/assetcore-three';
 import type { PlazaWorld } from '../shell/plaza/types';
 import type { StageGpu } from '../shell/stage3d';
 import { ASSET_MODE, ASSETS } from '../env';

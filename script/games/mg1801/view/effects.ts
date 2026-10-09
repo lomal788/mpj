@@ -53,7 +53,7 @@
  * 위 1~11 근사는 RULES_WEB(이전 웹 그대로, 골든 같음)이고, 기본은 RULES_ORIGINAL(사용자 결정 — 항목별 차이는 08 §14.5 원본 스위치 표)이다.
  */
 import type * as THREE from 'three';
-import type { EffectRules } from '../../../lib/effect';
+import type { EffectRules } from '@game/lib/effect';
 import type { Assets } from '../../../view/assets';
 import { MpjEffects, assetsLoader } from '../../../view/effect';
 

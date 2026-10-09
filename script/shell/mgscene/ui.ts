@@ -5,7 +5,7 @@
  * 모든 애니를 speed 만큼 진행한다 — 어디서 시작했든(흐름 처리기·틱 판정) 길이 N 의 애니는 시작 틱부터 N 틱 진행한 뒤의 틱에서 끝으로 본다
  * (엔진 애니 슬롯 갱신과 컴포넌트 틱의 순서 미판독, §12.11).
  */
-import { Transition, WIPE_WHITE } from '../../lib/transition';
+import { Transition, WIPE_WHITE } from '@game/lib/transition';
 import type { MgSceneEvent, UiAnimTable, UiPaneBox } from './types';
 
 const F = Math.fround;

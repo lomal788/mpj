@@ -5,7 +5,7 @@
  */
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
-import { NPAD, STICK_MAX, type PadInput } from '../core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { MgmSound, MgmView } from '../shell/mgmcommon';
 import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from '../shell/partyrule';
 import type { PadSource } from '../view/input';

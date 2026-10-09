@@ -25,7 +25,7 @@ import {
   type AssetHandler,
   type FetchLike,
   type SchedTask,
-} from '../script/lib/assetcore';
+} from '../script/game/lib/assetcore';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;
@@ -315,12 +315,12 @@ console.log('8. 3층 import 규칙(loader_manager.md §11.1)');
     }
     return out;
   };
-  const core = join(WEB, 'script/lib/assetcore');
+  const core = join(WEB, 'script/game/lib/assetcore');
   const coreImports = imports(core);
   eq(coreImports, [], '코어 폴더 import 0');
   const coreSrc = readdirSync(core).map((f) => readFileSync(join(core, f), 'utf8')).join('\n');
   ok(!/\b(window|document|performance|requestAnimationFrame|HTMLElement|Response|globalThis)\b/.test(coreSrc.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '')), '코어가 DOM·전역을 직접 쓰지 않음(주입만)');
-  const adapter = join(WEB, 'script/lib/assetcore-three');
+  const adapter = join(WEB, 'script/game/lib/assetcore-three');
   const bad = imports(adapter).filter((x) => x.spec !== 'three' && resolve(join(WEB, dirname(x.file)), x.spec) !== core && !resolve(join(WEB, dirname(x.file)), x.spec).startsWith(core + '/') && !resolve(join(WEB, dirname(x.file)), x.spec).startsWith(core + '\\'));
   eq(bad, [], '어댑터 폴더 import ⊂ {three, 코어}');
 }

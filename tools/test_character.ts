@@ -44,9 +44,9 @@ import {
   type FtrgSource,
   type MotionInfo,
   type MotionRules,
-} from '../script/lib/character';
+} from '@game/lib/character';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
-import { CharacterView, wrap, type MotionDataTable } from '../script/lib/character-three';
+import { CharacterView, wrap, type MotionDataTable } from '@game/lib/character-three';
 import { GOLDEN_SHA256, GOLDEN_SHA256_WEB, install, parseGlb, runGolden, sha256 } from './character_golden';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -486,9 +486,9 @@ console.log('11) import 경계·할당 0');
 {
   const read = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8');
   const imps = (s: string): string[] => [...s.matchAll(/^import[^'"]*['"]([^'"]+)['"]/gm)].map((m) => m[1]);
-  eq(imps(read('script/lib/character/index.ts')), [], '코어 import 0');
-  ok(!/\b(THREE|document|window)\b/.test(read('script/lib/character/index.ts').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')), '코어에 three·DOM 이름 없음');
-  const ad = [...new Set(imps(read('script/lib/character-three/index.ts')))].sort();
+  eq(imps(read('script/game/lib/character/index.ts')), [], '코어 import 0');
+  ok(!/\b(THREE|document|window)\b/.test(read('script/game/lib/character/index.ts').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '')), '코어에 three·DOM 이름 없음');
+  const ad = [...new Set(imps(read('script/game/lib/character-three/index.ts')))].sort();
   eq(ad, ['../character', 'three', 'three/examples/jsm/loaders/GLTFLoader.js'], 'three 어댑터 = three + 코어만');
   const base = json<{ sources: Record<string, FtrgSource> }>('chara/ftrg_base.json').sources;
   const f = json<{ model: string; sources: Record<string, FtrgSource> }>('chara/pc02/ftrg.json');

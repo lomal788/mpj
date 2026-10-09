@@ -7,8 +7,8 @@
  * - appBgm(): 페이지 흐름 전체에 하나인 BGM 채널(공유 AudioContext) — 화면을 바꿔도 같은 라벨이면 끊기지 않음. 곡 = assets/common/sound/bgm.json,
  *   화면 규칙 = screenBgm.ts(docs/engine/04_sound.md §12.14).
  */
-import { P1, P2 } from '../lib/assetcore';
-import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, sameLoop, validLoop, type BgmContext, type BgmLoaded, type BgmPlan, type BgmSource } from '../lib/bgmstream';
+import { P1, P2 } from '@game/lib/assetcore';
+import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, sameLoop, validLoop, type BgmContext, type BgmLoaded, type BgmPlan, type BgmSource } from '@game/lib/bgmstream';
 import { distStream } from '../shell/stage3d/assetLoader';
 import { ASSETS } from '../env';
 import { appAssets, assetKeyOf } from './appAssets';

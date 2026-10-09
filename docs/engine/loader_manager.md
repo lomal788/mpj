@@ -92,7 +92,7 @@
 | R9 | 영구 캐시(Cache Storage) + 해시 파일 이름, 개발(src) 모드는 캐시 우회 |
 | R10 | 관리자 자체는 매 프레임 할당 0 |
 | R11 | 통계(개발 페이지·시험) |
-| R12 | 셸 경계 유지: 셸은 관리자 **인터페이스**만 받는다. 정정(구현): 관리자 코어는 stage3d 가 아니라 **import 0 인 `script/lib/assetcore/`**, three 어댑터는 `script/lib/assetcore-three/`(three·코어만) — 두 폴더는 어디서나 import 가능(mgm_common.md §9.1 예외, §11.1) |
+| R12 | 셸 경계 유지: 셸은 관리자 **인터페이스**만 받는다. 정정(구현): 관리자 코어는 stage3d 가 아니라 **import 0 인 `script/game/lib/assetcore/`**, three 어댑터는 `script/game/lib/assetcore-three/`(three·코어만) — 두 폴더는 어디서나 import 가능(mgm_common.md §9.1 예외, §11.1) |
 
 ---
 
@@ -436,8 +436,8 @@ interface AssetManager {
 
 | 층 | 위치 | import 허용 | 내용 |
 |---|---|---|---|
-| 1 코어 | `script/lib/assetcore/` | **없음**(외부 라이브러리·three·프로젝트 파일·DOM 타입 모두 금지) | 논리 키 캐시(Promise 공유·중복 제거), P0~P3 링 큐(올리기), 동시 받기·풀기 수 제한, 단계 상태, 참조 수·owner release, 바이트·GPU 예산 숫자·LRU 후보, 묶음, 통계 숫자, 프레임 예산 스케줄러, json·bytes 처리기 |
-| 2 three 어댑터 | `script/lib/assetcore-three/` | `three` 와 코어만 | 프레임 예산 GPU 준비(`initTexture`·`compileAsync`·1×1 렌더 업로드)와 "준비 끝에만 보이기", 일반 glTF 처리기(로더 인스턴스 주입), 일반 텍스처 처리기(읽기 함수 주입), glTF 안 텍스처를 관리자로 돌리는 로더 대리 객체 |
+| 1 코어 | `script/game/lib/assetcore/` | **없음**(외부 라이브러리·three·프로젝트 파일·DOM 타입 모두 금지) | 논리 키 캐시(Promise 공유·중복 제거), P0~P3 링 큐(올리기), 동시 받기·풀기 수 제한, 단계 상태, 참조 수·owner release, 바이트·GPU 예산 숫자·LRU 후보, 묶음, 통계 숫자, 프레임 예산 스케줄러, json·bytes 처리기 |
+| 2 three 어댑터 | `script/game/lib/assetcore-three/` | `three` 와 코어만 | 프레임 예산 GPU 준비(`initTexture`·`compileAsync`·1×1 렌더 업로드)와 "준비 끝에만 보이기", 일반 glTF 처리기(로더 인스턴스 주입), 일반 텍스처 처리기(읽기 함수 주입), glTF 안 텍스처를 관리자로 돌리는 로더 대리 객체 |
 | 3 mpj 전용 | `script/shell/stage3d/assetHandlers.ts`, `script/view/appAssets.ts`, stage3d·plaza 연결, `tools/plaza_first.ts` | 프로젝트 의존 허용 | `assetLoader.ts` 의 압축/원본 모드·KTX2·meshopt·소리, 앱 관리자 인스턴스(키 → URL resolver), stage3d 연결, 광장 묶음·`plaza_first.json` |
 
 - 코어가 바깥에서 받는 것(생성 때 주입): `now()`(시계), `tick(fn)`(rAF), `io.fetch(url)`(받기 — `ok·status·arrayBuffer()·json()·text()` 만 쓰는 작은 인터페이스), `resolve(key, kind)`(논리 키 → URL). 저장소(Cache Storage)는 6단계가 서비스 워커로 하므로 코어에 두지 않는다.
@@ -501,8 +501,8 @@ mgr.stats                                               // 숫자 필드만(요�
 
 | 층 | 파일 | 내용 |
 |---|---|---|
-| 1 코어 | `script/lib/assetcore/index.ts`(새, **import 0**) | `createAssetManager`·`AssetManager`(`AssetManagerApi`)·`FrameScheduler`·`Ring`·`jsonHandler`·`bytesHandler`·`textHandler`, 상수 P0~P3·ST_*·RUN_* |
-| 2 three 어댑터 | `script/lib/assetcore-three/index.ts`(새, import = `three` + 코어) | `ScenePreparer`·`PrepJob`(§11.3), `gltfHandler(로더)`, `textureHandler(읽기 함수)`, `managedTextureLoader`(glb 안 텍스처 대리), `textureBytes` |
+| 1 코어 | `script/game/lib/assetcore/index.ts`(새, **import 0**) | `createAssetManager`·`AssetManager`(`AssetManagerApi`)·`FrameScheduler`·`Ring`·`jsonHandler`·`bytesHandler`·`textHandler`, 상수 P0~P3·ST_*·RUN_* |
+| 2 three 어댑터 | `script/game/lib/assetcore-three/index.ts`(새, import = `three` + 코어) | `ScenePreparer`·`PrepJob`(§11.3), `gltfHandler(로더)`, `textureHandler(읽기 함수)`, `managedTextureLoader`(glb 안 텍스처 대리), `textureBytes` |
 | 3 mpj | `script/shell/stage3d/assetHandlers.ts`(새) | assetLoader 의 createGltfLoader·loadTexture·ktx2Loader 를 처리기로(압축 모드 glb 안 KTX2 → 관리자), meshopt 워커 2 |
 | 3 mpj | `script/view/appAssets.ts`(새) | 앱 인스턴스(`globalThis.__mpjAssetManager`), 키 = assets 기준 소스 경로, resolver = ASSETS + 키, `assetKeyOf(url)` |
 | 3 mpj | `stage3d/stage.ts`·`material.ts`·`types.ts`·`index.ts`, `assetLoader.ts`(distUrl·distReady — [loader-6] 계약) | `StageLoader` 연결(manifest·fmab json, glb = 무대 템플릿 복제, MaterialSetup 텍스처 끼움점), `prepareModel`·`warmup` 쪼개기·`budget`·`unpreparedVisible` |

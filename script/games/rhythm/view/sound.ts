@@ -43,11 +43,11 @@
  *   결과: 출력 리스너가 여럿이라 팬은 계산하지 않고(가운데), 볼륨은 리스너 최댓값이라 무대(원점 50 안)의 소리는 1 이 된다.
  */
 import type * as THREE from 'three';
-import type { V3 } from '../../../core/fmath';
+import type { V3 } from '@game/core/fmath';
 import type { SoundSnapshot } from '../../../game';
 import type { Assets } from '../../../view/assets';
-import { SoundCatalog, soundDefaults, type SoundDef } from '../../../lib/sound';
-import type { BufferPayload, Voice } from '../../../lib/sound-webaudio';
+import { SoundCatalog, soundDefaults, type SoundDef } from '@game/lib/sound';
+import type { BufferPayload, Voice } from '@game/lib/sound-webaudio';
 import type { AudioOut, Bus, Listener3d, Sound3dInfo } from '../../../view/audio';
 import { bgmSource, type AppBgmSource } from '../../../view/bgm';
 import { SeqEngine, type SeqData } from '../../../view/seq';

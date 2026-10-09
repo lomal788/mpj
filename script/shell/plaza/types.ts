@@ -7,7 +7,7 @@
 import type * as THREE from 'three';
 import type { ClipHandle, ClipOptions, Collider, SocketPose, Stage3D, StageModel } from '../stage3d';
 
-/** 버튼 비트(script/core/pad.ts NPAD 와 같은 값) */
+/** 버튼 비트(script/game/core/pad.ts NPAD 와 같은 값) */
 export const PLAZA_BTN = {
   A: 1 << 0,
   B: 1 << 1,

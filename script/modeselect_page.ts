@@ -7,7 +7,7 @@ import { shellSound } from './view/sound';
 import { appFlow } from './view/appFlow';
 import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
-import { NPAD, STICK_MAX, type PadInput } from './core/pad';
+import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from './shell/modeselect';
 import type { PadSource } from './view/input';
 

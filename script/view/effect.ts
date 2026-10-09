@@ -9,9 +9,9 @@
  * 원본 스위치: 기본 = 코어 effectDefaults(원본 규칙, 2026-10-09 사용자 결정). original:false 면 RULES_WEB.
  */
 import * as THREE from 'three';
-import { EffectCore, RULES_ORIGINAL, RULES_WEB, Xorshift128, effectDefaults, type EffectRules, type MatrixSource } from '../lib/effect';
-import { EffectView, type EffectLoader } from '../lib/effect-three';
-import type { CharacterEvent } from '../lib/character';
+import { EffectCore, RULES_ORIGINAL, RULES_WEB, Xorshift128, effectDefaults, type EffectRules, type MatrixSource } from '@game/lib/effect';
+import { EffectView, type EffectLoader } from '@game/lib/effect-three';
+import type { CharacterEvent } from '@game/lib/character';
 import { loadTexture } from '../shell/stage3d/assetLoader';
 import type { Assets } from './assets';
 

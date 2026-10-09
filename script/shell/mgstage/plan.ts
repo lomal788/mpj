@@ -3,7 +3,7 @@
  * P0 = 첫 카메라 0 프레임에 보이는 배치(+ 부착 부모) — 이것만 기다린다. P1 = 첫 카메라 다른 프레임에 보이는 것, P2 = 그 밖 보이는 배치(뒤에서 받기),
  * 숨김 배치·배치 밖 모델 = P3(게임이 부를 때). 순서 = 등급, 같은 등급은 표 순서.
  */
-import { P0, P1, P2, P3 } from '../../lib/assetcore';
+import { P0, P1, P2, P3 } from '@game/lib/assetcore';
 import type { MgExt, MgLayoutEntry, MgManifest } from './types';
 
 /** 'a/b/../c/./d' → 'a/c/d' (공용 폴더를 가리키는 ../ 경로를 관리자 키로) */

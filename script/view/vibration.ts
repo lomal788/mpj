@@ -3,8 +3,8 @@
  * 설계: docs/engine/05_ui_input.md §11. 규칙 = vibDefaults.rules(기본 원본). 장면이 끝나면 stopAllVibration(04 §13.12.1).
  * 셸 자리 이름(proceed·error·rule 등 원본 이름이 빠진 것)은 같은 사건의 SE 와 짝으로 고른다: SQ_SE_SYS_<X> → bv_vib_sys_<x> [추정 §11.1].
  */
-import { P1 } from '../lib/assetcore';
-import { VibMixer, vibDef, vibDefaults, vibLength, vibSegments, type VibSegment, type VibTable } from '../lib/vibration';
+import { P1 } from '@game/lib/assetcore';
+import { VibMixer, vibDef, vibDefaults, vibLength, vibSegments, type VibSegment, type VibTable } from '@game/lib/vibration';
 import { appAssets } from './appAssets';
 import type { PadSource } from './input';
 

@@ -7,7 +7,7 @@
  */
 import * as THREE from 'three';
 import type { Spec } from '../charselect';
-import type { MpatRow } from '../../lib/character';
+import type { MpatRow } from '@game/lib/character';
 import { mpatTables, Preview3D } from '../charselect/preview3d';
 import type { ClipHandle, StageModel } from '../stage3d';
 import { createGltfLoader } from '../stage3d/assetLoader';

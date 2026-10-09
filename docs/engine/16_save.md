@@ -56,8 +56,8 @@
 ## 3. 웹 계층·경계 [설계]
 
 ```
-script/lib/save                (코어, import 0) 섹션 등록·버전/마이그레이션·요청 수명·변경 감지·직렬화. 게임을 모른다
-script/lib/save-localstorage   (어댑터) localStorage 키 하나·모든 접근 try/catch·메모리 대체. lib/save 의 타입만 import
+script/game/lib/save                (코어, import 0) 섹션 등록·버전/마이그레이션·요청 수명·변경 감지·직렬화. 게임을 모른다
+script/game/lib/save-localstorage   (어댑터) localStorage 키 하나·모든 접근 try/catch·메모리 대체. lib/save 의 타입만 import
 script/view/save.ts            (mpj 연결) mpj 섹션 정의·옛 키 마이그레이션·앱 싱글턴 appSave()·MgmSave 연결·메시지 속도 원천·광장 저장·한 판 저장 고리
 ```
 

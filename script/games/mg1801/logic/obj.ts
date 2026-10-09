@@ -7,7 +7,7 @@
  * 외곽선 안내는 원본 UpdateOutlineOnOff @0x7100008e40 대로 레인 점유(World.outlinePlace = sm_outline_place)를 따진다.
  * 켜는 조건(Entry 의 guide)은 ObjectMan 이 OBJ1 'L' && RmGameWork::IsOutLineGuideDispEnable(모드 < 2)로 정한다.
  */
-import { F, type V3, v3 } from '../../../core/fmath';
+import { F, type V3, v3 } from '@game/core/fmath';
 import type { ObjView } from '../state';
 import { MAX_CUT_COUNTS, OFFSET_X, SE_L_LABEL, SE_S_LABEL } from './data';
 import type { World } from './world';

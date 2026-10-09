@@ -6,7 +6,7 @@
  */
 import './assetMode';
 import { ASSETS } from '../env';
-import { createAssetManager, type AssetManager } from '../lib/assetcore';
+import { createAssetManager, type AssetManager } from '@game/lib/assetcore';
 import { createMpjHandlers } from '../shell/stage3d/assetHandlers';
 import { assetKeyFrom } from './assetKey';
 

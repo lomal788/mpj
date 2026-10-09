@@ -9,7 +9,7 @@
  *
  *   npx tsx tools/test_mg1801.ts
  */
-import { NPAD, emptyPad, type PadInput } from '../script/core/pad';
+import { NPAD, emptyPad, type PadInput } from '@game/core/pad';
 import type { GameSetup, SoundSnapshot } from '../script/game';
 import { mg1801Game, mg1801Options } from '../script/games/mg1801/index';
 import { type Mg1801Game, calcTotalPoint, endingBgmName, gameBgmName, interEndBgmName, type Mg1801Options } from '../script/games/mg1801/logic/game';
@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { fmabRepeatBad } from './anim_repeat';
 import { Mg1801Harness, NodeMgRun } from './mg_node_host';
 import { determinismCheck, staticLogicCheck } from './mg_determinism';
-import { WIPE_WHITE } from '../script/lib/transition';
+import { WIPE_WHITE } from '@game/lib/transition';
 
 let bad = 0;
 const check = (name: string, ok: boolean, info = ''): void => {
@@ -557,7 +557,7 @@ function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801H
   const d = determinismCheck(() => new Mg1801Harness(setup([false, false, true, true]), { mode: 2 }), rec);
   check('결정성: 같은 seed·입력 기록(패드·acc·사운드 관측 지연 2)으로 두 번 → 매 틱 상태 해시 같음(끝까지)', d.ok && d.ended, `${d.ticks} 틱 ${d.firstDiff}`);
   const root = fileURLToPath(new URL('../script/', import.meta.url));
-  const st = staticLogicCheck(['games/mg1801/logic', 'games/mg1801/state.ts', 'games/rhythm', 'shell/mgscene', 'core'].map((x) => root + x));
+  const st = staticLogicCheck(['games/mg1801/logic', 'games/mg1801/state.ts', 'games/rhythm', 'shell/mgscene', 'game/core'].map((x) => root + x));
   check(`정적 검사: 로직 ${st.files} 파일에 Math.random·performance.now·Date·getGamepads·rAF·DOM 없음`, st.bad.length === 0 && st.files > 30, st.bad.join(' '));
 }
 

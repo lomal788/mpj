@@ -2,9 +2,9 @@
  * 한 판의 공유 상태 — 원본 MaintainProduct 인터페이스(GetScene/GetPlayerMan/GetObjectMan/GetStageMan)와
  * 엔진 모듈(MainModule·RandModule·SoundModule)을 묶은 자리. 제품들이 서로를 여기로 찾는다.
  */
-import type { V3 } from '../../../core/fmath';
-import { FRAME_DT } from '../../../core/clock';
-import type { RandModule } from '../../../core/rng';
+import type { V3 } from '@game/core/fmath';
+import { FRAME_DT } from '@game/core/clock';
+import type { RandModule } from '@game/core/rng';
 import type { RhythmClock } from '../../rhythm/clock';
 import type { RmGameWork } from '../../rhythm/gameWork';
 import type { RmSoundMan } from '../../rhythm/soundMan';

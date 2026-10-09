@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BexRandModule } from '../script/core/rng';
+import { BexRandModule } from '@game/core/rng';
 import { createDummyGame } from '../script/games/mgdummy/logic';
 import {
   localGate,
@@ -32,7 +32,7 @@ import {
   type ResultStageInput,
 } from '../script/shell/mgscene';
 import { freePlayJudgeType, minigameResultEntry, type MgGame, type MgSceneContext } from '../script/shell/mgscene';
-import { WIPE_WHITE } from '../script/lib/transition';
+import { WIPE_WHITE } from '@game/lib/transition';
 import type { GameLogic, GameSetup } from '../script/game';
 import { determinismCheck, staticLogicCheck } from './mg_determinism';
 import { NodeMgRun } from './mg_node_host';
@@ -380,7 +380,7 @@ let finishTicks = 0;
   const bad: string[] = [];
   for (const f of fs.readdirSync(dir)) {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');
-    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '../../lib/transition' && m[1] !== '../../lib/splitscreen' && m[1] !== '../../lib/sound') bad.push(`${f}: ${m[1]}`);
+    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '@game/lib/transition' && m[1] !== '@game/lib/splitscreen' && m[1] !== '@game/lib/sound') bad.push(`${f}: ${m[1]}`);
   }
   ok(bad.length === 0, 'shell/mgscene import 0(같은 폴더 + import 0 공용 코어 lib/transition·lib/splitscreen, mgm_common §9.1 lib 예외)', bad.join(' '));
   const pre = mgscenePrefetch(ui);
@@ -446,7 +446,7 @@ let finishTicks = 0;
   );
   ok(d.ok && d.ended, '결정성: 더미 게임 같은 seed·입력 기록 두 번 → 매 틱 상태 해시 같음(끝까지)', `${d.ticks} 틱 ${d.firstDiff}`);
   const root = path.join(WEB, 'script');
-  const st = staticLogicCheck([path.join(root, 'shell/mgscene'), path.join(root, 'games/mgdummy/logic.ts'), path.join(root, 'lib/transition/index.ts'), path.join(root, 'lib/splitscreen'), path.join(root, 'lib/sound')]);
+  const st = staticLogicCheck([path.join(root, 'shell/mgscene'), path.join(root, 'games/mgdummy/logic.ts'), path.join(root, 'game/lib/transition/index.ts'), path.join(root, 'game/lib/splitscreen'), path.join(root, 'game/lib/sound')]);
   ok(st.bad.length === 0 && st.files >= 10, `정적 검사: 틀·더미 로직 ${st.files} 파일에 Math.random·벽시계·직접 입력·DOM 없음`, st.bad.join(' '));
 }
 

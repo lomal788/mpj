@@ -3,7 +3,7 @@
  * 설계: docs/engine/loader_manager.md §13.2. 묶음 이름의 키 목록은 flowCatalog.ts, 표를 돌리는 쪽은 flow.ts.
  * next = 바로 다음 화면(데이터 절약·느린 망 lite 에서도 받음). '{v}' = 상태 값, '{chars}' = 진입 때 넘긴 캐릭터마다.
  */
-import { P2, P3 } from '../lib/assetcore';
+import { P2, P3 } from '@game/lib/assetcore';
 
 export type FlowScreen = 'boot' | 'setplayer' | 'charselect' | 'plaza' | 'modeselect' | 'mgmet' | 'mgm01' | 'game';
 

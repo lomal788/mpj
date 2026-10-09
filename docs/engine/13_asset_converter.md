@@ -204,7 +204,7 @@ assets/<분류>/<이름>/
 
 ### 7.1 경계
 
-셸 경계(mgm_common.md §9.1): 같은 폴더·`three`·`../stage3d`·`../plaza`(attachToSocket)·`../../lib/assetcore`(상수) 만. `script/core·games·view` 금지. 로더 코어(`lib/assetcore`)는 import 0 그대로.
+셸 경계(mgm_common.md §9.1): 같은 폴더·`three`·`../stage3d`·`../plaza`(attachToSocket)·`../../lib/assetcore`(상수) 만. `script/game/core·games·view` 금지. 로더 코어(`lib/assetcore`)는 import 0 그대로.
 
 ### 7.2 API
 

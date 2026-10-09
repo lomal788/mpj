@@ -5,8 +5,8 @@
  * - 메시지 속도: SystemData+0x74 를 모든 MessageWindow 의 원천으로(setMessageSpeedSource). 가이드 setter·SaveRequestFiber 대응 함수.
  * 계약·원본 근거: docs/engine/16_save.md. createMpjSave 는 DOM 없이 돈다(노드 시험 tools/test_save.ts).
  */
-import { saveRequestFiber, SaveCore, type SaveSection, type SaveSections, type SaveStorage } from '../lib/save';
-import { LocalStorageSave } from '../lib/save-localstorage';
+import { saveRequestFiber, SaveCore, type SaveSection, type SaveSections, type SaveStorage } from '@game/lib/save';
+import { LocalStorageSave } from '@game/lib/save-localstorage';
 import { MemorySave, MG_ID_COUNT, type MinigameSaveEntry } from '../shell/mgmcommon/contracts';
 import { setMessageSpeedSource } from '../shell/mgmcommon/messageWindow';
 import { commitPlayCount } from '../shell/mgm01/playResult';

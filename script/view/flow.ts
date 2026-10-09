@@ -6,7 +6,7 @@
  * 묶음 키 목록은 주입한 catalog 가 명세 json 을 관리자 json(그 묶음 등급)으로 읽어 만든다. 관리자 밖 의존 없음(노드 시험 tools/test_prefetch.ts).
  * 사건(on): enter·predict·ready — [plaza-gl] 광장 GPU 미리 준비가 ready('plaza:p0') 에 맞춰 시작한다(§13.6).
  */
-import { P0, type AssetManagerApi } from '../lib/assetcore';
+import { P0, type AssetManagerApi } from '@game/lib/assetcore';
 import { FLOW_TABLE, type FlowEntry, type FlowScreen } from './flowTable';
 
 export type FlowKeys = readonly (readonly [key: string, kind: string])[];

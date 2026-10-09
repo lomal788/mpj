@@ -1,6 +1,6 @@
 /**
  * 캐릭터 선택 화면 컨트롤러 — 상태기계(state.ts) 사건을 명세 레이아웃(scene2d)·3D 카드(preview3d)·어댑터(소리·진동)로 옮긴다.
- * 레이아웃 조립·그리기 순서·문구는 docs/shell/charselect.md 3.1·5·6·7 [판독·데이터]. 엔진층(script/core·games·view)을 쓰지 않는다.
+ * 레이아웃 조립·그리기 순서·문구는 docs/shell/charselect.md 3.1·5·6·7 [판독·데이터]. 엔진층(script/game/core·games·view)을 쓰지 않는다.
  * 3D 미리 받기 등급(커서 → 주변 칸 → 나머지)은 charaTiers — docs/engine/loader_manager.md §13.4.
  */
 import * as THREE from 'three';

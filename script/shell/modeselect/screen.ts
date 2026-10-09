@@ -1,7 +1,7 @@
 /**
  * 모드 선택(맵 메뉴) 화면 컨트롤러 — 상태기계(state.ts) 사건을 명세 레이아웃·어댑터(소리·진동·알림)로 옮긴다.
  * 레이아웃 재생·그리기는 캐릭터 선택 모듈의 scene2d·render2d 를 그대로 import 해서 쓴다(규칙: docs/shell/charselect.md 6절).
- * 이 화면 고유 배치·흐름은 docs/shell/modeselect.md 4~6·9절. 엔진층(script/core·games·view)을 쓰지 않는다.
+ * 이 화면 고유 배치·흐름은 docs/shell/modeselect.md 4~6·9절. 엔진층(script/game/core·games·view)을 쓰지 않는다.
  */
 import * as THREE from 'three';
 import { nodeMatrix, Render2D } from '../charselect/render2d';

@@ -1,4 +1,4 @@
-"""분할 화면 분할선(web/script/lib/splitscreen·splitscreen-dom) 에셋 → web/assets/splitscreen/lines.json + 공용 그림.
+"""분할 화면 분할선(web/script/game/lib/splitscreen·splitscreen-dom) 에셋 → web/assets/splitscreen/lines.json + 공용 그림.
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/splitscreen_web_assets.py
 

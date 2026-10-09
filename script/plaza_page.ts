@@ -6,9 +6,9 @@
  * 캔버스·렌더러는 앱 수명 광장 렌더러(view/plazaGl.ts, §14) — 들어갈 때 붙이고(앞 화면에서 미리 만든 world 가 있으면 넘겨받음), 나갈 때 프로그램 고정 뒤
  * 부품·무대 dispose → 떼기. ?plazagl=0 이면 이전처럼 이 페이지가 캔버스를 만들고 무대가 렌더러를 만든다(UI 는 어느 쪽이든 무대 렌더러 하나).
  */
-import { STICK_MAX, type PadInput } from './core/pad';
+import { STICK_MAX, type PadInput } from '@game/core/pad';
 import { ASSET_MODE, ASSETS } from './env';
-import { P3 } from './lib/assetcore';
+import { P3 } from '@game/lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
 import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from './shell/plaza';
 import { parseDecoParam } from './shell/plaza/deco';

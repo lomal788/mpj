@@ -13,7 +13,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { P0, P1, P2, P3 } from '../script/lib/assetcore';
+import { P0, P1, P2, P3 } from '@game/lib/assetcore';
 import { applyFsnb, MgCamera, mgStageKey, mgStageP0Paths, mgStagePlan, normPath, parseFsnb, CAMERA_MIN_NEAR, type MgManifest } from '../script/shell/mgstage';
 import { graphSource, type GraphDef } from '../script/shell/stage3d/graph';
 import { classify, isTex3d } from './assets_tex';
@@ -273,12 +273,12 @@ console.log('9. 압축 분류(converted.json)');
 console.log('10. import 경계');
 {
   const dir = join(WEB, 'script', 'shell', 'mgstage');
-  const allow = /^(three|\.\/[a-z]+|\.\.\/stage3d|\.\.\/stage3d\/assetHandlers|\.\.\/plaza\/world|\.\.\/\.\.\/lib\/assetcore|\.\.\/\.\.\/lib\/assetcore-three|\.\.\/\.\.\/lib\/splitscreen|\.\.\/\.\.\/lib\/splitscreen-three)$/;
+  const allow = /^(three|\.\/[a-z]+|\.\.\/stage3d|\.\.\/stage3d\/assetHandlers|\.\.\/plaza\/world|@game\/lib\/assetcore|@game\/lib\/assetcore-three|@game\/lib\/splitscreen|@game\/lib\/splitscreen-three)$/;
   for (const fn of readdirSync(dir)) {
     const src = readFileSync(join(dir, fn), 'utf8');
     for (const mm of src.matchAll(/from '([^']+)'/g)) ok(allow.test(mm[1]), `${fn}: import '${mm[1]}'`);
   }
-  const core = readdirSync(join(WEB, 'script', 'lib', 'assetcore')).map((f) => readFileSync(join(WEB, 'script', 'lib', 'assetcore', f), 'utf8'));
+  const core = readdirSync(join(WEB, 'script', 'game', 'lib', 'assetcore')).map((f) => readFileSync(join(WEB, 'script', 'game', 'lib', 'assetcore', f), 'utf8'));
   ok(core.every((s) => !/^import .* from '/m.test(s)), '로더 코어(lib/assetcore) import 0');
 }
 

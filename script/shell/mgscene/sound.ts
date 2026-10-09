@@ -3,7 +3,7 @@
  * 판독: docs/shell/minigame_scene.md §12.1 (mgscene_web1.c·mgscene_web2.c: FUN_71001e4a54·4c9c·4af0·4f28·4308·559c·51e0·597c,
  * TryStartResultSound·TryStartWhistle). 실제 재생은 화면 쪽(view/mgsceneSound.ts)이 사건을 받아 한다.
  */
-import { fadeTimeSec } from '../../lib/sound';
+import { fadeTimeSec } from '@game/lib/sound';
 import type { MgPlayer, MgSceneEvent, MgSoundRow } from './types';
 
 const F = Math.fround;

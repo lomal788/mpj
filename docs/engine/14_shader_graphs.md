@@ -8,7 +8,7 @@
 
 ## 2. 공통 노드·수치 규칙
 
-[판독] 텍스처 핸들은 Material[0x10·i]의 실제 샘플러 위치로 읽는다. sass_dis.py의 @주석은 낮은 핸들에서 한 칸 밀리므로 uniform·bfsha 배치로 확인한다. f32 즉시값은 비트를 해석한다. FFMA는 곱셈+덧셈의 단일 반올림 의미로 판독한다. GLSL ES 3.00의 곱셈·덧셈이 실제 GPU에서 항상 FFMA로 합쳐지는지는 [미확정]이며 표본 오차를 별도로 검증한다. SNORM은 표본 2x−1, sRGB는 기존 텍스처 색공간을 따른다. SRT·바람·마스크·overlay·fresnel·알파·노멀 재구성은 기판독 함수를 재사용한다.
+[판독] 텍스처 핸들은 Material[0x10·i]의 실제 샘플러 위치로 읽는다. sass_dis.py의 @주석은 낮은 핸들에서 한 칸 밀리므로 uniform·bfsha 배치로 확인한다. f32 즉시값은 비트를 해석한다. FFMA는 곱셈+덧셈의 단일 반올림 의미로 판독한다. GLSL ES 3.00의 곱셈·덧셈이 실제 GPU에서 항상 FFMA로 합쳐지는지는 [미확정]이며 표본 오차를 별도로 검증한다. SNORM의 native 표본은 이미 signed이며 PNG 저장값 복원에만 2x−1을 적용한다(§30). sRGB는 기존 텍스처 색공간을 따른다. SRT·바람·마스크·overlay·fresnel·알파·노멀 재구성은 기판독 함수를 재사용한다.
 
 [미확정] 27개는 전체 옵션 튜플 기준이며 단계별 해시가 겹친다. FS 또는 VS 해시 0은 해당 단계의 그래프가 없음을 뜻한다. 표준 셰이딩 부분을 새 그래프 식으로 중복 판독하지 않는다.
 
@@ -142,9 +142,9 @@
 
 ## 9. 사용자 확인 필요
 
-- [근사] World+4 단위는 u32 프레임으로 확정. 웹 Stage60fps 누적의 원본 gate·logic scheduler·renderer lifetime/epoch 대응, env sampler filter/address/LOD는 미확정. ms로 환산하지 않는다.
-- [미확정] G01 철판 _c0 기본값, G02 Model 생산자·Mode translation, 캡처 깊이/역투영·스텐실·texture array·추가 Layer 입력은 대기36에 기록. 원본 값 대신 임의 상수를 쓰지 않는다.
-- [근사] G09 화면 viewport 역수·1픽셀 clamp의 Layer CPU 대응, ModelOpacity1·PBR/IBL/TBN은 기존/명시 근사.
+- [근사] World+4 단위는 u32 프레임으로 확정. 웹 Stage60fps 누적의 원본 gate·logic scheduler·renderer lifetime/epoch 대응, env sampler filter/address/LOD는 원본 확정(§30), 웹 대응 미지원. ms로 환산하지 않는다.
+- [미확정] G01 철판 _c0의 외부NVN 최종fetch값, G02 draw별Model·Mode instance translation, 캡처 깊이/역투영·스텐실·texture array·추가 Layer 입력은 대기36에 기록. 원본 값 대신 임의 상수를 쓰지 않는다.
+- [근사] G09 화면 viewport 역수·1픽셀 근사(원본 Layer CPU는 §31 확정), ModelOpacity1·PBR/IBL/TBN은 기존/명시 근사.
 - [근사] 표준 조명·IBL·굴절·런타임 정점 속성 생성은 기존 stage3d 수준을 유지한다. 사용자 외형 확인은 게임별 적용한 식이 확정된 뒤 항목을 적는다.
 
 ## 10. 직접 담당 판독 결과·API 한계
@@ -163,19 +163,19 @@ G05/G08/G12는 static_opt_shading_type=0의 최종 RGB이므로 baseColor에 식
 
 G05의 mul_vertex_base_color=1과 GraphDef.c0가 `_c0`를 각각 선언한다. 비동기 graph 적용 순서가 달라도 GLSL 선언은 하나여야 하므로 graph.ts와 material.ts의 두 onBeforeCompile에서 이미 선언한 attribute 줄을 중복하지 않는다. 그래프는 emissivemap 뒤 원본 최종 RGB를 덮고 표준 정점색 곱은 그 앞 map 단계에 남는다.
 
-## 11. 중간 검증·외형 확인 항목
+## 11. 첫 통합 시점의 검증 이력·외형 확인 항목
 
 [데이터] 직접 담당 첫 통합: 고유 조합27 중 판독1·시간 바인딩 근사2·대기24, pending106→103(표 §8). 원본 파일·텍스처 픽셀·모델은 동일하며 manifest2개만 변했다. 압축 `--only mg/`는 새 텍스처0·새 소리0·manifest 해시2개 갱신, 10초 완료.
 
-[데이터] 신규 노드 시험416/416, 사전 재사용/오배정 방지·필수 sampler/파라미터 누락0, 원본 SASS RGB/alpha 표본240 최대절대오차1.1920928955078125e−7, GLSL 6/6 컴파일·링크(세 그래프×정점색 패치 순서2). WGL 숨은 컨텍스트에서 **compile/link만** 호출했으며 화면 그리기·촬영은 없다. 이 첫 수치는 시간 위상을 주입한 RGB/alpha 시험이며, f32 시간 상수 재대조 후 정수·SIN 단계까지 확대 시험 중이다.
+[데이터] 신규 노드 시험416/416, 사전 재사용/오배정 방지·필수 sampler/파라미터 누락0, 원본 SASS RGB/alpha 표본240 최대절대오차1.1920928955078125e−7, GLSL 6/6 컴파일·링크(세 그래프×정점색 패치 순서2). WGL 숨은 컨텍스트에서 **compile/link만** 호출했으며 화면 그리기·촬영은 없다. 이 첫 수치는 시간 위상을 주입한 RGB/alpha 시험이며, 뒤의 f32 시간 상수 재대조·정수/SIN 확대 시험 및 §18 최종 집계와 구분한다.
 
 [데이터] 기존 노드 시험 전체1회: 27파일 중26통과, test_mg_assets1825/1825·test_plaza_world437/437. test_mgmet은 별도 transition 작업의 fade.ts 이동 도중 모듈 없음으로 실패. 첫 tsc통과, 이후 npm run build도 같은 mgmet/fade 미연결2건으로 실패. 해당 파일은 shader-graphs가 수정하지 않는다.
 
-사용자 외형 체크: mg0106 탐조등 두 표본의 색 혼합·밝기 위상, mg0102 홀로그램의 정점색·시선 각도별 알파, mg0508/mg0101/mg0122는 첫 통합에서 새 식 적용 없음. [미확정] 시간 CPU 단위·실제 화면 모양은 이 시험으로 확인되지 않는다. 병렬 판독 결과는 문서 본문에 식·근거를 먼저 적고 사전·시험으로 반영한다.
+사용자 외형 체크: mg0106 탐조등 두 표본의 색 혼합·밝기 위상, mg0102 홀로그램의 정점색·시선 각도별 알파, mg0508/mg0101/mg0122는 첫 통합에서 새 식 적용 없음. [판독] 당시 시험은 시간 CPU 단위·화면 모양의 증거가 아니었다. 이후 World 단위는 u32 프레임으로 확정(§19·29), 실제 화면 모양은 사용자 확인 대상이다. 현재 게임별 외형 체크는 §20을 따른다.
 
-[데이터] 시간 상수 원본 비트 대조 수정 뒤 확대 시험593/593: 위상 상수 비트1건·uint 정수 나머지11경계·시간/SIN176표본·RGB/alpha240표본을 포함하며 최대절대오차1.1920928955078125e−7, GLSL컴파일/링크6/6. 현재 사전 적용3개를 유지하고 다른 담당 결과 대기 중이다.
+[데이터] 시간 상수 원본 비트 대조 수정 뒤 확대 시험593/593: 위상 상수 비트1건·uint 정수 나머지11경계·시간/SIN176표본·RGB/alpha240표본을 포함하며 최대절대오차1.1920928955078125e−7, GLSL컴파일/링크6/6. 당시 사전 적용3개였으며 현재 반영70·대기36 집계는 §18이다.
 
-[데이터] transition 담당의 연결 수정 후 `test_mgmet` 218/218 재검증, `tsc --noEmit`·`npm run build` 통과. 전체 최초 실행의 실패1건은 이 재검증으로 해소했다. VS 담당의 중간 수치 파일은 6묶음×100표본+깊이 clip5표본이며, 최종 단계식이 도착하기 전에는 사전에 승격하지 않는다.
+[데이터] transition 담당의 연결 수정 후 `test_mgmet` 218/218 재검증, `tsc --noEmit`·`npm run build` 통과. 전체 최초 실행의 실패1건은 이 재검증으로 해소했다. VS 중간 수치는 6묶음×100표본+깊이 clip5표본이었다. 이후 최종 단계식의 결합·적용 결과는 §18, CPU 생산자 후속은 §32로 구분한다.
 
 [데이터] 실제 재변환 manifest의 식·해시 일치 18건을 추가하여 신규 노드 시험611/611. PBR 병렬 결과를 위해 GLSL 시험의 무조명 패치도 원본 shading_type=0인 경우에만 적용한다.
 
@@ -195,7 +195,7 @@ G05의 mul_vertex_base_color=1과 GraphDef.c0가 `_c0`를 각각 선언한다. �
 
 [판독] FS C G07/G20/G27 공통: `h=fract(P.y)`, `j=fract(h+0.5)`, `w=abs(2h−1)`, `Ui=U·P.w+flow·{h,j}·P.z`, `pair=mix(sample(U0),sample(U1),w)`. flow=(2R−1,1−2G), color 마스크=step(1−area.r,pair.rgb), 물 roughness=material_roughness·(1−0.5·(1−sat(N·V))^4). FS에는 World 시간 reader가 없으며 원본 재질 애니 P.y를 사용한다. G07/G27 노멀은 **RGBA 네 채널** `normalize(2pair−1)` 후 XY를 사용한다. UNORM 입력에 SNORM 복원을 중복하지 않는다.
 
-[최초 보고] FS C 세 조합은 VS 결과와 결합 전 pending이었다. 현재 G07/G20은 §17 결합 완료, G27만 대기. 원본 IBL cube/LOD·ModelOpacity·G27 화면 color/depth 캡처·View 역투영·안개 입력을 보존한다. G07/G20 read_under_water=0인데 기존 patchWater가 water_enable만으로 muddy 합성을 붙여 원본 결과를 가리는 차이를 확인했다. 해당 조건 수정 여부는 원본 옵션과 공용 시험을 확인한 뒤 결정한다. 최초 C 중간 numericValidation은 실행 예정이었다. 최종320표본·max4.172325134277344e−7은 §18에 별도 집계했다.
+[최초 보고] FS C 세 조합은 VS 결과와 결합 전 pending이었다. 현재 G07/G20은 §17 결합 완료, G27만 대기. 원본 IBL cube/LOD·ModelOpacity·G27 화면 color/depth 캡처·View 역투영·안개 입력을 보존한다. G07/G20 read_under_water=0인데 기존 patchWater가 water_enable만으로 muddy 합성을 붙여 원본 결과를 가리는 차이를 확인했다. 해당 조건은 최종 통합에서 read_under_water 기준으로 수정했고 G07/G20 적용을 검증했다(§17~19). 최초 C 중간 numericValidation은 실행 예정이었다. 최종320표본·max4.172325134277344e−7은 §18에 별도 집계했다.
 
 [데이터] 사용자 우선순위: G09(24) → G11(14) → G01(10) → G02(7) → G10(5), 합60재질. 먼저 이 다섯 전체 조합의 FS/VS·공용 런타임 상태를 해소한다. 위 A·C 원본식과 후보는 사전 stages.fs에 보존하고 전체 pending은 유지한다.
 
@@ -204,7 +204,7 @@ G05의 mul_vertex_base_color=1과 GraphDef.c0가 `_c0`를 각각 선언한다. �
 [설계 이력] 이 절의 실제 할당5재질·미할당9대기는 최초 조건부 통합 시점이다. 현재 판독·변환은 원본 resident dummy 조건까지 반영해 G11 14/14 적용·대기0이며 §18~§19가 최종 기준이다.
 [판독] ndv=sat(N·V), noise=T(utility1,srt0(uv0)·P0.z).r, film=T(utility0,(fract(ndv+noise),0.5)).rgb, k=pow(1−ndv,P0.y)·P0.x. base=mix(B,film,k)이며 k를 임의 clamp하지 않는다. B는 원본 base_color_texture/mul_base_color 옵션에 따라 albedo·base_color·mul_base_color를 선택한다. thin-film은 발광 가산이 아니다. PBR·노멀·sRGB는 기존 경로를 재사용한다.
 
-[데이터] 14재질·FS5변형. utility0/1 둘 다 할당된 spco_05_up_mt·spco_05_under_mt·spco_01_mt·spco_00_under_mt·spco_00_up_mt 5개만 반영 후보. 나머지9개는 원본 미할당 sampler 기본 바인딩이 미확정. null을 검정 표본으로 치환하지 않는다. 담당 Node 검증은 최종 JSON의 passed 수치를 사용한다.
+[데이터] 14재질·FS5변형. utility0/1 둘 다 할당된 spco_05_up_mt·spco_05_under_mt·spco_01_mt·spco_00_under_mt·spco_00_up_mt 5개가 최초 반영 후보였다. 나머지9개의 원본 resident texture7/sampler4를 후속에서 확정해 현재14/14 적용(§19). 검정 표본은 null 추정이 아닌 원본2D dummy 근거로 한정한다. 담당 Node 검증은 최종 JSON의 passed 수치를 사용한다.
 
 사전 확장: 전체 해시 키는 그대로 유지하고 graphVariants에 순수 원본 옵션 selector·requiresSamplers·status·GraphDef를 저장한다. 조회에 대상 FRES를 넘겨 selector 완전 일치+필수 sampler 실제 비null인 분기만 선택한다. 불완전 분기는 None으로 남겨 기존 pending 경로로 간다. 복수 분기가 겹치면 오류다. 재질 이름으로 고르지 않으므로 다른 아카이브에도 재사용한다. program=graph:<tupleSHA>:<selectorSHA>로 분기별 GLSL 캐시 충돌을 막는다. record status=partial은 일부 재질 반영이며 전체14 완료를 뜻하지 않는다.
 
@@ -218,7 +218,7 @@ G05의 mul_vertex_base_color=1과 GraphDef.c0가 `_c0`를 각각 선언한다. �
 
 GraphDef 조각식의 새 이름 screenUV는 필요한 그래프에서만 uniform을 선언한다. material.onBeforeRender가 현재 물리 viewport=(x,y,w,h)를 공급하고, 조각 위치를 `(gl_FragCoord.x−x,h−(gl_FragCoord.y−y))`로 좌상단 원점으로 바꾼다(03_graphics UV·PNG 첫 행·flipY=false 계약). viewport 역크기와 한 픽셀 edge로 `clamp(local/w,h,0,1−1/(w,h))`를 계산한다. viewport 변경 때 uniform 갱신을 보장한다. 원본 표준 재질·광장 그래프에는 screenUV가 없어 새 경로를 사용하지 않는다.
 
-[근사] 원본 Layer470/488/458 CPU 갱신 함수가 아직 확보되지 않아 현재 그리기 viewport·그 역크기를 웹 대응으로 사용한다. 한 픽셀 edge와 캡처/분할 viewport의 원본 범위는 사용자 확인 필요에 남긴다. 모델 UV·worldPos·상수 마스크로 바꾸지 않는다. 원본 screen 식 산술은 판독, 웹 입력 대응은 근사이며 runtime 완전 동등성으로 세지 않는다.
+[근사] 최초 반영 당시 Layer470/488/458 CPU 갱신 함수가 없어 현재 그리기 viewport·그 역크기를 웹 대응으로 사용했다. 후속 §31에서 원본 depthRT·scissor writer를 확보했으나 runtime은 이 근사를 유지한다. 한 픽셀 edge와 캡처/분할 viewport의 원본 범위는 사용자 확인 필요에 남긴다. 모델 UV·worldPos·상수 마스크로 바꾸지 않는다. 원본 screen 식 산술은 판독, 웹 입력 대응은 근사이며 runtime 완전 동등성으로 세지 않는다.
 
 [데이터] G11 FRES 재확인: 14개 모두 texture_srt0=1·pbr_uv=0, SRT scale1.5~25, P0.x=0.57~2로 활성 강도다. 미할당9개를 강도0으로 간주할 수 없다. slots 자체가 FRES samplers에 없으며 converter의 null 표본 기본값은 원본 fallback 근거가 아니다. 최초에는 sampler0/1 실제 할당5개만 통과했다. 후속 원본 dummy 바인딩 확인과 미할당 조건으로 현재14/14 적용(§19).
 
@@ -226,11 +226,11 @@ GraphDef 조각식의 새 이름 screenUV는 필요한 그래프에서만 unifor
 
 [판독] G01은 광장 grass_card와 같은 VS2522730817 단계식을 재사용. E=ENV0(Layer120, CPU 07_camera_lighting 정정 근거), U=u32 World4, D=f32(E.y·1000), phase=float(U%uint(D))/D. W.xz·0.1·E.x를 각(−E.z−45)°로 회전 후 frac(+phase), 잡음R·E.w=amp. deltaWorld=amp·(sin(E.z°),0,−cos(E.z°))·c0.y+amp·비정규화 nrmW·c0.x. 법선 자체는 변위로 다시 계산하지 않는다. 기존 광장 ENV1 연결은 변경하지 않는다.
 
-[데이터] env_sg_utility_texture2d0에서 manifest.windNoise로 이미 원본 이름을 보존한다. mg0508/mg0101/mg0122 ENV0=[15,2,0.5,0.012]/[5,2,25,0.35]/[1,0.8,1,0.07], noise=leafnoise00/windnoise00/grass00_noise. G01 10재질 중 mg0508_griddle의 grass00_mt만 attribAssign._c0가 없으며 기본 정점값 미확정. 잡음 handle Layer10·World 프레임 CPU 후속 근거는 §19에서 확정했다. 원본 gate/epoch·sampler descriptor 대응은 근사다. 원본 정점색을 임의0/1로 만들지 않는다.
+[데이터] env_sg_utility_texture2d0에서 manifest.windNoise로 이미 원본 이름을 보존한다. mg0508/mg0101/mg0122 ENV0=[15,2,0.5,0.012]/[5,2,25,0.35]/[1,0.8,1,0.07], noise=leafnoise00/windnoise00/grass00_noise. G01 10재질 중 mg0508_griddle의 grass00_mt만 attribAssign._c0가 없다. CPU descriptor/항목제거 경로는 §32 확정, 외부NVN 최종Color0.xy fetch값은 미확정. 잡음 handle Layer10·World 프레임 CPU 후속 근거는 §19에서 확정했다. 원본 sampler descriptor는 §30에서 확정했고 웹 sampler/mip 대응은 미구현이다. World 생성/gate 경로는 §29에서 확정했으나 owner epoch/Core timing의 웹 대응은 근사다. 원본 정점색을 임의0/1로 만들지 않는다.
 
-[판독] G02: c=c0.xyz·f32(0x3c23d70a), D=E.y·100, ph=float(U%uint(D))/D+(c.x+c.z)E.x. pivot=Model100..12c·vec4(c,1)+instance.translation. axis=normalize((sin((E.z−45)°),0,−cos((E.z−45)°))), theta=sin((2ph−1)π)·E.w·20°. deltaWorld=pivot+Rodrigues(axis,theta)(W−pivot)−W. c0.w 미사용·법선/탄젠트 회전 없음. 현재 mesh.modelMatrix를 원본 Model100으로 간주하면 Shape/뼈 변환이 두 번 적용될 수 있어 아직 대기7재질. 실제 모델 행렬 공급은 VS 담당 추가 추적 중이다.
+[판독] G02: c=c0.xyz·f32(0x3c23d70a), D=E.y·100, ph=float(U%uint(D))/D+(c.x+c.z)E.x. pivot=Model100..12c·vec4(c,1)+instance.translation. axis=normalize((sin((E.z−45)°),0,−cos((E.z−45)°))), theta=sin((2ph−1)π)·E.w·20°. deltaWorld=pivot+Rodrigues(axis,theta)(W−pivot)−W. c0.w 미사용·법선/탄젠트 회전 없음. 현재 mesh.modelMatrix를 원본 Model100으로 간주하면 Shape/뼈 변환이 두 번 적용될 수 있어 아직 대기7재질. Model producer·Mode packing은 §32에서 확정했고 실제 draw별 행렬·instance 값/순서의 웹 공급이 남는다.
 
-[데이터] VS605표본·순서회귀1·GraphSource6검사 통과. 원본식 판독과 입력 공급은 구별한다. 후속 G01 9/10은 환경 잡음+프레임 근사 공급으로 반영했으며 G02는 Model 생산자/Mode 미확정으로7재질 대기(§19).
+[데이터] VS605표본·순서회귀1·GraphSource6검사 통과. 원본식 판독과 입력 공급은 구별한다. 후속 G01 9/10은 환경 잡음+프레임 근사 공급으로 반영했으며 G02는 원본 Model 생산·Mode packing 확정 후에도 draw별 Model·instance writer/순서·웹 binding이 없어7재질 대기(§32).
 
 ## 16. 우선 G10 packed 표면·AO 설계
 
@@ -251,7 +251,7 @@ GraphDef 조각식의 새 이름 screenUV는 필요한 그래프에서만 unifor
 
 물 합성 충돌의 범위 제한: **이번 사전에서 반영된 graph: 프로그램**이고 read_under_water=0일 때만 legacy patchWater를 생략한다. 원본 FS에 없는 muddy 틴트가 그래프를 덮는 것을 막는다. 기존 광장·아카이브 그래프는 프로그램 식별자가 graph:가 아니므로 동작을 유지한다. setup 호출에 실제 선택된 GraphDef를 전달해 같은 이름의 다른 모델에도 오배정하지 않는다.
 
-G27 물속 color/depth 캡처·역투영·안개, G06 스텐실 캡처, G13/G14 깊이 복원, G17/G26 texture array, G18 Model 중심·G21 화면/곱하기 합성·G23 원본 Layer 방향, G24 VS 깊이/varying은 대기다. 이들은 원본식을 사전에 보존하되 대규모 렌더패스나 미확정 바인딩을 상수로 대체하지 않는다.
+G27 물속 color/depth 캡처·역투영·안개, G06 스텐실 캡처, G13/G14 깊이 복원, G17/G26 texture array, G18 draw별 Model 중심·G21 화면/곱하기 합성·G23 raw Layer 방향의 draw yaw/scale 웹 공급, G24 VS 깊이/varying은 대기다. 이들은 원본식을 사전에 보존하되 대규모 렌더패스나 미확정 바인딩을 상수로 대체하지 않는다.
 
 ## 18. 현재 반영·검증 집계
 
@@ -262,14 +262,14 @@ G27 물속 color/depth 캡처·역투영·안개, G06 스텐실 캡처, G13/G14 
 | G09 |24|24|0|색 식 판독·screen 입력 근사|
 | G11 |14|14|0|옵션+실제/미할당 sampler 조건·원본 dummy 판독|
 | G01 |10|9|1|ENV0/잡음 연결 확정·프레임 tick/epoch·sampler 근사; _c0 누락1|
-| G02 |7|0|7|회전 식·행패킹 판독; Model 생산자/Mode 대기|
+| G02 |7|0|7|회전 식·Model producer/Mode packing 확정; draw별값·instance 순서/웹 binding 대기|
 | G10 |5|5|0|packed/detail·globalAO 분기·AO replace|
 
 [데이터] 원본 식 분류 판독5재질(G04 1·G05 1·G15 1·G19 2), 런타임 입력/조명 근사65재질, 미반영36. 판독5도 ModelOpacity·표준 PBR 전체 정확성을 뜻하지 않는다. 적용묶음 G01/G04/G05/G07/G08/G09/G10/G11/G12/G15/G19/G20/G25의 원본식과 변형 SASS·옵션은 사전에 보존했다.
 
 [데이터] 최종 통합 Node1971/1971, 실제70재질×패치순서2의 GLSL compile/link140/140(NVIDIA RTX4060 GL4.6). sampler/raw/필요 uv1/uv2/uv3/c0 누락0. RGB/alpha304·프레임/SIN176·screen5 SASS 직접 표본, maxAbsError1.1920928955078125e−7. 필수 World 입력·환경 잡음 로드 실패 거절, 다른 게임 env 재결합, 누락 attribute 차단, 원본 dummy/실제 texture 분기 cache key를 회귀로 검증. shader_graph_compile.py는 native WGL 컴파일/링크만 호출하며 그리기·촬영 없음.
 
-[데이터] test_mg_assets2048/2048(참조2283·없음0, GLB131·문제0), test_plaza_world438/438, 기존 test_plaza_gl60/60, tsc 통과. 기존 전체 최초27파일 실행의 mgmet 실패1건은 transition 수정 후218/218로 해소. 이번 후속은 관련 노드 회귀만 재실행.
+[데이터] test_mg_assets2048/2048(참조2283·없음0, GLB131·문제0), test_plaza_world438/438, 기존 test_plaza_gl60/60, tsc 통과. 기존 전체 최초27파일 실행의 mgmet 실패1건은 transition 수정 후218/218로 해소. 이 런타임 통합 시점에는 관련 노드 회귀를 재실행했고, 이후 분석·문서 후속은 §29~33의 검증 범위로 구분한다.
 
 [데이터] 별도 판독 표본: FS A503·digest13; FS B/F5034·SASS17; FS C320표본·max4.172325134277344e−7·의존성76; FS D/E/G3968·GraphSource20, G11 후속4851비교·max1.7881393432617188e−7·후보14; VS605·순서회귀1·GraphSource6, CPU 후속54·GraphSource2. 단위가 다른 수를 합산하지 않는다.
 
@@ -281,13 +281,13 @@ G27 물속 color/depth 캡처·역투영·안개, G06 스텐실 캡처, G13/G14 
 
 [판독] World+4는 ms가 아닌 u32 누적 프레임. main 00968a4에서 renderer+218/+21c=0, 00970dc..0097144에서 두 gate가 해제되면 +21c에 Core+1c+1(1..4, 무효 handle은1)을 w-register add, 0097d1c/0097d34에서 World+4에 그대로 저장한다. `counter=(counter+increment)>>>0`. 기존 광장 mpjMs는 이전 계약을 유지하며 이번 G01/G08/G12만 `uniform uint mpjWorldFrame`을 쓴다. Stage의 `floor(frame)>>>0`를 명시적 공급한다. [근사] Stage의 dt×60 누적은 원본 gate·logic tick·renderer lifetime 재현이 아니며 이 대응을 정확 판독으로 표기하지 않는다. uint 공급이 없으면 해당 그래프 적용은 오류로 거절한다.
 
-[판독] G01 Layer+10: 이름표019cf4f8 env_sg_utility_texture2d0 → reader+3b4 → 0090dec..0090e1c에서 texture handle, setter0074774의 slot1 → ComEnvironment+1a0 → 0073f58 Layer memmove. 기존 manifest.env.windNoise가 바로 이 자산이다. BC4_UNORM RRR1·linear·mip9. [근사] sampler filter/address/LOD descriptor는 미확정. 사전 `environmentSamplers:{sgLayer10:windNoise}`를 대상 manifest.env로 해결하고 GraphDef.samplerSources에 environment 출처를 보존한다. 실제 자산이 없으면 분기 불성립, 로드 실패는 오류이며 검정 텍스처로 대신하지 않는다. `requiresAttributes:[_c0]`가 없는 mg0508_griddle 1재질은 pending.
+[판독] G01 Layer+10: 이름표019cf4f8 env_sg_utility_texture2d0 → reader+3b4 → 0090dec..0090e1c에서 texture handle, setter0074774의 slot1 → ComEnvironment+1a0 → 0073f58 Layer memmove. 기존 manifest.env.windNoise가 바로 이 자산이다. BC4_UNORM RRR1·linear·mip9. [판독] 원본 sampler는 ClampUVW·Bilinear min/mag·Linear mip·LOD0..13·bias0으로 확정(§30). [근사] 웹 sampler 상태·원본 mip 체인 공급은 미지원. 사전 `environmentSamplers:{sgLayer10:windNoise}`를 대상 manifest.env로 해결하고 GraphDef.samplerSources에 environment 출처를 보존한다. 실제 자산이 없으면 분기 불성립, 로드 실패는 오류이며 검정 텍스처로 대신하지 않는다. `requiresAttributes:[_c0]`가 없는 mg0508_griddle 1재질은 pending.
 
-[판독] G02 Model+100/+110/+120은 ComModelBuffer+60의 column 행렬을 CPU zip/ext/st2로 전치한 affine3행. Three elements 인덱스 [0,4,8,12]/[1,5,9,13]/[2,6,10,14]에 대응한다. Model 생산자와 Mode translation은 미확정이라 자동 적용하지 않는다. mesh.matrixWorld로 Shape까지 재적용하는 반례: 원본 pivot(1,2,3), 잘못된 mesh 대체(200,400,600). 원본 행렬 입력은 draw별 공급 계약으로 남긴다. 후속 Node54/54·GraphSource2/2 통과.
+[판독] G02 Model+100/+110/+120은 ComModelBuffer+60의 column 행렬을 CPU zip/ext/st2로 전치한 affine3행. Three elements 인덱스 [0,4,8,12]/[1,5,9,13]/[2,6,10,14]에 대응한다. Model 생산자·instance translation 위치/packing은 §32에서 확정했다. 실제 draw별 M·instance writer/순서·웹 binding이 없어 자동 적용하지 않는다. mesh.matrixWorld로 Shape까지 재적용하는 반례: 원본 pivot(1,2,3), 잘못된 mesh 대체(200,400,600). 원본 행렬 입력은 draw별 공급 계약으로 남긴다. 후속 Node54/54·GraphSource2/2 통과.
 
 [판독] G11 미할당9재질의 원본 음수 texture index → resident_texture2d_dummy(texture7/sampler4). 실데이터1×1 RGBA8_UNORM=(0,0,0,255), 정규화(0,0,0,1). noise 미할당은 R=0, spco02의 film 미할당도 RGB=0으로 식 특수화한다. 옵션 selector에 `requiresMissingSamplers`를 더해 실제 미할당일 때만 적용하고, 실제 할당된 변형에 상수0을 오배정하지 않는다. 분기 program cache key에 selector·할당/미할당·attribute 조건을 포함한다. ModelOpacity1·PBR/IBL 기존 근사는 유지한다. 같은 음수 규칙을 다른 pending에 적용하려면 기존 samplerAssign 데이터가 음수/부재인지 별도 확인하고, array·capture·Layer 입력을 더미로 대신하지 않는다.
 
-[데이터] 기존 사전 단계식·현재 FRES samplerAssign 대조: 전체 대기 중 G21 shadow_mt의 sg_utility_texture2d0가 미할당이다. 같은 원본 더미 R/RGB=0 자료를 참조할 수 있으나 화면 Layer viewport·ModelOpacity 및 state4 곱하기 합성 계약이 남아 자동 적용을 늘리지 않았다. G17/G26 array·G06 캡처·G13/G14 깊이는 resident 2D 더미로 대체할 수 없다. 함수 재판독 없음.
+[데이터] 기존 사전 단계식·현재 FRES samplerAssign 대조: 전체 대기 중 G21 shadow_mt의 sg_utility_texture2d0가 미할당이다. 같은 원본 더미 R/RGB=0 자료를 참조할 수 있으나 Layer 좌표source/Opacity CPU 식은 확보했으나 실제 RT snapshot·draw별Opacity와 state4 곱하기 합성 계약이 남아 자동 적용을 늘리지 않았다. G17/G26 array·G06 캡처·G13/G14 깊이는 resident 2D 더미로 대체할 수 없다. 함수 재판독 없음.
 
 ## 20. 최종 빌드·받기 경로 검증
 
@@ -327,21 +327,21 @@ Nl0=TBN(Ng,nz(N0),Tw,tw); Nl1=TBN(Ng,nz(N1),Tw,tw)
 N=mix(mix(Nb,Nl0,w0),Nl1,w1)
 ```
 
-array0 RGB=sRGB, alpha=선형; array1 xy=SNORM 표본(T 복원 이후 추가2x−1 없음); array2 R=roughness/A=AO(TEX mask0x9로 r/a 축약); array3 R=metallic. **마지막 N은 재정규화하지 않는다.** 현재 GraphDef.normal의 정규화는 원본 BRDF 입력을 바꾸므로 자동 적용 보류. 실제 array3 미할당은 2D resident dummy의 층 동작으로 확정할 수 없다. P1=(1,1,1,1),P4=(3,1,1,1),P2.x=1. [미확정] sampler2DArray 층·array3 기본 바인딩·비정규화 normal 출력. 근거 mg0122 p78 FS2~50(UV),53~58/162/170~172(array),131~148/174(weight),149~180(normal),214~241/294~326(표면), p82/p74 변형. 사전 `f054c5129297…json:stages.fs`.
+array0 RGB=sRGB, alpha=선형; array1 xy=SNORM 표본(T 복원 이후 추가2x−1 없음); array2 R=roughness/A=AO(TEX mask0x9로 r/a 축약); array3 R=metallic. **마지막 N은 재정규화하지 않는다.** 현재 GraphDef.normal의 정규화는 원본 BRDF 입력을 바꾸므로 자동 적용 보류. 실제 array3 미할당은 2D resident dummy의 층 동작으로 확정할 수 없다. P1=(1,1,1,1),P4=(3,1,1,1),P2.x=1. [판독] 원본 array 층/metadata/sampler와 array3 CPU 기본handle은 §30 확정. [미확정] 웹2DArray/mip·비정규화 normal 출력·2D TIC/array TEX 차원 불일치의 GPU 표본. 근거 mg0122 p78 FS2~50(UV),53~58/162/170~172(array),131~148/174(weight),149~180(normal),214~241/294~326(표면), p82/p74 변형. 사전 `f054c5129297…json:stages.fs`.
 
 ## 22. G14·G18·G21·G24 확보 식과 입력 계약
 
 ### 22.1 G14 FS2265242073 — 깊이 복원 거리 ramp
 
-[판독] native fragment XY에서 `u=max(min((XY−Layer470/474)·Layer488/48c,1−Layer458/45c),0)`, `pixel=ivec2(trunc(u·Layer478/47c+Layer470/474))`, `z=texelFetch(Layer4f0,pixel,0).r`. clip=`(2u.x−1,1−2u.y,z,1)`이며 **z에2z−1을 적용하지 않는다**. View120/130/140/150의 vec4 행과 dot해 H를 만들고 W=H.xyz/H.w. `rampU=sat(length(Model1c0/1c4/1c8−W)/Model1e4)`, RGB=`T(utility0,(rampU,.5)).rgb·material_base_color`, alpha=Model20c. PBR을 추가하는 식이 아니다. [미확정] Layer viewport/캡처 깊이/원본 View 역행렬·Model 중심/반경·최종 출력 경로. H.w=0·radius0 임의 보정 없음. 근거 mg0106 p119 FS2~26(화면),27~46(역투영),47~60(거리/색); 같은 FS 식 mg0101/mg0102 포함.
+[판독] native fragment XY에서 `u=max(min((XY−Layer470/474)·Layer488/48c,1−Layer458/45c),0)`, `pixel=ivec2(trunc(u·Layer478/47c+Layer470/474))`, `z=texelFetch(Layer4f0,pixel,0).r`. clip=`(2u.x−1,1−2u.y,z,1)`이며 **z에2z−1을 적용하지 않는다**. View120/130/140/150의 vec4 행과 dot해 H를 만들고 W=H.xyz/H.w. `rampU=sat(length(Model1c0/1c4/1c8−W)/Model1e4)`, RGB=`T(utility0,(rampU,.5)).rgb·material_base_color`, alpha=Model20c. PBR을 추가하는 식이 아니다. [판독] Layer viewport 좌표source·capture handle writer는 §31 확정. [미확정] RT snapshot/view format·View 역행렬 depth/Y·Model 중심/반경의 draw 공급·최종 출력 경로. H.w=0·radius0 임의 보정 없음. 근거 mg0106 p119 FS2~26(화면),27~46(역투영),47~60(거리/색); 같은 FS 식 mg0101/mg0102 포함.
 
 ### 22.2 G18 FS3035261389 — 모델 중심 발광
 
-[판독] 원본 Model affine행 M으로 `center=M·(0,.7,.1,1)`, .7=0x3f333333,.1=0x3dcccccd(FFMA 순서 보존). `q=worldPos−center`, `d=length(q)`, `rad=sat(1−d+f32(0.8500000238418579)·P0.x)`, `facing=sat(dot(viewDir,normalize(q)))`, `weight=rad³+1.5·P0.x·facing`. 발광=`weight·material_emissive_color_scale·material_emissive_color·(1−T(utility0,uv0).r·P0.y)`, weight·마스크 억제에 추가 sat 없음. 표준 PBR에 가산; alpha=ModelOpacity. [미확정] Model100..12c 생산자; q=0 원본 RSQ 경계. 근거 mg0106 p86 FS136~175(중심/weight),182~210(mask),518~525(최종 가산), utility0=linear BC4 R.
+[판독] 원본 Model affine행 M으로 `center=M·(0,.7,.1,1)`, .7=0x3f333333,.1=0x3dcccccd(FFMA 순서 보존). `q=worldPos−center`, `d=length(q)`, `rad=sat(1−d+f32(0.8500000238418579)·P0.x)`, `facing=sat(dot(viewDir,normalize(q)))`, `weight=rad³+1.5·P0.x·facing`. 발광=`weight·material_emissive_color_scale·material_emissive_color·(1−T(utility0,uv0).r·P0.y)`, weight·마스크 억제에 추가 sat 없음. 표준 PBR에 가산; alpha=ModelOpacity. [판독] Model100..12c 생산·전치 업로드는 §32 확정. [미확정] 실제 draw별 M 값·웹 공급; q=0 원본 RSQ 경계. 근거 mg0106 p86 FS136~175(중심/weight),182~210(mask),518~525(최종 가산), utility0=linear BC4 R.
 
 ### 22.3 G21 FS3483203703 — 화면 왜곡 곱하기 계수
 
-[판독] 화면 u는 G14와 같은 Layer 정규화/edge clamp. `a=T(utility0,u).r`, `u2=u+vec2(P0.y+a·f32(.05))`, `b=T(utility0,u2).r`, `mask=sat(b+P0.z)`. `f=sat(pow(max(1−dot(normalize(NgW),viewDir),0),P0.x))`, `k=c0.r·(1−f)·mask`, RGBA=`vec4(1−ModelOpacity)+ModelOpacity·k·C0`. dot 자체를 먼저 sat하지 않는다. **state_type4 곱하기**이며 RGB/alpha 독립 식. .05=0x3d4ccccd. 후속 공통 resident dummy로 미할당 utility0의 R0을 참조할 수 있으므로 a=b=0·mask=sat(P0.z) 특수화 가능; 이를 sampler 자료만으로 렌더 state 정확성까지 확정하지 않는다. [미확정] native XY/Layer viewport·ModelOpacity·곱하기 패스의 alpha 중복 여부. 원본 현재 P0.z=10,C0=1이라는 데이터와 런타임 계약을 구분한다. 근거 mg0106 p131 FS2~21(왜곡),24~58(Fresnel),59~72(RGBA).
+[판독] 화면 u는 G14와 같은 Layer 정규화/edge clamp. `a=T(utility0,u).r`, `u2=u+vec2(P0.y+a·f32(.05))`, `b=T(utility0,u2).r`, `mask=sat(b+P0.z)`. `f=sat(pow(max(1−dot(normalize(NgW),viewDir),0),P0.x))`, `k=c0.r·(1−f)·mask`, RGBA=`vec4(1−ModelOpacity)+ModelOpacity·k·C0`. dot 자체를 먼저 sat하지 않는다. **state_type4 곱하기**이며 RGB/alpha 독립 식. .05=0x3d4ccccd. 후속 공통 resident dummy로 미할당 utility0의 R0을 참조할 수 있으므로 a=b=0·mask=sat(P0.z) 특수화 가능; 이를 sampler 자료만으로 렌더 state 정확성까지 확정하지 않는다. [판독] Layer 좌표source·ModelOpacity CPU 식은 §31~32 확정. [미확정] 실제 RT/viewport snapshot·draw별Opacity 공급·곱하기 패스의 alpha 중복 여부. 원본 현재 P0.z=10,C0=1이라는 데이터와 런타임 계약을 구분한다. 근거 mg0106 p131 FS2~21(왜곡),24~58(Fresnel),59~72(RGBA).
 
 ### 22.4 G24 VS3548160070·FS4221260974 — 깊이 비교 flare
 
@@ -359,7 +359,7 @@ visibility=out?0:float(texelFetch(Layer4f0,pixel,0).r>=ndc.z)
 local*=visibility
 ```
 
-이후 Shape/Skeleton·Mode 변환→VP. visibility0은 local0을 후속 변환하므로 discard와 같지 않다. depth 비교는 geu(unordered 포함). v10.xy=uv0, v14.w=angular이며 angular에 visibility를 다시 곱하지 않는다. FS RGB=`T(utility0,perspective(v10.xy)).rgb·perspective(v14.w)`; alpha=Model20c(표본 alpha·gain 미곱). FS IPA.pass×rcp(pos.w),FMUL.RZ 순서. [미확정] VS 원본 View/Model CPU 축·depth pass·float varying 계약. gain을 c0.a나1로 대신하지 않는다. 근거 mg0122 p182 VS9~147/148~168/514~531, FS2~14; mg0102 동일 그래프 변형. 사전 `a38d96c3e7f4…json:stages.vs/fs`.
+이후 Shape/Skeleton·Mode 변환→VP. visibility0은 local0을 후속 변환하므로 discard와 같지 않다. depth 비교는 geu(unordered 포함). v10.xy=uv0, v14.w=angular이며 angular에 visibility를 다시 곱하지 않는다. FS RGB=`T(utility0,perspective(v10.xy)).rgb·perspective(v14.w)`; alpha=Model20c(표본 alpha·gain 미곱). FS IPA.pass×rcp(pos.w),FMUL.RZ 순서. [판독] Model 생산/행 패킹·Layer depth handle/좌표source는 §31~32 확정. [미확정] draw별Model·View 축/depth 규약·RT snapshot·float varying 웹 계약. gain을 c0.a나1로 대신하지 않는다. 근거 mg0122 p182 VS9~147/148~168/514~531, FS2~14; mg0102 동일 그래프 변형. 사전 `a38d96c3e7f4…json:stages.vs/fs`.
 
 ## 23. G27 VS2739868962·FS649725027 — 강물 굴절·깊이 합성
 
@@ -397,7 +397,7 @@ FinalRGB=spec+water_opacity·diffuse+(1−water_opacity)·under
 
 알파는 water_opacity가 아니라 Model20c. water_mt/low의 IOR1.2/1.33,opacity.65/.6,muddy_range17/5를 보존. 캡처 UV의 y 반전·depth 범위는 CPU→WebGL 계약에서 확인해야 한다. 표면 worldPos를 underWorld로 재사용하거나 depth1·muddy 상수로 대신하지 않는다.
 
-[판독] 안개 분기 `Layer100>−Model318`, view depth 입력 View170..178, 거리/높이 입력 Layer104..11c, fogCube=Layer80. LOD=`7·(1−sat(depth·Layer108−Layer104))`. [판독] 누락했던 최종 거리/높이 가중식은 후속 §26에서 확보했다. CPU 계수·enable·cube 공급 계약은 별도 미확정이며 런타임은 미반영이다.
+[판독] 안개 분기 `Layer100>−Model318`, view depth 입력 View170..178, 거리/높이 입력 Layer104..11c, fogCube=Layer80. LOD=`7·(1−sat(depth·Layer108−Layer104))`. [판독] 누락했던 최종 거리/높이 가중식은 후속 §26에서 확보했다. CPU 계수·enable·cube slot/descriptor/metadata는 후속 §29~30에서 확정했다. native cube LOD와 웹 공급 계약은 미확정이며 런타임은 미반영이다.
 
 근거 mg0101 p74/p70 FS: 2(flow),12(RGBA),41~42(color/area),138(cube),190(Layer550),212(Layer540),286(역투영),317(muddy),341(alpha); normalized SHA p74=6f3ec41c85b8e2f07eaa4a6fbacfb98e3eb3b0fa8fb01c1728b4053eb46275ad. [미지원] render-target 색/깊이·pass 수명·View rows/basis·cube/LOD·안개·ModelOpacity; VS 식 지원과 FS 전체 이식은 구분해 graph=null 유지. 사전 `15520a47e420…json:stages.vs/fs`.
 
@@ -409,26 +409,26 @@ FinalRGB=spec+water_opacity·diffuse+(1−water_opacity)·under
 
 [판독] G13 FS2248262712: 화면 깊이 G14 방식으로 W 복원. d=W−P3.xyz, plane=dot(d,P4.xyz), tangent=d.z·P4.x−d.x·P4.z, mask=sat((f32(.025)−abs(plane))·40). U=World0 u32, quotient=(uint64(U)·0xa7c61a3b)>>48, rem=U−quotient·99999, phase=f32(rem)·.25. emission=C0.rgb·mask·sat(sin(tangent·40+phase))·pow(abs(normalize(Ng).y),3). [미확정] World0 규약은 World4와 별도이며 새 frame을 대신 쓰지 않는다. 화면깊이/역투영·cutLineUpdate의 P3/P4/C0도 미공급. 근거 G13 FS 단계 evidence와 mg0508 기판독 cutline 계약.
 
-[판독] G16 FS2596196817: alpha=`max(P0.x,min(T(_a0,uv0).a·material_mul_opacity,P0.y))·Model20c`; B는 표준 알베도·mul_base_color, 노멀/roughness 텍스처 보존. G22 FS3942598924: A=sat(_a0.rgb·material_mul_base_color),B=sat(pow(abs(c0.rgb),f32(0x400ccccd))) 즉 지수2.2. RGB는 **채널별** A<.5면2AB, 나머지1−2(1−A)(1−B); alpha=Model20c. 두 그래프는 현재 사전 단계식을 확보했으나 ModelOpacity 생산자 엄격 바인딩 조건으로 자동 적용을 보류했다(기존 근사로 반영한 묶음과 구분).
+[판독] G16 FS2596196817: alpha=`max(P0.x,min(T(_a0,uv0).a·material_mul_opacity,P0.y))·Model20c`; B는 표준 알베도·mul_base_color, 노멀/roughness 텍스처 보존. G22 FS3942598924: A=sat(_a0.rgb·material_mul_base_color),B=sat(pow(abs(c0.rgb),f32(0x400ccccd))) 즉 지수2.2. RGB는 **채널별** A<.5면2AB, 나머지1−2(1−A)(1−B); alpha=Model20c. 두 그래프는 현재 사전 단계식을 확보했으나 ModelOpacity CPU 식/생산자 확정 후에도 실제 draw/GraphicsLayer별값의 엄격 바인딩 조건으로 자동 적용을 보류했다(기존 근사로 반영한 묶음과 구분).
 
 [판독] G17 FS2653408627: layer=F2I.U16.RN(P0.x), mask=array0((uv0,layer)).r. B=mix(_a0.rgb,C0.rgb,mask), r=mix(_r0.r,P0.y,mask), N=mix(normalize(TBN·nz(_n0.xy)),normalize(nz(utility0.xy)),mask), 최종 N 재정규화 없음. [미지원] array 층 선택·비정규화 N·Model20c. sampler2D 더미 규칙으로 array 층을 추정하지 않는다. G06/G13/G16/G17/G22 담당503수치·digest13은 §18이며, 개별 SASS 경로·줄·상수·옵션은 각 사전의 stages.fs에 동봉했다.
 
-## 25. 미확정 후속의 초기 원인 목록·분담 경계
+## 25. 공통 원인·분담 경계 — CPU 후속 통합 상태
 
-2026-10-09 후속은 **분석·문서만**. 웹 런타임·변환기·manifest·압축자산·시험 코드를 수정하지 않는다. 현재106재질을 실제 사전 조건과 manifest에 재대조:70반영·36대기(§8 unchanged). `analysis/mat/shader_graph_uncertainty_inventory.json`은 각 재질의 실제 `_c0`/UV 배치·sampler·선택 GraphDef·stage 차단 입력을 저장한다. 새 판독 소유는 **G27 마지막 fog 가중식**과 시험 근거 정리; 아래 다른 CPU 생산자는 부모 배정 전 새 판독하지 않는다. 기판독 SASS 식·VS/DEG 결과·03/07은 재사용한다.
+2026-10-09 후속은 **분석·문서만**. 웹 런타임·변환기·manifest·압축자산·시험 코드를 수정하지 않는다. 현재106재질을 실제 사전 조건과 manifest에 재대조:70반영·36대기(§8 unchanged). `analysis/mat/shader_graph_uncertainty_inventory.json`은 각 재질의 실제 `_c0`/UV 배치·sampler·선택 GraphDef·stage 차단 입력을 저장한다. 초기 직접 소유는 **G27 마지막 fog 가중식**과 시험 근거 정리였다. 부모 배정 후 World/Layer/fog 직접 결과와 분담3의 CPU 생산자를 §29~32에 통합했다. 아래 표는 현재 상태다. 기판독 SASS 식·VS/DEG 결과·03/07은 재사용한다.
 
 | 공통 원인 | 적용/대기 재질 | 공통 함수·데이터 경계 | 현재 판독 상태 | 차단 조건 |
 |---|---|---|---|---|
-| `_c0` 누락/생성 | G01대기1; G03/G13대기7 | G01 FRES attribAssign 누락과 native vertex fetch 기본 상태; mg0508 createMeshPost의 aux/h/w/side 버퍼 | G03/G13 생성식은 mg0508 §6.10/§7.1 기판독 | source buffer가 없으므로0/1 임의 보충 금지 |
-| Model/Mode | G02대기7·G18대기1·G24대기2 | ComModelBuffer UpdateGpuResources0070340 전치 업로드; +60 producer·entity placement·Mode instance translation | 행 배치는 확정; mesh Shape 중복 반례 확인 | native producer/draw context 미공급 |
-| ModelOpacity | 전체106의 FS가 Model20c reader; 엄격 차단 G16/G22 3 | ComModelBuffer의20c upload source·setter/animation·model instance 범위 | shader reader 위치 확정; CPU 공급 미확정 | `modelOpacity→1.0`은 원본 판독이 아님 |
-| World tick/epoch | 적용 G01/G08/G12 11; G13대기6의World0 | 0096864 초기0→00970c4 gate·Core+1c(1..4)→0097bd0 upload | World4 u32 프레임·World0 별도counter까지 기존 후속 확정 | 원본 renderer lifetime/logic gate와 Stage dt×60 floor 대응 미확정 |
-| env sampler | 적용 G01 9 | 00905a0 name cache→0090c90 handle→0074774 slot1→0073e8c Layer10; 원본 sampler descriptor | windNoise 자산·BC4 linear RRR1 mip9 확정 | filter/address/LOD 미확정 |
-| texture array·N 혼합 | G17대기2·G26대기3 | BNTX arrayLength/viewDimension·native 2DArray descriptor·layer 선택·array3 default | G17 mask R8_UNORM256²,arrayLength6/viewDimension5; G26 층0/1 식·채널 확정 | T는2D, 최종 blended N 강제정규화, array3 기본층 미공급 |
-| 화면/capture/stencil | G06/G13/G14/G21/G24/G27대기16; G09적용24 | Layer458..550/Viewport·View120..15c·render-target pass 수명; uintStencil bit80 | 식·reader·depth/capture 역할은 기존 SASS 확정 | actual target/viewport/depth 규약 미공급; G09는 currentViewport 역수/1pixel 근사 |
-| Layer 방향·P7.y | G23대기2 | Layer220/224/228 raw direction producer·P7.y parameter animation | projectedUV·jitter·caustics 식 확정 | normalize sunDir 대체 금지·P7.y scheduler 미확정 |
+| `_c0` 누락/생성 | G01대기1; G03/G13대기7 | G01 FRES attribAssign 누락과 native vertex fetch 기본 상태; mg0508 createMeshPost의 aux/h/w/side 버퍼 | G03/G13 생성식 재사용; G01 descriptor/제거 경로 §32 확정 | 외부NVN 최종fetch 미확정; 0/1 보충 금지 |
+| Model/Mode | G02대기7·G18대기1·G24대기2 | ComModelBuffer UpdateGpuResources0070340 전치 업로드; +60 producer·entity placement·Mode instance translation | E×local/instance branch·전치·Mode/record packing §32 확정 | draw별실제M·instance writer/순서·웹context 미공급 |
+| ModelOpacity | 전체106의 FS가 Model20c reader; 엄격 차단 G16/G22 3 | ComModelBuffer의20c upload source·setter/animation·model instance 범위 | global/baseline·GraphicsLayer별 overwrite 식·setter §32 확정 | 실제draw/레이어 값·갱신 공급 미확정; 1.0은 근사 |
+| World tick/epoch | 적용 G01/G08/G12 11; G13대기6의World0 | 0096864 초기0→00970c4 gate·Core+1c(1..4)→0097bd0 upload | factory·등록·카운터 gate·upload·해제 확정(§29) | 원본 owner 수명/Core timing·Stage dt×60 floor 대응 미확정 |
+| env sampler | 적용 G01 9 | 00905a0 name cache→0090c90 handle→0074774 slot1→0073e8c Layer10; 원본 sampler descriptor | windNoise 자산·BC4 linear RRR1 mip9 확정 | 원본 상태 확정(§30); 웹 sampler·mip 계약 미지원 |
+| texture array·N 혼합 | G17대기2·G26대기3 | BNTX arrayLength/viewDimension·native 2DArray descriptor·layer 선택·array3 default | G17 mask R8_UNORM256²,arrayLength6/viewDimension5; G26 층0/1·채널·sampler·array3 CPU fallback 확정(§30) | T는2D, 최종 blended N 강제정규화, array3의 차원 불일치 GPU 표본값 미확정 |
+| 화면/capture/stencil | G06/G13/G14/G21/G24/G27대기16; G09적용24 | Layer458..550/Viewport·View120..15c·render-target pass 수명; uintStencil bit80 | 식·reader는 기존 SASS; 직접 Layer writer·sampler·좌표source §31 확정 | actual RT snapshot/View depthY 규약 미공급; G09는 currentViewport 역수/1pixel 근사 |
+| Layer 방향·P7.y | G23대기2 | Layer220/224/228 raw direction producer·P7.y parameter animation | projectedUV·jitter·caustics와 raw +Z·FMAB 채널 확정(§29) | draw yaw/socket scale·native animation scheduler의 웹 대응 미확정 |
 | G21 state4 | 위 대기16에 포함한1 | native multiply blend·RGBA opacity·resident utility0 | RGBA식·state4·dummy R0은 기판독 | three alpha와 중복 곱 여부 미확정 |
-| G27 fog | 위 대기16에 포함한2 | p74/p70 FS337~373·Layer100/104..11c/80·Model318 | §26에서 누락 가중식만 새 판독 | shader식 완성과 CPU coefficient/target 공급은 구분 |
+| G27 fog | 위 대기16에 포함한2 | p74/p70 FS337~373·Layer100/104..11c/80·Model318 | §26 가중식·§29 CPU coefficient/enable·cube slot8 확정 | descriptor/metadata §30 확정; Model gate·native cube LOD·웹 final RGB 공급은 별도 |
 
 원인별 수는 중복되므로 합산하지 않는다. 65근사의 그래프 추가식 분류: G01 9(프레임/샘플러),G08/G12 2(프레임),G09 24(screenUV),G07/G10/G11/G20/G25 30(기존PBR/IBL/TBN/ModelOpacity 및 출력계약). **5판독+65근사는 추가 그래프 식 분류**다. 판독5도 전체 셰이더·원본GPU의 정확성 수치가 아니다. 기존 FS를 새 분석 없이 문자열 대조했을 때 Model20c reader는70반영+36대기 전부에 있다. 선택 GraphDef에서 `modelOpacity`를 직접 쓰는 것은28재질(G05 1,G08/G12 2,G07 3,G11 14,G20 6,G25 2); 나머지는 baseline alpha 경로의 별도 검증 대상이다. 원본 전체 런타임 대응까지 확정한70재질이라는 의미로 세지 않는다. 표준 shading_type1 적용64의 일반PBR/IBL은03/07 재사용 대상으로, 중복 판독하지 않는다.
 
@@ -456,19 +456,19 @@ outAlpha = Model20c                            // 341, fog 말단은 r3 변경 �
 
 | raw 입력 | shader 의미 | CPU 공급 상태 |
 |---|---|---|
-| Layer100, Model318 | `L100 > -M318` 원본 gate | L100=mip fog enable 0/1 확정(§29); Model318은 VS 담당 공급 계약 |
+| Layer100, Model318 | `L100 > -M318` 원본 gate | L100=mip fog enable 0/1 확정(§29); Model318 draw별 gate 값/producer는 미확정; §32의 Model행/Opacity 판독으로 대체하지 않음 |
 | View160..168,170..178 | camera와 signed depth 축 | 기존 View/03/07 연결 참조, native field→web draw 계약 별도 |
 | Layer104/108 | depth offset/scale | 원본 start/end와 f32 최소폭 처리 확정(§29) |
 | Layer10c | distance 강도 | env_mip_fog_intensity 직접 복사 확정(§29) |
 | Layer114/118 | world-height offset/scale | 원본 height start/end와 f32 최소폭 처리 확정(§29) |
 | Layer11c/110 | height exponent/cap | falloff 직접 복사·height enable 0/1 cap 확정(§29) |
-| Layer80 | mip fog cube handle | slot8 env_mip_fog_texturecube0→Layer80 확정; descriptor는 FSDEG 담당 |
+| Layer80 | mip fog cube handle | slot8→Layer80·원본 descriptor 확정(§29/30); 단일mip view/LOD 웹 대응 별도 |
 
 [데이터] 현재 mg0101 manifest는 fog(start20,end150,intensity.5,cube=mg0101_fog_irr),heightFog(start−100,end−10,falloff.6)를 보존한다. [판독] 두 객체의 존재는 변환기 asset_convert.py:563/569의 원본 enable==1 분기를 통과한 결과다. CPU C의 실제 packing은 §29; manifest 색[.34543,.5093,.72877]을 cube 표본 대신 쓰는 것은 원본 식이 아니다.
 
 [데이터] 두 말단의 텍스트 SHA256=`f61fa1c3b211d24a875c6a2954587e7ce8da280c43b6e8c05f8716fc07a9914c`로 동일. 분석용 Node는 실제 SASS 줄을 읽어 FADD/FMUL/FFMA/FMNMX/MUFU 순서를 실행하고 독립 pow/mix 식과 대조했다. **320표본·641검사 통과**, RGB maxAbsError=`5.960464477539063e−8`, α변경0. gate off·거리/높이 경계·height cap0·거리 강도.5/1 포함. cube 값은 합성 표본 주입이므로 native texture sampling·GPU SFU bit 일치 시험이 아니다. [미확정] V=0·(H=1,exponent=0)의 LG20×0·FTZ/NaN 경계는 보정하지 않았다.
 
-분석 자료: `analysis/mat/shader_graph_g27_fog.json`, scratchpad `shader_graph_g27_fog_numeric.ts/json`. 후속 CPU decomp C 목록은 §29; INDEX는 부모 통합 담당이며 이 작업에서 변경하지 않았다. [판독] G27 수학식 완료·런타임 미반영. G27 fog 수학식의 기존 문서 공백1건 해소; capture·cube descriptor·Model draw 공급 및 웹 구현 계약이 남아 G27 2재질 pending 유지. 사전27·70반영·36대기 집계는 변하지 않는다.
+분석 자료: `analysis/mat/shader_graph_g27_fog.json`, scratchpad `shader_graph_g27_fog_numeric.ts/json`. 후속 CPU decomp C 목록은 §29; INDEX는 부모 통합 담당이며 이 작업에서 변경하지 않았다. [판독] G27 수학식 완료·런타임 미반영. G27 fog 수학식의 기존 문서 공백1건 해소; capture snapshot/View·native cube LOD·Model draw 공급 및 웹 구현 계약이 남아 G27 2재질 pending 유지. 사전27·70반영·36대기 집계는 변하지 않는다.
 
 ## 27. 직전 검증의 정확한 범위·병행 작업 구분
 
@@ -488,34 +488,34 @@ outAlpha = Model20c                            // 341, fog 말단은 r3 변경 �
 
 [미확정] 이 시험의 map/normal/roughness·directional-light 대표 define과 three patched source가 컴파일 가능함을 검증한다. 모든 native pipeline/skin/instance/shadow 변형, 실제 sampler 색공간/값·draw state·capture pass·GPU SFU·화면 모양을 검증하지 않는다. dummy THREE.Texture로 loader 입력을 만들므로 수치 SASS 대조와 texture binding 자료는 별도 근거다. 모델 속성/파라미터/샘플러 누락0은 사전·GLB·manifest 정적 대조 결과이고 compile 성공 하나로 추론하지 않는다.
 
-## 28. 같은 시점의 남은 표·사용자 확인 필요
+## 28. CPU 후속 통합 후 남은 표·사용자 확인 필요
 
 | 묶음 | 미반영 재질 | 확보된 추가식 | 남은 원본 입력/계약 |
 |---|---:|---|---|
-| G01 |1|바람 offset·ENV/noise identity|누락 _c0 native 기본 상태|
-| G02 |7|pivot Rodrigues 회전·Model행 전치|Model producer·Mode translation·tick/epoch|
+| G01 |1|바람 offset·ENV/noise identity|CPU descriptor 경로 확정; 외부NVN 최종_c0.xy fetch|
+| G02 |7|pivot Rodrigues 회전·Model행 전치|draw별Model·Mode instance writer/순서·tick/epoch|
 | G03 |1|mg0508 기판독 변형|runtime _C0 버퍼·P0/P1/P2 갱신|
 | G06 |2|stencil bit80 마스크·색/r/N 혼합|uint capture/viewport·최종 N 비정규화|
 | G13 |6|VS 기판독·깊이 plane scan emission|_C0·capture inverse·World0 lifetime·cutLineUpdate|
 | G14 |3|깊이 inverse→거리 ramp|depth/View·center/radius·final color path|
 | G16 |2|alpha clamp|ModelOpacity 엄격 바인딩|
 | G17 |2|array layer mask·색/r/N 혼합|2DArray층 선택·N 비정규화|
-| G18 |1|model 기준점·radial/facing emission|Model 원본 중심 producer|
+| G18 |1|model 기준점·radial/facing emission|원본 Model 중심식 확정; draw별값 웹 공급|
 | G21 |1|화면 왜곡·RGBA multiply 계수|viewport·state4 alpha·ModelOpacity|
 | G22 |1|abs(c0)^2.2 채널 overlay|ModelOpacity 엄격 바인딩|
 | G23 |2|투영caustics|Layer raw +Z·FMAB 채널 확정; draw yaw/scale·native scheduler 웹 대응|
 | G24 |2|camera-facing/depth flare VS·gain FS|Model/View·depth pass·float varying|
-| G26 |3|두 array 층 표면값|array3 default·층/색공간·비정규화 N|
+| G26 |3|두 array 층 표면값|metadata/sampler·CPU default 확정; array3 GPU차원 불일치·웹층/mip·비정규화 N|
 | G27 |2|flow VS·water/IBL·굴절/depth·**최종fog 신규확보**|capture/cube·View/Layer/Model 공급|
 | 합계 |36|추가식 확보와 런타임 공급을 분리|중복 원인을 재질 수로 다시 합산하지 않음|
 
-[데이터] **변환·런타임 미반영36은 유지**. 이번에 실제 확인한 문서식 공백은 G27 fog1건이며 §26으로 해소했다. 이를 “36개 모두 수학 미판독” 또는 “원본 전체 식/GPU 대응27개 완전 확정”으로 바꾸어 세지 않는다. 본문에 이미 확보한 식, unknown CPU producer, 미지원 렌더 입력, 기존 PBR 근사를 각각 표시한다. 70 적용에도 runtime opacity70·정확PBR64·clock11·screen24·env sampler9 등 중복 검증 항목이 남는다. “판독5/근사65”는 이전 추가식 분류를 유지한 집계다.
+[데이터] **변환·런타임 미반영36은 유지**. 이번에 실제 확인한 문서식 공백은 G27 fog1건이며 §26으로 해소했다. 이를 “36개 모두 수학 미판독” 또는 “원본 전체 식/GPU 대응27개 완전 확정”으로 바꾸어 세지 않는다. 본문에 확보한 식·CPU 생산자를 표시하고, 실제 draw값/웹 binding·외부NVN/TIC 규약·RT snapshot·기존 PBR 근사를 남은 계약으로 구분한다. 70 적용에도 runtime opacity70·정확PBR64·clock11·screen24·env sampler9 등 중복 검증 항목이 남는다. “판독5/근사65”는 이전 추가식 분류를 유지한 집계다.
 
-[판독] World0와World4의 기존 CPU 후속 근거는 별개로 재사용: gate 해제 후 renderer218은+1(00970ec..00970f4),renderer21c는Core+1c+1 또는1(0097124..0097144),0097d00/0097d10은World0에218,0097d1c/0097d34는World4에21c를 복사. 둘 다00968a4에서0 초기화. **G13의 World0를 mpjWorldFrame(World4)로 대신하지 않는다.** 원본 객체 생성/존속·logic scheduler·gate producer는 여전히 미확정. 이 항목은 shader_vs_batch 기존 CPU 결과 재사용이며 새 ARM64 판독이 아니다.
+[판독] World0와World4의 기존 CPU 후속 근거는 별개로 재사용: gate 해제 후 renderer218은+1(00970ec..00970f4),renderer21c는Core+1c+1 또는1(0097124..0097144),0097d00/0097d10은World0에218,0097d1c/0097d34는World4에21c를 복사. 둘 다00968a4에서0 초기화. **G13의 World0를 mpjWorldFrame(World4)로 대신하지 않는다.** 생성0·등록·해제·counter gate 경로는 §29에서 확정했다. owner World3d 생성/보존 epoch·Core callback timing/frame step·Core+30 설정 원인의 웹 대응은 남는다. counter 식/주소는 기존 shader_vs_batch 판독을 재사용한다.
 
-[미확정] 사용자 확인 필요는 구현 허가 요청이 아니라 남은 판단/공급 목록이다: native missing attribute 기본값과 mg0508 _C0 생성자료; Model/Mode/Opacity draw 단위 값; World 객체 lifetime/gated logic tick; env sampler filter/address/LOD; native viewport/depth/Y범위·stencil/underwater capture 시점; array default층과N 비정규화; raw Layer 방향/P7.y; G21 multiply state; fog 웹 계약·Model318·cube descriptor(원본 coefficient는 §29에서 확정). 웹 외형은 사용자 확인이며 이번 분석 후속에서 브라우저·화면·촬영을 실행하지 않았다.
+[미확정] 사용자 확인 필요는 구현 허가 요청이 아니라 남은 판단/공급 목록이다: 외부NVN missing attribute fetch값과 기판독 mg0508 _C0의 웹 생성; Model/Mode/Opacity draw 단위 값; World 객체 lifetime/gated logic tick; 원본 env sampler/mip 상태의 웹 대응; native viewport/depth/Y범위·stencil/underwater capture 시점; array3 2D TIC/array TEX 차원 불일치 표본과N 비정규화; raw Layer +Z의draw yaw/scale와P7.y native 재생; G21 multiply state; fog 웹 계약·Model318·native cube LOD(원본 coefficient/descriptor는 §29~30에서 확정). 웹 외형은 사용자 확인이며 이번 분석 후속에서 브라우저·화면·촬영을 실행하지 않았다.
 
-부모 분담용 기존 C 목록은 `analysis/mat/shader_graph_uncertainty_cpu_sources.json`. analysis/decomp의 createMeshPost 근거는 mg0508.nro.c·mgC_mg0508_dis.c·mgC_mg0508_game.c. 기존Ghidra C는 ghidra_work/plazaA/out_post_com.c(0074774/0090c90/06b2458),out_post_sampler.c(0097bd0/06b2458). 누락 CPU 함수의 새 Ghidra 묶음은 부모 배정 뒤 이름/소유를 확정한다. 이번 신규 C는0개, INDEX 변화0.
+부모 분담용 기존 C 목록은 `analysis/mat/shader_graph_uncertainty_cpu_sources.json`. analysis/decomp의 createMeshPost 근거는 mg0508.nro.c·mgC_mg0508_dis.c·mgC_mg0508_game.c. 기존Ghidra C는 ghidra_work/plazaA/out_post_com.c(0074774/0090c90/06b2458),out_post_sampler.c(0097bd0/06b2458). 부모 배정 후 새 C는 직접8개/37주소(§29),FSDEG4개/20함수(§30),FSC2개/11함수(§31),VS4개/40함수(§32)로 보관했다. 주소 중복은 각 provenance로 구분하고 INDEX 통합은 부모/A 담당이다. 이 작업의 INDEX 수정0.
 
 
 ## 29. World·Layer 방향·G27 fog CPU 공급 후속
@@ -537,9 +537,9 @@ outAlpha = Model20c                            // 341, fog 말단은 r3 변경 �
 
 [판독] 거리·높이에 같은 packing을 쓴다. 모든 항은 원본 f32이며 `end <= f32(start+0.0001)`이면 end를 그 값으로 바꾼다. `폭=f32(end−start)`, offset=`f32(start/폭)`, scale=`f32(1/폭)`. shader는 `sat(FFMA(value,scale,−offset))`로 읽는다. 범용 epsilon을 shader에 추가하는 규칙이 아니다. 큰 start에서 f32 덧셈이 start에 흡수되는 특이점은 별도 보정하지 않는다.
 
-[판독] fog cube는 이름 표 `019cf4f0`의 **slot8 `env_mip_fog_texturecube0`**. 기존 `0090c90→06b2458→0074774(slot8)`를 재사용한다. `0074774`는 ComEnvironment `190+slot*10`에 handle을 쓰고, `0073e8c`의 `memmove(Layer,env+190,b0)`가 **Layer80**으로 넘긴다. 미지정 texture index는 reader+430의 원본 fallback 참조 경로다. GPU descriptor/filter/LOD와 cube 변환은 FSDEG 담당 결과와 결합해야 한다; fallback 색이나 임의 PMREM으로 대체하지 않는다.
+[판독] fog cube는 이름 표 `019cf4f0`의 **slot8 `env_mip_fog_texturecube0`**. 기존 `0090c90→06b2458→0074774(slot8)`를 재사용한다. `0074774`는 ComEnvironment `190+slot*10`에 handle을 쓰고, `0073e8c`의 `memmove(Layer,env+190,b0)`가 **Layer80**으로 넘긴다. 미지정 texture index는 reader+430의 원본 fallback 참조 경로다. FSDEG의 원본 descriptor 자료에서 mg0101 fog `_a3`(@FMAT+6b0)도 확인했다: ClampUVW, Bilinear min/mag, Linear mip, LOD0..13,bias0,compare/anisotropy off. 원본 cube metadata는 §30. fallback 색이나 임의 PMREM으로 대체하지 않는다.
 
-[데이터] mg0101의 native 입력은 distance enable1, start20,end150,intensity.5; height enable1,start−100,end−10,falloff.6. f32 packing: Layer100=1,104=0.1538461595773697,108=0.007692307699471712,10c=.5,110=1,114=−1.1111111640930176,118=0.011111111380159855,11c=0.6000000238418579. **height cap은 enable 0/1**, 독립 intensity가 아니다. G27 guard의 다른 항 Model318은 VS 담당자의 Model draw 계약을 소비하며 여기서 생산자를 중복 판독하지 않는다.
+[데이터] mg0101의 native 입력은 distance enable1, start20,end150,intensity.5; height enable1,start−100,end−10,falloff.6. f32 packing: Layer100=1,104=0.1538461595773697,108=0.007692307699471712,10c=.5,110=1,114=−1.1111111640930176,118=0.011111111380159855,11c=0.6000000238418579. **height cap은 enable 0/1**, 독립 intensity가 아니다. G27 guard의 다른 항 Model318은 draw별 gate 값/producer 미확정이며, §32의 Model행/Opacity 판독으로 공급이 해소된 것은 아니다. 여기서 생산자를 추가 판독하지 않는다.
 
 근거 C: [환경 업로드](../../../analysis/decomp/shader_graph_environment_fields.c), [Layer 배치·fog setter](../../../analysis/decomp/shader_graph_environment_supply.c), [원본 이름 캐시·reader](../../../analysis/decomp/shader_graph_world_env.c). 이름 표는 scratchpad `shader_graph_name_tables.txt`. FSDEG의 `shader_fs_deg_env_sampler.c`에 이미 있는 00905a0·0074774·06b2458도 재사용한다.
 
@@ -588,6 +588,148 @@ if ((CoreSystem+30).bit0 == 0 && (0984814() & 1) == 0):
 | shader_graph_world_registry.c |1|renderer vector 제거|
 | shader_graph_world_register.c |1|renderer vector 등록|
 
-[데이터] 총37 header, 고유37주소. 기존 G27 320표본·641검사와 FMAB 2002값을 근거로 유지한다. 이 후속은 분석·문서만이므로 전체 Node/GLSL/tsc/build를 재실행하지 않았으며 §27의 검증 범위를 확대하지 않는다. 현재 고유27·신규70반영·36대기(사전 formula5/runtime 근사65), 게임별 pending17/3/10/4/2는 그대로다. 새 구현 완료나 화면 정확도 완료로 집계하지 않는다.
+[데이터] 총37 header, 고유37주소. 기존 G27 합성 계수 320표본·641검사에 이어, 새로 확정한 **원본 mg0101 CPU 계수**로 320표본·641검사를 추가 실행해 모두 통과했다. 추가 maxAbsError=5.960464477539063e−8, α변경0; 합성 cube 표본·Model318=0을 주입한 산술 시험이며 실제 cube sampling/draw는 시험하지 않았다. 기존 FMAB 2002값도 선형식과 대조했다. 이 후속은 분석·문서만이므로 전체 Node/GLSL/tsc/build를 재실행하지 않았으며 §27의 검증 범위를 확대하지 않는다. 현재 고유27·신규70반영·36대기(사전 formula5/runtime 근사65), 게임별 pending17/3/10/4/2는 그대로다. 새 구현 완료나 화면 정확도 완료로 집계하지 않는다.
 
-[미확정] 담당별 결과 결합 후 최소 웹 작업: World 수명·gate 계약, raw Layer +Z 공급, P7 FMAB native 재생 계약, fog f32 packing·cube sampler·Model gate 및 final RGB 적용 위치. 사용자 확인 필요는 이 계약과 게임 외형이며 임의 보정값 승인 요청이 아니다.
+[미확정] §30~32 결합 결과를 포함한 최소 웹 작업: World 수명·gate 계약, raw Layer +Z 공급, P7 FMAB native 재생 계약, fog f32 packing·cube sampler·Model gate 및 final RGB 적용 위치. 사용자 확인 필요는 이 계약과 게임 외형이며 임의 보정값 승인 요청이 아니다.
+
+후속 수치 자료: scratchpad `shader_graph_g27_fog_native_coeff_numeric.ts/json`; 영구 분석 계약 `analysis/mat/shader_graph_world_env_contract.json`. 원본 계수 표본에서 (depth85,y−10)→D=.5,H=1,k=.25,LOD3.5; (depth150,y0)→D=1,H=1,k=.5,LOD0; height 시작 이하에서는 height1과 거리항의 합이 sat된다.
+
+
+## 30. FSDEG 환경 sampler·array 후속 통합
+
+[판독·데이터] 담당자의 `shader_fs_deg.json.environmentArrayFollowup`·동명 MD 후속을 통합했다. 원본 FMAT59개 descriptor와 texture7개, CPU 생성·소비 근거의 **Node 정적 대조440/440**. 식·해시·기존 GPU loader를 재판독하지 않았다. 영구 자료 `analysis/mat/shader_graph_env_array_contract.json`; C4개·20함수의 INDEX 통합은 부모/A 담당으로 그대로 전달된다.
+
+[판독] FMAT+40 descriptor stride20, count+9c→`06b5860→084dc0c→08514e0→08839b4→088310c`. descriptor 첫20바이트 FNV32와 필드 byte 동일성이 cache 기준이다. u16+6에서 mip=`v&3`,min=`(v>>4)&3`,mag=`(v>>2)&3`; `0x2a`→native min5/mag1, `0x15`→native min2/mag0. wrap enum 표 `[1,6,7,5,3,0]`; float+8/+c가 LOD clamp,+10이bias. texture와 해당 material sampler가 하나의 handle로 조합되므로 texture만 재사용하는 계약으로 축소하지 않는다.
+
+| 입력 | FMAT sampler / byte 위치 | UVW·LOD bias | 원본 texture view·mip·채널 |
+|---|---|---|---|
+| mg0508 leafnoise | env:_a2,688 | Clamp³,0 | BC4_UNORM256²,2D,1층·9mip,RRR1 |
+| mg0101 windnoise | env:_a2,610 | Clamp³,0 | BC4_UNORM256²,2D,1층·9mip,RRR1 |
+| mg0122 grass noise | env_mt:_a0,9a8 | Clamp³,0 | BC4_UNORM256²,2D,1층·9mip,RRR1 |
+| G17 array0 mask | 도마00/01:_a1,e88 | Clamp³,0 | R8_UNORM256²,2DArray,6층·9mip,RRR1 |
+| G26 array0 albedo | ground00_mt/no_s:_a1 | Wrap,Wrap,Clamp;−2 | BC1_SRGB512²,2DArray,2층·10mip,RGBA |
+| G26 array1 normal | ground00_mt/no_s:_a4 | Wrap,Wrap,Clamp;−2 | BC5_SNORM512²,2DArray,2층·10mip,RG01 |
+| G26 array2 roughness | ground00_mt/no_s:_a5 | Wrap,Wrap,Clamp;0 | BC4_UNORM32²,2DArray,2층·6mip,RRR1 |
+
+[판독·데이터] 표의 min/mag는 Bilinear,mip Linear(`0x2a`),LOD0..13,bias는 표의 값, compare/anisotropy off(Ratio1). noise .r는 linear이며 sRGB/SNORM 변환을 더하지 않는다. albedo RGB만 sRGB→linear, alpha는 linear. BC5 native xy는 이미 signed, PNG 저장값을 되돌릴 때만2x−1. **G26 array2 alpha=1**(RRR1)이라 그 array AO 중첩 mix는1로 접을 수 있지만 별도 globalAO 결합은 유지한다. G17 layer=기판독 F2I.U16.RN(P0.x)·유효0..5,ties-even; G26 layer0/1과 최종 N 비정규화 식은 유지한다. W wrap을 array 층 보간이나 layer0 고정으로 해석하지 않는다.
+
+### 30.1 미할당 array3 — CPU 바인딩 확정과 GPU 차원 불일치
+
+[판독] native43슬롯 중 array0..3은33..36. array3 이름 포인터019cf020, cache=`forward_plus+3c8`, UBO=`Material+240`. G26 세 재질에 samplerAssign이 없어서 `00880b0`가−1을 저장한다. `00891b0`는 array 예외 없이 공용 +3f0 handle을 올리며 그 handle은 `0087f74`의 **textureId7+samplerId4**다. texture7은 G11 기존 판독의 1×1·RGBA8_UNORM·RGB0,A1·**2D view1·1층·1mip**. sampler4는 ClampUVW,Point min/mag/mip,LOD−1000..1000,bias0(`0x15`).
+
+[판독] `085d9b0`는 BRTI+5c view_dim·+30 arrayLength를 view descriptor로 복사한다. `0886248→0882a50` target table은 view1→native1(2D),view5→native4(2DArray); `0851be0→087ed28`이 pool에 등록한다. array3용 별도 array view 생성은 확인되지 않았다.
+
+[미확정] G26은 `M0=array3(q0,0).r; M1=array3(q1,1).r; metallic=mix(mix(material_metallic,M0,w0),M1,w1)`이다. **CPU default handle 공급 부재는 해소**, 그러나 2D TIC를 array TEX로 읽는 층0/1의 GPU 표본 결과는 미확정이다. G11 2D lookup의0 접기를 여기에 전용하지 않는다. 최소 자료는 NVN texture-pool이 만드는 TIC 차원과 Maxwell array TEX의 차원 불일치 처리 규약이다. M0=M1=0,흰색/1층 array dummy,base metallic0을 이유로 입력을 없애는 대체는 근거가 없다.
+
+### 30.2 G27 fog cube에 담당 자료 재사용
+
+[데이터] FSDEG raw sampler59자료 중 `mg0101_env.fmdb env:_a3`는 `env_mip_fog_texturecube0`→mg0101_fog_irr. descriptor+6b0 첫20byte=`0202020000012a00000000000000504100000000`: Clamp³,Bilinear min/mag,Linear mip,LOD0..13,bias0,compare/anisotropy off. §29의 slot8→Layer80과 연결했다.
+
+[데이터] 기존 graphics_bntx metadata reader로 원본 cube header만 읽은 결과 **BC6H_UFLOAT32²,6면,Cube view,1mip,RGB1,sRGB=false**. 원본 바이트나 이미지 파일은 변경하지 않았다. shader LOD=`7*(1−D)`는 이 자산에 존재하는 mip 수를 뜻하지 않는다. [미확정] native view mip-range/explicit LOD 처리·GPU SFU와 웹 cube 공급은 별도 계약이다. 7개 mip나 PMREM을 새로 만들어 원본이라고 표기하지 않는다. 내용 hash와 descriptor 원본 경로는 `shader_graph_world_env_contract.json.fogCube`에 보존했다.
+
+### 30.3 남은 구현·집계
+
+[미확정] GraphDef T(vec2)에서 native array layer/mip,env sampler 상태·원본 mip 체인,최종 N 비정규화의 공급 계약을 구현해야 한다. G26 array3 GPU 처리 자료는 여전히 필요하다. runtime/manifest/변환기/압축 결과는 이번 후속에서 변경하지 않았고 G17 2·G26 3·G27 2재질의 pending도 유지했다. Node440은 정적 descriptor/metadata 대조이며 원본 실행·GPU 표본·화면 일치 시험이 아니다.
+
+근거 C: [sampler 생성](../../../analysis/decomp/shader_fs_deg_env_sampler.c), [texture view·pool](../../../analysis/decomp/shader_fs_deg_env_texture.c), [view 공급](../../../analysis/decomp/shader_fs_deg_env_texture_supply.c), [dummy 등록](../../../analysis/decomp/shader_fs_deg_env_dummy_registration.c). 0883ab0는 조사 중 shader loader로 확인된 후보라 sampler 결론에 사용하지 않는다.
+## 31. FSC capture/stencil 후속과 직접 Layer writer 연결
+
+[판독·데이터] 담당자의 `shader_fs_c.json.captureCpuFollowup`·MD를 기존 `005f750` C와 연결했다. 영구 계약 `analysis/mat/shader_graph_capture_contract.json`. FSC 새 C2개·11함수 검증, CPU 좌표 Node2/2(7표본)는 담당 결과를 재사용한다. 새 SASS 판독·웹 반영·화면 시험은 없다.
+
+### 31.1 요청·RT 참조·binding
+
+[판독] GraphicsLayerExtension color weak 참조는 +298/+2a0/+2a8, depth는 +2b0/+2b8/+2c0. null과 owner generation 일치를 검사한다. `005dfa8`는 요청 handle→+40/+48/+50,flags→+58,enabled+5c=`flags&1`; `005dfc8`은 +40 handle과 +58 flags를 읽는다. 두 helper의 미사용 type 인자만으로 capture 종류·flags bit1의 최종 포스트 포함 시점을 확정하지 않는다.
+
+[판독] `005a0d0`는 extension+248에 **0x5f0 Layer buffer**, 슬롯0/1 zero 초기화를 만든다. `00609bc`는 +248을 slot1(stage0/4)에 bind한다. +258+16*i는 slot2(stage0/4), **크기0x30**; +288은 slot9(stage0/4). slot2를 View 역투영 UBO라 부른 담당 초기 추정은 철회한다. 이 문서에는 그 추정을 넣지 않았다.
+
+### 31.2 005f750 직접 writer — 미확정 범위 정정
+
+[판독] 환경 담당 C `005f750`은 extension+38이 enabled일 때 +248의 현재 GraphicsCore 슬롯을 Map해 Layer를 쓰고 Unmap한다. `00bc300` sampler0=lVar13, sampler4=lVar5, texture7+sampler0=uVar6 fallback이다. `08645f0(view,sampler)` 조합을 다음 위치에 직접 쓴다.
+
+| Layer | CPU 입력·view getter(vtable byte offset) | sampler | 참조 무효 시 |
+|---|---|---:|---|
+| 4e0 | color weak +298, virtual100 |0|texture7+sampler0|
+| 4f0 | depth weak +2b0, virtual108 |4|texture7+sampler0|
+| 500 | depth virtual110; 유효+2e0 resource의 ushort+8≥2이면 +208 virtual100 |4|depth 무효이면 texture7+sampler0|
+| 540 | extension+1d8 virtual100 |0|해당 코드에 별도 fallback 없음|
+| 550 | extension+1e8 virtual108 |4|해당 코드에 별도 fallback 없음|
+
+[판독] 따라서 담당 후속의 “Layer540/550·4f0 직접 writer 미확정”은 **해소**했다. virtual108/110의 view format을 depth/stencil로 이름 붙이는 것, extension+1d8/+1e8 객체의 생성·capture pass snapshot·resize/alias/lifetime, uintStencil bit0x80을 쓰는 producer는 아직 미확정이다. CPU handle 연결만으로 G27 적용 또는 stencil 식 제거를 승인하지 않는다.
+
+### 31.3 Layer 좌표·viewport/scissor
+
+[판독] 같은 `005f750`의 유효 depth weak +2b0 virtual48/50→W,H, `Viewport.GetScissor`→sx,sy,sw,sh를 사용한다. `Layer450/454=(W,H)`, `458/45c=(1/(W−1),1/(H−1))`, `478/47c=(sw*W,sh*H)`, `480/484=((sx*W)/(sw*W),(sy*H)/(sh*H))`, `488/48c=(1/(sw*W),1/(sh*H))`, `4a4=1/((sw*W)/(sh*H))`. C의 f32 곱·나눗셈 순서를 보존한다. W=1·빈 scissor의 epsilon이나 대체값을 새로 넣지 않는다. **이 필드들의 CPU source 부재는 해소**, 실제 shader draw의 RT snapshot과 View120..15c 역투영 연결은 별도다.
+
+[판독] `0862028/0862380` viewport는 normalized +1a0/1a4/1a8/1ac 각각 W/H f32 곱, +1b0/+1b4 min/max depth는 그대로. `08626c0/08627b0` scissor는 +1c0/1c4/1c8/1cc 각각 곱 뒤 int 절삭이며 right−left로 다시 계산하지 않는다. 기존 [10_split_screen §2](10_split_screen.md) 재사용. 1919×1079,rect(.5,.5,.5,.5)→viewport(959.5,539.5,959.5,539.5),scissor(959,539,959,539). WebGL 변환 `H−y−h` 결과는 각각0/1이다. 이 변환은 **native G27 texture Y 방향 증거가 아니다**.
+
+### 31.4 stencil feedback·pass·잔여
+
+[판독] `0063630`은 enabled+4f8·유효 depthRT·W/H>0일 때 +508의 현재 buffer index를 Map한다. `x=trunc(sat(+4fc)*(W−1)); y=trunc(sat(+500)*(H−1))`; **새 draw 전에** +504에 mapped int[2]를 읽는다. depth attachment, 전체 RT viewport/scissor, shader0x6d·buffer slot6를 bind하고 1vertex draw. scalar feedback는 G06의 uintStencil bit0x80 texture와 동일 입력이 아니며 fence·정확한 frame latency는 미확정이다.
+
+[판독] `00b5bd0`의 UnderWater/OpaqueNormal/Translucent/ScreenCaptureFinal pass 등록은 기존 [10_split_screen §5](10_split_screen.md)를 재사용한다. 등록 순서만으로 GPU copy·최종 포스트 포함·capture 요청 종료를 확정하지 않는다. `0728e64→072d7c4→0768730/0729b90`는 ParticleFx2라 G27 Model/Layer 증거에서 제외했다. 0056fe8 padding의 C 오류 및 getter/빈 helper도 writer 근거에서 제외했다.
+
+[미확정] 남은 최소 계약은 **RT 객체 생성·view format·pass snapshot, View120..15c depth/Y 역투영, stencil0x80 write/copy, capture flags/type 종료·포스트 의미, feedback fence/latency**다. 확인된 직접 writer와 sampler·좌표 공급을 다시 “자료 없음”으로 집계하지 않는다. 고유27·신규70반영·36대기와 게임별17/3/10/4/2는 그대로다. 화면 외형은 사용자가 기존 게임별 체크 목록으로 확인한다.
+
+근거 C: [capture core9함수](../../../analysis/decomp/shader_fs_c_capture_core.c), [setup2함수](../../../analysis/decomp/shader_fs_c_capture_setup.c), [직접 handle·좌표 writer005f750](../../../analysis/decomp/shader_graph_environment_supply.c), [기존 RT 참조 setter](../../../analysis/decomp/camera_gfx_components.c). 새 C의 INDEX 통합은 부모/A 담당이다.
+
+## 32. VS CPU 생산자 후속 — Model·Mode·Opacity·누락 Color0
+
+[판독·데이터] 담당자 `shader_vs_batch.json.producerFollowup`·MD와 `shader_vs_producer_c_inventory.json`을 통합했다. 영구 계약 `analysis/mat/shader_graph_vs_producer_contract.json`, 새 C4개·고유40함수, Node **805/805**. World/env/capture·기존 shader 식·motion/bone C는 소유별 결과를 재사용하며 추가 판독하지 않았다.
+
+### 32.1 Model 생산·전치 업로드
+
+[판독] `0099fb0→00726b4→ComModel::CalculateTransform(06adaac)`의 q0..q3 반환을 ComModelBuffer+60..9f에 보관하고 `00702c0`가 Model UBO+100/+110/+120의 3 vec4행으로 전치한다. C가 외부 param1..4로 잘못 표시한 다중 SIMD 반환은 **00726b4..26dc 44byte** ASM만 대조했다. translation은 각 row.w(+10c/+11c/+12c)다.
+
+[판독] `E=EntityTransform`, `R=ComModel+100..13f`, `L=SetLocalTransform` 인자(+c0..ff), 합성 local `B=R*L`(+80..bf). 일반 `M=E*B`; ComModel+228 instance buffer가 존재하고 ModelModule+e4 bit0=0이면 `M=B`. Entity+190 generation과 cache+140이 다르고 Model+2c bit80=0이면 재계산; SetLocalTransform은 cache140을−1로 무효화한다. Shape/skin은 이 M에 추가되지 않는다. 기존7 GLB의 Shape·scale200 중복 반례를 재사용하며 mesh.modelMatrix를 M으로 바꾸지 않는다.
+
+[미확정] **Model producer와 행 의미 부재는 해소**. 실제 장면별 Entity·R/L 값/갱신 시점·instance branch→웹 draw별 M 공급은 미구현/미검증이다. G02 7·G18 1·G24 2재질의 원본 Model origin/pivot 계약이 남는다. 루트 identity는 완성된 대체 입력이 아니다.
+
+### 32.2 Mode·instance record
+
+[판독] 실제 constructor `006c6a0`는 ComModel+228 존재 여부를 Mode+4 uint에 저장(일반/planar),shadow 슬롯은0. 과거006c3d0는 vector helper라 constructor 근거에서 제외한다. `06ba3f0`는 CPU stride**0x54** record의 active byte+50≠0인 항목만 첫**0x50** byte를 GPU stride0x50으로 compact copy한다. allocated/live byte+51과 draw active+50는 다르다. matrix 첫0x30 byte는 row-major3×4 affine, translation은+c/+1c/+2c; record+30 opaque 기본1은 Model20c와 별도다.
+
+[판독] `06ba710`의 named ConstantIdentity 초기 copy·opaque1·allocated51, `06bb400`의 capacity×0x50 GPU 할당, `06ba6dc`의 frame/draw buffer 객체 stride0x58, `007172c`의 VS/FS storage slot0 binding을 확정했다. 0x58은 instance record stride가 아니다. 외부 ConstantIdentity의 byte 주소는 main Ghidra map 밖이므로 직접 측정으로 집계하지 않는다.
+
+[미확정] 게임별 actual instance matrix/active writer·GPU culling 후 buffer 순서와 Mode branch의 draw 공급은 남는다. 초기 identity/opaque1을 모든 프레임 값으로 대체하지 않는다.
+
+### 32.3 ModelOpacity — GraphicsLayer별 덮어쓰기
+
+[판독] `g=Buffer+258`, `b=Buffer+1dc`, `l[i]=Buffer+1e0+4*i`(i=0..14). 원본 ordered comparison 기준 `clamp01(x)=x<=0?0:(x>1?1:x)`이다.
+
+```text
+baseline Model20c = f32(clamp01(g) * clamp01(b))
+layer overwrite Model20c = f32(clamp01(g) * (l[i]>1 ? 1 : l[i]))
+```
+
+[판독] layer 식은 유한값에서 min(l[i],1)이며 **음수 하한 clamp가 없다**. NaN은 ordered comparison을 통과해 곱에서 전파한다. g=.5,b/l=−2이면 baseline0,layer−1; g=0,l=−2이면 layer−0. scratch Buffer+21c+4*i의4byte만 UBO20c에 overwrite한다. `0069be0→0060210(extension+30 uint)→006fab8 param4`로 i는 **GraphicsLayer 번호**, param5는+660의0x18-stride resource descriptor 선택임을 확인했다. material/instanceID가 아니다.
+
+[판독] constructor의 global/baseline/15layer는1 초기화. SetOpaque(float)006eb70은16float 전체, SetOpaque(index,float)006eb8c는 해당 layer만(range 검사 없음),006eba4는 raw global258을 쓴다.0093d10의 외부float+310과 ModelBase Transparency/DitherTransparency setter도 연결된다. `mdl_model_opaque` 문자열→+310 binding C xref는 확보하지 못해 이름 대응을 확정하지 않는다.
+
+[미확정] 실제5게임 global float/SetOpaque 갱신·GraphicsLayer overwrite 호출 순서·draw별20c 값을 공급해야 한다. 기본1 생성만으로106재질 runtime opacity1을 확정하지 않는다. graph.ts의 `modelOpacity→1.0`은 근사 유지, 엄격 G16/G22 3재질은 pending. 직접식28·baseline78은 동일 원본 float 계약의 검증 대상이다.
+
+### 32.4 누락 _c0·검증
+
+[판독] G01 griddle grass는344정점/258삼각형, POSITION/NORMAL/TANGENT/TEXCOORD_0만 있으며 원본 export가 custom attribute를 보존하므로 단순 이름 손실로 보지 않는다. `06db430→06db9e0→06dbb00` lookup 실패 후 `_internalNeedToBindAllVertexBuffer(08647b0)=0`이므로 항목을 제거하고 dummy buffer를 붙이지 않는다. VertexAttributeStateInfo::SetDefault는 descriptor 초기화다.0885260의 attribute hole 기본 설정은 외부 NVN `nvnVertexAttribStateSetDefaults`로 이어진다.
+
+[미확정] **CPU descriptor 경로는 확정**, 외부 driver의 최종 Color0.xy fetch값과 bind 수명은 main C에서 확보하지 못했다. 0/1 buffer 또는 requiresAttributes 제거 근거가 아니다. G03/G13 스테이크 stride0x40,+30의 aux/h/w/side 생성은 기존 mg0508 createMeshPost 판독을 재사용하고 정적 grass에 적용하지 않는다.
+
+[데이터] Node805는 opacity 음수/NaN/signed-zero, Model 합성/transpose, instance54→50 compact bytes/translation,Mode flags의 **합성 산술·패킹 검사**. 실제 Entity/레이어/instance 시퀀스·NVN fetch·GPU/화면·NEON fused bit 동일성 시험은 아니다. 기존 shader605·runtime54 표본과 별도 집계한다. C4파일 함수수9/9/7/15=40과 전체주소/원본batch/SHA는 영구 JSON의 cpuCArtifacts에 보존했다. API등록087ef00은 기존effect_runtime_b11.c를 재사용하여 새 C에서 제외했다.
+
+근거 C: [Model9](../../../analysis/decomp/shader_vs_model_producers.c), [Opacity9](../../../analysis/decomp/shader_vs_opacity_producers.c), [native attribute7](../../../analysis/decomp/shader_vs_native_attributes.c), [instance15](../../../analysis/decomp/shader_vs_instance_producers.c). INDEX 통합은 부모/A 담당이다.
+
+## 33. 분담 후속 통합 준비도·사용자 확인 필요
+
+[데이터] §29~32는 원본 공급 근거를 늘린 **분석·문서 후속**이다. 사전27·신규70반영·36대기(5판독/65근사), 게임별 pending17/3/10/4/2는 변하지 않는다. 최초 pending106→36 집계와 후속 CPU 증거 확보를 별도 집계한다.
+
+| 영역 | 원본 근거 확보 | 남은 웹 공급/외부 증거 |
+|---|---|---|
+| World | 생성0·등록·gate·0/4 각counter·upload·해제 | owner epoch·Core callback timing/frame step·Stage lifetime 대응 |
+| Model/Mode/Opacity | E×local/instance branch·transpose·record packing·GraphicsLayer별20c 식 | draw별 실제 값/갱신·instance writer/culling 순서·외부NVN missing Color0.xy |
+| Layer+Z/P7.y | 751d0→Layer220 raw +Z·draw yaw·cliff FMAB2002값 | socket scale/draw q·native animation start/step/loop 웹 대응 |
+| env/array/fog | descriptor59·metadata7·array3 CPU fallback·G27 coefficient/cube slot/view | 확정한 원본 mip/state·array layer의 웹 공급·비정규화N·2D TIC/array TEX GPU 불일치·native cube explicit LOD |
+| capture/stencil | 요청·RT weak ref·binding·직접handle/좌표writer·feedback | upstream RT snapshot/view format·View120..15c depth/Y·bit80 write/copy·flags 종료·fence |
+
+[미확정] “CPU producer 전체 부재”를 남은 원인으로 반복하지 않는다. 검증할 대상은 표의 구체적 웹 공급과 외부 경계다. 사용자 확인 필요는 **게임별 기존 외형 체크 목록과 실제 장면/GraphicsLayer 입력 선택**이며, tint·임의 보정값 승인을 요구하는 항목이 아니다. Model/instance/Opacity1·원본없는 Color0 상수·World ms 치환·fog PMREM/추가mip를 근거 없이 확정하지 않는다.
+
+[데이터] 이번 후속 검증: 원본 mg0101 fog 계수 산술641/641(max5.960464477539063e−8),FMAB2002값(max2.220446049250313e−16); 담당 Node env/array440/440,VS805/805,capture2/2. 문서 UTF8·fence·근거링크 및 계약 JSON 파싱 확인. capture C 전달 당시/현재 해시가 달라 원본batch의 **11함수 코드 토큰 일치**를 확인하고 전달·현재해시를 함께 보존했다(005a0d0 batch의xref 출력꼬리는 본문 밖으로 분리). 런타임 후속 변경이 없어 전체시험/tsc/build를 재실행하지 않았으며 §27의 기존 증거 범위를 확대하지 않는다.
+

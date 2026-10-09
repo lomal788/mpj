@@ -38,25 +38,12 @@
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { characterDefaults, EyeLook, HeadLook, headInput } from '../../../lib/character';
+import { HeadView } from '../../../lib/character-three';
 import { loadTexture } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 
 const BODY_MAPS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap'] as const;
-const DEG = Math.PI / 180;
-/** ComHeading 기본값 [판독 impl 생성자 FUN_71001bee00]: speedCoef(+0xB0), linearSpeed(+0xB4, rad/s), eyesLookWeight(+0xBC), 눈 따라가기(+0xF4·+0x134) */
-const HEAD_SPEED_COEF = 0.12;
-const HEAD_LINEAR_SPEED = 5;
-const EYES_LOOK_WEIGHT = 1;
-const EYE_RATE = 0.6;
-/** 프레임 시간 표 DAT_71015d4678[0] = 1/60 [데이터] */
-const FRAME_SEC = 1 / 60;
-/** 모드 4 스프링 강성 = min(2000, speedCoef^2.252184 · 17851.338), 감쇠 = 2√k [판독 FUN_71001c1694 case 4] */
-const HEAD_K = Math.min(2000, Math.pow(HEAD_SPEED_COEF, 2.252184) * 17851.338);
-const HEAD_C = 2 * Math.sqrt(HEAD_K);
-/** 대상 각속도 경계(rad/s): 이하 = 스프링, 이상 = 선형, 사이 = 둘의 slerp [판독 같은 곳] */
-const HEAD_W_LO = 2.0943952;
-const HEAD_W_HI = 4.1887903;
-const F32_EPS = 1.1920929e-7;
 /**
  * 모션 user data "headLookWeight"(fskb, 실수 1개) — 주 슬롯 모션에 있으면 headLookWeight 대신 쓴다(0 이상일 때, impl+0x23C)
  * [판독 FUN_71001c1380·FUN_71001bea18]. mg1801 이 쓰는 모션 중 값이 있는 것만 [데이터: chara~pcMot_co pcNN_co_win00a/b.fskb].
@@ -318,17 +305,11 @@ export class CharacterActor {
   private prev: { motion: string; frame: number; since: number; frames: number } | null = null;
   private headTarget: THREE.Vector3 | null = null;
   private headWeight = 0;
-  /** head_aimcont 바인드 로컬 회전(단위) — 매 프레임 여기로 되돌린다 */
-  private readonly headRest = new THREE.Quaternion();
-  /** impl+0x200 현재 회전, +0x220 스프링 속도, +0x210 지난 대상(0 으로 시작) */
-  private readonly headCur = new THREE.Quaternion();
-  private readonly headVel = new THREE.Vector4();
-  private readonly headPrevT = new THREE.Vector4();
-  /** impl+0x230 대상 방향(캐릭터 공간) z — 생성자 1.0 */
-  private headFront = 1;
-  /** 눈 i: impl+0x100/+0x140 지난 출력, +0xF8/+0x138 섞임비 */
-  private readonly eyeOut: [THREE.Vector2 | null, THREE.Vector2 | null] = [null, null];
-  private readonly eyeBlend: [number, number] = [0, 0];
+  /** ComHeading 머리·눈 계산 = 공용 캐릭터 런타임(lib/character HeadLook·EyeLook, lib/character-three HeadView — head_aimcont 바인드 로컬 회전으로 매 프레임 되돌림) */
+  private readonly headLookCore: HeadLook;
+  private readonly headView: HeadView;
+  private readonly headIn = headInput();
+  private readonly eyeLooks: EyeLook[];
   /** 따라가기 진행용: 지난 장면 프레임과 모션 속도(주 슬롯 |speed|, 프레임 진행으로 잰다) */
   private lastNow: number | null = null;
   private motionSpeed = 1;
@@ -381,7 +362,13 @@ export class CharacterActor {
     }
     this.rightHand = this.root.getObjectByName('attach_R_hand') ?? null;
     this.head = this.root.getObjectByName('head_aimcont') ?? null;
-    if (this.head) this.headRest.copy(this.head.quaternion);
+    const h = tpl.info.head;
+    this.headLookCore = new HeadLook({ minDeg: [h.min_x, h.min_y, h.min_z], maxDeg: [h.max_x, h.max_y, h.max_z], weight: 0, chinCoef: h.chincoef }, characterDefaults.head);
+    this.headView = new HeadView(this.headLookCore);
+    this.headView.bind(this.root);
+    this.eyeLooks = tpl.info.eyes.map(
+      (e) => new EyeLook({ ox: e.t_offset_x, oy: e.t_offset_y, sx: e.t_scale_x, sy: e.t_scale_y, rot: e.t_rot, minx: e.t_min_x, miny: e.t_min_y, maxx: e.t_max_x, maxy: e.t_max_y }, 'blend'),
+    );
     this.setupBlink();
     this.setEyeMaskFromAlbedo();
   }
@@ -561,27 +548,9 @@ export class CharacterActor {
         uni.set(ax, ay);
         continue;
       }
-      const on = look.eyesActive;
-      let tx = e.t_offset_x;
-      let ty = e.t_offset_y;
-      if (on) {
-        const c = Math.cos(e.t_rot);
-        const s = Math.sin(e.t_rot);
-        tx = clamp(e.t_offset_x + (look.eyeYaw * c + look.eyePitch * s) * e.t_scale_x, e.t_min_x, e.t_max_x);
-        ty = clamp(e.t_offset_y - (-s * look.eyeYaw + look.eyePitch * c) * e.t_scale_y, e.t_min_y, e.t_max_y);
-      }
-      const rate = on ? EYE_RATE : EYE_RATE * 0.5;
-      let out = this.eyeOut[i];
-      for (let n = 0; n < steps; n++) {
-        this.eyeBlend[i] += rate * ((on ? 1 : 0) - this.eyeBlend[i]);
-        const px = out ? out.x : ax;
-        const py = out ? out.y : ay;
-        const sx = px + (tx - px) * rate;
-        const sy = py + (ty - py) * rate;
-        out = (out ?? new THREE.Vector2()).set(ax + (sx - ax) * this.eyeBlend[i], ay + (sy - ay) * this.eyeBlend[i]);
-      }
-      this.eyeOut[i] = out;
-      if (out) uni.copy(out);
+      const el = this.eyeLooks[i];
+      el.update(steps, look.eyesActive, look.eyeYaw, look.eyePitch, ax, ay);
+      if (el.has) uni.set(el.outX, el.outY);
       else uni.set(ax, ay);
     }
   }
@@ -594,66 +563,16 @@ export class CharacterActor {
     const head = this.head;
     const look: LookState = { eyesActive: !!this.headTarget && this.eyesLook, eyePitch: 0, eyeYaw: 0 };
     if (!head) return look;
-    head.quaternion.copy(this.headRest);
-    this.root.updateMatrixWorld(true);
-    /* 대상 회전 qT: 대상 위치를 head(부모) 공간 방향으로 바꿔 +Z → 그 방향 최단 회전(1 + 내적 ≤ ulp 면 (1,0,0,0)).
-       대상 없음·머리 시선 꺼짐이면 단위 [판독 FUN_71001c0c90 앞머리]. impl+0x230 = 같은 대상의 캐릭터 공간 방향 z */
-    const qT = new THREE.Quaternion();
-    if (this.headTarget && this.headLook && head.parent) {
-      const dir = head.parent.worldToLocal(this.headTarget.clone()).sub(head.position);
-      const ent = this.root.worldToLocal(this.headTarget.clone()).sub(this.root.worldToLocal(head.getWorldPosition(new THREE.Vector3())));
-      if (dir.lengthSq() > 0 && ent.lengthSq() > 0) {
-        dir.normalize();
-        this.headFront = ent.normalize().z;
-        const d1 = 1 + dir.z;
-        if (d1 <= F32_EPS) qT.set(1, 0, 0, 0);
-        else {
-          const s = Math.sqrt(d1 + d1);
-          qT.set(-dir.y / s, dir.x / s, 0, s * 0.5);
-        }
-      }
-    }
-    /* 가중치: 모션 user data headLookWeight(0 이상) 가 있으면 그것, 아니면 SetHeadLookWeight 값(mg1801 0.3) */
     const mw = MOTION_HEAD_WEIGHT[this.tpl.key]?.[motion];
-    const hw = mw !== undefined && mw >= 0 ? mw : this.headWeight;
-    const q = new THREE.Quaternion().slerp(qT, hw);
-    if (this.headTarget) {
-      /* YZX 분해 → head_min/max 로 자름 → ZYX 재구성 [판독 디스어셈블리 @0x71001c1ad8·@0x71001c38b4~0x71001c39b0] */
-      const h = this.tpl.info.head;
-      const e = new THREE.Euler().setFromQuaternion(q, 'YZX');
-      e.set(clamp(e.x, h.min_x * DEG, h.max_x * DEG), clamp(e.y, h.min_y * DEG, h.max_y * DEG), clamp(e.z, h.min_z * DEG, h.max_z * DEG), 'ZYX');
-      q.setFromEuler(e);
-    }
-    /* 따라가기 모드 4: 대상 각속도 ω = acos(대상·지난 대상)/dt 로 스프링·선형을 고른다. 시간 = dt·|모션 속도| */
-    const cur = this.headCur;
-    const vel = this.headVel;
-    const pt = this.headPrevT;
-    const sp = Math.abs(this.motionSpeed);
-    for (let n = 0; n < steps; n++) {
-      const w = Math.acos(clamp(q.x * pt.x + q.y * pt.y + q.z * pt.z + q.w * pt.w, -1, 1)) / FRAME_SEC;
-      const lin = w > HEAD_W_LO ? cur.clone().rotateTowards(q, FRAME_SEC * sp * HEAD_LINEAR_SPEED) : null;
-      let spr: THREE.Quaternion | null = null;
-      if (w < HEAD_W_HI) {
-        const h = FRAME_SEC * sp;
-        vel.x += ((cur.x - q.x) * -HEAD_K - vel.x * HEAD_C) * h;
-        vel.y += ((cur.y - q.y) * -HEAD_K - vel.y * HEAD_C) * h;
-        vel.z += ((cur.z - q.z) * -HEAD_K - vel.z * HEAD_C) * h;
-        vel.w += ((cur.w - q.w) * -HEAD_K - vel.w * HEAD_C) * h;
-        spr = new THREE.Quaternion(cur.x + vel.x * h, cur.y + vel.y * h, cur.z + vel.z * h, cur.w + vel.w * h).normalize();
-      }
-      if (lin && spr) cur.copy(spr.slerp(lin, (w - HEAD_W_LO) / HEAD_W_LO));
-      else cur.copy((lin ?? spr)!);
-      pt.set(q.x, q.y, q.z, q.w);
-    }
-    if (Math.abs(Math.abs(cur.w) - 1) >= F32_EPS) {
-      head.quaternion.copy(cur).multiply(this.headRest);
-      head.updateMatrixWorld(true);
-    }
-    /* 눈 회전(impl+0xC0 = 1): 단위 → qT 를 clamp(앞쪽 + 1.8, 0, 2)·(눈 가중치 − 머리 가중치) (≤ 2) 만큼 — 1 을 넘으면 넘어서 돈다 */
-    const t = Math.min(2, clamp(this.headFront + 1.8, 0, 2) * (EYES_LOOK_WEIGHT - hw));
-    const ee = new THREE.Euler().setFromQuaternion(slerpFromIdentity(qT, t), 'YZX');
-    look.eyePitch = ee.x;
-    look.eyeYaw = ee.y;
+    const inp = this.headIn;
+    inp.motionWeight = mw ?? NaN;
+    inp.headOn = this.headLook;
+    inp.eyesOn = this.eyesLook;
+    inp.speedScale = this.motionSpeed;
+    this.headLookCore.weight = this.headWeight;
+    this.headView.apply(this.root, steps, this.headTarget ? { pos: this.headTarget } : null, inp);
+    look.eyePitch = this.headLookCore.eyePitch;
+    look.eyeYaw = this.headLookCore.eyeYaw;
     return look;
   }
 }
@@ -665,26 +584,6 @@ interface LookState {
   /** 눈 회전의 X·Y 각(YZX 분해, rad) */
   eyePitch: number;
   eyeYaw: number;
-}
-
-function clamp(v: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, v));
-}
-
-/** 단위 → q slerp(최단 경로, t 가 1 을 넘으면 연장). 거의 같으면 선형 [판독 FUN_71001c5a58 앞머리] */
-function slerpFromIdentity(q: THREE.Quaternion, t: number): THREE.Quaternion {
-  const dot = q.w;
-  const sg = dot < 0 ? -1 : 1;
-  const c = Math.abs(dot);
-  let s0 = 1 - t;
-  let s1 = t * sg;
-  if (c <= 1 - F32_EPS) {
-    const th = Math.acos(c);
-    const si = Math.sin(th);
-    s0 = Math.sin((1 - t) * th) / si;
-    s1 = (sg * Math.sin(t * th)) / si;
-  }
-  return new THREE.Quaternion(q.x * s1, q.y * s1, q.z * s1, s0 + q.w * s1);
 }
 
 const alphaCache = new WeakMap<object, boolean>();

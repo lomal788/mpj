@@ -4,7 +4,7 @@
  * 3D 미리 받기 등급(커서 → 주변 칸 → 나머지)은 charaTiers — docs/engine/loader_manager.md §13.4.
  */
 import * as THREE from 'three';
-import { Preview3D, type LoadStat, type PrepStat } from './preview3d';
+import { mpatTables, Preview3D, type LoadStat, type PrepStat } from './preview3d';
 import { nodeMatrix, Render2D } from './render2d';
 import { LayoutInst } from './scene2d';
 import { CharSelectState, RANDOM, RepeatGen, type CharSelectEvent, type PadFrame } from './state';
@@ -69,7 +69,10 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
   gl.outputColorSpace = THREE.SRGBColorSpace;
   const r2d = new Render2D(spec);
   await r2d.load(url);
-  const p3d = new Preview3D(spec, url);
+  const mpat = await fetch(url('../chara/mpat.json'))
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+  const p3d = new Preview3D(spec, url, undefined, { mpat: mpatTables(mpat, ['sys_pc']) });
 
   const L = (name: string): LayoutInst => new LayoutInst(name, spec.layouts[name], spec);
   const layouts = {

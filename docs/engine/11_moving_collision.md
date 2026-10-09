@@ -1,6 +1,6 @@
 # 11. 움직이는 충돌 — 부착 포즈·강체 동기화·Ray/Capsule 질의
 
-2026-10-09. 상태: **공통 캡슐·접촉·접지 규약 판독 완료 / 웹 API 설계 제안 / 게임별 포즈 시점·ActorParam 소비 미확정**.
+2026-10-09. 상태: **공통 캡슐·접촉·접지 규약 판독 완료 / 웹 API 설계 제안 / 게임별 포즈 시점·ActorParam 소비 미확정 / SDK 내부는 PhysX 4.1 공개 소스 기준(§8)**.
 
 확정 수준 표기: **[실행]** 원본 실행 확인, **[판독]** 원본 코드 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 [실행]은 없다. 재구현 계산은 **재구현 계산**이라고 따로 적는다.
 
@@ -261,3 +261,63 @@ pause는 논리 시간·포즈 commit·물리 step을 정지시키고 pending di
 | CCD·Dynamic solver·All 정렬 | 내부 의미/정렬 일부 미확정 | 해당 기능의 원본 일치에만 차단; mg0106 기본 단일 query에는 비차단 |
 
 이번 검증 범위는 **기존 완료 문서 재사용, 원본 함수·ARM64/디컴파일의 누락 연결 정적 판독, 현재 웹 소스 대조, 문서 링크/형식 확인**이다. 공통 Entity·Collision·Physics 주소는 위 절에 기록했으며 추가 판독은 원본을 변경하지 않은 임시 Ghidra 프로젝트의 `-noanalysis -readOnly`로 수행했다. 게임 구현·원본 실행·스테이징은 하지 않았다.
+
+## 8. PhysX 4.1 공개 소스 기준 (2026-10-09)
+
+앞 절에서 "SDK 내부(narrow phase·접촉 순서·CCD)는 판독 범위 밖"으로 둔 항목은 **디컴파일이 아니라 공개 소스로 확정할 수 있다.** 원본은 PhysX 4.1.2를 정적 링크했고, 같은 버전의 소스가 BSD-3으로 공개돼 있다. 충돌 런타임은 이 절을 기준으로 **원본 알고리즘을 옮기는 방식**으로 구현한다(표준 알고리즘으로 새로 설계하지 않는다).
+
+### 8.1 근거 [데이터]
+
+| 근거 | 내용 |
+|---|---|
+| 원본 버전 | `.apx` = PhysX **4.1.2** `PxSerialization` 이진 직렬화([06_scene_data.md §5](06_scene_data.md)) |
+| 원본에 들어 있는 모듈 | `main` 안의 단언 경로 문자열 `PhysX4/physx/source/<모듈>`: physx 25 · geomutils 23(하위 convex·hf·mesh·sweep) · physxextensions 17 · physxcooking 17 · foundation 14 · lowleveldynamics 12 · lowlevel 11 · common 10 · **scenequery 9** · simulationcontroller 8 · lowlevelaabb 7 · **physxcharacterkinematic 2** · task 1 |
+| 캐릭터 컨트롤러 포함 | `physx::Cct::{Controller, CapsuleController, BoxController, CharacterControllerManager, ObstacleContext}` 클래스 이름이 있다. 어느 게임이 쓰는지는 [mg0912 §6](../minigame/mg0912.md)의 선택적 CCT 경로 참조 |
+| 충돌 메시 midphase | `.apx` 객체 통계에서 삼각형 메시는 전부 **TRIANGLE_MESH_BVH33(3,098개)**, BVH34·높이맵 0, CONVEX_MESH 38([06 §5](06_scene_data.md)). BVH33 = **RTree midphase**(`GuMidphaseRTree`·`GuRTree`). BV4 경로는 이식 대상이 아니다 |
+| 공개 소스 | NVIDIAGameWorks/PhysX `4.1` 브랜치, 라이선스 **BSD-3-Clause**. 로컬 `C:/dev/mpj/tools/oss/PhysX-4.1`(HEAD `a2c0428`, sparse checkout, 현재 663파일) |
+
+로컬 sparse checkout 에는 지금 `include`·`geomutils/src`의 일부(convex·gjk·hf·mesh 등)·lowlevel·lowleveldynamics·physx·physxextensions·simulationcontroller 만 있다. **이식 전에 아래를 checkout 에 추가해야 한다**: `source/scenequery`, `source/physxcharacterkinematic`, `source/geomutils/src/{contact,pcm,sweep,intersection,distance,ccd}` 등 하위 전부, `source/common`, `source/foundation`, `source/lowlevelaabb`.
+
+### 8.2 원본 호출 → 공개 소스 대응
+
+앞 절의 Bezel 래퍼(디컴파일로 판독 완료)는 SDK 가상 함수로 넘어간다. 그 뒤는 공개 소스에서 읽는다. 대응은 **[추정: 이름·호출 형태]** 이며, 이식 착수 때 원본 함수의 단언 문자열·vtable 순서로 한 번 대조해 [판독]으로 올린다.
+
+| 원본(이 문서) | PhysX 4.1 API | 공개 소스 위치(대표) |
+|---|---|---|
+| `CastRay` → SDK 가상 **+0x2B8** (§3.1) | `PxScene::raycast` | `physx/src/NpSceneQueries.*`, `scenequery/src/Sq*`, `geomutils/src/GuRaycastTests.cpp`, 메시 `mesh/GuMidphaseRTree.cpp`·`GuRTreeQueries.cpp` |
+| `CastShape` → SDK 가상 **+0x2C0** (§3.1) | `PxScene::sweep`(선형 스윕) | `GuSweepTests.cpp`·`GuSweepSharedTests.cpp`·`sweep/*`, 메시 `mesh/GuSweepsMesh.cpp`·`GuSweepMesh.h` |
+| 초기 겹침·`initialOverlap`·distance≤0 (§3.2) | sweep 의 `eINITIAL_OVERLAP`·MTD | `GuSweepMTD.cpp`·`GuMTD.cpp` |
+| hit flags 0x403/0x423/0x603·+0x80 (§3.2 "의미 미확정") | `PxHitFlag` 비트 | **[데이터: 소스 정의]** `include/PxQueryReport.h`: ePOSITION 0x1·eNORMAL 0x2·eUV 0x8·eASSUME_NO_INITIAL_OVERLAP 0x10·eMESH_MULTIPLE 0x20·eMESH_ANY 0x40·eMESH_BOTH_SIDES 0x80·ePRECISE_SWEEP 0x100·eMTD 0x200·eFACE_INDEX 0x400. 따라서 **0x403 = eDEFAULT(POSITION·NORMAL·FACE_INDEX)**, 0x423 = 기본 + **MESH_MULTIPLE**(Ray+0x41), 0x603 = 기본 + **MTD**(Sweep+0xE1), +0x80 = **MESH_BOTH_SIDES**(+0x42/+0xE2) |
+| 레이어·제외 Entity prefilter (§3.2) | `PxQueryFilterCallback::preFilter`, `PxQueryFilterData` | `include/PxQueryFiltering.h`. 원본 prefilter 함수 `FUN_710062c8b4` 는 게임 콜백(이미 판독) |
+| `CastRayAll`·`CastShapeAll` 정렬·동점 (§7 미확정) | `PxHitBuffer` touch 목록 | `scenequery`·`NpSceneQueries` 의 touch 수집 순서 |
+| Actor–Map 침투 벡터(§4.1) | `PxGeometryQuery::computePenetration`·overlap | `GuMTD.cpp`·`GuOverlapTests.cpp`·`mesh/GuOverlapTestsMesh.cpp` |
+| 캡슐 Z축 quarter-turn(§3.3) | `PxCapsuleGeometry` 축 = **X**([데이터: 소스 주석 "extending along the x axis"]) | `include/geometry/PxCapsuleGeometry.h`, `GuCapsule.*` — 엔진 Y축 캡슐을 SDK X축 캡슐로 바꾸는 것이 원본의 sin/cos(π/4) Z축 회전의 이유 |
+| 선택적 CCT(mg0912) | `PxCapsuleController::move` | `physxcharacterkinematic/src/Cct*` |
+| Dynamic 강체·접촉 해결(mg1002·mg0911, §2.3) | `PxScene::simulate` 솔버 | `lowleveldynamics`(PGS/TGS)·`simulationcontroller`·`geomutils/src/contact`·`pcm` |
+
+### 8.3 이식 범위와 순서
+
+| 단계 | 범위 | 쓰는 곳 |
+|---|---|---|
+| P0 | 형상(Box·Capsule·Sphere·TriangleMesh BVH33·Convex)과 **씬 질의**: raycast·선형 sweep·overlap·MTD/penetration, RTree midphase, `PxHitFlag`·필터 규약 | 공용 충돌 런타임 전부(§6 API의 백엔드) |
+| P1 | 캐릭터 컨트롤러(Cct) | mg0912 등 CCT 를 켜는 게임만 |
+| P2 | 강체 시뮬레이션(브로드페이즈·접촉 생성·솔버) | Dynamic 을 쓰는 게임(mg1002·mg0911 등)만, 게임 포팅 때 |
+
+- **필요한 함수만** 옮긴다. PhysX 전체·쿠킹(메시 빌드)은 옮기지 않는다. 메시는 `.apx`에 이미 구워진 BVH33 데이터를 그대로 읽는다(재구축 금지 — 질의 순서가 midphase 트리 구조에 따라 달라질 수 있음).
+- 옮긴 코드는 §6.2 의 숫자 상태 world 뒤에 **질의 백엔드**로 꽂는다(API·수명 규칙은 §6 그대로). 위치는 `script/lib/` 아래 import 0 모듈로 두고 three 에 묶지 않는다(엔진 무관 코어 원칙).
+
+### 8.4 동일성 기준과 한계
+
+- **알고리즘은 원본과 같다**(같은 버전 소스). 동점 처리·후보 순서·초기 겹침 처리·MTD 방향이 원본 규칙대로 나온다.
+- **비트 일치는 보장하지 않는다.** 원본은 ARM64 NEON 의 `Ps::aos` SIMD 경로로 컴파일됐고(FMA·연산 순서), 웹은 JavaScript 스칼라다. f32 결과는 `Math.fround`로 단계마다 맞추고, SIMD 경로의 연산 순서를 스칼라로 그대로 펼쳐 차이를 줄인다. 남는 차이는 [근사]로 표시한다.
+- **골든 검증 제안 [설계]**: 같은 공개 소스를 데스크톱에서 네이티브로 빌드한 작은 시험 프로그램으로, 같은 형상·같은 질의 입력에 대한 결과(hit 위치·법선·거리·touch 순서·MTD)를 기록해 웹 이식본과 대조한다. 원본(ARM)과 데스크톱(x86 SSE)의 차이는 위와 같은 수준으로 작다고 본다 [추정]. 빌드 도구(CMake·MSVC 등) 준비 여부는 착수 때 확인한다.
+
+### 8.5 라이선스
+
+BSD-3-Clause 는 소스 형태 재배포 시 **저작권 고지·조건·면책 문구 유지**를 요구한다. 이식한 파일마다 머리에 PhysX 원본 저작권 고지를 넣고, 저장소에 원문 `LICENSE.md` 사본을 둔다. 이 고지는 이 프로젝트의 "임의 주석 금지" 규칙의 예외다(법적 요구).
+
+### 8.6 이 절로 바뀌는 판단
+
+- §7 남은 미확정 중 "SDK narrow phase·동점 접촉 순서·고속 회전 CCD", "Query 옵션(+0x41/42·E1/E2) 비트 의미·All 정렬" 은 **공개 소스로 확정할 수 있는 항목**이 됐다. 이식 착수 때 §8.2 대응을 [판독]으로 올리면서 해소한다.
+- 런타임 구현 준비도의 "SDK와 후보 순서까지 완전 일치는 추가 검증" 은 **원본 알고리즘 이식 + 네이티브 골든 대조**로 검증 경로가 생겼다.
+- 게임 고유 판단(포즈 commit 시점, ActorParam 소비)은 공개 소스와 무관하며 기존대로 게임별 디컴파일로 판독한다.

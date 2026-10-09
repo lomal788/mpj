@@ -290,7 +290,7 @@ console.log('6. import 그래프 (독립성)');
     const src = readFileSync(join(dir, f), 'utf8');
     for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
       const spec2 = m[1] ?? m[2];
-      const allowed = spec2.startsWith('./') ? !spec2.includes('..') : spec2 === 'three' || spec2.startsWith('three/examples/jsm/');
+      const allowed = spec2.startsWith('./') ? !spec2.includes('..') : spec2 === 'three' || spec2.startsWith('three/examples/jsm/') || spec2 === '../../lib/character' || spec2 === '../../lib/character-three';
       ok(allowed, `${f}: 금지 import '${spec2}'`);
     }
   }

@@ -9,6 +9,7 @@
  * spec.layers 경로 = 명세 폴더 기준 상대 경로(공용 assets/chara/tex, docs/engine/chara_assets.md §5).
  */
 import * as THREE from 'three';
+import { EyeLook } from '../../lib/character';
 import { loadTextureInto } from '../stage3d/assetLoader';
 import type { Heading } from './heading';
 
@@ -179,9 +180,8 @@ export class NpcLook {
   private readonly mats: Inst[] = [];
   private color: number | null;
   private readonly texCache = new Map<string, THREE.Texture>();
-  private eyeParam: { ox: number; oy: number; sx: number; sy: number; rot: number; minx: number; miny: number; maxx: number; maxy: number }[] = [];
+  private eyes: EyeLook[] = [];
   private readonly eyeOut: (THREE.Vector2 | null)[] = [null, null];
-  private readonly eyeBlend = [0, 0];
 
   constructor(
     private readonly spec: LookSpec,
@@ -280,19 +280,25 @@ export class NpcLook {
       }
     });
     const rec = spec.npc[0];
-    this.eyeParam = (rec?.eyes ?? [])
+    this.eyes = (rec?.eyes ?? [])
       .filter((e) => String(e.shaderparam ?? '').startsWith('material_texture_srt'))
-      .map((e) => ({
-        ox: Number(e.t_offset_x ?? 0),
-        oy: Number(e.t_offset_y ?? 0),
-        sx: Number(e.t_scale_x ?? 0),
-        sy: Number(e.t_scale_y ?? 0),
-        rot: Number(e.t_rot ?? 0),
-        minx: Number(e.t_min_x ?? 0),
-        miny: Number(e.t_min_y ?? 0),
-        maxx: Number(e.t_max_x ?? 0),
-        maxy: Number(e.t_max_y ?? 0),
-      }));
+      .map(
+        (e) =>
+          new EyeLook(
+            {
+              ox: Number(e.t_offset_x ?? 0),
+              oy: Number(e.t_offset_y ?? 0),
+              sx: Number(e.t_scale_x ?? 0),
+              sy: Number(e.t_scale_y ?? 0),
+              rot: Number(e.t_rot ?? 0),
+              minx: Number(e.t_min_x ?? 0),
+              miny: Number(e.t_min_y ?? 0),
+              maxx: Number(e.t_max_x ?? 0),
+              maxy: Number(e.t_max_y ?? 0),
+            },
+            'npc',
+          ),
+      );
     this.setColor(this.color);
   }
 
@@ -366,21 +372,10 @@ export class NpcLook {
 
   /** 눈 시선(FUN_71001c5a58) — 결과는 다음 apply 에서 srt1/srt2 이동으로 들어감(srt1/2 를 읽는 눈에만 보임) */
   applyEyes(h: Heading): void {
-    this.eyeParam.forEach((e, i) => {
+    this.eyes.forEach((e, i) => {
       if (i > 1) return;
-      const on = h.eyesActive;
-      let tx = e.ox;
-      let ty = e.oy;
-      if (on) {
-        const c = Math.cos(e.rot);
-        const s = Math.sin(e.rot);
-        tx = Math.min(e.maxx, Math.max(e.minx, e.ox + (h.eyeYaw * c + h.eyePitch * s) * e.sx));
-        ty = Math.min(e.maxy, Math.max(e.miny, e.oy - (-s * h.eyeYaw + h.eyePitch * c) * e.sy));
-      }
-      const rate = on ? 0.6 : 0.3;
-      this.eyeBlend[i] += rate * ((on ? 1 : 0) - this.eyeBlend[i]);
-      const prev = this.eyeOut[i] ?? new THREE.Vector2(e.ox, e.oy);
-      this.eyeOut[i] = prev.set(prev.x + (tx - prev.x) * rate, prev.y + (ty - prev.y) * rate);
+      e.update(1, h.eyesActive, h.eyeYaw, h.eyePitch, 0, 0);
+      this.eyeOut[i] = (this.eyeOut[i] ?? new THREE.Vector2()).set(e.outX, e.outY);
     });
   }
 

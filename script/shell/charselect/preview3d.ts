@@ -29,18 +29,15 @@ import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { assetHooks } from './assetHooks';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { CharacterCore, characterDefaults, mpatRows, type CharacterCoreOptions, type MpatRow, type PlayOptions } from '../../lib/character';
+import { CharacterView, wrap, type MotionData } from '../../lib/character-three';
 import type { BodyGraph, CharaSpec, Spec } from './types';
 
-type MatTable = Record<string, Record<string, Record<string, number | number[]>>>;
+type MotionInfo = MotionData;
 
-interface MotionInfo {
-  frames: number;
-  loop: boolean;
-  blinkName?: string;
-  matFrames?: number;
-  mat?: MatTable;
-  visFrames?: number;
-  vis?: Record<string, [number, number][]>;
+/** assets/chara/mpat.json 에서 이름 순서대로(없는 표는 건너뜀) — 등록 순서 = 장면/캐릭터 → 장면/공통 → sys/캐릭터 → sys/공통(09 §14.7) */
+export function mpatTables(json: Record<string, [string | null, string | null, number, number, number, number][]> | null, names: readonly string[]): MpatRow[][] {
+  return names.filter((n) => json?.[n]).map((n) => mpatRows(json![n]));
 }
 
 type MotionTable = Record<string, MotionInfo>;
@@ -69,34 +66,55 @@ interface BodyUniforms {
   tintColor: { value: THREE.Color };
 }
 
-interface Slot {
-  rt: THREE.WebGLRenderTarget;
-  scene: THREE.Scene;
-  camera: THREE.PerspectiveCamera;
-  chara: number;
-  shown: boolean;
-  root: THREE.Object3D | null;
-  mixer: THREE.AnimationMixer | null;
-  blink: THREE.AnimationMixer | null;
-  blinkOn: boolean;
-  acts: THREE.AnimationAction[];
-  clips: Map<string, THREE.AnimationClip>;
-  current: string;
-  next: string | null;
-  /** 본 모션 노드 프레임(모델이 없어도 흐른다) */
-  frame: number;
-  eye: EyeUniforms | null;
-  body: BodyUniforms | null;
-  motions: MotionTable;
-  matDefaults: Record<string, number[]>;
-  visMeshes: Map<string, THREE.Object3D[]>;
-  boneDefault: Map<string, boolean>;
-  token: number;
+class Slot {
+  chara = -1;
+  shown = false;
+  root: THREE.Object3D | null = null;
+  view: CharacterView | null = null;
+  /** 모션 시간축(지금 모션·다음·노드 프레임) = 공용 캐릭터 코어 주 슬롯(docs/engine/09_character.md §14) */
+  readonly core: CharacterCore;
+  seq = 0;
+  eye: EyeUniforms | null = null;
+  body: BodyUniforms | null = null;
+  matDefaults: Record<string, number[]> = {};
+  token = 0;
   /** 요청 시각·준비 여부(stats) */
-  reqAt: number;
-  reqReady: boolean;
+  reqAt = 0;
+  reqReady = false;
   /** 첫 그리기 측정 대기 중인 stats 항목 */
-  pendingStat: LoadStat | null;
+  pendingStat: LoadStat | null = null;
+
+  constructor(
+    readonly rt: THREE.WebGLRenderTarget,
+    readonly scene: THREE.Scene,
+    readonly camera: THREE.PerspectiveCamera,
+    spec: Spec,
+    rand: (n: number) => number,
+    extra?: Partial<CharacterCoreOptions>,
+  ) {
+    this.core = new CharacterCore({ info: (name) => spec.chars[this.chara]?.clips?.[name], rand, rules: characterDefaults.motion, ...extra });
+  }
+
+  get current(): string {
+    return this.core.main.name;
+  }
+
+  get next(): string | null {
+    return this.core.main.queuedName;
+  }
+
+  /** 본 모션 노드 프레임(모델이 없어도 흐른다) */
+  get frame(): number {
+    return this.core.main.bundleFrame;
+  }
+
+  get mixer(): THREE.AnimationMixer | null {
+    return this.view?.mixer ?? null;
+  }
+
+  get motions(): MotionTable {
+    return this.view?.motions ?? {};
+  }
 }
 
 type PrepState = 'queued' | 'loading' | 'loaded' | 'compiling' | 'textures' | 'warm' | 'ready' | 'failed';
@@ -178,17 +196,6 @@ function paramAt(v: number | number[] | undefined, f: number): number | undefine
   return v[Math.min(v.length - 1, Math.max(0, Math.floor(f)))];
 }
 
-function stepAt(steps: [number, number][], f: number): number {
-  let v = steps[0]?.[1] ?? 1;
-  for (const [fr, val] of steps) {
-    if (fr > f) break;
-    v = val;
-  }
-  return v;
-}
-
-const wrap = (f: number, n: number | undefined): number => (n && n > 0 ? f % n : f);
-
 function eyeTex(t: THREE.Texture): THREE.Texture {
   t.flipY = false;
   t.colorSpace = THREE.SRGBColorSpace;
@@ -219,6 +226,8 @@ export class Preview3D {
     private readonly url: (p: string) => string,
     /** 시작 프레임 난수(원본 오프라인 = 비동기 RandModule, 09 §6.4) */
     private readonly rand: (n: number) => number = (n) => Math.floor(Math.random() * n),
+    /** 칸 모션 코어 옵션(원본 스위치·mpat — 공용 캐릭터 런타임 mpj 연결 view/character.ts 가 쓴다) */
+    private readonly coreOptions?: Partial<CharacterCoreOptions>,
   ) {
     this.warmScene = makeScene(spec.env);
     this.warmCam.position.set(0, 50, 300);
@@ -236,32 +245,7 @@ export class Preview3D {
       rt.texture.userData.linear = true;
       const scene = makeScene(env);
       const camera = new THREE.PerspectiveCamera(30, w / h, env.near, env.far);
-      this.slots.push({
-        rt,
-        scene,
-        camera,
-        chara: -1,
-        shown: false,
-        root: null,
-        mixer: null,
-        blink: null,
-        blinkOn: false,
-        acts: [],
-        clips: new Map(),
-        current: '',
-        next: null,
-        frame: 0,
-        eye: null,
-        body: null,
-        motions: {},
-        matDefaults: {},
-        visMeshes: new Map(),
-        boneDefault: new Map(),
-        token: 0,
-        reqAt: 0,
-        reqReady: false,
-        pendingStat: null,
-      });
+      this.slots.push(new Slot(rt, scene, camera, this.spec, this.rand, this.coreOptions));
     }
   }
 
@@ -450,16 +434,14 @@ export class Preview3D {
     s.token++;
     if (s.root) s.scene.remove(s.root);
     s.root = null;
-    s.mixer = s.blink = null;
-    s.blinkOn = false;
-    s.acts = [];
+    s.view?.dispose();
+    s.view = null;
     s.eye = null;
     s.body = null;
     s.chara = chara;
     s.shown = shown;
-    s.current = '';
-    s.next = null;
-    s.frame = 0;
+    s.core.main.clear();
+    s.seq = s.core.main.startSeq;
     s.pendingStat = null;
     if (!shown) return;
     const c = this.spec.chars[chara];
@@ -550,28 +532,11 @@ export class Preview3D {
 
   private build(s: Slot, c: CharaSpec, l: Loaded): void {
     const { root, eye, body } = this.buildRoot(c, l);
-    s.visMeshes = new Map();
-    s.boneDefault = new Map();
-    root.traverse((o) => {
-      if (o.userData.visible === false) s.boneDefault.set(o.name, false);
-      const vb = o.userData.visBone as string | undefined;
-      if (vb && (o as THREE.Mesh).isMesh) {
-        let list = s.visMeshes.get(vb);
-        if (!list) s.visMeshes.set(vb, (list = []));
-        list.push(o);
-      }
-    });
     s.scene.add(root);
     s.root = root;
-    s.mixer = new THREE.AnimationMixer(root);
-    s.acts = [];
-    const anims = [...l.gltf.animations, ...l.animGltfs.flatMap((g) => g.animations)];
-    s.clips = new Map(anims.map((a) => [a.name, a]));
-    s.blink = anims.some((a) => a.name === 'fcl_blink00' || a.name === 'fcl_blink00_shape') ? new THREE.AnimationMixer(root) : null;
-    s.blinkOn = false;
+    s.view = new CharacterView(root, l);
     s.eye = eye;
     s.body = body;
-    s.motions = l.motions;
     const mats = (l.gltf.parser.json.materials ?? []) as { name: string; extras?: { fres?: { params?: Record<string, { value: number[] }> } } }[];
     const bodyMat = mats.find((mm) => mm.name === (c.eye?.material ?? 'body_m'));
     const defs: Record<string, number[]> = {};
@@ -581,74 +546,26 @@ export class Preview3D {
 
   /** 모션 재생(next = 끝나면 이어서, 원본 EnqueuePlay). 모델이 없어도 시간축은 바뀐다 */
   play(slot: number, clip: string, next?: string, blendSec?: number): void {
+    this.playMotion(slot, clip, { blend: blendSec, force: this.slots[slot]?.core.main.rules.playForce ?? true, next });
+  }
+
+  /** 모션 재생(공용 런타임 play 옵션 그대로 — 속도·시작 프레임·같은 모션 무시 여부) */
+  playMotion(slot: number, clip: string, o: PlayOptions): void {
     const s = this.slots[slot];
     if (!s || !s.shown) return;
-    const clips = this.spec.chars[s.chara]?.clips;
-    const prev = s.current ? (clips?.[s.current]?.loop ?? true) : null;
-    const st = motionStart(prev, clip, clips?.[clip]?.frames ?? 0, this.rand);
-    s.current = clip;
-    s.next = next ?? null;
-    s.frame = st.frame;
-    if (s.mixer) this.applyPlay(s, prev === null ? st.blend : (blendSec ?? st.blend));
+    if (!s.core.play(clip, o)) return;
+    s.seq = s.core.main.startSeq;
+    if (s.mixer) this.applyPlay(s, s.core.main.startBlend);
   }
 
   /** 믹서에 지금 모션을 노드 프레임 s.frame 으로 건다(blend 초 크로스페이드) */
   private applyPlay(s: Slot, blend: number): void {
-    const mixer = s.mixer!;
-    const info = this.spec.chars[s.chara]?.clips?.[s.current];
-    const once = !!info && !info.loop;
-    const acts: THREE.AnimationAction[] = [];
-    for (const name of [s.current, `${s.current}_shape`]) {
-      const clip = s.clips.get(name);
-      if (!clip) continue;
-      const a = mixer.clipAction(clip);
-      a.reset();
-      a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
-      a.clampWhenFinished = true;
-      a.time = (once ? Math.min(s.frame, info!.frames) : wrap(s.frame, info?.frames)) / 60;
-      a.play();
-      if (blend > 0 && s.acts.length) a.fadeIn(blend);
-      acts.push(a);
-    }
-    for (const clip of s.clips.values()) {
-      const a = mixer.existingAction(clip);
-      if (!a || acts.includes(a)) continue;
-      if (blend > 0 && s.acts.includes(a)) a.fadeOut(blend);
-      else a.stop();
-    }
-    s.acts = acts;
+    s.view!.start(s.core.main, blend);
   }
 
   /** 믹서를 dt 초 진행하고 깜빡임(프레임 = 본 모션 노드 프레임)·보임·눈을 지금 프레임으로 맞춘다 */
   private pose(s: Slot, dt: number): void {
-    const cur = s.motions[s.current];
-    const blink = cur?.blinkName ? s.motions[cur.blinkName] : undefined;
-    if (!blink && s.blinkOn) {
-      s.blink?.stopAllAction();
-      s.blinkOn = false;
-    }
-    s.mixer!.update(dt);
-    if (blink && s.blink) {
-      for (const name of ['fcl_blink00', 'fcl_blink00_shape']) {
-        const clip = s.clips.get(name);
-        if (!clip) continue;
-        const a = s.blink.clipAction(clip);
-        if (!s.blinkOn) a.reset().play();
-        a.time = wrap(s.frame, blink.frames) / 60;
-      }
-      s.blinkOn = true;
-      s.blink.update(0);
-    }
-    const f = cur?.loop ? wrap(s.frame, cur.visFrames ?? cur.frames) : s.frame;
-    const bf = blink ? wrap(s.frame, blink.visFrames ?? blink.frames) : 0;
-    // 뼈 보임 → 메시 보임 (docs 12.1)
-    for (const [bone, meshes] of s.visMeshes) {
-      let v: number | undefined;
-      if (blink?.vis?.[bone]) v = stepAt(blink.vis[bone], bf);
-      else if (cur?.vis?.[bone]) v = stepAt(cur.vis[bone], f);
-      const on = v === undefined ? s.boneDefault.get(bone) !== false : v !== 0;
-      for (const m of meshes) m.visible = on;
-    }
+    const { cur, blink } = s.view!.pose(s.core.main, dt);
     if (s.eye) this.applyEyes(s, cur, blink, wrap(s.frame, blink?.frames));
     if (s.body) this.applyBody(s, cur, blink, wrap(s.frame, blink?.frames));
   }
@@ -669,13 +586,15 @@ export class Preview3D {
   /** 1틱(1/60 s): 시간축은 모델이 없어도 흐른다(붙을 때 그 프레임부터) */
   update(): void {
     const dt = 1 / 60;
-    this.slots.forEach((s, i) => {
+    this.slots.forEach((s) => {
       if (!s.shown || !s.current) return;
-      s.frame++;
-      const info = this.spec.chars[s.chara]?.clips?.[s.current];
-      if (s.next && info && !info.loop && s.frame >= info.frames) {
-        this.play(i, s.next);
-        if (s.mixer) this.pose(s, 0);
+      s.core.step(dt);
+      if (s.core.main.startSeq !== s.seq) {
+        s.seq = s.core.main.startSeq;
+        if (s.mixer) {
+          this.applyPlay(s, s.core.main.startBlend);
+          this.pose(s, 0);
+        }
         return;
       }
       if (s.mixer) this.pose(s, dt);

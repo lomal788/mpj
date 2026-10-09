@@ -5,7 +5,7 @@
  * 빛: host.world 가 없으면 캐릭터 선택과 같은 env(평행광·반구광) [근사: 원본은 미니게임 무대 env].
  */
 import * as THREE from 'three';
-import { Preview3D } from '../charselect/preview3d';
+import { mpatTables, Preview3D } from '../charselect/preview3d';
 import type { CharaSpec, Spec } from '../charselect/types';
 import { Heading } from '../plaza/heading';
 import * as L from './logic';
@@ -66,7 +66,7 @@ export function themeOf(input: ResultStageInputExt): string | null {
 
 export function stageFiles(spec: MgResultSpec, input: ResultStageInputExt): string[] {
   const p = L.plan(spec, logicInput(input), input.opts.motions);
-  const out = new Set<string>([SPEC_PATH]);
+  const out = new Set<string>([SPEC_PATH, 'chara/mpat.json']);
   if (p.camera) out.add(camPath(p.camera));
   const pcs = input.players.map((x) => x.chara);
   const th = themeOf(input);
@@ -126,7 +126,8 @@ export async function createResultStage(input: ResultStageInputExt, host: Result
   const pcs = input.players.map((p) => p.chara);
   if (theme) pcs.push(theme);
   const url = (p: string): string => host.url(normPath(`mgresult/${p}`));
-  const preview = new Preview3D({ chars: spec.chars, env: spec.env } as unknown as Spec, url);
+  const mpat = await getJson<Parameters<typeof mpatTables>[0]>(host.url('chara/mpat.json')).catch(() => null);
+  const preview = new Preview3D({ chars: spec.chars, env: spec.env } as unknown as Spec, url, undefined, { mpat: mpatTables(mpat, [`${input.mgId}_pc`, 'sys_pc']) });
   const actors: Actor[] = [];
   if (P.row) {
     preview.setup(pcs.map(() => [1, 1] as [number, number]));

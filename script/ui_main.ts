@@ -20,6 +20,7 @@ import { runMgResult, type MgResultRun } from './mgresult_page';
 import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
 import { runMgStagePage, type MgStagePageRun } from './mgstage_page';
 import { runSplitScreenPage, type SplitScreenPageRun } from './splitscreen_page';
+import { runCharacterPage, type CharacterPageRun } from './character_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
 import { installTransition, sceneIn, sceneOut } from './view/appTransition';
@@ -213,6 +214,15 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: SplitScreenPageRun = await runSplitScreenPage(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
       (window as unknown as { __splitscreen?: SplitScreenPageRun }).__splitscreen = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'character',
+    name: '캐릭터 런타임',
+    async run(stage, cfg) {
+      const r: CharacterPageRun = await runCharacterPage(stage, { params: new URLSearchParams(location.search), pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __character?: CharacterPageRun }).__character = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

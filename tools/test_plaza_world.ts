@@ -305,7 +305,7 @@ const scan = (dir: string, allowed: string[]): void => {
     if (!f.endsWith('.ts')) continue;
     for (const m of readFileSync(p2, 'utf-8').matchAll(/from '([^']+)'/g)) {
       const spec = m[1];
-      const lib = spec.startsWith('.') && [join(WEB, 'script', 'lib', 'assetcore'), join(WEB, 'script', 'lib', 'assetcore-three'), join(WEB, 'script', 'lib', 'transition')].includes(resolve(dir, spec));
+      const lib = spec.startsWith('.') && [join(WEB, 'script', 'lib', 'assetcore'), join(WEB, 'script', 'lib', 'assetcore-three'), join(WEB, 'script', 'lib', 'transition'), join(WEB, 'script', 'lib', 'character'), join(WEB, 'script', 'lib', 'character-three')].includes(resolve(dir, spec));
       const okSpec = spec === 'three' || spec.startsWith('three/') || lib || (spec.startsWith('.') && allowed.some((a) => resolve(dir, spec).startsWith(join(SHELL, a))));
       ok(okSpec, `${p2.slice(WEB.length + 1)} import ${spec}`);
     }

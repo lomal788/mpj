@@ -7,7 +7,8 @@
  */
 import * as THREE from 'three';
 import type { Spec } from '../charselect';
-import { Preview3D } from '../charselect/preview3d';
+import type { MpatRow } from '../../lib/character';
+import { mpatTables, Preview3D } from '../charselect/preview3d';
 import type { ClipHandle, StageModel } from '../stage3d';
 import { createGltfLoader } from '../stage3d/assetLoader';
 import { Heading, type HeadParams, type HeadTarget } from './heading';
@@ -113,8 +114,7 @@ export class Npc {
   }
 
   isFinished(): boolean {
-    const info = this.set.spec.clips?.[this.motion];
-    return !!info && !info.loop && this.frame >= info.frames;
+    return this.set.preview.slots[this.slot]?.core.main.isFinished() ?? false;
   }
 
   lookAt(t: HeadTarget): void {
@@ -144,8 +144,9 @@ export class NpcModelSet {
     env: Spec['env'],
     readonly url: (p: string) => string,
     readonly count: number,
+    mpat: MpatRow[][] = [],
   ) {
-    this.preview = new Preview3D({ chars: [spec], env } as unknown as Spec, url);
+    this.preview = new Preview3D({ chars: [spec], env } as unknown as Spec, url, undefined, { mpat });
     this.preview.setup(Array.from({ length: count }, () => [1, 1] as [number, number]));
     this.preview.prefetch([0]);
   }
@@ -310,9 +311,12 @@ export class NpcSystem {
 
   async load(extraKinopio: number): Promise<void> {
     const url = (p: string): string => this.ctx.assetUrl(`plaza/world/chara/${p}`);
+    const mp = await fetch(this.ctx.assetUrl('chara/mpat.json'))
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null);
     for (const [k, count] of this.plan(extraKinopio)) {
       const c = this.chara(k);
-      if (c) this.sets.set(k, new NpcModelSet(c, this.spec.env, url, count));
+      if (c) this.sets.set(k, new NpcModelSet(c, this.spec.env, url, count, mpatTables(mp, [`sys_${k.match(/^npc\d+/)?.[0] ?? k}`, 'sys_npc'])));
     }
     for (const m of MANAGER_NPCS) this.make(m.name, m.id, m.color);
     for (const d of DECO_NPCS) if (this.groups[d.group]) this.make(d.name, d.id, d.color);

@@ -1,6 +1,6 @@
 # 05. UI·입력·FX 트리거 — 레이아웃(.lyt), 폰트, 메시지 태그, 입력·자이로, FX 트리거·진동
 
-2026-10-09. 상태: **분석 진행**(포맷 파서 완료, §7 공통 FTRG 최초 평가·참조·보이스·발소리 추가 판독). 웹 코드는 고치지 않았다(10절은 명세다).
+2026-10-09. 상태: **분석 진행**(포맷 파서 완료, §7 공통 FTRG 최초 평가·SetFrame·참조·보이스·발소리 공간/재질 추가 판독). 웹 코드는 고치지 않았다(10절은 명세다).
 확정 수준: **[실행]** 원본 실행 확인, **[판독]** 원본 명령 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 원본 [실행]은 없다. 자체 파서·렌더를 돌린 결과는 **[실행: 파서 실행 확인]** 으로 따로 적는다.
 주소는 SwitchLoader 기본 베이스(0x7100000000) 기준이고 따로 적지 않으면 main NSO다(`main @0x…`).
 
@@ -385,7 +385,7 @@ MinPlayer 1, MaxPlayer 1, Style `GameControllerStyle_FullKey`, 컨트롤러 지�
 
 ### 7.5 `ComFxTrigger::Play`·참조·애니 이벤트 [판독]
 
-**부착과 키 해석.** `actor::Util::AddFxTrigger @0x71000376c0`는 모델 경로에서 PC의 `_light`를 제거하고 `<캐릭터>/ftrg/<접두><모델명>.ftrg`를 찾는다. 접두 배열 `@0x71019cccc0`은 `fx_ → se_ → vb_ → vo_ → pg_ → st_` 6개다. 존재하는 파일만 `AttachFxTrigger` 하고 각각 `Play("CO_INITIALIZE")` 한다. `rc_`를 이 6개 자동 탐색 접두에 추가하지 않는다(§7.4의 RC 데이터는 그대로 유효). 파일이 없으면 빈 컴포넌트만 만들 수 있다.
+**부착과 키 해석.** `actor::Util::AddFxTrigger @0x71000376c0`는 모델 경로에서 PC의 `_light`를 제거하고 `<캐릭터>/ftrg/<접두><모델명>.ftrg`를 찾는다. 접두 배열 `@0x71019cccc0`은 `fx_ → se_ → vb_ → vo_ → pg_ → st_` 6개다. 존재하는 파일만 `AttachFxTrigger` 하고 각각 `Play("CO_INITIALIZE")` 한다. `rc_`를 이 6개 자동 탐색 접두에 추가하지 않는다(§7.4의 RC 데이터는 그대로 유효). 파일이 없으면 빈 컴포넌트만 만들 수 있다. `ComMatter`의 별도 모델 helper `@0x71001d8d30`도 같은 6개 접두(`@0x71019d7700`)를 찾고 부착 후 `CO_INITIALIZE`를 보낸다([C](../../../analysis/decomp/character_ftrg_c_follow_producers.c)). `ComMatter @0x71002af940`의 kind=2는 이 helper를 항상 호출하고, 다른 kind는 생성 인수 +5가 참일 때 호출한다(기존 `core_b12.c`). PC/NPC 파라미터 ID 102~111 분기에서는 일반 basename 대신 `_fake.ftrg`를 선택하므로 파일명만 보고 일반 트랙과 둘 다 활성이라고 세지 않는다. 문자열 경로 생성자 `@0x71002afe88`은 kind=0·+5=1을 만들어 helper를 호출한다([생성자 C](../../../analysis/decomp/character_ftrg_c_follow_applyflags.c)); mg0122 `GenerateObjectModel @0x7100007ab0`의 `AddComponent<ComMatter,string_view>`도 이 생성 경로다(기존 `mg0122.nro.c`). 따라서 모션 SE를 별도 등록하지 않았다고 가정하여 수동 SE와의 중복을 제거하지 않는다. 같은 노드 SetFrame은 이 자동 부착 소스의 이벤트 문맥을 보존한다(§7.8).
 
 `bex::Play @0x710010d224 → nn::Play @0x71005f0cec → @0x7101112b40`은 소유자에 묶인 최대 8개 소스의 SE/FX/VB를 각각 탐색한다(`@0x7101115690/5b00/5f70`). 한 소스 안에서 같은 키의 조건에 맞는 행들을 처리하며, 조건 불일치 결과 2에서는 `@Default` 분기를 다시 검사한다. 키 없음(결과 3) 또는 `IsPostReferenceTrigger`이면 루트 +0x30 이름으로 참조 소스를 따라간다. 자원·위치 덮어쓰기 속성은 참조 행의 자원·오프셋 상속에도 적용된다(`IsAssetFilePathOverwritten`, `IsPositionOffsetOverwritten`, `@0x7101117380`). **캐릭터 표와 base 표를 무조건 합집합으로 실행하거나 첫 키 하나로 전 종류를 덮어쓰는 계약이 아니다.** 애니 트랙도 모션명·애니 자원 경로를 맞춘 뒤 참조 여부에 따라 부모 트랙을 찾는다(`@0x7101113120 → 1119040 → 11193a0`).
 
@@ -430,6 +430,10 @@ u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32
 
 첫 채널이 유효하면 +0x10 ID를 0x104 B 재질 표의 +0x100 ID와 대조하여 이름을 상태 +0x24에 복사한다. `@0x710010db68`은 유효 채널이 있고 이전 이름과 달라질 때 FTRG enum **`co_ground`**를 새 이름으로 설정한다. 원본 `audio.nx.bea/audio/sound_space/footstep_param.msgpack`의 `GroundParam` 39행은 `{co_ground, prg}`다 [데이터]: 0~20=`earth, earth_soft, stone, rock, sand, wood_heavy, wood_light, bridge_wood, carpet, iron_1~4, snow_soft, snow_hard, ice, cloud, paper, cloth, pane, water_soak`; 64~81=`grass, lawn, gravel, water_1~4, wood_squeak_1~3, iron_squeak_1~3, snow_layer_1~3, ice_layer_1~2`. 이름 범위는 순서대로 연속 ID에 대응한다. `nnMain @0x7100003660`이 이 경로를 오디오 설정 +0x140에 넣는다(기존 `core_b3.c`); 일반 충돌 재질 enum과 동일 번호라고 단정하지 않는다. 재생된 사운드의 플래그 0x100000과 SoundWorld 존재 조건을 만족하면(`@0x71000fb548`), `@0x71000f1708`이 유효 채널 i의 로컬 변수 7+i에 **`int(sqrt(valueᵢ)×127) | (materialIdᵢ<<7)`**, 무효이면 0xFFFFFFFF를 쓰고 선택 채널을 변수 6에도 쓴다. 단일 문자열 치환만으로는 이 다중 재질 혼합을 재현하지 못한다.
 
+**로드와 실제 공간 데이터.** 설정 +0x140은 `@0x71000bf964 → 00c0208 → 00fa118`에서 SoundModule core +0x516E로 복사한다. `@0x71000fa230/00fd5f0 → 00f0148 → 00efde0`이 SoundWorld +0x2AA8의 GroundParam 표를 로드한다. 장면 키 K는 `@0x71000facc0 → 00edc18`에서 `sound/snd_sp_K` 아카이브와 `audio/sound_space/snd_sp_K/snd_ft_K.bspp`로 연결되며, 파일 존재·GroundParam 로드 조건을 만족하면 `00f0554`로 읽는다([로드 C](../../../analysis/decomp/character_ftrg_c_follow_bspp.c), [설정 C](../../../analysis/decomp/character_ftrg_c_follow_finals.c)). `00f0dd0`의 임시 프리셋은 기존 영역·자원을 백업한 뒤 `audio/sound_space/%s.bspp`를 읽고 `00f0ea0`이 복원한다.
+
+[데이터] 전체 `.bspp` 140개 중 발자국 `fssp` v8 **131개**는 원본 읽기 순서와 끝 오프셋이 모두 일치한다(나머지는 `snsp` v1 8개·설정 `BSPP` 1개). +8의 슬롯 수 다음 슬롯마다 u8 mode/u8 영역 수, **직렬화 영역 0xB8 B**를 읽어 런타임 0xD0 B 항목으로 만들고, 마지막 u8 자원 수 다음 0x30 B 자원들을 읽는다(`00f0554`). mode1은 영역 1개 조건이 있으며 길이 불일치는 배열을 비우고 실패한다. 131개에는 모드 0/1/2 슬롯 41/69/56개, 영역 종류 0/1/2/3이 717/24/149/344개다. `snd_ft_mg1801`은 mode1·ID6=`wood_light` 고정이다. `snd_ft_mg0122`는 mode2·6영역·4자원: 기본 자원1=`lawn`(ID65) 0.5+`earth`(0) 0.5, 자원0=`stone`(2) 1, 자원2=`wood_light`(6) 1, 자원3=`earth` 0.8+`stone` 0.2다. `snd_ft_rc_stage01` slot0은 `stone` 고정값을 가진 두 상자 영역이며 slot1의 고정 자원은 4 ID 모두 −1로 무효다. 공간 ID→재질명은 이 자원과 GroundParam의 연결로 판독하며 모델 재질 번호로 추정하지 않는다.
+
 ### 7.8 공통 `play(motion)` 이벤트 계약·웹 설계
 
 - 모션 요청→노드 교체→이전 슬롯 등록 해제→시작값/first 초기화→애니 진행 수집→구간 평가/키 해석→SE·VO·VB·FX 콜백→이전값 확정 순서를 유지한다. `forceRestart`의 노드 교체는 새 최초 평가를 만들고 같은 모션의 비재시작 유지에는 임의 초기화를 추가하지 않는다(09 §6.4~6.6). 이벤트 문맥은 슬롯별이며 Sub를 Main으로 합치지 않는다.
@@ -443,8 +447,8 @@ u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32
 | 구분 | 결과·남은 근거 |
 |---|---|
 | 기존 참조 해소 | mg1801 RC/VO 프레임·JUST VB, `mg1800_cmn` MUTE, 사운드 재생·Effect 내부·일반 접지는 기존 담당 문서 재사용 |
-| 신규 판독 | 슬롯 0~3 최초/정·역/루프 횟수, FTRG 종류별 참조/덮어쓰기, VO 자원 선택, 수동 SetFrame의 노드별 가상 경로/문맥 유지, Sound Space 모드·재질 혼합→`co_ground`/사운드 변수와 GroundParam 39 ID |
-| 자료 부족 | 장면별 footstep space 설정 이름/slot/selector 생산자와 실제 영역·재질 자원 매핑은 추가 데이터 대조 필요. 등록 소스 식별자의 생성/그룹 순서와 모든 조건 그래프의 소비까지 전부 닫힌 것은 아님. mg0122 등 개별 모델의 FTRG 등록/활성 조건과 BNVIB 주파수 코드→Hz도 유지 |
+| 신규 판독 | 슬롯 0~3 최초/정·역/루프 횟수, FTRG 종류별 참조/덮어쓰기, VO 자원 선택, 수동 SetFrame의 노드별 가상 경로/문맥 유지, Sound Space 로드·131개 자원·재질 혼합→`co_ground`/사운드 변수와 GroundParam 39 ID |
+| 추가 판독 필요 | 설정 경로·장면 키→131개 공간 자원·지면 ID 연결은 해소했다. 추가 slotId/selector 변경 주체와 종류 2/3의 모든 장면별 엔티티 대응은 미해소다. 등록 소스 식별자의 생성/그룹 순서와 모든 조건 그래프의 소비까지 전부 닫힌 것은 아님. mg0122의 ComMatter 자동 부착은 해소했으며, 다른 모델의 조건 그래프 전수 연결과 BNVIB 주파수 코드→Hz는 유지 |
 
 사용자 확인 필요: 브라우저 진동의 주파수 손실과 다중 발소리 재질 혼합을 어디까지 지원할지는 제품 범위 결정이다. 이 결정으로 원본 수식이나 미확정 자료를 바꾸지는 않는다.
 
@@ -454,7 +458,7 @@ u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32
 |---|---|---|
 | 모션 최초/방향/루프 이벤트 | §7.5 확정 식·순서 | 공통 슬롯 이벤트 진행 가능; 첫 렌더 시점은 09 별도 공백 |
 | base/캐릭터·VO | 종류별 참조·조건·자원 선택 판독 | 확인된 트리거/자원은 진행 가능; 모든 그래프/소스 로딩 동등성은 부분 차단 |
-| 발소리 | 공간 조회·혼합·39 지면 ID/재질명/변수 전달 판독 | 상태/디스패처는 진행 가능; 장면별 공간 데이터 연결은 차단 |
+| 발소리 | 공간 조회·혼합·39 지면 ID·131개 자원/로드 연결 판독 | 기본 slot0/확인된 장면은 진행 가능; 추가 selector/엔티티 연결은 부분 차단 |
 | FX·사운드·진동 출력 | 08·04 기존/병렬 결과와 §7.6 참조 | 출력 내부는 담당 결과 확인, BNVIB 정확한 Hz 재현은 차단 |
 
 ## 8. HUD 포팅 방침

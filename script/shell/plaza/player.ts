@@ -4,9 +4,10 @@
  * PlazaCharaLoader.load 의 tick = Preview3D 준비 단계 사이 기다림(기본 setTimeout 0, 광장 렌더러 미리 준비는 프레임마다 — docs/engine/loader_manager.md §14.5).
  */
 import * as THREE from 'three';
+import { characterDefaults, mpatBlendCompat, type MpatRow } from '../../lib/character';
 import type { Collider } from '../stage3d';
 import type { Spec } from '../charselect';
-import { Preview3D } from '../charselect/preview3d';
+import { mpatTables, Preview3D } from '../charselect/preview3d';
 import type { PlazaActor, PlazaContext, PlazaPad, PlazaPart, PlazaPartFactory } from './types';
 
 /** actorparam.json → ComActor 필드 [판독+데이터 §3.5 ②] */
@@ -219,8 +220,7 @@ export interface Transit {
 
 /** sys_pc.mpat 전이(from→to 먼저, 없으면 *→to). a = 보간 프레임 [추정] → 초. 없으면 undefined(MotionArg 기본) */
 export function transitBlend(table: readonly Transit[], from: string, to: string): number | undefined {
-  const t = table.find((x) => x.from === from && x.to === to) ?? table.find((x) => x.from === null && x.to === to);
-  return t ? t.a / 60 : undefined;
+  return mpatBlendCompat(table, from, to);
 }
 
 type CharaSpec = Spec['chars'][number];
@@ -251,7 +251,7 @@ export class PlazaChara {
 
   play(clip: string, next?: string): void {
     if (clip === this.motion) return;
-    const blend = this.motion ? transitBlend(this.transit, this.motion, clip) : undefined;
+    const blend = this.motion && !characterDefaults.motion.mpatBlend ? transitBlend(this.transit, this.motion, clip) : undefined;
     this.preview.play(0, clip, next, blend);
     this.motion = clip;
   }
@@ -271,13 +271,17 @@ export class PlazaCharaLoader {
   private constructor(
     readonly spec: PlazaPlayerSpec,
     private readonly url: (p: string) => string,
+    private readonly mpat: MpatRow[][] = [],
   ) {}
 
   static async create(assetUrl: (p: string) => string): Promise<PlazaCharaLoader> {
     const url = (p: string): string => assetUrl(`plaza/player/${p}`);
     const r = await fetch(url('spec.json'));
     if (!r.ok) throw new Error(`plaza player spec 를 읽지 못했다: ${r.status}`);
-    return new PlazaCharaLoader((await r.json()) as PlazaPlayerSpec, url);
+    const mp = await fetch(assetUrl('chara/mpat.json'))
+      .then((x) => (x.ok ? x.json() : null))
+      .catch(() => null);
+    return new PlazaCharaLoader((await r.json()) as PlazaPlayerSpec, url, mpatTables(mp, ['sys_pc']));
   }
 
   find(pc: string): PlazaCharaSpec | null {
@@ -287,7 +291,7 @@ export class PlazaCharaLoader {
   async load(pc: string, renderer: THREE.WebGLRenderer, prepare: (root: THREE.Object3D) => Promise<void>, rand?: (n: number) => number, tick?: () => Promise<void>): Promise<PlazaChara> {
     const c = this.find(pc) ?? this.spec.chars[0];
     const idx = this.spec.chars.indexOf(c);
-    const preview = new Preview3D({ chars: this.spec.chars, env: this.spec.env } as unknown as Spec, this.url, rand);
+    const preview = new Preview3D({ chars: this.spec.chars, env: this.spec.env } as unknown as Spec, this.url, rand, { mpat: this.mpat });
     preview.setup([[1, 1]]);
     preview.prefetch([idx]);
     preview.setChara(0, idx, true);

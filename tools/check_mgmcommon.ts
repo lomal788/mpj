@@ -304,7 +304,7 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
   };
   scan(dir);
   const SHARED = ['charselect/scene2d', 'charselect/render2d', 'charselect/state', 'charselect/types'];
-  const LIB = [join(WEB, 'script/lib/assetcore'), join(WEB, 'script/lib/assetcore-three')];
+  const LIB = [join(WEB, 'script/lib/assetcore'), join(WEB, 'script/lib/assetcore-three'), join(WEB, 'script/lib/transition')];
   for (const f of files) {
     const src = readFileSync(f, 'utf8');
     const depth = f.slice(dir.length + 1).split(/[\\/]/).length - 1;

@@ -2,6 +2,7 @@
  * 미니게임 공용 틀 형식 — 표(tables.json)·UI 애니 길이·플레이어·사건·게임 훅(MgGame) 계약.
  * 근거·설계: docs/shell/minigame_scene.md §12. 이 폴더는 import 0(셸 경계, mgm_common §9.1) — 같은 폴더만 import 한다.
  */
+import type { Transition } from '../../lib/transition';
 import type { CreateResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
 
 /** MGSetting 한 행(문자열 열거는 정수, None = −1) — tables.json mgSetting */
@@ -253,4 +254,5 @@ export interface MgSceneSetup {
   createResultStage?: CreateResultStage | null;
   /** 결과 무대 호스트 중 페이지가 채우는 것(gl·url·world) */
   resultHost?: Pick<ResultStageHost, 'gl' | 'url'> & Partial<Pick<ResultStageHost, 'world'>>;
+  wipe?: Transition;
 }

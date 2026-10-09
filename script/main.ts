@@ -23,6 +23,7 @@ import { type GameDef, type GameLogic, type GameSetup, type GameView, type Playe
 import { GAMES } from './games';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
+import { installTransition, sceneIn } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
 import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
@@ -119,6 +120,7 @@ const glCanvas = el('canvas', 'jw-gl');
 const hudCanvas = el('canvas', 'jw-hud');
 const msg = el('div', 'jw-msg');
 stageBox.append(glCanvas, hudCanvas, msg);
+installTransition(stageBox);
 
 const panel = el('aside', 'jw-panel');
 const title = el('h1', '', '슈퍼 마리오 파티 잼버리 웹');
@@ -331,6 +333,7 @@ async function start(d: GameDef, setup: GameSetup): Promise<void> {
   setMsg('');
   status.textContent = `${d.id} 시드 ${setup.seed} (0x${setup.seed.toString(16).padStart(8, '0')})`;
   hook.stage = 'running';
+  sceneIn();
   hook.dropped = 0;
   clockKind = audio && audio.ctx.state === 'running' && fast === 0 ? 'audio' : 'wall';
   /* 첫 rAF 의 그리기가 끝난 뒤 정한다 — 첫 그리기(셰이더·텍스처 올리기)의 긴 멈춤을 따라잡지 않게 */
@@ -348,12 +351,14 @@ const flowPlayers = { com: [] as boolean[], chars: [] as string[], names: undefi
 const flowStep = (name: string, r: FlowRun | null): void => {
   flowRun?.stop();
   flowRun = r;
+  if (r) sceneIn();
   hook.flow = name;
   (window as unknown as { __flow?: FlowRun | null }).__flow = r;
 };
 
 const endFlow = (text: string): void => {
   flowStep('end', null);
+  sceneIn();
   void import('./view/bgm').then((m) => m.appBgm().stop(FLOW_END_FADE));
   plazaPage = null;
   glCanvas.style.visibility = hudCanvas.style.visibility = '';
@@ -364,7 +369,7 @@ const endFlow = (text: string): void => {
 async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null> {
   const d = GAMES.find((g) => g.id === req.name);
   if (!d) return null;
-  const others = [...stageBox.children].filter((c) => c !== glCanvas && c !== hudCanvas && c !== msg) as HTMLElement[];
+  const others = [...stageBox.children].filter((c) => c !== glCanvas && c !== hudCanvas && c !== msg && !c.classList.contains('tr-wipe')) as HTMLElement[];
   for (const c of others) c.style.visibility = 'hidden';
   glCanvas.style.visibility = hudCanvas.style.visibility = '';
   hook.flow = 'game';
@@ -385,6 +390,7 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
   dispose();
   glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
   for (const c of others) c.style.visibility = '';
+  sceneIn();
   hook.flow = 'mgm01';
   const results = [0, 1, 2, 3].map((p) => (!req.team.gamePlayByPid[p] ? 255 : rows.find((x) => x.player === p)?.rank === 0 ? 1 : 0)) as [number, number, number, number];
   return { id: req.id, judge: 1, results };

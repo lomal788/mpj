@@ -22,6 +22,7 @@ import { F } from '../../../core/fmath';
 import { Pads, type PadInput } from '../../../core/pad';
 import { BexRandModule } from '../../../core/rng';
 import type { GameLogic, GameSetup, SoundSnapshot } from '../../../game';
+import { CLOSED, CLOSING, OPENING, Transition, WIPE_WHITE } from '../../../lib/transition';
 import type { Mg1801Event, Mg1801Result, Mg1801State, Phase } from '../state';
 import { type ChartRow, chartRows } from './chart';
 import {
@@ -36,7 +37,6 @@ import {
   RESULT_MOTIONS,
   RESULT_PANEL_DELAY_BEATS,
   RESULT_PANEL_FRAMES,
-  WIPE_WHITE_FRAMES,
 } from './data';
 import { ObjectMan } from './objectMan';
 import { PlayerMan } from './playerMan';
@@ -177,12 +177,6 @@ export function resolveConfig(opts: Mg1801Options): Mg1801Config {
   };
 }
 
-/** 흰 페이드 하나(bq::WipeModule) */
-interface Fade {
-  kind: 'out' | 'in';
-  start: number;
-}
-
 /** 원본 결과 기록 FUN_710042ca10 (단계 8) 가운데 쓰는 것 */
 interface ResultRecord {
   scores: number[];
@@ -240,7 +234,7 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
   private practiceArrow = false;
   private perfectTelop = false;
   private camera: 'loop' | 'result' | 'capture' = 'loop';
-  private fade: Fade | null = null;
+  private readonly fade = new Transition();
   /** OnGameEnding +0x471 앰비언트 끝(또는 생략), +0x472 환호 끝 */
   private ambientDone = false;
   private cheerDone = false;
@@ -298,6 +292,7 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
     this.pads.read(input);
     w.rhythm.observe(sound ?? null);
     this.frame++;
+    this.fade.step();
     this.flow = this.nextFlow;
     w.tickExcellentSe();
     w.rhythm.tick();
@@ -357,7 +352,7 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
 
   /** 흰 페이드가 재생 중인지(원본 WipeModule::IsPlayingFadeAnim: in/out 애니 재생 중) */
   private fadePlaying(): boolean {
-    return this.fade !== null && this.frame - this.fade.start < WIPE_WHITE_FRAMES;
+    return this.fade.playing;
   }
 
   /**
@@ -369,14 +364,14 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
     const c = this.cfg;
     this.statusUi = false;
     if (c.mode !== 3 && (c.medley || !c.midCourse)) {
-      this.fade = { kind: 'out', start: this.frame };
+      this.fade.fadeOut(WIPE_WHITE, 1.0);
       this.stage = 0;
       this.nextFlow = 11;
       return;
     }
     if (this.stage !== 1) {
       if (this.stage !== 0) return;
-      this.fade = { kind: 'out', start: this.frame };
+      this.fade.fadeOut(WIPE_WHITE, 1.0);
       this.stage = 1;
     }
     if (!this.fadePlaying()) this.finish();
@@ -445,7 +440,7 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
     const rec = this.record;
     const rate = rec?.rate ?? 0;
     if (this.stage === 0) {
-      this.fade = { kind: 'in', start: this.frame };
+      this.fade.fadeIn(WIPE_WHITE, 1.0);
       /* FUN_71004431cc: LoadSettingPreset("<mg>_result") */
       w.events.push({ k: 'soundPreset', name: 'mg1801_result' });
       /* f32(rate / 20) 을 double 로 0.1 과 비교 — 작으면 앰비언트 생략(+0x471 = 1) [판독 @0x7100445694~0x71004456b4] */
@@ -467,7 +462,6 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
         }
       }
       if (this.fadePlaying()) return;
-      this.fade = null;
       /* FUN_7100447a90: (+0x2C == 0) 결과 징글 GOOD(판정 > 1)/BAD, 결과 연출 갱신 람다 시작 */
       if (!c.midCourse) w.events.push({ k: 'bgm', label: (rec?.judge ?? 0) > 1 ? 'SM_JIN_MG1801_MG_RESULT_GOOD' : 'SM_JIN_MG1801_MG_RESULT_BAD' });
       this.resultState = 0;
@@ -827,10 +821,9 @@ export class Mg1801Game implements GameLogic<Mg1801State, Mg1801Event, Mg1801Res
 
   private fadeView(): Mg1801State['fade'] {
     const f = this.fade;
-    if (!f) return null;
-    const k = this.frame - f.start;
-    if (f.kind === 'in') return k < WIPE_WHITE_FRAMES ? { anim: 'WipeWhite_in', frame: k } : null;
-    return k < WIPE_WHITE_FRAMES ? { anim: 'WipeWhite_out', frame: k } : { anim: 'WipeWhite_normal', frame: 0 };
+    if (f.phase === OPENING) return { anim: 'WipeWhite_in', frame: f.frame };
+    if (f.phase === CLOSING) return { anim: 'WipeWhite_out', frame: f.frame };
+    return f.phase === CLOSED ? { anim: 'WipeWhite_normal', frame: 0 } : null;
   }
 
   get state(): Mg1801State {

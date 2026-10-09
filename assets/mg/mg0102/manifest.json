@@ -870,7 +870,19 @@
    "vignetteAspect": 1
   }
  },
- "graphs": [],
+ "graphs": [
+  {
+   "samplers": {},
+   "baseColor": "c0.rgb * ((c0.rgb * material_base_color + material_emissive_color_scale * material_emissive_color) * P0.y)",
+   "alpha": "pow(clamp(dot(normalize(NgW), viewDir), 0.0, 1.0), P0.x) * modelOpacity",
+   "emissive": "vec3(0.0)",
+   "material": "hologram_glass_mt",
+   "models": [
+    "mg0102_hologram00"
+   ],
+   "program": "graph:dea054f523d0d309eec4121363b8bc4d854ad43392cd44741ee49e8ede45cf72"
+  }
+ ],
  "asset": {
   "archive": "mg~mg0102.nx.bea",
   "category": "mg",
@@ -1083,15 +1095,6 @@
       "vertex_shader_graph_color": "0"
      },
      "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p63.fs.txt"
-    },
-    {
-     "material": "hologram_glass_mt",
-     "model": "mg0102_hologram00",
-     "graph": {
-      "fragment_shader_graph_color": "1147244367",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p54.fs.txt"
     },
     {
      "material": "lesnflara_mt",

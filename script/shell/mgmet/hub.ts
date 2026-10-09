@@ -13,7 +13,7 @@ import type { MessageWindow } from '../mgmcommon/messageWindow';
 import type { MgmSound } from '../mgmcommon/sound';
 import type { MgmDrawHost } from '../mgmcommon/window';
 import { ActivityTitle } from './activityTitle';
-import { Fade, FadeLayer } from './fade';
+import { Transition } from '../../lib/transition';
 import { FreePlayInfo } from './freePlayInfo';
 import { commitFreePlay, freePlayConfig, type FreePlayCommit } from './ruleConfig';
 import { RuleConfigView } from './ruleConfigView';
@@ -64,6 +64,7 @@ export interface MgmetHubOptions {
   /** PlayerWork ComLevel 적용 */
   setComLevel?: (level: number) => void;
   onDone?: (r: MgmetResult) => void;
+  transition?: Transition;
 }
 
 const DT = Math.fround(1 / 60);
@@ -72,8 +73,7 @@ export class MgmetHub {
   readonly title: ActivityTitle;
   readonly rule: RuleConfigView;
   readonly info: FreePlayInfo;
-  readonly fade = new Fade();
-  private readonly fadeLayer: FadeLayer;
+  readonly fade: Transition;
   private readonly fibers = new FiberRunner();
   private readonly sig: MgmetSignals;
   /** +0x330 */
@@ -107,7 +107,7 @@ export class MgmetHub {
     this.title = new ActivityTitle(o.host, o.sound);
     this.rule = new RuleConfigView(o.host, o.sound, () => o.input.operator);
     this.info = new FreePlayInfo(o.host);
-    this.fadeLayer = new FadeLayer(o.host);
+    this.fade = o.transition ?? new Transition();
     this.firstHowtoSeen = !!(o.save.modeFlags & MODE_FLAG.FIRST_HOWTO_MGM01);
     this.fibers.start(o.entry === 'rule' ? this.ruleOnly() : this.main(), (r) => this.finish(r));
   }
@@ -246,7 +246,7 @@ export class MgmetHub {
     if (this.restore) {
       yield* waitUntil(() => this.sig.coinBattleEventDone());
       this.restore = false;
-      this.fade.fadeIn(1.0);
+      this.fade.fadeIn(this.fade.lastType, 1.0);
     }
     this.seq = 6;
   }
@@ -484,8 +484,8 @@ export class MgmetHub {
       return;
     }
     this.phase = '취소 → 항구';
-    this.fade.fadeOut(1.0);
-    yield* waitUntil(() => this.fade.isFinishedFadeOut());
+    this.fade.fadeOut(this.fade.lastType, 1.0);
+    yield* waitUntil(() => this.fade.closed);
     this.title.hide();
     this.selected = FREEPLAY_ID;
     this.restore = true;
@@ -531,7 +531,7 @@ export class MgmetHub {
     this.rule.tick();
     this.info.tick();
     this.o.guides.update();
-    this.fade.update(DT);
+    this.fade.step();
   }
 
   draw(): void {
@@ -541,6 +541,5 @@ export class MgmetHub {
     this.o.howto?.draw();
     this.o.guides.draw();
     this.o.msg.draw();
-    this.fadeLayer.draw(this.fade.level);
   }
 }

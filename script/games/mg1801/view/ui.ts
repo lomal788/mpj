@@ -44,6 +44,7 @@
  *   얼굴 재질(바탕 × 얼굴 투영 텍스처)은 두 텍스처 곱, 메시지 태그 [1:0:NNcd] = 변수 NN 의 정수.
  */
 import * as THREE from 'three';
+import { appTransition, CLOSED, CLOSING, OPEN, OPENING, Transition, WIPE_WHITE } from '../../../lib/transition';
 import type { V3 } from '../../../core/fmath';
 import { resolveSpecFonts } from '../../../shell/charselect/fontSheet';
 import { loadUiImage, type UiImage } from '../../../shell/stage3d/assetLoader';
@@ -146,8 +147,8 @@ export class Mg1801Ui {
   private lastSum = 0;
   /** PERFECT 텔롭이 한 번이라도 켜졌는지(state.perfectTelop 끔 감지용) */
   private perfectOn = false;
-  /** 공용 흰 페이드 wipe.bflyt */
-  private fade: LayoutInstance | null = null;
+  private readonly fade = new Transition();
+  private fadeOn = false;
   private readonly wipe: LayoutInstance[] = [];
   private wipeState = -1;
   private wipeTimer = 0;
@@ -201,7 +202,6 @@ export class Mg1801Ui {
       this.mgTelop.set(k, { inst, state: 0, timer: 0, oneshot: ONESHOT[k] });
     }
     this.score = this.instance('mg1800_score_00');
-    this.fade = this.instance('wipe');
     if (this.rcWipe) {
       for (const n of ['mg1801_wip_bg_01', 'mg1801_wip_bg_00']) {
         const w = this.instance(n);
@@ -265,10 +265,15 @@ export class Mg1801Ui {
     if (state.perfectTelop !== undefined ? this.perfectOn && !state.perfectTelop : state.phase === 'ending') this.hidePerfect(rate);
     if (state.perfectTelop) this.perfectOn = true;
     /* 흰 페이드(bq::WipeModule, 공용 wipe.bflyt): 로직이 애니·프레임을 준다 */
-    if (this.fade) {
-      const f = state.fade;
-      this.fade.visible = !!f;
-      if (f) this.fade.play(f.anim, 0, f.frame);
+    const f = state.fade;
+    if (f) {
+      this.fade.set(f.anim === 'WipeWhite_in' ? OPENING : f.anim === 'WipeWhite_out' ? CLOSING : CLOSED, WIPE_WHITE, f.frame);
+      if (!this.fadeOn) appTransition().follow(this.fade);
+      this.fadeOn = true;
+    } else if (this.fadeOn) {
+      this.fade.set(OPEN, WIPE_WHITE, 0);
+      appTransition().unfollow(this.fade);
+      this.fadeOn = false;
     }
   }
 
@@ -652,11 +657,12 @@ export class Mg1801Ui {
       for (const f of this.panel.flash01) r.draw(f);
       r.draw(this.panel.flash00);
     }
-    if (this.fade) r.draw(this.fade);
     r.end(ctx);
   }
 
   dispose(): void {
+    if (this.fadeOn) appTransition().unfollow(this.fade);
+    this.fadeOn = false;
     this.lyt?.dispose();
   }
 }

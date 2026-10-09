@@ -40,6 +40,7 @@ sys.path.insert(0, str(TOOLS))
 import common_shared as cs  # noqa: E402
 import graphics_convert as gc  # noqa: E402
 import plaza_graph_web as pgw  # noqa: E402
+import shader_graph_dictionary as sgd
 import plaza_world_assets as pw  # noqa: E402
 import scene_apx  # noqa: E402
 import scene_nbmap  # noqa: E402
@@ -711,12 +712,13 @@ def handle_graph(job):
         if (name, model) in seen:
             continue
         seen.add((name, model))
-        src = own_defs.get(name) or plaza.get(graph_key(f["shader"]["options"]))
+        shared_src = sgd.load_definition(f["shader"]["options"])
+        src = shared_src or own_defs.get(name) or plaza.get(graph_key(f["shader"]["options"]))
         if not src:
             need.append((model, f))
             continue
-        d = copy.deepcopy(src)
-        if name not in own_defs:
+        d = sgd.bind_definition(src, f, model) if shared_src else copy.deepcopy(src)
+        if not shared_src and name not in own_defs:
             tex = {}
             for s in f.get("samplers", []):
                 tex[s["sampler"]] = s["texture"]

@@ -200,7 +200,7 @@ export function patchVertexColor(m: StdMat, index: number): void {
   m.onBeforeCompile = (sh, r) => {
     prev.call(m, sh, r);
     sh.vertexShader = sh.vertexShader.replace('#include <common>', `#include <common>
-attribute vec4 ${a};
+${sh.vertexShader.includes(`attribute vec4 ${a};`) ? '' : `attribute vec4 ${a};`}
 varying vec4 vMpjVc;`).replace('#include <begin_vertex>', `#include <begin_vertex>
 vMpjVc = ${a};`);
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>

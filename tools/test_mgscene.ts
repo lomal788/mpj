@@ -375,9 +375,9 @@ let finishTicks = 0;
   const bad: string[] = [];
   for (const f of fs.readdirSync(dir)) {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');
-    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./')) bad.push(`${f}: ${m[1]}`);
+    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '../../lib/transition') bad.push(`${f}: ${m[1]}`);
   }
-  ok(bad.length === 0, 'shell/mgscene import 0(같은 폴더만)', bad.join(' '));
+  ok(bad.length === 0, 'shell/mgscene import 0(같은 폴더 + import 0 공용 코어 lib/transition, mgm_common §9.1 lib 예외)', bad.join(' '));
   const pre = mgscenePrefetch(ui);
   const miss = pre.filter((p) => !fs.existsSync(path.join(A, p)));
   ok(miss.length === 0 && pre.length > 10, `미리 받기 ${pre.length}개 파일 존재`, miss.join(' '));

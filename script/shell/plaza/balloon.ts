@@ -2,10 +2,11 @@
  * 기구 출발 — SelectedBalloonImpl @0x710005ed30 → SequenceBalloon::Setup @0x7100046ca0 → TakeOffImpl @0x71000470d0(람다 @0x7100047870)
  * → CallSceneImpl @0x7100047628 (docs/shell/plaza_3d.md §6.10 ④) [판독 + 어셈블리].
  * 카메라 컷 = fsnb 베이크 json(manifest.anims)을 stage 'anim' 슬롯에(07_camera_lighting §6.2: EulerZXY → three 'YXZ', Aim → lookAt+twist, fovy 전체 세로각).
- * 화면 페이드(bq::WipeModule)는 ctx.overlay 위 검은 막 [근사: 와이프 종류 무시]. 끝나면 오프라인 ctx.exit({k:'balloon'}), 방 있으면 {k:'session'}.
+ * 화면 페이드(bq::WipeModule)는 공용 전환 lib/transition(종류 White, 인자 = 속도, docs/engine/15_transition.md). 끝나면 오프라인 ctx.exit({k:'balloon'}), 방 있으면 {k:'session'}.
  * 세션 중 방장은 연출 없이 'net:playSession'(NetworkManager::PlaySession), 'net:started'(방장·손님 PlaySessionFiber) → 0.5 s 페이드 아웃 → 1.0 s → {k:'session'} (online.md 5.6 정정).
  */
 import * as THREE from 'three';
+import { appTransition, LogicTransition, WIPE_WHITE } from '../../lib/transition';
 import type { CameraDriver, ClipHandle } from '../stage3d';
 import { followSystemOf } from './follow';
 import { RESULT } from './interact';
@@ -101,43 +102,6 @@ export class FsnbCamera implements CameraDriver {
 
 type Phase = 'idle' | 'selectFade' | 'setup' | 'fadeIn' | 'cut00' | 'cut01' | 'endFade' | 'session' | 'sessionFade' | 'sessionWait' | 'done';
 
-/** 검은 막(WipeModule) */
-class Fade {
-  readonly el: HTMLDivElement | null;
-  alpha = 0;
-  private from = 0;
-  private to = 0;
-  private t = 0;
-  private dur = 0;
-
-  constructor(host: HTMLElement | null) {
-    if (host && typeof document !== 'undefined') {
-      this.el = document.createElement('div');
-      Object.assign(this.el.style, { position: 'absolute', inset: '0', background: '#000', opacity: '0', pointerEvents: 'none', zIndex: '50' });
-      host.appendChild(this.el);
-    } else this.el = null;
-  }
-
-  start(to: number, sec: number): void {
-    this.from = this.alpha;
-    this.to = to;
-    this.t = 0;
-    this.dur = sec;
-  }
-
-  get playing(): boolean {
-    return this.t < this.dur;
-  }
-
-  step(dt: number): void {
-    if (this.t < this.dur) {
-      this.t = Math.min(this.dur, this.t + dt);
-      this.alpha = this.from + (this.to - this.from) * (this.t / this.dur);
-    }
-    if (this.el) this.el.style.opacity = String(this.alpha);
-  }
-}
-
 export class BalloonSystem {
   phase: Phase = 'idle';
   private cam: FsnbCamera | null = null;
@@ -152,7 +116,7 @@ export class BalloonSystem {
   private passed = false;
   private getFrames = 0;
   private whoPlayed = false;
-  readonly fade: Fade;
+  readonly fade = new LogicTransition(appTransition());
   skipEnabled = false;
   online = false;
   /** 'net:lobby' — 방장·IsReadyNetworkPlayerData */
@@ -161,7 +125,6 @@ export class BalloonSystem {
   private prevButtons = 0;
 
   constructor(private readonly ctx: PlazaContext) {
-    this.fade = new Fade(ctx.overlay ?? null);
     try {
       this.skipEnabled = typeof localStorage !== 'undefined' && localStorage.getItem('mpj.plaza.menuData0') === '1';
     } catch {
@@ -201,7 +164,7 @@ export class BalloonSystem {
       return;
     }
     this.phase = 'selectFade';
-    this.fade.start(1, TAKEOFF.fadeOutSelectSec);
+    this.fade.fadeOut(WIPE_WHITE, TAKEOFF.fadeOutSelectSec);
   }
 
   private humans(): string[] {
@@ -263,7 +226,7 @@ export class BalloonSystem {
   /** 람다 @0x7100047870 앞부분 */
   private startTakeoff(): void {
     this.phase = 'fadeIn';
-    this.fade.start(0, TAKEOFF.fadeInSec);
+    if (this.fade.closed) this.fade.fadeIn(this.fade.lastType, TAKEOFF.fadeInSec);
     const mc = this.mc;
     if (mc) {
       mc.addAnimation('takeoff_idle', 'bnclr_idle00');
@@ -327,7 +290,7 @@ export class BalloonSystem {
     if (skip) this.ctx.sound.se('SQ_SE_SYS_SKIP');
     this.ctx.sound.se('SQ_SE_MENU00_TRANSITION_WHO');
     this.ctx.emit('balloon:guide', { visible: false, label: 'sys_ctrl_skip', pos: 12 });
-    this.fade.start(1, skip ? TAKEOFF.fadeOutSkipSec : TAKEOFF.fadeOutEndSec);
+    this.fade.fadeOut(WIPE_WHITE, skip ? TAKEOFF.fadeOutSkipSec : TAKEOFF.fadeOutEndSec);
     this.ctx.emit('balloon:fade', { out: true, sec: skip ? TAKEOFF.fadeOutSkipSec : TAKEOFF.fadeOutEndSec });
   }
 
@@ -338,7 +301,7 @@ export class BalloonSystem {
     this.ctx.emit('camera:follow', false);
     this.ctx.emit('player:input', false);
     this.phase = 'sessionFade';
-    this.fade.start(1, TAKEOFF.sessionFadeSec);
+    this.fade.fadeOut(WIPE_WHITE, TAKEOFF.sessionFadeSec);
   }
 
   /** 방장 PlaySession 이 안 되고 세션이 끝남 → 광장으로 */
@@ -367,7 +330,7 @@ export class BalloonSystem {
     this.sec += dt;
     const trig = buttons & ~this.prevButtons;
     this.prevButtons = buttons;
-    this.fade.step(dt);
+    this.fade.step();
     const due = this.timers.filter((t) => t.at <= this.sec + 1e-9);
     this.timers = this.timers.filter((t) => t.at > this.sec + 1e-9);
     for (const t of due) t.fn();
@@ -430,7 +393,7 @@ export class BalloonSystem {
       phase: this.phase,
       cam: this.cam ? { frame: this.cam.frame, frames: this.cam.clip.frames } : null,
       takeoff: this.takeoff ? { frame: this.takeoff.frame, frames: this.takeoff.frames } : null,
-      fade: this.fade.alpha,
+      fade: this.fade.alpha(),
       mc: this.mc?.motion ?? null,
       pcs: this.pcs.map((p) => ({ pc: p.spec.pc, motion: p.motion })),
       skipEnabled: this.skipEnabled,
@@ -439,7 +402,7 @@ export class BalloonSystem {
   }
 
   dispose(): void {
-    this.fade.el?.remove();
+    this.fade.release();
     for (const p of this.pcs) p.dispose();
   }
 }

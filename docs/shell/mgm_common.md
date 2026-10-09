@@ -495,6 +495,7 @@ mgm00 글자 페인은 `x_text_NN` 과 `x_text_NN_shadow`(같은 자리, `_shado
 - 위치 `web/script/shell/mgmcommon/`(엔진 독립 모듈). import 허용: 같은 폴더, `three`, `../charselect/scene2d`·`../charselect/render2d`·`../charselect/state`(RepeatGen)·`../charselect/types`(명세 형식) — modeselect 와 같은 규칙(공용으로 끌어올리지 않고 그대로 import). 금지: `script/core`·`script/games`·`script/view`·`script/game.ts`·`script/env.ts`.
 - 명세 JSON: `web/assets/mgmcommon/spec.json` ← `web/tools/analysis/mgmcommon_web_assets.py`(제안). charsel_web_assets.py 의 레이아웃·폰트·텍스처 변환 함수와 modesel_web_assets.py 의 창 9조각 분할·부품 재질 덮어쓰기를 import 해 mgm00 20 레이아웃을 변환. 각 모드 화면은 자기 명세 + 이 공용 명세를 함께 읽는다(원본의 (자기 lyt, mgm00 lyt) 묶음과 같은 관계).
 - 공용 라이브러리 예외(2026-10-08, loader_manager.md §11.1): **import 0 인 `script/lib/assetcore/`(로더 관리자 코어)와 `three`·코어만 import 하는 `script/lib/assetcore-three/`(three 어댑터)는 모든 셸 모듈이 import 할 수 있다.** 셸은 코어의 인터페이스(`AssetManagerApi` 등)만 받고 인스턴스는 페이지가 넣는다. 두 폴더 자신의 import 규칙은 `tools/test_assetcore.ts`·`test_plaza_world.ts` 8절이 확인한다.
+- 공용 라이브러리 예외 추가(2026-10-09, [../engine/15_transition.md](../engine/15_transition.md)): import 0 인 `script/lib/transition/`(화면 전환 코어)도 모든 셸 모듈이 import 할 수 있다(`check_mgmcommon` LIB·`test_mgscene` 9절 허용 목록).
 - 상태(순수 로직)와 그리기(LayoutInst/Render2D)를 나눈다. 순수 로직은 입력 {trig, rep} 과 "애니 끝" 신호만 받고 사건(애니 재생 요청·SE)을 낸다 → 단위 시험 가능.
 
 ### 9.2 파일과 책임

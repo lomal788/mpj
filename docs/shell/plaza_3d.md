@@ -501,7 +501,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (C) 기구 출발 첫 페이드 시간 | 1.0 s | 어셈블리 확인(정정) [판독]. 정정(plaza-B): 선택 때 1번이 `balloon_pos` 를 보는 회전(`PlayerManager::LookAt(pos, false)`)은 **구현함** — balloon.ts `begin()` 이 `player:input` false(PlayerManager::Stop) + `player:lookAt` {target: balloon_pos} 를 내고 player.ts 가 §3.5 LookAt 규칙으로 돈다 |
 | (C) 출발 카메라 컷 near | fsnb near 0.01 대신 **0.3**, far 1000·fov·위치·EulerZXY(three 'YXZ')는 그대로 | 원본은 ApplyNearAndFar(기본 켬)로 0.01 이지만 웹 24비트 깊이에서 near 0.01 이면 바다·섬·원경이 깜빡임(z 싸움). 컷 카메라는 물체에서 수 m 이상 떨어져 있어 잘림 차이 없음 [근사] |
 | (C) 출발 건너뛰기 | 두 번째 출발부터 `sys_ctrl_skip` 안내·+/− 건너뛰기(첫 출발 때 브라우저 저장소에 메뉴 비트 기록) | 원본 메뉴 저장값 비트 0 [판독]. 저장 = localStorage `mpj.plaza.menuData0` [설계] |
-| (C) 화면 페이드 | ctx.overlay 위 검은 막(불투명도 선형) | `bq::WipeModule` 와이프 종류·곡선 미판독 [근사] |
+| (C) 화면 페이드 | 공용 화면 전환 White, 인자 = 속도(선택·건너뛰기 1.0 = 20f, 끝·세션 0.5 = 40f) | 판독 완료(2026-10-09) — [../engine/15_transition.md](../engine/15_transition.md) |
 | (C) 따라가기 이동 | 목표 쪽 수평 단위 방향을 B `PlazaMover`의 깊이 1 레버로, 도착하면 목표 위치로 맞춤 | `ComActor::GetMoveLever` main @0x7100013500이 진행 중 `Calculate` 결과로 입력 레버를 대체(§3.5 기존 판독). 속도 6·도착 판정은 §6.10 ② [판독]; 웹 충돌은 [근사] |
 | (C) NPC 셰이더 그래프 | §6.11 판독 식대로(색 층·눈 합성·쿠리보 UV·틴트). 림·SSS·노멀 배열은 생략 | plaza-C-sg [판독], 생략분 [근사] |
 | (room) 세션 중 기구 선택 | 오프라인 출발 연출 없이 바로 PlaySession → 모두 0.5 s 페이드 아웃 → 1.0 s → 모드 메뉴 | `SelectedBalloonImpl`·`PlaySessionFiber` [판독, online.md 5.6 정정]. WaitSync(1) 는 서버 `started` 방송 한 번으로 맞춤 [근사] |

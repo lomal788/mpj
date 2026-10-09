@@ -407,6 +407,8 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 
 **정정: 페이드 "1.0초"는 속도다.** `WipeModule::FadeOut(type, f)` 는 `Wipe<종류>_out` 을 재생하고 `AnimationSlot::SetSpeed(f)` 한다 [판독 logic1801_main1.c @0x710029c940]. `wipe.bflyt` 의 `Wipe{Black,White,Loading,CrossFade}_{out,in}` 은 **20프레임** [데이터] → `FadeOut(1.0)` = **20프레임(1/3초)**. §5.1·§6·§7 의 "1.0초"는 모두 이 뜻으로 읽는다. 와이프 종류 = `GetLastUsedWipeType`(이어 쓰기); 이름 Black 0·White 1·CrossFade 2·Loading 3.
 
+**이전(2026-10-09):** 와이프는 공용 화면 전환 [../engine/15_transition.md](../engine/15_transition.md) 로 옮겼다. `MgWipe` 는 코어 위 얇은 부품(판정 규칙 그대로), FadeOut 종류 = **White**(MinigameFlow `FadeOut(1.0, 1)` [판독 core_b5]), FadeIn = 마지막 종류. 그림은 레이아웃 층이 아니라 앱 DOM 오버레이.
+
 | 항목 | 판독 결과 | 근거 |
 |---|---|---|
 | 열거 문자열 표 | `{이름 ptr, 값}` 16 B 쌍. **GameRule**: VS4 0, 2VS2 1, 1VS3 2, 1VS1 3, VS8 4, 1VS7 5, VS30 6, Chara 7, Item 8, Boss 9, Rhythm 10, Busters 11, Athlon 12, AthlonSP 13, Extra 14, None −1. **TimerPos(LytPlace)**: TL 0, TC 1, TR 2, CL 3, CC 4, CR 5, BL 6, BC 7, BR 8. **StatusFace**: Corner 0, Top 2, Bottom 3, Split00_Top 4, Split00_Bottom 5, Split01_Top 6, Split01_Top_Slim 7, Split01_Bottom 8, Split01_Corner 9, Left_Top 10, Right_Top 11, 2vs2_Top 12, 2vs2_Bottom 13, 2vs2_Left_Top 14, 2vs2_Split00_Top 15, 2vs2_Split00_Bottom 16, 2vs2_Split01_Left_Top 17, 2vs2_Split01_Right_Top 18, 2vs2_Split01_Left_Bottom 19, 2vs2_Split01_Right_Bottom 20, 1vs3_Top 21, 1vs3_Bottom 22, 1vs3_Left_Top 23, 1vs1_Top 24, 1vs1_Bottom 25. **In 시점**: Telop 0, AfterTelop 1, Ending 2. **Out 시점**: Telop 0, AfterTelop 1, FadeOut 2. **InstLoop**: Finish 0, Result 1. 문자열 None = −1 | `main.decomp.bin` 0x19d8390~0x19d8740 [실행: 변환] — §4.3·§11 의 "JSON 문자열 열거 ↔ 정수" 닫힘 |

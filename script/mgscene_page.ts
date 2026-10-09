@@ -12,6 +12,7 @@ import { createDummyGame } from './games/mgdummy/logic';
 import { DummyView } from './games/mgdummy/view';
 import { localGate, MgScene, mgUiData, STAGE_END, STAGE_NAME, type MgPadInput, type MgSettingRow, type MgTables } from './shell/mgscene';
 import { createResultStage } from './shell/mgresult';
+import { logicWipe } from './view/appTransition';
 import { Assets } from './view/assets';
 import { AudioOut } from './view/audio';
 import { appBgm } from './view/bgm';
@@ -77,6 +78,7 @@ export async function runMgScenePage(
   });
   const view = new DummyView();
   const readPads = (): (MgPadInput | null)[] => cfg.pads.map((p) => p?.read() ?? null);
+  const wipe = logicWipe();
   const scene = new MgScene(
     {
       mgId,
@@ -89,6 +91,7 @@ export async function runMgScenePage(
       settingOverride: override,
       createResultStage: useResult3d ? (i, h) => createResultStage(i, h as Parameters<typeof createResultStage>[1]) : null,
       resultHost: { gl: renderer.gl, url: (p) => new URL(`${ASSETS}${p}`, document.baseURI).href },
+      wipe,
     },
     game,
     localGate(readPads),
@@ -133,6 +136,7 @@ export async function runMgScenePage(
     stop() {
       stopped = true;
       cancelAnimationFrame(raf);
+      wipe.release();
       window.removeEventListener('resize', onResize);
       sound.dispose();
       audio?.dispose();

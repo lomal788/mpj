@@ -9,6 +9,7 @@ import { assetHooks } from './shell/charselect/assetHooks';
 import { createWork, MemorySave, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
 import { MgmetHowtoView } from './shell/mgmet/howto';
+import { logicWipe } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 
@@ -207,6 +208,7 @@ export async function runMgmet(
 
   let done = false;
   let result: MgmetResult | null = null;
+  const wipe = logicWipe();
   const hub = new MgmetHub({
     host: view,
     input,
@@ -221,6 +223,7 @@ export async function runMgmet(
     bossOpen: cfg.test.bossOpen,
     nickname: cfg.test.nickname,
     entry,
+    transition: wipe,
     onDone: (r) => {
       result = r;
     },
@@ -282,6 +285,7 @@ export async function runMgmet(
       stopped = true;
       cancelAnimationFrame(raf);
       done = true;
+      wipe.release();
       view.dispose();
       canvas.remove();
       appBgm().exit('mgmet', 'leave');

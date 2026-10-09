@@ -5,6 +5,7 @@
  * 모든 애니를 speed 만큼 진행한다 — 어디서 시작했든(흐름 처리기·틱 판정) 길이 N 의 애니는 시작 틱부터 N 틱 진행한 뒤의 틱에서 끝으로 본다
  * (엔진 애니 슬롯 갱신과 컴포넌트 틱의 순서 미판독, §12.11).
  */
+import { Transition, WIPE_WHITE } from '../../lib/transition';
 import type { MgSceneEvent, UiAnimTable, UiPaneBox } from './types';
 
 const F = Math.fround;
@@ -91,24 +92,17 @@ export class UiLayer {
 
 // ---------------------------------------------------------------- 와이프(WipeModule / MgWipeModule)
 
-export const WIPE_TYPES = ['Black', 'White', 'CrossFade', 'Loading'] as const;
-
 /** 0 없음, 1 out 재생, 2 덮음(normal), 3 in 재생 */
 export class MgWipe {
-  readonly layer: UiLayer;
   state = 2;
-  type = 0;
 
   constructor(
-    anims: UiAnimTable,
     /** flag 0 이면 MgWipeModule 이 SystemCallBack 으로 넘겨 와이프를 그리지 않는다 [판독] → 바로 끝난 것으로 [추정] */
     private readonly inst: boolean,
+    readonly core: Transition = new Transition(),
   ) {
-    this.layer = new UiLayer('wipe', 'wipe', anims, 0x9000);
-    if (!inst) {
-      this.layer.visible = true;
-      this.layer.play(`Wipe${WIPE_TYPES[this.type]}_normal`);
-    } else this.state = 0;
+    if (!inst) core.cover();
+    else this.state = 0;
   }
 
   fadeOut(speed = 1): void {
@@ -116,10 +110,7 @@ export class MgWipe {
       this.state = 2;
       return;
     }
-    const t = WIPE_TYPES[this.type];
-    this.layer.visible = true;
-    this.layer.play(`Wipe${t}_out`, speed);
-    this.layer.enqueue(`Wipe${t}_normal`);
+    this.core.fadeOut(WIPE_WHITE, speed);
     this.state = 1;
   }
 
@@ -128,8 +119,7 @@ export class MgWipe {
       this.state = 0;
       return;
     }
-    this.layer.visible = true;
-    this.layer.play(`Wipe${WIPE_TYPES[this.type]}_in`, speed);
+    this.core.fadeIn(this.core.lastType, speed);
     this.state = 3;
   }
 
@@ -145,14 +135,12 @@ export class MgWipe {
 
   tick(): void {
     if (this.state === 0) return;
-    if (this.state === 1 && this.layer.anim?.endsWith('_normal')) this.state = 2;
-    else if (this.state === 3 && this.layer.ended) {
+    if (this.state === 1 && this.core.closed) this.state = 2;
+    else if (this.state === 3 && this.core.open) {
       this.state = 0;
-      this.layer.visible = false;
-      this.layer.anim = null;
       return;
     }
-    this.layer.tick();
+    this.core.step();
   }
 }
 

@@ -889,7 +889,46 @@
    "vignetteAspect": 1.5
   }
  },
- "graphs": [],
+ "graphs": [
+  {
+   "samplers": {
+    "sg_utility_texture2d0": "mg0106_spotlight00_alb",
+    "sg_utility_texture2d1": "mg0106_spotlight00_mask"
+   },
+   "fsHelpers": [
+    "vec3 sgSpotlight(vec3 a, vec3 b, vec3 c, vec3 d, vec2 p, float phase) { vec3 q = b * ((a + c) * p.x); return mix(q, d, p.y) + phase * mix(a.x, b.x, p.x) * c; }"
+   ],
+   "fsPrelude": "vec3 sgA = T(\"sg_utility_texture2d0\", uv0).rgb; vec3 sgB = T(\"sg_utility_texture2d1\", uv1).rgb; float sgPhase = sin(float(uint(mpjMs) % 360u) * 0.008726646192371845) * 0.5 + 0.5;",
+   "baseColor": "sgSpotlight(sgA, sgB, C0.rgb, C1.rgb, P0.xy, sgPhase)",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정",
+   "material": "mg0602_spotlight00_mt",
+   "models": [
+    "mg0106_search_light"
+   ],
+   "program": "graph:c175e471e305e32320bb40001f0c1e17cec666fa16cf2d74a1652be41769de23"
+  },
+  {
+   "samplers": {
+    "sg_utility_texture2d0": "mg0106_spotlight00_alb",
+    "sg_utility_texture2d1": "mg0106_spotlight00_mask"
+   },
+   "fsHelpers": [
+    "vec3 sgSpotlight(vec3 a, vec3 b, vec3 c, vec3 d, vec2 p, float phase) { vec3 q = b * ((a + c) * p.x); return mix(q, d, p.y) + phase * mix(a.x, b.x, p.x) * c; }"
+   ],
+   "fsPrelude": "vec3 sgA = T(\"sg_utility_texture2d0\", uv0).rgb; vec3 sgB = T(\"sg_utility_texture2d1\", uv1).rgb; float sgPhase = sin(float(uint(mpjMs) % 360u) * 0.008726646192371845) * 0.5 + 0.5;",
+   "baseColor": "sgSpotlight(sgA, sgB, C0.rgb, C1.rgb, P0.xy, sgPhase)",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정",
+   "material": "mg0602_spotlight01_mt",
+   "models": [
+    "mg0106_search_light"
+   ],
+   "program": "graph:9d05fd698138002d60fe043339e35c96d729756cb641f1bde20f9d3d10f2c841"
+  }
+ ],
  "asset": {
   "archive": "mg~mg0106.nx.bea",
   "category": "mg",
@@ -1098,24 +1137,6 @@
       "vertex_shader_graph_color": "0"
      },
      "sass": "analysis/mat/conv/mg/mg0106/sass/mg0106__forward_plus__p86.fs.txt"
-    },
-    {
-     "material": "mg0602_spotlight00_mt",
-     "model": "mg0106_search_light",
-     "graph": {
-      "fragment_shader_graph_color": "1807808248",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0106/sass/mg0106__forward_plus__p122.fs.txt"
-    },
-    {
-     "material": "mg0602_spotlight01_mt",
-     "model": "mg0106_search_light",
-     "graph": {
-      "fragment_shader_graph_color": "2202427043",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0106/sass/mg0106__forward_plus__p125.fs.txt"
     }
    ]
   },

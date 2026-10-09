@@ -131,7 +131,7 @@ export class MgScene {
     this.P = !!setup.inst;
     this.charaDemoSeen = !!setup.charaDemoSeen;
     this.players = setup.players.map((p) => ({ ...p, rank: -1, winLose: -1, coin: 0 }));
-    this.wipe = new MgWipe(setup.ui.anims, this.P);
+    this.wipe = new MgWipe(this.P, setup.wipe);
     this.sound = new MgSound(setup.tables.mgSound[setup.mgId] ?? null, this.emitFn);
     this.ctx = this.makeContext();
     game.setup(this.ctx);
@@ -340,7 +340,6 @@ export class MgScene {
     if (this.endTimer?.timer.layer.visible) out.push(this.endTimer.timer.layer);
     for (const t of [this.startTelop.telop, this.finishTelop.telop, this.winTelop, this.resultTelop]) if (t?.layer.visible) out.push(t.layer);
     if (this.skipGuide?.layer.visible) out.push(this.skipGuide.layer);
-    if (this.wipe.layer.visible) out.push(this.wipe.layer);
     return out.sort((a, b) => a.order - b.order);
   }
 

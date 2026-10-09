@@ -23,9 +23,6 @@ const mul = (a: Mat3, b: Mat3): Mat3 => [
   a[3] * b[2] + a[4] * b[5] + a[5],
 ];
 
-/** 결정 뒤 마지막 화면을 유지하는 프레임(원본 = 다음 시퀀스의 Wipe FadeOut 1.0 [근사], docs 8절) */
-export const DECIDE_HOLD = 60;
-
 export interface ModeSelectHandle {
   step(): void;
   render(): void;
@@ -284,7 +281,7 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
     Notice_PlayModeMissed01: 'sys_notice_playModeMissed01',
     Notice_PlayModeMissed04: 'sys_notice_playModeMissed04',
   };
-  let hold = -1;
+  let wiping = false;
   let cancelled = false;
   let finished = false;
 
@@ -336,7 +333,8 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
         case 'decided': {
           const m = modes[e.button];
           opts.onDecided?.({ button: m.button, key: m.key, name: texts[m.name], next: m.next });
-          hold = DECIDE_HOLD;
+          wiping = true;
+          opts.wipe?.fadeOut(1, 1.0);
           break;
         }
         case 'cancel':
@@ -362,7 +360,8 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
     base.update(1);
     guide.update(1);
     splitVc(base);
-    if (hold > 0 && --hold === 0) {
+    opts.wipe?.step();
+    if (wiping && (!opts.wipe || opts.wipe.closed)) {
       finished = true;
       opts.onFinished?.(true);
     } else if (cancelled && state.finished) {

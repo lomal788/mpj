@@ -97,4 +97,5 @@ export interface ModeSelectOptions {
   onDecided?(r: ModeSelectResult): void;
   onCancel?(): void;
   onFinished?(decided: boolean): void;
+  wipe?: { fadeOut(type: number, speed?: number): void; step(): void; readonly closed: boolean };
 }

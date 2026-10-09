@@ -21,6 +21,8 @@ import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
 import { runMgStagePage, type MgStagePageRun } from './mgstage_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
+import { appTransition } from './lib/transition';
+import { installTransition } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
 
 interface UiRun {
@@ -235,6 +237,7 @@ const dbgIn = app.querySelector<HTMLInputElement>('.jw-ui-dbg')!;
 const startBtn = app.querySelector<HTMLButtonElement>('.jw-ui-start')!;
 const stopBtn = app.querySelector<HTMLButtonElement>('.jw-ui-stop')!;
 const resultBox = app.querySelector<HTMLElement>('.jw-ui-result')!;
+installTransition(stage);
 
 Object.assign(dbg.style, {
   position: 'absolute',
@@ -276,6 +279,7 @@ const stop = (): void => {
   token++;
   cur?.stop();
   cur = null;
+  if (!appTransition().following) appTransition().clear();
   appBgm().stop(FLOW_END_FADE);
   dbg.textContent = '';
 };

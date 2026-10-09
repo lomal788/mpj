@@ -11,6 +11,8 @@ import { ASSETS } from './env';
 import { MT19937 } from './core/rng';
 import { createResultStage, type ResultStageEvent, type ResultStageExt, type ResultStageInputExt } from './shell/mgresult';
 import { DEFAULT_RESULT_OPTIONS } from './shell/mgscene/resultContract';
+import { WIPE_WHITE } from './lib/transition';
+import { logicWipe } from './view/appTransition';
 
 export interface MgResultRun {
   readonly stage: ResultStageExt;
@@ -83,16 +85,14 @@ export async function runMgResult(host: HTMLElement, cfg: MgResultPageCfg): Prom
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
-  const veil = document.createElement('div');
-  veil.style.cssText = 'position:absolute;inset:0;background:#000;opacity:0;pointer-events:none';
   const label = document.createElement('div');
   label.style.cssText = 'position:absolute;right:12px;bottom:12px;padding:4px 8px;background:rgba(0,0,0,0.6);color:#fff;font:14px monospace;white-space:pre;pointer-events:none';
-  host.append(canvas, veil, label);
+  host.append(canvas, label);
   const gl = new THREE.WebGLRenderer({ canvas, antialias: true });
   gl.outputColorSpace = THREE.SRGBColorSpace;
   gl.setClearColor(0x4a4a4a, 1);
 
-  let fade = { from: 0, to: 0, t: 0, dur: 0 };
+  const wipe = logicWipe();
   let telop = { on: false, outAt: -1 };
   let frame = 0;
   const notes: string[] = [];
@@ -105,10 +105,11 @@ export async function runMgResult(host: HTMLElement, cfg: MgResultPageCfg): Prom
   const input = inputFromParams(cfg.params);
   const stage = await createResultStage(input, {
     gl,
-    fade(dir, sec) {
-      fade = { from: Number(veil.style.opacity) || 0, to: dir === 'out' ? 1 : 0, t: 0, dur: sec };
+    fade(dir, speed) {
+      if (dir === 'out') wipe.fadeOut(WIPE_WHITE, speed);
+      else wipe.fadeIn(wipe.lastType, speed);
     },
-    fading: () => fade.t < fade.dur,
+    fading: () => wipe.playing,
     winTelop: {
       start(no, place) {
         telop = { on: true, outAt: -1 };
@@ -162,8 +163,7 @@ export async function runMgResult(host: HTMLElement, cfg: MgResultPageCfg): Prom
     while (acc >= 1 / 60) {
       acc -= 1 / 60;
       frame++;
-      if (fade.t < fade.dur) fade.t = Math.min(fade.dur, fade.t + 1 / 60);
-      veil.style.opacity = String(fade.dur > 0 ? fade.from + (fade.to - fade.from) * (fade.t / fade.dur) : fade.to);
+      wipe.step();
       stage.step();
     }
     stage.render();
@@ -185,7 +185,7 @@ export async function runMgResult(host: HTMLElement, cfg: MgResultPageCfg): Prom
       stage.dispose();
       gl.dispose();
       canvas.remove();
-      veil.remove();
+      wipe.release();
       label.remove();
     },
     debug() {

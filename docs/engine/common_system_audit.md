@@ -2,7 +2,7 @@
 
 확정 수준 표기: **[실행]** 원본 실행 확인, **[판독]** 원본 코드 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 [실행]은 없다. 재구현 계산은 "재구현 계산"이라고 따로 적는다.
 
-2026-10-09. 웹 등록 게임 `mg1801` 1개. 원본 공용 기능의 웹 정의·실제 소비·우회·차이 정적 대조.
+소스 대조 기준: 2026-10-09 01:58:14 UTC. 웹 등록 게임 `mg1801` 1개. 원본 공용 기능의 웹 정의·실제 소비·우회·차이 정적 대조.
 
 경로 약칭: `G = script/games/mg1801`, `S = script/shell/stage3d`, `M = script/shell/mgstage`, `P = script/shell/charselect/preview3d.ts`. 주소: 모듈명 + 기본 베이스 `0x7100000000` 기준.
 
@@ -20,6 +20,8 @@
 | `bex::Fiber` | 117 | 미니게임·메뉴·부트·모드 |
 | `bex::InputModule` | 87 | 미니게임·메뉴·매칭·모드 |
 | `bq::MinigameScene` | 98 | 일반·리듬 미니게임 |
+| `bq::SceneBase::OnEntry` | 27 | 비mg#### NRO 전체 |
+| `bq::MinigameModeScene` 생성자 | 7 | mgm01~06·mgmet; CallMinigameScene→mgm01~06, CallMinigameModeScene→mgmet |
 | `ca::rm::RmMgSceneBase` | 10 | `mg1801`~`mg1810` |
 | `ca::coin_athlon` | 18 | `ca01`, `caet`, `mg1105/06/08/09/11/16/17/18/20`, `mg1301`~`mg1305`, `mg1804/09` |
 | `ca::kb` | 12 | `kb01`, `kbet`, `mg1401/02/03/04/05/06/07/08/12/14` |
@@ -36,7 +38,6 @@
 | 최고기록 | [판독] mgm01 `ApplySettingMgSetting_HighScore @0x7100017ba8`, `GetRecordIdx` 인자 @0x7100017d2c; [프리 플레이 §6.5](../shell/mgm01_freeplay.md) | `Mgm01Scene` record provider·catalog.initialRecord | `mgm01_page.ts:602` → catalog.defaultRecord | 현재 기록 대신 InitialRecord 반환; 최고기록 축적·조회 연결 없음 | 공용 기록 provider 미연결 | 기록형 게임 목록 | P2 — 현재 레코드 누락 |
 | 결과 무대 | [판독] main `bq::MGResult`; 리듬 `ca::rm` 고유 종료; [결과](../shell/minigame_result.md), [리듬](02_rhythm.md) | `shell/mgresult::createResultStage`; `shell/mgscene` resultHost | `mgresult_page.ts:106`, `mgscene_page.ts:90` 시험 소비. `mgscene/flow.ts:652` setModel no-op, :716 coinShow no-op; winTelop place 미소비 | 모델·코인·텔롭 위치의 호스트 연결 누락. mg1801: 고유 리듬 엔딩 정책 | 부분 연결·리듬 정책 차이 | 일반 결과 무대 시험·후속 게임 | P2 — 구현된 무대 기능의 host 누락 |
 | 종료 저장·재시도·수명 | [판독] main `MinigameFlow @0x71002e0500`, stage16 `@0x71002e1c68`, stage18 `@0x71002e1e8c`; [한 판](../shell/minigame_scene.md), [코어 §5](01_core.md) | `mgscene/flow.ts::stage16/stage18`; `mgmcommon/contracts.ts::SceneStack` | stage16(:801~817): save 사건·fade 완료; stage18 cleanup/setup. main(:266~271): view.dispose 후 참조 null; SceneStack: 이름 스택·부모 재생성 | Save 완료·통계·RetryMenu 대기 및 원본 scene/entity shutdown 조건 생략 | 일부 사용·미구현 | 한 판 시험·프리 플레이 복귀 | P2 — 비동기 종료 계약 |
-
 | 모드 장면·상위 router | [판독] main SceneBase ctor `@0x71002c9bd4`, OnEntry `@0x71002c9f68`, MinigameModeScene ctor `@0x710035f69c`, BeginScene `@0x710035fab8`; [공용 UI](../shell/mgm_common.md), [코어](01_core.md) | `mgmcommon/contracts.ts:32::SceneStack`, `MgmetHub.router` | SceneStack 실제 생성 `mgm01_page.ts:627` 1곳. `mgmet_page.ts:210~227` router 미주입; main(:393~489) 페이지 콜백 | 목록↔게임 Call/Return만 공용 스택; 허브·광장·설정은 외부 전환. 공통 초기화·archive 정리·pause·shutdown 계약 분산 | 일부 사용·공용 미사용 | 현재 셸·후속 모드 | P1 — 상위 장면 연결 |
 | 모드 호출·활동 번호 | [판독] main CallMinigameModeScene `@0x710036027c`, 이름표 `@0x71015d840c`; mgmet call `@0x7100049f14`; [허브 §3·8](../shell/mgmet_flow.md) | `mgmet/tables.ts:19~25`, hub.ts:153~155 router.call | mgmet_page(:99~111) 문자열 결과→main(:413) 접두 검사→flowMgm01 | 구조화 nextMode·rule 전달 손실. 활동ID 0~5→mode 4/3/1/5/2/6 표 구현; mgm02~06 실행 없음 | 공용 미사용·미포팅 미구현 | 프리 플레이·5활동 모드 | P1 전달·P2 미포팅 모드 |
 | 규칙 캐시·COM level | [판독] main MinigameModeWork+0x764~, mgm01 SyncedSetup `@0x7100004e50`, mgmet SetPlayerWorkComLevel `@0x71000500d0`; [허브](../shell/mgmet_flow.md), [규칙](../shell/mgmet_ruleconfig.md) | `mgmet/ruleConfig.ts:306~314::commitFreePlay`, Work.rule·setComLevel? | hub work 생성 mgmet_page:204; 목록 별도 work mgm01_page:169. 허브 setComLevel 미주입; 목록CPU :553 URL/default0 | 허브 CPU·설명 캐시와 실제 목록/공유 PlayerWork 단절. 게임 COM은 main:373의 별도 req.cpu | 공용 미사용 | 허브/목록 규칙·설명; mg1801 ComLevel 비소비 | P1 — 선택 규칙 손실 |
@@ -44,20 +45,31 @@
 | 컨트롤러 변경·설명 경로 | [판독] main CallMinigameScene `@0x71003601ac`: ID<152→GameWork ID→UseGyro/gyroPadChange→flag4/IsCallInst/mgInst→MGList 이름; [프리 플레이 §3](../shell/mgm01_freeplay.md) | `Mgm01PlayRequest.useGyro/callInst` | mgm01_page:608 일괄 minigame→main:364~390 GAMES 이름 검색 | gyroPadChange·mgInst 분기 실행 없음 | 공용 미사용·미구현 | 설명 요청·후속 체감 게임 | P1 — 장면 디스패치 |
 | 모드 선택·보드 규칙 | [판독] menu01 MapMenuImpl `@0x710003df70`·next sequence; [모드 선택](../shell/modeselect.md), [보드 규칙](../shell/partyrule.md) | modeselect/types.ts key·next; shell/partyrule·지역 config | main:423 key=mgm만 허브, 그 외 광장. partyrule_page:210~218→ui_main:149 시험 | next 미소비; bd/rc/mf/pp/kb/ca 진입 없음. 보드 화면·본편 Work 연결 분리 | 일부 사용·미포팅 미구현 | 6모드·보드 시험 | P2 — 모드 진입 |
 | 플레이어 설정 공유 | [판독] main ComUiSettingPlayer `@0x7100344a00~710034be24`; [플레이어 설정](../shell/setplayer.md) | `main.ts::flowPlayers` chars/com/names/pads | :477~489 설정 반환→허브 :409~410·목록 :397~398·게임 :373 | 현재 참가자·캐릭터·패드 공유 연결. [미확정] PlayerWork 전체 속성·모드 인원 제한 | 사용·일부 사용 | 현재 상위 흐름 | P2 — 속성 범위 |
+
 ## 2. 시간·난수·입력·이동·물리
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |
 |---|---|---|---|---|---|---|---|
 | 시간·프레임·pause | [판독] main GetDeltaTime `@0x7100196670`, 프레임 스텝 `@0x7100987af8`, RmMgSceneBase ctor `@0x7100440fb8`; [코어](01_core.md) | `core/clock.ts` FPS60·FRAME_DT; main audio/wall 시계 | `main.ts:619~630` backlog 제한·고정 step; mg1801 RhythmClock f32(1/60) | mg1801 Fixed60 일치. 일반 Variable60·.05 clamp·substep·pause level 계약 없음. 웹 visibility suspend·backlog 폐기 정책 | 리듬 사용·일반 계약 미구현 | mg1801; 일반 게임 102종 이식 | P2 — 일반 시간 모델 |
-| 난수 | [판독] main RandModule ctor `@0x7100189200`, SetSyncRandSeed `@0x7100189438`; [코어 §6.6~6.7](01_core.md) | `core/rng.ts::BexRandModule`, MT19937 async/sync | `G/logic/game.ts:261~263`: setup.seed→async, async.rand→sync; `mgscene_page.ts:71~72` 시험 | 원본 부팅tick·앱 수명 async→웹 매판 seed 재생성. actor 독립 stream·RandRange/F 계열 일부 없음 | 사용·일부 계약 미구현 | mg1801·후속 actor 게임 | P2 — 재현 seed 정책·API 범위 |
+| 난수 | [판독] main RandModule ctor `@0x7100189200`, SetSyncRandSeed `@0x7100189438`; [코어 §6.6~6.7](01_core.md) | `core/rng.ts::BexRandModule`, MT19937 async/sync | `G/logic/game.ts:261~263`: setup.seed→async, async.rand→sync; `mgscene_page.ts:71~72` 시험 | 원본 부팅tick·앱 수명 async→웹 매판 seed 재생성. MT·기각표본·multiply-high·n<2 소비0·syncF=1경계 구현; actor 독립stream·RandRange/F/ModF/RangeF 계열 미대응 | 사용·일부 계약 미구현 | mg1801·후속 actor 게임 | P2 — 재현 seed 정책·API 범위 |
 | 파이버·갱신 순서 | [판독] main 등록 `@0x710018e68c`, 실행 `@0x710018f400`: sequence·priority 안정 정렬·pause; [코어 §5.4·6.4](01_core.md) | `core/sched.ts::Scheduler`; `mgmcommon/fiber.ts::FiberRunner` | script213 TS 검색: core/sched import·new Scheduler 0. FiberRunner는 mgm01/mgmet/online/partyrule/setplayer 사용. `G/logic/game.ts:294~310` 수동 순서 | Scheduler 생성순·프레임 시작 길이 고정, priority/sequence/pause 없음. mg1801 확인 범위 수동 순서 근거 존재 | 공용 미사용·별도 셸 구현 | 메뉴·mg1801·후속 게임 | P2 — 범용 스케줄러 부재 |
-| 기본 패드·actor 입력 | [판독] bex::InputModule·actor::ComActorPad 회전·마스크·.1 threshold·override; [UI 입력](05_ui_input.md), [장면 데이터](06_scene_data.md) | `core/pad.ts::PadInput/Pads`, `view/input.ts` | `main.ts:557~560` pads.read→logic.step; `G/logic/game.ts:298` Pads.read | 기본 버튼·스틱 사용. actor 스타일 회전·논리 마스크·override 계약 없음 | 일부 사용·미구현 | mg1801·이동 게임 | P2 — actor 입력 계약 |
-| 체감 입력 | [판독] SixAxisConverter·WaveDetector·Emitter; [UI 입력](05_ui_input.md), mg0118/mg0906 등 게임 문서 | PadInput.acc 필드·입력원 | `view/input.ts:58/105` emptyPad→acc0; `mgscene/flow.ts:286~292` now/down·스틱만 전달 | acc/up/repeat 손실; SixAxis 변환·검출·방출 공용 런타임 없음 | 미구현 | 체감 게임; 현재 mg1801 버튼 입력 | P2 — 이식 입력 파이프라인 |
-| 일반 이동 | [판독] actor::ComActor·JumpCalculator·조건/액션·추가속도; [장면 데이터](06_scene_data.md), 이동 게임 문서 | `shell/plaza/player.ts::PlazaMover` | 광장 player 이동 소비; mg1801 고정 레인 | 광장 이동 일부 재현; 일반 점프·액션·추가속도 계약 없음 | 일부 사용·미구현; mg1801 비적용 | 광장·이동 게임 | P2 — 이동 공용 계약 |
+| 기본 패드·actor 입력 | [판독] bex::InputModule·actor::ComActorPad 회전·마스크·.1 threshold·override; [UI 입력](05_ui_input.md), [장면 데이터](06_scene_data.md) | `core/pad.ts::PadInput/Pads`, `view/input.ts` | `main.ts:557~560` pads.read→logic.step; `G/logic/game.ts:298` Pads.read | NPAD now/down/up·스틱 사용; 논리step 직전 샘플. PlayerID/PadID·논리변환·style·repeat 일부미대응 | 일부 사용·미구현 | mg1801·이동 게임 | P2 — actor 입력 계약 |
+| 체감 입력 | [판독] main Converter `@0x710003f930`, getter `@0x710003f820/710003f878/710003f8d0`, WaveDetector `@0x7100040cc0`, emitter `@0x71000413d0`; [UI 입력](05_ui_input.md), mg0118/mg0906 등 게임 문서 | PadInput.acc 필드·입력원 | `view/input.ts:58/105` emptyPad→acc0; `mgscene/flow.ts:286~292` now/down·스틱만 전달 | acc/up/repeat 손실; posture/angular velocity/샘플링·중력제거·자세회전·부호반전·파형당1발·Value/Sum emitter 없음. WebHID/DeviceMotion/터치: 설계 | 미구현 | 체감 게임; 현재 mg1801 버튼 입력 | P2 — 이식 입력 파이프라인 |
+| 일반 이동 | [판독] actor::ComActor·JumpCalculator·조건/액션·추가속도; [장면 데이터](06_scene_data.md), 이동 게임 문서 | `shell/plaza/player.ts::PlazaMover` | 광장 player 이동 소비; mg1801 고정 레인 | 광장 이동 일부 재현; 걷기2/달리기6·선회·공중가감속40·낙하49 일부재현; 일반 액션·가변중력·추가속도 없음 | 일부 사용·미구현; mg1801 비적용 | 광장·이동 게임 | P2 — 이동 공용 계약 |
 | 충돌 질의·침투 보정 | [판독] PhysicsWorld query·Capsule/Sphere/Ray·layer/exclude/initialOverlap; [움직이는 충돌](11_moving_collision.md) | `S/meshCollider.ts`, `plaza/world.ts`, `plaza/follow.ts::meshRayBlocked` | PlazaMover groundHeight/collide; follow ray. `M/stage.ts:381~383::collision` JSON 반환; createMgStage는 mgstage_page 시험 | 원본 평균 침투 보정→웹 최대3회 순차 push; 이동0 collide 생략. capsule sweep·layer/exclude·initialOverlap 일반 계약 없음 | 일부 사용·미구현 | 광장; APX 게임 이식 | P2 — query·정지 충돌 |
-| 동적 충돌·부착 포즈 | [판독] 원본 socket→Entity→rigid pose commit; [움직이는 충돌 §2~4](11_moving_collision.md) | `M/stage.ts:273::attachToSocket` 시각 부착 | stage3d/MgStage 모델 부착; 동적 body world·pose 동기화 없음 | 시각 부착과 물리 pose commit의 분리. mg1801: 원본 nbmap/APX 없음 | 시각 일부 사용·물리 미구현 | 동적 APX 게임·소품 | P2 — 움직이는 body |
+| 동적 충돌·부착 포즈 | [판독] main Attachment `@0x710088790c/7100887d84`, SyncTransform `@0x7100892d50`→dirty→`@0x71006097b4`; [움직이는 충돌 §2~4](11_moving_collision.md) | `M/stage.ts:273::attachToSocket` 시각 부착 | stage3d/MgStage 모델 부착; 동적 body world·pose 동기화 없음 | 시각부착과 pose commit 분리; MeshCollider geometry/grid 생성시고정. mg0106 B/C/D: layer2·motion0 움직이는Static. mg1801 nbmap/APX 없음 | 시각 일부 사용·물리 미구현 | 동적 APX 게임·소품 | P2 — 움직이는 body |
 | 리듬 시계·채보·점수 | [판독] main RmGameWork ctor `@0x7100440e9c`, RmMgSceneBase SetupGame `@0x71004415a4`, SyncedSetupGame `@0x7100443340`; [리듬](02_rhythm.md) | `G/logic/{rhythm,chart,game,world}.ts` | game(:260~270): chartRows·RhythmClock·점수·총점·CPU setup. G 내부 소유 | 원본 main 공용 시계·채보·점수/결과 책임이 게임 폴더에 내장; 다른 리듬 게임 구현 0 | 게임별 내장·다중 복제 없음 | mg1801·나머지 리듬9종 이식 | P2 — 공용 계층 위치 |
+| actor 입력·CPU overlay | [판독] main ComActorPad ctor `@0x710001e0b4`, Hold `@0x710001e54c`, Trigger `@0x710001e74c`, Stick `@0x710001eac4`; [mg0122 §6.10](../minigame/mg0122.md) | 셸 NPAD→bex 변환·view/input axis round/clamp; 일반 actorPad 없음 | game 원시Pads·셸MgmInput; CPU 이동stick/hold/trigger/release overlay 없음 | NPAD/actor 논리비트·style회전·enabled/override/mask·radial.1 threshold 미대응. 원시deadzone과 actor문턱 별도 | 일부 사용·미구현 | mg0122·mg0101·mg0107·mg0911/12 이식 | P2 — actor 입력계층 |
+| CPU 공용 상태·게임 전략 | [판독] PlayerWork type/ComLevel 공용. mg0101 AI `@0x7100004b50`, mg0106 UpdateCom `@0x710001d100`, mg0912 potential::Point::Run `@0x7100021ba0`: 각 NRO 소유 | GameSetup.players isCom/comLevel; G/logic/player.ts:112·playerMan.ts:19 | mg1801 고유 JUST/FAST/SLOW·miss계획, isCom 소비 | 원본 mg1801 ComLevel 비소비. NaviGrid/Route/ComAI 전략 NRO 고유 | 일부 사용·게임별 정책 | mg1801·이동형CPU 이식 | P3 현재정책·P2 overlay |
+| JumpCalculator | [판독] main SetupLegacy `@0x71000219d0`, 계수 `@0x7100022110`, update `@0x7100021af8`, reset `@0x7100021ae0`; [mg0912 §6.2](../minigame/mg0912.md) | PlazaMover Idle/Walk/Run/Fall·jumpCalcOffFactor5 | 계산기 off 낙하만 | vy구간 가속·Start frame factor0·hold frame 미대응; ExAction/HoldJump는 게임고유 | 미구현 | mg0106/0107/0912 | P2 — 점프적분 |
+| Ray/RayAll | [판독] main CastRay `@0x71006183c0`, All `@0x7100618420`→WorldExtension `@0x7100624fe8`; [움직이는 충돌 §3](11_moving_collision.md) | plaza/follow.ts:190 meshRayBlocked·THREE.Ray | :265 FollowSystem bool가시성; MeshCollider 외입력 false | world·mask/exclude·distance/normal/handle/validity/initialOverlap·All목록 없음 | 일부 사용 | mg0106 Route·mg0912 AI 이식 | P2 — query결과 계약 |
+| Shape/Capsule sweep | [판독] main CastShape `@0x7100618490`, All `@0x71006184f0`→`@0x71006252e0`, CreateCapsule `@0x7100602e44`; [움직이는 충돌 §3](11_moving_collision.md) | Collider groundHeight/collide·MgCollisionData.shapes | sweep API 없음 | 시작pose/quat·shape localpose·world·mask/exclude·거리·initialOverlap 미대응; [미확정] capsule축/길이adapter·All정렬/동점 | 미구현 | 접지·Route·AI 게임 | P2 — sweep질의 |
+| Kinematic·Dynamic simulation | [판독] main motion `@0x710062ce50`:0Static/1Kinematic/2Dynamic, target `@0x710062e8bc`, Physics→Entity `@0x71006098c4`; [움직이는 충돌 §2.3](11_moving_collision.md), [mg1002 §6.2~3](../minigame/mg1002.md) | motion별 simulation·force·poseapply 없음 | 광장 정적 원기둥보정만 | mg1002 공 중력·힘·후처리 미지원. [미확정] DetectionType1 회전/CCD 효과 | 미구현 | mg1002 등물리게임 | P2 — body운동 |
+| 형상 수명·필터·teleport | [판독] main Stage/Unstage·enabled·generationhandle, Teleport `@0x7100893030`, prefilter `@0x710062c8b4`; [움직이는 충돌 §2~3](11_moving_collision.md) | PlazaWorld CollisionMain/First enable/merge | 메시전체 활성화 | 복수shape id/generation/layer/exclude·teleport reset 없음. 원본mask=1<<layer, actor map0x6(layer1·2), Dynamic teleport 선/각속도0 | 일부 사용 | 복수shape·동적장애물 | P2 — 물리수명 |
+| Entity·Physics 갱신 경계 | [판독] main Scene/Fiber·Entity/Physics 단계, component배열·의존그룹; [코어](01_core.md), [움직이는 충돌 §2.4](11_moving_collision.md), [mg0101 §3.6](../minigame/mg0101.md) | game sound/result→Object→Player→flow→motion; Stage3D 표현updater; MgScene hooks/UI | G/logic/game.ts:294~310 수동순서·Stage3D.update | 논리Entity/Physics 및 query commit전/후 pose 계약 없음. [미확정] 전체MgScene 순서동등성·게임별dirty/query선후 | 일부 사용·일반 계약 미구현 | 물리·컴포넌트게임 | P2 — 처리순서 |
+| 리듬 점수·별·코스 | [판독] main 가산 `@0x710042a6b8`, 달성률 `@0x7100436558`, 별 `@0x7100436590`, 코스결과 `@0x710042ca10`; [리듬 §8](02_rhythm.md) | G/logic/world.ts:96 score0..999/teamScore·game.ts:69 starJudge | :766 recordResult→:803 finish | 기본합산·별문턱 구현. comScoreIgnore·ExtA×ExtB·grade·복수코스평균·공용Work 기록 미완료; mg1801기본 Ext없음/COM포함 | 일부 사용·게임내부 책임 | mg1801·리듬9종 이식 | P2 — 리듬공용범위 |
 
+NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, y≤0)·Boo 순차push/1.4; mg0102 수동 구면위치·접촉·득점. 일반 공용 carry의 이전/현재body transform 적용: [미확정].
 난수 검증 자료: [코어 §10](01_core.md)의 기존 재구현 계산(5시드×1,000 MT 출력·분포 벡터). 신규 실행·계산 없음.
 
 ## 3. 그래픽·카메라·후처리
@@ -123,6 +135,7 @@
 | 입자 운동·난수·field | [판독] main vfx2 CPU/GPU·형상·field·flowmap; [이펙트 §6.2~4](08_effects.md) | game LCG/volume/initParticle/positionAt·Batch ShaderMaterial | 김·물보라·반짝임 | 원본 P+=dt·m·V 후 drag/gravity→웹 drag-first 닫힌식; Q 표본 분포 차이; field·flowmap·soft depth·layer/sort/depthMask·PlayRate·상속 일부 생략 | 일부 사용·근사 | mg1801 입자 | P1 — 운동·표본·렌더 |
 | 모션 particle trigger | [판독] main ComFxTrigger callback `@0x710010d73c`→Effect; [이펙트 §8](08_effects.md) | ftrg particle callback 연결 없음 | mg1801 원본 particle trigger 미사용; SE/VO 별도 | 범용 모션 이벤트→particle 생성 미연결 | 미구현·mg1801 비적용 | 실제 particle trigger 게임 | P2 — 이벤트 연결 |
 | 화면 분할·보정·복구 | [판독] main SplitTo `@0x7100311674`, Apply `@0x7100311030`, tick `@0x7100312900`; mg0102/0122 2×2·mg0508 2×1; [분할 §1~7](10_split_screen.md) | Renderer/Stage3D 단일camera·post 전체RT | scissor는 ScenePreparer 준비 draw만 사용 | rect/focus/초 전환·draw FOV/aspect·layer mask/clear/RT·post sampling·capture·ResetAll 없음; [미확정] 원본 clear 영역·capture 시점 | 미구현 | 분할·사진 게임 | P2 계약·P3 GPU 조건 |
+
 ## 5. 서비스·영구 상태
 
 ### 5.1 UI·메시지·설정·오디오
@@ -153,7 +166,8 @@
 | 모드 Save·첫 안내 | [판독] main SaveFirstHowtoPlayViewMgm01 `@0x710022ee20`: bit3+SaveRequest; [허브 §8](../shell/mgmet_flow.md), [공용 §9](../shell/mgm_common.md) | `mgmcommon/contracts.ts::MemorySave`, modeFlags·게임 항목 JSON | mgm01_page:154~168 localStorage 복원/onSave 연결. mgmet_page:201~204 새 MemorySave·시험 firstHowto/opSkip | 같은 인터페이스의 다른 저장 인스턴스. 허브 onSave 없음·첫 안내/스킵/누적 횟수 공유 단절 | 일부 사용·공용 미사용 | 허브↔프리 플레이 | P1 — 영구 상태 연결 |
 | 저장 완료·오류 | [판독] menu00 SaveRequestFiber `@0x71000923c0`: SaveRequest→IsProcessing=false; [가이드](../shell/plaza_guide.md) | MemorySave.requestSave contracts.ts:207~209 동기callback | 목록localStorage·허브메모리·MgScene save사건 | 진행·완료·오류 상태 및 종료 handshake 없음 | 미구현 | 설정 변경·모드 종료 | P1 — 저장 수명 |
 | 인간별 플레이 기록·NEW·즐겨찾기 | [판독] main `FUN_71002db9f0`: 참가 인간별 횟수 증가; [한 판](../shell/minigame_scene.md), [프리 플레이](../shell/mgm01_freeplay.md) | MgmSave mutator·Work flags | mgm01_page:520 시험head 최대999+1; main 실제완료 Save hook 없음. 변경/requestSave 별도 | 실제 mg1801 인간별 갱신 미연결; NEW/즐겨찾기 영속화 시점 분리 | 일부 사용·공용 미사용 | mg1801·프리 플레이 | P1 — 실제 기록commit |
-| 실행·시스템 설정 | [판독] 원본 Work·SystemData·사용자Save; [가이드](../shell/plaza_guide.md) | main.ts:84~108 localStorage game/com/muted/options; plaza balloon menuData0 | 실행 패널·기구skip 값 저장 | 원본 프로필·시스템 설정 전체 계약 부재 | 일부 사용 | 게임·광장 | P2 — 설정 범위 || 플레이 보고·설정·모드 | [판독] main ReportSystem `@0x71002272d4`, AddAwakeCount `@0x710022b3c0`, ChangeSetting `@0x710022bb14`; boot GameFlow `@0x7100004520`, 광장 guide·mgmet callers | 보고 서비스 없음 | script/server 전수검색; `mgresult_page.ts:157~173`, `mgscene_page.ts:101~125::reported`는 완료 중복 방지 | 시스템·설정·모드 진입 이벤트 수집/전송 없음 | 미구현 | 부트·광장·항구 | P2 — 보고 서비스 |
+| 실행·시스템 설정 | [판독] 원본 Work·SystemData·사용자Save; [가이드](../shell/plaza_guide.md) | main.ts:84~108 localStorage game/com/muted/options; plaza balloon menuData0 | 실행 패널·기구skip 값 저장 | 원본 프로필·시스템 설정 전체 계약 부재 | 일부 사용 | 게임·광장 | P2 — 설정 범위 |
+| 플레이 보고·설정·모드 | [판독] main ReportSystem `@0x71002272d4`, AddAwakeCount `@0x710022b3c0`, ChangeSetting `@0x710022bb14`; boot GameFlow `@0x7100004520`, 광장 guide·mgmet callers | 보고 서비스 없음 | script/server 전수검색; `mgresult_page.ts:157~173`, `mgscene_page.ts:101~125::reported`는 완료 중복 방지 | 시스템·설정·모드 진입 이벤트 수집/전송 없음 | 미구현 | 부트·광장·항구 | P2 — 보고 서비스 |
 | 광장·룸 보고 | [데이터] main ReportPlaza `@0x7100227d24`, ReportCard `@0x71002281f8`, FriendRoom4Start `@0x710022bb48`, FriendRoom8Start `@0x710022bbe4` | Socket.IO 광장·룸 서비스 | 실제 room/plaza 경로에 보고 연결 없음 | 광장 이용·룸 시작 지표 누락 | 미구현 | 현재 광장·프렌드 룸 | P2 — 지표 연결 |
 | 업적·잠금·해금 목록 | [판독] main AchievementModule UnLock `@0x71001cdf14`, IsUnLock `@0x71001ce348`, SetUnlockList `@0x71001ce4a4/71001ce838`, GetUnlockList `@0x71001ceb78`, SetUp `@0x71001cef3c`; mgmet ID0x45. [데이터] achievement.json 170항목 | MemorySave: modeFlags·게임 항목; charselect 외부 unlocked | charselect screen:94~95/state:156~157 잠금표시; mgm01_page:170 전체 unlock:true | 업적 조건·해금·저장목록 서비스 없음 | 잠금 일부 사용·업적 미구현 | 선택·프리 플레이·광장 프로필 | P2 — 170업적 상태 |
 | 카드 업적값 | [데이터] 해금 목록과 CardData 별도 계약; [온라인](../shell/online.md) | `online/types.ts:34/44::achievement`, 기본−1 | `online/wire.ts:189~214` i16 직렬화/복원→룸 카드 | 단일 표시값 전송; 업적170목록·조건·Save 미연결 | 일부 사용 | 온라인 룸·카드 | P2 — 상태 연결 |
@@ -172,7 +186,7 @@
 | 프렌드 룸·알림 | [판독] menu00 Join `@0x7100035a90`, Play `@0x7100037a00`; main notice `@0x7100252860/710025366c/71002537b0`; [온라인](../shell/online.md) | server/socket·games·online/socketio::SocketIoOnline·OnlineView notice | 광장 실제 기본adapter; online_page FakeOnline 시험. notice 텍스트/아이콘/애니/SE, modeselect 별도callback | 실제 룸 사용; [미확정] 원본 알림queue 전체 책임 | 사용·알림 일부 사용 | 온라인·광장 | P1 실제세션·P2 queue |
 | 게임 세션·seed·입력 | [판독] main BeginScene `@0x71002df258`→StartSync `@0x7100218cd0`/IsSynced `@0x71002197bc`, NetworkGameScene `@0x71001c94cc`, 슬롯 `@0x710013c440`, seed `@0x7100162210`; [온라인 동기](12_online_sync.md) | server/games.ts mpj-plaza; wire 룸제어·INFO·STAMP; GameSetup 로컬seed/players | main URL/Math.random seed·local pads/audio step. 미니게임 세션 등록 없음 | 프레임입력·seed합의·시작barrier·결과합의·station/slot/epoch 소유권 없음 | 일부 입력대체·게임동기 미구현 | mg1801 온라인 | P1 — 룸/게임 경계 |
 | 프레임 gate | [판독] 원본 동기대기; [온라인 동기](12_online_sync.md), [한 판](../shell/minigame_scene.md) | mgscene/gate.ts FrameGate·localGate(always true) | 더미시험 MgScene | 온라인gate·실제게임 연결 없음 | 공용 미사용 | MgScene·후속게임 | P2 — 진행gate |
-| 광장 위치 송수신·보간 | [판독] menu00 SendRemote `@0x710003fd64`, Receive `@0x71000421e0`, payload0x50; [온라인 동기 §6.2.1](12_online_sync.md) | plaza/ui/net.ts RemoteTable/Actor target; follow.ts RemoteMotion/AutoInterpolation | wire INFO·speed²>.1·.2s송신; follow:143~185 단일표시, 거리>5 teleport/≤1 rotate | pos·quaternion→i16 1/256m·yaw. 정지heartbeat 없음(원본도 이동조건). [미확정] 원본 회전/수치 동등성 | 일부 사용·단일보간 사용 | 광장 | P2 — payload·수치 |
+| 광장 위치 송수신·보간 | [판독] menu00 SendRemote `@0x710003fd64`, Receive `@0x71000421e0`, payload0x50; [온라인 동기 §6.2.1](12_online_sync.md) | plaza/ui/net.ts RemoteTable/Actor target; follow.ts RemoteMotion/AutoInterpolation | wire INFO·speed²>.1·.2s송신; follow:143~185 단일표시, 거리>5 teleport/≤1 rotate·속도6·도착snap | pos·quaternion→i16 1/256m·yaw. 정지heartbeat 없음(원본도 이동조건). [미확정] 원본 회전/수치 동등성 | 일부 사용·단일보간 사용 | 광장 | P2 — payload·수치 |
 | NPC 접근·가이드 서비스 | [판독] menu00 MainImpl `@0x710005a170`: 정지→선회→Talking→설정→Save→복귀; [가이드](../shell/plaza_guide.md), [광장](../shell/plaza_3d.md) | plaza/npc·interact·Player·Heading; setplayer·charselect 부품 | 접근/클립/시선·A/result5 사건. interact:200~211 다음프레임resume; parts에 가이드부품 없음, ui/ui decide result3만 | 가이드 메뉴·화자/카메라·멤버교체·취소복원·Save·페이드 수명 연결 없음 | 접근 일부 사용·서비스 미구현·공용UI 미사용 | 광장 가이드 | P1 — 선택후 서비스 |
 | 상점·자료관·음악·랭킹 | [판독] 광장 NPC 목적지·선택결과; [광장](../shell/plaza_3d.md) | interact 대상/결정 사건 | 대응 처리부품·서비스flow 없음 | 접근·선택 이후 목적지 미연결 | 일부 사용·미구현 | 광장 | P2 — 목적지 연결 |
 
@@ -186,6 +200,7 @@
 | 공용 자산·owner 해제 | [판독·데이터] common/font/chara archive·참조해제; [공용자산](common_assets.md), [폰트](font_assets.md), [캐릭터자산](chara_assets.md) | assets/common/font/chara·fontSheet singleton; assetcore.release refs감소 | Render2D/LytRenderer 글꼴 공유; plaza_page:227·mgstage_page:122 release; Assets.dispose:63~71 glTF/Map 정리 | GPU 업로드문맥별; broker캐시 유지·게임자체캐시 해제 | 사용·일부수명 대응 | UI·캐릭터·장면전환 | P2 — owner·문맥 |
 | 예산·LRU | 웹 공용정책 [로더](loader_manager.md); 원본archive 수명과 별도 | assetcore:424~425 Infinity기본·:592~617 trim/LRU | appAssets 유한예산 없음·script trim 호출0; plazaGl 별도유한GPU예산 | LRU 정의와 앱 eviction 정책 미연결 | 공용 미사용 | 장시간전환·cache누적 | P1 — 앱예산 |
 | HTTP·SW cache | 웹 배포정책 [압축](assets_pipeline.md); 원본archive와 별도 | view/assetMode:21~30→cache/sw | hashed cache-first·HTML/manifest network-first·API/socket/range우회·dev/src해제 | [미확정] 브라우저활성 상태·실제 재다운로드/GPU 비용 | 사용·실행 미확정 | 배포자원 | P2 — 캐시정책 |
+
 ## 6. 스냅샷
 
 공용 기능 단위: 원본 게임 NRO 외부 소유 계약. 웹 비교 단위: 공용 정의 → 실제 소비자 → 우회·차이. 게임별 정책: 옵션·판정 창·카메라 설정 등 적용 조건 별도 기록.
@@ -193,11 +208,17 @@
 | 식별 항목 | 확인값·근거 [데이터] |
 |---|---|
 | 원본 제품 | Super Mario Party Jamboree, US, v0, TitleID `0100965017338000` — [추출 명세](../analysis/00_extraction_pipeline.md), `C:/dev/mpj/README.md` |
-| 웹 저장소 | `C:/dev/mpj/web`, HEAD `b8b72e723657bd1dd5bb3d8dd39c0439a69c7605`; 수정 작업트리 포함 |
+| 웹 저장소 | `C:/dev/mpj/web`, HEAD `a818f937e08dc6deaa13ff1873f1c50d3cc60102`; 수정 작업트리 포함 |
 | 원본 main | `C:/dev/mpj/extracted/exefs/main`, 15,934,795 B; SHA-256 `F474D60DA145BA0BF2E4262D727BA76718EF2CDD101ECEA592260EB507159A50` |
 | main 함수 인덱스 | `C:/dev/mpj/analysis/functions/main.nso.tsv`, 63,952행; SHA-256 `6AE1F55DD9F6987152865D60C727C33ECEC77C8AE7D0711721DBCCEAF78CDB3D` |
 | 판독 인덱스 | `C:/dev/mpj/analysis/decomp/INDEX.tsv`; SHA-256 `B02BA59DC5B4916C5051A82E7DE8BEEE87096C6628F35F2456EDEFCE6193FE4D` |
 | 웹 게임 등록 | `script/games/index.ts::GAMES = [mg1801Game]`; SHA-256 `743FD783C019196C87F6A9FCB6FFC09BBA41DB0AAB6755AF40F57F5D36C74CE3` |
+| 웹 진입·목록 | `script/main.ts` SHA-256 `FF315C7F58FC76944DF06F86053D35C9C92A0F3ABFD88C3D499B2D09CA867613`; `script/mgm01_page.ts` `1F28A57E204D58A784E945BD520E476DFDCD79137F6369CF4700EDC353DE1F69` |
+| 웹 허브 | `script/mgmet_page.ts` SHA-256 `A681929589EE2AD56438F89F7F06244712D9CA1465D4E537CDEB684112CDEDF1` |
+| 웹 후처리·공용 재질 | `G/view/post.ts` SHA-256 `CFD4426B15D9CD10239EC3D7D519C1EA46FA008FCB8C92514DE21E08661C83EE`; `S/material.ts` `82C1AC1C2DF52FA80156A316189A30779D387744A5091D331A0A70E8C31B0B47` |
+| 웹 온라인·추종 | `script/shell/plaza/ui/net.ts` SHA-256 `E4383ACF966DB25BBF36132193B3B53B328A9DCA35574AFB09F2798FCE6CA37D`; `script/shell/plaza/follow.ts` `9437578961173AAFA2A2C661491664F6B732EF892A53542D4D6950B4E829109B` |
+| 변환기 | `tools/analysis/asset_convert.py` SHA-256 `9C94FFD689291147199BAEDBBA6FB925BAC5484C8F0A85619FF269977D82D6A0`; :688~744 아카이브 graph.json→광장 hash 재사용[추정]→pending/SASS 경로 |
+| 추가 그래프 근거 | [셰이더 그래프 §5·8](14_shader_graphs.md), SHA-256 `36880C9AEF4AA6DC4FABECCD797DDA15AAC6FF4A7F57B4507085C5D84FAE65A9`: mg0508/mg0106/mg0101/mg0122/mg0102 옵션 튜플 27개·pending 106재질 집계; 변환 후 미실행. [미확정] 그래프 식·사전 적용·manifest/압축 자산 반영. 기존 선택적 GraphDef 처리와 별도 범위 |
 | 적용 지침 | `DESIGN.md`; 상위 README의 `C:/dev/mpj/분석.txt` 링크 대상 부재 |
 
 주소 식별: 모듈명 + 주소, 기본 베이스 `0x7100000000`. **[미확정]** NRO 139개 개별 해시, SDK·`subsdk0` 본문, 패키지 메타데이터 재판독.
@@ -215,7 +236,7 @@
 | 웹 게임 디렉터리 | `script/games/mg1801`, `script/games/mgdummy` 2개 | [판독] `mgdummy::createDummyGame`: 원본 대응 없는 `shell/mgscene` 시험용, GAMES 미등록 |
 | 웹 카탈로그 | `script/shell/mgm01/catalog.ts`, 112게임 | [판독] 목록·필터 데이터 |
 | 분석 문서 | 미니게임 22개 + `rc_stage01` 1개 | [데이터] 문서 목록 |
-| 웹 셸·기반 | `script/core` 6파일, `script/shell` 13디렉터리, `script/lib` 3디렉터리, `script/view`, `script/cache`, 페이지 진입점 | [데이터] `script` TypeScript 213파일; 소비자 연결: §1~§4 |
+| 웹 셸·기반 | `script/core` 6파일, `script/shell` 13디렉터리, `script/lib` 3디렉터리, `script/view`, `script/cache`, 페이지 진입점 | [데이터] `script` TypeScript 213파일; 소비자 연결: §1~§5 |
 | 서버·도구 | `server`, `tools/analysis`, 빌드·압축·검증 도구 | [판독] `server/games.ts`: `mpj-plaza` 1서비스 등록 |
 | 기존 문서 | 최초 `docs` MD 68파일 | [데이터] 제목·범주 목록; 관련 명세 재사용 |
 
@@ -248,8 +269,8 @@
 | 분류 | 모듈 | 공용 경계·미확정 분석 |
 |---|---|---|
 | 보드 | `bd01` | main 공용 보드 상태·보상·세이브; [미확정] 보드 전체 로직·모드 전용 규칙 |
-| 쿠파 계열 | `kb01`, `kbet` | `ca::kb`, `ca::kbd`, `ca::kbm`; [미확정] 공유 계약·적용 게임 |
-| 애슬론 | `ca01`, `caet` | `ca::coin_athlon`; [미확정] 적용 게임·공용 계약 |
+| 쿠파 계열 | `kb01`, `kbet` | `ca::kb`, `ca::kbd`, `ca::kbm`; §1.1 kb import 12개; [미확정] kbd/kbm 공유 계약·caller |
+| 애슬론 | `ca01`, `caet` | `ca::coin_athlon`; §1.1 import 18개; [미확정] 각 caller의 계약·활성 조건 |
 | 협력·파타파타 계열 후보 | `mf01`, `pp01`, `pp03`, `pp04`, `ppet` | [미확정] 정식 명칭·공용 적용 범위; 필요 근거: `sb`/`wl` 호출 |
 | 리듬 모드 | `rc_stage01` | `ca::rm`, 리듬 게임 10종; 웹 미등록 |
 | 미니게임 셸 | `mgm01`~`mgm06`, `mgmet`, `mgmrs`, `mgInst` | 목록·설명·결과·모드 흐름 |
@@ -275,9 +296,12 @@
 |---|---|
 | 결과·전환 | 원본 mg1801/freeplay ring writer 전체·Call/Return 부모 인스턴스 보존·Save 실제 디스크 시점 |
 | 모드 계층 | §1.1 import 경계 확인; bd/ca/kb/mf/pp/rc 내부 상세 공유 계약·실행 조건 |
-| 그래픽 활성 | spot/fluid/d_buffer/lens flare·DefaultGlobalLighting·LOD distance/FSO priority·impostor enable/atlas·APX solver·눈/morph/scale mode 최종 합성 |
+| 그래픽 활성 | spot/fluid/d_buffer/lens flare·DefaultGlobalLighting·LOD distance/FSO priority·impostor enable/atlas·APX solver·눈/morph/scale mode 최종 합성·5게임 그래프 사전/변환 반영 |
 | 영상·스크립트 | op/ppet CreateMovie 호출 위치·옵션·스킵; Lua 자산·진입·바인딩·GC 인자 |
 | 플랫폼 | SDK/subsdk0/rtld·heap/작업/I/O·ComMatter 부품 수명 경계 |
+| 센서·물리 | mg0118 센서tick/Player 선후·Capsule축/길이·All정렬/동점·query옵션명·회전CCD |
+| 서비스실행 | SW활성·GPU/네트워크 비용·동기SDK 복구·알림queue |
+
 ## 9. 근거·검증 범위
 
 | 검증 항목 | 범위·결과 |
@@ -285,5 +309,6 @@
 | 원본 분석 | 기존 01~13·lod·skinning·게임·셸 문서 재사용; main/NRO 함수 인덱스 정적 대조 |
 | 웹 소비자 | `script/**/*.ts` import·생성·호스트 검색, main/GameDef·mgm01·MgScene 결과 어댑터 판독; Stage3D/MgStage·Preview3D·게임 view·변환기 정적 조사 |
 | 문서 시점 차이 | Stage3D setupExtras→PostChain 구현; 게임 post의 곡선/DOF 미확정 주석 대 최신07 식; effects 운동식 미판독 주석 대 최신08; 09 MotionSlot·08 view/effects 권장 구조 대 실제 게임별 구현 |
+| 문서 정합성 | 감사 106항목·근거 링크 131개; 상대경로 존재·감사표 8열·항목 중복·git diff 공백 검사 |
 | 미실시 | 원본/웹 실행·새 Ghidra/SASS·신규 수치 검산·전체 binary hash 중복 검사 |
 | 미확정 전수 범위 | 원본112게임 전체 호출자·27모드 전체 본문·main63,952함수·SDK/subsdk0 전체 의미 판독 |

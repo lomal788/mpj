@@ -4,6 +4,7 @@
  */
 import { ASSETS } from './env';
 import { appFlow } from './view/appFlow';
+import { logicWipe } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { assetHooks } from './shell/charselect/assetHooks';
@@ -95,8 +96,10 @@ export async function runModeSelect(
       console.warn(`modeselect: 배경 이미지를 읽지 못했다 ${bgUrl}`);
     }
   }
+  const wipe = logicWipe();
   const handle = await createModeSelect({
     canvas,
+    wipe,
     backdrop,
     assets: { url: (p) => `${ASSETS}modeselect/${p}` },
     flags: cfg.flags,
@@ -155,6 +158,7 @@ export async function runModeSelect(
     stop() {
       cancelAnimationFrame(raf);
       done = true;
+      wipe.release();
       handle.dispose();
       canvas.remove();
       const c = ctx;

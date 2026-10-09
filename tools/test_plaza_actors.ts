@@ -416,7 +416,7 @@ console.log('4. 결정 → 기구 출발 사건(§6.10 ④)');
   near(cut01At, 260, 1, 'cut00 260f 뒤 cut01(프레임 260 부터)');
   near(passAt - cut01At, 40, 1, '0.6667 s 뒤 쌍안경 건넴·SM_JIN_MENU_TO_MAP');
   near(whoAt, 400, 1, '카메라 프레임 400 에서 SQ_SE_MENU00_TRANSITION_WHO');
-  near(exitAt - whoAt, 30, 1, '페이드 아웃 0.5 s 뒤 장면 호출');
+  near(exitAt - whoAt, 40, 1, '페이드 아웃 속도 0.5(FadeOut(White, 0.5) @0x7100047a74, 와이프 20프레임 ÷ 0.5 = 40) 뒤 장면 호출');
   ok(JSON.stringify(exited) === JSON.stringify({ k: 'balloon' }), `오프라인 → exit balloon(모드 메뉴): ${JSON.stringify(exited)}`);
   ok(exitAt < takeoff.frames, '출발 애니 500f 가 끝나기 전에 다음 장면');
   const m = srtMaya({ sx: 0.0625, sy: 1, r: 0, tx: -2, ty: 0 }, new THREE.Matrix3());

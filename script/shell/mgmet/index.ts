@@ -3,7 +3,6 @@
  */
 export * from './activityTitle';
 export * from './extra';
-export * from './fade';
 export * from './freePlayInfo';
 export * from './hub';
 export * from './ruleConfig';

@@ -130,9 +130,10 @@ export async function applyGraph(
     prev.call(m, sh, r);
     Object.assign(sh.uniforms, { mpjP: { value: mp.P }, mpjC: { value: mp.C }, mpjSrt: { value: mp.srt }, mpjEnvP: { value: g.env.P }, mpjMs: g.ms, mpjSunDir: g.sunDir }, raws);
     texs.forEach((t, i) => (sh.uniforms[`mpjGT${i}`] = { value: t.tex }));
+    const vsDecl = src.vsDecl.replace(/attribute \w+ \w+;/g, (decl) => sh.vertexShader.includes(decl) ? '' : decl);
     const head = HELPERS + src.rawDecl + texs.map((t, i) => `uniform sampler2D mpjGT${i};\nvec4 mpjT${i}(vec2 u) { vec4 v = texture2D(mpjGT${i}, u); return ${t.snorm ? 'v * 2.0 - 1.0' : 'v'}; }`).join('\n');
     sh.vertexShader = sh.vertexShader
-      .replace('#include <common>', `#include <common>\n${head}\n${src.vsDecl}`)
+      .replace('#include <common>', `#include <common>\n${head}\n${vsDecl}`)
       .replace('#include <begin_vertex>', `#include <begin_vertex>\n${src.vsBody}`);
     sh.fragmentShader = sh.fragmentShader
       .replace('#include <common>', `#include <common>\n${head}\n${src.fsDecl}`)

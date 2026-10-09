@@ -76,6 +76,10 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
   const muted = q.get('mute') === '1' || q.get('muted') === '1';
   const play = (label: string, file: string, gain: number): void => {
     if (muted) return;
+    if (ctx.sound.play) {
+      ctx.sound.play(label, file, gain);
+      return;
+    }
     try {
       audio ??= new AudioContext();
     } catch {

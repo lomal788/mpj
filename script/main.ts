@@ -22,16 +22,17 @@ import { DEV } from './env';
 import { type GameDef, type GameLogic, type GameSetup, type GameView, type PlayerSetup, readOptions } from './game';
 import { GAMES } from './games';
 import type { LogicTransition } from './lib/transition';
-import { createMgRun, freePlaySetup, localSeed, type MgRun } from './mgrun';
+import { createMgRun, freePlaySetup, localSeed, type MgRun, type MgRunSave } from './mgrun';
 import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from './shell/mgscene';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
 import { installTransition, logicWipe, sceneIn, sceneOut } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
-import { AudioOut } from './view/audio';
+import { AudioOut, appAudio } from './view/audio';
 import { Hud } from './view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from './view/input';
 import { Renderer } from './view/renderer';
+import { appSave, mgRunSaveHooks } from './view/save';
 import type { CharSelectRun } from './charselect_page';
 import type { Mgm01ListRun } from './mgm01_page';
 import type { MgmetRun } from './mgmet_page';
@@ -89,7 +90,6 @@ const q = new URLSearchParams(location.search);
 const fast = Math.max(0, Number(q.get('fast') ?? 0) | 0);
 const avlat = q.get('avlat');
 const debugOn = q.get('debug') === '1';
-const PREFS_KEY = 'jamboree-web/prefs';
 
 interface Prefs {
   game: string;
@@ -102,7 +102,7 @@ interface Prefs {
 function loadPrefs(): Prefs {
   const def: Prefs = { game: GAMES[0]?.id ?? '', com: [false, true, true, true], muted: false, options: {} };
   try {
-    return { ...def, ...(JSON.parse(localStorage.getItem(PREFS_KEY) ?? '{}') as Partial<Prefs>) };
+    return { ...def, ...(appSave().run.get() as Partial<Prefs>) };
   } catch {
     return def;
   }
@@ -110,7 +110,8 @@ function loadPrefs(): Prefs {
 
 function savePrefs(p: Prefs): void {
   try {
-    localStorage.setItem(PREFS_KEY, JSON.stringify(p));
+    appSave().run.set(JSON.parse(JSON.stringify(p)) as Record<string, unknown>);
+    appSave().request();
   } catch {
     /* 저장소 없음 */
   }
@@ -311,7 +312,7 @@ const readSetup = (): SetupDraft => {
   return { players, practice: false, options: readGameOptions() };
 };
 
-async function start(d: GameDef, draft: SetupDraft, play?: MgPlaySettings, endless = false): Promise<void> {
+async function start(d: GameDef, draft: SetupDraft, play?: MgPlaySettings, endless = false, save?: MgRunSave): Promise<void> {
   const my = ++token;
   dispose();
   result.replaceChildren();
@@ -330,7 +331,7 @@ async function start(d: GameDef, draft: SetupDraft, play?: MgPlaySettings, endle
   startBtn.disabled = true;
   if (!muteIn.checked) {
     try {
-      audio ??= new AudioOut();
+      audio ??= appAudio() ?? new AudioOut();
       await audio.resume();
     } catch (e) {
       console.warn('소리를 열지 못했다', e);
@@ -361,7 +362,7 @@ async function start(d: GameDef, draft: SetupDraft, play?: MgPlaySettings, endle
     mgUi = host.ui;
     const padsNow = pads;
     runWipe = logicWipe();
-    run = createMgRun({ def: d, setup, tables: host.tables, ui: host.data, gate: localGate(() => padsNow.map((p) => p?.read() ?? null)), play, endless, wipe: runWipe });
+    run = createMgRun({ def: d, setup, tables: host.tables, ui: host.data, gate: localGate(() => padsNow.map((p) => p?.read() ?? null)), play, endless, wipe: runWipe, save });
     logic = run.logic;
   } catch (e) {
     console.error(e);
@@ -424,7 +425,7 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
   chosenChars = flowPlayers.chars;
   const fp = freePlaySetup(req, flowPlayers.chars, flowPlayers.com);
   const draft: SetupDraft = { ...readSetup(), options: {}, players: fp.players };
-  await start(d, draft, fp.play, fp.endless);
+  await start(d, draft, fp.play, fp.endless, mgRunSaveHooks(appSave(), req.id));
   await new Promise<void>((res) => {
     const t = setInterval(() => {
       if (hook.stage === 'done' || hook.stage === 'error' || hook.stage === 'idle') {

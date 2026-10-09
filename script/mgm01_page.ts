@@ -7,8 +7,8 @@
  * 시험 배치(패널·저장 키·기본 기록 = gamerecord 초기값)는 docs/shell/mgm01_freeplay.md 9절 [설계].
  */
 import { ASSETS } from './env';
+import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
 import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, pushResult, SceneStack, type Flow, type MgmPlayer, type MgmSceneInstance, type MgResultEntry, type MgmWork } from './shell/mgmcommon';
 import {
   FilterScreen,
@@ -28,11 +28,11 @@ import {
 } from './shell/mgm01';
 import { appFlow } from './view/appFlow';
 import { appBgm } from './view/bgm';
+import { appSave } from './view/save';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
 export const MGM01_DT = Math.fround(1 / 60);
-const SAVE_KEY = 'mpj.mgm01.save';
 
 function toBex(p: PadInput | null): number {
   if (!p) return 0;
@@ -100,36 +100,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
     zIndex: '3',
   });
   stage.append(overlay);
-  let actx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      actx = new AudioContext();
-      void actx.resume();
-    } catch {
-      actx = null;
-    }
-  }
-  const playSe = (url: string, gain: number): void => {
-    if (!actx) return;
-    const c = actx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'mgm01', pads: (pid) => cfg.pads[pid] });
 
   const bgParam = new URLSearchParams(location.search).get('bg');
   const bgUrl = bgParam === 'none' ? null : (bgParam ?? `${ASSETS}modeselect/backdrop_temp.png`);
@@ -153,21 +124,8 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
   if (players.every((p) => p.type === 1)) players[0].type = 0;
   const mgmPlayers: MgmPlayer[] = players.map((p) => ({ pid: p.pid, type: p.type }));
 
-  let stored: string | null = null;
-  try {
-    stored = params.get('save') === '0' ? null : localStorage.getItem(SAVE_KEY);
-  } catch {
-    stored = null;
-  }
-  const save = MemorySave.fromJSON(stored);
-  const persist = (): void => {
-    try {
-      localStorage.setItem(SAVE_KEY, save.toJSON());
-    } catch {
-      return;
-    }
-  };
-  save.onSave = persist;
+  const save = params.get('save') === '0' ? new MemorySave() : appSave().mgm;
+  const persist = (): void => save.requestSave();
   const work = createWork();
   for (const g of catalog.games) work.mg.set(g.id, { isNew: (save.minigame(g.id).flags & MG_FLAG.NEW) !== 0, unlock: true, favorite: (save.minigame(g.id).flags & MG_FLAG.FAVORITE) !== 0 });
   for (const n of (params.get('fav') ?? '').split(',').filter(Boolean)) {
@@ -194,8 +152,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
   );
   const catSounds = Object.fromEntries(Object.entries(catalog.json.sounds).map(([k, v]) => [k, { ...v, file: `../${v.file}` }]));
   const sound = new MgmSound({ ...view.spec.sounds, ...catSounds }, view.url, {
-    play: (_l, url, gain) => playSe(url, gain),
-    ...appBgm().hooks(cfg.muted),
+    ...snd.mgm(appBgm().hooks(cfg.muted)),
   });
 
   let raf = 0;
@@ -257,8 +214,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
       canvas.remove();
       overlay.remove();
       appBgm().exit('mgm01', 'leave');
-      const c = actx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
   return env;
@@ -374,7 +330,7 @@ export async function runMgm01Setting(stage: HTMLElement, cfg: Mgm01Cfg): Promis
     fibers.start(flow(), (o) => {
       last = o;
       phase = '끝';
-      env.persist();
+      if (o.result === 'play') env.persist();
       const name = plainText(texts[catalog.game(o.id)?.nameLabel ?? ''] ?? '', texts);
       const lines = [`결과 ${o.result} (${o.result === 'play' ? '한 판 호출' : o.result === 'list' ? '목록으로' : o.result}) — ${o.id} ${name}`, `설정값 ${JSON.stringify(o.values)} 즐겨찾기 변경 ${o.favoriteDirty ? 1 : 0}`];
       if (o.request) lines.push(`호출 계약 ${JSON.stringify(o.request)}`);
@@ -582,7 +538,7 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
         step() {
           if (done || real === undefined) return;
           done = true;
-          stack.ret(settlePlayResult(env.save, req.id, !!cfg.play, real, () => fakeResult(env, req)));
+          stack.ret(settlePlayResult(env.save, req.id, !!cfg.play, real, () => fakeResult(env, req), !!cfg.play));
         },
         render() {},
         dispose() {},
@@ -627,7 +583,6 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
   };
   stack = new SceneStack(factory, save, work, () => {
     phase = '끝';
-    env.persist();
     const texts = env.view.spec.texts;
     cfg.onDone(
       [`항구로 돌아감(목록 B) — 한 판 ${calls.length}회, Round ${work.round}`, ...calls.map((c) => `${c.id} ${plainText(texts[`im_${c.name}_name`] ?? '', texts)} cpu ${c.cpu} 팀 ${c.team.teamIdByPid.join(',')}`)].join('\n'),
@@ -649,7 +604,6 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
     calls,
     press: (b) => env.press(b),
     stop: () => {
-      env.persist();
       stack.dispose();
       env.stop();
     },

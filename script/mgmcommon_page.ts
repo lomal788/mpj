@@ -7,8 +7,8 @@
  *   bex 비트: A 0x1, B 0x2, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10)
  */
 import { ASSETS } from './env';
+import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
 import {
   FiberRunner,
   MessageFlow,
@@ -71,39 +71,8 @@ export async function runMgmCommonDemo(
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
-  let ctx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      ctx = new AudioContext();
-      void ctx.resume();
-    } catch {
-      ctx = null;
-    }
-  }
-  const playSe = (url: string, gain: number, x?: number): void => {
-    if (!ctx) return;
-    const c = ctx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
       // Play2D 위치 → 좌우 팬: 원본 팬 곡선 [미확정] → 화면 x 선형 [근사] (charselect_page 와 같음)
-      const pan = c.createStereoPanner();
-      pan.pan.value = x === undefined ? 0 : Math.max(-1, Math.min(1, (x - 960) / 960));
-      src.connect(g).connect(pan).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: true, scene: 'mgmcommon', pads: (pid) => cfg.pads[pid] });
 
   // 흐림 창 뒤 그림: 원본 = 항구 3D 장면 [미확정] → modeselect 의 임시 대역 그림 [근사]. ?bg=none 이면 없음
   const bgParam = new URLSearchParams(location.search).get('bg');
@@ -141,7 +110,7 @@ export async function runMgmCommonDemo(
     },
     () => players,
   );
-  const sound = new MgmSound(view.spec.sounds, view.url, { play: (_l, url, gain, x) => playSe(url, gain, x) });
+  const sound = new MgmSound(view.spec.sounds, view.url, snd.mgm());
   const msg = new MessageWindow(view, input, sound);
   const flow = new MessageFlow(() => msg, { operator: () => input.operator, dt: () => DT });
   flow.initialize();
@@ -314,8 +283,7 @@ export async function runMgmCommonDemo(
       done = true;
       view.dispose();
       canvas.remove();
-      const c = ctx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
   return run;

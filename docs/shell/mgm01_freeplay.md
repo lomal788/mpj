@@ -567,6 +567,8 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 [판독] favorite/NEW setter 호출과 디스크 저장 요청은 같지 않다. 시작의 SaveRequest나 다른 적절한 요청까지 메모리 save 데이터에 남는다. [미확정] 취소 직후 실제 flush 시점과 앱 종료 persistence는 SaveRequest/SaveData 생명주기 및 원본 실행 자료가 더 필요하다.
 
+보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md)): 웹 목록·허브는 앱 공용 저장 `appSave().mgm` 하나를 쓴다(옛 키 `mpj.mgm01.save` 는 처음 한 번 옮김). NEW 끔·즐겨찾기는 메모리에만 쓰고 다음 SaveRequest(한 판 호출·허브 요청·단계 16) 때 기록한다. 목록 나가기·페이지 정리 때 하던 즉시 기록은 원본 근거가 없어 뺐다(16_save §10 사용자 확인 필요).
+
 ## 9. 웹 포팅 구조 — 제안, 코드 없음
 
 [추정][웹 이름] [mgm_common.md](mgm_common.md) §9의 독립 shell 원칙에 따라 `web/script/shell/mgm01/`을 제안한다. 허용 의존은 같은 shell 공용 부품, `three`, charselect의 scene2d/render2d/state/RepeatGen/types다. `core`, `games`, `view`, `game.ts`, `env.ts`는 import하지 않는다. 이번 작업에서는 파일을 구현하지 않았다.

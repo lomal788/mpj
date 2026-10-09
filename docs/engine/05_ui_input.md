@@ -505,3 +505,38 @@ u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32
 | mstl 필드 +0x0C·+0x20·+0x34 의미 | 로캘별 글자 배율 | 메시지 스타일 적용 코드 판독 |
 | FTRG 0x0400/0x0403 블록, 0x9101 앞부분 u32/f32 의미, 자원 f32 50.0 | 트리거 세부 | `nn::bezel::ComFxTrigger` 내부(@0x71005f0cec 이후) 판독 |
 | bnvib 주파수 코드 → Hz | 진동 음색(웹에서 표현 불가라 영향 작음) | nn::hid 진동 파일 파서 판독 |
+
+## 11. 웹 진동 재생 계약 [2026-10-09, sound-runtime-3]
+
+사용자 결정: 셸·메시지·시스템 진동을 rumble 60 ms 근사 대신 원본 진동 자료로 재생하고, mg1801 게임 진동도 같은 재생기를 쓴다. 근거는 §7.3~7.6 과 아래 [데이터].
+
+### 11.1 원본 자료 [데이터 `vib.nx.bea/vib/vibration.msgpack`, `bq.nx.bea/chara/pc/ftrgBase/ftrg/vb_pc_base.ftrg`]
+
+- `vib_define`(617): 라벨 → `play_type`·`play_name`(설정 이름)·`Gain_Master`·`Gain_Low`·`Pitch_Low`·`Gain_High`·`Pitch_High`·`Speed`·`priority`·`vib_slot`·`hold`·`solo`·`non_stop`·`non_pause`·3D 값.
+- `vib_setting`(474): `vib_type` = `value`(진폭·주파수 저/고, `duration`·`attack_time`·`release_time`·loop) 또는 `bnvib`(파일 이름).
+- `Global`·`Scene`·`SceneList`: 전역 명령(prm 3개)·장면별 명령 — 뜻 [미확정], 웹은 쓰지 않음.
+- 셸 진동 라벨: 메시지 창 `bv_vib_sys_deci`·`bv_vib_sys_cursor`(+선택지 칸별 `bv_vib_sys_deci_l` 등), 틀 건너뛰기 `bv_vib_sys_skip`, 안내 Next = `bv_vib_sys_proceed`(vib_define 에 있음), 캐릭터 선택·인원 설정 `bv_vib_sys_cursor/error/deci/deci_l`, 광장 스탬프 `bv_vib_stamp_deci`. 키 형식 `VB_*` 는 `vb_pc_base.ftrg` 의 자원 경로 끝 성분이 라벨이다(예 `VB_MGMET_SELECT_DECI` → `bv_vib_sys_deci`, `VB_MGMET_SELECT_CUR` → `bv_vib_sys_cursor`).
+- 웹 코드의 자리 이름 `proceed`(안내)·`error`(mgm01 목록)·`rule`(mgmet 규칙 설정)은 원본 이름이 디컴파일에서 빠졌다(mgm_common [미확정]). 같은 사건의 SE 와 짝으로 고른다: `SQ_SE_SYS_<X>` → `bv_vib_sys_<x>`(정의가 있을 때) [추정: 이름 짝]. `proceed` 는 `bv_vib_sys_proceed` 가 정의에 있어 그대로.
+
+### 11.2 변환(`web/tools/analysis/vib_convert.py` → `assets/common/vib/vib.json`)
+
+범용 변환기: 입력(vibration.msgpack·bnvib 폴더·ftrg 파일들)·포함 규칙·출력 경로를 모두 인자로 받고 `convert()` 함수를 다른 변환기가 부를 수 있다(어느 아카이브·프로젝트에도 묶이지 않음). mpj 실행 예는 파일 머리. `asset_convert.py` 는 아카이브 단위 처리기라 vib 아카이브를 통째로 돌리면 data 부분 복사 등이 같이 일어나 이번엔 처리기로 붙이지 않았다 — `convert()` 를 그대로 처리기로 꽂을 수 있다(사용자 확인 필요).
+
+정의(웹이 쓰는 라벨 + `VB_` 키의 대상) → `[설정 이름, Gain_Master, Gain_Low, Gain_High, priority, vib_slot]`, 설정 → 값형 `{ampLow, ampHigh, duration, attack, release}` 또는 bnvib `{rateHz, ampLow[], ampHigh[]}`(§7.6 파서 `ui_bnvib.py` 그대로, 진폭 = 바이트/255 [추정]), `VB_` 키 → 라벨.
+
+### 11.3 재생(`lib/vibration` 코어 import 0 + `lib/vibration-gamepad` 어댑터(코어만 import) + `view/vibration.ts` mpj 연결 + `view/input.ts` `GamepadPad.vibrate` → 어댑터)
+
+- 세기: 저역(strong 모터) = ampLow·Gain_Master·Gain_Low, 고역(weak) = ampHigh·Gain_Master·Gain_High, 1 로 자름(mg1801 이전 웹과 같은 곱).
+- 원본 규칙 구간: bnvib = 200 Hz 표본(5 ms)마다, 이웃 표본 세기가 같으면 합친다. 값형 = attack 선형 오름 → duration 유지 → release 선형 내림을 5 ms 표본으로. 웹 규칙 구간 = 이전 mg1801 식(50 ms 평균).
+- 재생: Gamepad `vibrationActuator.playEffect('dual-rumble')` 를 구간 순서대로 다시 부른다(`PadSource.vibrate`). 주파수(Pitch·freq)는 표현할 수 없다 [근사].
+- 동시 재생: 패드마다 한 줄. 재생 중보다 우선순위가 낮으면 새 진동을 버리고, 같거나 높으면 바꾼다 [추정: vib_define priority 의 뜻 — 모듈 판독 안 함]. `vib_slot` 은 보관만.
+- 장면이 끝나면 모든 패드 진동 정지(04 §13.12.1 `VibrationModule` 장면 정지).
+
+### 11.4 사용자 확인 필요
+
+| 항목 | 정한 것 | 이유 |
+|---|---|---|
+| 자리 이름 `error`·`rule` | 같은 사건 SE 와 이름 짝 | 원본 진동 이름 디컴파일 누락 |
+| 우선순위·슬롯 | 패드마다 한 줄, 낮은 우선순위 버림 | VibrationModule 판독 안 함 |
+| 주파수·Pitch·Global 명령 | 쓰지 않음 | 브라우저 dual-rumble 로 표현 불가 / 뜻 미확정 |
+

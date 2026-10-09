@@ -711,3 +711,5 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
 | 리듬 쿠킹 2번째 이후 OnGameInit 대기 | 없음(바로 1) | 웹엔 앞 게임 메인 BGM 이 이어지는 코스 실행이 없다 |
 | 틀 단계 16 의 소리 그룹 0x20 정지 | 틀 BGM·징글만 멈추고 게임 소리(리듬 종료 BGM·앰비언트)는 화면을 버릴 때 멈춘다 | 웹 소리 그룹 대응 미구현 |
 | 낡은 코드 주석 | 고치지 않았다(주석 임의 추가·삭제 금지 규칙). 옛 PREROLL·`stepFrame`·흐름 번호 12/13 을 설명하는 줄이 남아 있다: `games/rhythm/scene.ts` 머리 17·22~23행과 `beginFrame` 위 문서 주석·`onGameFinish` 문서 주석 끝 줄, `games/mg1801/logic/game.ts` 머리 5~10·17행, `games/rhythm/types.ts` `RmSceneState.flow`, `games/rhythm/data.ts` `PREROLL_FRAMES`·`gameWork.ts` `prerollFrames`(이제 읽는 곳 없음), `script/game.ts`·`script/main.ts` 머리의 `logic.step` 설명 | 고칠지 사용자 결정 |
+
+보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md) §7): "플레이 횟수 +1 자리" 해소 — 이 장면의 `save` 사건을 `script/mgrun.ts` `MgRunInit.save` 가 받는다. 단계 11 → `playCount(참가자)`(FUN_71002db9f0 규칙: 사람·참가·세이브 있는 칸만 +1, 웹은 1P = 칸 0 만 세이브), 단계 16 → SaveRequest(공용 저장 요청 수명). 목록은 `settlePlayResult(…, countedByScene)` 로 다시 세지 않는다. 단계 16 sub 1 의 IsProcessing 대기는 틀에 넣지 않았다(웹 기록이 페이드 안에 끝나고 로직이 저장을 읽지 않게, 16_save §9). 저장 고리 있음/없음 로직 같음: `tools/test_save.ts` 7절.

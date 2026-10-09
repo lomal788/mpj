@@ -132,6 +132,16 @@ export interface PlazaPlayerSetup {
 export interface PlazaSound {
   se(label: string): void;
   bgm(label: string | null): void;
+  /** 명세 소리 하나(부품 UI SE) — 페이지 공용 소리 출력(docs/engine/04_sound.md §13.11.1). 없으면 부품이 스스로 낸다 */
+  play?(label: string, url: string, gain: number): void;
+}
+
+/** 앱 저장 중 광장이 쓰는 칸(원본 칸 0 MenuData·SystemData, docs/engine/16_save.md §4). 페이지가 꽂는다 */
+export interface PlazaSave {
+  menuBit(n: number): boolean;
+  setMenuBit(n: number, on: boolean): void;
+  request(): void;
+  isProcessing(): boolean;
 }
 
 /** 장면 나가기(페이지가 다음 화면으로) */
@@ -143,6 +153,7 @@ export interface PlazaContext {
   readonly actors: PlazaActor[];
   pad(slot: number): PlazaPad | null;
   readonly sound: PlazaSound;
+  readonly save?: PlazaSave;
   /** 2D UI 겹(캔버스 위 HTML 상자, 크기 = 캔버스) */
   readonly overlay: HTMLElement;
   /** web/assets/ 기준 URL(예 'plaza/ui/x.png') */

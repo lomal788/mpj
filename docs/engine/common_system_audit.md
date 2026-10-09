@@ -181,6 +181,8 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 공용 데이터: `C:/dev/mpj/extracted/bea/bq.nx.bea/common/data/{achievement,reward,rewardList,noticeList}.json`. 원본 영상: `extracted/romfs/movie/flow/op/movie`, `movie/extra/ppet/movie`.
 
 [데이터] 보고·업적·보상 직접 외부 참조: `mg####` 112개에서 0. 모드/셸 경유 책임. 보고 소비 모듈 `boot/menu00/menu01/bd01/kb01/mf01/mgm02~06/mgmet/pp01/03/04/rc_stage01`; 업적 `bd01/ca01/kb01/menu00/mf01/mgm02/04/06/mgmet/pp01/rc_stage01`; 보상 `bd01/ca01/ed/kb01/matching00/menu00/01/mf01/mgm01~06/mgmet/pp01/03/04/rc_stage01`.
+[해소 2026-10-09, save-runtime] §5.1 메시지 속도(P1)·§5.2 모드 Save·첫 안내(P1)·저장 완료·오류 수명(P1)·인간별 플레이 기록 commit(P1)·실행·시스템 설정(P2 중 실행 패널·기구 비트) → [16_save.md](16_save.md)(코어 `lib/save`·어댑터 `lib/save-localstorage`·연결 `view/save.ts`, 키 `mpj.save` 하나). 위 표 본문은 조사 당시 기록이라 고치지 않았다. 남은 것: 가이드 메시지 속도 화면 UI, 온라인 즉시 표시(P2).
+
 ### 5.3 온라인·광장·NPC
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |

@@ -5,6 +5,7 @@
  * 사람 플레이어는 슬롯 순서대로 패드 0, 1, … 를 받고 첫 사람은 키보드도 함께 쓴다.
  */
 import { NPAD, STICK_MAX, emptyPad, type PadInput } from '../core/pad';
+import { GamepadVibrator, type RumbleActuator } from '../lib/vibration-gamepad';
 
 /** 진동 포락선 한 구간: ms 동안 dual-rumble 세기(0..1). strong = 저역 모터, weak = 고역 모터 */
 export interface VibSegment {
@@ -91,7 +92,7 @@ const GP_BUTTONS: [number, number][] = [
 ];
 
 export class GamepadPad implements PadSource {
-  private timers: ReturnType<typeof setTimeout>[] = [];
+  private readonly vib = new GamepadVibrator(() => this.pad()?.vibrationActuator as unknown as RumbleActuator | undefined);
 
   constructor(readonly index: number) {}
 
@@ -121,18 +122,7 @@ export class GamepadPad implements PadSource {
    * 주파수는 표현할 수 없다 [근사: 05_ui_input 7.7].
    */
   vibrate(segments: readonly VibSegment[]): void {
-    for (const t of this.timers) clearTimeout(t);
-    this.timers = [];
-    let at = 0;
-    for (const seg of segments) {
-      const play = (): void => {
-        const act = this.pad()?.vibrationActuator;
-        void act?.playEffect('dual-rumble', { startDelay: 0, duration: seg.ms, strongMagnitude: seg.strong, weakMagnitude: seg.weak }).catch(() => undefined);
-      };
-      if (at === 0) play();
-      else this.timers.push(setTimeout(play, at));
-      at += seg.ms;
-    }
+    this.vib.play(segments);
   }
 }
 

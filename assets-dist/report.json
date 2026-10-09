@@ -1,16 +1,16 @@
 {
  "note": "MB 단위(1e6). dist = 압축본(소리는 ogg 만, m4a 는 따로), transferDist = json·glb 는 brotli q9 추정 + 나머지 그대로. gpu = 모든 텍스처를 한 번에 올렸을 때(밉 포함) 추정",
  "total": {
-  "src": 1132.94,
-  "dist": 473.81,
+  "src": 1133.16,
+  "dist": 474.02,
   "distOgg": 41.61,
   "distM4a": 52.46,
-  "transferSrc": 1132.94,
-  "transferDist": 385.06,
+  "transferSrc": 1133.16,
+  "transferDist": 385.07,
   "gpuSrc": 3270.23,
   "gpuDesk": 1168.02,
   "gpuMob": 1053.14,
-  "n": 3842
+  "n": 3844
  },
  "folders": {
   "chara": {
@@ -38,16 +38,16 @@
    "n": 87
   },
   "common": {
-   "src": 72.44,
-   "dist": 1.02,
+   "src": 72.66,
+   "dist": 1.23,
    "distOgg": 12.35,
    "distM4a": 14.43,
-   "transferSrc": 72.44,
-   "transferDist": 13.37,
+   "transferSrc": 72.66,
+   "transferDist": 13.39,
    "gpuSrc": 9.84,
    "gpuDesk": 5.06,
    "gpuMob": 5.06,
-   "n": 162
+   "n": 164
   },
   "font": {
    "src": 9.67,
@@ -376,16 +376,16 @@
    "n": 274
   },
   "json": {
-   "src": 29.47,
-   "dist": 17.84,
+   "src": 29.69,
+   "dist": 18.05,
    "distOgg": 0,
    "distM4a": 0,
-   "transferSrc": 29.47,
-   "transferDist": 1.44,
+   "transferSrc": 29.69,
+   "transferDist": 1.45,
    "gpuSrc": 0,
    "gpuDesk": 0,
    "gpuMob": 0,
-   "n": 346
+   "n": 348
   },
   "copy": {
    "src": 76.03,
@@ -70212,6 +70212,26 @@
    "srcBytes": 3093,
    "distBytes": 2641,
    "br": 930
+  },
+  {
+   "src": "common/sound/meta.json",
+   "kind": "json",
+   "out": [
+    "common/sound/meta.json"
+   ],
+   "srcBytes": 194732,
+   "distBytes": 194732,
+   "br": 13380
+  },
+  {
+   "src": "common/vib/vib.json",
+   "kind": "json",
+   "out": [
+    "common/vib/vib.json"
+   ],
+   "srcBytes": 22578,
+   "distBytes": 20998,
+   "br": 3349
   },
   {
    "src": "converted.json",

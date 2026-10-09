@@ -21,6 +21,13 @@ const CHOICE_ALIGN: Readonly<Record<string, AlignParams>> = {
 const CHOICE_PAD = 130;
 const CHOICE_MIN_W = 232;
 
+/** 메시지 속도 원천 — 원본은 페이지 시작마다 FindPreselectedUserSaveData → SystemData+0x74 를 읽는다(FUN_7100322e40). 앱 저장이 꽂는다(docs/engine/16_save.md §8) */
+let speedSource: (() => 0 | 1 | 2) | null = null;
+
+export function setMessageSpeedSource(f: (() => 0 | 1 | 2) | null): void {
+  speedSource = f;
+}
+
 export interface MessageWindowAdapter {
   setMessageLabel(label: string): void;
   addMessageLabel(label: string): void;
@@ -63,6 +70,8 @@ export class MessageWindow implements MessageWindowAdapter {
   private readonly spec: MgmSpec;
   /** 시험·디버그용 최근 사건 */
   readonly log: MsgEvent[] = [];
+  /** setSpeed 로 창별 덮어쓰기(원본 +0x90/+0x94) */
+  private speedFixed = false;
 
   constructor(
     private readonly host: MgmDrawHost,
@@ -71,6 +80,11 @@ export class MessageWindow implements MessageWindowAdapter {
   ) {
     this.spec = host.spec;
     this.st = new MsgWinState((p, off, ch) => this.resolvePage(p, off, ch));
+    this.syncSpeed();
+  }
+
+  private syncSpeed(): void {
+    if (speedSource && !this.speedFixed) this.st.speed = speedSource();
   }
 
   private pageIndex(p: MsgPage): number {
@@ -290,6 +304,7 @@ export class MessageWindow implements MessageWindowAdapter {
   }
 
   setSpeed(s: 0 | 1 | 2): void {
+    this.speedFixed = true;
     this.st.speed = s;
   }
 
@@ -312,6 +327,7 @@ export class MessageWindow implements MessageWindowAdapter {
   }
 
   start(): void {
+    this.syncSpeed();
     this.st.start();
     this.apply(this.st.drain());
   }
@@ -385,6 +401,7 @@ export class MessageWindow implements MessageWindowAdapter {
 
   /** 한 틱: 상태기계 + 글자 → 레이아웃 애니 진행 */
   update(dt: number): void {
+    this.syncSpeed();
     this.st.update(dt, { trigOf: (p) => this.input.trigOf(p), isCom: (p) => this.input.isCom(p), animEnd: this.cur ? this.cur.inst.done : true });
     this.apply(this.st.drain());
     this.cur?.inst.update(1);

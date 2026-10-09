@@ -5,8 +5,8 @@
  */
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { appBgm } from './view/bgm';
+import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
 import { ASSETS } from './env';
 import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from './shell/setplayer';
 import { appFlow } from './view/appFlow';
@@ -111,36 +111,7 @@ export async function runSetPlayer(
   const controllers = new PageControllers(cfg.keyboard);
   controllers.begin();
 
-  let actx: AudioContext | null = null;
-  if (!cfg.muted) {
-    try {
-      actx = new AudioContext();
-      void actx.resume();
-    } catch {
-      actx = null;
-    }
-  }
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  const playSe = (url: string, gain: number): void => {
-    if (!actx) return;
-    const c = actx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'menu00' });
 
   const q = new URLSearchParams(location.search);
   const bgParam = q.get('bg');
@@ -219,8 +190,8 @@ export async function runSetPlayer(
     backdrop,
     charaName: (c) => charaNames[c] || `pc${String(c + 1).padStart(2, '0')}`,
     sound: {
-      play: (_l, url, gain) => playSe(url, gain),
-      vibrate: (id) => controllers.source(id)?.rumble?.(60),
+      play: (l, url, gain) => void snd.play(l, url, gain),
+      vibrate: (id, name) => snd.vibrate(controllers.source(id), name, () => controllers.source(id)?.rumble?.(60)),
     },
     system: {
       selectAccount: (pid) =>
@@ -312,8 +283,7 @@ export async function runSetPlayer(
       handle.dispose();
       canvas.remove();
       overlay.remove();
-      const c = actx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
 }

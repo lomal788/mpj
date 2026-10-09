@@ -126,7 +126,7 @@ export class BalloonSystem {
 
   constructor(private readonly ctx: PlazaContext) {
     try {
-      this.skipEnabled = typeof localStorage !== 'undefined' && localStorage.getItem('mpj.plaza.menuData0') === '1';
+      this.skipEnabled = !!ctx.save?.menuBit(0);
     } catch {
       this.skipEnabled = false;
     }
@@ -318,7 +318,10 @@ export class BalloonSystem {
     this.phase = 'done';
     this.log('callScene');
     try {
-      if (typeof localStorage !== 'undefined') localStorage.setItem('mpj.plaza.menuData0', '1');
+      if (this.ctx.save && !this.ctx.save.menuBit(0)) {
+        this.ctx.save.setMenuBit(0, true);
+        this.ctx.save.request();
+      }
     } catch {
       /* 저장 못 해도 진행 */
     }

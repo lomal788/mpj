@@ -130,7 +130,7 @@ export interface MgmSave {
   modeFlags: number;
   minigame(id: number): MinigameSaveEntry;
   setMinigame(id: number, e: MinigameSaveEntry): void;
-  /** SaveRequest — 요청만(디스크 기록 시점 [미확정]) */
+  /** SaveRequest — 요청만. 기록은 앱 공용 저장의 요청 수명이 모아서 한 번 한다(docs/engine/16_save.md) */
   requestSave(): void;
 }
 
@@ -189,28 +189,73 @@ export function pushResult(work: MgmWork, e: MgResultEntry): void {
   while (work.results.length > RESULT_RING) work.results.shift();
 }
 
-/** 기본 저장 구현: 메모리 + JSON 직렬화(페이지가 매체에 둔다) */
+/**
+ * 저장 칸 보기 — MemorySave 가 실제로 읽고 쓰는 곳. 앱 공용 저장(view/save.ts, docs/engine/16_save.md §7)이 모드 섹션·요청 수명을 꽂는다.
+ * 셸은 저장 모듈을 import 하지 않고 이 모양만 안다.
+ */
+export interface MgmSaveBacking {
+  getModeFlags(): number;
+  setModeFlags(v: number): void;
+  minigame(id: number): MinigameSaveEntry | undefined;
+  setMinigame(id: number, e: MinigameSaveEntry): void;
+  entries(): Iterable<[number, MinigameSaveEntry]>;
+  request(): void;
+  isProcessing(): boolean;
+}
+
+function memoryBacking(): MgmSaveBacking {
+  let flags = 0;
+  const mg = new Map<number, MinigameSaveEntry>();
+  return {
+    getModeFlags: () => flags,
+    setModeFlags: (v) => {
+      flags = v;
+    },
+    minigame: (id) => mg.get(id),
+    setMinigame: (id, e) => {
+      mg.set(id, e);
+    },
+    entries: () => mg.entries(),
+    request: () => {},
+    isProcessing: () => false,
+  };
+}
+
+/** 기본 저장 구현: 저장 칸(MgmSaveBacking)을 보는 MgmSave + JSON 직렬화. 영구 매체는 앱 공용 저장이 칸으로 꽂는다(없으면 메모리) */
 export class MemorySave implements MgmSave {
-  modeFlags = 0;
-  private mg = new Map<number, MinigameSaveEntry>();
   saveRequests = 0;
   onSave?: (json: string) => void;
 
+  constructor(private readonly backing: MgmSaveBacking = memoryBacking()) {}
+
+  get modeFlags(): number {
+    return this.backing.getModeFlags();
+  }
+
+  set modeFlags(v: number) {
+    this.backing.setModeFlags(v >>> 0);
+  }
+
   minigame(id: number): MinigameSaveEntry {
-    return { ...(this.mg.get(id) ?? { head: 0, flags: 0 }) };
+    return { ...(this.backing.minigame(id) ?? { head: 0, flags: 0 }) };
   }
 
   setMinigame(id: number, e: MinigameSaveEntry): void {
-    this.mg.set(id, { head: e.head & 0xffff, flags: e.flags & 0xff });
+    this.backing.setMinigame(id, { head: e.head & 0xffff, flags: e.flags & 0xff });
   }
 
   requestSave(): void {
     this.saveRequests++;
+    this.backing.request();
     this.onSave?.(this.toJSON());
   }
 
+  isProcessing(): boolean {
+    return this.backing.isProcessing();
+  }
+
   toJSON(): string {
-    return JSON.stringify({ modeFlags: this.modeFlags, mg: [...this.mg.entries()] });
+    return JSON.stringify({ modeFlags: this.modeFlags, mg: [...this.backing.entries()] });
   }
 
   static fromJSON(s: string | null | undefined): MemorySave {

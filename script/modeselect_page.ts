@@ -3,11 +3,11 @@
  *   bex 비트: A 0x1, B 0x2, 0x8(취소에 같이 쓰임, Y [추정]), 십자 아래 0x400·위 0x800, 스틱 위 0x20000·아래 0x80000 (docs/shell/modeselect.md 5절)
  */
 import { ASSETS } from './env';
+import { shellSound } from './view/sound';
 import { appFlow } from './view/appFlow';
 import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
 import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from './shell/modeselect';
 import type { PadSource } from './view/input';
 
@@ -47,39 +47,8 @@ export async function runModeSelect(
   stage.append(canvas);
   let prev = 0;
   let extra = 0;
-  let ctx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      ctx = new AudioContext();
-      void ctx.resume();
-    } catch {
-      ctx = null;
-    }
-  }
-  const playSe = (url: string, gain: number, x?: number): void => {
-    if (!ctx) return;
-    const c = ctx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
       // Play2D 위치 → 좌우 팬: 원본 팬 곡선 [미확정] → 화면 x 선형 [근사] (charselect_page 와 같음)
-      const pan = c.createStereoPanner();
-      pan.pan.value = x === undefined ? 0 : Math.max(-1, Math.min(1, (x - 960) / 960));
-      src.connect(g).connect(pan).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: true, scene: 'menu01' });
   let done = false;
   let result: ModeSelectResult | null = null;
   // 뒤 3D 장면 그림(docs/shell/modeselect.md 6.2): 원본 고정 그림이 없어 기본은 임시 대역(menu01_sky 자른 그림 [근사]). ?bg=<이미지 URL> 이면 그것, ?bg=none 이면 없음
@@ -112,7 +81,7 @@ export async function runModeSelect(
         return { hold, trig };
       },
     },
-    sound: { play: (_l, url, gain, x) => playSe(url, gain, x) },
+    sound: { play: (l, url, gain, x) => void snd.play(l, url, gain, x) },
     onNotice: cfg.onNotice,
     onDecided(r) {
       result = r;
@@ -164,8 +133,7 @@ export async function runModeSelect(
       wipe.release();
       handle.dispose();
       canvas.remove();
-      const c = ctx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
   return run;

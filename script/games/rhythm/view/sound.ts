@@ -437,7 +437,7 @@ export class RmSoundMap {
 
   /** 프리셋 라벨 치환(켜진 프리셋만) */
   private resolve(label: string): string {
-    return this.cat.resolve(label, this.sys?.rules ?? soundDefaults.rules);
+    return this.sys ? this.sys.core.resolve(this.cat, label) : this.cat.resolve(label, soundDefaults.rules);
   }
 
   /** view/index.ts onStep 의 소리 사건. bpm = state.bpm(G11), camera = 리스너(3D) */
@@ -584,6 +584,11 @@ export class RmSoundMap {
       sys.flush();
       sys.out.unregister(this.seqVoice);
       sys.out.unregister(this.bgmVoice);
+      if (sys.rules.sceneExit) {
+        const sub = new Set<string>();
+        for (const e of Object.values(this.m.sounds)) if (e.kind === 'seq') for (const w of e.seq.waves) if (/(^|\/)subarc_/.test(w.file)) sub.add(this.assets.url(w.file));
+        sys.release([...sub]);
+      }
     }
     this.rhythm.length = 0;
     this.engine?.stopAll();

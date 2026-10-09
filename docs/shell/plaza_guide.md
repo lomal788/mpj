@@ -163,6 +163,8 @@
 
 **[판독] 속도 메뉴는 B 취소 불가:** 첫 메뉴 종료 후 공통 out 완료 처리 `FUN_7100315e5c`가 `FUN_7100318340`을 호출한다. 이 초기화는 **+0x514(sample)와 +0x515(cancelEnable)를 함께 0**으로 쓴다(main @`0x7100318394`: `strh wzr,[x0,#0x514]`). 속도 갈래는 sample만 다시 켜고 `SetCancelEnable(true)`는 부르지 않으므로 B가 무시되고 A로 세 값 중 하나를 결정해야 한다. `Start`의 동작만 보고 첫 메뉴의 취소 허용을 상속한다고 판단하면 안 된다. 저장식은 `r==2 ? 2 : (r!=1)`이지만 정상 입력에서 취소 결과 −1로 들어오는 경로는 없다.
 
+보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md) §8): 저장·적용 쪽은 구현했다 — `view/save.ts` `guideMessageSpeedCursor`(초기 커서)·`guideMessageSpeedValue`(저장식)·`setGuideMessageSpeed`(+0x74 쓰기 → SaveRequestFiber 대기), 모든 MessageWindow 가 저장값을 페이지마다 읽음. 화면 UI(상태 5 부품·sample mode·라벨 재타이핑·B 취소 불가)는 아직 없다.
+
 ## 5. 모션·카메라·소리와 종료
 
 **[판독·데이터]** MC `AddFrag`는 `menu00_guide_flag00.fmdb`를 `attach_R_hand`에 `kinopio_flag`로 붙이고 모션 이름을 아래처럼 등록한다. 현재 변환 명세 [world/chara/spec.json](../../assets/plaza/world/chara/spec.json)의 npc022 클립 길이/loop도 확인했다.

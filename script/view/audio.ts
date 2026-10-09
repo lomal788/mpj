@@ -96,4 +96,17 @@ export class AudioOut {
   }
 }
 
+/** 페이지 흐름 전체에 하나인 AudioOut(셸 화면·앱 BGM·게임이 같은 컨텍스트·같은 사운드 코어 — docs/engine/04_sound.md §13.11.1). 만들 수 없으면 null */
+export function appAudio(): AudioOut | null {
+  const G = globalThis as { __mpjAudio?: AudioOut | null };
+  if (G.__mpjAudio === undefined) {
+    try {
+      G.__mpjAudio = new AudioOut();
+    } catch {
+      G.__mpjAudio = null;
+    }
+  }
+  return G.__mpjAudio;
+}
+
 export { calc3d, SOUND3D_MANAGER, type Ambient3d, type Listener3d, type Sound3dInfo } from '../lib/sound';

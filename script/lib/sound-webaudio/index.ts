@@ -147,7 +147,7 @@ export class WebAudioSoundOut {
     const gain = this.ctx.createGain();
     gain.gain.value = c.gain;
     let pan: StereoPannerNode | null = null;
-    if (!f.ownsPan && (c.pan !== 0 || c.pan3d)) {
+    if (!f.ownsPan && (c.pan !== 0 || c.pan3d || def.pan2d)) {
       pan = this.ctx.createStereoPanner();
       pan.pan.value = c.pan;
       gain.connect(pan);
@@ -216,6 +216,13 @@ export class DecodeCache {
   /** 풀린 버퍼(아직이면 undefined) */
   peek(key: string): AudioBuffer | undefined {
     return this.map.get(key)?.buf;
+  }
+
+  /** 내린다(원본 서브 아카이브 해제 — 다음 get 은 다시 받고 푼다). 풀린 버퍼가 있었으면 true */
+  drop(key: string): boolean {
+    const had = !!this.map.get(key)?.buf;
+    this.map.delete(key);
+    return had;
   }
 
   has(key: string): boolean {

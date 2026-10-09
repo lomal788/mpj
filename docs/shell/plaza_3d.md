@@ -517,3 +517,5 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (room2) 나가기·해산 뒤 | 친구 매치 메뉴로 돌아가지 않고 혼자 광장 메인 | MainImpl 람다 LeaveSession/DissolveSession 뒤 광장 [판독 online.md 5.5]. 단독 온라인 페이지만 메뉴로 |
 | (room2) 열린 카드 뷰어와 멤버 이탈 | 나간 사람 카드를 빼고 0장이면 닫힘 | 원본 람다는 열 때 한 번 채움 — 이탈 때 고치는지 미판독 [설계] |
 | (room2) 끊김 감지 | 탭 닫기 = 즉시, 네트워크 끊김 = socket.io 핑 최대 ≈ 15 s(5 s 간격 + 10 s 시간 초과), 재접속 없음 | 원본 NEX 시간 초과 값 미판독 [설계] |
+
+보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md)): (C) 의 저장은 앱 공용 저장 `mpj.save` 의 `menu.bits` 비트 0 으로 옮겼다(`ctx.save` = `PlazaSave`, 첫 출발 때 비트 + 저장 요청). 옛 키 `mpj.plaza.menuData0` 는 처음 한 번 옮기고 지우지 않는다.

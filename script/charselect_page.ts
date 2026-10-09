@@ -6,11 +6,10 @@
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { createCharSelect, type CharSelectHandle } from './shell/charselect';
-import { P1 } from './lib/assetcore';
-import { appAssets, assetKeyOf } from './view/appAssets';
 import { appFlow } from './view/appFlow';
 import { sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
+import { shellSound } from './view/sound';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -47,63 +46,13 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
   stage.append(canvas);
   const prev = cfg.com.map(() => 0);
   const extra = cfg.com.map(() => 0);
-  let ctx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      ctx = new AudioContext();
-      void ctx.resume();
-    } catch {
-      ctx = null;
-    }
-  }
   // 입력 전에 만든 AudioContext 는 suspended 로 남을 수 있다 → 재생마다·사용자 입력마다 resume(docs 12.10)
-  const live = (c: AudioContext): AudioContext => {
-    if (c.state === 'suspended') void c.resume().catch(() => undefined);
-    return c;
-  };
-  const wake = (): void => {
-    if (ctx) live(ctx);
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: true, scene: cfg.bgm === false ? 'menu00' : 'menu01', pads: (pid) => cfg.pads[pid] });
+  const wake = (): void => snd.wake();
   const wakeEvents = ['keydown', 'pointerdown', 'touchstart'] as const;
   for (const t of wakeEvents) window.addEventListener(t, wake, { capture: true });
-  const buffer = (c: AudioContext, url: string): Promise<AudioBuffer | null> => {
-    let b = buffers.get(url);
-    if (!b) {
-      const key = assetKeyOf(url);
-      b = (key ? appAssets().get<ArrayBuffer>(key, 'bytes', P1) : fetch(url).then((r) => r.arrayBuffer()))
-        .then((a) => c.decodeAudioData(a.slice(0)))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    return b;
-  };
   // 보이스(카드 슬롯마다 하나, 취소·Out 때 정지)와 배경음악(루프 구간, 결정 때 페이드 정지)
   // 슬롯 요청 번호: 정지·새 요청 뒤 늦게 끝난 디코드는 재생하지 않는다(docs 12.10)
-  const voices = new Map<number, AudioBufferSourceNode>();
-  const voiceToken = new Map<number, number>();
-  const stopVoice = (slot: number): number => {
-    voices.get(slot)?.stop();
-    voices.delete(slot);
-    const t = (voiceToken.get(slot) ?? 0) + 1;
-    voiceToken.set(slot, t);
-    return t;
-  };
-  const playVoice = (url: string, gain: number, slot: number): void => {
-    if (!ctx) return;
-    const c = live(ctx);
-    const token = stopVoice(slot);
-    void buffer(c, url).then((buf) => {
-      if (!buf || voiceToken.get(slot) !== token) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-      voices.set(slot, src);
-    });
-  };
   // BGM = 앱 채널(같은 라벨이면 이어 재생, docs/engine/04_sound.md §12.14). 인원 설정 안(cfg.bgm === false)은 타이틀 곡을 건드리지 않음
   const playBgm = (label: string): void => {
     if (cfg.bgm !== false) void appBgm().play(label, cfg.muted);
@@ -111,22 +60,7 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
   const stopBgm = (fade: number): void => {
     if (cfg.bgm !== false) appBgm().stop(fade);
   };
-  const playSe = (url: string, gain: number, x?: number): void => {
-    if (!ctx) return;
-    const c = live(ctx);
-    void buffer(c, url).then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      // Play2D 위치 → 좌우 팬: 원본 팬 곡선 [미확정] → 화면 x 선형 [근사]
-      const pan = c.createStereoPanner();
-      pan.pan.value = x === undefined ? 0 : Math.max(-1, Math.min(1, (x - 960) / 960));
-      src.connect(g).connect(pan).connect(c.destination);
-      src.start();
-    });
-  };
+  // Play2D 위치 → 좌우 팬: 원본 팬 곡선 [미확정] → 화면 x 선형 [근사]
   let done = false;
   const handle = await createCharSelect({
     canvas,
@@ -142,14 +76,13 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
       },
     },
     sound: {
-      play: (_label, url, gain, x) => playSe(url, gain, x),
-      voice: (_label, url, gain, slot) => playVoice(url, gain, slot),
-      voiceStop: (slot) => void stopVoice(slot),
+      play: (label, url, gain, x) => void snd.play(label, url, gain, x),
+      voice: (label, url, gain, slot) => snd.voice(label, url, gain, slot),
+      voiceStop: (slot) => snd.voiceStop(slot),
+      vibrate: (player, name) => snd.vibrate(cfg.pads[player], name),
       bgm: playBgm,
       bgmStop: stopBgm,
-      preload: (urls) => {
-        if (ctx) for (const u of urls) void buffer(ctx, u);
-      },
+      preload: (urls) => snd.preload(urls),
     },
     onDecided(result) {
       chosen = result.map((c) => handle.spec.chars[c]?.pc ?? 'pc01');
@@ -196,8 +129,7 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
       handle.dispose();
       canvas.remove();
       // 결정 때 BGM 페이드(0.5 s)가 끝난 뒤 닫는다
-      const c = ctx;
-      setTimeout(() => void c?.close(), 600);
+      snd.close(600);
     },
   };
   return run;

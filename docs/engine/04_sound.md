@@ -844,7 +844,18 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 | `games/mg1801/view/index.ts` | `RmSoundMap` 사용 | 그대로(파일 무수정) — 내부가 코어로 간다 | — |
 | `view/character.ts` `routeCharacterEvents` | `sound.onEvents([{k, label}])` | 그대로 `MgSceneSound` 로 → 코어 해석(파일 없음 = 라벨 사건까지) | — |
 
-미룬 것: 셸 화면(mgm01·mgmet·online·partyrule·setplayer·charselect·mgmcommon 등)의 `MgmSound`·화면별 `AudioBuffer` 맵, 캐릭터 효과음·보이스·발소리 파일 변환, 리전 점프(`*_JMP`), 메시지 창 덕킹 연결(코어 API 만 있음).
+미룬 것(1차): 셸 화면 `MgmSound`·화면별 `AudioBuffer` 맵, 메시지 창 덕킹 → **2차(13.11)에서 연결**. 아직 미룬 것: 캐릭터 효과음·보이스·발소리 파일 변환, 리전 점프(`*_JMP`) — 별도 결정.
+
+2차 이전(13.11):
+
+| 소비자 | 전 | 후 | 바뀌지 않는 것 |
+|---|---|---|---|
+| `mgm01_page`(목록·설정·필터·기록·announce), `mgmet_page`(허브·활동 제목·rule), `online_page`, `partyrule_page`, `setplayer_page`, `modeselect_page`, `mgmcommon_page`, `mgmscreens_page` | 페이지마다 `new AudioContext()` + `AudioBuffer` 맵 + `playSe`(팬 노드 있는 것·없는 것 두 벌), 출력 `ctx.destination` | `view/sound.ts` `shellSound({muted, pan2d})` 하나 — 페이지 흐름 공용 `appAudio()`(AudioOut 하나)·코어 하나·디코드 캐시 하나. `MgmSound` 어댑터 = `shellSound(…).mgm(hooks)` | 화면 모듈·`MgmSound` API·화면 공개 API |
+| `charselect_page` | 같은 AudioContext 에 SE·슬롯 보이스(슬롯마다 하나, 요청 번호로 늦은 디코드 버림)·미리 받기 | SE·보이스 = `shellSound` 의 `play`·`voice(slot)`·`voiceStop`·`preload` — 보이스 슬롯 = 코어 핸들 하나 | 선택 보이스 규칙(슬롯마다 하나, 정지 뒤 늦게 풀린 것 무시) |
+| `plaza_page`·`shell/plaza/ui/part.ts` | 페이지 AudioContext(광장 SE)·부품 자체 AudioContext(UI SE) | 둘 다 `shellSound`. 부품은 셸 경계상 view 를 못 부르므로 `PlazaContext.sound.play` 고리(페이지가 넣음)를 쓰고, 없으면 예전 길 | 부품 import |
+| 메시지 창(`mgmcommon/messageWindow`·`guides` → `MgmSound.duck/voice/vibrate`) | 어댑터 고리 없음(무시) | `duck` → 코어 `duckGroup`(DUCKING_PRESET) + 앱 BGM 덕킹 노드, `vibrate` → 조작 플레이어 패드 rumble, `voice` → 사건 기록·라벨 해석 자리(파일 없음) | 사건 형식 |
+| 앱 BGM(`view/bgm.ts` `appBgm`) | 자체 `new AudioContext()`, 출력 `destination` | 컨텍스트 = `appAudio()` 와 같은 것, 출력 = 사운드 연결의 BGM 덕킹 GainNode → destination | 곡·조각 재생·화면 규칙(`screenBgm`) 그대로 |
+| `main.ts` 게임 실행 | `audio ??= new AudioOut()` | `audio ??= appAudio() ?? new AudioOut()` — 광장 → 프리 플레이 → 게임이 같은 코어 | 오디오 시계·`heardTime`·`?avlat` |
 
 ### 13.4 원본 스위치
 
@@ -861,6 +872,8 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 | `track3d` 3D 갱신 | 재생할 때 한 번 | 살아 있는 3D 핸들을 `update()` 마다 다시 계산(`setPosition`·리스너 바뀜 반영) | [판독] §6.7 계산 함수, 프레임마다 부르는 것은 [추정: nn::atk Sound3DEngine] |
 | `f32` | 3D 식 f64 | 3D 식 `Math.fround` | 원본 float 산술 |
 | FadeTimePreset | 틀 `MgSound` 이 `FADE_TIME_02` 만 0.7 | 6.9 표 전체(0 = 0.1 … 10 = 10.0 s) | [판독] mgm_common 6.9. 지금 데이터(`mg_bgm_stop_fade` 전부 `FADE_TIME_02`)에서는 값이 같다 — 로직이라 스위치 없이 표를 쓴다 |
+| `meta` 원본 사운드 정보(2차) | 그룹 0x00~0x1f = 라벨 접두, 셸 SE 는 플레이어 한도 없음 | `assets/common/sound/meta.json`(fspj·서브 아카이브 INFO 에서 뽑음): 그룹 비트 = 사용자 파라미터 비트 29 값, 플레이어 이름·playableSoundMax·플레이어 우선순위. 명세에 없는 라벨만 접두 근사 | [데이터] 6.9(색인 2 = 사용자 파라미터 비트 29), 13.11 |
+| `shellHooks` 메시지·시스템 고리(2차) | 연결 안 함(이전 그대로) | 메시지 덕킹(창 열림 0x13·선택지 0x0d·닫힘 해제) → 코어 + 앱 BGM, 진동 → 패드 rumble, 보이스 → 사건 | [판독] message_window.md 5·6.4·6.5·7, mgm_common 6.9 |
 | 틀 단계 16 `StopGroup_Type(0x20, 6)` 초 | 사건 `sec: 0`(웹 소리는 0.7 로 무시) | 사건 `sec` = FadeTimePreset 6 = 0.5 s | [판독] [minigame_scene §6](../shell/minigame_scene.md) 단계 16 |
 
 규칙과 무관하게 바뀌는 것: 틀 BGM·징글 출력이 `ctx.destination` 직결 → `AudioOut` 의 bgm 버스(음소거 체크가 먹는다). 경로 이득 곱은 1 이라 골든 무관.
@@ -935,13 +948,20 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 | 항목 | 정한 것(원본 쪽) | 이유·선택지 |
 |---|---|---|
 | 틀 단계 16 그룹 정지 초 | 로직 사건 `sec` 를 FadeTimePreset 6 = 0.5 s 로 고침(`shell/mgscene/flow.ts` 한 줄, 로직 상태·다른 사건 무변화) | 원본 `StopGroup_Type(0x20, 6)` [판독]. 로직 파일이라 알림. 단계 6 의 `[0x23,1,0x25], sec 0` 은 프리셋 번호 미판독이라 그대로 |
-| 원본 규칙 그룹 정지 범위 | 같은 AudioOut 의 틀 + 게임 소리 모두(단계 16 에 리듬 결과 징글·환경음도 0.5 s 페이드) | 웹 규칙은 게임 소리를 화면을 버릴 때 끊었다 |
-| 그룹 0x00~0x1f 소속 | 라벨 접두(SQ_SE → 0x01, SQ_VOI → 0x02) | 원본은 사운드마다 사용자 파라미터 비트. 명세 변환기에 `userGroups` 를 넣으면 정확해진다(0x0d BGM·0x13 메시지 덕킹 대상에 필요) |
+| 원본 규칙 그룹 정지 범위 | (해소 2026-10-09 사용자 결정) 원본대로 확정 — 같은 코어의 틀·게임 소리를 모두 정지. 2차부터 셸 화면도 같은 코어(`appAudio()`)라 화면 소리도 같은 규칙 | — |
+| 그룹 0x00~0x1f 소속 | (2차) 원본 규칙은 `meta.json`(사용자 파라미터 비트 29). 표에 없는 라벨만 접두 근사 | 13.11.3 — 6.9 의 "SQ_SE 전부 0x01" 은 데이터와 다르다: `meta.json` 범위(메인 fspj + 서브 2)의 SQ_SE 765개 중 740개가 0x01, 25개는 그룹 없음(`SQ_SE_SYS_*` 18개 중 17·`SQ_SE_MGM01_*` 7·`SQ_SE_MENU00_TRANSITION_WHO` 1) [데이터, 2026-10-09 조정자 재집계] |
 | 엔진 난수 시작 상태 | AudioOut 마다 `0x12345678` 에서, 그 코어를 만든 오디오 시각부터 5 ms 마다 한 칸 | 원본은 부팅 뒤 모든 소리 소비에 따라 다름 — 같은 값 재현은 불가, 식·분포만 원본 |
 | 플레이어·아카이브 한도 넘칠 때 | 가장 낮은(같으면 가장 오래된) 소리와 비교 | nn::atk 공개 동작 [추정]. 판독하려면 SoundInstanceManager·SoundPlayer 할당 경로 |
 | `resolve` 와일드카드 | `**` = 두 글자, 대상이 명세에 있을 때만 | 치환 함수 미판독. 캐릭터 보이스 파일을 넣을 때 `SQ_VOI_PC**_MUTE`·`SQ_SE_DUMMY` 를 무음 항목으로 명세에 넣어야 원본처럼 꺼진다 |
 | `supersede` 끔 | 리듬 직접 재생 BGM 이 겹칠 수 있음(핸드셰이크 밖 경로: 마스터가 없을 때의 `bgm` 사건) | 원본에 그런 규칙이 없음. 실제 mg1801 흐름에서는 핸드셰이크가 끊는다 |
 | 틀 BGM 출력 버스 | `ctx.destination` 직결 → AudioOut bgm 버스(음소거 체크가 먹음) | 이전엔 음소거해도 틀 BGM·징글이 났다 |
+| 셸 Play2D 팬 | (해소 3차) 위치 → 팬 식 판독(13.12.2) — 원본 규칙은 그 식(f32), 웹 규칙은 이전 식. 팬 → 좌우 이득 곡선(nn::atk 내부)은 여전히 StereoPanner 근사 | — |
+| 진동 파형 | (해소 3차) vibration.msgpack 정의·설정 + bnvib 를 변환해 포락선으로 재생(13.12.3, [05 §11](05_ui_input.md)) | 주파수·전역 명령 prm 은 [근사]·[미확정] |
+| 메시지 보이스 | 사건 기록만 | vo_message.ftrg·보이스 파일 변환 안 함(캐릭터 보이스와 함께 별도 결정) |
+| 메시지 속도 | 소리 쪽 연결 없음(기본 0) | 저장 값을 쓰는 설정 화면이 웹에 없음 |
+| 덕킹 중 바뀐 BGM | 덕킹을 켠 순간의 곡 라벨로 BGM 덕킹 노드 목표를 정함 — 덕킹 중 곡이 바뀌어도 노드 값은 그대로 | 원본은 핸들마다 그룹 소속으로 계산 |
+| 광장 UI 부품 소리 실패 | 페이지 고리(`PlazaContext.sound.play`)를 쓰면 이전의 "파일을 못 풀면 광장 `se(label)` 로 대신" 길은 타지 않음 | 고리 없는 시험 하네스는 이전 길 |
+| 페이지를 떠날 때 | (해소 3차) 원본 장면 정리 판독(13.12.1) — 원본 규칙: 다른 장면이 시작될 때 앞 장면 소리 전부 즉시 정지·진동 정지, 같은 장면 안 화면 전환은 이어짐, 게임 서브 아카이브 해제. 웹 규칙은 이전(`close(ms)`) | — |
 | 낡은 주석 | (해소 2026-10-09) 사용자 지시로 지금 코드에 맞게 고침: `view/mgsceneSound.ts` 머리(코어 핸들 두 칸·그룹 정지 규칙), `view/audio.ts` 머리(calc3d 는 lib/sound 에서 다시 내보냄), `games/rhythm/view/sound.ts` 머리(코어 담당·BGM 끼리 정지 규칙별)·`startFile` 문서 주석 | — |
 
 ### 13.10 새 판독: 시퀀스 엔진 난수 [판독 2026-10-09]
@@ -957,3 +977,123 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 | FUN_71005de7f0 | `(r & 0xffff) / 65535.0` 실수 난수. FUN_71005de6ec 가 함수 포인터로 등록 — 쓰는 곳 [미확정] |
 
 그래서 원본 물보라 피치·볼륨(§6.4)은 부팅 뒤 지난 사운드 프레임 수와 그 사이 모든 소리의 무작위 소비에 따라 다르다. 웹(원본 규칙)은 AudioOut 하나에 LCG 하나를 두고 그 코어를 만든 오디오 시각을 기준으로 5 ms 프레임마다 한 칸 돌린다.
+
+### 13.11 셸 화면·메시지 창 연결 [2026-10-09 2차, sound-runtime-2]
+
+사용자 결정: (1) 그룹 정지 범위 원본 확정(13.9), (2) 미룬 소비자를 지금 연결. 캐릭터 효과음·보이스·발소리 파일 변환과 리전 점프는 하지 않는다.
+
+#### 13.11.1 셸 소리 연결(`view/sound.ts`)
+
+- `appAudio()`: 페이지 흐름 전체에 `AudioOut` 하나(globalThis — 번들이 나뉘어도 하나). 처음 부를 때 만든다(AudioContext 를 만들 수 없으면 null). 셸 화면·앱 BGM·`main.ts` 게임이 같은 컨텍스트·같은 코어를 쓴다. ui 시험 페이지(`mgscene`·`character`·`sound`)는 판마다 자기 `AudioOut` 을 만들고 닫는다(그대로).
+- `shellSound({muted, pan2d, pads?})`: 화면 하나의 소리 출력. 라벨 표(`SoundCatalog`)는 화면마다, 코어·디코드 캐시는 공용.
+  - `play(label, url, gain, x?)` — 원본 `Play`/`Play2D`. 정의 = `buffer` 처리기(풀리는 대로 처음부터, 이전 페이지 `playSe` 와 같은 한 마이크로태스크 뒤 시작). `pan2d` 면 팬 노드를 늘 두고 팬 = `clamp((x − 960)/960)`(x 없으면 0) — 이전 페이지 식 그대로 [근사: 원본 Play2D 팬 곡선 미확정]. `pan2d` 가 아니면 팬 노드 없음(이전 mgm01·online·partyrule·setplayer·mgmscreens·광장).
+  - `voice(label, url, gain, slot)`·`voiceStop(slot)` — 캐릭터 선택 슬롯 보이스(슬롯마다 핸들 하나, 새 요청이 앞 것을 멈춤, 멈춘 뒤 늦게 풀린 것은 재생 안 함).
+  - `preload(urls)` — 디코드 캐시 미리 채우기.
+  - `mgm(hooks)` — `MgmSoundAdapter`: `play`, `stopGroups`(코어 `stopGroup`), `duck`·`vibrate`·`voice`(13.11.2), BGM 고리는 `appBgm().hooks` 를 그대로 합친다.
+- 디코드 캐시·받기는 1차와 같다(13.5): 로더 관리자 `bytes` 키 + 전역 디코드 맵. 광장 페이지가 `bytes` 를 owner `plaza` 로 미리 받아 두면 같은 키를 그대로 쓴다.
+
+#### 13.11.2 메시지 창·시스템 고리(`shellHooks`, 원본 규칙에서만)
+
+| 고리 | 원본 | 웹 |
+|---|---|---|
+| 덕킹 | 창 열림(Announce·Subtitle 아니면) `DuckingGroup(0x13, 0x13, 켬)`, 선택지 열림 `DuckingGroup(0x0d, 0x0d, 켬)`, 닫힘 둘 다 해제 [판독 message_window.md 5·6.4·7] — 값 0x13 = 0 으로 0.3 s, 0x0d = 0.6 배 0.3 s, 해제 0.3 s [판독 mgm_common 6.9] | 코어 `duckGroup`(소속 핸들 gain 램프) + 앱 BGM: 지금 곡 라벨의 그룹(meta)이 덕킹 그룹에 들면 BGM 덕킹 GainNode 를 같은 목표·같은 시간으로 램프 |
+| 진동 | 메시지 창 `bv_vib_sys_deci`·`bv_vib_sys_cursor`(owner), 안내 Next·mgmet·mgm01 등 이름 [판독], 파형(bnvib) 셸용 변환 없음 | 그 플레이어 패드 `rumble(60 ms)` — setplayer 페이지가 쓰던 값 [근사: 파형 미변환] |
+| 보이스 | vo_message.ftrg 키 + 화자 VoiceID → `SQ_VOI_<NPC>_MV_<감정>[_01..03]`, 변형 고르기 [미확정] [판독 6.5] | 사건 기록만(보이스 파일·ftrg 변환 없음 — 이번 범위 밖) |
+| 메시지 속도 | SystemData+0x74(0·1·2) → 글자 속도·글자 소리 수 [판독 6.3] | 소리 쪽은 `Typer` 가 이미 속도대로 글자 소리를 낸다. 저장 값을 쓰는 곳(가이드 설정 화면)이 웹에 없어 기본 0 그대로 — 연결할 생산자 없음 |
+
+#### 13.11.3 원본 사운드 정보 표(`assets/common/sound/meta.json`, 도구 `web/tools/analysis/sound_meta.py` — 3차부터 입력 FSAR·조사 폴더·출력을 모두 인자로 받는 범용 도구)
+
+- 원천: 메인 `AddonAudioProject.fspj` + 웹이 쓰는 서브 아카이브(`subarc_mg1801.fsst`·`subarc_rc_cmn.fsst`) INFO 사운드 정보(4.1): 사용자 파라미터 4개(옵션 비트 28~31)·플레이어 참조·플레이어 우선순위·사운드 종류. 파서 `sound_fsar.py`.
+- 그룹 비트 = **사용자 파라미터 비트 29 칸**(6.9 FUN_71005c3840 색인 표 {31,30,29,28} 의 색인 2) [판독 6.9 + 데이터]. 확인: `SM_BGM_MENU` 0x80E001 → 0x0d(BGM 덕킹) 포함, `SM_BGM_MENU_RHYTHM` 0x2088E001 → 0x13 포함(6.9 "0x13 = SM_BGM_MENU_RHYTHM") — 표와 맞는다.
+- 라벨 범위: 웹 에셋 JSON(`assets/**/*.json`)에 나오는 모든 원본 라벨 + 세팅 프리셋 치환 대상. 줄 = `[그룹 비트, 플레이어 이름, playableSoundMax, 플레이어 우선순위, 종류]`.
+- 무음 항목: `SQ_SE_DUMMY` 와 `*_MUTE` 전부(메인 91개) — 시퀀스가 첫 명령 `fin` [실행: `sound_seq.py disasm` SQ_SE_DUMMY·SQ_VOI_PC01_MUTE·SQ_VOI_PC01_RUN_MUTE]. 웹은 처리기 `silent`(소리 없음, 바로 끝)로 정의한다 — 프리셋 치환(`SQ_SE_FS_PC**_WALK` → `SQ_SE_DUMMY`, `SQ_VOI_PC**_JUMP` → `SQ_VOI_PC**_MUTE`)이 원본처럼 무음 라벨로 간다.
+- 쓰는 곳: `soundSystem` 이 처음 만들어질 때 받아 코어 `setMeta` 로 넘긴다(원본 규칙 `meta` 일 때만 그룹·플레이어에 씀). 받기 전에 낸 소리는 접두 근사.
+- 원본 규칙에서는 표에 있는 라벨의 그룹 비트·플레이어·한도·플레이어 우선순위가 명세 값보다 앞선다(웹 명세의 스트림 우선순위 64 는 자리값이었다). 그래서 틀·게임·셸이 같은 플레이어(예 `PLY_JIN` 2·`PLY_SE_SYS` 2)를 같이 센다.
+- 실행 결과(2026-10-09): 라벨 2,964(웹 에셋 라벨 + 스트림 전부 + 무음), 무음 92, 웹 에셋에 있으나 메인·두 서브 아카이브에 없는 라벨 146(다른 게임 서브 아카이브 — 접두 근사로 둠). 압축본 `assets-dist` 에도 넣었다(`build_assets --only common/sound/meta.json`).
+
+#### 13.11.4 검증 [실행 2026-10-09, 노드만]
+
+- `tools/test_sound.ts` **97/97**(1차 77 + 2차 20): 원본 정보 표(0x0d·0x13 소속이 6.9 와 같음, `SQ_SE_SYS_DECI` = 그룹 0·`PLY_SE_SYS` 2·108, 서브 아카이브 라벨, 무음 92), 플레이어 한도·그룹 0x01 을 웹/원본 규칙으로 비교, 무음 항목(발소리 → `SQ_SE_DUMMY`, 핸들 없음), `shellSound`(appAudio 하나·코어 하나, Play2D 팬 두 벌, 디코드 캐시 공유, 원본 규칙 MgmSound 고리, 앱 BGM 덕킹 0x0d 0.6 배 0.3 s·0x13 곡 그룹 밖·해제, 진동 → rumble, 슬롯 보이스, 음소거), 골든 12(시나리오 6 × 규칙 2).
+- 골든 새 시나리오 `shell_flow`: 광장 → 인원 설정 → 캐릭터 선택(Play2D·슬롯 보이스·미리 받기) → 모드 선택 → 항구(**메시지 창 상태기계**: 열기·글자·넘김·선택지·커서·결정·닫기, `MgmSound` 실제 어댑터) → 프리 플레이(FadeAndEntryCancel) → 온라인, 화면마다 출력을 새로 만듦. 이전 전 기준 = 2차 이전 전 코드 트리(scratchpad)에서 같은 도구가 이전 페이지 소리 코드(`legacyShell` — 페이지는 DOM 이 있어 노드에서 못 돌아 그 `playSe`·보이스 코드를 그대로 옮김)로 돌린 기록.
+- **(a) RULES_WEB: 여섯 시나리오 모두 2차 이전 전과 바이트까지 같다**(`shell_flow` 535줄·시작 23·정지 4). 가짜 컨텍스트 `close()` 는 남은 소스를 그 자리 정지로 남긴다(이전 페이지는 화면을 떠날 때 자기 컨텍스트를 닫았다 — 지금은 `close(ms)` 가 그 화면 소리를 멈춤).
+- **(b) RULES_ORIGINAL**(로직 해시 여섯 모두 웹과 같음):
+
+| 항목 | 화면·소리 |
+|---|---|
+| `meta` | 셸 흐름: `PLY_SE_SYS` 한도 2 → 인원 설정 커서 3번째·캐릭터 선택 커서·프리 플레이 연속 SE 에서 가장 오래된 `SQ_SE_SYS_*` 를 멈춤(정지 6). 리듬 직접: `PLY_JIN` 2 를 틀·게임이 같이 세어, 결과 환경음 시작 때 틀 징글 `SM_JIN_MG_WIN` 이 밀림 |
+| `groups`(+`meta`) | 셸 흐름 `FadeAndEntryCancel`(0x22·0x01·0x25·0x29): `SQ_SE_SYS_*` 는 원본 데이터에서 0x01 이 아니라 멈추지 않음. 1차 원본 규칙에서 0.3 s 로 짧아지던 틀 건너뛰기 `SQ_SE_SYS_SKIP` 도 같은 이유로 이제 끝까지 난다(`mgscene_skip` 원본 = 웹) |
+| `shellHooks` | 골든 시나리오에는 BGM 이 없고 SE 는 0x0d·0x13 밖이라 차이 없음. 덕킹·진동은 시험 12 로 확인 |
+| 1차 항목 | 1차 표와 같음(mg1801 두 판·리듬 직접의 random·groups·supersede) |
+
+- 디코드 캐시(화면 흐름 기준, 같은 골든): **셸 흐름 받기 7 / 풀기 21 → 7 / 7**. 이전엔 바이트는 앱 흐름 관리자를 같이 썼지만 풀기는 화면(페이지 컨텍스트)마다 다시 했다 — 같은 `SQ_SE_SYS_*` 4개가 3~5번씩. 1차 시나리오 합과 더하면 받기 94 → 94, 풀기 97 → 83(원본 규칙은 `meta.json` 받기 +1).
+- 기존 노드 시험(일괄 1회): 셸 시험 전부(`test_mgm01` 277·`test_mgmet` 218·`test_msgwin` 52·`test_partyrule` 106·`test_online` 154·`test_setplayer` 116·`test_modeselect` 71·`test_charselect` 67·`check_charselect` 2,414·`test_plaza_world` 445·`test_shell_bgm` 62 등) 그대로 통과, `test_character` GC 측정 1건(단독 재실행 135/135), `test_room_server` 255/256 1차와 같은 항목(광장 원격 달리기 타이밍). `tsc`·`npm run build` 통과. 받는 경로가 바뀌어 :51811 콘솔 확인 1회(촬영 없음): `ui=modeselect`·`ui=partyrule&assets=dist`(meta.json 압축본 200)·`ui=charselect`·`index.html?plaza=1&skipsetup=1` 콘솔 오류 0·4xx 0(GL 경고만).
+
+### 13.12 장면 퇴장·Play2D 팬·진동 [2026-10-09 3차, sound-runtime-3]
+
+사용자 결정: 13.9 의 남은 항목을 원본대로 적용(메시지 속도는 공용 저장 담당). 새 판독은 CoreTool 덤프(ghidra_work/sound, scratchpad 보관)와 기존 `analysis/decomp/sound_bex.c`.
+
+#### 13.12.1 장면 퇴장 때 소리 [판독 2026-10-09]
+
+| 함수 | 내용 |
+|---|---|
+| `bq::SceneBase::OnCleanup` @0x71002caaf0 → FUN_71001c7c00 | `SoundModule` 장면 정지(현재 gfx 장면 종류, StopAllType 0) + `VibrationModule` 장면 정지(FUN_71001b129c(진동, 장면 종류, 0)) — 그 뒤 CPU boost 해제·네트워크 동기 정지 |
+| `bq::SceneBase::~SceneBase` @0x71002c9d50 +0xb8 | FUN_71000bf4e0(**0.0**, 사운드, 현재 gfx 장면 종류, 0) → FUN_71000c1168 → FUN_71000fe210 → FUN_71000d3c80(0.0, 장면 사운드+0x40, **그룹 0x20**, 0, 0) — 그 장면 종류의 모든 소리를 페이드 없이 정지 |
+| FUN_71001c7afc(장면 기반 소멸) | 장면 상태 3 이면 장면 종류 0·1 모두 StopAll(종류 2) |
+| `ca::rm::RmMgSceneBase` 생성 +0x148 / 소멸 +0x58 | `LoadSoundArchiveAsync("sound/subarc_rc_cmn")`·`AddLoadArchive("mg/mg1800")` / `ReleaseSoundArchive("sound/subarc_rc_cmn")` — 게임 장면의 서브 아카이브는 장면과 같이 적재·해제 |
+| FUN_710024e220(접속 끊김 → menu00 복귀) | `SoundModule::StopAll(1)` + `VibrationModule::StopAll(1)` |
+
+결론: 장면이 끝나면 그 장면 종류의 소리 **전부(0x20)를 즉시** 멈추고 진동도 멈춘다. 장면 안의 화면 전환(같은 장면의 다른 UI)에는 이 처리가 없다. 메인 상주 아카이브(`_ResidentAudio`)는 유지, 게임 서브 아카이브만 해제. StopAllType 0/1/2 의 뜻은 [미확정].
+
+웹 적용(규칙 `sceneExit`): 페이지마다 원본 장면 이름을 둔다 — 광장·인원 설정·캐릭터 선택(인원 설정 안)·온라인 friend = `menu00`, 모드 선택·캐릭터 선택(모드 메뉴 쪽)·파티 규칙 = `menu01`, 온라인 world = `matching00`, 항구 = `mgmet`, 프리 플레이 = `mgm01`, 미니게임 = `mg`([§12.14.2](#12142-화면별-재생전환-판독) 표의 원본 장면). 다른 장면 이름의 출력이 시작될 때 앞 장면의 코어 소리를 그룹 0x20 으로 즉시 정지하고 진동을 멈춘다. 같은 장면이면 이어진다. BGM(`appBgm`)은 §12.14 판독 규칙(화면별 정지·이어 재생)이 이미 장면 정지 앞에서 처리하므로 건드리지 않는다. 게임 장면이 끝나면(`RmSoundMap.stopBgm`) 서브 아카이브 파형(`subarc_*`)을 디코드 캐시에서 내린다(다음 판에 다시 받고 푼다 — 원본도 장면마다 다시 적재). 웹 규칙은 이전 `close(ms)`.
+
+#### 13.12.2 Play2D 팬 [판독 2026-10-09]
+
+`SoundModule::Play2D(label, Vector3f pos, float)` @0x71000be024 → FUN_71000c044c(장면, pos) → `SoundHandle::SetPan`(FUN_71000c0300). `Play2D(label, float pan, float)` @0x71000be0f8 는 팬을 그대로 받는다.
+
+```
+FUN_71000c044c [판독: 디스어셈블 71000c044c~0490]:
+  W = (float)*DAT_7101c45478          // FUN_7100984dc0 — 화면 폭(정수) [1920 으로 봄: 추정]
+  p = pos.x * (1.0f / (W * 0.5f))     // f32
+  pan = p < -1 ? -1 : min(p, 1)
+```
+
+pos 는 페인 전역 위치(레이아웃 좌표, 가운데 0)다(mgm_common 6.9 PlaySe2D). 웹 화면 x(0..1920) = 레이아웃 x + 960 이므로 원본 규칙 팬 = 위 식(f32, W = 1920)에 x − 960. 이전 웹 식 `clamp((x − 960)/960)` 과는 f32 반올림만 다르다(규칙 `pan2d`). 팬 → 좌우 이득(nn::atk 팬 곡선)은 판독하지 않았다 — StereoPanner(equal-power) [근사].
+
+#### 13.12.3 진동
+
+원본 진동 모듈·자료와 웹 재생은 [05 §11](05_ui_input.md). 소리 쪽 연결: `shellSound().mgm()` 의 `vibrate` 고리와 mg1801 `VB_` 트리거가 같은 공용 진동 재생기(`lib/vibration` + `view/vibration.ts`)를 쓴다. 장면이 끝나면 진동도 멈춘다(13.12.1).
+
+#### 13.12.4 원본 스위치(3차 추가)
+
+| 항목 | 웹 근사(`RULES_WEB`) | 원본(`RULES_ORIGINAL`) | 근거 |
+|---|---|---|---|
+| `sceneExit` | 페이지를 떠나면 ms 뒤 그 페이지 소리 정지(이전 컨텍스트 닫기) | 다른 장면이 시작될 때 앞 장면 소리 0x20 즉시 정지·진동 정지, 게임 서브 아카이브 파형 해제 | 13.12.1 |
+| `pan2d` | `clamp((x − 960)/960)` | `clamp((x − 960) · (1/(1920·0.5)))` f32 | 13.12.2 |
+| 진동 | 셸 = 연결 없음(인원 설정만 rumble 60 ms), mg1801 = bnvib 진폭 50 ms 평균 구간 | 원본 정의·설정(값형 attack·duration·release / bnvib 200 Hz 표본) 그대로의 구간, 우선순위 | [05 §11](05_ui_input.md) |
+
+#### 13.12.5 공용 모듈 경계(사용자 원칙: 공통으로 쓸 것은 처음부터 공통, 어디에도 의존하지 않음)
+
+| 모듈 | import | 하는 일 |
+|---|---|---|
+| `lib/sound` | 0 | 소리 코어 — Play2D 팬 식(`pan2d`)·장면 퇴장 규칙(`enterScene`)도 여기 원본 규칙으로 둔다. 진동을 부르지 않는다: 장면 퇴장은 `enterScene` 이 참을 돌려주는 사건으로만 알린다 |
+| `lib/sound-webaudio` | `../sound` | WebAudio 어댑터 |
+| `lib/vibration` | 0 | 진동 코어 — 정의·설정 → 구간 포락선, 우선순위(`VibMixer`) |
+| `lib/vibration-gamepad` | `../vibration` | Gamepad `dual-rumble` 어댑터(액추에이터·타이머 주입) |
+| `view/sound.ts`·`view/vibration.ts`·`view/input.ts` | lib + mpj | mpj 연결: 셸 화면·메시지 창·게임이 꽂아 쓴다(장면 퇴장 사건 → `stopAllVibration`) |
+| 변환기 `sound_meta.py`·`vib_convert.py` | — | 입력 파일·출력 경로를 인자로 받는 범용 도구 |
+
+공용 lib 는 mpj 형식(view·shell·games)을 import 하지 않는다 — `tools/test_sound.ts` 13 이 검사한다.
+
+#### 13.12.6 검증 [실행 2026-10-09, 노드만]
+
+- `tools/test_sound.ts` **115/115**(2차 97 + 3차 18): 진동 표(VB_ 키 → 라벨, `bv_vib_sys_skip` 정의), 자리 이름 짝, 웹 규칙 포락선 = 이전 mg1801 50 ms 식, 원본 표본 구간·값형 포락선, 우선순위, Gamepad 어댑터, Play2D 팬(판독 식·f32·자름), 장면 퇴장(웹 = 이어짐, 원본 = 0x20 즉시 정지), 서브 아카이브 해제, 공용 lib import 경계.
+- 골든(시나리오 6, 3차 이전 전 트리 = scratchpad): **RULES_WEB 6/6 바이트까지 같음**. 원본 규칙에서 바뀐 것은 `shell_flow` 하나(로직 해시 같음):
+
+| 항목 | 화면·소리 |
+|---|---|
+| `sceneExit` | 광장 → 인원 설정(같은 menu00): 이전엔 광장을 떠날 때 SE 3개를 끊었으나 이제 이어짐. 인원 설정 → 캐릭터 선택(menu01): 그때 남은 menu00 소리를 즉시 정지. 모드 선택 → 항구(mgmet)·프리 플레이(mgm01)·온라인(menu00) 시작 때 앞 장면 소리 정지(정지 위치가 화면 닫기 시각 → 다음 장면 시작 시각으로) |
+| `pan2d` | Play2D 팬 값이 f32(예 −0.6875 → −0.6875000596, 0.7708333 → 0.7708333731) |
+| 진동 | 메시지 창 결정 진동 `bv_vib_sys_deci` 가 원본 bnvib 포락선 17 구간(×Gain_Master 0.5), 프리 플레이 장면 시작 때 진동 정지(세기 0 구간) |
+| 서브 아카이브 해제 | 기록 줄은 같고, 디코드 수만 늘어남: mg1801 롱 180(두 번째 판)·리듬 직접에서 풀기 0 → 61(원본도 장면마다 다시 적재). 합계 원본 규칙 풀기 205·받기 96 |
+
+- 기존 노드 시험 일괄 1회 전부 통과(`test_save` 65 포함), `test_room_server` 255/256 은 1·2차와 같은 항목(광장 원격 달리기 타이밍). `tsc`·`npm run build` 통과. 받는 경로(진동 표 `vib.json`·압축본 갱신)가 바뀌어 :51811 콘솔 확인 1회(촬영 없음): `ui=modeselect`·`ui=partyrule&assets=dist`·`ui=charselect`·`ui=sound` 오류 0·4xx 0(GL 경고만).

@@ -3,8 +3,8 @@
  * 시험값(URL): ?rounds=N 승패 기록 판 수(기본 12, 0 = 기록 없음), ?first=0 플레이 방법 다시 보기(B 로 끝낼 수 있음), ?howto=1~6 종류.
  */
 import { ASSETS } from './env';
+import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
 import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from './shell/mgmcommon';
 import { AnnounceScreen } from './shell/mgm01/announceScreen';
 import { HistoryScreen } from './shell/mgm01/historyScreen';
@@ -65,36 +65,7 @@ export async function runMgmScreen(
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
-  let ctx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      ctx = new AudioContext();
-      void ctx.resume();
-    } catch {
-      ctx = null;
-    }
-  }
-  const playSe = (url: string, gain: number): void => {
-    if (!ctx) return;
-    const c = ctx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'mgmscreens', pads: (pid) => cfg.pads[pid] });
 
   const bgParam = q.get('bg');
   const bgUrl = bgParam === 'none' ? null : (bgParam ?? `${ASSETS}modeselect/backdrop_temp.png`);
@@ -139,7 +110,7 @@ export async function runMgmScreen(
     },
     () => players,
   );
-  const sound = new MgmSound(sounds, view.url, { play: (_l, url, gain) => playSe(url, gain) });
+  const sound = new MgmSound(sounds, view.url, snd.mgm());
 
   let phase = '시작';
   let result = '';
@@ -263,8 +234,7 @@ export async function runMgmScreen(
       done = true;
       view.dispose();
       canvas.remove();
-      const c = ctx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
   return run;

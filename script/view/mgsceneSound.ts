@@ -9,7 +9,7 @@ import { SoundCatalog } from '../lib/sound';
 import type { BufferPayload } from '../lib/sound-webaudio';
 import type { Assets } from './assets';
 import type { AudioOut, Bus } from './audio';
-import { soundSystem, type MpjSound, type StreamPayload } from './sound';
+import { enterSoundScene, soundSystem, type MpjSound, type StreamPayload } from './sound';
 
 interface SoundEntry {
   file: string;
@@ -44,6 +44,7 @@ export class MgSceneSound {
 
   private constructor(private readonly audio: AudioOut | null) {
     this.sys = audio ? soundSystem(audio) : null;
+    enterSoundScene(this.sys, 'mg');
   }
 
   /** sources: 앞의 것이 우선(게임 → 틀) */

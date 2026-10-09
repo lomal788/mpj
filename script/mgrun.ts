@@ -27,6 +27,13 @@ export interface MgRunInit {
   play?: MgPlaySettings;
   endless?: boolean;
   wipe?: Transition;
+  /** 장면 save 사건 받기(셸 저장만, 로직에 값을 돌려주지 않는다): 단계 11 = 플레이 횟수(FUN_71002db9f0), 단계 16 = SaveRequest. docs/engine/16_save.md §7 */
+  save?: MgRunSave;
+}
+
+export interface MgRunSave {
+  playCount(players: readonly { pid: number; isCom: boolean; gamePlay?: boolean }[]): void;
+  request(): void;
 }
 
 export interface MgRun {
@@ -99,7 +106,15 @@ export function createMgRun(init: MgRunInit): MgRun {
     },
     tick(sound) {
       logic.sound = sound ?? null;
-      return scene.tick();
+      const stage = scene.stage;
+      const stepped = scene.tick();
+      if (stepped && init.save)
+        for (const e of scene.events) {
+          if (e.k !== 'save') continue;
+          if (stage === 11) init.save.playCount(scene.players);
+          else init.save.request();
+        }
+      return stepped;
     },
     resultEntry: (id) => minigameResultEntry(id, judgeType, gameRule, scene.players),
   };

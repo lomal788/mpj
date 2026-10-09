@@ -288,6 +288,8 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
 
 파일: `web/script/shell/mgmcommon/messageWindow/{state,typer,layout,index}.ts`. `state.ts`·`typer.ts`·`layout.ts` 는 순수(입력·dt·애니 끝 신호 → 사건), `index.ts` 의 `MessageWindow` 가 명세 레이아웃(sys_meswin_00·arrowicon_00)에 사건을 옮긴다. 공개 API = mgm_common.md 9.2 `MessageWindowAdapter` + `addMessageLabel(label)`·`setInsert(index, value)`·`setNextMask(mask)`·`setSpeed(0|1|2)`·`setOnline(b)`·`update(dt)`·`draw()`.
 
+보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md) §8): 메시지 속도 원천 `setMessageSpeedSource(f)`(index.ts) — 앱 저장이 SystemData+0x74(`system.messageSpeed`, 기본 0)를 꽂는다. 창은 생성·start·update 때 원천 값을 `st.speed` 에 두고, 페이지 시작 때 Typer 가 읽는다(원본 FUN_7100322e40 의 페이지마다 읽기). `setSpeed(s)` 는 창별 덮어쓰기(+0x90/+0x94)로 원천보다 우선한다.
+
 원본에서 정해지지 않아 웹이 정한 것 **[설계]**:
 
 | 항목 | 웹 결정 | 이유·근거 한계 |

@@ -17,3 +17,4 @@
 | [13_asset_converter.md](13_asset_converter.md) | 공용 에셋 변환기(아카이브 무관 코어·형식별 처리기·분류별 어댑터, 미니게임 어댑터 `mg_assets.py`), 출력 폴더·압축 분류 규칙, 기존 변환기 이전 표, 미니게임 장면 로더 `shell/mgstage`·보기 페이지 | 구현 |
 | [common_roadmap.md](common_roadmap.md) | 공통(엔진) 작업 현황·남은 작업·미루면 비용이 커지는 것·권장 순서 | 정리 |
 | [common_assets.md](common_assets.md) | 시스템 효과음·공용 UI 그림 공용 폴더 `assets/common/{sound,tex}/`(SQ_SE_SYS_*·sys_* 전부 + 여러 화면이 같이 쓰던 것 한 벌, 화면 명세가 가리킴) | 구현 |
+| [16_save.md](16_save.md) | 공용 저장(Save): 원본 SaveDataMgr 칸·SaveData 배치·SaveRequest/IsProcessing 수명, 웹 코어 `lib/save`(import 0)·어댑터 `lib/save-localstorage`(키 `mpj.save` 하나)·mpj 연결 `view/save.ts`, 마이그레이션·메시지 속도 | 구현 |

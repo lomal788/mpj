@@ -34,22 +34,27 @@ export const GOLDEN_SHA256_PRE: Record<string, string> = {
   rhythm_script: 'd6929b78317ca832e83c21d8c1046bcf053fa19b17d8e53c896cd3860979b8a7',
 };
 
-/** RULES_WEB 실행(지금 코드) — 이전 전과 다른 줄은 틀 단계 16 groupStop 사건의 sec 한 줄뿐(rhythm_script 는 그 사건이 없어 같다) */
+/**
+ * RULES_WEB 실행(지금 코드) — 이전 전과 다른 줄은 틀 단계 16 groupStop 사건의 sec 한 줄뿐(rhythm_script 는 그 사건이 없어 같다)
+ * shell_flow(2차, 셸 화면 흐름)는 이전 페이지 소리 코드(2차 이전 전 트리에서 이 도구가 옮긴 legacyShell)로 돌린 기록과 바이트까지 같다(04 §13.11.4).
+ */
 export const GOLDEN_SHA256_WEB: Record<string, string> = {
   mg1801_normal: 'f76344391133fb9ace0afd2861d61a57d5b28cbc11fac9c9d68482ca262cdf6b',
   mg1801_long180: '2f9b3c145e2122e3e2bc6b04776a184e7b450822d9039773ab41a73532a0c025',
   mgscene_dummy: '5e9bd29dd74af673f40c9c589b1621414143052851a80d480a3c9102a778d542',
   mgscene_skip: '3b2958cce970d442c12b9f431b683f274d15fb54cf86aab0f449b9fcd9f1e3e2',
   rhythm_script: 'd6929b78317ca832e83c21d8c1046bcf053fa19b17d8e53c896cd3860979b8a7',
+  shell_flow: '6172d72bc2f073ead6a429721b6681811c685f89e960ee984bb4944b23f672ab',
 };
 
-/** 원본 규칙(기본) 기준 — 2026-10-09 RULES_ORIGINAL 로 돌린 기록 */
+/** 원본 규칙(기본) 기준 — 2026-10-09 RULES_ORIGINAL 로 돌린 기록(2차: meta·shellHooks 포함해 다시) — 3차: sceneExit·pan2d·진동 포함(shell_flow 만 바뀜) */
 export const GOLDEN_SHA256: Record<string, string> = {
   mg1801_normal: '51745f96c3c93b3714a35f566cc339e667425ea01b6c60424bdcb56325711b92',
   mg1801_long180: 'bfb5a10696704d7b881b81b9ecaa4dd17d0ad62773bb46870f279253020fe0c3',
   mgscene_dummy: '5e9bd29dd74af673f40c9c589b1621414143052851a80d480a3c9102a778d542',
-  mgscene_skip: '16c49284560ecf377234cf21bfb74db0a599a8187e1529530a277ca3e27d5bef',
-  rhythm_script: '315c0e69f7b7da0a9437caa3e576c5dca3c8cb0845e15e3debd6ed0d4591e2de',
+  mgscene_skip: '3b2958cce970d442c12b9f431b683f274d15fb54cf86aab0f449b9fcd9f1e3e2',
+  rhythm_script: 'ac2504cab856b5f876e57bd9e5b13d8b315ef9abfc6d361bc7503fafabf47033',
+  shell_flow: '67afe8b8fdedbb26f057d2f2a136ba93661ef48d30b6638ba159de1fdd2f5d7e',
 };
 
 /* ================================================================ 가상 시계·타이머 */
@@ -386,6 +391,8 @@ class FCtx {
   }
   close(): Promise<void> {
     this.state = 'closed';
+    /* 컨텍스트를 닫으면 남은 소스가 그 자리에서 멎는다 — 정지와 같게 남긴다 */
+    for (const s of [...this.sources].sort((a, b) => a.srcId - b.srcId)) if (s.started && !s.fired) s.stop(0);
     return Promise.resolve();
   }
   getOutputTimestamp(): { contextTime: number; performanceTime: number } {
@@ -486,6 +493,12 @@ function fakeAssets(dir: string): Any {
 const SOUND_KINDS = new Set(['justSound', 'bgm', 'bgmStop', 'se', 'se3d', 'seLocal', 'soundStop', 'soundPreset']);
 
 interface Mods {
+  MgmSound: Any;
+  MessageWindow: Any;
+  mgmSpec: Any;
+  mgmHost: Any;
+  appAssets: Any;
+  assetKeyOf: Any;
   AudioOut: Any;
   RmSoundMap: Any;
   MgSceneSound: Any;
@@ -660,18 +673,250 @@ async function rhythmScript(out: Map<string, string[]>): Promise<void> {
   mark('rhythm_script');
 }
 
-export const SCENARIOS = ['mg1801_normal', 'mg1801_long180', 'mgscene_dummy', 'mgscene_skip', 'rhythm_script'];
+/* ================================================================ 셸 화면(04 §13.11) */
+
+/** 화면 하나의 소리 출력 — 지금 코드 = view/sound.ts shellSound, 이전 전 트리 = 이전 페이지 playSe·보이스 코드를 그대로 옮긴 것(페이지는 DOM 이 있어 노드에서 못 돈다) */
+interface ShellOut {
+  play(label: string, url: string, gain: number, x?: number): void;
+  voice(label: string, url: string, gain: number, slot: number): void;
+  voiceStop(slot: number): void;
+  preload(urls: readonly string[]): void;
+  mgm(hooks?: Any): Any;
+  close(ms: number): void;
+}
+
+let shellNew: ((o: Any) => ShellOut) | null = null;
+
+/** 이전 페이지 코드(2026-10-09 2차 이전 전): 페이지마다 AudioContext·AudioBuffer 맵, 바이트 = 앱 흐름 assetHooks.loadBytes(관리자 bytes 키 + 복사) */
+function legacyShell(pan2d: boolean): ShellOut {
+  const c = new (globalThis as Any).AudioContext();
+  void c.resume();
+  const buffers = new Map<string, Promise<Any>>();
+  const bytes = (url: string): Promise<ArrayBuffer> => {
+    const key = mods.assetKeyOf(url);
+    return key ? mods.appAssets().get(key, 'bytes', 1).then((a: ArrayBuffer) => a.slice(0)) : fetch(url).then((r) => r.arrayBuffer());
+  };
+  const buffer = (url: string): Promise<Any> => {
+    let b = buffers.get(url);
+    if (!b) {
+      b = bytes(url)
+        .then((a) => c.decodeAudioData(a))
+        .catch(() => null);
+      buffers.set(url, b);
+    }
+    return b;
+  };
+  const play = (_l: string, url: string, gain: number, x?: number): void => {
+    void buffer(url).then((buf) => {
+      if (!buf) return;
+      const src = c.createBufferSource();
+      src.buffer = buf;
+      const g = c.createGain();
+      g.gain.value = gain;
+      if (pan2d) {
+        const pan = c.createStereoPanner();
+        pan.pan.value = x === undefined ? 0 : Math.max(-1, Math.min(1, (x - 960) / 960));
+        src.connect(g).connect(pan).connect(c.destination);
+      } else src.connect(g).connect(c.destination);
+      src.start();
+    });
+  };
+  const voices = new Map<number, Any>();
+  const voiceToken = new Map<number, number>();
+  const voiceStop = (slot: number): number => {
+    voices.get(slot)?.stop();
+    voices.delete(slot);
+    const t = (voiceToken.get(slot) ?? 0) + 1;
+    voiceToken.set(slot, t);
+    return t;
+  };
+  return {
+    play,
+    voice(_l, url, gain, slot) {
+      const token = voiceStop(slot);
+      void buffer(url).then((buf) => {
+        if (!buf || voiceToken.get(slot) !== token) return;
+        const src = c.createBufferSource();
+        src.buffer = buf;
+        const g = c.createGain();
+        g.gain.value = gain;
+        src.connect(g).connect(c.destination);
+        src.start();
+        voices.set(slot, src);
+      });
+    },
+    voiceStop: (slot) => void voiceStop(slot),
+    preload(urls) {
+      for (const u of urls) void buffer(u);
+    },
+    mgm: (hooks = {}) => ({ ...hooks, play: (l: string, u: string, g: number, x?: number) => play(l, u, g, x) }),
+    close: (ms) => void setTimeout(() => void c.close(), ms),
+  };
+}
+
+/** 시험 패드: 진동 구간·rumble 을 기록 줄로 */
+const fakePad = { read: () => null, rumble: (ms: number) => R(`rumble ${ms}`), vibrate: (segs: Any[]) => R(`vib ${segs.map((g) => `${num(g.ms)}:${num(g.strong)}/${num(g.weak)}`).join(' ')}`) };
+
+const shellOut = (pan2d: boolean, scene: string): ShellOut => (shellNew ? shellNew({ muted: false, pan2d, scene, pads: () => fakePad }) : legacyShell(pan2d));
+
+const steps = async (n: number, tag: string): Promise<void> => {
+  for (let i = 0; i < n; i++) {
+    await advance(1 / 60);
+    R(`# ${tag} t=${num(clock.t)}`);
+  }
+};
+
+/** 셸 화면 흐름: 광장 → 인원 설정 → 캐릭터 선택 → 모드 선택 → 항구(메시지 창 상태기계) → 프리 플레이 → 온라인. 화면마다 출력을 새로 만든다(이전 = 페이지마다 컨텍스트) */
+async function shellFlow(out: Map<string, string[]>): Promise<void> {
+  rec.cur = [];
+  rec.on = true;
+  srcCount = 0;
+  const mg = mods.mgmSpec;
+  const url = (p: string): string => `./assets/mgmcommon/${p}`;
+  const cs = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/charselect/spec.json'), 'utf8'));
+  const csUrl = (p: string): string => `./assets/charselect/${p}`;
+  const se = (o: ShellOut, label: string, x?: number): void => {
+    const s = mg.sounds[label] ?? cs.sounds[label];
+    if (s) o.play(label, mg.sounds[label] ? url(s.file) : csUrl(s.file), s.gain, x);
+  };
+  // 광장(팬 없음)
+  let o = shellOut(false, 'menu00');
+  for (const l of ['SQ_SE_SYS_DECI', 'SQ_SE_SYS_CURSOR', 'SQ_SE_SYS_CANCEL']) {
+    se(o, l);
+    await steps(6, 'plaza');
+  }
+  o.close(0);
+  // 인원 설정(팬 없음)
+  o = shellOut(false, 'menu00');
+  for (const l of ['SQ_SE_SYS_CURSOR', 'SQ_SE_SYS_CURSOR', 'SQ_SE_SYS_DECI']) {
+    se(o, l);
+    await steps(5, 'setplayer');
+  }
+  o.close(300);
+  await steps(20, 'setplayer-out');
+  // 캐릭터 선택(Play2D 팬·슬롯 보이스·미리 받기)
+  o = shellOut(true, 'menu01');
+  o.preload([csUrl(cs.voices.pc01.files[0]), csUrl(cs.voices.pc02.files[0])]);
+  await steps(2, 'charselect');
+  se(o, 'SQ_SE_SYS_CURSOR', 300);
+  se(o, 'SQ_SE_SYS_CURSOR', 1500);
+  await steps(3, 'charselect');
+  o.voice(cs.voices.pc01.label, csUrl(cs.voices.pc01.files[0]), cs.voices.pc01.gain, 0);
+  await steps(10, 'charselect');
+  o.voice(cs.voices.pc02.label, csUrl(cs.voices.pc02.files[0]), cs.voices.pc02.gain, 0);
+  o.voice(cs.voices.pc01.label, csUrl(cs.voices.pc01.files[1]), cs.voices.pc01.gain, 1);
+  o.voiceStop(1);
+  se(o, 'SQ_SE_SYS_DECI', 960);
+  await steps(30, 'charselect');
+  o.close(600);
+  await steps(40, 'charselect-out');
+  // 모드 선택(Play2D 팬)
+  o = shellOut(true, 'menu01');
+  se(o, 'SQ_SE_SYS_CURSOR', 200);
+  await steps(4, 'modeselect');
+  se(o, 'SQ_SE_SYS_DECI', 1700);
+  await steps(10, 'modeselect');
+  o.close(300);
+  // 항구: 메시지 창 상태기계(열기 → 글자 → 넘김 → 선택지 → 커서 → 결정 → 닫기)
+  o = shellOut(true, 'mgmet');
+  const pad = { next: 0, cur: 0 };
+  const inp = {
+    com: new Set<number>(),
+    tick() {
+      pad.cur = pad.next;
+      pad.next = 0;
+    },
+    trigOf: (pid: number) => (pid === 0 ? pad.cur : 0),
+    isCom: () => false,
+  };
+  const snd = new mods.MgmSound(mg.sounds, url, o.mgm());
+  const mw = new mods.MessageWindow(mods.mgmHost, inp, snd);
+  const step = async (n = 1): Promise<void> => {
+    for (let i = 0; i < n; i++) {
+      inp.tick();
+      mw.update(Math.fround(1 / 60));
+      await steps(1, 'msg');
+    }
+  };
+  mw.setMessageLabel('mgmet_entFirst_mw_guide02');
+  mw.setOwner(0);
+  mw.disablePadInput(false, false);
+  mw.start();
+  for (let k = 0; k < 400 && !mw.isNextInputWait(); k++) await step();
+  await step(30);
+  pad.next = 0x1;
+  await step(2);
+  for (let k = 0; k < 60 && !mw.isEnd(); k++) await step();
+  mw.setChoiceCount(2);
+  mw.setMessageLabel('mgmet_entFirst_mw_guide01');
+  mw.setChoiceLabel(0, 'mgmet_entFirst_mw_guide01');
+  mw.setChoiceLabel(1, 'mgmet_entFirst_mw_guide01');
+  mw.setCancelEnable(true);
+  mw.setInitialChoice(1);
+  mw.setOwner(0);
+  mw.start();
+  for (let k = 0; k < 400 && !mw.isNextInputWait(); k++) await step();
+  await step(40);
+  pad.next = 0x800;
+  await step(10);
+  pad.next = 0x1;
+  await step(2);
+  for (let k = 0; k < 120 && !mw.isEnd(); k++) await step();
+  snd.playSe('SQ_SE_SYS_DECI');
+  await step(5);
+  snd.fadeAndEntryCancel();
+  await step(40);
+  o.close(300);
+  // 프리 플레이(팬 없음)
+  o = shellOut(false, 'mgm01');
+  const s2 = new mods.MgmSound(mg.sounds, url, o.mgm());
+  for (const l of ['SQ_SE_SYS_CURSOR', 'SQ_SE_SYS_DECI', 'SQ_SE_SYS_CANCEL', 'SQ_SE_SYS_MES_PROC']) {
+    s2.playSe(l);
+    await steps(4, 'mgm01');
+  }
+  o.close(300);
+  // 온라인(팬 없음)
+  o = shellOut(false, 'menu00');
+  const s3 = new mods.MgmSound(mg.sounds, url, o.mgm());
+  s3.playSe('SQ_SE_SYS_DECI');
+  s3.playSe('SQ_SE_SYS_CURSOR');
+  await steps(30, 'online');
+  o.close(300);
+  await steps(30, 'end');
+  R(`msglog ${JSON.stringify(snd.log.map((e: Any) => e.type + ':' + (e.label ?? e.groups ?? '')))}`);
+  out.set('shell_flow', rec.cur);
+  rec.on = false;
+  mark('shell_flow');
+}
+
+async function shellMods(): Promise<Pick<Mods, 'MgmSound' | 'MessageWindow' | 'mgmSpec' | 'mgmHost' | 'appAssets' | 'assetKeyOf'>> {
+  const mgm = await import('../script/shell/mgmcommon');
+  const { LayoutInst } = await import('../script/shell/charselect/scene2d');
+  const { resolveFontsFromDisk } = await import('./fontSpecNode');
+  const aa = await import('../script/view/appAssets');
+  const spec = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/mgmcommon/spec.json'), 'utf8'));
+  await resolveFontsFromDisk(spec.fonts, path.join(WEB, 'assets/mgmcommon'));
+  const host = { all: spec, spec, r2d: null, layout: (n: string) => new LayoutInst(n, spec.layouts[n], spec), draw: () => undefined };
+  const vs = (await import('../script/view/sound')) as Any;
+  shellNew = typeof vs.shellSound === 'function' ? vs.shellSound : null;
+  return { MgmSound: mgm.MgmSound, MessageWindow: mgm.MessageWindow, mgmSpec: spec, mgmHost: host, appAssets: aa.appAssets, assetKeyOf: aa.assetKeyOf };
+}
+
+export const SCENARIOS = ['mg1801_normal', 'mg1801_long180', 'mgscene_dummy', 'mgscene_skip', 'rhythm_script', 'shell_flow'];
 
 /** 시나리오를 돌려 이름 → 기록 줄. 받기·풀기 횟수도 */
 export async function runSoundGolden(rules?: 'web' | 'original', only?: string): Promise<{ lines: Map<string, string[]>; fetches: Map<string, number>; decodes: Map<string, number> }> {
   install();
   const core = (await import('../script/lib/sound' as string).catch(() => null)) as Any;
   if (core && rules) core.soundDefaults.rules = rules === 'web' ? core.RULES_WEB : core.RULES_ORIGINAL;
+  const vib = (await import('../script/lib/vibration' as string).catch(() => null)) as Any;
+  if (vib && rules) vib.vibDefaults.rules = rules === 'web' ? vib.VIB_RULES_WEB : vib.VIB_RULES_ORIGINAL;
   /* GOLDEN_ITEMS=random,groups → 웹 규칙에서 그 항목만 원본으로(항목별 차이 확인) */
   if (core && process.env.GOLDEN_ITEMS) {
     const r: Any = { ...core.RULES_WEB, id: 'web' };
     for (const k of process.env.GOLDEN_ITEMS.split(',')) r[k] = core.RULES_ORIGINAL[k];
     core.soundDefaults.rules = r;
+    if (vib) vib.vibDefaults.rules = process.env.GOLDEN_ITEMS.split(',').includes('vib') ? vib.VIB_RULES_ORIGINAL : vib.VIB_RULES_WEB;
   }
   const THREE = await import('three');
   mods = {
@@ -684,6 +929,7 @@ export async function runSoundGolden(rules?: 'web' | 'original', only?: string):
     NodeMgRun: (await import('./mg_node_host')).NodeMgRun,
     mg1801Options: (await import('../script/games/mg1801/index')).mg1801Options,
     createDummyGame: (await import('../script/games/mgdummy/logic')).createDummyGame,
+    ...(await shellMods()),
     THREE,
   };
   const ev = mods.rmTelopView as Any;
@@ -695,6 +941,7 @@ export async function runSoundGolden(rules?: 'web' | 'original', only?: string):
   if (want('mgscene_dummy')) await mgsceneDummy(out, 'mgscene_dummy', false);
   if (want('mgscene_skip')) await mgsceneDummy(out, 'mgscene_skip', true);
   if (want('rhythm_script')) await rhythmScript(out);
+  if (want('shell_flow')) await shellFlow(out);
   return { lines: out, fetches: fetchLog, decodes: decodeLog };
 }
 

@@ -4,13 +4,14 @@
  * bex 비트: A 0x1·B 0x2·X 0x4·Y 0x8 [추정 mgm_common.md 11]·L 0x10·R 0x20·ZL 0x40·ZR 0x80·십자 0x100~0x800·스틱 0x10000~0x80000. 3D 항구 = 고정 배경 그림(modeselect 임시 대역).
  */
 import { ASSETS } from './env';
+import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
-import { createWork, MemorySave, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
+import { createWork, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
 import { MgmetHowtoView } from './shell/mgmet/howto';
 import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
+import { appSave } from './view/save';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -123,38 +124,7 @@ export async function runMgmet(
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
-  let ctx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      ctx = new AudioContext();
-      void ctx.resume();
-    } catch {
-      ctx = null;
-    }
-  }
-  const playSe = (url: string, gain: number, x?: number): void => {
-    if (!ctx) return;
-    const c = ctx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      const pan = c.createStereoPanner();
-      pan.pan.value = x === undefined ? 0 : Math.max(-1, Math.min(1, (x - 960) / 960));
-      src.connect(g).connect(pan).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: true, scene: 'mgmet', pads: (pid) => cfg.pads[pid] });
 
   const bgParam = new URLSearchParams(location.search).get('bg');
   const bgUrl = bgParam === 'none' ? null : (bgParam ?? `${ASSETS}modeselect/backdrop_temp.png`);
@@ -194,12 +164,12 @@ export async function runMgmet(
     },
     () => players,
   );
-  const sound = new MgmSound(view.spec.sounds, view.url, { play: (_l, u, gain, x) => playSe(u, gain, x), ...appBgm().hooks(cfg.muted) });
+  const sound = new MgmSound(view.spec.sounds, view.url, snd.mgm(appBgm().hooks(cfg.muted)));
   const msg = new MessageWindow(view, input, sound);
   const flow = new MessageFlow(() => msg, { operator: () => input.operator, dt: () => Math.fround(1 / 60) });
   flow.initialize();
   const guides = new MgmetGuides(view, sound, () => input.operator);
-  const save = new MemorySave();
+  const save = appSave().mgm;
   if (cfg.test.firstHowtoSeen) save.modeFlags |= MODE_FLAG.FIRST_HOWTO_MGM01;
   if (cfg.test.again) save.modeFlags |= MODE_FLAG.OP_SKIP;
   const work = createWork();
@@ -292,8 +262,7 @@ export async function runMgmet(
       view.dispose();
       canvas.remove();
       appBgm().exit('mgmet', 'leave');
-      const c = ctx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
   return run;

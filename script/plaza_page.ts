@@ -8,13 +8,15 @@
  */
 import { STICK_MAX, type PadInput } from './core/pad';
 import { ASSET_MODE, ASSETS } from './env';
-import { P1, P3 } from './lib/assetcore';
+import { P3 } from './lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
 import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from './shell/plaza';
 import { parseDecoParam } from './shell/plaza/deco';
 import { AREA } from './shell/plaza/interact';
 import { appFlow } from './view/appFlow';
 import { appBgm } from './view/bgm';
+import { appSave } from './view/save';
+import { shellSound } from './view/sound';
 import type { PadSource } from './view/input';
 import { plazaGl, plazaGlEnabled } from './view/plazaGl';
 
@@ -76,44 +78,13 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
   overlay.style.cssText = 'position:absolute;inset:0;pointer-events:none;overflow:hidden';
   stage.append(canvas, overlay);
 
-  let actx: AudioContext | null = null;
-  if (!cfg.muted) {
-    try {
-      actx = new AudioContext();
-      void actx.resume();
-    } catch {
-      actx = null;
-    }
-  }
+  const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'menu00' });
   const assets = appAssets();
   const OWNER = 'plaza';
   const sounds = await loadSounds();
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  const buffer = (c: AudioContext, url: string): Promise<AudioBuffer | null> => {
-    let b = buffers.get(url);
-    if (!b) {
-      const key = assetKeyOf(url);
-      b = (key ? assets.get<ArrayBuffer>(key, 'bytes', P1, OWNER) : fetch(url).then((r) => r.arrayBuffer()))
-        .then((a) => c.decodeAudioData(a.slice(0)))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    return b;
-  };
   const play = (label: string): void => {
     const s = sounds[label];
-    if (!actx || !s) return;
-    const c = actx;
-    if (c.state === 'suspended') void c.resume().catch(() => undefined);
-    void buffer(c, s.url).then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = s.gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-    });
+    if (s) snd.play(label, s.url, s.gain);
   };
 
   const extra = cfg.com.map(() => ({ buttons: 0, stick: null as { lx: number; ly: number } | null, frames: 0 }));
@@ -134,11 +105,13 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
     pad: (slot) => cur[slot] ?? null,
     sound: {
       se: (label) => play(label),
+      play: (label, url, gain) => void snd.play(label, url, gain),
       bgm: (label) => {
         if (label) void appBgm().play(label, cfg.muted);
         else appBgm().exit('plaza', 'balloon');
       },
     },
+    save: appSave().plaza,
     params: cfg.params,
     deco,
     onProgress: cfg.onProgress,
@@ -225,7 +198,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       if (gl) gl.leave(run.world.stage.scene, () => run.stop());
       else run.stop();
       assets.release(OWNER);
-      void actx?.close();
+      snd.close(0);
       canvas.remove();
       overlay.remove();
     },

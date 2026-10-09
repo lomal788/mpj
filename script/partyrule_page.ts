@@ -4,8 +4,8 @@
  * fast=1, inst=0, gyro=0, vote=1, flag20=1, flag22=1, board=0~6, champ=1. 사람/CPU = 패널 COM 칸. 배경 ?bg=none|URL(기본 modeselect/backdrop_temp.png).
  */
 import { ASSETS } from './env';
+import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
-import { assetHooks } from './shell/charselect/assetHooks';
 import { MgmSound, MgmView } from './shell/mgmcommon';
 import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from './shell/partyrule';
 import type { PadSource } from './view/input';
@@ -157,36 +157,7 @@ export async function runPartyRule(
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
-  let ctx: AudioContext | null = null;
-  const buffers = new Map<string, Promise<AudioBuffer | null>>();
-  if (!cfg.muted) {
-    try {
-      ctx = new AudioContext();
-      void ctx.resume();
-    } catch {
-      ctx = null;
-    }
-  }
-  const playSe = (url: string, gain: number): void => {
-    if (!ctx) return;
-    const c = ctx;
-    let b = buffers.get(url);
-    if (!b) {
-      b = assetHooks.loadBytes(url)
-        .then((a) => c.decodeAudioData(a))
-        .catch(() => null);
-      buffers.set(url, b);
-    }
-    void b.then((buf) => {
-      if (!buf) return;
-      const src = c.createBufferSource();
-      src.buffer = buf;
-      const g = c.createGain();
-      g.gain.value = gain;
-      src.connect(g).connect(c.destination);
-      src.start();
-    });
-  };
+  const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'menu01', pads: (pid) => cfg.pads[pid] });
 
   const bgParam = q.get('bg');
   const bgUrl = bgParam === 'none' ? null : (bgParam ?? `${ASSETS}modeselect/backdrop_temp.png`);
@@ -205,7 +176,7 @@ export async function runPartyRule(
   const view = await MgmView.create({ canvas, assets: { url }, parts: [PARTYRULE_PART, PARTYRULE_FACES], backdrop });
   const extra = (await (await fetch(url(PARTYRULE_PART))).json()) as PartyRuleExtra;
   applyPartyRuleExtra(view.spec, extra);
-  const sound = new MgmSound(view.spec.sounds, view.url, { play: (_l, u, gain) => playSe(u, gain) });
+  const sound = new MgmSound(view.spec.sounds, view.url, snd.mgm());
 
   const conf = makeConfig(cfg.com, cfg.test);
   const prev = new Map<number, number>();
@@ -285,8 +256,7 @@ export async function runPartyRule(
       done = true;
       view.dispose();
       canvas.remove();
-      const c = ctx;
-      setTimeout(() => void c?.close(), 300);
+      snd.close(300);
     },
   };
   return run;

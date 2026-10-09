@@ -12,6 +12,7 @@ import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, sameLoo
 import { distStream } from '../shell/stage3d/assetLoader';
 import { ASSETS } from '../env';
 import { appAssets, assetKeyOf } from './appAssets';
+import { appAudio } from './audio';
 import { BGM_SPEC_PATH, SCREEN_BGM, type BgmScreen } from './screenBgm';
 
 /** 반복: 초 구간 | 'all'(파일 전체) | null(한 번) */
@@ -118,6 +119,8 @@ export class BgmChannel {
     private readonly ctx: () => AudioContext | null,
     private readonly owner?: string,
     private readonly source: BgmSourceFactory = bgmSource,
+    /** 출력 노드(없으면 destination) — 앱 BGM 은 사운드 연결의 덕킹 노드(docs/engine/04_sound.md §13.11.2) */
+    private readonly dest: () => AudioNode | null = () => null,
   ) {}
 
   get label(): string | null {
@@ -141,7 +144,7 @@ export class BgmChannel {
     const c = this.ctx();
     if (!c || !url) return;
     if (c.state === 'suspended') void c.resume().catch(() => undefined);
-    this.cur = { label, s: playBgmStream(c, this.source(c, url, o.loop, this.owner), { gain: o.gain }) };
+    this.cur = { label, s: playBgmStream(c, this.source(c, url, o.loop, this.owner), { gain: o.gain, dest: this.dest() ?? undefined }) };
   }
 
   stop(fade = 0): void {
@@ -177,6 +180,8 @@ export type BgmSpecMap = Record<string, BgmSpecEntry & { url: string }>;
 
 export interface AppBgmDeps {
   ctx(): AudioContext | null;
+  /** 출력 노드(없으면 destination) */
+  dest?(): AudioNode | null;
   spec(): Promise<BgmSpecMap>;
   source?: BgmSourceFactory;
 }
@@ -198,7 +203,7 @@ export class AppBgm {
   private want: string | null = null;
 
   constructor(private readonly deps: AppBgmDeps) {
-    this.ch = new BgmChannel(() => deps.ctx(), 'bgm', deps.source);
+    this.ch = new BgmChannel(() => deps.ctx(), 'bgm', deps.source, () => deps.dest?.() ?? null);
   }
 
   /** 틀기로 한 라벨(받는 중 포함) */
@@ -262,22 +267,18 @@ export class AppBgm {
 
 /** 페이지 흐름 전체에 하나(번들이 나뉘어도 globalThis 로 공유) */
 export function appBgm(): AppBgm {
-  const G = globalThis as { __mpjBgm?: AppBgm };
+  const G = globalThis as { __mpjBgm?: AppBgm; __mpjBgmDest?: () => AudioNode | null };
   if (G.__mpjBgm) return G.__mpjBgm;
-  let ctx: AudioContext | null = null;
   let spec: Promise<BgmSpecMap> | null = null;
   G.__mpjBgm = new AppBgm({
-    ctx() {
-      if (!ctx && typeof AudioContext !== 'undefined') {
-        try {
-          ctx = new AudioContext();
-        } catch {
-          ctx = null;
-        }
-      }
-      return ctx;
-    },
+    ctx: () => appAudio()?.ctx ?? null,
+    dest: () => G.__mpjBgmDest?.() ?? null,
     spec: () => (spec ??= loadBgmSpec()),
   });
   return G.__mpjBgm;
+}
+
+/** 앱 BGM 출력 노드 고리 — 사운드 연결(view/sound.ts)이 공용 AudioOut 의 덕킹 노드를 넣는다 */
+export function setAppBgmDest(f: () => AudioNode | null): void {
+  (globalThis as { __mpjBgmDest?: () => AudioNode | null }).__mpjBgmDest = f;
 }

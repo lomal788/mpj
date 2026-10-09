@@ -52,7 +52,9 @@ import type { V3 } from '../../../core/fmath';
 import { resolveSpecFonts } from '../../../shell/charselect/fontSheet';
 import { loadUiImage, type UiImage } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
+import { envelopeSamples, envelopeWeb50, vibDefaults } from '../../../lib/vibration';
 import type { PadSource, VibSegment } from '../../../view/input';
+import { playVibration } from '../../../view/vibration';
 import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from '../../../view/lyt';
 import type { RmEvent, RmSceneState } from '../types';
 
@@ -642,19 +644,10 @@ export class RmUi {
       pad.rumble?.(Math.round((v.ampLow.length / v.rateHz) * 1000));
       return;
     }
-    const per = Math.max(1, Math.round((v.rateHz * VIB_STEP_MS) / 1000));
-    const segs: VibSegment[] = [];
-    for (let i = 0; i < v.ampLow.length; i += per) {
-      const lo = v.ampLow.slice(i, i + per);
-      const hi = v.ampHigh.slice(i, i + per);
-      const avg = (a: number[]): number => a.reduce((x, y) => x + y, 0) / a.length;
-      segs.push({
-        ms: (lo.length / v.rateHz) * 1000,
-        strong: Math.min(1, avg(lo) * v.gainMaster * v.gainLow),
-        weak: Math.min(1, avg(hi) * v.gainMaster * v.gainHigh),
-      });
-    }
-    pad.vibrate(segs);
+    const segs: VibSegment[] =
+      vibDefaults.rules.envelope === 'web50' ? envelopeWeb50(v, v.gainMaster, v.gainLow, v.gainHigh, VIB_STEP_MS) : envelopeSamples(v, v.gainMaster, v.gainLow, v.gainHigh);
+    if (vibDefaults.rules.priority) playVibration(pad, v.priority, segs);
+    else pad.vibrate(segs);
   }
 
   draw(ctx: CanvasRenderingContext2D, state: RmUiState): void {

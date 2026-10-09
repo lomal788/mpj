@@ -31,11 +31,13 @@ import {
   SoundRandom,
   calc3d,
   fadeTimeSec,
+  pan2d,
   soundDefaults,
   soundGroupsOf,
   type Listener3d,
   type SoundCmd,
   type SoundDef,
+  type SoundMeta,
   type SoundRules,
 } from '../script/lib/sound';
 import { DecodeCache, WebAudioSoundOut, bufferVoiceFactory, type Voice } from '../script/lib/sound-webaudio';
@@ -502,6 +504,197 @@ await (async () => {
   ok(per.length >= 3 && m < 2, `update()+drain() 정상 상태(3D 핸들 24, 원본 규칙 track3d) 할당 0(스텝당 ${m.toFixed(2)} B)`, { per, empty, sink: acc.sink });
 })();
 
+/* ---------------------------------------------------------------- 12 */
+console.log('12) 원본 사운드 정보 표·무음·셸 소리(2차, 04 §13.11)');
+await (async () => {
+  const meta = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/common/sound/meta.json'), 'utf8')) as SoundMeta;
+  const L = meta.labels;
+  ok(((L.SM_BGM_MENU[0] >>> 0x0d) & 1) === 1 && ((L.SM_BGM_MENU_RHYTHM[0] >>> 0x13) & 1) === 1, 'meta: SM_BGM_MENU ∈ 0x0d(BGM 덕킹), SM_BGM_MENU_RHYTHM ∈ 0x13(mgm_common 6.9 와 같음)');
+  eq(L.SQ_SE_SYS_DECI, [0, 'PLY_SE_SYS', 2, 108, 'seq'], 'meta: SQ_SE_SYS_DECI = 그룹 비트 0·PLY_SE_SYS 한도 2·우선순위 108');
+  ok(((L.SQ_SE_MG1801_JUST[0] >>> 1) & 1) === 1, 'meta: 서브 아카이브 라벨(SQ_SE_MG1801_JUST)도 0x01');
+  ok(meta.silent.includes('SQ_SE_DUMMY') && meta.silent.filter((l) => l.endsWith('_MUTE')).length >= 90, `meta: 무음 = SQ_SE_DUMMY + *_MUTE ${meta.silent.length}개`);
+
+  const cat = new SoundCatalog().define('SQ_SE_SYS_DECI', def({ kind: 'stream' })).define('SQ_SE_X', def());
+  for (const [rules, want] of [
+    [RULES_WEB, false],
+    [RULES_ORIGINAL, true],
+  ] as const) {
+    const c = mkCore(rules);
+    c.core.setMeta(meta);
+    const hs = [0, 1, 2].map(() => c.core.play(cat, 'SQ_SE_SYS_DECI'));
+    const evicted = !c.core.alive(hs[0]);
+    eq(evicted, want, `플레이어 한도: ${rules.id} — 셸 SE 3발, meta 의 PLY_SE_SYS 한도 2 로 가장 오래된 것 멈춤 = ${want}`);
+    const left = hs.filter((h) => c.core.alive(h)).length;
+    c.core.stopGroup(1, 0);
+    eq(hs.filter((h) => c.core.alive(h)).length === left, want, `그룹 0x01: ${rules.id} — SQ_SE_SYS_DECI 는 원본 데이터에서 0x01 아님(접두 근사는 0x01)`);
+  }
+  const sc = new SoundCatalog('fs').define('SQ_SE_FS_PC01_WALK', def()).substitute('SQ_SE_FS_PC**_WALK', 'SQ_SE_DUMMY', 'mg1801').loadPreset('mg1801');
+  const c3 = mkCore(RULES_ORIGINAL);
+  c3.core.setMeta(meta);
+  eq([c3.core.resolve(sc, 'SQ_SE_FS_PC01_WALK'), c3.core.play(sc, 'SQ_SE_FS_PC01_WALK'), c3.core.stats.silent], ['SQ_SE_DUMMY', 0, 1], '무음 항목: 발소리 → 프리셋 → SQ_SE_DUMMY(무음, 핸들 없음)');
+  const c4 = mkCore(RULES_WEB);
+  c4.core.setMeta(meta);
+  ok(c4.core.resolve(sc, 'SQ_SE_FS_PC01_WALK') === 'SQ_SE_FS_PC01_WALK', '웹 규칙: 무음 항목·와일드카드 안 씀(그대로)');
+
+  /* 셸 소리 — 가짜 컨텍스트(전역 AudioContext) 위 appAudio·shellSound */
+  class P {
+    value: number;
+    log: string[] = [];
+    constructor(v: number) {
+      this.value = v;
+    }
+    setValueAtTime(v: number, t: number): void {
+      this.log.push(`set ${v} ${t}`);
+    }
+    linearRampToValueAtTime(v: number, t: number): void {
+      this.log.push(`lin ${+v.toFixed(4)} ${+t.toFixed(4)}`);
+    }
+    cancelScheduledValues(): void {}
+  }
+  class N {
+    outs: N[] = [];
+    connect(d: N): N {
+      this.outs.push(d);
+      return d;
+    }
+    disconnect(): void {
+      this.outs = [];
+    }
+  }
+  class G extends N {
+    gain = new P(1);
+  }
+  class Pan extends N {
+    pan = new P(0);
+  }
+  const started: { pan: number | null; buf: unknown }[] = [];
+  class Src extends N {
+    buffer: unknown = null;
+    loop = false;
+    start(): void {
+      let n: N | undefined = this.outs[0];
+      let pan: number | null = null;
+      for (let k = 0; n && k < 8; k++, n = n.outs[0]) if (n instanceof Pan) pan = n.pan.value;
+      started.push({ pan, buf: this.buffer });
+    }
+    stop(): void {}
+    addEventListener(): void {}
+  }
+  class Ctx {
+    currentTime = 1;
+    sampleRate = 48000;
+    state = 'running';
+    destination = new N();
+    createGain = (): G => new G();
+    createStereoPanner = (): Pan => new Pan();
+    createBufferSource = (): Src => new Src();
+    resume = (): Promise<void> => Promise.resolve();
+    decodeAudioData = (): Promise<unknown> => Promise.resolve({ duration: 1 });
+  }
+  const g0 = globalThis as unknown as { AudioContext?: unknown; requestAnimationFrame?: unknown; fetch: unknown; __mpjSoundMeta?: unknown };
+  g0.AudioContext = Ctx;
+  g0.requestAnimationFrame = (f: () => void) => setTimeout(f, 0);
+  g0.__mpjSoundMeta = Promise.resolve(meta);
+  g0.fetch = async () => ({ ok: true, status: 200, arrayBuffer: async () => new ArrayBuffer(8), json: async () => ({ bgm: {} }), text: async () => '' });
+  const vs = await import('../script/view/sound');
+  const { appBgm } = await import('../script/view/bgm');
+  const { appAudio } = await import('../script/view/audio');
+  const s1 = vs.shellSound({ muted: false, pan2d: true });
+  const s2 = vs.shellSound({ muted: false, pan2d: false });
+  ok(!!s1.sys && s1.sys === s2.sys && s1.sys.audio === appAudio(), 'shellSound: 화면이 달라도 appAudio() 하나·코어 하나');
+  await new Promise((r) => setTimeout(r, 5));
+  s1.play('SQ_SE_SYS_CURSOR', './assets/common/sound/SQ_SE_SYS_CURSOR.wav', 0.8661, 1440);
+  s2.play('SQ_SE_SYS_CURSOR', './assets/common/sound/SQ_SE_SYS_CURSOR.wav', 0.8661, 1440);
+  for (let k = 0; k < 10; k++) await Promise.resolve();
+  eq(started.map((x) => x.pan), [0.5, null], 'Play2D: pan2d 화면은 팬 노드(x 1440 → 0.5), 아닌 화면은 팬 노드 없음(이전 페이지 두 벌 그대로)');
+  ok(started[0]?.buf === started[1]?.buf && s1.sys!.decode.size >= 1, '디코드 캐시 하나: 두 화면이 같은 AudioBuffer');
+  const a = s1.mgm({});
+  ok(typeof a.stopGroups === 'function' && typeof a.duck === 'function' && typeof a.vibrate === 'function', '원본 규칙: MgmSound 어댑터에 그룹 정지·덕킹·진동 고리');
+  void appBgm().play('SM_BGM_MENU');
+  const dg = s1.sys!.bgmDuck.gain as unknown as P;
+  a.duck!(0x0d, true);
+  a.duck!(0x13, true);
+  a.duck!(0x0d, false);
+  eq(dg.log.filter((l) => l.startsWith('lin')), ['lin 0.6 1.3', 'lin 0.6 1.3', 'lin 1 1.3'], '앱 BGM 덕킹: SM_BGM_MENU(0x0d) → 0.6 배 0.3 s, 0x13 은 이 곡 그룹 밖(그대로), 0x0d 해제 → 1');
+  /* 3차: 진동 고리 = 원본 진동 표(vib.json) 포락선(이전 2차 rumble 60 ms 근사를 사용자 결정으로 바꿈, 05 §11) */
+  (globalThis as unknown as { __mpjVibTableNow?: unknown }).__mpjVibTableNow = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/common/vib/vib.json'), 'utf8'));
+  const vibs: { ms: number; strong: number; weak: number }[][] = [];
+  const s3 = vs.shellSound({ muted: false, pan2d: false, pads: () => ({ read: () => null, vibrate: (g) => void vibs.push([...g]) }) });
+  s3.mgm().vibrate!(0, 'bv_vib_sys_deci');
+  ok(vibs.length === 1 && vibs[0].length > 1 && s3.log.includes('vib bv_vib_sys_deci'), `진동 고리 → 원본 bnvib 포락선 구간 ${vibs[0]?.length ?? 0}개`);
+  const n0 = started.length;
+  s2.voice('SQ_VOI_PC01_MENU00_SELECT', './assets/charselect/sound/voice/pc01_0.wav', 0.2, 0);
+  s2.voice('SQ_VOI_PC02_MENU00_SELECT', './assets/charselect/sound/voice/pc02_0.wav', 0.2, 0);
+  for (let k = 0; k < 10; k++) await Promise.resolve();
+  eq(started.length - n0, 1, '슬롯 보이스: 같은 슬롯 새 요청이 앞 것을 멈춤(풀리기 전이면 앞 것은 나지 않음)');
+  ok(vs.shellSound({ muted: true, pan2d: false }).sys === null, '음소거 화면 = 출력 없음');
+})();
+
+/* ---------------------------------------------------------------- 13 */
+console.log('13) 진동 재생기·장면 퇴장·Play2D 팬(3차, 04 §13.12·05 §11)');
+await (async () => {
+  const vib = await import('../script/lib/vibration');
+  const vgp = await import('../script/lib/vibration-gamepad');
+  const t = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/common/vib/vib.json'), 'utf8'));
+  eq([t.vb.VB_MGMET_SELECT_DECI, t.vb.VB_MGMET_SELECT_CUR], ['bv_vib_sys_deci', 'bv_vib_sys_cursor'], 'VB_ 키 → 라벨(vb_pc_base.ftrg 자원 경로)');
+  eq(t.define.bv_vib_sys_skip, ['bv_vib_sys_deci', 0.5, 1, 1, 96, 0], '정의: bv_vib_sys_skip = 설정 bv_vib_sys_deci·Gain_Master 0.5·priority 96(vibration.msgpack)');
+  const vs = await import('../script/view/vibration');
+  eq([vs.vibLabel(t, 'proceed', 'SQ_SE_SYS_PROCEED'), vs.vibLabel(t, 'error', 'SQ_SE_SYS_ERROR'), vs.vibLabel(t, 'rule', 'SQ_SE_SYS_CURSOR_S'), vs.vibLabel(t, 'VB_MGMET_SELECT_DECI', null)], ['bv_vib_sys_proceed', 'bv_vib_sys_error', 'bv_vib_sys_cursor_s', 'VB_MGMET_SELECT_DECI'], '자리 이름 → 같은 사건 SE 와 이름 짝(정의가 있을 때)');
+  /* 웹 규칙 = 이전 games/rhythm/view/ui.ts vibrate 식(50 ms 평균) — 같은 식을 여기 다시 써서 비교 */
+  const w = { rateHz: 200, ampLow: [0.1, 0.5, 0.9, 0.3, 0.2, 0.2, 0.1, 0.05, 0.4, 0.6, 0.7, 0.8, 0.0], ampHigh: [0, 0.2, 0.4, 0.6, 0.8, 1, 1, 1, 0.5, 0.25, 0.1, 0, 0] };
+  const per = Math.max(1, Math.round((w.rateHz * 50) / 1000));
+  const old: { ms: number; strong: number; weak: number }[] = [];
+  for (let i = 0; i < w.ampLow.length; i += per) {
+    const lo = w.ampLow.slice(i, i + per);
+    const hi = w.ampHigh.slice(i, i + per);
+    const avg = (a: number[]): number => a.reduce((x, y) => x + y, 0) / a.length;
+    old.push({ ms: (lo.length / w.rateHz) * 1000, strong: Math.min(1, avg(lo) * 1.3 * 1), weak: Math.min(1, avg(hi) * 1.3 * 1) });
+  }
+  eq(vib.envelopeWeb50(w, 1.3, 1, 1), old, '웹 규칙 포락선 = 이전 mg1801 50 ms 평균 식');
+  const smp = vib.envelopeSamples({ rateHz: 200, ampLow: [0.5, 0.5, 1, 0], ampHigh: [0, 0, 0.5, 0] }, 1.5, 1, 1);
+  eq(smp, [{ ms: 10, strong: 0.75, weak: 0 }, { ms: 5, strong: 1, weak: 0.75 }, { ms: 5, strong: 0, weak: 0 }], '원본 표본 구간: 5 ms 표본, 같으면 합침, ×Gain 뒤 1 로 자름');
+  const val = vib.envelopeValue({ ampLow: 1, ampHigh: 1, duration: 0.02, attack: 0, release: 0 }, 1.5, 0.1, 0);
+  eq(val, [{ ms: 20, strong: 0.15000000000000002, weak: 0 }], '값형 bv_vib_sys_cursor: 20 ms·저역 1×1.5×0.1·고역 0');
+  const mx = new vib.VibMixer();
+  ok(mx.admit('p', 96, 0, 0.1) && !mx.admit('p', 64, 0.05, 0.1) && mx.admit('p', 96, 0.05, 0.1) && mx.admit('p', 10, 0.2, 0.1), '우선순위: 재생 중 낮은 것 버림, 같으면 바꿈, 끝나면 무엇이든');
+  const calls: string[] = [];
+  const timers: (() => void)[] = [];
+  const gp = new vgp.GamepadVibrator(() => ({ playEffect: (_t, p) => (calls.push(`${p.duration}:${p.strongMagnitude}`), Promise.resolve()) }), { set: (f) => timers.push(f), clear: () => undefined });
+  gp.play([{ ms: 10, strong: 0.5, weak: 0 }, { ms: 5, strong: 1, weak: 0 }]);
+  for (const f of timers) f();
+  gp.stop();
+  eq(calls, ['10:0.5', '5:1', '1:0'], 'Gamepad 어댑터: 구간마다 dual-rumble, stop = 세기 0');
+
+  eq([pan2d(1440, RULES_WEB), pan2d(1440, RULES_ORIGINAL), pan2d(2400, RULES_ORIGINAL), pan2d(-500, RULES_ORIGINAL), pan2d(undefined, RULES_ORIGINAL)], [0.5, 0.5, 1, -1, 0], 'Play2D 팬: FUN_71000c044c x·(1/(W·0.5)) f32, −1·1 로 자름');
+  ok(pan2d(300, RULES_ORIGINAL) === Math.fround(Math.fround(300 - 960) * Math.fround(1 / 960)) && pan2d(300, RULES_ORIGINAL) !== pan2d(300, RULES_WEB), '원본 팬은 f32 값(웹 식과 반올림만 다름)');
+  for (const [rules, want] of [
+    [RULES_WEB, true],
+    [RULES_ORIGINAL, false],
+  ] as const) {
+    const c = mkCore(rules);
+    const cat = new SoundCatalog().define('SQ_SE_X', def());
+    c.core.enterScene('menu00');
+    const a = c.core.play(cat, 'SQ_SE_X');
+    eq(c.core.enterScene('menu00'), false, `${rules.id}: 같은 장면이면 이어짐`);
+    c.core.enterScene('menu01');
+    eq(c.core.alive(a), want, `${rules.id}: 다른 장면 시작 → 앞 장면 소리 0x20 즉시 정지 = ${!want}`);
+  }
+  const dc = new DecodeCache(
+    async () => new ArrayBuffer(4),
+    async () => ({ duration: 1 }) as unknown as AudioBuffer,
+  );
+  await dc.get('subarc_x');
+  ok(dc.drop('subarc_x') && !dc.has('subarc_x'), '서브 아카이브 해제: 디코드 캐시에서 내림(다음엔 다시 받고 품)');
+
+  const read = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8');
+  const imps = (s: string): string[] => [...s.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)].map((m) => m[1]);
+  eq(imps(read('script/lib/vibration/index.ts')), [], 'lib/vibration import 0');
+  eq([...new Set(imps(read('script/lib/vibration-gamepad/index.ts')))], ['../vibration'], 'lib/vibration-gamepad = 진동 코어만');
+  const libs = ['lib/sound', 'lib/sound-webaudio', 'lib/vibration', 'lib/vibration-gamepad'];
+  const bad = libs.flatMap((l) => imps(read(`script/${l}/index.ts`)).filter((m) => /view|shell|games|vibration$/.test(m) && !(l === 'lib/vibration-gamepad' && m === '../vibration')).map((m) => `${l}: ${m}`));
+  eq(bad, [], '공용 lib 는 mpj(view·shell·games)를 부르지 않고, lib/sound 는 진동을 부르지 않는다(사건으로만)');
+})();
+
 /* ---------------------------------------------------------------- 11 */
 console.log('11) 골든(tools/sound_golden.ts, 자식 프로세스)');
 {
@@ -520,7 +713,7 @@ console.log('11) 골든(tools/sound_golden.ts, 자식 프로세스)');
   ] as const) {
     const got = run(env);
     for (const n of Object.keys(want)) ok(got[n] === want[n], `${label}: ${n}`, got[n]);
-    ok(Object.keys(want).length === 5, `${label}: 시나리오 5개`);
+    ok(Object.keys(want).length === 6, `${label}: 시나리오 6개`);
   }
 }
 

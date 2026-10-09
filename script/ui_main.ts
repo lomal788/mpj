@@ -25,6 +25,7 @@ import { runEffectPage, type EffectPageRun } from './effect_page';
 import { runSoundPage, type SoundPageRun } from './sound_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
+import { appSave } from './view/save';
 import { installTransition, sceneIn, sceneOut } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
 
@@ -40,6 +41,7 @@ interface UiDef {
 }
 
 const keyboard = new KeyboardPad();
+appSave();
 
 const PHASE = ['0', '1', '2', '3', '4', '5'];
 

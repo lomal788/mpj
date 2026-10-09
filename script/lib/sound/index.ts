@@ -337,6 +337,14 @@ export interface SoundRules {
   readonly track3d: boolean;
   /** 3D 식 f32 */
   readonly f32: boolean;
+  /** 원본 사운드 정보 표(meta.json: 그룹 비트·플레이어·우선순위·무음 라벨)를 쓴다(04 §13.11.3) */
+  readonly meta: boolean;
+  /** 셸 메시지·시스템 고리(덕킹·진동·보이스, 04 §13.11.2) — 코어는 보관만, 연결 층이 읽는다 */
+  readonly shellHooks: boolean;
+  /** 장면 퇴장: 다른 장면이 시작되면 앞 장면 소리 0x20 즉시 정지(04 §13.12.1). web = 화면이 ms 뒤 자기 소리 정지 */
+  readonly sceneExit: boolean;
+  /** Play2D 위치 → 팬: original = FUN_71000c044c 식 f32, web = clamp((x − 960)/960)(04 §13.12.2) */
+  readonly pan2d: 'web' | 'original';
 }
 
 export const RULES_WEB: Readonly<SoundRules> = {
@@ -348,6 +356,10 @@ export const RULES_WEB: Readonly<SoundRules> = {
   resolve: 'web',
   track3d: false,
   f32: false,
+  meta: false,
+  shellHooks: false,
+  sceneExit: false,
+  pan2d: 'web',
 };
 
 export const RULES_ORIGINAL: Readonly<SoundRules> = {
@@ -359,10 +371,31 @@ export const RULES_ORIGINAL: Readonly<SoundRules> = {
   resolve: 'original',
   track3d: true,
   f32: true,
+  meta: true,
+  shellHooks: true,
+  sceneExit: true,
+  pan2d: 'original',
 };
 
 /** 기본 규칙 — 2026-10-09 사용자 결정: 원본(04 §13.4). 소비자는 만들 때 읽는다. RULES_WEB 으로 바꾸면 이전 웹 결과(골든 WEB) */
 export const soundDefaults: { rules: Readonly<SoundRules> } = { rules: RULES_ORIGINAL };
+
+// ---------------------------------------------------------------- Play2D 팬 [판독 FUN_71000c044c, 04 §13.12.2]
+
+/** 화면 폭(FUN_7100984dc0 = *DAT_7101c45478) — 1920 으로 본다 [추정] */
+export const SCREEN_W = 1920;
+
+/**
+ * Play2D(label, pos) 의 팬. x = 화면 x(0..W, 레이아웃 x + W/2).
+ * original: p = pos.x · (1 / (W · 0.5)) f32, p < −1 → −1, 아니면 min(p, 1). web: 이전 페이지 식 clamp((x − 960)/960).
+ */
+export function pan2d(x: number | undefined, rules: Readonly<SoundRules> = soundDefaults.rules): number {
+  if (x === undefined) return 0;
+  if (rules.pan2d === 'web') return Math.max(-1, Math.min(1, (x - 960) / 960));
+  const F = Math.fround;
+  const p = F(F(x - SCREEN_W / 2) * F(1 / F(SCREEN_W * 0.5)));
+  return p < -1 ? -1 : Math.min(p, 1);
+}
 
 // ---------------------------------------------------------------- 엔진 난수 [판독 FUN_71005df19c, 04 §13.10]
 
@@ -447,8 +480,10 @@ export interface SoundDef {
   voice: string;
   /** 처리기 자료(코어는 보지 않는다) */
   payload: unknown;
-  /** 사용자 파라미터 그룹 비트(0x00~0x1f). 없으면 라벨 접두 */
+  /** 사용자 파라미터 그룹 비트(0x00~0x1f). 없으면 라벨 접두 — 원본 규칙(meta)이면 원본 정보 표가 앞선다 */
   userGroups?: number;
+  /** Play2D: 팬 노드를 늘 둔다(화면 x 팬, 04 §13.11.1) */
+  pan2d?: boolean;
   /** 원본 사운드 종류(그룹 0x26~0x28·아카이브 한도). 없으면 라벨 접두(SQ_ = 시퀀스, 그 밖 스트림) */
   orig?: OrigKind;
 }
@@ -488,16 +523,17 @@ export class SoundCatalog {
     return this;
   }
 
-  /** 라벨 → 실제 라벨(프리셋 치환) */
-  resolve(label: string, rules: Readonly<SoundRules> = soundDefaults.rules): string {
+  /** 라벨 → 실제 라벨(프리셋 치환). known = 표 밖에서 아는 라벨(원본 정보 표의 무음 라벨) */
+  resolve(label: string, rules: Readonly<SoundRules> = soundDefaults.rules, known?: (l: string) => boolean): string {
     const s = this.subs.get(label);
-    if (rules.resolve === 'web') return s && this.presets.has(s.preset) && this.defs.has(s.to) ? s.to : label;
-    if (s && this.presets.has(s.preset) && this.defs.has(s.to)) return s.to;
+    const has = (l: string): boolean => this.defs.has(l) || (!!known && known(l));
+    if (rules.resolve === 'web') return s && this.presets.has(s.preset) && has(s.to) ? s.to : label;
+    if (s && this.presets.has(s.preset) && has(s.to)) return s.to;
     for (const w of this.wild) {
       if (!this.presets.has(w.preset) || label.length !== w.pre.length + 2 + w.post.length) continue;
       if (!label.startsWith(w.pre) || !label.endsWith(w.post)) continue;
       const to = w.to.replace('**', label.slice(w.pre.length, w.pre.length + 2));
-      if (this.defs.has(to)) return to;
+      if (has(to)) return to;
     }
     return label;
   }
@@ -560,6 +596,8 @@ class Slot {
   orig: OrigKind = 'seq';
   flags = 0;
   voice = '';
+  player: string | null = null;
+  playerMax = 0;
   has3d = false;
   px = 0;
   py = 0;
@@ -589,6 +627,8 @@ export interface PlayOpts {
   onAdmit?: () => void;
   /** 처리기 덮기(없으면 def.voice) */
   voice?: string;
+  /** 2D 팬(−1..1, Play2D 화면 위치) */
+  pan?: number;
 }
 
 export interface SoundCoreOptions {
@@ -599,7 +639,17 @@ export interface SoundCoreOptions {
   probe?(h: number): boolean;
 }
 
+/** 원본 사운드 정보 표 한 줄: [그룹 비트(사용자 파라미터 비트 29), 플레이어, playableSoundMax, 플레이어 우선순위, 종류] */
+export type SoundMetaRow = [number, string | null, number, number, string];
+
+/** assets/common/sound/meta.json(web/tools/analysis/sound_meta.py) */
+export interface SoundMeta {
+  labels: Record<string, SoundMetaRow>;
+  silent: string[];
+}
+
 export interface SoundCoreStats {
+  silent: number;
   played: number;
   rejected: number;
   evicted: number;
@@ -614,7 +664,7 @@ const DUCK_GROUPS = 64;
 /** SoundModule + SoundHandle 표 */
 export class SoundCore {
   rules: Readonly<SoundRules>;
-  readonly stats: SoundCoreStats = { played: 0, rejected: 0, evicted: 0, unknown: 0, ended: 0 };
+  readonly stats: SoundCoreStats = { silent: 0, played: 0, rejected: 0, evicted: 0, unknown: 0, ended: 0 };
   private readonly slots: Slot[] = [];
   private serial = 0;
   private listeners: readonly Listener3d[] = [];
@@ -636,6 +686,39 @@ export class SoundCore {
 
   now(): number {
     return this.o.now();
+  }
+
+  /** 원본 사운드 정보 표(04 §13.11.3) — 라벨 → [그룹 비트, 플레이어, playableSoundMax, 플레이어 우선순위, 종류], 무음 라벨 */
+  setMeta(meta: SoundMeta | null): void {
+    this.meta = meta;
+    this.silent = new Set(meta?.silent ?? []);
+  }
+
+  private meta: SoundMeta | null = null;
+  private silent = new Set<string>();
+  private readonly knownSilent = (l: string): boolean => this.rules.meta && this.silent.has(l);
+
+  /** 프리셋 치환(원본 규칙 meta 면 무음 라벨도 대상) */
+  resolve(cat: SoundCatalog, label: string): string {
+    return cat.resolve(label, this.rules, this.knownSilent);
+  }
+
+  /** 원본 정보 표 한 줄(규칙 meta 일 때만) */
+  metaOf(label: string): SoundMetaRow | null {
+    return (this.rules.meta && this.meta?.labels[label]) || null;
+  }
+
+  /** 라벨 하나의 그룹 [lo, hi](원본 정보 표 → 없으면 접두 근사) */
+  groupsFor(label: string, kind: OrigKind, out: [number, number] = [0, 0]): [number, number] {
+    const m = this.metaOf(label);
+    return soundGroupsOf(label, kind, m ? m[0] : undefined, out);
+  }
+
+  /** 그룹 [lo, hi] 의 덕킹 목표 곱(지금 켜진 덕킹들) */
+  duckTargetFor(lo: number, hi: number): number {
+    let v = 1;
+    for (let g = 0; g < DUCK_GROUPS; g++) if (this.duckTo[g] !== 1 && inGroup(lo, hi, g)) v *= this.duckTo[g];
+    return v;
   }
 
   setListeners(list: readonly Listener3d[]): void {
@@ -799,16 +882,20 @@ export class SoundCore {
 
   /** SoundModule::Play / Play3D — 핸들(0 = 못 냄) */
   play(cat: SoundCatalog, label: string, o: PlayOpts = EMPTY_OPTS): number {
-    const target = cat.resolve(label, this.rules);
+    const target = cat.resolve(label, this.rules, this.knownSilent);
     const def = cat.defs.get(target);
     if (!def) {
-      this.stats.unknown++;
+      if (this.knownSilent(target)) this.stats.silent++;
+      else this.stats.unknown++;
       return 0;
     }
     const s3 = def.sound3d;
-    let prio = o.priority ?? def.priority;
+    const meta = this.metaOf(target);
+    const player = meta ? meta[1] : def.player;
+    const playerMax = meta ? meta[2] : def.playerMax;
+    let prio = o.priority ?? (meta ? meta[3] : def.priority);
     let amb = 1;
-    let pan = 0;
+    let pan = o.pan ?? 0;
     let has3d = false;
     if (o.pos && s3) {
       const a = calc3dInto(this.amb, this.listeners, s3, o.pos, this.rules.f32);
@@ -817,7 +904,7 @@ export class SoundCore {
       prio += a.priority;
       has3d = true;
     }
-    if (def.player && !this.admit(def.playerMax, prio, (s) => s.def?.player === def.player)) {
+    if (player && !this.admit(playerMax, prio, (s) => s.player === player)) {
       this.stats.rejected++;
       return 0;
     }
@@ -840,9 +927,11 @@ export class SoundCore {
     s.label = label;
     s.target = target;
     s.prio = prio;
-    s.basePrio = o.priority ?? def.priority;
+    s.basePrio = o.priority ?? (meta ? meta[3] : def.priority);
     s.started = o.at ?? this.o.now();
-    soundGroupsOf(target, orig, def.userGroups, this.groupsTmp);
+    s.player = player;
+    s.playerMax = playerMax;
+    soundGroupsOf(target, orig, def.userGroups ?? (meta ? meta[0] : undefined), this.groupsTmp);
     s.lo = this.groupsTmp[0];
     s.hi = this.groupsTmp[1];
     s.orig = orig;
@@ -996,6 +1085,24 @@ export class SoundCore {
       s.duck = this.duckTarget(s);
       this.cmd('gain', s, this.handleOf(i)).time = this.duckSec[group];
     }
+  }
+
+  /**
+   * 장면 시작(원본 bq::SceneBase 정리 → 그 장면 종류 소리 그룹 0x20 페이드 0 정지, 04 §13.12.1).
+   * 원본 규칙(sceneExit)에서 이름이 앞 장면과 다르면 살아 있는 소리를 모두 멈추고 true(부르는 쪽이 진동 정지 등 사건을 처리). 같은 장면이면 이어진다.
+   */
+  enterScene(name: string): boolean {
+    const prev = this.scene;
+    this.scene = name;
+    if (!this.rules.sceneExit || prev === null || prev === name) return false;
+    this.stopGroup(GROUP_ALL, 0);
+    return true;
+  }
+
+  private scene: string | null = null;
+
+  get sceneName(): string | null {
+    return this.scene;
   }
 
   /** 그룹 덕킹 지금 값 */

@@ -130,7 +130,7 @@ const size = (files: Iterable<string>): { raw: number; br: number } => {
   return { raw, br: b };
 };
 const boot = closure([mainJs!]);
-const dynOfMain = importsOf(mainJs!).dyn;
+const dynOfMain = [...boot].flatMap((f) => importsOf(f).dyn);
 const pick = (name: string): string | undefined => dynOfMain.find((d) => path.posix.basename(d).startsWith(`${name}.`));
 const plazaPath = closure([mainJs!, ...[pick('setplayer_page'), pick('plaza_page')].filter((x): x is string => !!x)]);
 const allJs = dIndex.bundle.filter((b) => b.endsWith('.js'));

@@ -25,7 +25,7 @@ try {
       if (m.type() === 'error') errors.push(m.text());
     });
     page.on('pageerror', (e) => errors.push(String(e)));
-    await page.goto(server.url + t.query);
+    await page.goto(`${server.url}dev/index.html${t.query}`);
     await page.waitForFunction(() => 'navigator' in window && (window as unknown as { __mpj?: unknown }).__mpj !== undefined, null, { timeout: 15000 });
     if (t.query) {
       await page.waitForFunction(() => ['done', 'error'].includes((window as unknown as { __mpj: { stage: string } }).__mpj.stage), null, { timeout: 300000 });

@@ -17,7 +17,7 @@ Super Mario Party Jamboree(Switch) 미니게임을 원본 동작 그대로 웹�
 
 ```sh
 npm install
-npm run dev          # 개발 서버 http://localhost:5181/ (esbuild watch, 고치면 페이지 자동 새로 고침)
+npm run dev          # 개발 서버 http://localhost:51811/ = 배포용 게임(게임만), /dev = 개발 하네스(설정 패널·URL 옵션, 고치면 자동 새로 고침), /dev/ui = 화면 시험
 npm run build        # tsc --noEmit + 배포 빌드 → dist/ (상대 경로라 어느 경로에 올려도 된다)
 npm run typecheck    # 타입 검사만
 npm run check        # 등록된 게임 로직을 노드에서 두 번 돌려 결정성 확인
@@ -29,7 +29,7 @@ npm run assets       # 소스 assets/ → 압축본 assets-dist/(KTX2·meshopt·
 
 조작(첫 사람): WASD/방향키 = 왼쪽 스틱, J = A, K = B, U = X, I = Y, Q = L, E = R, Enter = +, Backspace = −. 게임패드는 표준 매핑을 닌텐도 배치로 읽는다([script/view/input.ts](script/view/input.ts)).
 
-URL 옵션: `?game=<id>` `?seed=<n>` `?com=0111` `?debug=1` `?fast=N` `?mute=1` `?auto=1` `?charselect=1`(시작 전 캐릭터 선택). 시험 훅은 `window.__mpj`(stage, frame, seed, result, error, hold, charselect), `window.__charselect`.
+하네스 `/dev` URL 옵션(배포용 `/` 는 URL 옵션 없음, DESIGN.md §10.1 진입점): `?game=<id>` `?seed=<n>` `?com=0111` `?debug=1` `?fast=N` `?mute=1` `?auto=1` `?charselect=1`(시작 전 캐릭터 선택) `?plaza=1`(실제 흐름, `&skipsetup=1`). 시험 훅은 `window.__mpj`(stage, frame, seed, result, error, hold, charselect), `window.__charselect`.
 
 캐릭터 선택 모듈: 에셋 변환 `c:/dev/mpj/.venv/Scripts/python web/tools/analysis/charsel_web_assets.py [ui] [sound] [chara]`, 시험 `npx tsx tools/test_charselect.ts`(상태기계)·`npx tsx tools/check_charselect.ts`(원본 데이터 대조·import 검사)·`npx tsx tools/shot_charselect.ts`(헤드리스).
 
@@ -39,17 +39,20 @@ URL 옵션: `?game=<id>` `?seed=<n>` `?com=0111` `?debug=1` `?fast=N` `?mute=1` 
 npx tsx server/main.ts --port 8787            # 페이지 + HTTP API(/api/v1/mpj-plaza/*) + socket.io(/mpj-plaza), 번들도 만든다(--watch 고칠 때마다, --external 다른 기기 허용)
 ```
 
-두 탭(또는 두 기기 — `--external` 로 켜고 서버 PC 주소)에서 `http://127.0.0.1:8787/index.html?plaza=1&online=io` 를 연다(같은 출처라 `/socket.io/socket.io.js` 를 그대로 읽는다. 개발 서버 51811 페이지에서 다른 출처 서버로 붙는 것은 CORS 를 두지 않아 안 된다). 한쪽은 광장에서 Y(I 키) → 방 만들기 → 4인용 방 → 패스워드 설정 안 함, 다른 쪽은 Y → 방 찾기(오른쪽) → 목록에서 A → "참가하겠습니까?" 예. 서로의 캐릭터가 광장에 나타나 걸어 다니고, 위쪽 대기 텔롭·하단 파티 줄·입장 알림·스탬프·Enter/Backspace(+/−) 멤버 카드를 쓸 수 있다. 방장이 기구 앞에서 A 를 누르면 둘 다 모드 메뉴로 간다. 통신은 방 찾기·만들기·참가 = HTTP, 방 입장부터 소켓(모두 바이너리), 혼자·로컬 플레이만이면 통신 없음. `online=io` 가 없으면 기존 가짜 어댑터(FakeOnline), `&skipsetup=1&chars=pc05&names=Aya` 로 설정 화면을 건너뛸 수 있다. 시험 `npx tsx tools/test_room_server.ts`(바이너리 크기·방 상태·HTTP·소켓·케이스·두 광장 UI), 헤드리스 `npx tsx tools/shot_plaza_room.ts`(두 페이지가 만나 출발까지, test/out/plaza_room/*.png). 카드 에셋 `c:/dev/mpj/.venv/Scripts/python web/tools/analysis/plaza_card_assets.py`.
+두 탭(또는 두 기기 — `--external` 로 켜고 서버 PC 주소)에서 `http://127.0.0.1:8787/dev?plaza=1&online=io` 를 연다(같은 출처라 `/socket.io/socket.io.js` 를 그대로 읽는다. 개발 서버 51811 페이지에서 다른 출처 서버로 붙는 것은 CORS 를 두지 않아 안 된다). 한쪽은 광장에서 Y(I 키) → 방 만들기 → 4인용 방 → 패스워드 설정 안 함, 다른 쪽은 Y → 방 찾기(오른쪽) → 목록에서 A → "참가하겠습니까?" 예. 서로의 캐릭터가 광장에 나타나 걸어 다니고, 위쪽 대기 텔롭·하단 파티 줄·입장 알림·스탬프·Enter/Backspace(+/−) 멤버 카드를 쓸 수 있다. 방장이 기구 앞에서 A 를 누르면 둘 다 모드 메뉴로 간다. 통신은 방 찾기·만들기·참가 = HTTP, 방 입장부터 소켓(모두 바이너리), 혼자·로컬 플레이만이면 통신 없음. `online=io` 가 없으면 기존 가짜 어댑터(FakeOnline), `&skipsetup=1&chars=pc05&names=Aya` 로 설정 화면을 건너뛸 수 있다. 시험 `npx tsx tools/test_room_server.ts`(바이너리 크기·방 상태·HTTP·소켓·케이스·두 광장 UI), 헤드리스 `npx tsx tools/shot_plaza_room.ts`(두 페이지가 만나 출발까지, test/out/plaza_room/*.png). 카드 에셋 `c:/dev/mpj/.venv/Scripts/python web/tools/analysis/plaza_card_assets.py`.
 
-UI 시험 페이지: http://localhost:51811/ui.html — 셸 화면을 게임 없이 단독으로 띄운다. 화면 선택·1~4P COM·소리 끔·디버그(fps·상태기계·카드 3D 로딩 ms)·결과 표시. URL `?ui=charselect` `?com=0001` `?mute=1` `?auto=1`. 키 J = A, K = B, 방향키·WASD. 스모크 `npx tsx tools/smoke_ui.ts`. 화면 추가는 `script/ui_main.ts` 의 `UIS` 에 등록.
+UI 시험 페이지: http://localhost:51811/dev/ui — 셸 화면을 게임 없이 단독으로 띄운다. 화면 선택·1~4P COM·소리 끔·디버그(fps·상태기계·카드 3D 로딩 ms)·결과 표시. URL `?ui=charselect` `?com=0001` `?mute=1` `?auto=1`. 키 J = A, K = B, 방향키·WASD. 스모크 `npx tsx tools/smoke_ui.ts`. 화면 추가는 `script/ui_main.ts` 의 `UIS` 에 등록.
 
 ## 구조
 
 ```
 web/
-  index.html            페이지. ./bundle/main.js·main.css 를 건다
-  script/               브라우저 코드 (esbuild 엔트리 script/main.ts)
-    main.ts             페이지 조립: 화면, 설정 패널, 60Hz 고정 스텝 루프, URL 옵션, 시험 훅
+  index.html            배포용 페이지(/). ./bundle/main.js·main.css 를 건다
+  dev/index.html        개발 하네스(/dev). ./bundle/dev.js·dev.css, dev/ui.html = 화면 시험(/dev/ui)
+  script/               브라우저 코드 (esbuild 엔트리 script/main.ts·script/dev/main.ts·script/dev/ui_main.ts)
+    main.ts             배포용 진입점: 열자마자 app/flow 실제 흐름(게임만, 개발 옵션 없음)
+    app/flow/           게임 흐름: host.ts 한 판 호스트(화면, 스텝 시계, 한 판 실행)·index.ts 플레이어 설정 → 광장 → … → 프리 플레이
+    dev/main.ts·flow.ts 개발 하네스: 설정 패널, URL 옵션, 개발 루프·시험 훅(app/flow 공개 API 조합)
     env.ts              DEV·BASE·ASSETS (vite import.meta.env 대신)
     game.ts             게임 계약: GameDef / GameLogic / GameView / GameSetup / GameResult
     style.css           페이지 스타일 (main.ts 가 import → bundle/main.css)

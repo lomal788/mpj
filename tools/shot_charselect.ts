@@ -50,7 +50,7 @@ try {
     if (m.type() === 'error') errors.push(m.text());
   });
   page.on('pageerror', (e) => errors.push(String(e)));
-  await page.goto(`${server.url}?charselect=1&com=0001&mute=1&auto=1`);
+  await page.goto(`${server.url}dev/index.html?charselect=1&com=0001&mute=1&auto=1`);
   await page.waitForFunction(() => !!(window as unknown as W).__charselect, null, { timeout: 60000 });
   await wait(page, 40);
   const canvas = page.locator('canvas.jw-gl').last();
@@ -109,7 +109,7 @@ try {
   const page2 = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   page2.on('pageerror', (e) => errors.push(String(e)));
   await page2.addInitScript(LT);
-  await page2.goto(`${server.url}?charselect=1&com=0001&mute=1&auto=1`);
+  await page2.goto(`${server.url}dev/index.html?charselect=1&com=0001&mute=1&auto=1`);
   await page2.waitForFunction(() => !!(window as unknown as W).__charselect, null, { timeout: 60000 });
   await wait(page2, 8);
   await press(page2, 0, LEFT);
@@ -134,7 +134,7 @@ try {
   // 몸 셰이더 그래프(docs 12.11) 확대: 1P 카드를 영향 캐릭터로 옮겨 찍는다(캐서린·요시·키노피코·키노피오·부끄부끄·쿠파주니어·마리오)
   const page3 = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   page3.on('pageerror', (e) => errors.push(String(e)));
-  await page3.goto(`${server.url}?charselect=1&com=0001&mute=1&auto=1`);
+  await page3.goto(`${server.url}dev/index.html?charselect=1&com=0001&mute=1&auto=1`);
   await page3.waitForFunction(() => !!(window as unknown as W).__charselect, null, { timeout: 60000 });
   await wait(page3, 8);
   type W3 = { __charselect: { handle: { state: { players: { cursor: number }[]; btnOf(c: number): number }; spec: { chars: { pc: string }[] }; loadStats: { pc: string }[] } } };

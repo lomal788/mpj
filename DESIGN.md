@@ -82,7 +82,8 @@ script/
     lib/<이름>   공용 코어(import 0) + lib/<이름>-<엔진> 어댑터(three·dom·webaudio·gamepad·localstorage)
   app/         mpj 제품 — 원본 모듈을 옮긴 화면·모드·미니게임
     main.ts      조립만(Composition Root)                              [나중]
-    flow/        흐름 표·등록표(화면 ID → 모듈, 다음 화면, 미니게임 ID → 게임)  [나중]
+    flow/        게임 흐름 — host.ts(한 판 호스트: 화면·렌더러·오디오 시계·start/step/draw)·index.ts(createGameFlow: 플레이어 설정~프리 플레이 흐름 함수). 게임만, 개발 코드 없음.
+                 [나중] 흐름 표·등록표(화면 ID → 모듈, 다음 화면, 미니게임 ID → 게임)
     common/      앱 공용 서비스(원본 bq 계열: 렌더·소리·입력·에셋·저장·공용 UI)   [나중]
     scene/       원본 NRO 중 화면·모드 — 같은 높이, 2단(분류/단위) 고정
       menu/        setplayer · charselect · modeselect · partyrule · online      (menu01 등)
@@ -93,9 +94,28 @@ script/
       frame/       한 판 틀(mgscene) · 결과(mgresult) · 장면 로더(mgstage)        (원본 main bq::MinigameScene·MGResult)
       kit/         계열 공통: rhythm · [athlon · kb · patapata …]                (원본 main ca::rm·ca::coin_athlon·ca::kb·sb)
       mg####/      게임 하나 = 폴더 하나, 평평하게. mps 게임은 mps_ 접두어
-  dev/         시험 페이지(script/dev + dev/ui.html, 주소 /dev/ui), dev/game = 시험용 가짜 게임(mgdummy, 등록표에 없음). 별칭 `@dev`, app 은 dev 를 부르지 않는다
+  dev/         개발 하네스(main.ts·flow.ts, 주소 /dev)·시험 페이지(ui_main.ts + dev/ui.html, 주소 /dev/ui), dev/game = 시험용 가짜 게임(mgdummy, 등록표에 없음). 별칭 `@dev`, app 은 dev 를 부르지 않는다
+  main.ts      배포용 진입점(index.html) — 게임만
 ```
 `[ ]` = 아직 없는 자리. 규칙상 위치가 정해져 있다.
+
+**진입점 (2026-10-09 사용자 결정)**
+
+| 주소 | 페이지 · 진입 스크립트 | 하는 일 |
+|---|---|---|
+| `/` | 루트 `index.html` + `script/main.ts` (번들 `main`) | 배포용. 게임만 돈다. 개발 옵션·설정 패널·URL 옵션·시험 훅이 없다. 열자마자 실제 흐름을 처음(플레이어 설정)부터 돈다(시작 화면 없음). 소리 잠금은 첫 사용자 입력(포인터·키·터치) 때 공용 오디오 resume. 흐름이 끝나면(설정 취소·광장 나감) 흐름 처음으로. 서비스 워커·에셋 모드·흐름 미리 받기·전환 설치는 그대로 |
+| `/dev` | `dev/index.html` + `script/dev/main.ts`·`script/dev/flow.ts` (번들 `dev`) | 개발 하네스. 게임 고르기·seed·com·게임별 옵션·debug·fast·synclog·avlat·mute·auto·charselect=1·plaza=1·skipsetup(chars·names) 등 기존 URL 옵션 전부, 시험 훅 `window.__mpj`·`__flow`·`__plaza`·`__charselect` |
+| `/dev/ui` | `dev/ui.html` + `script/dev/ui_main.ts` (번들 `ui`) | 화면 단독 시험 페이지 |
+
+- **app = 게임만.** `app/flow` 는 게임에 필요한 개념만 가진 공개 API 를 낸다. app 안에 "dev 면 이렇게" 분기·인자·이름이 없다.
+  - 한 판 호스트 `createGameHost(mount)`(host.ts): `start(def, setup, {play, endless, save, leaveWipe})`·`step()`(한 스텝)·`prime()`/`due()`/`resync()`(스텝 시계)·`draw()`·`stop()`·`dispose()`, 읽기 전용 상태 `stage`·`frame`·`seed`·`result`·`error`·`dropped`·`def`·`setup`·`run`·`logic`·`view`·`audio`, 사건 `listen`(stage·view·step), 게임 설정 `muted`·`fixedSeed`(빈 문자열 = 무작위)·`audioClock`(오디오 시계 따름, 기본 켬)·`latency`(출력 지연 보정, 기본 자동 `{compensate: true, extraMs: 0}`). `runGameLoop(host)` = 배포 루프(rAF 마다 prime → due 만큼 step → draw).
+  - 게임 흐름 `createGameFlow(host, screens = flowScreens)`(index.ts): `start(사람/COM)`(플레이어 설정부터)·`enterPlaza({com, chars, names})`(플레이어가 정해진 채 광장부터)·`listen`(screen·plaza·end{reason})·읽기 전용 `screen`·`plaza`·`plazaLoad`·`entry`. `flowScreens` = 화면 실행 함수 표(setplayer·plaza·modeselect·mgmet·mgm01). `prepareFlow()` = 흐름 미리 받기·광장 GL 준비.
+  - 흐름은 플레이어 설정 → 광장 → 기구 → 모드 메뉴 → 항구 → 프리 플레이 → 미니게임 → 복귀. 배포 main 과 하네스가 같은 흐름 코드를 쓴다(중복 없음).
+- **dev = app 공개 API 를 조합한 개발 흐름**(`script/dev/flow.ts`). dev 는 app 을 import 해도 되지만 app 은 dev 를 모르고, dev 가 있든 없든 배포 동작은 같다.
+  - fast = dev 루프가 rAF 당 `host.step()` N 번(+ `host.audioClock = false`), hold = dev 루프가 멈춤, synclog = dev 가 `host.listen` step 사건·`host.heardTime()`·리듬 소리 구독 `setRhythmSoundTrace` 로 기록, avlat = `host.latency`, 시험 훅 = dev 가 `window.__mpj`(호스트·흐름 읽기 상태 getter)·`__flow`·`__plaza`·`__charselect` 를 건다, 단일 게임 시작 = dev 가 `host.start` 직접, skipsetup = dev 가 chars·names 를 만들어 `flow.enterPlaza`, 광장 URL 옵션·항구 시험값 = dev 가 `flowScreens` 를 감싸 화면 인자(`params`·`test`)를 더한 표를 넘김, 패널(상태 줄·결과·시작 버튼·자유 카메라) = dev 가 `listen` 사건과 읽기 상태로.
+- `app/flow`·`script/main.ts` 는 URL 을 읽거나 바꾸지 않는다(`location`·`history`·`URLSearchParams` 없음). 화면 전환은 같은 문서 안의 장면 교체뿐이고 주소는 그대로다.
+- `app/flow`·`script/main.ts` 는 WebGL 렌더러를 새로 만들지 않는다 — 게임 화면 렌더러는 호스트가 앱 수명 동안 하나(`new Renderer` 한 곳), 광장은 `view/plazaGl` 앱 수명 렌더러.
+- 경계 시험 `tools/test_entry.ts`(정적 검사): app·배포 main → dev import 0. app/** 전체·배포 main 에 개발 식별자 `DEV_ALL` = `__mpj`·`__flow`·`__plaza`·`__charselect`·`synclog`·`syncLog`·`skipsetup`·`skipSetup`·`mgmetTest`·`mgmetTestValues`·`avlat`·`onStatus`·`onBusy` 없음. app/flow·배포 main 에는 `DEV_FLOW` = `DEV_ALL` + `fast`·`logSync`·`MgmetTestValues`·`test`·`debug`·`freeCam`·`setFreeCamera`·`held`·`hold`·`Hook`·`prefs`·`savePrefs`·`params`·`URLSearchParams`·`location`·`history`·`pushState`·`replaceState` 와 `window.__*` 없음(주석 제외). `new Renderer` 1곳·`WebGLRenderer` 0. 배포 main 은 시작 화면 없이 최상위에서 `flow.start`. dev 에 흐름 함수·스텝 시계·한 판 조립을 따로 두지 않음.
 
 ### 10.2 원본 모듈 → 폴더 대응
 
@@ -174,6 +194,25 @@ ID → 모듈은 `app/flow` 등록표가 정한다(원본 장면 이름표 `@0x7
 ### 10.7 지금 상태와 남은 이동
 
 - 됨: `game/core`·`game/lib`(별칭 `@game`), `app/scene/{menu,world}`, `script/dev`, 공용 폴더 2개 — 옛 `shell/mgmcommon` → `app/common/ui`, 옛 `shell/stage3d` → `app/common/render3d`(별칭 `@app/common`), 미니게임 — 옛 `scene/minigame/{mgscene,mgresult,mgstage}` → `app/minigame/frame/{scene,result,stage}`, 옛 `mgm01` → `app/scene/mode/freeplay`, 옛 `games/rhythm` → `app/minigame/kit/rhythm`, 옛 `games/mg1801` → `app/minigame/mg1801`, 옛 `games/mgdummy` → `dev/game/mgdummy`(시험용), 옛 `games/index.ts` → `app/minigame/index.ts`(게임 등록표, 별칭 `@app/minigame`).
-- 남음: `view/`·페이지 파일·`main.ts`·`mgrun.ts`(→ `app/minigame/frame`)·`game.ts`(게임 계약 → `app/minigame/frame`)·`env.ts` → `app/common`·`app/flow`·`app/main.ts`.
-- 화면끼리의 직접 import(광장 → 캐릭터 선택 미리보기, 결과 무대 → 광장 시선 등)는 `app/common` 으로 올려 없앤다.
-- 장면 계약·요청 API·Work(10.5)는 아직 없다. 지금은 프리 플레이 목록만 `SceneStack`(Call/Return)·`MgmWork` 를 쓰고, 나머지 흐름은 `main.ts` 함수(`flowPlaza`·`flowMgmet`·`playFromList` …)가 직접 잇는다. 허브·목록 Work 가 따로 노는 감사 문서 P1 항목(규칙 캐시·복귀 지점)도 Work 통일로 같이 푼다.
+- 됨(2026-10-09 진입점 분리): 루트 `index.html` + `script/main.ts` = 배포용(게임만, 바로 시작), `dev/index.html` + `script/dev/main.ts`(패널·URL 옵션) + `script/dev/flow.ts`(개발 흐름) = 하네스, 옛 `script/main.ts` 의 화면·스텝 시계·한 판 실행 → `app/flow/host.ts`, 흐름 함수(`flowPlaza`·`plazaFlow`·`flowModeSelect`·`flowMgmet`·`flowMgm01`·`playFromList`·`endFlow`) → `app/flow/index.ts`(별칭 `@app/flow`), 루프의 fast·hold·synclog·상태·디버그 줄과 시험 훅 → `dev/flow.ts`. 흐름 동작은 그대로다. 화면 쪽 선택 인자: `plaza_page` `params?`(없으면 빈 값)·`mgmet_page` `test?`(없으면 하네스 기본값과 같은 `MGMET_DEFAULT_VALUES`)·`view/plazaGl` `installPlazaGl(params = 빈 값)`. 리듬 소리의 `globalThis.__mpj.sync.audio` 읽기 → 구독 함수 `setRhythmSoundTrace`.
+- 남은 진입점 규칙 위반(배포 흐름이 부르는 모듈, 큰 구조 변경이라 이번에 안 고침):
+  - URL 읽기: `env.ts`(`?assets`)·`view/assetMode.ts`(`?texlod`)·`view/appFlow.ts`(`?prefetch`)·`view/hud.ts`(`?debug`)·`setplayer_page.ts`·`modeselect_page.ts`·`mgmet_page.ts` `runMgmet`(`?bg`)·`mgm01_page.ts` `runMgm01List`(`?bg`·`save`·`fav`·`boss`·`connected`)·`app/minigame/kit/rhythm/view/ui.ts`(`?rcwipe`), `plaza_page.ts`(`location.href` 로 에셋 URL 풀기). 배포 주소에는 쿼리가 없어 모두 기본값으로 돈다. 고치려면 각 화면 cfg 에 `params` 를 받게 바꾼다.
+  - 화면마다 새 WebGL 문맥: 플레이어 설정(`app/scene/menu/setplayer` → `app/common/ui` `MgmView`)·캐릭터 선택(`app/scene/menu/charselect/screen.ts`)·모드 메뉴(`app/scene/menu/modeselect/screen.ts`)·항구(`MgmView`)·프리 플레이 목록(`MgmView`)이 들어올 때마다 `new THREE.WebGLRenderer`. 앱 수명 하나는 게임 화면(`app/flow` `Renderer`)·광장(`view/plazaGl`)·결과 무대(게임 렌더러 공유)·Lyt(공유 정적)뿐. 통합은 plazaGl 처럼 앱 수명 렌더러 + 캔버스 넘기기로 바꾸는 큰 구조 변경이다.
+- app 안에 남은 개발용 코드(흐름 밖 모듈, 이번에 안 고침 — 경계 시험 DEV_ALL 에는 안 걸린다): 광장 `app/scene/world/plaza`(`ctx.params`: `online=fake|off`·`server`·`rooms`·`stamp`·`first`·`mute`·`decoNpc`·`loader`·`nowarm` 와 `debug()` 시험 훅 부품), 리듬 `kit/rhythm/view/ui.ts`(`?rcwipe=1` 리듬 쿠킹 와이프 미리보기, URL 직접 읽기), 게임 화면 `GameView.setFreeCamera`·`debug`·`status`(mg1801 view, 하네스 패널용). 옮기려면 광장 시험 인자를 dev 가 넘기는 화면 인자로, rcwipe 를 게임 설정(리듬 쿠킹 모드)으로 바꾼다.
+- 사용자 확인 필요(진입점):
+  - 배포 흐름이 끝나면(플레이어 설정 취소·광장 나감) 흐름 처음(플레이어 설정)으로 돌아가게 했다. 원본 근거를 찾지 않았다 — 원본은 타이틀 → 광장 진입 때 플레이어 설정이 나오므로 그쪽에 가깝게 골랐다. 광장 실패(에셋 오류)는 되풀이를 막으려고 메시지만 남긴다.
+  - 소리 잠금 해제 입력은 포인터·키·터치다. 게임패드 버튼은 브라우저가 사용자 활성으로 치지 않아 패드만 쓰면 첫 키/터치 전까지 소리가 안 날 수 있다.
+  - 출력 지연 보정은 기본 자동(`host.latency`)이다. 공용 저장 시스템 섹션으로 옮길지는 정하지 않았다.
+#### 남은 단계 (순서대로, 1~4 는 이동·정리 = 동작 불변, 5~7 은 구조 변경)
+
+1. ~~공용 폴더 2개~~ (됨) · 3. ~~미니게임 묶기~~ (됨) · 진입점 분리 (됨)
+2. **`view/` 해체** — 26개 파일을 성격별로: `app/common/{assets,render,audio,input,character,effect,save,transition}`, 흐름 관련(`appFlow`·`flow`·`flowCatalog`·`flowTable`) → `app/flow`. 분류표를 먼저 정한다.
+4. **루트·페이지 파일 정리 + app 안 개발용 코드 제거**
+   - 페이지 파일(`charselect_page`·`mgm01_page`·`mgmet_page`·`modeselect_page`·`plaza_page`·`setplayer_page`) → 각 화면 폴더(`app/scene/<분류>/<화면>/page.ts`). 안의 시험값·URL 시험 옵션은 dev 로.
+   - `mgrun.ts`·`game.ts`(게임 계약) → `app/minigame/frame`, `env.ts` → `app/common`.
+   - **URL 직접 읽기 제거**(위 "남은 진입점 규칙 위반" 목록 전부): `env.ts`·`view/assetMode.ts`·`view/appFlow.ts`·`view/hud.ts`·`setplayer_page`·`modeselect_page`·`mgmet_page`·`mgm01_page`·`kit/rhythm/view/ui.ts`(`?rcwipe`)·`plaza_page`(`location.href`). 화면은 cfg 인자로 받고, 값은 dev 가 넘긴다(배포는 기본값).
+   - **app 안 개발용 코드 → dev**(위 "app 안에 남은 개발용 코드" 목록 전부): 광장 `ctx.params` 시험 옵션·`debug()` 부품, 리듬 `?rcwipe`(→ 리듬 쿠킹 모드 게임 설정), 게임 화면 계약의 `setFreeCamera`·`debug`·`status`(→ dev 가 게임 view 를 감싸는 쪽으로).
+   - 끝나면 경계 시험 `tools/test_entry.ts` 의 `DEV_ALL`·`DEV_FLOW` 검사 범위를 `app/**` 전체로 넓혀 다시 안 생기게 고정한다.
+5. **화면끼리 직접 import 끊기** — 광장 → 캐릭터 선택 미리보기, 결과 무대 → 광장 시선 등을 `app/common/character` 로 올린다(결과 불변 골든).
+6. **렌더러 하나로 통합** — 위 "화면마다 새 WebGL 문맥" 목록(플레이어 설정·캐릭터 선택·모드 메뉴·항구·프리 플레이 목록)을 앱 수명 three.js 렌더러 하나(`view/plazaGl` 방식 확장, `ScenePreparer`)에 그리게 바꾼다. 주소·문서 그대로, 화면만 바뀌는 배포 원칙(10.1)의 마지막 조각.
+7. **장면 계약·요청 API·Work(10.5)** — 아래 상태 참고.

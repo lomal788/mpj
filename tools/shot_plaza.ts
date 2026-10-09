@@ -1,5 +1,5 @@
 /**
- * 광장(menu00) 3D 헤드리스 촬영 — index.html?plaza=1 (docs/shell/plaza_3d.md §6.4 장면 목록). 결과: test/out/plaza/*.png
+ * 광장(menu00) 3D 헤드리스 촬영 — dev/index.html?plaza=1 (docs/shell/plaza_3d.md §6.4 장면 목록). 결과: test/out/plaza/*.png
  * 입력은 window.__plaza.press(slot, 버튼 비트, 스틱 {lx, ly}, 프레임 수)(script/plaza_page.ts), 상태는 window.__mpj.plaza()·__mpj.flow.
  * 위치를 옮기지 않고 레버·버튼만 넣는다(원본 이동·상호작용·온라인 흐름·기구 출발 → 모드 메뉴 전환을 그대로 탄다).
  * 걷기 경로는 무대 충돌(원본 CollisionMain)로 격자 A* 를 구해 경유점을 차례로 향한다(직선이면 생울타리·분수에 막힌다).
@@ -147,7 +147,7 @@ const tap = async (bits: number, ms = 1200): Promise<void> => {
 };
 
 try {
-  await page.goto(`${server.url}index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0011&online=fake&join=4`);
+  await page.goto(`${server.url}dev/index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0011&online=fake&join=4`);
   if (await wait('① 광장 로드', "m && m.flow === 'plaza' && d && d.models > 0", 180000)) {
     await page.waitForTimeout(1500);
     await shot('01_loaded');

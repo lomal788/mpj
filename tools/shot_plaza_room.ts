@@ -43,7 +43,7 @@ const open = async (tag: string, chars: string, name: string): Promise<Page> => 
     if (m.type() === 'error') errors.push(`${tag}: ${m.text()}`);
   });
   p.on('pageerror', (e) => errors.push(`${tag}: ${String(e)}`));
-  await p.goto(`${web.url}index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0111&chars=${chars}&names=${name}`);
+  await p.goto(`${web.url}dev/index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0111&chars=${chars}&names=${name}`);
   return p;
 };
 

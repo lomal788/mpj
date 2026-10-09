@@ -463,7 +463,7 @@ interface OnlineAdapter {
 
 **개발 서버·기본값**
 
-- `npm run dev`(= `tools/serve.ts`, 포트 51811 그대로): 앞단 node http 서버 하나에 ① express `createApp(fallback)`(9.5 와 같은 게임 라우터 `/api/v1/mpj-plaza/*`) — fallback 은 같은 프로세스의 **esbuild serve**(127.0.0.1 임의 포트, watch·`/esbuild` 변경 알림 그대로)로 요청을 넘긴다, ② socket.io `createSocket`(같은 http 서버에 붙어 `/socket.io/*` 의 폴링·**웹소켓 업그레이드**·클라이언트 스크립트를 직접 처리). 새 의존성 없음(express·socket.io 는 이미 있음). → `http://localhost:51811/index.html?plaza=1` 이 바로 실제 방 서버를 쓴다.
+- `npm run dev`(= `tools/serve.ts`, 포트 51811 그대로): 앞단 node http 서버 하나에 ① express `createApp(fallback)`(9.5 와 같은 게임 라우터 `/api/v1/mpj-plaza/*`) — fallback 은 같은 프로세스의 **esbuild serve**(127.0.0.1 임의 포트, watch·`/esbuild` 변경 알림 그대로)로 요청을 넘긴다, ② socket.io `createSocket`(같은 http 서버에 붙어 `/socket.io/*` 의 폴링·**웹소켓 업그레이드**·클라이언트 스크립트를 직접 처리). 새 의존성 없음(express·socket.io 는 이미 있음). → `http://localhost:51811/dev?plaza=1` 이 바로 실제 방 서버를 쓴다.
 - `npx tsx tools/serve.ts --dist`: web/dist 정적(배포 헤더) + 같은 API·socket.io. 배포 서버 `server/main.ts`(`--dist`·`--port`)는 원래부터 같은 출처 구성이라 그대로.
 - URL `online`: 없음·`io` = 실제 서버(같은 출처, `server=http://호스트:포트` 로 바꿈) · `fake` = 가짜(시험·데모) · `off` = 가짜·방 없음. 혼자·로컬 플레이는 친구 매치 메뉴에서 방 찾기·만들기를 고르기 전까지 통신 없음(9.5 그대로).
 - 서버가 없을 때(정적 호스팅만): 광장·로컬 플레이는 그대로, 친구 매치에서 방 찾기·만들기를 하면 ⑥ 대로 `sys_error_B3` 대화상자 → 광장.

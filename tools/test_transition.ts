@@ -391,12 +391,12 @@ console.log('11) 부팅 덮음·장면 들고 남(sceneOut → 정리 → sceneI
     ['script/modeselect_page.ts', /wipe\.release\(\);\s*void sceneOut\(\)\.then\(\(\) => \{\s*run\.stop\(\);/],
     ['script/mgmet_page.ts', /wipe\.release\(\);\s*void sceneOut\(\)\.then\(\(\) => \{\s*run\.stop\(\);/],
     ['script/setplayer_page.ts', /onCharSelect: \(r\) => \{\s*void sceneOut\(\)\.then\(\(\) => runCharSelect/],
-    ['script/main.ts', /await sceneOut\(\);\s*dispose\(\);/],
-    ['script/main.ts', /await sceneOut\(\);\s*const others/],
-    ['script/main.ts', /onDone: \(\) => void sceneOut\(\)\.then\(flowMgmet\)/],
-    ['script/main.ts', /onDone: \(\) => void sceneOut\(\)\.then\(\(\) => \(got \? flowPlaza/],
-    ['script/main.ts', /onExit: \(e\) =>\s*void sceneOut\(\)\.then/],
-    ['script/main.ts', /flowRun\?\.stop\(\);\s*flowRun = r;\s*if \(r\) sceneIn\(\);/],
+    ['script/app/flow/index.ts', /await sceneOut\(\);\s*dispose\(\);/],
+    ['script/app/flow/index.ts', /await sceneOut\(\);\s*const others/],
+    ['script/app/flow/index.ts', /onDone: \(\) => void sceneOut\(\)\.then\(flowMgmet\)/],
+    ['script/app/flow/index.ts', /onDone: \(\) => void sceneOut\(\)\.then\(\(\) => \(got \? flowPlaza/],
+    ['script/app/flow/index.ts', /onExit: \(e\) =>\s*void sceneOut\(\)\.then/],
+    ['script/app/flow/index.ts', /flowRun\?\.stop\(\);\s*flowRun = r;\s*if \(r\) sceneIn\(\);/],
     ['script/dev/ui_main.ts', /await sceneOut\(\);\s*stop\(\);/],
   ];
   for (const [p, re] of pages) ok(re.test(src(p)), `${p}: 정리 전에 sceneOut / 준비 뒤 sceneIn`, String(re));

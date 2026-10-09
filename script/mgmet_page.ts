@@ -49,6 +49,8 @@ export interface MgmetTestValues {
   nickname: string;
 }
 
+const MGMET_DEFAULT_VALUES: MgmetTestValues = { firstHowtoSeen: false, again: false, bossOpen: true, startPoint: 0, nickname: '' };
+
 const START_POINTS: [number, string][] = [
   [0, '0 일반 진입(인사)'],
   ...ACTIVITIES.map((a): [number, string] => [a.startPoint, `${a.startPoint} 직접: ${a.title}`]).sort((x, y) => x[0] - y[0]),
@@ -119,8 +121,9 @@ let lastTexts: Record<string, string> = {};
 export async function runMgmet(
   entry: 'hub' | 'rule',
   stage: HTMLElement,
-  cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; test: MgmetTestValues; onDone(result: string): void },
+  cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; test?: MgmetTestValues; onDone(result: string): void },
 ): Promise<MgmetRun> {
+  const test = cfg.test ?? MGMET_DEFAULT_VALUES;
   const canvas = document.createElement('canvas');
   canvas.className = 'jw-gl';
   stage.append(canvas);
@@ -170,10 +173,10 @@ export async function runMgmet(
   flow.initialize();
   const guides = new MgmetGuides(view, sound, () => input.operator);
   const save = appSave().mgm;
-  if (cfg.test.firstHowtoSeen) save.modeFlags |= MODE_FLAG.FIRST_HOWTO_MGM01;
-  if (cfg.test.again) save.modeFlags |= MODE_FLAG.OP_SKIP;
+  if (test.firstHowtoSeen) save.modeFlags |= MODE_FLAG.FIRST_HOWTO_MGM01;
+  if (test.again) save.modeFlags |= MODE_FLAG.OP_SKIP;
   const work = createWork();
-  work.entranceStartPoint = cfg.test.startPoint;
+  work.entranceStartPoint = test.startPoint;
   const howto = new MgmetHowtoView(view, input, sound);
 
   let done = false;
@@ -190,8 +193,8 @@ export async function runMgmet(
     work,
     players: () => players,
     howto,
-    bossOpen: cfg.test.bossOpen,
-    nickname: cfg.test.nickname,
+    bossOpen: test.bossOpen,
+    nickname: test.nickname,
     entry,
     transition: wipe,
     onDone: (r) => {

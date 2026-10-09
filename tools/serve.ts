@@ -1,10 +1,10 @@
 /**
  * 개발 서버 — esbuild watch + serve. web/ 전체를 정적으로 내주고 bundle/ 만 다시 만든다.
- * 고치면 다시 빌드하고, 페이지는 /esbuild 변경 알림을 받아 새로 고친다(script/main.ts 의 __DEV__ 블록).
+ * 고치면 다시 빌드하고, 페이지는 /esbuild 변경 알림을 받아 새로 고친다(script/dev/main.ts 의 __DEV__ 블록).
  * 방 서버도 같은 프로세스·같은 포트(docs/shell/online.md 9.6): 앞단 node http 서버에 express API(/api/v1/*, server/api) + socket.io(/socket.io/*, 웹소켓 업그레이드 포함, server/socket),
  * 나머지 요청은 안쪽 esbuild serve(127.0.0.1 임의 포트)로 넘긴다. 광장 친구 매치 기본 = 이 실제 방 서버(?online=fake 만 가짜).
  *
- *   npm run dev                  http://localhost:51811/  (광장 http://localhost:51811/index.html?plaza=1)
+ *   npm run dev                  http://localhost:51811/  (하네스 http://localhost:51811/dev, 광장 http://localhost:51811/dev?plaza=1)
  *   npx tsx tools/serve.ts --port 5190
  *   npx tsx tools/serve.ts --dist        배포 미리보기: web/dist/(npm run build 결과)를 배포 헤더로 내준다(server/static.ts — 사전 압축·immutable·ETag) + 같은 API·socket.io
  */
@@ -52,7 +52,9 @@ export async function startDevServer(o: { port?: number; host?: string; dist?: b
     const proxy = proxyTo(es.port);
     fallback = (req, res) => {
       const u = new URL(req.url ?? "/", "http://localhost");
-      if (!path.extname(u.pathname) && !u.pathname.endsWith("/") && fs.existsSync(path.join(WEB, `${decodeURIComponent(u.pathname)}.html`))) req.url = `${u.pathname}.html${u.search}`;
+      const local = path.join(WEB, decodeURIComponent(u.pathname));
+      if (!path.extname(u.pathname) && !u.pathname.endsWith("/") && fs.existsSync(`${local}.html`)) req.url = `${u.pathname}.html${u.search}`;
+      else if (fs.existsSync(path.join(local, "index.html")) && fs.statSync(local).isDirectory()) req.url = `${u.pathname.replace(/\/?$/, "/")}index.html${u.search}`;
       proxy(req, res);
     };
     dispose = () => ctx.dispose();
@@ -87,6 +89,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   console.log(
     dist
       ? `배포 미리보기: http://localhost:${s.port}/ (web/dist + 방 서버)`
-      : `개발 서버: http://localhost:${s.port}/ (네트워크: ${hosts.join(", ")}) — 방 서버(API + socket.io) 같은 포트, 광장 http://localhost:${s.port}/index.html?plaza=1`,
+      : `개발 서버: http://localhost:${s.port}/ (네트워크: ${hosts.join(", ")}) — 방 서버(API + socket.io) 같은 포트, 하네스 http://localhost:${s.port}/dev, 광장 http://localhost:${s.port}/dev?plaza=1`,
   );
 }

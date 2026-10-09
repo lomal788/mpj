@@ -134,8 +134,11 @@ const ORIGIN: V3 = { x: 0, y: 0, z: 0 };
 const MASTER = 'SQ_BGM_RC_MAIN_RHYTHM';
 /** 리듬 BGM 시퀀스 timebase 와 ENDPLAY_CHECK 위치(마디 384틱 중 376틱째) [데이터: SQ_BGM_MG1801_A·RC_MGCMN_OP FSEQ] */
 const RHYTHM_TIMEBASE = 96;
-/** ?synclog=1 기록처(main.ts 의 window.__mpj.sync.audio) */
-const syncLog = (): unknown[] | null => (globalThis as { __mpj?: { sync?: { audio: unknown[] } | null } }).__mpj?.sync?.audio ?? null;
+/** 소리 시각 기록 구독(시퀀서 노트·전역값 쓰기·렌더 BGM 출발 시각 [종류, …값]). null = 기록 안 함 */
+let soundTrace: ((e: unknown[]) => void) | null = null;
+export function setRhythmSoundTrace(fn: ((e: unknown[]) => void) | null): void {
+  soundTrace = fn;
+}
 const BAR_TICKS = 384;
 const ENDPLAY_TICK = 376;
 /** 게임 BGM 트랙 1 이 L0 = 1 을 쓰는 틱(접수 뒤 2박) [데이터] */
@@ -266,8 +269,8 @@ export class RmSoundMap {
     if (!this.engine || !sys) return null;
     const bufs = e.seq.waves.map((w) => sys.peek(this.assets.url(w.file)));
     if (target === MASTER) this.masterStarted = true;
-    const log = target === MASTER ? syncLog() : null;
-    const onNote = log ? (key: number, time: number, start: number): void => void log.push(['note', key, time, start]) : undefined;
+    const log = target === MASTER ? soundTrace : null;
+    const onNote = log ? (key: number, time: number, start: number): void => void log(['note', key, time, start]) : undefined;
     const s = this.engine.play(e.seq, bufs, e.bus, { pan, local: (local ?? undefined) as Record<number, number> | undefined, onNote, dest: out });
     return {
       alive: () => !s.finished,
@@ -347,7 +350,7 @@ export class RmSoundMap {
     let k = h.length;
     while (k > 0 && h[k - 1][0] > time) k--;
     h.splice(k, 0, [time, v]);
-    syncLog()?.push(['g', i, v, time, this.audio?.ctx.currentTime ?? null]);
+    soundTrace?.(['g', i, v, time, this.audio?.ctx.currentTime ?? null]);
   }
 
   /** time 까지 쓴 마지막 값(없으면 기본 −1) */
@@ -367,7 +370,7 @@ export class RmSoundMap {
     if (r.render.g8.length) this.g8Src = { start: time, g8: r.render.g8 };
     if (this.sys?.rules.supersede === 'web') this.stopLoopingBgm(r.h);
     r.file = this.startFile(r.label, r.entry, r.render.file, r.render.loop, undefined, r.render.durationSec, time, true, r.out);
-    syncLog()?.push(['bgmStart', r.label, time, this.audio?.ctx.currentTime ?? null]);
+    soundTrace?.(['bgmStart', r.label, time, this.audio?.ctx.currentTime ?? null]);
   }
 
   /** 출발한 렌더 BGM 의 음악 트랙 ENDPLAY_CHECK: 다른 곡이 요청된 뒤 첫 (출발 + 376 + 384k)틱에 G10 = 1 (G10 을 읽을 때 따진다) */

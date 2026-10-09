@@ -1,12 +1,12 @@
 /**
- * 게임 등록 틀 — 페이지(main.ts)는 이 인터페이스로만 게임을 다룬다(DESIGN 5절).
+ * 게임 등록 틀 — 페이지(app/flow)는 이 인터페이스로만 게임을 다룬다(DESIGN 5절).
  * 새 게임은 games/<id>/ 에 logic·view·state 를 두고 index.ts 에서 GameDef 를 만들어 app/minigame/index.ts 의 GAMES 에 더한다.
  *
  *   logic = def.createLogic(setup, play)        로직 = MgGame 훅(DOM 없음, 60Hz 고정 스텝, 노드에서도 돈다). 한 판 호스트 mgrun.ts 가 공용 틀 MgScene 에 꽂는다
  *   view  = def.createView(ctx, assets)         화면(three.js·HUD·소리), view.load() 로 에셋을 읽는다
  *   매 스텝: run.tick(view.observe?.(t)) → view.onStep(logic.state, logic.events)   (소리·이펙트·진동은 여기서, 입력은 FrameGate 경유)
  *   rAF 마다: view.render(logic.state)
- * 스텝 시각 t: 소리가 있으면 페이지가 오디오 시계(지금 들리는 AudioContext 시각)로 스텝을 맞추고, 스텝마다 그 스텝이 나타내는 시각을 준다(main.ts).
+ * 스텝 시각 t: 소리가 있으면 페이지가 오디오 시계(지금 들리는 AudioContext 시각)로 스텝을 맞추고, 스텝마다 그 스텝이 나타내는 시각을 준다(app/flow).
  *   끝: run.ended → def.describeResult(logic.result, setup), 모드 기록 = run.resultEntry(id)
  */
 import type { MgGame, MgPlaySettings } from '@app/minigame/frame/scene';

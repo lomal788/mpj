@@ -5,7 +5,7 @@
  *
  *   npx tsx server/main.ts --port 8787 [--external] [--watch]
  *   npx tsx server/main.ts --dist           배포 미리보기: npm run build 결과 web/dist/ 를 배포 헤더(사전 압축·immutable·ETag, server/static.ts)로 내줌, 번들 빌드 안 함
- *   → http://127.0.0.1:8787/index.html?plaza=1&online=io
+ *   → http://127.0.0.1:8787/dev?plaza=1&online=io
  */
 import fs from 'node:fs';
 import http from 'node:http';
@@ -51,6 +51,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse): void 
     let p = path.resolve(WEB, `.${rel}`);
     if (!p.startsWith(WEB + path.sep) && p !== WEB) throw new Error('outside');
     if (!path.extname(p) && !fs.existsSync(p) && fs.existsSync(`${p}.html`)) p = `${p}.html`;
+    else if (fs.existsSync(p) && fs.statSync(p).isDirectory() && fs.existsSync(path.join(p, 'index.html'))) p = path.join(p, 'index.html');
     const stat = fs.statSync(p);
     if (!stat.isFile()) throw new Error('not file');
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(p)] ?? 'application/octet-stream', 'Content-Length': stat.size, 'Cache-Control': 'no-cache' });
@@ -105,5 +106,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const port = i >= 0 ? Number(process.argv[i + 1]) : PLAZA_PORT;
   const host = process.argv.includes('--external') ? '0.0.0.0' : '127.0.0.1';
   const s = await startPlazaServer({ port, host, watch: process.argv.includes('--watch'), dist: process.argv.includes('--dist') });
-  console.log(`방 서버: ${host}:${s.port} — 페이지 http://127.0.0.1:${s.port}/index.html?plaza=1&online=io (Ctrl+C 로 끝)`);
+  console.log(`방 서버: ${host}:${s.port} — 페이지 http://127.0.0.1:${s.port}/dev?plaza=1&online=io (Ctrl+C 로 끝)`);
 }

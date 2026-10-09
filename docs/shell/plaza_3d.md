@@ -47,7 +47,7 @@
 | 조명 규칙 | 엔진 [07_camera_lighting.md](../engine/07_camera_lighting.md) §6.6(overwrite 회전 → 빛 방향, R = Rz·Ry·Rx, 로컬 −Z)·§7.3~7.5·§9.4~9.5, mg1801 `view/post.ts`(포스트 순서·FXAA·블룸 대응) | §6.7 env·post 값 |
 | 변환 | `graphics_convert.py`(세트 함수만 추가: menu00·menu_common)·`graphics_bntx.py`·`graphics_bfres2gltf`, 충돌 obj(`scene_apx.py` 산출물 그대로) | §6.7 |
 | 셰이더 그래프 판독 | `bnbshpk_split.py` → `bfsha_dump` → `sass_dis.py`(charselect.md 12.11 경로), 바다 p59 판독(mgmet_3d.md §10.4) | §6.8 |
-| 흐름 페이지 | `setplayer_page.ts`(플레이어 설정 → 캐릭터 선택 `charselect_page.ts`), `modeselect_page.ts`(모드 메뉴), `mgm01_page.ts` `runMgm01List`(프리 플레이 목록·DecideMinigameFlow·한 판 호출), main.ts `start()`(게임 실행) | §6.9 `index.html?plaza=1` 이 이 순서로 부른다 |
+| 흐름 페이지 | `setplayer_page.ts`(플레이어 설정 → 캐릭터 선택 `charselect_page.ts`), `modeselect_page.ts`(모드 메뉴), `mgm01_page.ts` `runMgm01List`(프리 플레이 목록·DecideMinigameFlow·한 판 호출), main.ts `start()`(게임 실행) | §6.9 `dev/index.html?plaza=1`(흐름 코드 `app/flow`, 배포 `/` 도 같은 흐름) 이 이 순서로 부른다 |
 | 2D·소리·입력 | mgmcommon(창·메시지·dialogBox·안내·정렬·소리 어댑터), online(알림·텔롭·OnlineAdapter) | D 갈래 |
 | 판독 C | `analysis/decomp/plaza_menu00_world.c`·`plaza_menu00_npc_seq.c`·`plaza_menu00_ui.c` | 새 판독은 §6.6(ApplyDecoItem 키 표·main DecoItemData)만 |
 
@@ -235,7 +235,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 임계 경로: A(2.5시간) → 통합 10(45분). B·C·D 는 A 의 manifest 계약만 받으면 같이 간다. **병렬 약 3.5시간**.
 
 ### 6.4 마지막 확인 = index.html 헤드리스 촬영 (tools/shot_plaza.ts, 1회)
-`index.html?plaza=1&fast=…` 로 ① 맵 로딩 직후 전경, ② 1번 레버 이동(걷기·달리기 모션), ③ 로컬 사람 2~4P 따라가기, ④ 상점 앞 PopGuide·장소 텔롭, ⑤ 가짜 온라인 입장 → 상단 알림 + 하단 파티 줄 + 대기 텔롭, ⑥ 기구 접근(카메라 섞임) → 출발 컷 → 모드 메뉴. 콘솔 오류 0. `test_plaza.ts`는 판독값을 이용한 재구현 시험이며 원본 실행 확인이 아니다(헤드리스는 웹 촬영).
+`dev/index.html?plaza=1&fast=…` 로 ① 맵 로딩 직후 전경, ② 1번 레버 이동(걷기·달리기 모션), ③ 로컬 사람 2~4P 따라가기, ④ 상점 앞 PopGuide·장소 텔롭, ⑤ 가짜 온라인 입장 → 상단 알림 + 하단 파티 줄 + 대기 텔롭, ⑥ 기구 접근(카메라 섞임) → 출발 컷 → 모드 메뉴. 콘솔 오류 0. `test_plaza.ts`는 판독값을 이용한 재구현 시험이며 원본 실행 확인이 아니다(헤드리스는 웹 촬영).
 
 ### 6.5 A 계약 — `web/script/app/scene/world/plaza/` (plaza-A, 2026-10-08) [설계]
 
@@ -282,7 +282,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 - 장면 UBO 값(원본 Layer·World 블록은 bfsha 에 필드 이름이 없음) [추정]: 바람 Layer[0x120..0x12c] = env_utility_parameter1(3.5 주파수, 0.8 주기 s, −66 방향°, 0.01 진폭 — menu00_env00.fmab 가 x·y·w 를 움직임) [sg1 추정], Layer[0x130..0x13c](야자잎) = env_utility_parameter2 [추정: 다음 vec4 — 값 (1,1,1,1)], 잡음 Layer[0x10]·World[0xe0] = windnoise00 [추정], World[0x4] = 경과 ms [추정], 태양 Layer[0x220] = 평행광 방향.
 - [근사]로 남은 것: World[0xf0](기구 주름 마스크) 정체 미확정 → windnoise00, 미할당 슬롯(_m0·_n0·stage_concrete sg_utility_texture2d1)의 원본 기본 텍스처 → 0 / 평면 노멀, Model 불투명도 = 1, SSS 의 그림자 결합(원본 min(sh,·) → three 곱)·환경 확산 Ns 생략, punchthrough 색 패스에 discard 없음(깊이 선행 패스 몫 [추정]) → glb alphaTest 유지, 변환기 결함: carpet00·quest_entrance 의 uv3(bake AO) 가 TEXCOORD_2 에 0 으로 들어감(GltfExport.cs Packed 정규식, 안 고침).
 
-### 6.9 페이지 진입 `index.html?plaza=1` [설계]
+### 6.9 페이지 진입 `dev/index.html?plaza=1` [설계]
 - main.ts `?charselect=1` 과 같은 꼴: 시작 버튼 → `setplayer_page.runSetPlayer`(플레이어 설정 → 캐릭터 선택) → `plaza_page.runPlaza`(광장, 고른 캐릭터·COM) → 기구(`exit({k:'balloon'})`) → `modeselect_page.runModeSelect`(모드 메뉴) → 프리 플레이면 `mgm01_page.runMgm01List`(목록·설정) → 한 판 요청 = 웹에 있는 게임(GAMES)이면 main.ts `start()` 로 실행, 없으면 목록 페이지의 가짜 한 판 → 목록으로 돌아감. 다른 모드·취소는 광장으로 돌아간다.
 - `?plaza=1&skipsetup=1` 은 플레이어 설정·캐릭터 선택을 건너뛰고 pc01~04(설정 패널 COM 체크) 로 바로 광장 [설계: 시험용]. `?deco=…` 는 §6.6.
 - 시험 훅 `window.__mpj.plaza` = 실행기 debug(프레임·모델 수·로드 통계·카메라·actors·부품 debug), `window.__plaza` = 실행기.
@@ -444,7 +444,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | 장식 세트 | **111항목 전부 원본 규칙(ApplyDecoItem·DecoItemData·ApplyBgBd)으로 구현**, 처음 값 = 기본 6개(`_Dft`, 풍선 2개 포함 모델 7) display·보드 배경 모두 잠김. `?deco=all` 등 시험값 | §6.6 [판독]. 새 저장 초기화 함수는 못 찾아 처음 값만 [추정] (조정자 지시로 "기본 세트만" 결정을 고침) |
 | 퀘스트·상점·데이터하우스·음악·랭킹 선택 | 다가가기 안내·텔롭까지만 하고, 들어가는 화면은 없음(A 는 무시) | 사용자가 정한 범위 밖(이벤트·NPC 대화) |
 | 첫 진입 연출(`SequenceFront`·`CollisionFirst`·intro 카메라) | 건너뛰고 `pc_plaza_balloon_pos_p<사람 수>_pc00`에서 바로 조작(§3.5) | 범위 밖 이벤트. 막(`CollisionFirst`)도 쓰지 않음 |
-| 진입 경로 | `index.html?plaza=1` → 광장 → 기구 → 모드 메뉴 → 미니게임 항구 프리 플레이 목록 → 게임 | 원본 흐름(기구 → menu01 모드 선택). menu01 3D 섬 월드는 기존 modeselect 2D 화면(임시 배경)으로 대신 [근사] |
+| 진입 경로 | `dev/index.html?plaza=1`(배포 `/` 도 같은 흐름) → 광장 → 기구 → 모드 메뉴 → 미니게임 항구 프리 플레이 목록 → 게임 | 원본 흐름(기구 → menu01 모드 선택). menu01 3D 섬 월드는 기존 modeselect 2D 화면(임시 배경)으로 대신 [근사] |
 | VFX(분수·장식 FX) | 후순위(0x43 분수 별 FX 포함) | 막힘 아님, 용량·시간 |
 | 셰이더 그래프 재질 | **판독해서 식대로 구현**(§6.8), 못 끝낸 것만 [근사] 목록 | 조정자 지시(원본 일치 우선) |
 | (A) 텍스처 축소 | 최대 변 1024(2048 한 장만 해당), KTX2 안 씀 | §6.7 [근사], 도구 없음 |

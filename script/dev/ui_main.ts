@@ -266,7 +266,7 @@ app.innerHTML = `
     <div>결과</div>
     <pre class="jw-ui-result"></pre>
     <div class="jw-ui-help">J = A(결정), K = B(취소), 방향키·WASD = 이동, 게임패드 지원</div>
-    <a href="./index.html">게임 페이지로</a>
+    <a href="./dev/index.html">게임 페이지로</a>
   </div>`;
 const stage = app.querySelector<HTMLElement>('.jw-stage')!;
 const msg = app.querySelector<HTMLElement>('.jw-msg')!;

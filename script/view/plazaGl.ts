@@ -394,9 +394,8 @@ export function plazaGl(): PlazaGl {
   }));
 }
 
-export function installPlazaGl(): void {
+export function installPlazaGl(params: URLSearchParams = new URLSearchParams()): void {
   if (G.__mpjPlazaGlInstalled || typeof location === 'undefined') return;
-  const params = new URLSearchParams(location.search);
   if (!prewarmEnabled(params)) return;
   G.__mpjPlazaGlInstalled = true;
   void import('./appFlow').then(({ appFlow }) => {

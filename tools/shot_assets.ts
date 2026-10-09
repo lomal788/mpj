@@ -275,9 +275,9 @@ async function diff(browser: Browser, a: string, b: string, out: string, base?: 
 }
 
 const SCENES: Record<string, string> = {
-  plaza: 'index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0011&fast=1',
-  charselect: 'index.html?charselect=1&com=0001&mute=1&auto=1',
-  mg1801: 'index.html?game=mg1801&seed=1&auto=1&mute=1&fast=1',
+  plaza: 'dev/index.html?plaza=1&skipsetup=1&mute=1&auto=1&com=0011&fast=1',
+  charselect: 'dev/index.html?charselect=1&com=0001&mute=1&auto=1',
+  mg1801: 'dev/index.html?game=mg1801&seed=1&auto=1&mute=1&fast=1',
 };
 
 /** 소리: 원본 wav 와 압축본을 같은 브라우저 디코더(OfflineAudioContext 48 kHz)로 풀어 길이·시작 어긋남·SNR 을 잰다 */
@@ -291,7 +291,7 @@ const AUDIO_SAMPLES = [
 ];
 async function audioCheck(browser: Browser, base: string): Promise<unknown[]> {
   const page = await browser.newPage();
-  await page.goto(`${base}index.html?assets=src`);
+  await page.goto(`${base}dev/index.html?assets=src`);
   const AUDIO_JS = `async (files, base) => {
       const dec = async (url) => {
         try {

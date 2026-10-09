@@ -4,7 +4,7 @@
  *
  *   npx tsx tools/sync_measure.ts [--gpu d3d11|swiftshader] [--load none|const30|spike] [--label 이름] [--sec 최대초] [--query &키=값] [--from 원자료.json.gz]
  *
- * 비교 기준은 "들리는 오디오 시각"이다: 스텝을 처리한 순간의 AudioContext.getOutputTimestamp 를 그 순간으로 늘인 값(main.ts heardTime).
+ * 비교 기준은 "들리는 오디오 시각"이다: 스텝을 처리한 순간의 AudioContext.getOutputTimestamp 를 그 순간으로 늘인 값(app/flow heardTime).
  * 차이 = (로직이 그 일을 한 스텝의 들리는 시각) − (오디오 쪽에서 그 소리가 난 AudioContext 시각). 양수 = 로직이 소리보다 늦다.
  * 부하: const30 = rAF 마다 30 ms 바쁜 대기, spike = 1 초마다 300 ms 바쁜 대기(rAF 를 감싼다, 페이지 코드는 그대로).
  * 결과: test/out/sync_<label>_<gpu>_<load>.json (요약 + 시간별 표본)
@@ -135,7 +135,7 @@ async function capture(): Promise<Raw> {
       if (m.type() === "error") errors.push(m.text());
     });
     await page.goto(
-      `${server.url}?game=mg1801&auto=1&mute=0&seed=1&com=1111&synclog=1${query}`,
+      `${server.url}dev/index.html?game=mg1801&auto=1&mute=0&seed=1&com=1111&synclog=1${query}`,
     );
     const t0 = Date.now();
     await page.waitForFunction(

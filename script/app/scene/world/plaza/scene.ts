@@ -12,7 +12,7 @@ import type { PlazaDecoState } from './types';
 
 /**
  * 원본 60 fps 고정 스텝 시계 — 지난 실시간(ms)을 원본 프레임 수로 바꾼다. 한 번에 최대 MAX_STEPS 까지만 따라잡고 넘친 밀림은 버린다
- * (긴 멈춤 뒤 여러 프레임 동안 빨리 감기처럼 도는 것을 막음 — main.ts 의 MAX_BACKLOG 와 같은 규칙) [설계].
+ * (긴 멈춤 뒤 여러 프레임 동안 빨리 감기처럼 도는 것을 막음 — app/flow 의 MAX_BACKLOG 와 같은 규칙) [설계].
  */
 export class FixedClock {
   static readonly STEP_MS = 1000 / 60;

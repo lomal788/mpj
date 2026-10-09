@@ -123,3 +123,17 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.jw-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #000;
+}
+
+.jw-play .jw-stage {
+  width: min(100vw, calc(100vh * 16 / 9));
+  border: 0;
+  align-self: center;
+}

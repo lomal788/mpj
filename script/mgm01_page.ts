@@ -60,7 +60,7 @@ export interface Mgm01Cfg {
   com: boolean[];
   pads: (PadSource | null)[];
   muted: boolean;
-  /** 한 판 요청을 페이지가 실제 게임으로 돌릴 때(index.html ?plaza=1). null·없음 = 가짜 한 판 */
+  /** 한 판 요청을 페이지가 실제 게임으로 돌릴 때(app/flow 흐름: / 배포·/dev?plaza=1). null·없음 = 가짜 한 판 */
   play?(req: Mgm01PlayRequest): Promise<MgResultEntry | null>;
   onDone(result: string): void;
 }

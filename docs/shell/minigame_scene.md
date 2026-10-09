@@ -576,7 +576,7 @@ mg1801 로직(`app/minigame/mg1801/logic/game.ts`)은 이미 MinigameFlow 8~13 �
 3. 매 프레임: `game.sound = view.observe(t)` → `scene.tick()`(게이트가 열면 한 프레임) → `view.onStep(game.state, game.events)` + 틀 사건 → `MgSceneSound` → 그리기 `view.render(state)` 뒤 틀 2D `MgSceneUi.draw(scene.layers())`.
 4. 끝 = `scene.stage === STAGE_END`(단계 0x13). 결과 = 12.12.4.
 
-실행 경로: `index.html?game=<id>`(패널 시작)과 광장 → 프리 플레이 목록의 `playFromList` 가 같은 `start()` → `createMgRun` 을 쓴다. 시험 페이지 `dev/ui?ui=mgscene&game=mg1801` 도 등록 게임을 같은 호스트로 돌린다(사운드 관측 없음 = 로직 프레임 모델, 끝나면 기록 byte 를 글로 보인다). `game` 이 없으면 예전처럼 더미 게임이다.
+실행 경로: `dev/index.html?game=<id>`(하네스 패널 시작)과 광장 → 프리 플레이 목록의 `playFromList` 가 같은 `start()` → `createMgRun` 을 쓴다. 시험 페이지 `dev/ui?ui=mgscene&game=mg1801` 도 등록 게임을 같은 호스트로 돌린다(사운드 관측 없음 = 로직 프레임 모델, 끝나면 기록 byte 를 글로 보인다). `game` 이 없으면 예전처럼 더미 게임이다.
 
 끼움점: 게임 에셋은 `assetsDir`(게임 manifest), 틀 에셋은 `assets/mgscene/`(tables·ui·sound)를 호스트가 판마다 읽는다. 화면 전환은 `MgSceneSetup.wipe = logicWipe()`(앱 전환이 로직 전환을 비춘다, [../engine/15_transition.md](../engine/15_transition.md)) — 장면 시작 단계 3 FadeIn(마지막 종류), 나갈 때 단계 16 FadeOut(White, 1.0).
 
@@ -653,7 +653,7 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
 | 자이로 | MGList UseGyro → flag 6(`Mgm01SetupMinigamePlayInfo`) | `play.useGyro` | 전달만. 입력은 게이트 패드의 acc(있으면 Params.acc 비교), 없으면 A |
 | 순서 | GetOrder | `order` = pid | 레인 = pid(그대로) |
 
-직접 실행(`index.html?game=mg1801`)은 패널 설정(`mode`·`course`·`cpuMiss`)을 쓰고, 프리 플레이에서 온 `play.rhythm` 이 있으면 그것이 모드를 정한다.
+직접 실행(`dev/index.html?game=mg1801`)은 패널 설정(`mode`·`course`·`cpuMiss`)을 쓰고, 프리 플레이에서 온 `play.rhythm` 이 있으면 그것이 모드를 정한다.
 
 #### 12.12.6 결정성 규칙 (2026-10-09 사용자 결정 — 게임 계약)
 

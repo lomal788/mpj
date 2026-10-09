@@ -1,5 +1,5 @@
 /**
- * 로더 관리자 실측(헤드리스 1회) — index.html?plaza=1 을 Chrome 망 제한(기본 4G 9 Mbps·RTT 170 ms, CDP Network.emulateNetworkConditions)으로
+ * 로더 관리자 실측(헤드리스 1회) — dev/index.html?plaza=1 을 Chrome 망 제한(기본 4G 9 Mbps·RTT 170 ms, CDP Network.emulateNetworkConditions)으로
  * 이전 방식(?loader=seq)과 단계 로딩(staged)을 새 캐시로 한 번씩 열어 잰다. 설계: docs/engine/loader_manager.md §7·§12.
  *
  * 재는 것: 첫 프레임(흐름 'plaza' 가 된 뒤 첫 rAF)까지 시간·받은 양, 그 뒤 RUN_S 초 동안(앞으로 걷기 포함) 50 ms 넘는 프레임 수·최대 프레임,
@@ -71,7 +71,7 @@ async function runOne(mode: 'seq' | 'staged'): Promise<void> {
       requestAnimationFrame(loop); })();`,
   );
   const t0 = Date.now();
-  await page.goto(`${server.url}index.html?plaza=1&skipsetup=1&mute=1&auto=1&assets=${ASSETS}&loader=${mode}`);
+  await page.goto(`${server.url}dev/index.html?plaza=1&skipsetup=1&mute=1&auto=1&assets=${ASSETS}&loader=${mode}`);
   const renderer = await page.evaluate(() => {
     const gl = document.createElement('canvas').getContext('webgl2');
     const ext = gl?.getExtension('WEBGL_debug_renderer_info');

@@ -1,6 +1,6 @@
 /**
  * 페이지 ↔ 광장(menu00) 3D 모듈(app/scene/world/plaza) 연결 — 캔버스·2D 겹·입력(PadSource → PlazaPad)·소리(라벨 표)·60Hz 고정 스텝 루프.
- * 흐름(setplayer → 광장 → 모드 메뉴 → 프리 플레이)은 main.ts `?plaza=1` 이 잇는다(docs/shell/plaza_3d.md §6.9).
+ * 흐름(setplayer → 광장 → 모드 메뉴 → 프리 플레이)은 app/flow 가 잇는다(/ 배포·/dev `?plaza=1`)(docs/shell/plaza_3d.md §6.9).
  * 에셋은 앱 로더 관리자(view/appAssets.ts)로 — 광장 무대 단계 로딩(P0 만 기다림), 소리 바이트는 P3 로 미리 받고 디코드는 이 페이지 문맥에서
  * (docs/engine/loader_manager.md §11.4). 나갈 때 release('plaza')(지우지 않음 — 다시 들어오면 캐시에서).
  * 캔버스·렌더러는 앱 수명 광장 렌더러(view/plazaGl.ts, §14) — 들어갈 때 붙이고(앞 화면에서 미리 만든 world 가 있으면 넘겨받음), 나갈 때 프로그램 고정 뒤
@@ -35,7 +35,7 @@ export interface PlazaPageCfg {
   names?: string[];
   pads: (PadSource | null)[];
   muted: boolean;
-  params: URLSearchParams;
+  params?: URLSearchParams;
   onExit(e: PlazaExit): void;
   onProgress?(n: number, total: number, what: string): void;
 }
@@ -70,8 +70,9 @@ function toPad(p: PadInput | null): PlazaPad | null {
 }
 
 export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<PlazaPageRun> {
-  const gl = plazaGlEnabled(cfg.params) ? plazaGl() : null;
-  const entry = gl?.enter(stage, cfg.params, cfg.onProgress) ?? null;
+  const params = cfg.params ?? new URLSearchParams();
+  const gl = plazaGlEnabled(params) ? plazaGl() : null;
+  const entry = gl?.enter(stage, params, cfg.onProgress) ?? null;
   const canvas = entry?.canvas ?? document.createElement('canvas');
   canvas.className = 'jw-gl';
   const overlay = document.createElement('div');
@@ -90,7 +91,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
   const extra = cfg.com.map(() => ({ buttons: 0, stick: null as { lx: number; ly: number } | null, frames: 0 }));
   const cur: (PlazaPad | null)[] = cfg.com.map(() => null);
   const players: PlazaPlayerSetup[] = cfg.com.map((isCom, slot) => ({ slot, chara: cfg.chars[slot] ?? `pc0${slot + 1}`, isCom, local: true, name: cfg.names?.[slot] ?? `${slot + 1}P` }));
-  const deco = cfg.params.has('deco') ? parseDecoParam(cfg.params.get('deco') ?? '') : undefined;
+  const deco = params.has('deco') ? parseDecoParam(params.get('deco') ?? '') : undefined;
   let exited = false;
   const run = await startPlaza({
     canvas,
@@ -112,7 +113,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       },
     },
     save: appSave().plaza,
-    params: cfg.params,
+    params,
     deco,
     onProgress: cfg.onProgress,
     onExit: (e) => {
@@ -149,7 +150,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
   const ro = new ResizeObserver(fit);
   ro.observe(stage);
 
-  const fast = Math.max(0, Number(cfg.params.get('fast') ?? 0) || 0);
+  const fast = Math.max(0, Number(params.get('fast') ?? 0) || 0);
   let raf = 0;
   let last = performance.now();
   const clock = new FixedClock();

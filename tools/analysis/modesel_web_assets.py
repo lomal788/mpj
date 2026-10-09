@@ -1,4 +1,4 @@
-"""모드 선택(맵 메뉴) 화면(독립 모듈 web/script/shell/modeselect) 에셋 — 원본 레이아웃·폰트·메시지·소리 → web/assets/modeselect.
+"""모드 선택(맵 메뉴) 화면(독립 모듈 web/script/app/scene/menu/modeselect) 에셋 — 원본 레이아웃·폰트·메시지·소리 → web/assets/modeselect.
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/modesel_web_assets.py
 

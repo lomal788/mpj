@@ -402,7 +402,7 @@ c 가 잠김 또는 22(랜덤): win/x_text_chara 숨김, 모델 없음 → 끝 (
 
 ### 9.1 원칙
 
-- 위치 `web/script/shell/charselect/`. import 허용: 같은 폴더, `three`, `three/examples/jsm/loaders/GLTFLoader.js`. **금지**: `script/game/core`, `script/games`, `script/view`, `script/game.ts`, `script/env.ts`. 검사 도구가 import 그래프를 확인한다.
+- 위치 `web/script/app/scene/menu/charselect/`. import 허용: 같은 폴더, `three`, `three/examples/jsm/loaders/GLTFLoader.js`. **금지**: `script/game/core`, `script/games`, `script/view`, `script/game.ts`, `script/env.ts`. 검사 도구가 import 그래프를 확인한다.
 - 원본 레이아웃 재생기(view/lyt.ts)를 쓰지 않는다. 변환기가 원본 bflyt/bflan 을 **자체 명세 JSON**(노드 트리·재질·애니 곡선, 자체 필드 이름)으로 바꾸고, 모듈 안의 작은 2D 렌더러가 그 명세를 그린다.
 - 입력·소리·에셋 경로·난수·잠금 플래그는 어댑터로 받는다.
 

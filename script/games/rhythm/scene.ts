@@ -14,13 +14,13 @@
  * 1·3 은 리듬 쿠킹(rc_stage01) 코스 안에서만 나오므로 그 경로(+0x1C = 1, 코스 index, +0x2C)를 함께 둔다(web/docs/minigame/rc_stage01.md).
  *
  * 원본과 다른 점:
- * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 공용 틀 shell/mgscene 이 돈다(리듬 장면 훅은 모두 1,
+ * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 공용 틀 app/scene/minigame/mgscene 이 돈다(리듬 장면 훅은 모두 1,
  *   docs/shell/minigame_scene.md §12.12.3).
  * - 리듬 쿠킹의 컨트롤 안내 와이프(RmUiCntWipe 표시)는 닫히는 때를 정하는 내부 갱신을 판독하지 못했다 [미확정]. 웹은 바로 끝난 것으로 둔다
  *   (시험은 controlWipeFrames 로 길이를 넣어 SQ_BGM_RC_CALIBRATION 조건을 본다).
  * - 리믹스 BGM(SQ_BGM_RC_REMIX)의 L0=1 시점은 mg18xx A·C 와 같은 "시작 2박 뒤"로 둔다 [추정].
  * - 원본 결과 점수판(FUN_7100448610)을 시작한 프레임을 state.resultPanelFrame 에 남기고, 점수판 람다가 끝날 때(RESULT_PANEL_FRAMES 뒤) done.
- * mgscene(shell/mgscene MgGame) 위에서 흐름 슬롯(onGameStartAfter…onGameEnding)·update()·updateAnimation() 을 그대로 쓴다
+ * mgscene(app/scene/minigame/mgscene MgGame) 위에서 흐름 슬롯(onGameStartAfter…onGameEnding)·update()·updateAnimation() 을 그대로 쓴다
  * (어댑터 mgGame.ts RmMgGame, 흐름 단계 진행은 틀 MinigameFlow) — 02_rhythm.md 14.6.
  */
 import type { RmChartRow } from './chart';
@@ -338,7 +338,7 @@ export abstract class RmMgSceneBase {
   /**
    * 원본 MinigameFlow 단계 11 FUN_71002e1910: OnGameFinish(=1) 뒤 하위 0 에서 끝 텔롭(FUN_71002e2e90)을 시작한다.
    * 리듬 장면은 SetupGame 이 SetFinishTelop(−1) 이라 텔롭이 없어 하위 99 → 다음 프레임 단계 12 [판독 + 추정: 엔티티 없음 → 0].
-   * (그 두 프레임 세기는 공용 틀 shell/mgscene 의 단계 11 이 한다)
+   * (그 두 프레임 세기는 공용 틀 app/scene/minigame/mgscene 의 단계 11 이 한다)
    */
   onGameFinish(): boolean {
     /* MinigameFlow 단계 11 FUN_71002e1910 의 끝 텔롭 하위 단계(onGameFinish 머리 주석) */

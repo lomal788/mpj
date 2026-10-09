@@ -1,4 +1,4 @@
-"""온라인 멀티 화면(web/script/shell/online) 에셋 → web/assets/online/online.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
+"""온라인 멀티 화면(web/script/app/scene/menu/online) 에셋 → web/assets/online/online.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/online_web_assets.py [임시 폴더]
 

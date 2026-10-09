@@ -7,7 +7,7 @@
 import { installUrlShim } from '../cache/urlShim';
 import { syncServiceWorker } from '../cache/swClient';
 import { ASSET_MODE, ASSETS_DIST, ASSETS_SRC, BASE, DEV } from '../env';
-import { assetHooks } from '../shell/charselect/assetHooks';
+import { assetHooks } from '@app/scene/menu/charselect/assetHooks';
 import { assetStats, configureAssetLoader, createGltfLoader, distReady, distUrl, installFetchShim, loadTexture, loadUiImage, textureFromImage, type UiImage } from '../shell/stage3d/assetLoader';
 
 const q = typeof location !== 'undefined' ? new URLSearchParams(location.search) : null;

@@ -1,5 +1,5 @@
 /**
- * 공용 에셋 변환기(tools/analysis/asset_convert.py + mg_assets.py)·미니게임 장면 로더(shell/mgstage) 노드 시험 — WebGL·헤드리스 없음.
+ * 공용 에셋 변환기(tools/analysis/asset_convert.py + mg_assets.py)·미니게임 장면 로더(app/scene/minigame/mgstage) 노드 시험 — WebGL·헤드리스 없음.
  * 설계: docs/engine/13_asset_converter.md §11.
  *   1 manifest 유효성(게임 5개)  2 참조 파일 존재(404 0)  3 glb 로드(three GLTFLoader, 텍스처 대신 빈 Texture)  4 셰이더 그래프 graph.ts 형식
  *   5 공용 폴더 중복 0  6 기존 산출물 비교(mg1801·광장 — 변환기 중간 출력 analysis/asset_convert 와 바이트 비교)  7 로더 단계 묶음·미리 받기
@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { P0, P1, P2, P3 } from '@game/lib/assetcore';
-import { applyFsnb, MgCamera, mgStageKey, mgStageP0Paths, mgStagePlan, normPath, parseFsnb, CAMERA_MIN_NEAR, type MgManifest } from '../script/shell/mgstage';
+import { applyFsnb, MgCamera, mgStageKey, mgStageP0Paths, mgStagePlan, normPath, parseFsnb, CAMERA_MIN_NEAR, type MgManifest } from '@app/scene/minigame/mgstage';
 import { graphSource, type GraphDef } from '../script/shell/stage3d/graph';
 import { classify, isTex3d } from './assets_tex';
 
@@ -272,8 +272,8 @@ console.log('9. 압축 분류(converted.json)');
 
 console.log('10. import 경계');
 {
-  const dir = join(WEB, 'script', 'shell', 'mgstage');
-  const allow = /^(three|\.\/[a-z]+|\.\.\/stage3d|\.\.\/stage3d\/assetHandlers|\.\.\/plaza\/world|@game\/lib\/assetcore|@game\/lib\/assetcore-three|@game\/lib\/splitscreen|@game\/lib\/splitscreen-three)$/;
+  const dir = join(WEB, 'script', 'app', 'scene', 'minigame', 'mgstage');
+  const allow = /^(three|\.\/[a-z]+|(\.\.\/)+shell\/stage3d|(\.\.\/)+shell\/stage3d\/assetHandlers|@app\/scene\/world\/plaza\/world|@game\/lib\/assetcore|@game\/lib\/assetcore-three|@game\/lib\/splitscreen|@game\/lib\/splitscreen-three)$/;
   for (const fn of readdirSync(dir)) {
     const src = readFileSync(join(dir, fn), 'utf8');
     for (const mm of src.matchAll(/from '([^']+)'/g)) ok(allow.test(mm[1]), `${fn}: import '${mm[1]}'`);

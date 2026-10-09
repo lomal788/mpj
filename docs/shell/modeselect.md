@@ -225,7 +225,7 @@ b == −1: x_text_mess 숨김; 아니면 보임 + mn01_map_ui_mode_detail("[1:1:
 ## 9. 웹 포팅 구조 (독립 모듈 명세)
 
 ### 9.1 원칙
-- 위치 `web/script/shell/modeselect/`. import 허용: 같은 폴더, `three`, **`../charselect/scene2d`·`../charselect/render2d`·`../charselect/state`(RepeatGen)·`../charselect/types`(명세 형식)** (공용으로 끌어올리지 않고 그대로 import). 금지: `script/game/core`·`script/games`·`script/view`·`script/game.ts`·`script/env.ts`. 3D 없음(셰이더 미리 컴파일 대상 없음 — 2D 셰이더 1개는 화면 시작 때 첫 그리기 전에 `compile` 한다).
+- 위치 `web/script/app/scene/menu/modeselect/`. import 허용: 같은 폴더, `three`, **`../charselect/scene2d`·`../charselect/render2d`·`../charselect/state`(RepeatGen)·`../charselect/types`(명세 형식)** (공용으로 끌어올리지 않고 그대로 import). 금지: `script/game/core`·`script/games`·`script/view`·`script/game.ts`·`script/env.ts`. 3D 없음(셰이더 미리 컴파일 대상 없음 — 2D 셰이더 1개는 화면 시작 때 첫 그리기 전에 `compile` 한다).
 - 명세 JSON 형식은 charselect `Spec` 의 레이아웃·폰트·텍스처 부분을 그대로 쓰고, 이 화면 표(`modes`)·텍스처 덮어쓰기(`partTex`)를 더한다.
 
 ### 9.2 파일

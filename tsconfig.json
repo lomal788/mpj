@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "types": ["node"],
-    "paths": { "@game/*": ["./script/game/*"] }
+    "paths": { "@game/*": ["./script/game/*"], "@app/*": ["./script/app/*"] }
   },
   "include": ["script", "tools", "server"],
   "exclude": ["tools/analysis"]

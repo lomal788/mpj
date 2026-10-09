@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 모드 선택 독립 모듈(shell/modeselect) 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. charselect_page.ts 와 같은 방식.
+ * 페이지 ↔ 모드 선택 독립 모듈(app/scene/menu/modeselect) 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. charselect_page.ts 와 같은 방식.
  *   bex 비트: A 0x1, B 0x2, 0x8(취소에 같이 쓰임, Y [추정]), 십자 아래 0x400·위 0x800, 스틱 위 0x20000·아래 0x80000 (docs/shell/modeselect.md 5절)
  */
 import { ASSETS } from './env';
@@ -8,7 +8,7 @@ import { appFlow } from './view/appFlow';
 import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
-import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from './shell/modeselect';
+import { createModeSelect, type ModeSelectFlags, type ModeSelectHandle, type ModeSelectResult } from '@app/scene/menu/modeselect';
 import type { PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;

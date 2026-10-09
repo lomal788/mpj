@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 광장(menu00) 3D 모듈(shell/plaza) 연결 — 캔버스·2D 겹·입력(PadSource → PlazaPad)·소리(라벨 표)·60Hz 고정 스텝 루프.
+ * 페이지 ↔ 광장(menu00) 3D 모듈(app/scene/world/plaza) 연결 — 캔버스·2D 겹·입력(PadSource → PlazaPad)·소리(라벨 표)·60Hz 고정 스텝 루프.
  * 흐름(setplayer → 광장 → 모드 메뉴 → 프리 플레이)은 main.ts `?plaza=1` 이 잇는다(docs/shell/plaza_3d.md §6.9).
  * 에셋은 앱 로더 관리자(view/appAssets.ts)로 — 광장 무대 단계 로딩(P0 만 기다림), 소리 바이트는 P3 로 미리 받고 디코드는 이 페이지 문맥에서
  * (docs/engine/loader_manager.md §11.4). 나갈 때 release('plaza')(지우지 않음 — 다시 들어오면 캐시에서).
@@ -10,9 +10,9 @@ import { STICK_MAX, type PadInput } from '@game/core/pad';
 import { ASSET_MODE, ASSETS } from './env';
 import { P3 } from '@game/lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
-import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from './shell/plaza';
-import { parseDecoParam } from './shell/plaza/deco';
-import { AREA } from './shell/plaza/interact';
+import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from '@app/scene/world/plaza';
+import { parseDecoParam } from '@app/scene/world/plaza/deco';
+import { AREA } from '@app/scene/world/plaza/interact';
 import { appFlow } from './view/appFlow';
 import { appBgm } from './view/bgm';
 import { appSave } from './view/save';

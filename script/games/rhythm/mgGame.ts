@@ -1,5 +1,5 @@
 /**
- * 리듬 장면(RmMgSceneBase) → 미니게임 공용 틀(shell/mgscene MgGame) 어댑터. import 0(같은 폴더만) — 틀 문맥은 구조 형식 RmHost 로만 받는다.
+ * 리듬 장면(RmMgSceneBase) → 미니게임 공용 틀(app/scene/minigame/mgscene MgGame) 어댑터. import 0(같은 폴더만) — 틀 문맥은 구조 형식 RmHost 로만 받는다.
  * 단계 대응·프레임 순서·흰 페이드·끝 처리: docs/shell/minigame_scene.md §12.12.2, docs/engine/02_rhythm.md §14.6.
  * update = 패드 → 사건 비우기·사운드 관측·frame++·흐름 갱신 → 파이버들, 흐름 처리기 = 리듬 흐름 슬롯, onGameSequenceAfter = updateAnimation.
  * 결과 연출이 끝난(done) 프레임부터는 처리기·애니를 돌리지 않고 사건만 비운다. 리믹스 연속의 RequestReturnScene 은 host.requestReturnScene.

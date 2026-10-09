@@ -303,7 +303,7 @@ freePlay:
 
 ## 9. 웹 포팅 구조 — 제안, 코드 없음
 
-[추정][웹 이름] `web/script/shell/mgmet/`에 허브 순수 상태와 뷰 어댑터를 둔다. import 경계/레이아웃·텍스트·메시지·SE·안내 재사용은 mgm_common §9.1~9.4를 따른다. 기존 엔진층을 끌어오거나 공용 기능을 이 모듈에 다시 구현하지 않는다.
+[추정][웹 이름] `web/script/app/scene/world/mgmet/`에 허브 순수 상태와 뷰 어댑터를 둔다. import 경계/레이아웃·텍스트·메시지·SE·안내 재사용은 mgm_common §9.1~9.4를 따른다. 기존 엔진층을 끌어오거나 공용 기능을 이 모듈에 다시 구현하지 않는다.
 
 3D 무대(섬·바다·NPC·카메라) 규모 조사와 웹 반영 계획(2026-10-08) → [mgmet_3d.md](mgmet_3d.md).
 
@@ -323,7 +323,7 @@ freePlay:
 
 ### 9.1 구현 계약 (2026-10-07, 웹 구현 — 액티비티 선택·첫 설명)
 
-코드 = `web/script/shell/mgmet/`(`index.ts`). 공용 부품은 `../mgmcommon`(mgm_common.md 9.6)을 그대로 쓰고, import 경계는 같은 폴더·mgmcommon·charselect 공용(scene2d/render2d/state/types)·three(`tools/check_mgmcommon.ts` 6절이 함께 검사). 플레이 방법 화면(`howto.ts`, 조정자 작성)은 `types.ts` 의 `MgmetHowto` 인터페이스로 허브에 주입한다.
+코드 = `web/script/app/scene/world/mgmet/`(`index.ts`). 공용 부품은 `../mgmcommon`(mgm_common.md 9.6)을 그대로 쓰고, import 경계는 같은 폴더·mgmcommon·charselect 공용(scene2d/render2d/state/types)·three(`tools/check_mgmcommon.ts` 6절이 함께 검사). 플레이 방법 화면(`howto.ts`, 조정자 작성)은 `types.ts` 의 `MgmetHowto` 인터페이스로 허브에 주입한다.
 
 | 파일 | 원본 대응 | 내용 |
 |---|---|---|
@@ -430,6 +430,6 @@ freePlay:
 
 ### 9.x 구현 기록 — 플레이 방법 단독 화면 (2026-10-07)
 
-[설계] `script/shell/mgmet/howto.ts` `MgmetHowtoView`(types.ts `MgmetHowto` 구현): 설명 그림 창 `mgmet_act_img_00`(x_img_00 칸 1 = `<pict>_NN^o`, 페이지별 정보 페인) + 독립 메시지 창. UpdateManual 지역 변수 세부가 문서에 없어 페이지들을 한 메시지 묶음으로 열고 현재 페이지 번호로 그림을 바꾼다. 다시 보기에서 페이지 0 넘김 대기 중 B = CANCEL·반환 0, 마지막 페이지 A = 반환 1, 이전 페이지 돌아가기 없음. 확인 `dev/ui?ui=mgmet-howto&first=1|0&howto=1~6`. 남은 문제: 2페이지 정보 글자(`x_free_00` "2 vs 2 미니게임")가 헤드리스 화면에 보이지 않는다(글꼴·표시 플래그는 정상, 원인 미확인).
+[설계] `script/app/scene/world/mgmet/howto.ts` `MgmetHowtoView`(types.ts `MgmetHowto` 구현): 설명 그림 창 `mgmet_act_img_00`(x_img_00 칸 1 = `<pict>_NN^o`, 페이지별 정보 페인) + 독립 메시지 창. UpdateManual 지역 변수 세부가 문서에 없어 페이지들을 한 메시지 묶음으로 열고 현재 페이지 번호로 그림을 바꾼다. 다시 보기에서 페이지 0 넘김 대기 중 B = CANCEL·반환 0, 마지막 페이지 A = 반환 1, 이전 페이지 돌아가기 없음. 확인 `dev/ui?ui=mgmet-howto&first=1|0&howto=1~6`. 남은 문제: 2페이지 정보 글자(`x_free_00` "2 vs 2 미니게임")가 헤드리스 화면에 보이지 않는다(글꼴·표시 플래그는 정상, 원인 미확인).
 
 정정(2026-10-07, online.md 4.9): 위 [미확정] "버튼 아이콘 E000→E004 류 치환" — 치환을 찾지 못했다: 게임 문구는 E000~E003(버튼 위치 다이아몬드)만 쓰고 E004~E007(글자 단추)은 글꼴 글자 목록에만 있으며 main 에 0xe004~0xe007 즉시값 명령이 없다 [데이터][판독: 명령 검색]. 다이아몬드 그대로가 원본 표시로 본다(실행 대조 없음).

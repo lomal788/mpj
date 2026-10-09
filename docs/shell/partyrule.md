@@ -290,7 +290,7 @@ C 는 switch 본문이 빠져 있어(case 마다 break 만) 어셈블리로 확�
 ## 9. 웹 포팅 구조와 구현 순서
 
 ### 9.1 위치·의존
-`web/script/shell/partyrule/`(엔진 독립). import 허용: 같은 폴더, `../mgmcommon`, `three`, `../charselect/{scene2d,render2d,state,types}` (mgm_common.md 9.1 과 같음). 페이지 어댑터 `web/script/partyrule_page.ts`, UI 등록 `web/script/ui_main.ts` UIS 끝 `partyrule`. 에셋 `web/assets/partyrule/partyrule.json`(+tex/pr·font·sound) ← `web/tools/analysis/partyrule_web_assets.py`(mgmcommon_web_assets.Bundle 재사용), 얼굴은 `../mgm01/faces.json` 을 함께 합친다.
+`web/script/app/scene/menu/partyrule/`(엔진 독립). import 허용: 같은 폴더, `../mgmcommon`, `three`, `../charselect/{scene2d,render2d,state,types}` (mgm_common.md 9.1 과 같음). 페이지 어댑터 `web/script/partyrule_page.ts`, UI 등록 `web/script/ui_main.ts` UIS 끝 `partyrule`. 에셋 `web/assets/partyrule/partyrule.json`(+tex/pr·font·sound) ← `web/tools/analysis/partyrule_web_assets.py`(mgmcommon_web_assets.Bundle 재사용), 얼굴은 `../mgm01/faces.json` 을 함께 합친다.
 
 ### 9.2 파일과 책임
 | 파일 | 원본 | 책임 |

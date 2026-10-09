@@ -82,7 +82,7 @@ main `ComMatter`가 `common/data/actorparam.json` 값을 액터에 적용하고,
 
 ### 3.5 B 갈래 판독 결과 — 1번 플레이어 이동·추종 카메라 (2026-10-08, plaza-B)
 
-근거: `FollowPlayerImpl` 은 Ghidra C 가 위치 계산을 잃어서 **어셈블리**(menu00 @0x7100003de0~0x71000047a0)로 다시 읽었다. main 은 `extracted/exefs/main.decomp.bin` 평면 이미지 어셈블리. 구현 `web/script/shell/plaza/{player,camera}.ts`, 시험 `web/tools/test_plaza_move.ts`. 캐릭터 에셋 `web/tools/analysis/plaza_player_assets.py` → 명세 `web/assets/plaza/player/spec.json` + 공용 `web/assets/chara/`([chara_assets.md](../engine/chara_assets.md), 22명, charselect 와 같은 `charsel_chara.convert` 파이프라인, 클립 co_idle00·co_walk00·co_run00·co_look02·co_nod00·mn_bnclr_get00(40f 1회)·mn_bnclr_idle00(루프, 기구 출발 쌍안경 받기 §6.10 ④) + 깜빡임, `spec.json` 에 sys_pc.mpat 전이 6항목, 크기는 chara_assets.md §9). 그리기는 charselect `Preview3D`(몸·눈 셰이더 그래프·깜빡임·보임) 한 칸의 모델을 광장 장면으로 옮기고 `stage.prepare` 로 캐릭터 IBL 을 건다. 부품 계약: `parts.ts` 의 player·camera, `ctx.actors` 에 kind 'input' 하나, 사건 `player:input`(false = 입력 끔, 원본 StopInputControl; true 면 아래 고정 모션도 풂)·`player:play`({clip, next?} = 1번 모션 직접 재생, 예 TakeOffGet `{clip:'mn_bnclr_get00', next:'mn_bnclr_idle00'}`, 입력이 다시 켜질 때까지 이동 모션이 덮지 않음)·`camera:follow`(false = 추종 끔)·`camera:reset`(목표를 char_plaza_default_pos 또는 준 Vector3 로).
+근거: `FollowPlayerImpl` 은 Ghidra C 가 위치 계산을 잃어서 **어셈블리**(menu00 @0x7100003de0~0x71000047a0)로 다시 읽었다. main 은 `extracted/exefs/main.decomp.bin` 평면 이미지 어셈블리. 구현 `web/script/app/scene/world/plaza/{player,camera}.ts`, 시험 `web/tools/test_plaza_move.ts`. 캐릭터 에셋 `web/tools/analysis/plaza_player_assets.py` → 명세 `web/assets/plaza/player/spec.json` + 공용 `web/assets/chara/`([chara_assets.md](../engine/chara_assets.md), 22명, charselect 와 같은 `charsel_chara.convert` 파이프라인, 클립 co_idle00·co_walk00·co_run00·co_look02·co_nod00·mn_bnclr_get00(40f 1회)·mn_bnclr_idle00(루프, 기구 출발 쌍안경 받기 §6.10 ④) + 깜빡임, `spec.json` 에 sys_pc.mpat 전이 6항목, 크기는 chara_assets.md §9). 그리기는 charselect `Preview3D`(몸·눈 셰이더 그래프·깜빡임·보임) 한 칸의 모델을 광장 장면으로 옮기고 `stage.prepare` 로 캐릭터 IBL 을 건다. 부품 계약: `parts.ts` 의 player·camera, `ctx.actors` 에 kind 'input' 하나, 사건 `player:input`(false = 입력 끔, 원본 StopInputControl; true 면 아래 고정 모션도 풂)·`player:play`({clip, next?} = 1번 모션 직접 재생, 예 TakeOffGet `{clip:'mn_bnclr_get00', next:'mn_bnclr_idle00'}`, 입력이 다시 켜질 때까지 이동 모션이 덮지 않음)·`camera:follow`(false = 추종 끔)·`camera:reset`(목표를 char_plaza_default_pos 또는 준 Vector3 로).
 
 **남은 판독 ② ComMatter 가 속도를 덮는가 → 덮는다, 값은 같다** [판독+데이터]. main `FUN_71002b2e00`(ComMatter 액터 설정, ComActorJumpCalculator::SetupLegacy·SetLeverMove 다음)이 ActorParam 싱글턴(`FUN_71002b9bc0` 이 `common/data/actorparam.json` 의 `ActorParam` 배열을 읽음, 행 i = +0x30+0x10·i)에서 ComActor 필드를 채운다. 땅 이동에 쓰는 값: +0x2d0 달리기 = 행0 **6**, +0x2cc 걷기 = 행1 **2**, +0x2d4 땅 선회 = 행3 **360**, +0x2d8 빠른 선회 = 행4 **1100**, +0x2dc 문턱 = 행5 **85°**, +0x2ec 레버 문턱 = 행32 **0.8**, +0x2fc 공중 가속 = 행2 40, 공중 선회 +0x2e0/+0x2e4/+0x2e8 = 행6~8 **180/720/85**(엔진 생성자 360/1100 과 다름). menu00 은 그 뒤 속도를 바꾸지 않는다. 그래서 땅 값은 §3.1 과 같고, 공중 선회만 180/720 으로 고친다.
 
@@ -141,7 +141,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 |---|---|---|---|
 | **하단 파티 줄** | `ComUiPlayerStatusMgr` @0x71000806c0·`SetPlayers` @0x7100080a30, 칸마다 `ComUiPlayerStatus`(`SetCharacterId` → `x_face`) / 빈 칸 `ComUiPlayerStatusEmpty` | `menu/menu_common/layout.lyt` 의 `mncom_base_status_00`(목록 `x_null_list`, 스탬프 `x_null_stamp`) + 부품 `mncom_status_00/01`, 손님 이름 `im_guest00_name` [판독][데이터] | **구현**: menu_common 덤프·얼굴·이름 세터는 §5.1 ①. charselect·online의 `sys_username`·`sys_face` 규칙 재사용 |
 | **파티 입장** | 온라인 참가 → `UiNoticeModule::RegisterNotice`·`SetJoinPlayerName`(18·3회 호출) + 3D 캐릭터 등장(`SetupLocalPlayer`/원격 `Player` 생성) + 하단 줄 `SetPlayers` 갱신 | `sys_notice_00/01`, `Notice_JoinSession` | **재사용**: online `widgets.ts` 알림(online.md 9.3 정정: `x_pict` 숨김·`x_text_00`, in → 2 s → out, `SQ_SE_SYS_NOTICE`) |
-| **상단 알림·대기 텔롭** | `UiNoticeModule`(상단 알림) + `ComUiNetLobbySessionStatus`(대기 N/4 ↔ 출발 가능) | `mn00_base_lobby_00`/`mn00_tlp_lobby_00` | **재사용**: `web/script/shell/online/`(텔롭·알림·안내 글자). 광장 장면 위에 얹기만 |
+| **상단 알림·대기 텔롭** | `UiNoticeModule`(상단 알림) + `ComUiNetLobbySessionStatus`(대기 N/4 ↔ 출발 가능) | `mn00_base_lobby_00`/`mn00_tlp_lobby_00` | **재사용**: `web/script/app/scene/menu/online/`(텔롭·알림·안내 글자). 광장 장면 위에 얹기만 |
 | 장소 텔롭 | `ComUiLocationTelop` @0x7100073740/`SetArea` @0x7100073ac8 | `menu/menu00/layout.lyt`의 `mn00_text_plaza_00` [판독 §5.1 ③], in/normal/out, `x_icon_new`, 설명 `x_null_text_mess` | **새로**(작음). 메시지 라벨 §2 |
 | 다가가기 안내 | `bq::ComUiPopGuide`(main) | bq Parts `sys_guide_pop_00` [판독 §5.1 ④] | **새로**: 위치 규칙은 §2. 그림은 원본 `sys_guide_pop_00` |
 | 하단 버튼 안내 | `ComUiGuide00`·GuideTop/Bottom/Online | `sys_guide_*`(charselect 와 같음) | **재사용**: mgmcommon 안내 |
@@ -172,7 +172,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 **⑥ 위치 동기** [판독 `ComPlayerUtil::ReceiveMessageImpl` @0x710003fbd0·`SendRemotePlayerInfo` @0x710003fd64·`PlayerManager::OnReceive` @0x71000421e0]: 로컬 슬롯 < 4 만, 타이머 ≤ 0 이고 **속도 벡터 제곱합(4성분) > 0.1** 이면 보내고 타이머 = 0.2, 아니면 타이머 −= Δt(멈춰 있으면 타이머 0 유지 → 다시 움직이는 순간 바로 보냄). 보내는 값 = 스테이션·슬롯·캐릭터·위치·회전(쿼터니언), 세션 연결·스테이션 ≥ 2 일 때만. 받는 쪽: 처음 보는 (스테이션, 슬롯) 이면 그 캐릭터로 Player 를 만들고 위치·회전을 바로 놓음(첫 표시 플래그면 기본 소켓). 그 뒤 거리 > 5 순간이동, ≤ 1 회전만 `ComActorAutoInterpolation`, 사이 = 위치·회전 보간. **0.2 s는 송신 주기이며 원본 보간 시간이 아니다** [판독]. 수신 분기의 PLT(menu00 @0x710004275c~0x7100042804, GOT +0x1d9710/+0x1d9718)는 `Start(Vector3f,Quaternion)` / `Start(Quaternion)`이다. main @0x710002023c·@0x7100020628은 목표를 +0x40/+0x50에 저장하고 위치/회전 플래그 +0x60/+0x61을 켠다; 시간 인자는 없다. 위치 진행은 §6.10 ②의 이동 속도 6과 도착 판정, 회전은 §3.5의 액터 선회 규칙을 재사용한다. **웹 현재 구현**(2026-10-09, plaza-interp): `RemoteActor`·`RemoteTable`은 수신 목표·(스테이션, 슬롯)·수명만 맡고, `PlazaUi`는 받은 패킷마다 `net:remote` {station, slot, chara, pos, quat}(mode·speed 없음)를 낸다. 표시 actor(`follow.ts RemoteMotion`)의 `AutoInterpolation` 하나가 **표시 위치 기준** 5/1 m 분기·위치/회전 flag를 처리한다. 위치 진행의 Run6 액션 대응·로컬 충돌/접지 보정은 [근사]로 남는다. 정지 좌표는 원본처럼 보내지 않고 d>5 순간이동도 진행 중 보간기를 멈추지 않는다. 웹 송신 타이머는0.2 s, 고정60 Hz의 실제 간격은13틱(0.2167 s)이다. **수정 전 과거 경로**는 UI 내부 pos의0.2 s 선형·slerp → 매 틱 목표 발행 → mover 재추종이었으며 현재는 제거됐다. 변경 내역·현재 구현·시험 수치는 [12_online_sync.md §6.2.1](../engine/12_online_sync.md).
 
-**웹 모듈(D)** `web/script/shell/plaza/ui/`: `status.ts`(①, 순수 상태) · `stamp.ts`(②, 순수 상태) · `telop.ts`(③④⑤ 순수 상태) · `net.ts`(⑥ 보내기 타이머·수신 목표/수명 보관, 순수) · `view.ts`(그리기: 투명 WebGL 캔버스 + charselect Render2D, online `OnlineScreen` 을 같은 캔버스에 얹음) · `part.ts`(PlazaPart `createPlazaUi`) · `index.ts`. 에셋 `web/assets/plaza/ui/plaza_ui.json`(+tex/font/sound) ← `web/tools/analysis/plaza_ui_assets.py`(online_web_assets.py 방식). 갈래 신호(SHARED 합의): D 가 듣는 것 `interact:telop` {area, visible, detail}·`interact:pop` {x, y, visible}(레이아웃 좌표)·`ui:mainLayout` boolean, D 가 내는 것 `ui:friendMenu` boolean(친구 매치 메뉴 열림 = 이동 멈춤)·`ui:stampList` {slot, open}·`net:remote` {station, slot, chara, pos, quat}(수신 패킷마다 전달하는 원본 목표, mode·speed 없음; C 의 RemoteMotion 이 표시 보간).
+**웹 모듈(D)** `web/script/app/scene/world/plaza/ui/`: `status.ts`(①, 순수 상태) · `stamp.ts`(②, 순수 상태) · `telop.ts`(③④⑤ 순수 상태) · `net.ts`(⑥ 보내기 타이머·수신 목표/수명 보관, 순수) · `view.ts`(그리기: 투명 WebGL 캔버스 + charselect Render2D, online `OnlineScreen` 을 같은 캔버스에 얹음) · `part.ts`(PlazaPart `createPlazaUi`) · `index.ts`. 에셋 `web/assets/plaza/ui/plaza_ui.json`(+tex/font/sound) ← `web/tools/analysis/plaza_ui_assets.py`(online_web_assets.py 방식). 갈래 신호(SHARED 합의): D 가 듣는 것 `interact:telop` {area, visible, detail}·`interact:pop` {x, y, visible}(레이아웃 좌표)·`ui:mainLayout` boolean, D 가 내는 것 `ui:friendMenu` boolean(친구 매치 메뉴 열림 = 이동 멈춤)·`ui:stampList` {slot, open}·`net:remote` {station, slot, chara, pos, quat}(수신 패킷마다 전달하는 원본 목표, mode·speed 없음; C 의 RemoteMotion 이 표시 보간).
 
 정정(구현 뒤): 묶음 상태 = `ui.ts`(`PlazaUi`: ComUiMainMenuLayout Start/Finish·UiStamp 맵·`PlazaNet`(광장 사건 remoteInfo·stamp 를 온라인 흐름 inbox 와 가르는 어댑터 대리)·친구 매치 = 조작 플레이어 Y(bex 0x8)·대기실 A 막음), 명세 확장 = `data.ts`. C 요청 반영: `interact:decide` {result:3}(친구 매치 오브제 앞 A) → 친구 매치 메뉴, 메뉴가 닫히면 메인 레이아웃 복귀, `net:session` boolean(방 접속 여부가 바뀔 때). `interact:pop` 은 `ndc:[x,y]`(뷰포트 −1..1, D 가 §5.1 ④ 식으로 바꿈)도 받는다. 스탬프 소리 SQ_SE_STAMP_1P~4P·PC 는 별도 소리 묶음 `sound~subarc_voi_stamp`(fsst, 캐릭터 목소리 + 로컬 변수) 에 있어 공용 렌더 도구(sound_seq.py, 상주 fspj 만)로 만들지 못함 → 소리 없음(라벨 사건만) [§8]. 검증: `npx tsx tools/test_plaza_ui.ts` 119/119(재구현 시험, 원본 실행 대조 아님), `tools/test_online.ts` 154/154 그대로, tsc 새 오류 0.
 
@@ -200,7 +200,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 ### 6.1 모듈 위치 [설계]
 - `web/script/shell/stage3d/` — 공용(계약 stage3d.md). 광장 갈래가 채울 남은 일: 텍스처 축소(또는 KTX2), `Collider` 구현(`MeshCollider`, 원본 obj 입력), follow 카메라 슬롯 driver, `test_stage3d.ts`. import 경계는 mgm_common §9.1 을 지킨다.
-- `web/script/shell/plaza/` — 광장 전용(신규): `world.ts`(MapStructure → 배치·부착·애니), `actor.ts`(ComActor 이동 근사), `follow.ts`(ComFollowPlayer), `camera.ts`(ComMenuCamera 추종), `npc.ts`, `interact.ts`(GetArea·거리 판정·PopGuide·장소 텔롭), `balloon.ts`(기구 출발 연출), `ui/`(하단 파티 줄·장소 텔롭, online·mgmcommon 재사용), `flow.ts`(SequenceMainMenu 축소판: 광장 ↔ 친구 매치 ↔ 기구), `index.ts`.
+- `web/script/app/scene/world/plaza/` — 광장 전용(신규): `world.ts`(MapStructure → 배치·부착·애니), `actor.ts`(ComActor 이동 근사), `follow.ts`(ComFollowPlayer), `camera.ts`(ComMenuCamera 추종), `npc.ts`, `interact.ts`(GetArea·거리 판정·PopGuide·장소 텔롭), `balloon.ts`(기구 출발 연출), `ui/`(하단 파티 줄·장소 텔롭, online·mgmcommon 재사용), `flow.ts`(SequenceMainMenu 축소판: 광장 ↔ 친구 매치 ↔ 기구), `index.ts`.
 - 변환: `web/tools/analysis/plaza_world_assets.py`(신규) → `web/assets/plaza/world/{model,tex,anim,chara,collision.json,manifest.json}`. `graphics_convert.py` 에는 세트 함수만 추가한다.
 - 페이지: `web/script/plaza_page.ts`(신규). **index.html 진입** = `script/main.ts` 에 `?plaza=1` 한 갈래를 더한다(`?charselect=1` 과 같은 꼴: 시작 전에 광장 → 기구 → 기존 `modeselect_page`(모드 메뉴) → 미니게임 항구/프리 플레이 `mgm01_page` 목록 → 고른 게임 시작). 시험 훅 `window.__mpj.plaza`(위치·영역·상태).
 
@@ -226,9 +226,9 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | 갈래 | 단계 | 쓰는 곳 | 지시 요점 |
 |---|---|---|---|
 | **A 무대·에셋·페이지** | 1 → 2 → 3 | `tools/analysis/plaza_world_assets.py`, `assets/plaza/world/`, `shell/stage3d/`(Collider·텍스처 축소·test), `script/plaza_page.ts`, `main.ts` `?plaza=1` | 먼저 manifest 형식(`layout` = MapStructure 항목·부착 소켓)과 `collision.json` 형식을 SHARED 에 올린다. stage3d 코어 소유자와 겹치면 계약 추가만 한다 |
-| **B 이동·카메라** | 4 → 5 | `shell/plaza/{actor,follow,camera}.ts` | A 의 에셋 전에는 obj 충돌 + 빈 바닥으로 시작한다. 판독 ②③(ComMatter 덮기·지면 보정) 먼저. 수치는 §3 그대로, 근사는 문서에 [근사]로 적는다 |
-| **C NPC·상호작용·기구** | 6 → 7 → 8 | `shell/plaza/{npc,interact,balloon,flow}.ts` | 판독 ④⑤⑥ 먼저(어셈블리). 모드 메뉴·mgm01 목록은 기존 페이지 모듈을 부르기만 한다(수정은 SHARED 조율) |
-| **D 2D UI·온라인** | 9 | `shell/plaza/ui/`, mncom 덤프(`extracted/converted/ui/menu_common/`), online 모듈 작은 Edit | online `widgets.ts`·`view.ts` 의 알림·텔롭을 광장 위에 얹는다. 하단 줄은 새로. 스탬프도 원본대로 구현한다(main `bq::UiStamp` 판독 → `x_null_stamp` 말풍선, 가짜 온라인 멤버가 가끔 보냄 [설계]) |
+| **B 이동·카메라** | 4 → 5 | `app/scene/world/plaza/{actor,follow,camera}.ts` | A 의 에셋 전에는 obj 충돌 + 빈 바닥으로 시작한다. 판독 ②③(ComMatter 덮기·지면 보정) 먼저. 수치는 §3 그대로, 근사는 문서에 [근사]로 적는다 |
+| **C NPC·상호작용·기구** | 6 → 7 → 8 | `app/scene/world/plaza/{npc,interact,balloon,flow}.ts` | 판독 ④⑤⑥ 먼저(어셈블리). 모드 메뉴·mgm01 목록은 기존 페이지 모듈을 부르기만 한다(수정은 SHARED 조율) |
+| **D 2D UI·온라인** | 9 | `app/scene/world/plaza/ui/`, mncom 덤프(`extracted/converted/ui/menu_common/`), online 모듈 작은 Edit | online `widgets.ts`·`view.ts` 의 알림·텔롭을 광장 위에 얹는다. 하단 줄은 새로. 스탬프도 원본대로 구현한다(main `bq::UiStamp` 판독 → `x_null_stamp` 말풍선, 가짜 온라인 멤버가 가끔 보냄 [설계]) |
 
 **모든 갈래 공통 규칙**: 최대한 원본과 같게 만든다. 판단이 필요하면 멈추지 말고 **원본에 가장 가까운 쪽으로 정해 진행**한 뒤, 그 항목을 §8 '사용자 확인 필요'에 한 줄(무엇을·왜 그렇게 정했나·근거)로 덧붙인다. 근사·설계 값은 코드와 문서에 [근사]/[설계]로 표시한다. 헤드리스는 마지막 1회만 쓴다.
 
@@ -237,7 +237,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 ### 6.4 마지막 확인 = index.html 헤드리스 촬영 (tools/shot_plaza.ts, 1회)
 `index.html?plaza=1&fast=…` 로 ① 맵 로딩 직후 전경, ② 1번 레버 이동(걷기·달리기 모션), ③ 로컬 사람 2~4P 따라가기, ④ 상점 앞 PopGuide·장소 텔롭, ⑤ 가짜 온라인 입장 → 상단 알림 + 하단 파티 줄 + 대기 텔롭, ⑥ 기구 접근(카메라 섞임) → 출발 컷 → 모드 메뉴. 콘솔 오류 0. `test_plaza.ts`는 판독값을 이용한 재구현 시험이며 원본 실행 확인이 아니다(헤드리스는 웹 촬영).
 
-### 6.5 A 계약 — `web/script/shell/plaza/` (plaza-A, 2026-10-08) [설계]
+### 6.5 A 계약 — `web/script/app/scene/world/plaza/` (plaza-A, 2026-10-08) [설계]
 
 - 파일: `types.ts`(계약)·`world.ts`(무대)·`deco.ts`(장식 규칙 §6.6)·`scene.ts`(실행기 `startPlaza`)·`parts.ts`(부품 목록)·`index.ts`. 페이지 `web/script/plaza_page.ts`.
 - **현재 무대 로드 완료** = `createPlazaWorld()` 반환 시 충돌·P0 모델/부착/GPU 준비 완료. 나머지는 관리자 등급에 따라 뒤에 나타나고, 애니는 무대 시작 프레임으로 맞춘다(`world.ts`, [loader_manager.md](../engine/loader_manager.md) §11.4·§14.9 재사용). 전체 모델을 기다리는 옛 계약은 `loadMode:'seq'` 경로.
@@ -339,7 +339,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 4. TakeOffImpl 루프: 메뉴 저장값 비트 0(첫 출발 때 켬)이 켜져 있으면 안내 `sys_ctrl_skip`(ComUiGuide00, 위치 12)·**+/−(0x3000) = 건너뛰기**(`SQ_SE_SYS_SKIP`·`SQ_SE_MENU00_TRANSITION_WHO`·페이드 아웃 1 s).
 5. CallSceneImpl: 오프라인 → `RequestCallScene`(menu01 모드 선택), 방 있음 → `NetworkManager::PlaySession`.
 
-**⑤ 웹 구현 대응 (C 소유 `web/script/shell/plaza/`)**
+**⑤ 웹 구현 대응 (C 소유 `web/script/app/scene/world/plaza/`)**
 
 | 파일 | 원본 | 내용 |
 |---|---|---|
@@ -364,7 +364,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 ### 6.11 NPC 셰이더 그래프 (plaza-C-sg 판독, 2026-10-08) [판독: SASS]
 
-근거 표 `analysis/mat/plaza_npc_graph.json`(근거 줄 번호·GLSL 식), 디스어셈블 `analysis/mat/plaza_npc/sass/`, 도구 `web/tools/analysis/plaza_npc_graph.py`(split·match·sass·summary). 21프로그램·22재질. 웹 반영 = `web/script/shell/plaza/npcMaterial.ts` 의 `GRAPH` 표, 텍스처 = `plaza_npc_assets.py` 가 재질 샘플러 텍스처(배열 층 전부·눈 알베도)를 `spec.layers` 에 싣는다.
+근거 표 `analysis/mat/plaza_npc_graph.json`(근거 줄 번호·GLSL 식), 디스어셈블 `analysis/mat/plaza_npc/sass/`, 도구 `web/tools/analysis/plaza_npc_graph.py`(split·match·sass·summary). 21프로그램·22재질. 웹 반영 = `web/script/app/scene/world/plaza/npcMaterial.ts` 의 `GRAPH` 표, 텍스처 = `plaza_npc_assets.py` 가 재질 샘플러 텍스처(배열 층 전부·눈 알베도)를 `spec.layers` 에 싣는다.
 
 - **핸들 정정**: sass_dis 의 표준 샘플러 이름(`_a0`·`_n0`…)은 한 칸 밀려 있다(Material[0x0] = `_a0`). `sg_utility_texture2dN`(0x130+0x10N)·`sg_utility_texture2darray0`(0x210)은 맞다. charselect §12.11 주석도 같은 밀림일 수 있다(확인 권장).
 - **색 번호 P** = Model[0x280] = container `mdl_utility_parameter0.x`(ChangeColor). 기본값: npc001·001bd·002·003·022·053 = 0, 그 밖 = 1(읽지 않음).
@@ -408,7 +408,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | 5 | 분수 물기둥이 하얗게 반짝이는 잡음 기둥 | ① 굴절 재질에서 반사를 α 밖에 더해 가운데까지 번쩍임 ② 더하기 물(jet_fountain00, state 2 + water_enable)을 불투명도 1 로 더함 | ① (확산 + 반사)·α + 발광(판독 순서 "굴절 합성 → 그 위 발광") ② 더하기 물은 α = water_opacity(0.15) [추정]. 영역 평균 웹 (163,191,198) ↔ 원본 (142,211,216) — 굴절 왜곡(장면 uv 0.03) 없음이 남은 차이 [근사] |
 | 6 | 전체 색이 탁함 | 블룸(§6.13)·하늘·안개 위 1~3 이 겹친 것 | 위 수정 뒤 영역 평균: 바닥 웹 (211,208,183) ↔ 원본 (226,220,196), 계단 (148,145,152) ↔ (157,161,168), 잔디 (102,184,49) ↔ (116,182,55) — 카메라 위치·시각 차 범위 [측정] |
 | 7 | 그림자 흐림 | 그림자맵 2048 하나가 카메라 100 m 를 덮음 | 원본 캐스케이드 3·lambda 0.5 의 둘째 경계(38.4 m)까지만 맵 4096 하나로 [근사: 캐스케이드 대신]. 마리오 발밑 그림자 확인 |
-| 8 | 전경 높은 시점(7.png) 없음 | 광장 보기(OverView) 미구현: C 의 결과 13 은 다음 프레임 돌아옴 | `shell/plaza/overview.ts`: `OverViewImpl` @0x710005f930 [판독] = CameraManager::PlayAnim(0x10)·SetSpeed(0) → 카메라 표 16 `deco_00` = `menu00_deco_all_cam.fsnb` 프레임 0 [데이터: menu00.nro 이름 표 0x1c7a58·경로 표 0x19b2e4], 조작 플레이어 B·X(bex 0x2·0x4) 트리거까지 대기 → SQ_SE_SYS_CANCEL → 해제. 7.png 와 구도 같음(바다·섬·나무·분수) |
+| 8 | 전경 높은 시점(7.png) 없음 | 광장 보기(OverView) 미구현: C 의 결과 13 은 다음 프레임 돌아옴 | `app/scene/world/plaza/overview.ts`: `OverViewImpl` @0x710005f930 [판독] = CameraManager::PlayAnim(0x10)·SetSpeed(0) → 카메라 표 16 `deco_00` = `menu00_deco_all_cam.fsnb` 프레임 0 [데이터: menu00.nro 이름 표 0x1c7a58·경로 표 0x19b2e4], 조작 플레이어 B·X(bex 0x2·0x4) 트리거까지 대기 → SQ_SE_SYS_CANCEL → 해제. 7.png 와 구도 같음(바다·섬·나무·분수) |
 | 9 | 7.png 키노피오 메시지 창(얼굴 아이콘형) | 7.png 는 첫 진입 안내(`SequenceFront`·guidance 카메라 `menu00_ev_intro_scroll_cam`)의 장면 — §8 에서 범위 밖으로 정한 첫 진입 연출 | 범위 밖 그대로(§8). 카메라·메시지 형식은 이후 첫 진입 연출 구현 때 |
 | 10 | 8.png 대기실 4/4 | 웹도 4/4 에서 "방 정보 / 해산하기"(초대하기 없음) [측정]. 마지막 입장 직후 잠깐 "참가자를 기다리는 중…" 이 보이는 것은 가짜 멤버 준비 지연(D). 원격 멤버가 광장에 서 있는 모습은 가짜 걷기 원(online/fake.ts, D) | D 에 SHARED 로 알림 |
 | 11 | 시간이 빨리 감(사용자 실기) | plaza_page 루프가 밀린 시간을 버리지 않아(한 번에 4 스텝 상한 뒤 남은 밀림 누적) 셰이더 컴파일 등 긴 멈춤 뒤 몇 초 동안 4배속으로 따라잡음 [코드 분석] | `scene.ts FixedClock`: 1/60 고정 스텝, 한 번 최대 4 스텝·넘친 밀림 버림(main.ts MAX_BACKLOG 규칙). 시험: 30·60·75·120·144·240 Hz 10 초 = 600 프레임, 3 초 멈춤 뒤 1 초 = 60 프레임 |

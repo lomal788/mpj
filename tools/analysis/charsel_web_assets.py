@@ -1,4 +1,4 @@
-"""캐릭터 선택 화면(독립 모듈 web/script/shell/charselect) 에셋 — 원본 레이아웃·폰트·메시지·데이터·소리·캐릭터 → web/assets/charselect.
+"""캐릭터 선택 화면(독립 모듈 web/script/app/scene/menu/charselect) 에셋 — 원본 레이아웃·폰트·메시지·데이터·소리·캐릭터 → web/assets/charselect.
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/charsel_web_assets.py [ui] [sound] [chara]   (인자 없으면 전부)
 

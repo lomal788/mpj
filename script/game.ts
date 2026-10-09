@@ -9,7 +9,7 @@
  * 스텝 시각 t: 소리가 있으면 페이지가 오디오 시계(지금 들리는 AudioContext 시각)로 스텝을 맞추고, 스텝마다 그 스텝이 나타내는 시각을 준다(main.ts).
  *   끝: run.ended → def.describeResult(logic.result, setup), 모드 기록 = run.resultEntry(id)
  */
-import type { MgGame, MgPlaySettings } from './shell/mgscene';
+import type { MgGame, MgPlaySettings } from '@app/scene/minigame/mgscene';
 import type { Assets, Progress } from './view/assets';
 import type { AudioOut } from './view/audio';
 import type { PadSource } from './view/input';

@@ -1,6 +1,6 @@
 # 미니게임 한 판의 바깥 틀 (bq::MinigameScene) — 원본 분석
 
-2026-10-07. 상태: **분석 완료(판독·데이터). 2026-10-09 웹 구현 계약 §12(구현: shell/mgscene). 원본·웹 실행 대조 없음.**
+2026-10-07. 상태: **분석 완료(판독·데이터). 2026-10-09 웹 구현 계약 §12(구현: app/scene/minigame/mgscene). 원본·웹 실행 대조 없음.**
 형식은 `F:/dev/mps/web/docs/분석.txt` 11절 구성. 장면 구현체 상태기계·`SceneBase` 훅 순서·파이버·`MinigameFlow` 한 걸음 구조는
 [../engine/01_core.md](../engine/01_core.md) §5.1~5.5 를 그대로 따르고 다시 쓰지 않는다. 이 문서는 01_core 가 **[미확정]** 으로 남긴
 "MinigameFlow 단계 0~0x12 의 의미"(01_core §5.3·§11)와 그 단계가 쓰는 텔롭·타이머·스킵·엔딩·연습 반복을 채운다.
@@ -428,8 +428,8 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 
 | 폴더 | 내용 | import 규칙 |
 |---|---|---|
-| `web/script/shell/mgscene/` | **순수 로직**(three·DOM 없음): 장면 흐름·텔롭·타이머·상태 얼굴·와이프·스킵 안내·MGUiMgr·MGSound·엔딩·표·결과 무대 계약 | import 0(같은 폴더만). mgm_common §9.1 셸 경계를 지킨다(core·view·games 금지). 난수·패드는 인터페이스로 받는다 |
-| `web/script/view/mgsceneUi.ts` | 2D 그리기: 로직의 UI 상태 → `view/lyt.ts` LayoutInstance·LytRenderer(텔롭 OTF 글꼴·부품 지원, mg1801 과 같은 재생기) | view 쪽이라 `view/lyt.ts`·`shell/charselect/fontSheet` 사용 가능 |
+| `web/script/app/scene/minigame/mgscene/` | **순수 로직**(three·DOM 없음): 장면 흐름·텔롭·타이머·상태 얼굴·와이프·스킵 안내·MGUiMgr·MGSound·엔딩·표·결과 무대 계약 | import 0(같은 폴더만). mgm_common §9.1 셸 경계를 지킨다(core·view·games 금지). 난수·패드는 인터페이스로 받는다 |
+| `web/script/view/mgsceneUi.ts` | 2D 그리기: 로직의 UI 상태 → `view/lyt.ts` LayoutInstance·LytRenderer(텔롭 OTF 글꼴·부품 지원, mg1801 과 같은 재생기) | view 쪽이라 `view/lyt.ts`·`app/scene/menu/charselect/fontSheet` 사용 가능 |
 | `web/script/view/mgsceneSound.ts` | 소리 사건 → AudioOut(SE·보이스 wav) + `appBgm()`(공용 징글) + 게임 BGM 채널(`BgmChannel`) | |
 | `web/script/mgscene_page.ts` | dev/ui.html 항목 "미니게임 공용 틀": 페이지 루프(FixedClock 1/60, rAF 당 최대 4스텝), 더미 게임 | |
 | `web/script/games/mgdummy/` | 시험용 더미 게임(틀만 확인하는 최소 3D) | |
@@ -465,7 +465,7 @@ interface MgGame {
 
 `MgResultApi`(OnEndingInit 인자 = MGResult 핸들): `setPlayer(pid)`(갈래 A 확정), `setModel/setMotion/setCameraType/setCameraPattern/setCameraNearZ/setCameraFarZ/setPcPosOffset/setThemeChara`(minigame_result §4.1).
 
-**프레임 게이트(온라인 자리).** 틀의 고정 스텝은 `FrameGate { canStep(frame): boolean; inputsFor(frame): MgPadInput[] }` 로 감싼다(`shell/mgscene/gate.ts`). 기본 `localGate` = 항상 진행·로컬 패드 그대로(지금 동작). `canStep` 이 거짓이면 그 프레임은 **게임 update·흐름 단계·종료 타이머·텔롭/와이프/상태 상태기계(단계 진행을 정하므로 로직)·동기 난수 소비가 모두 멈추고**, 페이지의 그리기(3D·2D)만 계속 돈다. 게임은 패드를 `ctx.pad(pid)`(게이트가 준 입력)로만 받고, 시드는 틀이 받아 `ctx.seed`·`ctx.rand`(동기 난수)로 넘긴다 — 게임이 `Math.random`·URL·로컬 패드를 직접 읽지 않는다. **온라인 구현은 [../engine/12_online_sync.md](../engine/12_online_sync.md) §6.2 를 따른다.**
+**프레임 게이트(온라인 자리).** 틀의 고정 스텝은 `FrameGate { canStep(frame): boolean; inputsFor(frame): MgPadInput[] }` 로 감싼다(`app/scene/minigame/mgscene/gate.ts`). 기본 `localGate` = 항상 진행·로컬 패드 그대로(지금 동작). `canStep` 이 거짓이면 그 프레임은 **게임 update·흐름 단계·종료 타이머·텔롭/와이프/상태 상태기계(단계 진행을 정하므로 로직)·동기 난수 소비가 모두 멈추고**, 페이지의 그리기(3D·2D)만 계속 돈다. 게임은 패드를 `ctx.pad(pid)`(게이트가 준 입력)로만 받고, 시드는 틀이 받아 `ctx.seed`·`ctx.rand`(동기 난수)로 넘긴다 — 게임이 `Math.random`·URL·로컬 패드를 직접 읽지 않는다. **온라인 구현은 [../engine/12_online_sync.md](../engine/12_online_sync.md) §6.2 를 따른다.**
 
 **짧은 게임용 도우미** `simpleMgGame({ setup, step, isFinished, result, render? })`: `onGameMain` = step 후 isFinished, `onEndingInit` = `result()` 의 순위·승패·코인을 기록(+ `useResultStage` 면 setPlayer), `onGameEnding` = 승자 텔롭(CreateWinTelop/CreateDrawTelop)을 띄우고 끝날 때까지 기다린 뒤 Out. 결과 형식 `{ ranks: number[](0=1위), winLose: (−1|0|1|2)[], coins: number[] }` — 원본 PlayerWork 값 그대로.
 
@@ -518,12 +518,12 @@ interface MgGame {
 
 ### 12.8 결과 3D 무대 호출 계약 ([mg-result3d] 와 합의, SHARED.md `>> [mg-scene]`)
 
-타입 = `shell/mgscene/resultContract.ts`(import 0). 무대 = `shell/mgresult/`(그쪽 소유) `createResultStage(input, host): Promise<ResultStage>`, `resultStagePrefetch(input): string[]`.
+타입 = `app/scene/minigame/mgscene/resultContract.ts`(import 0). 무대 = `app/scene/minigame/mgresult/`(그쪽 소유) `createResultStage(input, host): Promise<ResultStage>`, `resultStagePrefetch(input): string[]`.
 - 입력 `ResultStageInput` = { mgId, gameRule, isCoin, isChara, judgeType, boardMode, playMode, players[{pid, chara, order, teamId, isCom, winLose, rank, coin}](SetPlayer 한 사람만), opts(Set 계열), rand() }.
 - 호스트 `ResultStageHost` = { gl(THREE.WebGLRenderer, unknown 으로 넘김), fade(dir, speed)·fading(), winTelop{start(no, place), out(), finished()}, coinShow(pid, coin), se, bgm, resultSound(no), uiTimingOut(n), url }.
 - 출력 `ResultStage` = { step()(1/60 = 파이버 Wait 1번), done, render()(3D만), dispose() }.
 - 틀: 단계 13 에서 `OnEndingInit` 참 + 등록 1명 이상 → 무대 생성(비동기: 준비될 때까지 단계 13 에 머문다), 매 프레임 step → done 이면 14 → 16. 무대 팩토리가 없거나 만들기 실패면 갈래 B(엔딩 5단계)로 넘어가고 `console.warn`.
-- 게임 3D 장면(2026-10-09): 공용 변환기로 만든 게임은 장면 로더 `shell/mgstage` 의 `MgStage` 가 "게임 3D" 를 그리고(`render()`), 갈래 A 에서 `await stage.resultWorld()`(= `{scene, origin: pos_result 소켓}`)를 `resultHost.world` 로 넘긴다 — [../engine/13_asset_converter.md](../engine/13_asset_converter.md) §7.3.
+- 게임 3D 장면(2026-10-09): 공용 변환기로 만든 게임은 장면 로더 `app/scene/minigame/mgstage` 의 `MgStage` 가 "게임 3D" 를 그리고(`render()`), 갈래 A 에서 `await stage.resultWorld()`(= `{scene, origin: pos_result 소켓}`)를 `resultHost.world` 로 넘긴다 — [../engine/13_asset_converter.md](../engine/13_asset_converter.md) §7.3.
 
 ### 12.9 시험 (`tools/test_mgscene.ts`, 노드)
 
@@ -632,7 +632,7 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
 #### 12.12.4 결과 갈래와 기록 계약
 
 - 갈래: 리듬은 시작 텔롭(START)·결과 점수판을 `RmMgSceneBase` 가 직접 띄우고 OnEndingInit 에서 SetPlayer 하지 않으므로 **갈래 B** 다(결과 3D 무대 없음).
-- 기록(원본 `MinigameModeWork::SetMinigameResult` 계약 `{id, judge, results[4]}` raw byte, [mgm01_freeplay.md](mgm01_freeplay.md) §6.6). 한 판 끝 쪽 writer 는 [미확정]이므로 같은 칸을 쓰는 main `FUN_71001f271c`(analysis/decomp/mgm01_main_contract.c) 규칙을 따른다 [판독, 호출자 미확정] — `shell/mgscene/resultEntry.ts` `minigameResultEntry`:
+- 기록(원본 `MinigameModeWork::SetMinigameResult` 계약 `{id, judge, results[4]}` raw byte, [mgm01_freeplay.md](mgm01_freeplay.md) §6.6). 한 판 끝 쪽 writer 는 [미확정]이므로 같은 칸을 쓰는 main `FUN_71001f271c`(analysis/decomp/mgm01_main_contract.c) 규칙을 따른다 [판독, 호출자 미확정] — `app/scene/minigame/mgscene/resultEntry.ts` `minigameResultEntry`:
   - `id` = MinigameID, `judge` = GameJudgeType.
   - GameRule 8 또는 10(`(rule | 2) == 10`): 네 byte 를 한 번에 — judge 0 이면 0xFF×4, 아니면 0x02×4.
   - 그 밖: judge 0 이면 PlayerList 순(PlayerID 순 [추정: 목록 종류 1])의 `GetMinigameRank` byte, judge ≠ 0 이면 `GetMinigameWinLose` byte(−1 = 0xFF). 이 값들은 게임이 OnEndingInit 까지 `ctx.setRank/setWinLose` 로 쓴 PlayerWork 값이다(초기 −1, `FUN_71001f1e20`).
@@ -657,7 +657,7 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
 
 #### 12.12.6 결정성 규칙 (2026-10-09 사용자 결정 — 게임 계약)
 
-원본 온라인은 **입력만** 동기화하고 기기마다 같은 계산을 한다([../engine/12_online_sync.md](../engine/12_online_sync.md) §1·§3·§4). 그래서 웹 로직(`games/<id>/logic`, `games/rhythm`(view 밖), `shell/mgscene`, `core`)은 다음을 지킨다.
+원본 온라인은 **입력만** 동기화하고 기기마다 같은 계산을 한다([../engine/12_online_sync.md](../engine/12_online_sync.md) §1·§3·§4). 그래서 웹 로직(`games/<id>/logic`, `games/rhythm`(view 밖), `app/scene/minigame/mgscene`, `core`)은 다음을 지킨다.
 
 1. 시간: 고정 1/60 스텝(`MG_DT`·`RM_DT`, f32)만. 벽시계·`performance.now`·`Date`·rAF dt 는 로직에서 쓰지 않는다(화면 보간은 예외).
 2. 난수: `BexRandModule` 만(sync/async 용도는 원본대로). 로직에서 `Math.random` 금지.

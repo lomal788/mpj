@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 플레이어 설정 흐름(shell/setplayer) 연결 — 컨트롤러(키보드 1 + Gamepad API 여러 개), 시스템 애플릿 대체 DOM,
+ * 페이지 ↔ 플레이어 설정 흐름(app/scene/menu/setplayer) 연결 — 컨트롤러(키보드 1 + Gamepad API 여러 개), 시스템 애플릿 대체 DOM,
  * WebAudio SE, 60 Hz 고정 스텝, 그리고 "플레이어 설정 → 캐릭터 선택(runCharSelect 그대로)" 이어 붙이기.
  * 근거: docs/shell/setplayer.md 9.3~9.5. 컨트롤러 지원 애플릿·유저 선택·소프트웨어 키보드는 원본이 시스템 UI 라 이 화면은 [설계].
  */
@@ -8,7 +8,7 @@ import { appBgm } from './view/bgm';
 import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { ASSETS } from './env';
-import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from './shell/setplayer';
+import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from '@app/scene/menu/setplayer';
 import { appFlow } from './view/appFlow';
 import { sceneIn, sceneOut } from './view/appTransition';
 import { GamepadPad, type KeyboardPad, type PadSource } from './view/input';

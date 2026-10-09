@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 프리 플레이(shell/mgm01) 화면 연결 — 어댑터(입력·소리·에셋·저장)와 60Hz 고정 스텝 루프, dev/ui.html 시험값 패널. mgmcommon_page.ts 와 같은 방식.
+ * 페이지 ↔ 프리 플레이(app/scene/minigame/mgm01) 화면 연결 — 어댑터(입력·소리·에셋·저장)와 60Hz 고정 스텝 루프, dev/ui.html 시험값 패널. mgmcommon_page.ts 와 같은 방식.
  * 화면: 개별 설정(runMgm01Setting)·필터(runMgm01Filter)·목록 전체 흐름(runMgm01List). 공용 환경 createMgm01Env 는 다른 mgm01 화면도 쓸 수 있다.
  * 시험값(URL 또는 화면 오른쪽 위 패널): mg=게임 이름, filter=enum, cpu·team·rhythm=값, endless=1, resume=1, connected=1, boss=1(보스 개방), fav=이름,이름, save=0(저장 무시)
  * 목록 흐름 시험값: new=all|이름,이름(NEW 켬), played=이름:횟수,…(플레이 횟수), rounds=N(승패 기록 미리 넣기), filter=enum(처음 필터)
@@ -25,7 +25,7 @@ import {
   type Mgm01CatalogJson,
   type Mgm01Player,
   type SettingOutcome,
-} from './shell/mgm01';
+} from '@app/scene/minigame/mgm01';
 import { appFlow } from './view/appFlow';
 import { appBgm } from './view/bgm';
 import { appSave } from './view/save';

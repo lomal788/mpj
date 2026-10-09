@@ -2,8 +2,8 @@
  * 공용 레이아웃(ComUiMinigameModeLayoutCommon) + 항목 레이아웃 제약(SetConstraint) — docs/shell/mgm_common.md 6.7.
  * 제약: 루트 = 제약 페인 전역 행렬 × 자기 루트 SRT, 알파 = 자기 × 페인 전역 알파/255, owner 레이아웃이 안 보이면 그리지 않는다.
  */
-import { nodeMatrix, type Render2D } from '../charselect/render2d';
-import type { LayoutInst } from '../charselect/scene2d';
+import { nodeMatrix, type Render2D } from '@app/scene/menu/charselect/render2d';
+import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 
 export type Mat3 = [number, number, number, number, number, number];
 

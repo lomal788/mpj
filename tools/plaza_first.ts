@@ -16,9 +16,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
-import { MenuCameraFollow } from '../script/shell/plaza/camera';
-import { decoIdOfKey } from '../script/shell/plaza/deco';
-import type { PlazaCameraParam, PlazaLayoutEntry } from '../script/shell/plaza/types';
+import { MenuCameraFollow } from '@app/scene/world/plaza/camera';
+import { decoIdOfKey } from '@app/scene/world/plaza/deco';
+import type { PlazaCameraParam, PlazaLayoutEntry } from '@app/scene/world/plaza/types';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const W = join(WEB, 'assets', 'plaza', 'world');

@@ -41,7 +41,7 @@ import {
 } from '@game/lib/splitscreen';
 import { SplitRenderer, type PostRegion, type RegionPost, type SplitGl } from '@game/lib/splitscreen-three';
 import { PostChain, type PostParams } from '../script/shell/stage3d/post';
-import { localGate, MgScene, mgUiData, type MgTables, type ResultStage } from '../script/shell/mgscene';
+import { localGate, MgScene, mgUiData, type MgTables, type ResultStage } from '@app/scene/minigame/mgscene';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const A = path.join(WEB, 'assets');
@@ -410,7 +410,7 @@ const mkCams = (): THREE.PerspectiveCamera[] =>
   ok(rows.slice(1).every((r, i) => r.cam !== cams[i] && (r.cam as THREE.PerspectiveCamera).layers.mask === cams[i].layers.mask && (r.cam as THREE.Camera).matrixWorld.equals(cams[i].matrixWorld)), 'draw 카메라 = 복사본(layers·matrixWorld 같음, 원본 아님)');
   eq(cams.map((c) => [c.fov, c.aspect, ...c.projectionMatrix.elements]), before, '원본 카메라 fov·aspect·projection 무변경');
   ok(updates === 1 && sr.stats.renders === 4, 'Stage3D.update 1회 + 레이어 4회 그리기(어댑터는 update 를 부르지 않음)');
-  const src = fs.readFileSync(path.join(WEB, 'script/shell/mgstage/stage.ts'), 'utf8');
+  const src = fs.readFileSync(path.join(WEB, 'script/app/scene/minigame/mgstage/stage.ts'), 'utf8');
   const body = src.slice(src.indexOf('  renderSplit('), src.indexOf('  resize(w: number'));
   ok(body.length > 0 && !/\.update\(/.test(body), 'MgStage.renderSplit 은 update 를 부르지 않음');
 

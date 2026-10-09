@@ -695,7 +695,7 @@ mgr.stats                                               // 숫자 필드만(요�
 - 광장 진입: `attach(stage)` 로 캔버스를 화면 상자에 붙인다. 크기는 페이지 ResizeObserver 가 맞춘다.
 - 광장 나감: `leave()` 순서 = 프로그램 고정(§14.3) → 부품·무대 dispose → 캔버스 떼기. 렌더러는 dispose 하지 않는다.
 - 내림(`drop()`): `renderer.dispose()` + `forceContextLoss()`. GPU 예산을 넘을 때(§14.6)와 문맥을 잃었을 때만 한다. 그다음 진입은 새 렌더러(지금과 같은 비용).
-- 의존: 정적 import 는 three·`appAssets`·`appFlow`(흐름 사건 구독)뿐이다. 광장 무대 코드(`shell/plaza`)는 미리 준비가 시작될 때 동적 import 한다(코드 분할 유지, §5.8.8). 시험용으로 캔버스·렌더러·world 만들기를 주입할 수 있다.
+- 의존: 정적 import 는 three·`appAssets`·`appFlow`(흐름 사건 구독)뿐이다. 광장 무대 코드(`app/scene/world/plaza`)는 미리 준비가 시작될 때 동적 import 한다(코드 분할 유지, §5.8.8). 시험용으로 캔버스·렌더러·world 만들기를 주입할 수 있다.
 
 ### 14.3 재진입 때 남기는 것 — 무대 `gpu` 모드 (`Stage3D` 옵션 `gpu: { renderer, uploads, keep }`)
 
@@ -814,10 +814,10 @@ mgr.stats                                               // 숫자 필드만(요�
 | 3 mpj | `shell/stage3d/stage.ts` | `StageGpu`(렌더러·uploads·keep) 주입, `PriorityFloor`(등급 바닥·내릴 때 올리기), gpu 모드 dispose(관리자 템플릿 기하·관리자 텍스처 복제·keep 물건 남김, 뼈 텍스처 버림), 후처리·하늘 keep |
 | 3 mpj | `shell/stage3d/material.ts` | `IblShare`(PMREM 생성기·IBL 큐브 캐시 공유), `dispose(keepManaged)` |
 | 3 mpj | `shell/stage3d/post.ts` | `precompile()`(RT 단계·화면 단계 셰이더 키로 compileAsync) |
-| 3 mpj | `shell/plaza/world.ts` | 옵션 `gpu`·`floor`·`budgetMs`·`pace`, 관리자 요청·준비 작업에 바닥 적용 |
-| 3 mpj | `shell/plaza/scene.ts` | 옵션 `gpu`·`world`(미리 만든 것 넘겨받기) |
-| 3 mpj | `shell/plaza/ui/view.ts`·`ui/part.ts` | UI 문맥 없앰 — 무대 렌더러에 3D 다음 패스(선형 RT → 8비트 RT → 화면 프리멀티 합성), `keep('plaza-ui')` |
-| 3 mpj | `shell/plaza/player.ts` | `PlazaCharaLoader.load` 선택 인자 `tick`(1P 캐릭터 미리 컴파일을 프레임마다) |
+| 3 mpj | `app/scene/world/plaza/world.ts` | 옵션 `gpu`·`floor`·`budgetMs`·`pace`, 관리자 요청·준비 작업에 바닥 적용 |
+| 3 mpj | `app/scene/world/plaza/scene.ts` | 옵션 `gpu`·`world`(미리 만든 것 넘겨받기) |
+| 3 mpj | `app/scene/world/plaza/ui/view.ts`·`ui/part.ts` | UI 문맥 없앰 — 무대 렌더러에 3D 다음 패스(선형 RT → 8비트 RT → 화면 프리멀티 합성), `keep('plaza-ui')` |
+| 3 mpj | `app/scene/world/plaza/player.ts` | `PlazaCharaLoader.load` 선택 인자 `tick`(1P 캐릭터 미리 컴파일을 프레임마다) |
 | 페이지 | `plaza_page.ts` | 캔버스 = `plazaGl().enter`, 나갈 때 `gl.leave(장면, () => run.stop())`, `?plazagl=0` 이면 이전 방식 |
 | 페이지 | `main.ts` | 1줄: `?plaza=1` 이면 `installPlazaGl()`(동적 import) |
 | 시험 | `tools/test_plaza_gl.ts`(새) | §14.7 |

@@ -8,8 +8,8 @@ Super Mario Party Jamboree(Switch) 미니게임을 원본 동작 그대로 웹�
 | 뼈대(페이지·루프·계약·도구) | 완료 — 타입 검사·빌드·스모크 통과 |
 | 게임 | mg1801 싹둑싹둑 수프 — 회색 박스(로직 원본 판독, 화면 상자, BGM). `?game=mg1801` |
 | 게임 분석 문서 | [docs/minigame/](docs/minigame/README.md) |
-| 캐릭터 선택 화면 | 독립 모듈 `script/shell/charselect`(엔진층 미의존) — `?charselect=1`(시작 → 선택 → 고른 캐릭터로 게임). 분석·명세 [docs/shell/charselect.md](docs/shell/charselect.md) |
-| 모드 선택(맵 메뉴) 화면 | 독립 모듈 `script/shell/modeselect`(charselect 2D 렌더러 import) — `ui.html?ui=modeselect`. 에셋 `tools/analysis/modesel_web_assets.py`, 시험 `tools/test_modeselect.ts`·`check_modeselect.ts`·`shot_modeselect.ts`. 분석·명세 [docs/shell/modeselect.md](docs/shell/modeselect.md) |
+| 캐릭터 선택 화면 | 독립 모듈 `script/app/scene/menu/charselect`(엔진층 미의존) — `?charselect=1`(시작 → 선택 → 고른 캐릭터로 게임). 분석·명세 [docs/shell/charselect.md](docs/shell/charselect.md) |
+| 모드 선택(맵 메뉴) 화면 | 독립 모듈 `script/app/scene/menu/modeselect`(charselect 2D 렌더러 import) — `ui.html?ui=modeselect`. 에셋 `tools/analysis/modesel_web_assets.py`, 시험 `tools/test_modeselect.ts`·`check_modeselect.ts`·`shot_modeselect.ts`. 분석·명세 [docs/shell/modeselect.md](docs/shell/modeselect.md) |
 
 설계 규칙은 [DESIGN.md](DESIGN.md), 진행 상황은 [PROGRESS.md](PROGRESS.md).
 
@@ -62,7 +62,7 @@ web/
       pad.ts            Switch Npad 입력 형식, 누름/뗌
       rng.ts            bex::RandModule 계약 (알고리즘 미확정, 구현 없음)
       events.ts         로직 → 화면 사건 유니온
-    shell/charselect/   캐릭터 선택 독립 모듈(state 순수 상태기계·scene2d/render2d 자체 명세 2D·preview3d 카드 3D·screen 컨트롤러, three 만 import)
+    app/scene/menu/charselect/   캐릭터 선택 독립 모듈(state 순수 상태기계·scene2d/render2d 자체 명세 2D·preview3d 카드 3D·screen 컨트롤러, three 만 import)
     charselect_page.ts  페이지 ↔ 캐릭터 선택 모듈 어댑터(입력 비트·SE·루프)
     ui_main.ts          UI 시험 페이지(ui.html) — 셸 화면 목록(UIS)·옵션·디버그
     view/               화면 부품 (브라우저 전용)

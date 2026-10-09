@@ -10,9 +10,9 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import type { Render2D } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import type { Render2D } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
   applyOnlineExtra,
@@ -40,12 +40,12 @@ import {
   type OnlineExtra,
   type OnlineSelf,
   type SioConnect,
-} from '../script/shell/online';
-import { applyPlazaUiExtra, PlazaUi, type PlazaUiExtra, type PlazaUiPlayer } from '../script/shell/plaza/ui';
+} from '@app/scene/menu/online';
+import { applyPlazaUiExtra, PlazaUi, type PlazaUiExtra, type PlazaUiPlayer } from '@app/scene/world/plaza/ui';
 import * as THREE from 'three';
-import { leverToward, RemoteMotion } from '../script/shell/plaza/follow';
-import { NO_LEVER, PlazaMover, type Lever } from '../script/shell/plaza/player';
-import type { PlazaCardExtra } from '../script/shell/plaza/ui/card';
+import { leverToward, RemoteMotion } from '@app/scene/world/plaza/follow';
+import { NO_LEVER, PlazaMover, type Lever } from '@app/scene/world/plaza/player';
+import type { PlazaCardExtra } from '@app/scene/world/plaza/ui/card';
 import { createPlaza } from '../server/games/mpj-plaza';
 import { PlazaRooms } from '../server/games/mpj-plaza/rooms';
 import { startPlazaServer } from '../server/main';

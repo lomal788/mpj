@@ -2,7 +2,7 @@
  * 미니게임 모드 공용 UI 모듈 — 명세 JSON(web/assets/mgmcommon/{spec,mgmet,mgm01}.json, tools/analysis/mgmcommon_web_assets.py)과 어댑터 형식.
  * 레이아웃·폰트·텍스처 형식은 캐릭터 선택 명세(../charselect/types)를 그대로 쓴다. 근거: docs/shell/mgm_common.md 9.6, message_window.md 9.4.
  */
-import type { FontSpec, LayoutSpec } from '../charselect/types';
+import type { FontSpec, LayoutSpec } from '@app/scene/menu/charselect/types';
 
 /** 메시지 속성(msbt ATR1): 번호는 meswin.attrLists 의 목록 순서 */
 export interface MsgAttr {

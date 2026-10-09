@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 미니게임 장면 로더(shell/mgstage) 보기 — dev/ui?ui=mgstage&mg=mg0508. 공용 변환기(tools/analysis/mg_assets.py)가 만든 장면을
+ * 페이지 ↔ 미니게임 장면 로더(app/scene/minigame/mgstage) 보기 — dev/ui?ui=mgstage&mg=mg0508. 공용 변환기(tools/analysis/mg_assets.py)가 만든 장면을
  * 맵 + 카메라 클립 재생 + 기본 애니로 보여 준다(게임 로직 없음). 설계: docs/engine/13_asset_converter.md §7.
  * URL: ?mg=<id>   변환된 게임(assets/mg/index.json, 기본 mg0508)
  *      ?cam=<이름> 처음 재생할 카메라(기본 = mg.camera.first, 끝나면 mg.camera.game 을 반복)
@@ -8,7 +8,7 @@
  */
 import { ASSETS } from '../env';
 import { P0 } from '@game/lib/assetcore';
-import { createMgStage, mgStageKey, type MgCameraHandle, type MgStage } from '../shell/mgstage';
+import { createMgStage, mgStageKey, type MgCameraHandle, type MgStage } from '@app/scene/minigame/mgstage';
 import { gltfTexturesManaged } from '../shell/stage3d/assetHandlers';
 import { appAssets } from '../view/appAssets';
 

@@ -77,3 +77,5 @@
 - `game/` 밖에서 core·lib 를 부를 때는 별칭 `@game/core/…`·`@game/lib/…` 만 쓴다(`tsconfig.json` `paths` 한 곳 — esbuild·tsx 가 같이 읽는다). 폴더를 옮기면 별칭 한 줄만 고친다.
 - `game/lib` 안의 어댑터 → 자기 코어는 상대 경로(`../sound`)로 둔다. 폴더째 다른 프로젝트(ddalkkakrider 포털 등)로 가져갈 때 별칭 설정 없이 돈다. 공용 lib 끼리, lib → shell·games·view import 는 금지(경계 시험).
 - 개발·시험 페이지는 `script/dev/` + `dev/ui.html`(주소 `/dev/ui`).
+- 화면은 `script/app/scene/<묶음>/<화면>`: `menu`(플레이어 설정·캐릭터 선택·모드 선택·보드 규칙·온라인), `world`(광장·항구 mgmet), `minigame`(한 판 틀 mgscene·결과 mgresult·장면 로더 mgstage·프리 플레이 mgm01). 화면 폴더 밖에서 부를 때는 별칭 `@app/scene/…`, 화면 폴더 안은 상대 경로.
+- 남은 정리(나중): `shell/mgmcommon`·`shell/stage3d`·`view/`·페이지 파일 → `app/common`·`app/flow`·`app/main.ts`. 화면끼리의 직접 import(광장 → 캐릭터 선택 미리보기 등)는 그때 `app/common` 으로 올려 없앤다.

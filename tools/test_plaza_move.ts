@@ -9,9 +9,9 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as THREE from 'three';
 import { MeshCollider } from '../script/shell/stage3d/meshCollider';
-import { ACTOR, leverFromStick, NO_LEVER, PlazaMover, startSocketCount, transitBlend, wrapDeg, type Lever, type Transit } from '../script/shell/plaza/player';
-import { applyPose, isBalloonFront, MenuCameraFollow } from '../script/shell/plaza/camera';
-import type { PlazaCameraParam } from '../script/shell/plaza/types';
+import { ACTOR, leverFromStick, NO_LEVER, PlazaMover, startSocketCount, transitBlend, wrapDeg, type Lever, type Transit } from '@app/scene/world/plaza/player';
+import { applyPose, isBalloonFront, MenuCameraFollow } from '@app/scene/world/plaza/camera';
+import type { PlazaCameraParam } from '@app/scene/world/plaza/types';
 
 const ROOT = join(import.meta.dirname, '..', '..');
 let fails = 0;

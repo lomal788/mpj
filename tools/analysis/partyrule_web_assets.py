@@ -1,4 +1,4 @@
-"""마리오 파티(보드) 파티 규칙 화면(web/script/shell/partyrule) 에셋 → web/assets/partyrule/partyrule.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
+"""마리오 파티(보드) 파티 규칙 화면(web/script/app/scene/menu/partyrule) 에셋 → web/assets/partyrule/partyrule.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/partyrule_web_assets.py [임시 폴더]
 

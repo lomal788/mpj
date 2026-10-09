@@ -442,7 +442,7 @@ console.log('9) import 경계·정적 검사');
   eq([...new Set(imps(read('script/game/lib/sound-webaudio/index.ts')))], ['../sound'], 'lib/sound-webaudio = 코어만');
   const bad = ['Math.random', 'performance.now', 'Date.now', 'new Date', 'document.', 'window.', 'requestAnimationFrame', 'setTimeout', 'setInterval'].filter((w) => core.includes(w));
   eq(bad, [], '코어: Math.random·벽시계·DOM·타이머 없음');
-  ok(imps(read('script/shell/mgscene/sound.ts')).includes('@game/lib/sound'), '틀 로직 MgSound → 코어 표(fadeTimeSec)');
+  ok(imps(read('script/app/scene/minigame/mgscene/sound.ts')).includes('@game/lib/sound'), '틀 로직 MgSound → 코어 표(fadeTimeSec)');
   const rh = read('script/games/rhythm/view/sound.ts');
   ok(!/\bthis\.handles\b|\badmit\(|calc3d\(/.test(rh) && rh.includes('soundSystem('), '리듬 RmSoundMap: 자체 핸들·한도·3D 없음 → 코어(soundSystem)');
   const mg = code(read('script/view/mgsceneSound.ts'));

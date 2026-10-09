@@ -49,7 +49,7 @@
 import * as THREE from 'three';
 import { appTransition, CLOSED, CLOSING, OPEN, OPENING, Transition, WIPE_WHITE } from '@game/lib/transition';
 import type { V3 } from '@game/core/fmath';
-import { resolveSpecFonts } from '../../../shell/charselect/fontSheet';
+import { resolveSpecFonts } from '@app/scene/menu/charselect/fontSheet';
 import { loadUiImage, type UiImage } from '../../../shell/stage3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 import { envelopeSamples, envelopeWeb50, vibDefaults } from '@game/lib/vibration';

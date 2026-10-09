@@ -8,9 +8,9 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nodeMatrix } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -228,7 +228,7 @@ console.log('5c. 22명 눈 회귀 검사 (docs 12.8)');
   }
   console.log(`   눈 표정 메시 ${meshesChecked}개`);
   // 12.2 회귀 방지: 눈동자 합성에 _C1 마스크를 곱하지 않는다(마리오 등은 _C1 이 흰자 일부만 표시)
-  const pv = readFileSync(join(WEB, 'script/shell/charselect/preview3d.ts'), 'utf8');
+  const pv = readFileSync(join(WEB, 'script/app/scene/menu/charselect/preview3d.ts'), 'utf8');
   ok(!/sclera \* vEyeMask/.test(pv) && /e0\.a \* eyeInside\(e0uv\) \* sclera\)/.test(pv), '눈동자 마스크 = 알베도 규칙만(_C1 미사용)');
   // 12.10 회귀 방지: 미리 준비(compileAsync·initTexture), 로드 완료가 대기 모션으로 덮지 않음, 붙일 때 첫 자세 뒤 그리기
   ok(/compileAsync\(/.test(pv) && /initTexture\(/.test(pv), '미리 준비 = compileAsync + initTexture');
@@ -277,14 +277,14 @@ console.log('5d. 22명 몸 셰이더 그래프 규칙 (docs 12.11: 알베도 좌
     }
   }
   console.log(`   오프셋 항 ${terms}개`);
-  const pv = readFileSync(join(WEB, 'script/shell/charselect/preview3d.ts'), 'utf8');
+  const pv = readFileSync(join(WEB, 'script/app/scene/menu/charselect/preview3d.ts'), 'utf8');
   ok(!/scleraColor|scleraOn/.test(pv), '셰이더에 흰자 칠하기 없음');
   ok(/bodyD \+ |MAP_UV \} \+ bodyD|\+ bodyD, 1/.test(pv) && /tintColor/.test(pv) && /applyBody\(/.test(pv), '몸 좌표 오프셋·기본색 섞기·프레임마다 파라미터');
 }
 
 console.log('6. import 그래프 (독립성)');
 {
-  const dir = join(WEB, 'script/shell/charselect');
+  const dir = join(WEB, 'script/app/scene/menu/charselect');
   const files = readdirSync(dir).filter((f) => f.endsWith('.ts'));
   for (const f of files) {
     const src = readFileSync(join(dir, f), 'utf8');

@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 미니게임 항구 화면(shell/mgmet: 액티비티 선택+첫 설명, 규칙 설정) 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. mgmcommon_page.ts 와 같은 방식.
+ * 페이지 ↔ 미니게임 항구 화면(app/scene/world/mgmet: 액티비티 선택+첫 설명, 규칙 설정) 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. mgmcommon_page.ts 와 같은 방식.
  * 시험값: 패널의 "항구 시험값"(첫 설명 flag 8·재방문 flag 1·시작 지점·보스 개방·이름) 또는 URL ?first=1 ?again=1 ?sp=0~7 ?boss=0 ?nick=…, 사람/COM = 패널 COM 칸.
  * bex 비트: A 0x1·B 0x2·X 0x4·Y 0x8 [추정 mgm_common.md 11]·L 0x10·R 0x20·ZL 0x40·ZR 0x80·십자 0x100~0x800·스틱 0x10000~0x80000. 3D 항구 = 고정 배경 그림(modeselect 임시 대역).
  */
@@ -7,8 +7,8 @@ import { ASSETS } from './env';
 import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { createWork, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
-import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
-import { MgmetHowtoView } from './shell/mgmet/howto';
+import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from '@app/scene/world/mgmet';
+import { MgmetHowtoView } from '@app/scene/world/mgmet/howto';
 import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import { appSave } from './view/save';

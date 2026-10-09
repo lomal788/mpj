@@ -9,11 +9,12 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nodeMatrix } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
-import type { ModeSpec } from '../script/shell/modeselect/types';
+import type { ModeSpec } from '@app/scene/menu/modeselect/types';
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
@@ -216,13 +217,13 @@ console.log('6. 글리프·소리');
 
 console.log('7. import 그래프 (독립성)');
 {
-  const dir = join(WEB, 'script/shell/modeselect');
+  const dir = join(WEB, 'script/app/scene/menu/modeselect');
   const files = readdirSync(dir).filter((f) => f.endsWith('.ts'));
   const SHARED = new Set(['../charselect/scene2d', '../charselect/render2d', '../charselect/state', '../charselect/types']);
   for (const f of files) {
     const src = readFileSync(join(dir, f), 'utf8');
     for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
-      const s = m[1] ?? m[2];
+      const s = legacySpec(m[1] ?? m[2]);
       const allowed = (s.startsWith('./') && !s.includes('..')) || SHARED.has(s) || s === 'three';
       ok(allowed, `${f}: 금지 import '${s}'`);
     }

@@ -167,7 +167,7 @@ PlayerCharacterID는 `characterlist.json`의 `PlayerCharacterData` 배열 인덱
 - 배열 텍스처는 그래픽 담당 `web/tools/analysis/graphics_bntx.py`가 레이어별 png(`_00`, `_01`)로 푼다 [실행].
 - **몸 UV는 기존 그래프 판독으로 해소**: [charselect §12.11](../shell/charselect.md)의 24개 프로그램과 `analysis/mat/charsel_body_graph.json`을 따른다. 일반식은 `uv_body = S·(uv0 + Σ(C1/C2 성분·P 성분)) + O`다. 기본 v 보정은 pc01~06·08·09·11·14·51·54·58에서 `0.5v+0.5`, pc50은 `0.5u`, pc13은 **`0.8v+0.2`**, pc07·12·52·53·56·61·62는 항등이다. 텍스처 종횡비만으로 판정하던 pc13 규칙과 ‘얼굴은 보정하지 않는다’ 설명을 폐기한다.
 - 눈 좌표·흰자 마스크·DK/가봉 눈꺼풀은 [charselect §12.8](../shell/charselect.md)에 있는 캐릭터별 구현·데이터 판독을 재사용한다. `_C1/_C2`의 몸 좌표식 확정이 눈 합성 전체의 확정을 뜻하지 않는다(§6.9). 과거 pc01 시험 렌더(§10)는 이 보정 이전 산출물이다.
-- 현재 `script/shell/charselect/preview3d.ts`는 위 그래프 분기를 적용하지만, `script/games/mg1801/view/character.ts`에는 종횡비 기반 보정이 남아 있다. 이 차이는 현재 구현의 정합성 과제이며 원본 규칙의 불확실성과 구분한다.
+- 현재 `script/app/scene/menu/charselect/preview3d.ts`는 위 그래프 분기를 적용하지만, `script/games/mg1801/view/character.ts`에는 종횡비 기반 보정이 남아 있다. 이 차이는 현재 구현의 정합성 과제이며 원본 규칙의 불확실성과 구분한다.
 
 **뼈 체계** (pc01, 94개) [데이터]
 
@@ -689,7 +689,7 @@ FX 트리거의 애니 프레임 이벤트는 "프레임 f를 지나는 순간" 
 | 현재 파일·공용 데이터 | 확인한 책임·한계 |
 |---|---|
 | `script/games/mg1801/view/character.ts` | 모델 인스턴스·모션/shape 채널·blink·시선·칼 부착. MPAT 프레임 표를 사용하지만 이전 포즈 고정과 재질 보정은 원본과 차이가 있음 |
-| `script/shell/charselect/preview3d.ts` | 캐릭터 선택·광장에서 공유하는 몸/눈 셰이더·본 표시·모션 화면 |
+| `script/app/scene/menu/charselect/preview3d.ts` | 캐릭터 선택·광장에서 공유하는 몸/눈 셰이더·본 표시·모션 화면 |
 | `assets/chara/pcNN/` | 공용 모델·텍스처·`motion/<name>.glb`·`motions.json`; 22명 및 NPC 공용화 결과는 [chara_assets §9](chara_assets.md) |
 | `tools/analysis/character_verify/motion_ref.ts` | §6.7의 과거 기준 계산. 범용 `script/game/core/motion.ts`는 아직 없음 |
 
@@ -852,7 +852,7 @@ MSYS_NO_PATHCONV=1 ./tools/ghidra_12.1.2_PUBLIC/support/analyzeHeadless.bat c:/d
 | three 어댑터 | `script/game/lib/character-three/index.ts` | three + 코어 | `CharacterView`(복제 모델의 뼈 포즈: 웹 이전 믹서 경로 / 원본 직접 샘플 경로, 깜빡임 묶음, 뼈 보임→메시 보임), `HeadView`(head_aimcont 되돌림·대상 방향을 부모/캐릭터 공간으로·chin·neck_roll) |
 | mpj 연결 | `script/view/character.ts` | 코어·어댑터·셸 | `createCharacter(pc, {...})`: 공용 에셋 경로, 캐릭터 선택 `Preview3D` 한 칸(로더 관리자 broker 받기·GPU 미리 준비·몸/눈 셰이더 그래프)을 빌림, characterlist 시선 값. `routeCharacterEvents`: se·voice → mgscene 사운드(`MgSceneSound.onEvents`, bgmstream 아님), vib → 장면 진동 표(없으면 Gamepad rumble), fx → 사건만(소비자 비움) |
 
-- 재질은 어댑터가 만들지 않는다. 셰이더 그래프는 소비자 끼움점이 건다: PC = `shell/charselect/preview3d.ts`의 몸·눈 그래프(기존 그대로), 광장 NPC = `shell/plaza/npcMaterial.ts`, mg1801 = 자기 재질(§14.4 미룸).
+- 재질은 어댑터가 만들지 않는다. 셰이더 그래프는 소비자 끼움점이 건다: PC = `app/scene/menu/charselect/preview3d.ts`의 몸·눈 그래프(기존 그대로), 광장 NPC = `app/scene/world/plaza/npcMaterial.ts`, mg1801 = 자기 재질(§14.4 미룸).
 - 고정 스텝 1/60, 시간 주입(`step(dt)`), three Quaternion·Euler 식(slerp·setFromEuler·setFromRotationMatrix·rotateTowards·normalize)을 같은 연산 순서로 옮겨 기존 웹 결과와 비트까지 같다(§14.6).
 - 할당: 코어 스텝(진행·루프·FTRG 평가·발소리·시선·눈)은 정상 상태 할당 0(실수 값·상태는 `Float64Array` 칸, 인라인 안 되는 함수에 실수 인자를 넘기지 않음). 재생 요청(노드 교체) 한 번은 최적화 밖 실수 상자 수십 B 를 낼 수 있다(스텝 아님, 시험 11절 수치).
 
@@ -894,11 +894,11 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 
 | 소비자 | 이전 | 어떻게 | 골든 |
 |---|---|---|---|
-| `shell/charselect/preview3d.ts`(캐릭터 선택, 광장 플레이어·NPC·결과 무대가 빌림) | 이전 | 칸 시간축 = `CharacterCore` 주 슬롯(`RULES_WEB`), 믹서·깜빡임·보임 = `CharacterView`, 몸·눈 그래프·GPU 준비·broker 는 그대로. `playMotion` 추가(속도·시작·force) | 같음 |
-| `shell/plaza/player.ts`(PlazaChara) | 이전 | Preview3D 경유, `transitBlend` = 코어 `mpatBlendCompat`(원본 규칙 기본 뒤에는 코어 mpat 조회 a/b·α/β, §14.7) | 같음(4명) |
-| `shell/plaza/heading.ts` | 이전 | `Heading` = 코어 `HeadLook` + 어댑터 `HeadView`(광장 이름 잇기만) | 같음 |
-| `shell/plaza/npc.ts`·`npcMaterial.ts` | 이전 | Preview3D·Heading 경유, `isFinished` = 코어, 눈 = 코어 `EyeLook('npc')`. NPC 그래프 재질은 그대로 | 같음 |
-| `shell/mgresult/stage.ts` | 이전(파일 무수정) | Preview3D·plaza Heading 경유 | 같음(4 패턴) |
+| `app/scene/menu/charselect/preview3d.ts`(캐릭터 선택, 광장 플레이어·NPC·결과 무대가 빌림) | 이전 | 칸 시간축 = `CharacterCore` 주 슬롯(`RULES_WEB`), 믹서·깜빡임·보임 = `CharacterView`, 몸·눈 그래프·GPU 준비·broker 는 그대로. `playMotion` 추가(속도·시작·force) | 같음 |
+| `app/scene/world/plaza/player.ts`(PlazaChara) | 이전 | Preview3D 경유, `transitBlend` = 코어 `mpatBlendCompat`(원본 규칙 기본 뒤에는 코어 mpat 조회 a/b·α/β, §14.7) | 같음(4명) |
+| `app/scene/world/plaza/heading.ts` | 이전 | `Heading` = 코어 `HeadLook` + 어댑터 `HeadView`(광장 이름 잇기만) | 같음 |
+| `app/scene/world/plaza/npc.ts`·`npcMaterial.ts` | 이전 | Preview3D·Heading 경유, `isFinished` = 코어, 눈 = 코어 `EyeLook('npc')`. NPC 그래프 재질은 그대로 | 같음 |
+| `app/scene/minigame/mgresult/stage.ts` | 이전(파일 무수정) | Preview3D·plaza Heading 경유 | 같음(4 패턴) |
 | `games/mg1801/view/character.ts` | 부분 | 머리·눈 계산 = 코어 `HeadLook`·`EyeLook('blend')`·어댑터 `HeadView`. 포즈(로직이 준 프레임 직접 샘플·MPAT a 프레임 섞기)·재질(종횡비 UV)·깜빡임은 그대로 — 게임 로직 프레임 소유 구조와 재질이 달라 다음 단계 | 같음(2판 전체) |
 | 공용 리듬 틀 `games/rhythm/`·mg1801 logic `resultMotion` | 미룸 | 로직이 모션 이름·프레임을 정하는 구조(화면은 mg1801 view). 이전 대상 아님 | — |
 

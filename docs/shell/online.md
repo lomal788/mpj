@@ -281,7 +281,7 @@ guide = host ? [info, invite(if members < max), dismiss] : [leave]
 ## 9. 웹 포팅 구조와 구현 순서
 
 ### 9.1 위치·의존
-`web/script/shell/online/`(엔진 독립). import 경계 = [mgm_common.md](mgm_common.md) 9.1(같은 폴더·`../mgmcommon/*`·charselect 공개 모듈·three). 페이지 어댑터 `web/script/online_page.ts`, dev/ui.html `UIS` 항목 `online`. 에셋 `web/assets/online/online.json`(+tex/font/sound) ← `web/tools/analysis/online_web_assets.py`(partyrule_web_assets 방식, mgmcommon `Bundle` 재사용). 얼굴 = `assets/mgm01/faces.json`.
+`web/script/app/scene/menu/online/`(엔진 독립). import 경계 = [mgm_common.md](mgm_common.md) 9.1(같은 폴더·`../mgmcommon/*`·charselect 공개 모듈·three). 페이지 어댑터 `web/script/online_page.ts`, dev/ui.html `UIS` 항목 `online`. 에셋 `web/assets/online/online.json`(+tex/font/sound) ← `web/tools/analysis/online_web_assets.py`(partyrule_web_assets 방식, mgmcommon `Bundle` 재사용). 얼굴 = `assets/mgm01/faces.json`.
 
 ### 9.2 네트워크 어댑터 계약 [설계 — 나중에 WebSocket 방 서버로 구현할 인터페이스]
 화면은 **어댑터만** 본다. 요청은 즉시 반환하고 결과는 사건으로 온다(원본 파이버의 "요청 → 결과 폴링"과 같은 모양). 사건은 화면 틱 시작에 `poll()` 로 한꺼번에 받는다.
@@ -364,7 +364,7 @@ interface OnlineAdapter {
 
 사용자 지시(2026-10-08): ① 서버는 ddalkkakrider(`E:/programming/python/ddalkkakrider_work/web`, 읽기만) 와 같은 구조 — http 서버 하나에 express `createApp(fallback)`(`scripts/server/api/index.mjs`, `/api/v1/…` 라우터 + 정적 파일 fallback) 과 socket.io `Server` 하나(`scripts/server/socket.ts` 의 `createSocket(http, {games, report, ...engine})`: 게임마다 `io.of('/'+id)` 네임스페이스·`guard` 미들웨어·`register(namespace, {every})`·`status(id)`·`close()`, 엔진 `maxHttpBufferSize 8192·pingInterval 5000·pingTimeout 10000`), 버전 socket.io·socket.io-client **4.0.1**, express **5.2.1**. ② 방 찾기·만들기·참가 요청은 **HTTP**, **실제 방에 입장하는 순간부터 socket**, 나가거나 해산되면 소켓을 끊는다. ③ 혼자·로컬만이면 HTTP·소켓 모두 호출 없음. ④ 통신은 **JSON 금지·바이너리**, 위치는 원본처럼 움직일 때만 0.2 s.
 
-**파일**: `web/server/socket.ts`(ddalkkakrider `createSocket`·`guard`·`Game`/`GameContext` 계약 그대로) · `web/server/games.ts`(게임 목록) · `web/server/games/mpj-plaza/index.ts`(Game `id = 'mpj-plaza'`, `register(namespace, {every})` + HTTP 라우터) · `rooms.ts`(순수 방 상태 `PlazaRooms`, 전송과 분리) · `web/server/api/index.ts`(`createApp(fallback, routers)` — ddalkkakrider createApp 과 같은 꼴, 로그인 라우터 대신 게임 라우터) · `web/server/main.ts`(http 서버: API + socket.io + 정적 파일 web/ + esbuild 번들 — ddalkkakrider `server.mjs` 처럼 **페이지와 같은 http 에** 붙여 클라이언트가 `/socket.io/socket.io.js` 를 같은 출처에서 읽는다). 클라이언트 `script/shell/online/wire.ts`(바이너리 배치, 서버·클라이언트 공용) · `socketio.ts`(`SocketIoOnline implements OnlineAdapter`). 나중에 ddalkkakrider `games.ts` 목록에 `mpj-plaza` 의 Game 을 그대로 넣고 라우터를 createApp 에 더하면 같은 서버에 얹힌다.
+**파일**: `web/server/socket.ts`(ddalkkakrider `createSocket`·`guard`·`Game`/`GameContext` 계약 그대로) · `web/server/games.ts`(게임 목록) · `web/server/games/mpj-plaza/index.ts`(Game `id = 'mpj-plaza'`, `register(namespace, {every})` + HTTP 라우터) · `rooms.ts`(순수 방 상태 `PlazaRooms`, 전송과 분리) · `web/server/api/index.ts`(`createApp(fallback, routers)` — ddalkkakrider createApp 과 같은 꼴, 로그인 라우터 대신 게임 라우터) · `web/server/main.ts`(http 서버: API + socket.io + 정적 파일 web/ + esbuild 번들 — ddalkkakrider `server.mjs` 처럼 **페이지와 같은 http 에** 붙여 클라이언트가 `/socket.io/socket.io.js` 를 같은 출처에서 읽는다). 클라이언트 `script/app/scene/menu/online/wire.ts`(바이너리 배치, 서버·클라이언트 공용) · `socketio.ts`(`SocketIoOnline implements OnlineAdapter`). 나중에 ddalkkakrider `games.ts` 목록에 `mpj-plaza` 의 Game 을 그대로 넣고 라우터를 createApp 에 더하면 같은 서버에 얹힌다.
 
 **연결 수명**
 

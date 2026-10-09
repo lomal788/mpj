@@ -16,7 +16,7 @@ import {
   type MgResultBytes,
   type MgTables,
   type MgUiData,
-} from './shell/mgscene';
+} from '@app/scene/minigame/mgscene';
 
 export interface MgRunInit {
   def: Pick<GameDef, 'id' | 'createLogic'>;

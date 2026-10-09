@@ -8,7 +8,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { FontSpec } from '../script/shell/charselect/types';
+import type { FontSpec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');

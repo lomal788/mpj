@@ -2,9 +2,9 @@
  * 공용 창 ComUiMinigameModeWindowCommon — 창 생애(windowLife)·메뉴 격자(menuGrid) 사건을 명세 레이아웃에 옮긴다 (docs/shell/mgm_common.md 3.2·4~6·9.3).
  * 페인 항목 애니 = 그 페인 부품 인스턴스의 태그 재생(부품이 아니면 무시 [설계, 9.6]). 항목 레이아웃은 창 뒤에 그린다 [설계].
  */
-import type { Render2D } from '../charselect/render2d';
-import type { LayoutInst } from '../charselect/scene2d';
-import type { Spec } from '../charselect/types';
+import type { Render2D } from '@app/scene/menu/charselect/render2d';
+import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { IDENTITY, MgmLayout, type ConstraintOwner, type Mat3 } from './itemLayout';
 import { MenuGrid, type MenuAnimeSet, type MenuEvent, type MenuItem } from './menuGrid';
 import { parseMessage, plainText, RichTextPane, type Inserts } from './text';

@@ -1,6 +1,6 @@
 /**
  * mg1801 한 판 — 원본 mg1801::Scene(+ 기반 ca::rm::RmMgSceneBase, bq::MinigameScene::MinigameFlow)과 MaintainProduct 를 묶는다.
- * 기반(RmMgSceneBase)은 리듬 공용 모듈 games/rhythm/scene.ts, 흐름 단계 진행은 공용 틀 shell/mgscene 이 맡는다(docs/engine/02_rhythm.md 14절).
+ * 기반(RmMgSceneBase)은 리듬 공용 모듈 games/rhythm/scene.ts, 흐름 단계 진행은 공용 틀 app/scene/minigame/mgscene 이 맡는다(docs/engine/02_rhythm.md 14절).
  * 이 파일은 mg1801 고유 부분: 원본 vtable 훅 덮어쓰기, 제품 파이버(Object → Player), MapImpl NPC·카메라, state·결과 조립.
  * step() 한 번 = 원본 한 프레임 [판독: docs/engine/01_core.md, analysis/notes/mg1801_core.md 2절]:
  *   패드 읽기 → RmSoundMan 파이버(JUST 판정음 타이머) → 결과 연출 파이버 → 제품 파이버(Stage → Object → Player)
@@ -14,7 +14,7 @@
  * 1·3 은 리듬 쿠킹(rc_stage01) 코스 안에서만 나오므로 그 경로(+0x1C = 1, 코스 index, +0x2C)를 함께 둔다(web/docs/minigame/rc_stage01.md).
  *
  * 원본과 다른 점:
- * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 공용 틀 shell/mgscene 이 돈다(리듬 장면 훅은 모두 1,
+ * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 공용 틀 app/scene/minigame/mgscene 이 돈다(리듬 장면 훅은 모두 1,
  *   docs/shell/minigame_scene.md §12.12.3).
  * - 리듬 쿠킹의 컨트롤 안내 와이프(RmUiCntWipe 표시)는 닫히는 때를 정하는 내부 갱신을 판독하지 못했다 [미확정]. 웹은 바로 끝난 것으로 둔다
  *   (시험은 controlWipeFrames 로 길이를 넣어 SQ_BGM_RC_CALIBRATION 조건을 본다).
@@ -26,7 +26,7 @@ import { Pads, type PadInput } from '@game/core/pad';
 import type { RandModule } from '@game/core/rng';
 import type { GameLogic, GameSetup } from '../../../game';
 import { CLOSED, CLOSING, OPENING, type Transition } from '@game/lib/transition';
-import type { MgPlaySettings, MgSceneContext } from '../../../shell/mgscene';
+import type { MgPlaySettings, MgSceneContext } from '@app/scene/minigame/mgscene';
 import { type RmConfig, type RmOptions, resolveRmConfig } from '../../rhythm/gameWork';
 import { RmMgGame } from '../../rhythm/mgGame';
 import { type RmBeatData, RmMgSceneBase } from '../../rhythm/scene';

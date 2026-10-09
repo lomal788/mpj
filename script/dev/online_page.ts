@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 온라인 멀티 화면(shell/online) 연결 — partyrule_page.ts 와 같은 어댑터(입력·소리·에셋)·60Hz 고정 스텝 루프, dev/ui.html 시험값 패널.
+ * 페이지 ↔ 온라인 멀티 화면(app/scene/menu/online) 연결 — partyrule_page.ts 와 같은 어댑터(입력·소리·에셋)·60Hz 고정 스텝 루프, dev/ui.html 시험값 패널.
  * 네트워크는 가짜(FakeOnline). 시험값(패널 또는 URL): entry=friend|world|lobbyHost|lobbyClient, rooms=방 수, join=입장 간격 s(0 = 없음),
  * leave=퇴장까지 s(0 = 안 나감), err=none|connect|join|password|full|dissolve|disconnect|match|timeout, first=1(첫 온라인 안내),
  * humans=1~4(이 기기 사람 수), chara=0~21, match=매칭 걸리는 s, mtime=MATCHING_TIME. 배경 ?bg=none|URL(기본 modeselect/backdrop_temp.png).
@@ -9,7 +9,7 @@ import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { MgmSound, MgmView } from '../shell/mgmcommon';
-import { applyOnlineExtra, FakeOnline, ONLINE_FACES, ONLINE_PART, OnlineScreen, type FakeError, type OnlineEntry, type OnlineExtra } from '../shell/online';
+import { applyOnlineExtra, FakeOnline, ONLINE_FACES, ONLINE_PART, OnlineScreen, type FakeError, type OnlineEntry, type OnlineExtra } from '@app/scene/menu/online';
 import type { PadSource } from '../view/input';
 import { appBgm } from '../view/bgm';
 

@@ -2,7 +2,7 @@
  * 입력 도우미 — bq::mgm::GetOperationPlayerId / GetInputTrigger / GetInputRepeat (docs/shell/mgm_common.md 6.10).
  * 반복 간격은 원본 bex [미확정] → charselect RepeatGen 24/6f [근사, 9.4].
  */
-import { RepeatGen } from '../charselect/state';
+import { RepeatGen } from '@app/scene/menu/charselect/state';
 import type { MgmPadSource } from './types';
 
 /** bex 비트(6.10 쓰임; 0x4 = X·0x8 = Y 는 online.md 4.9 정정 [판독: 안내 글리프 위치 ↔ 입력 비트], 0x10~0x80 의 버튼 이름은 [추정]) */

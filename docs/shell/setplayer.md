@@ -284,7 +284,7 @@ SetName(name)   (vt+0xb8)
 ## 9. 웹 포팅 구조와 구현 순서
 
 ### 9.1 원칙
-- 위치 `web/script/shell/setplayer/`. import 허용 = 같은 폴더, `../mgmcommon`, `../charselect` 공개 모듈, `three`. 금지 = script/game/core·games·view, game.ts, env.ts (mgm_common.md 9.1 과 같음).
+- 위치 `web/script/app/scene/menu/setplayer/`. import 허용 = 같은 폴더, `../mgmcommon`, `../charselect` 공개 모듈, `three`. 금지 = script/game/core·games·view, game.ts, env.ts (mgm_common.md 9.1 과 같음).
 - 상태기계는 원본 파이버 구조 그대로 mgmcommon `Flow`(제너레이터)로 쓴다: 단계 함수 하나 = 원본 람다 하나, `Wait` = `yield`.
 - 시스템 애플릿 3가지(컨트롤러 지원·유저 선택·소프트웨어 키보드)는 **어댑터**로 뺀다 [설계].
 

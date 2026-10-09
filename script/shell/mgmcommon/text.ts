@@ -3,10 +3,10 @@
  * 근거: docs/shell/mgm_common.md 6.8, message_window.md 6.3·9.4, engine/05_ui_input.md 5.2. 그리기는 charselect render2d 글자 규칙 그대로
  * (글자마다 txt 노드 하나, 진행폭 = adv × 배율 + 자간), 컬러 글리프는 흰 정점색(modeselect.md 6.1).
  */
-import type { Render2D } from '../charselect/render2d';
-import { rectOf } from '../charselect/render2d';
-import { LayoutInst } from '../charselect/scene2d';
-import type { FontSpec, LayoutSpec, NodeSpec, Rgba, Spec } from '../charselect/types';
+import type { Render2D } from '@app/scene/menu/charselect/render2d';
+import { rectOf } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { FontSpec, LayoutSpec, NodeSpec, Rgba, Spec } from '@app/scene/menu/charselect/types';
 import { IDENTITY, mul, paneGlobal, type Mat3 } from './itemLayout';
 
 export interface RichUnit {

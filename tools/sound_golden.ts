@@ -891,7 +891,7 @@ async function shellFlow(out: Map<string, string[]>): Promise<void> {
 
 async function shellMods(): Promise<Pick<Mods, 'MgmSound' | 'MessageWindow' | 'mgmSpec' | 'mgmHost' | 'appAssets' | 'assetKeyOf'>> {
   const mgm = await import('../script/shell/mgmcommon');
-  const { LayoutInst } = await import('../script/shell/charselect/scene2d');
+  const { LayoutInst } = await import('@app/scene/menu/charselect/scene2d');
   const { resolveFontsFromDisk } = await import('./fontSpecNode');
   const aa = await import('../script/view/appAssets');
   const spec = JSON.parse(fs.readFileSync(path.join(WEB, 'assets/mgmcommon/spec.json'), 'utf8'));

@@ -211,11 +211,11 @@ ConfirmReturnSceneFlow @0x7100059fa0:
 | FUN_7100208240 | `dialogBoxSize(n, choiceMaxW, textW, textH, btnH)`(순수 계산) + `layoutDialogBox(inst, n, measure)`(sys_dialog_00 인스턴스에 적용) | online.md 9.3 정정 1~7, 상수 `DIALOG_SIZE` |
 | 나눈 창 크기 | `resizeSplitWindow(inst, path, w, h?)` | online view.ts 에서 옮김 [설계: 조각 재배치] |
 
-온라인(`shell/online`)은 이 부품을 쓴다: `view.ts` 의 `layoutDialog`·`resizeWindow` → `layoutDialogBox`·`resizeSplitWindow` 호출, `widgets.ts DialogBox.update` 의 칸 이동·결정·취소 → `DialogBoxState.input`. 온라인 흐름이 쓰는 결과 값(B → `cancel` 칸 번호, 선택지 없음 → 0)은 온라인 어댑터의 기존 약속으로 남긴다 [설계].
+온라인(`app/scene/menu/online`)은 이 부품을 쓴다: `view.ts` 의 `layoutDialog`·`resizeWindow` → `layoutDialogBox`·`resizeSplitWindow` 호출, `widgets.ts DialogBox.update` 의 칸 이동·결정·취소 → `DialogBoxState.input`. 온라인 흐름이 쓰는 결과 값(B → `cancel` 칸 번호, 선택지 없음 → 0)은 온라인 어댑터의 기존 약속으로 남긴다 [설계].
 
 정정(2026-10-08, 이 판독으로): 온라인 웹 대화상자의 **선택지 없는 대화상자 A 소리**를 `SQ_SE_SYS_DECI` → **`SQ_SE_SYS_MES_PROC`** 로 고친다(FUN_7100209234). 진동 사건(`bv_vib_sys_cursor`·`bv_vib_sys_deci`)은 온라인 사건 목록에 진동이 없어 버린다 [설계].
 
-### 9.2 항구 나가기 확인 (`web/script/shell/mgmet/hub.ts`)
+### 9.2 항구 나가기 확인 (`web/script/app/scene/world/mgmet/hub.ts`)
 
 - `modeSelectCameraIdle` 의 B: `SQ_SE_SYS_CANCEL` → `confirmReturnSceneFlow()` → 예면 `seq=-1`·`exitRequested`, 아니면 `pendingGuide=true` 로 반환(상태 7 재진입).
 - `confirmReturnSceneFlow()`: 6.3 의사코드 그대로 공용 `MessageWindow` 선택지 API(`setChoiceCount`·`setChoiceLabel`·`setChoiceDeciSe`·`setChoiceDeciVib`·`setCancelEnable`·`setInitialChoice`·`choiceResult`)를 쓴다. 새 UI 를 만들지 않는다.

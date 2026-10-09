@@ -25,8 +25,8 @@ import {
   type PlayOptions,
 } from '@game/lib/character';
 import { HeadView, type HeadTarget } from '@game/lib/character-three';
-import { Preview3D } from '../shell/charselect/preview3d';
-import type { CharaSpec, Spec } from '../shell/charselect/types';
+import { Preview3D } from '@app/scene/menu/charselect/preview3d';
+import type { CharaSpec, Spec } from '@app/scene/menu/charselect/types';
 import { ASSETS } from '../env';
 import type { PadSource } from './input';
 

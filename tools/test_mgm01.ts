@@ -1,5 +1,5 @@
 /**
- * 프리 플레이(mgm01) 개별 설정·필터 상태 시험 — script/shell/mgm01 의 순수 상태(catalog·listFilter·settingView)와
+ * 프리 플레이(mgm01) 개별 설정·필터 상태 시험 — script/app/scene/minigame/mgm01 의 순수 상태(catalog·listFilter·settingView)와
  * 실제 명세(assets/mgmcommon + assets/mgm01/catalog.json)로 만든 설정 화면·필터 화면 흐름을 노드에서 돈다(WebGL 없음).
  * 기대값 근거: docs/shell/mgm01_freeplay.md 6.1·6.2·6.4·6.5·8.3·9절(판독한 규칙의 재구현 시험, 원본 실행 대조 아님).
  *
@@ -8,9 +8,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nodeMatrix, rectOf, type Render2D } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import { nodeMatrix, rectOf, type Render2D } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '../script/shell/mgmcommon';
 import { mkdirSync } from 'node:fs';
@@ -49,7 +49,7 @@ import {
   type Mgm01Player,
   type SettingDeps,
   type SettingOutcome,
-} from '../script/shell/mgm01';
+} from '@app/scene/minigame/mgm01';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

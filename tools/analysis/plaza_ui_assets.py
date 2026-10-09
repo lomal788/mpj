@@ -1,4 +1,4 @@
-"""광장(menu00) 2D UI(web/script/shell/plaza/ui) 에셋 → web/assets/plaza/ui/plaza_ui.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
+"""광장(menu00) 2D UI(web/script/app/scene/world/plaza/ui) 에셋 → web/assets/plaza/ui/plaza_ui.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/plaza_ui_assets.py [임시 폴더]
 

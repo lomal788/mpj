@@ -1,5 +1,5 @@
 /**
- * 온라인 화면 상태 시험 — script/shell/online 을 실제 명세(assets/mgmcommon/spec.json + assets/online/online.json + assets/mgm01/faces.json)와
+ * 온라인 화면 상태 시험 — script/app/scene/menu/online 을 실제 명세(assets/mgmcommon/spec.json + assets/online/online.json + assets/mgm01/faces.json)와
  * 가짜 어댑터(FakeOnline)로 노드에서 돈다(WebGL 없음). 기대값 근거: docs/shell/online.md 4~6절(판독 규칙의 재구현 시험, 원본 실행 대조 아님).
  * 흐름: 메뉴 → 방 만들기(4/8·패스워드)/찾기(목록·방 ID) → 대기실(입장·준비·정보·해산/나가기·시작) → 전 세계 매칭(찾기·취소·실패 재시도).
  * 사건이 가리키는 페인 경로·쓰는 라벨이 명세에 있는지도 함께 본다.
@@ -9,9 +9,9 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Render2D } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import type { Render2D } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, type MgmDrawHost, type MgmPadSource, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
@@ -27,7 +27,7 @@ import {
   type OIO,
   type OnlineEntry,
   type OnlineExtra,
-} from '../script/shell/online';
+} from '@app/scene/menu/online';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;
@@ -453,9 +453,9 @@ const lastDialogLabel = (c: Ctx): string => {
 {
   console.log('11. 페인 경로·라벨');
   ok(badPaths.size === 0, `없는 경로/라벨: ${[...badPaths].slice(0, 12).join(', ')}`);
-  const src = readdirSync(join(WEB, 'script/shell/online'))
+  const src = readdirSync(join(WEB, 'script/app/scene/menu/online'))
     .filter((f) => f.endsWith('.ts'))
-    .map((f) => readFileSync(join(WEB, 'script/shell/online', f), 'utf8'))
+    .map((f) => readFileSync(join(WEB, 'script/app/scene/menu/online', f), 'utf8'))
     .join('\n');
   const labels = new Set([...src.matchAll(/'((?:mn0[01]|mtch00|sys)_[A-Za-z0-9_]+)'/g)].map((m) => m[1]));
   const missing = [...labels].filter((l) => !(l in spec.texts) && !spec.layouts[l]);

@@ -1,5 +1,5 @@
 /**
- * 광장 2D UI(D 갈래) 상태 시험 — script/shell/plaza/ui 를 실제 명세(mgmcommon/spec.json + online/online.json + mgm01/faces.json +
+ * 광장 2D UI(D 갈래) 상태 시험 — script/app/scene/world/plaza/ui 를 실제 명세(mgmcommon/spec.json + online/online.json + mgm01/faces.json +
  * plaza/ui/plaza_ui.json)와 가짜 어댑터(FakeOnline)로 노드에서 돈다(WebGL 없음). 기대값 근거: docs/shell/plaza_3d.md §5.1(판독 규칙의 재구현 시험, 원본 실행 대조 아님).
  * ① 하단 줄 칸·이름·얼굴 ② 스탬프 조작부·목록·말풍선 시간·소리 ③ 장소 텔롭·다가가기 안내·온라인 안내 ④ 친구 매치 → 대기실 입장 알림·하단 줄 갱신·원격 스탬프
  * ⑤ 위치 동기(보내기 간격·받기 표 = 수신 목표·수명, 패킷마다 net:remote — 거리 분기·보간은 test_plaza_actors.ts RemoteMotion)
@@ -9,12 +9,12 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Render2D } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import type { Render2D } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
-import { applyOnlineExtra, BTN, FakeOnline, type OnlineExtra } from '../script/shell/online';
+import { applyOnlineExtra, BTN, FakeOnline, type OnlineExtra } from '@app/scene/menu/online';
 import {
   applyPlazaUiExtra,
   listStamps,
@@ -28,7 +28,7 @@ import {
   stampTexture,
   type PlazaUiExtra,
   type PlazaUiPlayer,
-} from '../script/shell/plaza/ui';
+} from '@app/scene/world/plaza/ui';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

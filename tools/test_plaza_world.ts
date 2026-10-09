@@ -9,10 +9,10 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
-import { FixedClock } from '../script/shell/plaza/scene';
-import { DECO_ITEMS, DECO_TYPE, decoVisible, defaultDecoState, isDefaultDeco, parseDecoParam, setDecoDisplay } from '../script/shell/plaza/deco';
-import type { PlazaLayoutEntry } from '../script/shell/plaza/types';
-import { plazaPlan, type PlazaFirstFile } from '../script/shell/plaza/world';
+import { FixedClock } from '@app/scene/world/plaza/scene';
+import { DECO_ITEMS, DECO_TYPE, decoVisible, defaultDecoState, isDefaultDeco, parseDecoParam, setDecoDisplay } from '@app/scene/world/plaza/deco';
+import type { PlazaLayoutEntry } from '@app/scene/world/plaza/types';
+import { plazaPlan, type PlazaFirstFile } from '@app/scene/world/plaza/world';
 import { Clip } from '../script/shell/stage3d/clip';
 import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '../script/shell/stage3d/meshCollider';
 import { graphSource, type GraphDef, type GraphSource } from '../script/shell/stage3d/graph';
@@ -295,6 +295,8 @@ for (const hz of [30, 60, 75, 120, 144, 240]) {
 
 console.log('8. import 경계(mgm_common.md §9.1 — lib/assetcore·assetcore-three 는 어디서나 허용)');
 const SHELL = join(WEB, 'script', 'shell');
+const SCENE = join(WEB, 'script', 'app', 'scene');
+const specPath = (dir: string, spec: string): string => (spec.startsWith('@app/') ? join(WEB, 'script', 'app', spec.slice(5)) : resolve(dir, spec));
 const scan = (dir: string, allowed: string[]): void => {
   for (const f of readdirSync(dir)) {
     const p2 = join(dir, f);
@@ -306,13 +308,13 @@ const scan = (dir: string, allowed: string[]): void => {
     for (const m of readFileSync(p2, 'utf-8').matchAll(/from '([^']+)'/g)) {
       const spec = m[1];
       const lib = ['@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition', '@game/lib/character', '@game/lib/character-three'].includes(spec);
-      const okSpec = spec === 'three' || spec.startsWith('three/') || lib || (spec.startsWith('.') && allowed.some((a) => resolve(dir, spec).startsWith(join(SHELL, a))));
+      const okSpec = spec === 'three' || spec.startsWith('three/') || lib || ((spec.startsWith('.') || spec.startsWith('@app/')) && allowed.some((a) => specPath(dir, spec).startsWith(a)));
       ok(okSpec, `${p2.slice(WEB.length + 1)} import ${spec}`);
     }
   }
 };
-scan(join(SHELL, 'plaza'), ['plaza', 'stage3d', 'mgmcommon', 'online', 'charselect']);
-scan(join(SHELL, 'stage3d'), ['stage3d']);
+scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(SHELL, 'stage3d'), join(SHELL, 'mgmcommon'), join(SCENE, 'menu', 'online'), join(SCENE, 'menu', 'charselect')]);
+scan(join(SHELL, 'stage3d'), [join(SHELL, 'stage3d')]);
 
 console.log('9. 단계 로딩 계획(loader_manager.md §11.4·§11.5 — plaza_first.json)');
 {

@@ -3,7 +3,7 @@
  * 배치·수명·오류: docs/shell/online.md 9.5. 원본 규칙: 5.3(검색 거르기)·5.4(참가 검사)·5.5·5.6.
  */
 import { randomBytes } from 'node:crypto';
-import { JOIN_TIMEOUT_S, KOOPA, ROOM_ID_LEN, type RoomSize, type RoomSummary } from '../../../script/shell/online/types';
+import { JOIN_TIMEOUT_S, KOOPA, ROOM_ID_LEN, type RoomSize, type RoomSummary } from '@app/scene/menu/online/types';
 import {
   decCreate,
   decJoin,
@@ -23,7 +23,7 @@ import {
   toBytes,
   type WirePlayer,
   type WireStation,
-} from '../../../script/shell/online/wire';
+} from '@app/scene/menu/online/wire';
 
 /** 연결 하나에 보내기(volatile = 밀리면 버려도 되는 위치) */
 export type Send = (bytes: Uint8Array, volatile: boolean) => void;

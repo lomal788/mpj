@@ -65,7 +65,7 @@ script/view/save.ts            (mpj 연결) mpj 섹션 정의·옛 키 마이그
 |---|---|---|
 | `lib/save` | 없음 | 모든 import(시험 `test_save.ts` 6절이 검사) |
 | `lib/save-localstorage` | `../save` | 그 밖 전부 |
-| `view/save.ts` | `lib/save`·`lib/save-localstorage`·`shell/mgmcommon/contracts`·`shell/mgmcommon/messageWindow`·`shell/mgm01/playResult`·`shell/plaza/types`(타입) | DOM 은 `appSave()` 안 어댑터 생성에서만 |
+| `view/save.ts` | `lib/save`·`lib/save-localstorage`·`shell/mgmcommon/contracts`·`shell/mgmcommon/messageWindow`·`app/scene/minigame/mgm01/playResult`·`app/scene/world/plaza/types`(타입) | DOM 은 `appSave()` 안 어댑터 생성에서만 |
 | 셸(`shell/*`) | 저장을 **구조 인터페이스로만** 받는다: `MgmSaveBacking`(contracts.ts), `PlazaSave`(plaza/types.ts), `setMessageSpeedSource`(messageWindow) | `lib/save`·`view/save` import 금지(mgm_common 9.1 경계 그대로) |
 
 - 다른 게임(ddalkkakrider 포털 등)은 `lib/save` + `lib/save-localstorage` 를 그대로 쓰고 자기 섹션만 등록한다.
@@ -135,7 +135,7 @@ process()        : 대기 해제 → 문서 직렬화 → 마지막으로 쓴 �
 
 | 웹 | 원본 |
 |---|---|
-| 허브 `opSkip`·첫 안내·`freeplayAfterFlow`(shell/mgmet/hub.ts) | mgmet_flow §8 |
+| 허브 `opSkip`·첫 안내·`freeplayAfterFlow`(app/scene/world/mgmet/hub.ts) | mgmet_flow §8 |
 | mgm01 `setupPlayData`(announce.ts) | SetupPlayData |
 | mgm01 한 판 호출(mgm01_page `call` → `persist`) | MgStartFlow SaveRequest |
 | 한 판 단계 16 `save` 사건(mgrun `save.request`) | `FUN_71002e1c68` SaveRequest |

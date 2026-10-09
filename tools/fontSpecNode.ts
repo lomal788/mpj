@@ -3,8 +3,8 @@
  * sheetFilesMissing = 글리프가 가리키는 원본 시트 파일 중 없는 것. 설계: docs/engine/font_assets.md.
  */
 import { existsSync, readFileSync } from 'node:fs';
-import { resolveFonts } from '../script/shell/charselect/fontTable';
-import type { FontSpec } from '../script/shell/charselect/types';
+import { resolveFonts } from '@app/scene/menu/charselect/fontTable';
+import type { FontSpec } from '@app/scene/menu/charselect/types';
 
 export async function resolveFontsFromDisk(fonts: Record<string, unknown> | undefined, specDir: string): Promise<string[]> {
   if (!fonts) return [];

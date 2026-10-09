@@ -21,8 +21,8 @@
  *   - FLCT·FLIM·사용자 데이터 애니, 정렬(ali1)·스크롤(scr1) 페인은 다루지 않는다.
  */
 import * as THREE from 'three';
-import { sheetTexture } from '../shell/charselect/fontSheet';
-import type { FontSpec } from '../shell/charselect/types';
+import { sheetTexture } from '@app/scene/menu/charselect/fontSheet';
+import type { FontSpec } from '@app/scene/menu/charselect/types';
 import { textureFromImage, type UiImage } from '../shell/stage3d/assetLoader';
 import { SCREEN_H, SCREEN_W } from './renderer';
 

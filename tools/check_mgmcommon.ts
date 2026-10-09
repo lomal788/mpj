@@ -10,11 +10,12 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { nodeMatrix, rectOf } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import { nodeMatrix, rectOf } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
 import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
@@ -313,19 +314,19 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
       const s = m[1] ?? m[2];
       const r = resolve(dirname(f), s);
       const inside = s.startsWith('.') && (r === dir || r.startsWith(dir + '\\') || r.startsWith(dir + '/'));
-      const shared = SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}`);
+      const shared = SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}` || s === `@app/scene/menu/${x}`);
       const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(r);
       ok(inside || shared || lib || s === 'three', `${f.slice(dir.length + 1)}: 금지 import '${s}'`);
     }
   }
   console.log(`   파일 ${files.length}개`);
-  const metDir = join(WEB, 'script/shell/mgmet');
+  const metDir = join(WEB, 'script/app/scene/world/mgmet');
   if (existsSync(metDir)) {
     const met = readdirSync(metDir).filter((f) => f.endsWith('.ts'));
     for (const f of met) {
       const src = readFileSync(join(metDir, f), 'utf8');
       for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
-        const s = m[1] ?? m[2];
+        const s = legacySpec(m[1] ?? m[2]);
         const inside = s.startsWith('./') || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
         const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
@@ -334,13 +335,13 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
     }
     console.log(`   mgmet 파일 ${met.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
   }
-  const m01Dir = join(WEB, 'script/shell/mgm01');
+  const m01Dir = join(WEB, 'script/app/scene/minigame/mgm01');
   if (existsSync(m01Dir)) {
     const m01 = readdirSync(m01Dir).filter((f) => f.endsWith('.ts'));
     for (const f of m01) {
       const src = readFileSync(join(m01Dir, f), 'utf8');
       for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
-        const s = m[1] ?? m[2];
+        const s = legacySpec(m[1] ?? m[2]);
         const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
         const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
@@ -349,13 +350,13 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
     }
     console.log(`   mgm01 파일 ${m01.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
   }
-  const prDir = join(WEB, 'script/shell/partyrule');
+  const prDir = join(WEB, 'script/app/scene/menu/partyrule');
   if (existsSync(prDir)) {
     const prf = readdirSync(prDir).filter((f) => f.endsWith('.ts'));
     for (const f of prf) {
       const src = readFileSync(join(prDir, f), 'utf8');
       for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
-        const s = m[1] ?? m[2];
+        const s = legacySpec(m[1] ?? m[2]);
         const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
         const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));

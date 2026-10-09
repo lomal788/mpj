@@ -1,11 +1,11 @@
 /**
- * 미니게임 공용 틀 2D 그리기 — 로직(shell/mgscene)의 UiLayer 상태를 원본 레이아웃(assets/mgscene/ui.json)으로 그린다.
+ * 미니게임 공용 틀 2D 그리기 — 로직(app/scene/minigame/mgscene)의 UiLayer 상태를 원본 레이아웃(assets/mgscene/ui.json)으로 그린다.
  * 재생기 = view/lyt.ts(mg1801 과 같음: 텔롭 OTF 글꼴·부품·마스크). 게임 3D 다음에 HUD 캔버스로 겹친다(docs/shell/minigame_scene.md §12.2).
  * 상태 → 인스턴스: 애니 태그가 바뀌면 play, 매 그리기 setFrame(로직 프레임), 그 뒤 글자·페인 표시·재질 ty(타이머 숫자)·얼굴 텍스처를 덮어쓴다.
  * 얼굴 = 부품 sys_face_00 의 x_face_pc64 재질 둘째 칸(sys_face_dummy*)을 face_128_pcNN^u 로(UiControlStatusFace 규칙, mg1801 과 같음).
  */
-import { resolveSpecFonts } from '../shell/charselect/fontSheet';
-import type { UiLayer } from '../shell/mgscene';
+import { resolveSpecFonts } from '@app/scene/menu/charselect/fontSheet';
+import type { UiLayer } from '@app/scene/minigame/mgscene';
 import { loadUiImage, type UiImage } from '../shell/stage3d/assetLoader';
 import type { Assets } from './assets';
 import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from './lyt';

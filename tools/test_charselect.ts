@@ -1,14 +1,14 @@
 /**
- * 캐릭터 선택 상태기계 시험 — script/shell/charselect/state.ts 를 노드에서 돈다.
+ * 캐릭터 선택 상태기계 시험 — script/app/scene/menu/charselect/state.ts 를 노드에서 돈다.
  * 기대값 근거: docs/shell/charselect.md 5절(원본 main FUN_710033a1e0·b540·c650·c3f0 판독). 원본 실행 대조가 아니라 판독한 규칙의 재구현 시험이다.
  *
  *   npx tsx tools/test_charselect.ts
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { motionStart, Preview3D } from '../script/shell/charselect/preview3d';
-import { CharSelectState, PAD, RANDOM, RepeatGen, type CharSelectEvent, type PadFrame } from '../script/shell/charselect/state';
-import type { Spec } from '../script/shell/charselect/types';
+import { motionStart, Preview3D } from '@app/scene/menu/charselect/preview3d';
+import { CharSelectState, PAD, RANDOM, RepeatGen, type CharSelectEvent, type PadFrame } from '@app/scene/menu/charselect/state';
+import type { Spec } from '@app/scene/menu/charselect/types';
 
 // selectCharacterList.json BtnNo (표 번호 순) [데이터]
 const BTN = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 10, 13, 14, 15, 16, 17, 18, 19, 20, 21];

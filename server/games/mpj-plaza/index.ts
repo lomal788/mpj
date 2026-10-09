@@ -5,7 +5,7 @@
 import express from 'express';
 import type { Router } from 'express';
 import type { Game } from '../../socket';
-import { API_BASE, PLAZA_GAME, WIRE_EVENT } from '../../../script/shell/online/wire';
+import { API_BASE, PLAZA_GAME, WIRE_EVENT } from '@app/scene/menu/online/wire';
 import { PlazaRooms, type PlazaRoomsOptions } from './rooms';
 
 /** 방 상태 하나를 socket 게임과 HTTP 라우터가 함께 쓴다 */

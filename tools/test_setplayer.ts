@@ -1,5 +1,5 @@
 /**
- * 플레이어 설정 흐름(shell/setplayer) 상태 시험 — 순수 상태기계(SetPlayerFlow)·컨트롤러 애플릿 대체·이름 규칙을 노드에서 돌리고,
+ * 플레이어 설정 흐름(app/scene/menu/setplayer) 상태 시험 — 순수 상태기계(SetPlayerFlow)·컨트롤러 애플릿 대체·이름 규칙을 노드에서 돌리고,
  * 실제 명세(assets/mgmcommon/spec.json + assets/setplayer/setplayer.json)로 흐름이 내는 애니 경로·태그·문구 페인·라벨이 있는지 본다(WebGL 없음).
  * 기대값 근거: docs/shell/setplayer.md 3.2·6.1~6.9·9.4(판독 규칙의 재구현 시험, 원본 실행 대조 아님).
  *
@@ -8,8 +8,8 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, PAD, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
@@ -29,7 +29,8 @@ import {
   type SetPlayerStartArg,
   type SlotWork,
   type SpEvent,
-} from '../script/shell/setplayer';
+} from '@app/scene/menu/setplayer';
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;
@@ -429,16 +430,16 @@ console.log('9. 실제 명세: 경로·태그·페인·라벨');
 
 console.log('10. import 경계 (mgm_common.md 9.1 과 같음)');
 {
-  const dir = join(WEB, 'script/shell/setplayer');
+  const dir = join(WEB, 'script/app/scene/menu/setplayer');
   const bad: string[] = [];
   for (const f of readdirSync(dir).filter((x) => x.endsWith('.ts'))) {
     for (const m of readFileSync(join(dir, f), 'utf8').matchAll(/from '([^']+)'/g)) {
-      const p = m[1];
+      const p = legacySpec(m[1]);
       const okImp = p.startsWith('./') || p === '../mgmcommon' || p.startsWith('../charselect/') || p === '../charselect' || p === 'three' || p === '@game/lib/assetcore' || p === '@game/lib/assetcore-three';
       if (!okImp) bad.push(`${f}: ${p}`);
     }
   }
-  eq(bad, [], 'shell/setplayer 금지 import 0');
+  eq(bad, [], 'app/scene/menu/setplayer 금지 import 0');
 }
 
 console.log(fails ? `실패 ${fails} / ${count}` : `통과 ${count}/${count}`);

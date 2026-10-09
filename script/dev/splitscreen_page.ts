@@ -1,5 +1,5 @@
 /**
- * UI 시험 항목 "분할 화면" — 분할 화면 공용 런타임(lib/splitscreen·splitscreen-three·splitscreen-dom)을 미니게임 장면(shell/mgstage) 위에서 본다.
+ * UI 시험 항목 "분할 화면" — 분할 화면 공용 런타임(lib/splitscreen·splitscreen-three·splitscreen-dom)을 미니게임 장면(app/scene/minigame/mgstage) 위에서 본다.
  * 설계·조작: docs/engine/10_split_screen.md §9.7. 게임 로직 없음 — 장면·카메라 클립만.
  * URL: dev/ui?ui=splitscreen&mg=mg0508|mg0102|mg0122 (기본 mg0508: 2×1, mg0102·mg0122: 2×2)
  * 키: S = 전체(focus0) ↔ 균등 분할, 1~4 = 그 화면 focus, T = 전환 시간 0 / 0.5 / 1 초, G = 다음 게임.
@@ -12,7 +12,7 @@ import { ASSETS } from '../env';
 import { P0 } from '@game/lib/assetcore';
 import { SplitScreen, STEP_SEC } from '@game/lib/splitscreen';
 import { DomDividingLines } from '@game/lib/splitscreen-dom';
-import { createMgStage, mgStageKey, MgCamera, parseFsnb, type MgStage } from '../shell/mgstage';
+import { createMgStage, mgStageKey, MgCamera, parseFsnb, type MgStage } from '@app/scene/minigame/mgstage';
 import { distUrl } from '../shell/stage3d/assetLoader';
 import { gltfTexturesManaged, KIND_JSON } from '../shell/stage3d/assetHandlers';
 import { appAssets } from '../view/appAssets';

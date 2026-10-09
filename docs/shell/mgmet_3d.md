@@ -73,7 +73,7 @@
 
 ## 4. 3D 신호 ↔ 3D 요소 (추가 판독 결과는 §7 ②)
 
-`web/script/shell/mgmet/types.ts` `MgmetSignals` 8개(현재 `IMMEDIATE_SIGNALS` = 모두 즉시 참) [설계].
+`web/script/app/scene/world/mgmet/types.ts` `MgmetSignals` 8개(현재 `IMMEDIATE_SIGNALS` = 모두 즉시 참) [설계].
 
 | 신호 | 원본 대기 [판독, mgmet_flow §5.2] | 대응 3D 요소 | 길이가 데이터로 정해지나 |
 |---|---|---|---|
@@ -93,7 +93,7 @@
 ### 5.1 모듈 위치 [설계]
 
 - `web/script/shell/stage3d/` **공용 3D 무대**(엔진 독립, mgm_common §9.1 규칙: `three`·같은 폴더만 import, `script/games|view|core` 금지). 내용: glb 로더·라이트맵/IBL 재질(mg1801 `material.ts` 이식), fsnb 카메라 재생기(프레임 json, Aim·fovy 규칙), fmab 재질 애니(srt·파라미터), 로케이터 소켓 조회, 캐릭터 액터(charselect `preview3d.ts`의 블렌드·시간축 일부 이식). 이후 mgm01~06 항구 장면·보드에서도 재사용.
-- `web/script/shell/mgmet/world3d/` **항구 전용**: `MapManager`·`NpcManager`·`PlayerManager`·`Camera` 대응 어댑터 + `MgmetSignals` 구현. 허브(`hub.ts`)는 지금처럼 신호만 받는다 → 3D 를 끄면 `IMMEDIATE_SIGNALS` 로 그대로 돌아감.
+- `web/script/app/scene/world/mgmet/world3d/` **항구 전용**: `MapManager`·`NpcManager`·`PlayerManager`·`Camera` 대응 어댑터 + `MgmetSignals` 구현. 허브(`hub.ts`)는 지금처럼 신호만 받는다 → 3D 를 끄면 `IMMEDIATE_SIGNALS` 로 그대로 돌아감.
 - 변환: `web/tools/analysis/mgmet_world_assets.py`(신규) → `web/assets/mgmet/world/`(glb·png·anim json·manifest). `graphics_convert.py`에는 세트 함수만 추가.
 
 ### 5.2 단계·예상 시간 — 우선순위 반영 (2026-10-08 갱신)
@@ -247,7 +247,7 @@ fmab `mgmet_sea00`(2700f 루프): P0.x = 0 → 1 선형(흐름 위상 = 45 s 주
 
 ### 9.3 다음 광장(menu00) 구현에서 다시 쓸 것
 
-- 캐릭터·NPC 변환: `web/tools/analysis/character_glb.py`(pcNN·npcNNN glb), `web/tools/analysis/charsel_chara.py`(정리 규칙), 런타임 `web/script/shell/charselect/preview3d.ts`(눈·몸 셰이더 그래프·모션·깜빡임). NPC 모델·모션 경로는 `bq.nx.bea/common/data/characterlist.json` `NPCCharacterData[id]`(`archive`·`motion filename prefix`)에서 정해진다. 이 갈래에서는 **변환을 실행하지 않았다.**
+- 캐릭터·NPC 변환: `web/tools/analysis/character_glb.py`(pcNN·npcNNN glb), `web/tools/analysis/charsel_chara.py`(정리 규칙), 런타임 `web/script/app/scene/menu/charselect/preview3d.ts`(눈·몸 셰이더 그래프·모션·깜빡임). NPC 모델·모션 경로는 `bq.nx.bea/common/data/characterlist.json` `NPCCharacterData[id]`(`archive`·`motion filename prefix`)에서 정해진다. 이 갈래에서는 **변환을 실행하지 않았다.**
 - NPC 회전(360/1100°/s)·플레이어 보간 속도(6.0/3.9) 규칙은 광장의 CPU·NPC 자동 이동에 같은 actor 계열로 쓰일 가능성이 있다 [추정].
 
 ## 8. 중단 시점 정리 — A 갈래(공용 무대·맵 로딩·맵 애니) (2026-10-08)

@@ -6,10 +6,10 @@ import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from '../shell/mgmcommon';
-import { AnnounceScreen } from '../shell/mgm01/announceScreen';
-import { HistoryScreen } from '../shell/mgm01/historyScreen';
-import { historyFromRing, writeRing } from '../shell/mgm01/historyView';
-import { MgmetHowtoView } from '../shell/mgmet/howto';
+import { AnnounceScreen } from '@app/scene/minigame/mgm01/announceScreen';
+import { HistoryScreen } from '@app/scene/minigame/mgm01/historyScreen';
+import { historyFromRing, writeRing } from '@app/scene/minigame/mgm01/historyView';
+import { MgmetHowtoView } from '@app/scene/world/mgmet/howto';
 import type { PadSource } from '../view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;

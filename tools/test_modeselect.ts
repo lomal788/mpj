@@ -1,11 +1,11 @@
 /**
- * 모드 선택 상태기계 시험 — script/shell/modeselect/state.ts 를 노드에서 돈다.
+ * 모드 선택 상태기계 시험 — script/app/scene/menu/modeselect/state.ts 를 노드에서 돈다.
  * 기대값 근거: docs/shell/modeselect.md 3·5절(menu01.nro ComUiMap::UpdateProcess·Cursor·Start·Out 판독). 원본 실행 대조가 아니라 판독한 규칙의 재구현 시험이다.
  *
  *   npx tsx tools/test_modeselect.ts
  */
-import { RepeatGen } from '../script/shell/charselect/state';
-import { ModeSelectState, NOTICE_COOLDOWN, PAD, type ModeEvent } from '../script/shell/modeselect/state';
+import { RepeatGen } from '@app/scene/menu/charselect/state';
+import { ModeSelectState, NOTICE_COOLDOWN, PAD, type ModeEvent } from '@app/scene/menu/modeselect/state';
 
 let fails = 0;
 let count = 0;

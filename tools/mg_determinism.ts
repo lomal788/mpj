@@ -7,7 +7,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { SoundSnapshot } from '../script/game';
-import type { MgPadInput } from '../script/shell/mgscene';
+import type { MgPadInput } from '@app/scene/minigame/mgscene';
 import type { NodeMgRun } from './mg_node_host';
 
 export function stableText(root: unknown): string {

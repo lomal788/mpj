@@ -3,7 +3,7 @@
  * 입력 = 축·kind·gap·stretch·부모 축 길이·자식 측정 결과(extent·bias·gap·visible/ignore·원점) → 자식 축 위치·stretch 크기.
  * 레이아웃 적용 alignPanes 는 측정을 "크기 × 배율, 원점 비트로 bias" 로 환원한다(무회전·부모 원점 가운데 [근사, 4절 끝 "일반 변환에서는 저장 width 만 더하면 안 된다"]).
  */
-import type { LayoutInst } from '../charselect/scene2d';
+import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 
 export interface AlignParams {
   /** 축: true 수평(+0xdd bit1 = 0), false 수직 */

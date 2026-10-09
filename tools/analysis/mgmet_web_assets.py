@@ -1,4 +1,4 @@
-"""미니게임 항구 화면(web/script/shell/mgmet) 추가 에셋 — 공용 묶음(assets/mgmcommon)에 없는 것만 → web/assets/mgmet/extra.json + tex/ + sound/.
+"""미니게임 항구 화면(web/script/app/scene/world/mgmet) 추가 에셋 — 공용 묶음(assets/mgmcommon)에 없는 것만 → web/assets/mgmet/extra.json + tex/ + sound/.
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/mgmet_web_assets.py [임시 폴더]
 

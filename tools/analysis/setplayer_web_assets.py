@@ -1,4 +1,4 @@
-"""플레이어 설정 흐름(web/script/shell/setplayer) 에셋 → web/assets/setplayer/setplayer.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
+"""플레이어 설정 흐름(web/script/app/scene/menu/setplayer) 에셋 → web/assets/setplayer/setplayer.json + tex/ + sound/ (글꼴 = 공용 assets/font/, font_web_assets.py).
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/setplayer_web_assets.py [임시 폴더]
 

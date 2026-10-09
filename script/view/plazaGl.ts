@@ -18,7 +18,7 @@
 import * as THREE from 'three';
 import { P0, P2, type AssetManagerApi } from '@game/lib/assetcore';
 import { textureBytes, type UploadRecord } from '@game/lib/assetcore-three';
-import type { PlazaWorld } from '../shell/plaza/types';
+import type { PlazaWorld } from '@app/scene/world/plaza/types';
 import type { StageGpu } from '../shell/stage3d';
 import { ASSET_MODE, ASSETS } from '../env';
 
@@ -288,8 +288,8 @@ export class PlazaGl {
 const frameTick = (fn: () => void): void => void (typeof document !== 'undefined' && document.hidden ? setTimeout(fn, 16) : requestAnimationFrame(fn));
 
 export interface WorldModules {
-  createPlazaWorld: typeof import('../shell/plaza/world').createPlazaWorld;
-  parseDecoParam: typeof import('../shell/plaza/deco').parseDecoParam;
+  createPlazaWorld: typeof import('@app/scene/world/plaza/world').createPlazaWorld;
+  parseDecoParam: typeof import('@app/scene/world/plaza/deco').parseDecoParam;
   PriorityFloor: typeof import('../shell/stage3d').PriorityFloor;
   LOAD_BUDGET_MS: number;
   manager: AssetManagerApi;
@@ -353,7 +353,7 @@ export function worldStarter(env: WorldEnv): (o: WorldStart) => PlazaWorldJob {
 
 const startWorldDefault = worldStarter({
   modules: async () => {
-    const [w, d, sd, a] = await Promise.all([import('../shell/plaza/world'), import('../shell/plaza/deco'), import('../shell/stage3d'), import('./appAssets')]);
+    const [w, d, sd, a] = await Promise.all([import('@app/scene/world/plaza/world'), import('@app/scene/world/plaza/deco'), import('../shell/stage3d'), import('./appAssets')]);
     return { createPlazaWorld: w.createPlazaWorld, parseDecoParam: d.parseDecoParam, PriorityFloor: sd.PriorityFloor, LOAD_BUDGET_MS: sd.LOAD_BUDGET_MS, manager: a.appAssets() };
   },
   tick: frameTick,
@@ -362,7 +362,7 @@ const startWorldDefault = worldStarter({
 });
 
 async function warmCharaDefault(w: PlazaWorld, pc: string): Promise<Disposable | null> {
-  const { PlazaCharaLoader } = await import('../shell/plaza/player');
+  const { PlazaCharaLoader } = await import('@app/scene/world/plaza/player');
   const stage = w.stage;
   const loader = await PlazaCharaLoader.create((p) => `${ASSETS}${p}`);
   const ch = await loader.load(pc, stage.renderer, (r) => stage.prepare(r), undefined, () => new Promise<void>((r) => frameTick(r)));

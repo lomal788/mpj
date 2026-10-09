@@ -201,8 +201,8 @@ CPU도 게임별 로직 계약이다 [판독]. `mg0101.nro @0x710000b840 StepAI`
 
 | 파일 | 실제 동작·게임 동기화와의 차이 |
 |---|---|
-| [server/games.ts](../../server/games.ts), [wire.ts](../../script/shell/online/wire.ts) | 서버 등록은 `mpj-plaza` 하나. `MSG`에는 방 제어·광장 INFO/STAMP만 있으며 게임 frame input/seed/start barrier/result 메시지는 없음. 기존 방 프로토콜의 크기·권한은 online.md §9.5 참조 |
-| [socketio.ts](../../script/shell/online/socketio.ts) | `reconnection:true` 옵션은 있으나 disconnect handler가 `closeSocket()`으로 socket을 명시 종료. 게임 재접속/프레임 재전송 계약은 없음. 광장 이탈 시 연결 종료는 online.md §9.5~9.6의 완료 결론 |
+| [server/games.ts](../../server/games.ts), [wire.ts](../../script/app/scene/menu/online/wire.ts) | 서버 등록은 `mpj-plaza` 하나. `MSG`에는 방 제어·광장 INFO/STAMP만 있으며 게임 frame input/seed/start barrier/result 메시지는 없음. 기존 방 프로토콜의 크기·권한은 online.md §9.5 참조 |
+| [socketio.ts](../../script/app/scene/menu/online/socketio.ts) | `reconnection:true` 옵션은 있으나 disconnect handler가 `closeSocket()`으로 socket을 명시 종료. 게임 재접속/프레임 재전송 계약은 없음. 광장 이탈 시 연결 종료는 online.md §9.5~9.6의 완료 결론 |
 | [game.ts](../../script/game.ts) | `GameSetup={players,seed,practice,options}`: station/slot/소유권/세션 epoch 없음. `GameLogic.step(pads,sound)`의 두 입력원이 결과에 영향을 줄 수 있음 |
 | [main.ts](../../script/main.ts) | `readSetup`은 URL seed 또는 로컬 Math.random. step은 로컬 `pads.read()`와 `view.observe(t)`를 곧바로 전달하고 `hook.frame++`. `logic.done/result`는 로컬 결과 표시 |
 | [clock.ts](../../script/core/clock.ts) | `MAX_STEPS=120`, `MAX_BACKLOG_STEPS=300`. backlog>300이면 `base+=(due-120)/60`으로 시각을 건너뜀. 탭 숨김/오디오 중단도 로컬 시계에 영향. 이 로컬 복구 정책을 온라인 공통 프레임에 그대로 적용할 수 없음 |
@@ -224,12 +224,12 @@ plaza_page.ts: readPads → run.step(1)
 
 | 단계/파일 | 실제 값·조건 |
 |---|---|
-| 발신 [ui/part.ts](../../script/shell/plaza/ui/part.ts), [ui/net.ts](../../script/shell/plaza/ui/net.ts) | `input/follow` actor의 로컬 비COM 사람 순번을 wire slot으로 압축. slot<4, 방 멤버≥2. timer≤0·`Σvel²>0.1`일 때만 보내고 timer=0.2; `joined/memberReady`의 `sendAll`은 force. 계속 움직여도 정확한 12틱 고정 송신이 아니며, 정지/회전 dirty·정기 heartbeat 없음 |
-| 실제 payload [wire.ts](../../script/shell/online/wire.ts) | `INFO=0x10`: `[type:u8,slot:u8,x/y/z:i16 LE,yaw:u16 LE]`, 10 B. 서버 삽입 후 `REMOTE_INFO=0x90`: `[type:u8,station:u16 LE,slot:u8,x/y/z:i16 LE,yaw:u16 LE]`, 12 B. `qpos=clamp(round(pos×256),−32768,32767)`, 복원 `q/256`; 표현 범위 `[-128,127.99609375] m`. `qyaw=round(frac(yaw/2π)×65536)`를 u16으로 저장. frame/timestamp/sequence/velocity/버튼/충돌 상태 없음 |
+| 발신 [ui/part.ts](../../script/app/scene/world/plaza/ui/part.ts), [ui/net.ts](../../script/app/scene/world/plaza/ui/net.ts) | `input/follow` actor의 로컬 비COM 사람 순번을 wire slot으로 압축. slot<4, 방 멤버≥2. timer≤0·`Σvel²>0.1`일 때만 보내고 timer=0.2; `joined/memberReady`의 `sendAll`은 force. 계속 움직여도 정확한 12틱 고정 송신이 아니며, 정지/회전 dirty·정기 heartbeat 없음 |
+| 실제 payload [wire.ts](../../script/app/scene/menu/online/wire.ts) | `INFO=0x10`: `[type:u8,slot:u8,x/y/z:i16 LE,yaw:u16 LE]`, 10 B. 서버 삽입 후 `REMOTE_INFO=0x90`: `[type:u8,station:u16 LE,slot:u8,x/y/z:i16 LE,yaw:u16 LE]`, 12 B. `qpos=clamp(round(pos×256),−32768,32767)`, 복원 `q/256`; 표현 범위 `[-128,127.99609375] m`. `qyaw=round(frac(yaw/2π)×65536)`를 u16으로 저장. frame/timestamp/sequence/velocity/버튼/충돌 상태 없음 |
 | 중계 [rooms.ts](../../server/games/mpj-plaza/rooms.ts), [index.ts](../../server/games/mpj-plaza/index.ts) | INFO 길이10·slot<발신자의 프로필 사람 수만 검사. station은 연결에서 주입하며 호스트 조건 없이 다른 station으로 동일 좌표 relay. `others` 기본 volatile=false, 현재 INFO도 그 경로: 일반 Socket.IO emit. 서버의 250 ms tick은 연결 정리이며 이동 송신 주기가 아님. 마지막 위치 저장/늦은 참가자 snapshot·서버 이동/충돌 계산은 없음 |
-| 수신 [socketio.ts](../../script/shell/online/socketio.ts), [ui.ts](../../script/shell/plaza/ui/ui.ts) | 멤버 매핑 없는 station/slot은 폐기. UI도 live remote station만 수용. 첫 INFO가 있어야 RemoteTable actor 생성. 누적 event queue를 틱에서 비우며 좌표의 원래 frame/나이를 판정할 정보 없음. 참가/준비의 강제 송신이 최초 표시를 담당함 |
+| 수신 [socketio.ts](../../script/app/scene/menu/online/socketio.ts), [ui.ts](../../script/app/scene/world/plaza/ui/ui.ts) | 멤버 매핑 없는 station/slot은 폐기. UI도 live remote station만 수용. 첫 INFO가 있어야 RemoteTable actor 생성. 누적 event queue를 틱에서 비우며 좌표의 원래 frame/나이를 판정할 정보 없음. 참가/준비의 강제 송신이 최초 표시를 담당함 |
 | 수신 목표 저장 `RemoteActor`·`RemoteTable` | 마지막 수신 pos/quat·(station,slot)·수신 수(rx)·수명만 보관한다. 보간·5/1 m 분기·mode·speed는 없다. `PlazaUi`가 받은 패킷마다 `remote` 사건을 내고 `ui/part.ts`가 `net:remote`로 전달한다. frame history/외삽·입력 예측·rollback buffer는 없음 |
-| 단일 표시 보간 [follow.ts](../../script/shell/plaza/follow.ts), [player.ts](../../script/shell/plaza/player.ts) | `RemoteMotion.receive`는 **표시 mover 위치**와 수신 위치의 3D 거리로 d>5이면 place, d≤1이면 startRotate, 그 사이이면 start(pos,yaw)를 한 번 적용한다. `AutoInterpolation` 하나가 수평 이동 레버를 주고 `PlazaMover`가 로컬 충돌·접지·선회를 처리한다. 위치 진행 중 Run6 대응은 [근사]이며 수신 목표가 표시 좌표와 즉시 일치하는 계약은 아니다. 최초 spawn·teleport만 수신 y를 바닥에 재투영하고, 이동 중 접지·낙하 보정은 mover가 맡는다 |
+| 단일 표시 보간 [follow.ts](../../script/app/scene/world/plaza/follow.ts), [player.ts](../../script/app/scene/world/plaza/player.ts) | `RemoteMotion.receive`는 **표시 mover 위치**와 수신 위치의 3D 거리로 d>5이면 place, d≤1이면 startRotate, 그 사이이면 start(pos,yaw)를 한 번 적용한다. `AutoInterpolation` 하나가 수평 이동 레버를 주고 `PlazaMover`가 로컬 충돌·접지·선회를 처리한다. 위치 진행 중 Run6 대응은 [근사]이며 수신 목표가 표시 좌표와 즉시 일치하는 계약은 아니다. 최초 spawn·teleport만 수신 y를 바닥에 재투영하고, 이동 중 접지·낙하 보정은 mover가 맡는다 |
 
 **현재 남은 조건·재현 후보와 수정 전 원인 후보:**
 

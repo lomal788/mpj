@@ -9,8 +9,8 @@ import { saveRequestFiber, SaveCore, type SaveSection, type SaveSections, type S
 import { LocalStorageSave } from '@game/lib/save-localstorage';
 import { MemorySave, MG_ID_COUNT, type MinigameSaveEntry } from '../shell/mgmcommon/contracts';
 import { setMessageSpeedSource } from '../shell/mgmcommon/messageWindow';
-import { commitPlayCount } from '../shell/mgm01/playResult';
-import type { PlazaSave } from '../shell/plaza/types';
+import { commitPlayCount } from '@app/scene/minigame/mgm01/playResult';
+import type { PlazaSave } from '@app/scene/world/plaza/types';
 
 /** localStorage 키 하나 */
 export const SAVE_KEY = 'mpj.save';

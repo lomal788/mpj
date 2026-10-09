@@ -9,14 +9,14 @@
 | 에셋 압축·해시 이름·Service Worker·brotli·코드 분할 | `tools/build_assets.ts`, `assets-dist/`, `script/cache/` | [assets_pipeline.md](assets_pipeline.md) |
 | 로더 관리자(P0~P3·중복 받기 제거·프레임 예산·GPU 미리 준비)·화면 흐름 미리 받기 | `lib/assetcore`, `lib/assetcore-three`, `view/appAssets.ts`·`appFlow.ts`·`flowCatalog.ts` | [loader_manager.md](loader_manager.md) |
 | 공용 에셋 폴더(캐릭터·NPC·모션, 글꼴, 시스템 효과음, `sys_` UI 그림) | `assets/{chara,font,common}` | [chara_assets.md](chara_assets.md), [font_assets.md](font_assets.md), [common_assets.md](common_assets.md) |
-| 공용 에셋 변환기 + 미니게임 장면 로더 | `tools/analysis/asset_convert.py`·`mg_assets.py`, `shell/mgstage` | [13_asset_converter.md](13_asset_converter.md) |
+| 공용 에셋 변환기 + 미니게임 장면 로더 | `tools/analysis/asset_convert.py`·`mg_assets.py`, `app/scene/minigame/mgstage` | [13_asset_converter.md](13_asset_converter.md) |
 | BGM 스트리밍·화면 BGM | `lib/bgmstream`, `view/bgm.ts`·`screenBgm.ts` | [04_sound.md](04_sound.md) §12 |
 | 화면 전환(Black 부팅·White 퇴장) | `lib/transition`, `lib/transition-dom` | [15_transition.md](15_transition.md) |
 | 분할 화면 | `lib/splitscreen`, `-three`, `-dom` | [10_split_screen.md](10_split_screen.md) |
-| 미니게임 한 판 틀(0~18단계·텔롭·타이머·상태 UI·FrameGate 자리)·3D 결과 무대 | `shell/mgscene`, `shell/mgresult` | [../shell/minigame_scene.md](../shell/minigame_scene.md), [../shell/minigame_result.md](../shell/minigame_result.md) |
+| 미니게임 한 판 틀(0~18단계·텔롭·타이머·상태 UI·FrameGate 자리)·3D 결과 무대 | `app/scene/minigame/mgscene`, `app/scene/minigame/mgresult` | [../shell/minigame_scene.md](../shell/minigame_scene.md), [../shell/minigame_result.md](../shell/minigame_result.md) |
 | 리듬 공용 틀(mg1801에서 분리, 결과 불변) | `games/rhythm` | [02_rhythm.md](02_rhythm.md) §14 |
 | 캐릭터 런타임(모션·전이·시선·눈·FTRG, 원본 규칙 기본) | `lib/character`, `lib/character-three`, `view/character.ts` | [09_character.md](09_character.md) §14 |
-| 온라인 방(socket.io)·광장 원격 보간 | `server/`, `online/socketio.ts`, `shell/plaza/follow.ts` | [../shell/online.md](../shell/online.md), [12_online_sync.md](12_online_sync.md) |
+| 온라인 방(socket.io)·광장 원격 보간 | `server/`, `online/socketio.ts`, `app/scene/world/plaza/follow.ts` | [../shell/online.md](../shell/online.md), [12_online_sync.md](12_online_sync.md) |
 | PhysX 4.1 공개 소스 기준(충돌 런타임 분석) | 미구현 | [11_moving_collision.md](11_moving_collision.md) §8 |
 | mg1801 → 공용 틀 `mgscene` 연결(A1)·결정성 규칙 게임 계약 | `script/mgrun.ts`, `games/rhythm/mgGame.ts`, `tools/mg_determinism.ts` | [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12 |
 | 이펙트 공용 런타임(B1, 원본 규칙 기본) | `lib/effect`, `lib/effect-three`, `view/effect.ts` | [08_effects.md](08_effects.md) §14 |

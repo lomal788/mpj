@@ -144,10 +144,10 @@ web/assets/chara/
 
 | 곳 | 바꾸는 것 |
 |---|---|
-| `shell/charselect/preview3d.ts`(캐릭터 선택·광장 플레이어·광장 NPC 공용) | 요청 파일 = 모델 glb + `anims` glb + motions + 눈·눈꺼풀. 클립 = 모델 클립 + 모션 glb 클립 합침 |
-| `shell/charselect/types.ts` | `CharaSpec.anims?: string[]` |
-| `shell/plaza/npcMaterial.ts` | `layers` 경로 떼기 없앰 |
-| `shell/plaza/npc.ts`·`player.ts` | 그대로(명세 상대 경로를 `url()` 이 붙임) |
+| `app/scene/menu/charselect/preview3d.ts`(캐릭터 선택·광장 플레이어·광장 NPC 공용) | 요청 파일 = 모델 glb + `anims` glb + motions + 눈·눈꺼풀. 클립 = 모델 클립 + 모션 glb 클립 합침 |
+| `app/scene/menu/charselect/types.ts` | `CharaSpec.anims?: string[]` |
+| `app/scene/world/plaza/npcMaterial.ts` | `layers` 경로 떼기 없앰 |
+| `app/scene/world/plaza/npc.ts`·`player.ts` | 그대로(명세 상대 경로를 `url()` 이 붙임) |
 | `games/mg1801/view/character.ts` | `CharaInfo.anims`·`resultAnims`, 템플릿이 클립 목록을 들고 액터·깜빡임이 그것을 씀 |
 | `view/flowCatalog.ts` | `charaFiles` 에 `anims`(gltf) — Preview3D 요청과 같은 키 |
 | `tools/assets_tex.ts` | `TEX3D_ROOTS` 에 `chara/` — 밉·색공간·노멀 판정이 지금(3D 폴더)과 같게 |
@@ -224,7 +224,7 @@ web/assets/chara/
 | 종류 | 파일 |
 |---|---|
 | 변환기 | 새 `tools/analysis/chara_shared.py`, `charsel_chara.py`(convert → 공용, 반환 경로 = 명세 기준), `charsel_web_assets.py`, `plaza_player_assets.py`, `plaza_npc_assets.py`(공용 + `archive` extras), `mg1801_web_charas.py` |
-| 런타임 | `shell/charselect/preview3d.ts`·`types.ts`(`anims`), `shell/plaza/npcMaterial.ts`(layers 떼기 없앰), `games/mg1801/view/character.ts`(`anims`·`resultAnims`), `view/flowCatalog.ts`(`anims`) |
+| 런타임 | `app/scene/menu/charselect/preview3d.ts`·`types.ts`(`anims`), `app/scene/world/plaza/npcMaterial.ts`(layers 떼기 없앰), `games/mg1801/view/character.ts`(`anims`·`resultAnims`), `view/flowCatalog.ts`(`anims`) |
 | 빌드 | `tools/assets_tex.ts`(`TEX3D_ROOTS` 에 `chara/`), `tools/build_assets.ts`(경로만 바뀐 텍스처 옛 결과 복사) |
 | 시험·도구 | `tools/check_charselect.ts`(동키콩 glb 경로), `tools/test_prefetch.ts`(마리오 glb 키·캐릭터 파일에 모션 glb, 8절 추가), `tools/test_plaza_actors.ts`(layers 경로 = 읽는 쪽 규칙), `tools/analysis/character_verify/web_same.ts`(모델 + 모션 glb) |
 | 문서 | 이 문서, `README.md`, `assets_pipeline.md` §2·§3, `loader_manager.md` §13.3·§13.4, `shell/plaza_3d.md`, `assets/README.md` |

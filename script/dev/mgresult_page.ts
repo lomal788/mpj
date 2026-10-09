@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 미니게임 3D 결과 무대(shell/mgresult) 단독 시험 — dev/ui?ui=mgresult. 틀(shell/mgscene) 없이 시험용 호스트(검은 막 와이프·글자 텔롭)로 돌린다.
+ * 페이지 ↔ 미니게임 3D 결과 무대(app/scene/minigame/mgresult) 단독 시험 — dev/ui?ui=mgresult. 틀(app/scene/minigame/mgscene) 없이 시험용 호스트(검은 막 와이프·글자 텔롭)로 돌린다.
  * URL: ?mgr=<규칙> vs4|2vs2|1vs3|1vs1|coin|coin-team|chara|charank|boss|quest|bossrush (기본 vs4)
  *      ?wl=1000   플레이어별 승패(1 승·0 패·2 무, 글자 수 = 인원 1~4)   ?coin=5,0,2,0  플레이어별 코인(coin 규칙)
  *      ?pcs=pc01,pc02,pc03,pc04  캐릭터   ?team=0011  TeamID   ?order=0123  GetOrder   ?camtype=0|1(Normal|Overlook)   ?campat=-1|0|1
@@ -9,8 +9,8 @@
 import * as THREE from 'three';
 import { ASSETS } from '../env';
 import { MT19937 } from '@game/core/rng';
-import { createResultStage, type ResultStageEvent, type ResultStageExt, type ResultStageInputExt } from '../shell/mgresult';
-import { DEFAULT_RESULT_OPTIONS } from '../shell/mgscene/resultContract';
+import { createResultStage, type ResultStageEvent, type ResultStageExt, type ResultStageInputExt } from '@app/scene/minigame/mgresult';
+import { DEFAULT_RESULT_OPTIONS } from '@app/scene/minigame/mgscene/resultContract';
 import { WIPE_WHITE } from '@game/lib/transition';
 import { logicWipe } from '../view/appTransition';
 

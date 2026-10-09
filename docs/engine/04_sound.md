@@ -699,9 +699,9 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 | 앱 어댑터 | `script/view/bgm.ts` | 소스 만들기(압축 = 조각 bytes 키 → decodeAudioData, 원본 = wav PCM 자르기), `BgmChannel`(라벨 하나 재생·페이드), 미리 받기 키 |
 | 페이지 | `charselect_page.ts`(SM_BGM_MENU_MAP, 결정 때 0.5 s 페이드), `plaza_page.ts`(광장 `sound.bgm` 고리 — 지금은 풍선의 정지 `bgm(null)` 만 부름), `mgmet_page.ts`(MgmSound `bgm`/`bgmStop` 고리 — hub 의 PlayBgm, 명세에 BGM 파일이 아직 없어 소리 없음), `games/mg1801/view/sound.ts`(렌더 BGM) | 공용 재생기 하나로 |
 | 미리 받기 | `view/flowCatalog.ts` `charselect:sound`(옵션 `bgmKey` ← `appFlow.ts` `bgmPrefetchKey`) | BGM 은 첫 조각 키만(원본 모드는 wav) |
-| 화면 모듈 | `shell/charselect/screen.ts` | 소리 미리 받기(preload)에서 BGM 을 뺌 — 어댑터가 첫 조각부터 받는다 |
+| 화면 모듈 | `app/scene/menu/charselect/screen.ts` | 소리 미리 받기(preload)에서 BGM 을 뺌 — 어댑터가 첫 조각부터 받는다 |
 
-조사 결과 지금 BGM 을 실제로 내는 곳은 캐릭터 선택(SM_BGM_MENU_MAP)과 mg1801(렌더 BGM)뿐이다. 모드 선택·인원 설정·프리 플레이(mgm01)·온라인·파티 규칙 페이지는 BGM 을 읽는 코드가 없고(효과음만), 그 화면들의 명세에도 BGM 파일이 없다. MgmSound 의 `playBgm` 을 부르는 화면은 mgmet(hub)뿐이라 그 페이지만 고리를 이었다. 광장 UI 부품(`shell/plaza/ui/part.ts`)은 셸 경계상 view 를 못 불러 그대로 둔다(BGM 호출 없음).
+조사 결과 지금 BGM 을 실제로 내는 곳은 캐릭터 선택(SM_BGM_MENU_MAP)과 mg1801(렌더 BGM)뿐이다. 모드 선택·인원 설정·프리 플레이(mgm01)·온라인·파티 규칙 페이지는 BGM 을 읽는 코드가 없고(효과음만), 그 화면들의 명세에도 BGM 파일이 없다. MgmSound 의 `playBgm` 을 부르는 화면은 mgmet(hub)뿐이라 그 페이지만 고리를 이었다. 광장 UI 부품(`app/scene/world/plaza/ui/part.ts`)은 셸 경계상 view 를 못 불러 그대로 둔다(BGM 호출 없음).
 
 ### 12.11 AudioContext 표본율이 48 kHz 가 아닐 때
 
@@ -805,7 +805,7 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 | WebAudio 어댑터 | `script/game/lib/sound-webaudio/index.ts` | 코어만 | 명령 → 핸들 하나 = `GainNode`(핸들 음량: 3D·덕킹·SetVolume) → (팬이 있을 때만 `StereoPannerNode`) → 버스. 소리 재생 자체는 **목소리 처리기**(꽂기): 내장 `buffer`(AudioBufferSourceNode, 반복·늦은 시작), 디코드 캐시 `DecodeCache`(받기·풀기 주입) |
 | mpj 연결 | `script/view/sound.ts` | 코어·어댑터·`view/audio`·`view/bgm`·`view/appAssets` | `soundSystem(audio)` = `AudioOut` 하나에 코어·어댑터 하나(같은 페이지의 틀 소리·게임 소리가 핸들·그룹·한도를 같이 쓴다). 디코드 캐시 = 로더 관리자 `bytes`(압축 모드 소리 이름 바꿈 shim 통과) + 전역 디코드 맵 하나. 처리기 `buffer`·`bgmstream`(§12 재생기), 시퀀서 처리기는 소비자가 꽂는다 |
 | 소비자 | `view/mgsceneSound.ts`(틀 소리 `MgSceneSound`), `games/rhythm/view/sound.ts`(`RmSoundMap`, mg1801 view 가 씀), `view/character.ts` `routeCharacterEvents`(se·voice 라벨 사건) | — | 사건 → 코어 `play/stop/stopGroup` |
-| 로직(사건만) | `shell/mgscene/sound.ts`(`MgSound`), `games/rhythm/soundMan.ts`(`RmSoundMan`) | 코어 표만(`fadeTimeSec`) | 원본 MGSound·RmSoundMan 상태 → 사건. 소리 재생·핸들은 모른다 |
+| 로직(사건만) | `app/scene/minigame/mgscene/sound.ts`(`MgSound`), `games/rhythm/soundMan.ts`(`RmSoundMan`) | 코어 표만(`fadeTimeSec`) | 원본 MGSound·RmSoundMan 상태 → 사건. 소리 재생·핸들은 모른다 |
 | 보기 | `script/sound_page.ts`(`dev/ui?ui=sound`) | — | 라벨 재생·정지, 그룹, 덕킹, 3D 위치, 원본 스위치, 핸들 목록·사건 로그 |
 
 `view/audio.ts` `AudioOut`(버스·`load`·`play`·`track`·`stopAll`·`setMuted`)은 그대로다 — 셸 화면이 계속 쓸 수 있다. `calc3d`·`Listener3d`·`Sound3dInfo`·`SOUND3D_MANAGER`·`Ambient3d` 는 코어로 옮기고 `view/audio.ts` 가 같은 이름으로 다시 내보낸다.
@@ -840,7 +840,7 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 | `view/mgsceneSound.ts` `MgSceneSound` | SE·보이스 = `AudioOut.load/play`(핸들 없음), BGM·징글 = `BgmChannel` 두 개(출력 = `ctx.destination`), 그룹 정지 = 0x22·0x20 만 채널 정지 | 표마다 `SoundCatalog`, SE·보이스 = `buffer` 처리기, BGM·징글 = `bgmstream` 처리기 핸들 두 칸(같은 라벨이면 그대로), 그룹 정지 = 코어 `stopGroup`(원본 규칙) | `load(audio, sources)`·`onEvents`·`log`·`dispose` |
 | `games/rhythm/view/sound.ts` `RmSoundMap`(mg1801 view) | 자체 핸들 집합·`admit`·`resolve`·`calc3d`·`startFile`·`fetch`(AudioOut.load) | 핸들·한도·치환·3D = 코어, 파일 = `buffer`·`bgmstream` 처리기, 시퀀스 = 이 파일이 꽂는 시퀀서 처리기(전역 변수 G0..G15 를 같이 쓰는 `SeqEngine` 하나), 핸드셰이크 BGM = 이 파일이 꽂는 처리기(요청부터 출발·끝까지 핸들 하나, 출발 때 `bgmstream` 재생기를 그 시각에 연다) | 리듬 핸드셰이크(G10·G12·G13), 전역 변수 기록·`observe`, 공개 API(`load`·`onEvent`·`playJust`·`observe`·`stopBgm`) |
 | `games/rhythm/soundMan.ts` | 로직(사건만) | 그대로. 경계: 로직은 핸들을 모르고 `justSound{combo, play}`·`se`·`soundStop` 사건만 낸다. PlayExcellentSe 의 핸들 수명 근사(그 파일 주석)는 로직 쪽에 남는다 — 실제 핸들 수명은 코어가 안다 | — |
-| `shell/mgscene/sound.ts` `MgSound` | `FADE_PRESET_SEC` 한 칸 | 코어 `fadeTimeSec`(6.9 표 전체, 모르는 이름 0.7) | 사건 형식 |
+| `app/scene/minigame/mgscene/sound.ts` `MgSound` | `FADE_PRESET_SEC` 한 칸 | 코어 `fadeTimeSec`(6.9 표 전체, 모르는 이름 0.7) | 사건 형식 |
 | `games/mg1801/view/index.ts` | `RmSoundMap` 사용 | 그대로(파일 무수정) — 내부가 코어로 간다 | — |
 | `view/character.ts` `routeCharacterEvents` | `sound.onEvents([{k, label}])` | 그대로 `MgSceneSound` 로 → 코어 해석(파일 없음 = 라벨 사건까지) | — |
 
@@ -852,7 +852,7 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 |---|---|---|---|
 | `mgm01_page`(목록·설정·필터·기록·announce), `mgmet_page`(허브·활동 제목·rule), `online_page`, `partyrule_page`, `setplayer_page`, `modeselect_page`, `mgmcommon_page`, `mgmscreens_page` | 페이지마다 `new AudioContext()` + `AudioBuffer` 맵 + `playSe`(팬 노드 있는 것·없는 것 두 벌), 출력 `ctx.destination` | `view/sound.ts` `shellSound({muted, pan2d})` 하나 — 페이지 흐름 공용 `appAudio()`(AudioOut 하나)·코어 하나·디코드 캐시 하나. `MgmSound` 어댑터 = `shellSound(…).mgm(hooks)` | 화면 모듈·`MgmSound` API·화면 공개 API |
 | `charselect_page` | 같은 AudioContext 에 SE·슬롯 보이스(슬롯마다 하나, 요청 번호로 늦은 디코드 버림)·미리 받기 | SE·보이스 = `shellSound` 의 `play`·`voice(slot)`·`voiceStop`·`preload` — 보이스 슬롯 = 코어 핸들 하나 | 선택 보이스 규칙(슬롯마다 하나, 정지 뒤 늦게 풀린 것 무시) |
-| `plaza_page`·`shell/plaza/ui/part.ts` | 페이지 AudioContext(광장 SE)·부품 자체 AudioContext(UI SE) | 둘 다 `shellSound`. 부품은 셸 경계상 view 를 못 부르므로 `PlazaContext.sound.play` 고리(페이지가 넣음)를 쓰고, 없으면 예전 길 | 부품 import |
+| `plaza_page`·`app/scene/world/plaza/ui/part.ts` | 페이지 AudioContext(광장 SE)·부품 자체 AudioContext(UI SE) | 둘 다 `shellSound`. 부품은 셸 경계상 view 를 못 부르므로 `PlazaContext.sound.play` 고리(페이지가 넣음)를 쓰고, 없으면 예전 길 | 부품 import |
 | 메시지 창(`mgmcommon/messageWindow`·`guides` → `MgmSound.duck/voice/vibrate`) | 어댑터 고리 없음(무시) | `duck` → 코어 `duckGroup`(DUCKING_PRESET) + 앱 BGM 덕킹 노드, `vibrate` → 조작 플레이어 패드 rumble, `voice` → 사건 기록·라벨 해석 자리(파일 없음) | 사건 형식 |
 | 앱 BGM(`view/bgm.ts` `appBgm`) | 자체 `new AudioContext()`, 출력 `destination` | 컨텍스트 = `appAudio()` 와 같은 것, 출력 = 사운드 연결의 BGM 덕킹 GainNode → destination | 곡·조각 재생·화면 규칙(`screenBgm`) 그대로 |
 | `main.ts` 게임 실행 | `audio ??= new AudioOut()` | `audio ??= appAudio() ?? new AudioOut()` — 광장 → 프리 플레이 → 게임이 같은 코어 | 오디오 시계·`heardTime`·`?avlat` |
@@ -947,7 +947,7 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 
 | 항목 | 정한 것(원본 쪽) | 이유·선택지 |
 |---|---|---|
-| 틀 단계 16 그룹 정지 초 | 로직 사건 `sec` 를 FadeTimePreset 6 = 0.5 s 로 고침(`shell/mgscene/flow.ts` 한 줄, 로직 상태·다른 사건 무변화) | 원본 `StopGroup_Type(0x20, 6)` [판독]. 로직 파일이라 알림. 단계 6 의 `[0x23,1,0x25], sec 0` 은 프리셋 번호 미판독이라 그대로 |
+| 틀 단계 16 그룹 정지 초 | 로직 사건 `sec` 를 FadeTimePreset 6 = 0.5 s 로 고침(`app/scene/minigame/mgscene/flow.ts` 한 줄, 로직 상태·다른 사건 무변화) | 원본 `StopGroup_Type(0x20, 6)` [판독]. 로직 파일이라 알림. 단계 6 의 `[0x23,1,0x25], sec 0` 은 프리셋 번호 미판독이라 그대로 |
 | 원본 규칙 그룹 정지 범위 | (해소 2026-10-09 사용자 결정) 원본대로 확정 — 같은 코어의 틀·게임 소리를 모두 정지. 2차부터 셸 화면도 같은 코어(`appAudio()`)라 화면 소리도 같은 규칙 | — |
 | 그룹 0x00~0x1f 소속 | (2차) 원본 규칙은 `meta.json`(사용자 파라미터 비트 29). 표에 없는 라벨만 접두 근사 | 13.11.3 — 6.9 의 "SQ_SE 전부 0x01" 은 데이터와 다르다: `meta.json` 범위(메인 fspj + 서브 2)의 SQ_SE 765개 중 740개가 0x01, 25개는 그룹 없음(`SQ_SE_SYS_*` 18개 중 17·`SQ_SE_MGM01_*` 7·`SQ_SE_MENU00_TRANSITION_WHO` 1) [데이터, 2026-10-09 조정자 재집계] |
 | 엔진 난수 시작 상태 | AudioOut 마다 `0x12345678` 에서, 그 코어를 만든 오디오 시각부터 5 ms 마다 한 칸 | 원본은 부팅 뒤 모든 소리 소비에 따라 다름 — 같은 값 재현은 불가, 식·분포만 원본 |

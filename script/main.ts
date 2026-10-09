@@ -11,8 +11,8 @@
  *           ?<key>=<value> 게임별 설정(GameDef.options, 예: mg1801 ?mode=2&cpuMiss=1),
  *           ?avlat=raw|<ms> 출력 지연 보정(raw = 보정 없이 currentTime, 원본처럼 / ms = 측정값에 더 늦출 양),
  *           ?synclog=1 스텝·소리 시각 기록(window.__mpj.sync, tools/sync_measure.ts),
- *           ?charselect=1 시작 전에 캐릭터 선택 화면(독립 모듈 shell/charselect, script/charselect_page.ts)을 띄우고 고른 캐릭터로 시작
- *           ?plaza=1 플레이어 설정 → 광장 3D(shell/plaza) → 기구 → 모드 메뉴 → 항구 → 프리 플레이 목록 → 게임(docs/shell/plaza_3d.md §6.9), &skipsetup=1 설정 건너뜀(&chars=pc05,pc02 슬롯별 캐릭터, &names=A,B 이름)
+ *           ?charselect=1 시작 전에 캐릭터 선택 화면(독립 모듈 app/scene/menu/charselect, script/charselect_page.ts)을 띄우고 고른 캐릭터로 시작
+ *           ?plaza=1 플레이어 설정 → 광장 3D(app/scene/world/plaza) → 기구 → 모드 메뉴 → 항구 → 프리 플레이 목록 → 게임(docs/shell/plaza_3d.md §6.9), &skipsetup=1 설정 건너뜀(&chars=pc05,pc02 슬롯별 캐릭터, &names=A,B 이름)
  * 시험 훅: window.__mpj (stage, frame, result, error, hold(frame), dropped, sync)
  */
 import './style.css';
@@ -23,7 +23,7 @@ import { type GameDef, type GameLogic, type GameSetup, type GameView, type Playe
 import { GAMES } from './games';
 import type { LogicTransition } from '@game/lib/transition';
 import { createMgRun, freePlaySetup, localSeed, type MgRun, type MgRunSave } from './mgrun';
-import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from './shell/mgscene';
+import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from '@app/scene/minigame/mgscene';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
 import { installTransition, logicWipe, sceneIn, sceneOut } from './view/appTransition';
@@ -40,7 +40,7 @@ import type { ModeSelectRun } from './modeselect_page';
 import type { PlazaPageRun } from './plaza_page';
 import type { SetPlayerRun } from './setplayer_page';
 import type { MgResultEntry } from './shell/mgmcommon';
-import type { Mgm01PlayRequest } from './shell/mgm01';
+import type { Mgm01PlayRequest } from '@app/scene/minigame/mgm01';
 import type { MgSceneSound } from './view/mgsceneSound';
 import type { MgSceneUi, MgSceneUiJson } from './view/mgsceneUi';
 

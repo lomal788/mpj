@@ -2,7 +2,7 @@
  * 메시지 창 bq::ComUiMessageWindow — 순수 상태기계(state.ts) 사건을 bq Parts 메시지 창 레이아웃(sys_meswin_00 등)에 옮긴다.
  * 근거: docs/shell/message_window.md 3~7·9절. 공개 API = mgm_common.md 9.2 MessageWindowAdapter + 9.4 추가 함수.
  */
-import type { LayoutInst } from '../../charselect/scene2d';
+import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import { alignPanes, type AlignParams } from '../alignment';
 import type { Mat3 } from '../itemLayout';
 import type { MgmSound } from '../sound';

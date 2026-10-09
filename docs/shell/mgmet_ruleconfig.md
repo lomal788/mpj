@@ -343,7 +343,7 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 
 ## 9. 웹 포팅 구조 — 제안, 코드 없음
 
-[추정][웹 이름] `web/script/shell/mgmet/ruleConfig.ts`에 순수 상태/입력/결과를 둔다. 파일 경계와 허용 import는 mgm_common §9.1~9.4를 따른다. 같은 폴더·three·기존 charselect의 scene2d/render2d/RepeatGen/types 및 공용 mgmcommon 어댑터를 사용하고 core/games/view/game.ts/env.ts에 의존하지 않는다.
+[추정][웹 이름] `web/script/app/scene/world/mgmet/ruleConfig.ts`에 순수 상태/입력/결과를 둔다. 파일 경계와 허용 import는 mgm_common §9.1~9.4를 따른다. 같은 폴더·three·기존 charselect의 scene2d/render2d/RepeatGen/types 및 공용 mgmcommon 어댑터를 사용하고 core/games/view/game.ts/env.ts에 의존하지 않는다.
 
 | 제안 부품 [추정][웹 이름] | 계약 |
 |---|---|
@@ -361,7 +361,7 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 
 ### 9.1 구현 계약 (2026-10-07, 웹 구현)
 
-코드: `web/script/shell/mgmet/ruleConfig.ts`(순수 `RuleConfigState`·`loadWorkData`·`freePlayConfig`·`commitFreePlay`), `ruleConfigView.ts`(`RuleConfigView` = 공용 창 `MgmWindow`(mgmet_base_rule_00) + 열 부품 태그 재생 + Alignment + SetupBaseBg), 허브의 `Mgm01SetRuleFlow`(mgmet_flow.md 9.1 `hub.ts`). 정렬 계산은 공용 `mgmcommon/alignment.ts`(ui2d_alignment.md 9.1).
+코드: `web/script/app/scene/world/mgmet/ruleConfig.ts`(순수 `RuleConfigState`·`loadWorkData`·`freePlayConfig`·`commitFreePlay`), `ruleConfigView.ts`(`RuleConfigView` = 공용 창 `MgmWindow`(mgmet_base_rule_00) + 열 부품 태그 재생 + Alignment + SetupBaseBg), 허브의 `Mgm01SetRuleFlow`(mgmet_flow.md 9.1 `hub.ts`). 정렬 계산은 공용 `mgmcommon/alignment.ts`(ui2d_alignment.md 9.1).
 
 | 항목 | 웹 | 수준 |
 |---|---|---|

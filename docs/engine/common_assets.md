@@ -170,10 +170,10 @@ web/assets/common/
 
 | 곳 | 바꾸는 것 |
 |---|---|
-| `shell/charselect/render2d.ts`(모든 2D 화면 공용)·`games/mg1801/view/ui.ts` | 없음 — 명세 경로를 `url()` 이 붙이고 `..` 는 URL 이 접는다 |
-| `shell/charselect/assetHooks.ts` | `loadBytes(url)` 끼움점 추가(기본 = fetch → ArrayBuffer) |
+| `app/scene/menu/charselect/render2d.ts`(모든 2D 화면 공용)·`games/mg1801/view/ui.ts` | 없음 — 명세 경로를 `url()` 이 붙이고 `..` 는 URL 이 접는다 |
+| `app/scene/menu/charselect/assetHooks.ts` | `loadBytes(url)` 끼움점 추가(기본 = fetch → ArrayBuffer) |
 | `view/appFlow.ts` broker | `loadBytes` 를 앱 로더 관리자 `bytes`(P1)로 — 받은 버퍼는 복사해 넘김(decodeAudioData 가 떼어 감). 관리자 밖(다른 종류로 쓰는 키 등)이면 직접 |
-| 효과음을 fetch 로 직접 받던 곳: `mgm01_page`·`mgmcommon_page`·`mgmet_page`·`mgmscreens_page`·`modeselect_page`·`online_page`·`partyrule_page`·`setplayer_page`·`shell/plaza/ui/part.ts` | `assetHooks.loadBytes(url)` 로 — 흐름 안에서는 같은 키 = 한 번 받기 |
+| 효과음을 fetch 로 직접 받던 곳: `mgm01_page`·`mgmcommon_page`·`mgmet_page`·`mgmscreens_page`·`modeselect_page`·`online_page`·`partyrule_page`·`setplayer_page`·`app/scene/world/plaza/ui/part.ts` | `assetHooks.loadBytes(url)` 로 — 흐름 안에서는 같은 키 = 한 번 받기 |
 | `charselect_page`·`plaza_page` | 그대로(이미 관리자 `bytes` 키) |
 | `mgm01_page` catalog 소리 | `mgm01/` 로 시작할 때만 assets 기준이던 규칙 → catalog `file` 앞에 `../` 를 붙여 mgmcommon 기준으로(mgmscreens_page 와 같은 규칙). `common/sound/…` 도 맞게 풀린다 |
 | `view/flowCatalog.ts` | 코드 변경 없음(명세 경로를 `normPath` 로 접어 `common/…` 키가 됨). 머리 주석에 공용 폴더 |
@@ -278,7 +278,7 @@ web/assets/common/
 | 종류 | 파일 |
 |---|---|
 | 변환기 | 새 `tools/analysis/common_shared.py`, `charsel_web_assets.py`(공용 쓰기 + chara 없이 돌릴 때 키 보존), `modesel_web_assets.py`, `mgmcommon_web_assets.py`(`Bundle.write_textures`·`render_sounds`), `mgm01_web_assets.py`, `mgmet_web_assets.py`, `online_web_assets.py`, `partyrule_web_assets.py`, `setplayer_web_assets.py`, `plaza_ui_assets.py`, `plaza_card_assets.py`, `mg1801_web_ui.py`, `mgm01_faces_part.py` |
-| 런타임 | `shell/charselect/assetHooks.ts`(`loadBytes`), `view/appFlow.ts`(broker `bytes`), `mgm01_page.ts`(catalog `../` 규칙 + loadBytes), `mgmcommon_page.ts`·`mgmet_page.ts`·`mgmscreens_page.ts`·`modeselect_page.ts`·`online_page.ts`·`partyrule_page.ts`·`setplayer_page.ts`·`shell/plaza/ui/part.ts`(loadBytes), `view/flowCatalog.ts`(머리 주석) |
+| 런타임 | `app/scene/menu/charselect/assetHooks.ts`(`loadBytes`), `view/appFlow.ts`(broker `bytes`), `mgm01_page.ts`(catalog `../` 규칙 + loadBytes), `mgmcommon_page.ts`·`mgmet_page.ts`·`mgmscreens_page.ts`·`modeselect_page.ts`·`online_page.ts`·`partyrule_page.ts`·`setplayer_page.ts`·`app/scene/world/plaza/ui/part.ts`(loadBytes), `view/flowCatalog.ts`(머리 주석) |
 | 빌드 | `tools/build_assets.ts`(경로만 바뀐 소리도 옛 결과 복사) |
 | 시험·도구 | `tools/test_prefetch.ts`(9절), `tools/shot_assets.ts`(소리 표본 경로 `common/sound/SQ_SE_SYS_DECI.wav`) |
 | 에셋 | 새 `assets/common/{sound,tex}/` 63 파일, 명세 13개 경로 |

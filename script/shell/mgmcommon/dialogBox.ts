@@ -3,7 +3,7 @@
  * 근거: docs/shell/dialog_box.md 4~6·9.1 (main FUN_7100207c38·FUN_7100208b80·FUN_7100209234·FUN_7100208240·In @0x71002093d0), online.md 9.3 정정 1~7.
  * 메시지 창 선택지(세로 2~4지)는 이 부품이 아니라 messageWindow 의 선택지 API 다(dialog_box.md 1·3.2).
  */
-import type { LayoutInst } from '../charselect/scene2d';
+import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import { alignPanes } from './alignment';
 
 /** FUN_7100208240 상수 [판독] + 정렬 ali1 [데이터] */

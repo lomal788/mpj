@@ -165,8 +165,8 @@ GPU 대여 종료 시 target·viewport·scissor/test·autoClear 및 clearColor/d
 | `script/game/lib/splitscreen-three/` | **three 어댑터**: 한 번 갱신한 장면을 레이어마다 viewport/scissor·draw용 보정 카메라로 그림, clear 정책, 레이어 영역 후처리 호출, renderer 상태 복구, 레이어별 3D→HUD 투영, 캡처 요청 자리 | `three` + 코어만 |
 | `script/game/lib/splitscreen-dom/` | **분할선 DOM**: 원본 `sys_dividing_lines` pane 26개를 div 로, 코어가 정한 위치·길이·회전·알파를 style 에 쓴다 | 코어만 |
 | `script/shell/stage3d/post.ts` | `PostChain.render(scene, camera, region?)` — 선택 인자 `region`(출력 target·viewport·scissor) 추가. 인자가 없으면 지금과 같은 출력 | 기존 그대로 |
-| `script/shell/mgstage/` | `MgStage.renderSplit(list, cameras, opts?)` — 무대 장면·후처리로 어댑터 호출. `update` 는 부르지 않는다 | + `../../lib/splitscreen`·`../../lib/splitscreen-three` |
-| `script/shell/mgscene/` | 틀이 `SplitScreen` 하나를 갖고 `ctx.split` 으로 게임에 준다. 틀 step 의 UI 틱에서 `split.step(MG_DT)` | + `../../lib/splitscreen`(import 0 코어, lib 예외 — transition 과 같은 규칙) |
+| `script/app/scene/minigame/mgstage/` | `MgStage.renderSplit(list, cameras, opts?)` — 무대 장면·후처리로 어댑터 호출. `update` 는 부르지 않는다 | + `../../lib/splitscreen`·`../../lib/splitscreen-three` |
+| `script/app/scene/minigame/mgscene/` | 틀이 `SplitScreen` 하나를 갖고 `ctx.split` 으로 게임에 준다. 틀 step 의 UI 틱에서 `split.step(MG_DT)` | + `../../lib/splitscreen`(import 0 코어, lib 예외 — transition 과 같은 규칙) |
 | `script/splitscreen_page.ts` | dev/ui.html 항목 "분할 화면" 보기 페이지 | 페이지 |
 | `assets/splitscreen/lines.json` | 원본 `bq.nx.bea/Parts.lyt` 의 `sys_dividing_lines` bflyt·in/out/normal bflan 정리본 ← `tools/analysis/splitscreen_web_assets.py`(mgscene 변환기 함수 재사용). 그림 `sys_dividing_line^s`(8×8, 열 3·4 만 불투명 흰색 [데이터])는 공용 규칙대로 `assets/common/tex/sys_dividing_line_s.png` | — |
 
@@ -241,10 +241,10 @@ class SplitRenderer {
 
 ### 9.6 게임 연결
 
-- **틀(`shell/mgscene`)**: `MgScene.split: SplitScreen`, `ctx.split = { to(cols, rows, focus, sec), isFinished(), isSplitting(), list }`. `to` 가 sec > 0 이면 그 프레임에 `{k:'se', label}`(MgSound 표 `camera_split_se_label` → tables.json `mgSound[id].splitSe`, 없으면 내지 않음; mg0102 = `SQ_SE_SYS_MNG_CMR_SPLT_4`, mg0122·mg0508 = 없음 [데이터]) [추정: MGSound::SetSplitScreen 미판독, 소리 파일은 아직 변환하지 않음]. 틀 step 의 UI 틱(와이프·텔롭 다음)에서 `split.step(MG_DT)` — 게이트가 닫히면 분할도 멈춘다(로직). 결과 무대(갈래 A)를 시작할 때 분할 중이면 `split.finish()`(focus0 즉시) [설계: 원본은 게임이 SetFinishCamera/ResetSplit 을 부름 — 같은 값이라 이중 호출 무해].
+- **틀(`app/scene/minigame/mgscene`)**: `MgScene.split: SplitScreen`, `ctx.split = { to(cols, rows, focus, sec), isFinished(), isSplitting(), list }`. `to` 가 sec > 0 이면 그 프레임에 `{k:'se', label}`(MgSound 표 `camera_split_se_label` → tables.json `mgSound[id].splitSe`, 없으면 내지 않음; mg0102 = `SQ_SE_SYS_MNG_CMR_SPLT_4`, mg0122·mg0508 = 없음 [데이터]) [추정: MGSound::SetSplitScreen 미판독, 소리 파일은 아직 변환하지 않음]. 틀 step 의 UI 틱(와이프·텔롭 다음)에서 `split.step(MG_DT)` — 게이트가 닫히면 분할도 멈춘다(로직). 결과 무대(갈래 A)를 시작할 때 분할 중이면 `split.finish()`(focus0 즉시) [설계: 원본은 게임이 SetFinishCamera/ResetSplit 을 부름 — 같은 값이라 이중 호출 무해].
 - **게임 화면**: 게임은 로직에서 `ctx.split.to(...)` 만 부르고, 화면은 프레임마다 `stage.update(dt)` 1회 → 레이어 카메라 갱신 → `mgStage.renderSplit(scene.split.list, cameras)` → `domLines.draw(scene.split.lines)` → 틀 2D. 카메라 배열 index = GraphicsLayer ID(mg0102 Camera00~03, mg0122 index p, mg0508 화면 t = TeamID t).
 - **mg0102**: 초기 `(2,2,0,0)` → 오프닝 끝 `(2,2,−1,skip?0:1)` → 닫기 `(2,2,0,skip?0:1)` → 결과 `(2,2,0,0)`. **mg0122**: `(2,2,0,0)` → 시작 전 `(2,2,−1,0)` → 0x29 균등 → FadedOut focus0. **mg0508**: `(2,1,0,0)` → BeginSplit `(2,1,−1,duration)` → ResetSplit `(2,1,0,0)`.
-- **결과 무대(`shell/mgresult`)**: 수정 없음. 틀이 focus0 로 돌리고, 어댑터가 매 프레임 renderer 상태를 되돌리므로 결과 무대의 전체 화면 그리기에 viewport/scissor 가 남지 않는다.
+- **결과 무대(`app/scene/minigame/mgresult`)**: 수정 없음. 틀이 focus0 로 돌리고, 어댑터가 매 프레임 renderer 상태를 되돌리므로 결과 무대의 전체 화면 그리기에 viewport/scissor 가 남지 않는다.
 - **mg0122 캡처 자리**: 코어 `MG0122_CAPTURE = { perCamera: [960, 540], extra: [1920, 1080], extraCamera: 0 }`, 어댑터 `capture({ layer, target, type, flags, post?, onDone? })` = 다음 `render` 끝에 그 레이어 draw 카메라로 target 전체에 한 번 그리고(기본 후처리 없음) `onDone`. 복사 시점·포스트 포함·type0/flags1·3 의미는 §5 [미확정] 그대로, 사진 판정은 게임 포팅 때 붙인다.
 
 ### 9.7 보기 페이지 (`dev/ui?ui=splitscreen`)

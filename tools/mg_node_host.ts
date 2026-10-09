@@ -10,7 +10,7 @@ import type { PadInput } from '@game/core/pad';
 import type { GameDef, GameSetup, SoundSnapshot } from '../script/game';
 import { Mg1801Logic, type Mg1801Game, type Mg1801Options } from '../script/games/mg1801/logic/game';
 import { createMgRun, type MgRun } from '../script/mgrun';
-import { localGate, mgUiData, type MgPadInput, type MgPlaySettings, type MgTables, type MgUiData } from '../script/shell/mgscene';
+import { localGate, mgUiData, type MgPadInput, type MgPlaySettings, type MgTables, type MgUiData } from '@app/scene/minigame/mgscene';
 
 const A = path.join(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'), 'assets');
 let cache: { tables: MgTables; ui: MgUiData } | null = null;

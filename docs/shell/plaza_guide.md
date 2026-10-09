@@ -217,8 +217,8 @@
 
 | 항목 | 현재 웹 | 필요한 연결 |
 |---|---|---|
-| 대상·접근·A | [npc.ts](../../script/shell/plaza/npc.ts)의 `MC` 색 1·깃발·4클립, [interact.ts](../../script/shell/plaza/interact.ts)의 거리/온라인 억제·상태 5까지 있음 | 기존 판정/공통 NPC 재사용 |
-| 대화 수명 | `decide`가 `interact:decide {result:5,target:'guide'}`를 내고 **다음 프레임 `resume`**. 상태 5 처리 부품은 [parts.ts](../../script/shell/plaza/parts.ts)에 없음.UI `decide`는 결과 3만 처리([ui.ts](../../script/shell/plaza/ui/ui.ts)) | 메뉴 종료까지 상태 5·플레이어 입력 정지 유지, 재진입 커서 3/종료 커서 0 |
+| 대상·접근·A | [npc.ts](../../script/app/scene/world/plaza/npc.ts)의 `MC` 색 1·깃발·4클립, [interact.ts](../../script/app/scene/world/plaza/interact.ts)의 거리/온라인 억제·상태 5까지 있음 | 기존 판정/공통 NPC 재사용 |
+| 대화 수명 | `decide`가 `interact:decide {result:5,target:'guide'}`를 내고 **다음 프레임 `resume`**. 상태 5 처리 부품은 [parts.ts](../../script/app/scene/world/plaza/parts.ts)에 없음.UI `decide`는 결과 3만 처리([ui.ts](../../script/app/scene/world/plaza/ui/ui.ts)) | 메뉴 종료까지 상태 5·플레이어 입력 정지 유지, 재진입 커서 3/종료 커서 0 |
 | 첫 선회·Talk | 접근 FragSwing·머리 시선과 클립 등록까지 있음 | 몸 TurnLookAt/완료 대기, Talk/Idle, 종료 Y=0 |
 | 메뉴 데이터 | [plaza_ui.json](../../assets/plaza/ui/plaza_ui.json)에 장소 이름/설명만 있음.mgmcommon spec·mgm01/mgmet 추가 데이터에도 **위 대화 9개 라벨 없음** | menu01_main 9라벨·ATR, 선택지 원본 순서, 화자 11 |
 | Talking 창 | 공통 MessageWindow에 선택지 API는 있음. 현재 mgmcommon/plaza 명세에 **`sys_meswin_talk_*` 레이아웃 없음** | 기존 Parts.lyt `sys_meswin_talk_choices_00`와 참조 부품, §2.1의 MC 높이·카메라 투영·실측 경계·페이지별 말꼬리 연결. 공통 상태기계는 재사용 |

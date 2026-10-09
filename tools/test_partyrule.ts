@@ -1,5 +1,5 @@
 /**
- * 파티 규칙 화면 상태 시험 — script/shell/partyrule 을 실제 명세(assets/mgmcommon/spec.json + assets/partyrule/partyrule.json + assets/mgm01/faces.json)로
+ * 파티 규칙 화면 상태 시험 — script/app/scene/menu/partyrule 을 실제 명세(assets/mgmcommon/spec.json + assets/partyrule/partyrule.json + assets/mgm01/faces.json)로
  * 노드에서 돈다(WebGL 없음). 기대값 근거: docs/shell/partyrule.md 4~6·10절(판독한 규칙의 재구현 시험, 원본 실행 대조 아님).
  *
  *   npx tsx tools/test_partyrule.ts
@@ -7,9 +7,9 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { Render2D } from '../script/shell/charselect/render2d';
-import { LayoutInst } from '../script/shell/charselect/scene2d';
-import type { Spec } from '../script/shell/charselect/types';
+import type { Render2D } from '@app/scene/menu/charselect/render2d';
+import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, MgmSound, type MgmDrawHost, type MgmPadSource, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
 import {
@@ -22,7 +22,7 @@ import {
   type PartyRuleConfig,
   type PartyRuleExtra,
   type Scr,
-} from '../script/shell/partyrule';
+} from '@app/scene/menu/partyrule';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

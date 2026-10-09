@@ -56,12 +56,12 @@
 
 | 곳 | 방식 | 시간 단위 | 색·곡선 | 화면이 바뀌면 |
 |---|---|---|---|---|
-| `shell/mgmet/fade.ts`·`hub.ts` | Render2D 사각형(LayoutInst) | 초(dt 누적), 1.0 s = 60f | 검정, 직선, 지금 알파부터 | 허브와 함께 사라짐 |
-| `shell/plaza/balloon.ts` `Fade` | DOM div(ctx.overlay, z 50) | 초, 1.0/0.5 s = 60/30f | 검정, 직선 | dispose 때 div 제거 → 다음 화면이 갑자기 보임 |
-| `shell/mgscene/ui.ts` `MgWipe` | 원본 wipe 레이아웃 애니(lyt, HUD 캔버스) | 속도 1.0 = 20f | Black 고정(종류 무시), 원본 키 | 장면과 함께 사라짐, 처음엔 강제로 덮음 |
+| `app/scene/world/mgmet/fade.ts`·`hub.ts` | Render2D 사각형(LayoutInst) | 초(dt 누적), 1.0 s = 60f | 검정, 직선, 지금 알파부터 | 허브와 함께 사라짐 |
+| `app/scene/world/plaza/balloon.ts` `Fade` | DOM div(ctx.overlay, z 50) | 초, 1.0/0.5 s = 60/30f | 검정, 직선 | dispose 때 div 제거 → 다음 화면이 갑자기 보임 |
+| `app/scene/minigame/mgscene/ui.ts` `MgWipe` | 원본 wipe 레이아웃 애니(lyt, HUD 캔버스) | 속도 1.0 = 20f | Black 고정(종류 무시), 원본 키 | 장면과 함께 사라짐, 처음엔 강제로 덮음 |
 | `mgresult_page.ts` veil | DOM div | 초, 1.0 s = 60f | 검정, 직선 | 페이지와 함께 |
-| `shell/mgresult/stage.ts` | 호스트 `fade(dir, sec)` 호출 | 틀 안 = 속도, 단독 = 초 | 호스트 몫 | — |
-| `shell/modeselect/screen.ts` | 그림 없음, `DECIDE_HOLD` 60f 유지 [근사] | 프레임 | — | 끊김 |
+| `app/scene/minigame/mgresult/stage.ts` | 호스트 `fade(dir, sec)` 호출 | 틀 안 = 속도, 단독 = 초 | 호스트 몫 | — |
+| `app/scene/menu/modeselect/screen.ts` | 그림 없음, `DECIDE_HOLD` 60f 유지 [근사] | 프레임 | — | 끊김 |
 | `games/mg1801` logic+view | 로직 frame−start, view가 lyt로 `WipeWhite_*` | 20f | White, 원본 키 | 게임과 함께 |
 | `main.ts`·`ui_main.ts` 흐름 | 없음(바로 바꿈) | — | — | — |
 | `charselect/preview3d.ts`·`types.ts`, `mgmcommon/types.ts`, `charselect_page.ts` | **해당 없음**: 모션 crossfade·BGM 페이드다 | — | — | — |
@@ -126,7 +126,7 @@
 | mg1801 | 로직 = 자기 `Transition`(frame++ 직후 스텝), view = 앱 인스턴스가 비춤, lyt wipe 그리기 삭제 | White | 20 → 20 |
 | 흐름(main.ts) | 새 화면 준비 때 sceneIn | 마지막 | 없음 → 20(닫혀 있을 때만) |
 
-- 셸 경계: 이 코어도 assetcore처럼 import 0인 공용 lib다. 그래서 `shell/mgscene`·`mgmet`가 import한다(mgm_common.md §9.1 lib 예외). `test_mgscene` 9절과 `check_mgmcommon`의 허용 목록에 한 줄씩 넣었다. `shell/modeselect`는 구조 타입 `wipe` 옵션만 받는다(import 없음).
+- 셸 경계: 이 코어도 assetcore처럼 import 0인 공용 lib다. 그래서 `app/scene/minigame/mgscene`·`mgmet`가 import한다(mgm_common.md §9.1 lib 예외). `test_mgscene` 9절과 `check_mgmcommon`의 허용 목록에 한 줄씩 넣었다. `app/scene/menu/modeselect`는 구조 타입 `wipe` 옵션만 받는다(import 없음).
 
 ### 6.1 장면 들고 남 순서(2026-10-09, 원본 SceneBase::UpdateMain 단계 4 → 2)
 

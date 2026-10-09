@@ -2,7 +2,7 @@
  * 마리오 파티(보드) 파티 규칙 화면 — 설정값·사건·입력 형식. 근거: docs/shell/partyrule.md 4·9.2.
  * 원본 저장 위치: PlayerWork(ComLevel·BoardHandicap·캐릭터·PlayerType), flag 4·6·7·8, BoardWork(TurnMax·BonusStarType·BoardID·BoardMode), Menu+9·+10·+0x20..0x24.
  */
-import type { Inserts } from '../../../../shell/mgmcommon/text';
+import type { Inserts } from '@app/common/ui/text';
 
 export interface PartyPlayer {
   /** 캐릭터 얼굴 이름(face_128_<chara>^u, 예 pc01) */

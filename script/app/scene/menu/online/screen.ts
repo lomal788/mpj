@@ -2,11 +2,11 @@
  * 온라인 화면 묶음 — 흐름(순수) + 어댑터 + 그리기. 한 틱 순서 [설계, online.md 9.4]:
  * 입력 → 어댑터 시간 진행·사건 받기 → 부품 갱신(수명·입력) → 흐름 파이버 → 레이아웃 애니.
  */
-import { FiberRunner } from '../../../../shell/mgmcommon/fiber';
-import { MgmInput, type MgmPlayer } from '../../../../shell/mgmcommon/input';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import type { MgmPadSource, MgmSpec } from '../../../../shell/mgmcommon/types';
-import type { MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { FiberRunner } from '@app/common/ui/fiber';
+import { MgmInput, type MgmPlayer } from '@app/common/ui/input';
+import type { MgmSound } from '@app/common/ui/sound';
+import type { MgmPadSource, MgmSpec } from '@app/common/ui/types';
+import type { MgmDrawHost } from '@app/common/ui/window';
 import { OnlineFlow, type OnlineEntry } from './flow';
 import type { OEv, OIO } from './panels';
 import type { OnlineAdapter, OnlineSelf, RoomMember } from './types';

@@ -3,13 +3,13 @@
  * 근거: docs/shell/mgm01_freeplay.md 5.5(진입·나감 순서)·6.7(ApplyChangeMgList·ApplyChangeMgList2·ResetMgItem·MoveCursor·PrepareMgListFlow)·7.1(썸네일 = 재질 칸1). 웹 결정 9.2.
  */
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import type { Flow } from '../../../../shell/mgmcommon/fiber';
-import type { MgmGuide } from '../../../../shell/mgmcommon/guides';
-import { MgmLayout, paneGlobal } from '../../../../shell/mgmcommon/itemLayout';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import { measure, plainText } from '../../../../shell/mgmcommon/text';
-import type { MgmView } from '../../../../shell/mgmcommon/view';
-import { MgmWindow } from '../../../../shell/mgmcommon/window';
+import type { Flow } from '@app/common/ui/fiber';
+import type { MgmGuide } from '@app/common/ui/guides';
+import { MgmLayout, paneGlobal } from '@app/common/ui/itemLayout';
+import type { MgmSound } from '@app/common/ui/sound';
+import { measure, plainText } from '@app/common/ui/text';
+import type { MgmView } from '@app/common/ui/view';
+import { MgmWindow } from '@app/common/ui/window';
 import { AnnounceScreen } from './announceScreen';
 import { LIST_FORMAT } from './catalog';
 import type { FilterApplied } from './listFilter';

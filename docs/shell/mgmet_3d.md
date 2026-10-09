@@ -92,7 +92,7 @@
 
 ### 5.1 모듈 위치 [설계]
 
-- `web/script/shell/stage3d/` **공용 3D 무대**(엔진 독립, mgm_common §9.1 규칙: `three`·같은 폴더만 import, `script/games|view|core` 금지). 내용: glb 로더·라이트맵/IBL 재질(mg1801 `material.ts` 이식), fsnb 카메라 재생기(프레임 json, Aim·fovy 규칙), fmab 재질 애니(srt·파라미터), 로케이터 소켓 조회, 캐릭터 액터(charselect `preview3d.ts`의 블렌드·시간축 일부 이식). 이후 mgm01~06 항구 장면·보드에서도 재사용.
+- `web/script/app/common/render3d/` **공용 3D 무대**(엔진 독립, mgm_common §9.1 규칙: `three`·같은 폴더만 import, `script/games|view|core` 금지). 내용: glb 로더·라이트맵/IBL 재질(mg1801 `material.ts` 이식), fsnb 카메라 재생기(프레임 json, Aim·fovy 규칙), fmab 재질 애니(srt·파라미터), 로케이터 소켓 조회, 캐릭터 액터(charselect `preview3d.ts`의 블렌드·시간축 일부 이식). 이후 mgm01~06 항구 장면·보드에서도 재사용.
 - `web/script/app/scene/world/mgmet/world3d/` **항구 전용**: `MapManager`·`NpcManager`·`PlayerManager`·`Camera` 대응 어댑터 + `MgmetSignals` 구현. 허브(`hub.ts`)는 지금처럼 신호만 받는다 → 3D 를 끄면 `IMMEDIATE_SIGNALS` 로 그대로 돌아감.
 - 변환: `web/tools/analysis/mgmet_world_assets.py`(신규) → `web/assets/mgmet/world/`(glb·png·anim json·manifest). `graphics_convert.py`에는 세트 함수만 추가.
 
@@ -253,7 +253,7 @@ fmab `mgmet_sea00`(2700f 루프): P0.x = 0 → 1 선형(흐름 위상 = 45 s 주
 ## 8. 중단 시점 정리 — A 갈래(공용 무대·맵 로딩·맵 애니) (2026-10-08)
 
 ### 8.1 한 것
-- **공용 3D 무대 `web/script/shell/stage3d/`**(types·stage·material·clip·index): 계약과 코어 구현, tsc 통과. 페이지·시험이 없어 화면 실행은 안 했다. 계약·범위·남은 것은 [stage3d.md](stage3d.md).
+- **공용 3D 무대 `web/script/app/common/render3d/`**(types·stage·material·clip·index): 계약과 코어 구현, tsc 통과. 페이지·시험이 없어 화면 실행은 안 했다. 계약·범위·남은 것은 [stage3d.md](stage3d.md).
 - **변환**: `web/tools/analysis/graphics_convert.py` 에 `mgmet` 세트 함수만 추가(모델별 fskb 짝 표 `MGMET_ANIMS`: 위치 모델 vehicle_pos ← vehicle_approach/departure, mgm06_pos ← approach/course_selection/departure, mgm06_release_pos ← release_c01, seagul00 ← seagul00_idle, 나머지는 같은 이름). 실행 결과 → `extracted/converted/graphics/mgmet/`(새 폴더, 원본 무변경) [데이터]:
   - glb 28개(18.5 MB, 정점 187,744·삼각형 224,185), 재질 텍스처 누락 0, 바인드 오류 0
   - 텍스처 169장 → png/hdr 496파일 129 MB(디코드 실패 0). **웹에 그대로 싣기엔 큼** → 축소(알베도·노멀·거칠기 1/2~1/4) 또는 KTX2 필요(§2), 미결정

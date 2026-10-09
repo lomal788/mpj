@@ -4,12 +4,12 @@
  * 근거: docs/shell/mgm01_freeplay.md 3.1·3.2(Enter/Continue)·5.2·5.5(전이·안내·SE)·8.3·8.4(호출·복귀 계약). 웹 결정 9.2.
  * BGM(docs/engine/04_sound.md §12.14): Start/ContinueFlow PlayBgm(4), MgStartFlow 맨 앞 StopBgm(3)+PlayBgm(5), ExitFlow StopBgm(2).
  */
-import { pushResult, type MgmSave, type MgmWork, type MgResultEntry } from '../../../../shell/mgmcommon/contracts';
-import { FiberRunner, waitTime, type Flow } from '../../../../shell/mgmcommon/fiber';
-import { MgmGuide } from '../../../../shell/mgmcommon/guides';
-import type { MgmInput } from '../../../../shell/mgmcommon/input';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import type { MgmView } from '../../../../shell/mgmcommon/view';
+import { pushResult, type MgmSave, type MgmWork, type MgResultEntry } from '@app/common/ui/contracts';
+import { FiberRunner, waitTime, type Flow } from '@app/common/ui/fiber';
+import { MgmGuide } from '@app/common/ui/guides';
+import type { MgmInput } from '@app/common/ui/input';
+import type { MgmSound } from '@app/common/ui/sound';
+import type { MgmView } from '@app/common/ui/view';
 import { consumeNew } from './announce';
 import { FILTER, type Mgm01Catalog } from './catalog';
 import { HistoryScreen } from './historyScreen';

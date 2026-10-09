@@ -195,7 +195,7 @@ ConfirmReturnSceneFlow @0x7100059fa0:
 
 ## 9. 웹 포팅 구조
 
-### 9.1 공용 부품 `web/script/shell/mgmcommon/dialogBox.ts` (2026-10-08) [설계: 모듈 위치·이름]
+### 9.1 공용 부품 `web/script/app/common/ui/dialogBox.ts` (2026-10-08) [설계: 모듈 위치·이름]
 
 | 원본 | 웹 | 비고 |
 |---|---|---|

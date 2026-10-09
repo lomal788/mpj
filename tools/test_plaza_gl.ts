@@ -23,7 +23,7 @@ import { parseDecoParam, defaultDecoState } from '@app/scene/world/plaza/deco';
 import type { PlazaWorld } from '@app/scene/world/plaza/types';
 import { PlazaUiView } from '@app/scene/world/plaza/ui/view';
 import { createPlazaWorld, plazaP0Paths } from '@app/scene/world/plaza/world';
-import { LOAD_BUDGET_MS, PriorityFloor } from '../script/shell/stage3d';
+import { LOAD_BUDGET_MS, PriorityFloor } from '@app/common/render3d';
 import { FramePacer, KEEP_RATIO, PlazaGl, PREWARM_BUDGET_MS, prewarmEnabled, worldStarter, type PlazaWorldJob, type WorldStart } from '../script/view/plazaGl';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -751,7 +751,7 @@ console.log('9. 코드 경계·문맥 수(정적)');
   const plazaFiles = (dir: string): string[] => readdirSync(join(WEB, dir), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? plazaFiles(`${dir}/${e.name}`) : e.name.endsWith('.ts') ? [`${dir}/${e.name}`] : []));
   const makers = plazaFiles('script/app/scene/world/plaza').filter((p) => /new THREE\.WebGLRenderer\(/.test(src(p)));
   eq(makers, [], '광장 셸(UI 포함)에서 렌더러 만들기 0');
-  ok(/opts\.gpu\?\.renderer \?\? new THREE\.WebGLRenderer\(/.test(src('script/shell/stage3d/stage.ts')), '무대는 gpu 렌더러가 있으면 만들지 않음');
+  ok(/opts\.gpu\?\.renderer \?\? new THREE\.WebGLRenderer\(/.test(src('script/app/common/render3d/stage.ts')), '무대는 gpu 렌더러가 있으면 만들지 않음');
   ok(/plazaGl\(\)/.test(src('script/plaza_page.ts')) && /gl\.leave\(/.test(src('script/plaza_page.ts')), '광장 페이지 = 앱 수명 렌더러 사용');
   const core = src('script/game/lib/assetcore/index.ts');
   eq((core.match(/^import /gm) ?? []).length, 0, '코어 import 0');

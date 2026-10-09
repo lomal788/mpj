@@ -2,7 +2,7 @@
  * 미니게임 장면 로더 계약 — 공용 에셋 변환기(tools/analysis/asset_convert.py + mg_assets.py 미니게임 어댑터)가 만든 web/assets/mg/<id>/manifest.json 형식.
  * 설계: docs/engine/13_asset_converter.md §5·§7. import 경계(mgm_common.md §9.1): 같은 폴더·three·../stage3d·../plaza(attachToSocket)·../../lib/assetcore 만.
  */
-import type { StageManifest } from '../../../../shell/stage3d';
+import type { StageManifest } from '@app/common/render3d';
 
 /** 배치 항목 기본 애니(clip = glb 스켈레탈, fmab = 재질 애니, vis = fvbb 뼈 보임) */
 export interface MgDefaultAnim {

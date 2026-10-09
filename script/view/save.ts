@@ -7,8 +7,8 @@
  */
 import { saveRequestFiber, SaveCore, type SaveSection, type SaveSections, type SaveStorage } from '@game/lib/save';
 import { LocalStorageSave } from '@game/lib/save-localstorage';
-import { MemorySave, MG_ID_COUNT, type MinigameSaveEntry } from '../shell/mgmcommon/contracts';
-import { setMessageSpeedSource } from '../shell/mgmcommon/messageWindow';
+import { MemorySave, MG_ID_COUNT, type MinigameSaveEntry } from '@app/common/ui/contracts';
+import { setMessageSpeedSource } from '@app/common/ui/messageWindow';
 import { commitPlayCount } from '@app/scene/minigame/mgm01/playResult';
 import type { PlazaSave } from '@app/scene/world/plaza/types';
 

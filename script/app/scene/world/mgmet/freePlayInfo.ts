@@ -2,7 +2,7 @@
  * mgmet::FreePlayInfo(mgmet_base_playinfo_freeplay_00) — 조작자 이름(비었으면 im_guest00_name)·플레이한 미니게임 수·/112, In/Out 은 공용 창 생애(완료 대기 없음).
  * 근거: docs/shell/mgmet_flow.md 7.2·8. 글자 페인 대응은 레이아웃 위치 [추정, 9.1].
  */
-import { MgmWindow, type MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { MgmWindow, type MgmDrawHost } from '@app/common/ui/window';
 
 export class FreePlayInfo {
   readonly win: MgmWindow;

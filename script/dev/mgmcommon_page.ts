@@ -1,5 +1,5 @@
 /**
- * 페이지 ↔ 미니게임 모드 공용 UI 모듈(shell/mgmcommon) 데모 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. charselect_page.ts·modeselect_page.ts 와 같은 방식.
+ * 페이지 ↔ 미니게임 모드 공용 UI 모듈(app/common/ui) 데모 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. charselect_page.ts·modeselect_page.ts 와 같은 방식.
  * 데모 흐름(원본 라벨·레이아웃 그대로, 흐름 순서는 확인용 구성 [설계]):
  *   ① 메시지 흐름(사람 A): mgmet_entFirst_mw_guide00~02 (Text0 = im_mode03_name)  ② 자동 흐름(3.0 s): mgmet_fp_mw_howToPlay00~02
  *   ③ 공용 창 mgm00_tlp_course_01(SetAnimeWindow in_left/normal_left/out_left) "프리 플레이"
@@ -26,7 +26,7 @@ import {
   waitUntil,
   type Flow,
   type MgmPlayer,
-} from '../shell/mgmcommon';
+} from '@app/common/ui';
 import type { PadSource } from '../view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;

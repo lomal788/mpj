@@ -4,7 +4,7 @@
  * 앱 수명 렌더러(docs/engine/loader_manager.md §14): gpu 를 받으면 무대가 그 렌더러를 쓰고, world 를 받으면(앞 화면에서 미리 만든 것) 새로 만들지 않는다.
  */
 import * as THREE from 'three';
-import { PLAY_BUDGET_MS, type AssetSource, type StageGpu, type StageLoader } from '../../../../shell/stage3d';
+import { PLAY_BUDGET_MS, type AssetSource, type StageGpu, type StageLoader } from '@app/common/render3d';
 import { PLAZA_PARTS } from './parts';
 import type { PlazaActor, PlazaContext, PlazaExit, PlazaPad, PlazaPart, PlazaPlayerSetup, PlazaSave, PlazaSound, PlazaWorld } from './types';
 import { createPlazaWorld } from './world';

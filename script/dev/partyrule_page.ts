@@ -6,7 +6,7 @@
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
-import { MgmSound, MgmView } from '../shell/mgmcommon';
+import { MgmSound, MgmView } from '@app/common/ui';
 import { applyPartyRuleExtra, defaultConfig, PARTYRULE_FACES, PARTYRULE_PART, PartyRuleScreen, type PartyRuleConfig, type PartyRuleExtra } from '@app/scene/menu/partyrule';
 import type { PadSource } from '../view/input';
 import { appBgm } from '../view/bgm';

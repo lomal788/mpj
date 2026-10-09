@@ -13,8 +13,8 @@ import { P0 } from '@game/lib/assetcore';
 import { SplitScreen, STEP_SEC } from '@game/lib/splitscreen';
 import { DomDividingLines } from '@game/lib/splitscreen-dom';
 import { createMgStage, mgStageKey, MgCamera, parseFsnb, type MgStage } from '@app/scene/minigame/mgstage';
-import { distUrl } from '../shell/stage3d/assetLoader';
-import { gltfTexturesManaged, KIND_JSON } from '../shell/stage3d/assetHandlers';
+import { distUrl } from '@app/common/render3d/assetLoader';
+import { gltfTexturesManaged, KIND_JSON } from '@app/common/render3d/assetHandlers';
 import { appAssets } from '../view/appAssets';
 
 export interface SplitScreenPageRun {

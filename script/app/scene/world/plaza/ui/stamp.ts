@@ -4,7 +4,7 @@
  */
 import { RepeatGen } from '@app/scene/menu/charselect/state';
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import { plainText, type MgmDrawHost } from '../../../../../shell/mgmcommon';
+import { plainText, type MgmDrawHost } from '@app/common/ui';
 import { stampTexture, UI_LAYOUT, type StampDef } from './data';
 
 /** 입력 비트(bex) [판독 FUN_7100356e20·FUN_710035c9b4] */

@@ -6,7 +6,7 @@
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
-import { createWork, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
+import { createWork, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from '@app/common/ui';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from '@app/scene/world/mgmet';
 import { MgmetHowtoView } from '@app/scene/world/mgmet/howto';
 import { logicWipe, sceneOut } from './view/appTransition';

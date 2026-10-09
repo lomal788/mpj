@@ -1,4 +1,4 @@
-"""미니게임 모드 공용 UI(독립 모듈 web/script/shell/mgmcommon) 에셋 — mgm00·mgmet·mgm01 레이아웃 + bq Parts 메시지 창·안내 → web/assets/mgmcommon.
+"""미니게임 모드 공용 UI(독립 모듈 web/script/app/common/ui) 에셋 — mgm00·mgmet·mgm01 레이아웃 + bq Parts 메시지 창·안내 → web/assets/mgmcommon.
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/mgmcommon_web_assets.py [임시 폴더]
 

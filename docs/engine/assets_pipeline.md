@@ -140,7 +140,7 @@ gltf-transform 의 GLB 쓰기는 이미지를 안에 넣어 버리므로 JSON �
 
 ## 6. 런타임 로더
 
-`script/shell/stage3d/assetLoader.ts` 한 곳. 셸 경계(mgm_common.md §9.1 — stage3d 는 자기 폴더만 import)상 stage3d 안에 두고, 다른 셸·게임 뷰가 import 한다.
+`script/app/common/render3d/assetLoader.ts` 한 곳. 셸 경계(mgm_common.md §9.1 — stage3d 는 자기 폴더만 import)상 stage3d 안에 두고, 다른 셸·게임 뷰가 import 한다.
 
 | 함수 | 쓰는 곳 |
 |---|---|

@@ -30,7 +30,7 @@ import {
   type MgmPlayer,
   type MgmSpec,
   type MgmSpecPart,
-} from '../script/shell/mgmcommon';
+} from '@app/common/ui';
 import {
   ACTIVITIES,
   adjustStartPoint,

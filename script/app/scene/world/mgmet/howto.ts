@@ -5,12 +5,12 @@
  *   다시 보기(first = false)에서 페이지 0 의 넘김 대기 중 B = CANCEL·종료(반환 0), 마지막 페이지 A 로 끝나면 반환 1(types.ts MgmetHowto [추정]).
  *   이전 페이지로 돌아가기는 없다.
  */
-import type { Flow } from '../../../../shell/mgmcommon/fiber';
-import { PAD, type MgmInput } from '../../../../shell/mgmcommon/input';
-import { MessageWindow } from '../../../../shell/mgmcommon/messageWindow';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import type { MgmView } from '../../../../shell/mgmcommon/view';
-import { MgmWindow } from '../../../../shell/mgmcommon/window';
+import type { Flow } from '@app/common/ui/fiber';
+import { PAD, type MgmInput } from '@app/common/ui/input';
+import { MessageWindow } from '@app/common/ui/messageWindow';
+import type { MgmSound } from '@app/common/ui/sound';
+import type { MgmView } from '@app/common/ui/view';
+import { MgmWindow } from '@app/common/ui/window';
 import { HOWTO_INFO_PANES, HOWTO_PANE_TEXT, howtoKind, type HowtoKind } from './tables';
 import type { MgmetHowto } from './types';
 

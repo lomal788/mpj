@@ -7,7 +7,7 @@
  */
 import * as THREE from 'three';
 import { appTransition, LogicTransition, WIPE_WHITE } from '@game/lib/transition';
-import type { CameraDriver, ClipHandle } from '../../../../shell/stage3d';
+import type { CameraDriver, ClipHandle } from '@app/common/render3d';
 import { followSystemOf } from './follow';
 import { RESULT } from './interact';
 import { BLEND_NPC, npcSystemOf, type Npc } from './npc';

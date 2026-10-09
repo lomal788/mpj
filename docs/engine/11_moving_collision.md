@@ -185,9 +185,9 @@ Route는 `Setup @0x7100011360`의 CastShape로 0=빈 곳/1=ObjA/2=ObjE/3=기타�
 
 | 소스 | 제공 기능과 한계 |
 |---|---|
-| [`script/shell/stage3d/types.ts:116`](../../script/shell/stage3d/types.ts) | Collider는 `groundHeight(x,z,fromY?)`와 수평 원기둥 이동 `collide(pos,move,radius,height)`뿐. 일반 3D capsule sweep·접촉 목록·레이어/제외 Entity API 없음 |
-| [`meshCollider.ts:27`](../../script/shell/stage3d/meshCollider.ts) | constructor에서 vertices·normals·XZ grid를 캐시. 이후 obj의 matrixWorld 변경이 캐시의 위치/회전을 갱신하지 않음. mesh 병합의 초기 변환과 runtime 포즈 갱신은 별개 |
-| [`stage.ts:376·580`](../../script/shell/stage3d/stage.ts) | `setCollider`는 참조 대입, `update(dt)`는 clip/updater/camera 갱신. 강체·query world의 포즈 commit을 제공하지 않음 |
+| [`script/app/common/render3d/types.ts:116`](../../script/app/common/render3d/types.ts) | Collider는 `groundHeight(x,z,fromY?)`와 수평 원기둥 이동 `collide(pos,move,radius,height)`뿐. 일반 3D capsule sweep·접촉 목록·레이어/제외 Entity API 없음 |
+| [`meshCollider.ts:27`](../../script/app/common/render3d/meshCollider.ts) | constructor에서 vertices·normals·XZ grid를 캐시. 이후 obj의 matrixWorld 변경이 캐시의 위치/회전을 갱신하지 않음. mesh 병합의 초기 변환과 runtime 포즈 갱신은 별개 |
+| [`stage.ts:376·580`](../../script/app/common/render3d/stage.ts) | `setCollider`는 참조 대입, `update(dt)`는 clip/updater/camera 갱신. 강체·query world의 포즈 commit을 제공하지 않음 |
 | [`script/app/scene/world/plaza/player.ts:164`](../../script/app/scene/world/plaza/player.ts) | integrate는 수평 move가0이면 collide를 호출하지 않음. 정지한 플레이어를 움직이는 장애물이 누르는 경우를 이 경로만으로 처리할 수 없음 |
 
 현재 THREE 기반 Collider를 순수 GameLogic의 권위 상태로 그대로 사용하지 않는다. `Stage3D.getSocket`과 rAF `Stage3D.update`는 렌더 포즈이므로, 같은 이름의 소켓을 읽더라도 논리 프레임과 시점이 맞지 않으면 충돌 근거가 될 수 없다. 게임/Stage3D 연결·공유 renderer·asset owner 해제 계약은 [mg0106 §9.2](../minigame/mg0106.md), [loader_manager.md §11](loader_manager.md)에 두며 여기서 중복하지 않는다.

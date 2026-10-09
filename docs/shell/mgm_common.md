@@ -1,7 +1,7 @@
 # 미니게임 모드 화면 공용 UI 틀 (bq::mgm 공용 창·레이아웃·메시지 흐름·입력) — 원본 분석
 
 2026-10-07. 상태: **분석 완료(판독·데이터). 웹 구현 없음, 원본·웹 실행 대조 없음.** 2차(같은 날): 메시지 창 내부를 [message_window.md](message_window.md) 로 분석하고, 1차 미확정 4건(메시지 창 내부·MESSSAGE_WINDOW_OFFSET·소리 그룹/프리셋 이름·mgm00 커서 사용처)을 이 문서에 반영했다(4.3·6.9·7.1·7.4·8·9.4·11절). 이 문서는 1단계(공용 틀)만 다룬다. 각 모드 화면(mgm01~06·mgmet)의 개별 흐름은 다루지 않고, 공용 부품을 어떻게 부르는지 보여 주는 호출 예만 적는다.
-3차(2026-10-07, 구현 1단계 + A): 공용 계약을 9.6 에 고정하고 `web/script/shell/mgmcommon/` 에 구현(메뉴 격자·창 생애·항목 제약·글자·입력·소리·안내·메시지 창·메시지 흐름·장면 전환·저장소 기본 구현). 검증은 10절 끝.
+3차(2026-10-07, 구현 1단계 + A): 공용 계약을 9.6 에 고정하고 `web/script/app/common/ui/` 에 구현(메뉴 격자·창 생애·항목 제약·글자·입력·소리·안내·메시지 창·메시지 흐름·장면 전환·저장소 기본 구현). 검증은 10절 끝.
 형식은 `F:/dev/mps/web/docs/분석.txt` 의 11절 구성. 레이아웃 재생·그리기 규칙(색 공간·부모 기준점·블렌드·부품 덮어쓰기·창 정점색·흐림)·폰트·메시지 태그·입력 모듈·소리 재생 방식은 다시 분석하지 않고
 [charselect.md](charselect.md) 6.4·6.5·12절, [modeselect.md](modeselect.md) 6.1·6.2절, [../engine/05_ui_input.md](../engine/05_ui_input.md), [../engine/04_sound.md](../engine/04_sound.md) 를 그대로 따른다.
 
@@ -492,7 +492,7 @@ mgm00 글자 페인은 `x_text_NN` 과 `x_text_NN_shadow`(같은 자리, `_shado
 ## 9. 웹 포팅 구조 (공용 부품 명세 — 제안, 코드 없음)
 
 ### 9.1 원칙
-- 위치 `web/script/shell/mgmcommon/`(엔진 독립 모듈). import 허용: 같은 폴더, `three`, `../charselect/scene2d`·`../charselect/render2d`·`../charselect/state`(RepeatGen)·`../charselect/types`(명세 형식) — modeselect 와 같은 규칙(공용으로 끌어올리지 않고 그대로 import). 금지: `script/game/core`·`script/games`·`script/view`·`script/game.ts`·`script/env.ts`.
+- 위치 `web/script/app/common/ui/`(엔진 독립 모듈). import 허용: 같은 폴더, `three`, `../charselect/scene2d`·`../charselect/render2d`·`../charselect/state`(RepeatGen)·`../charselect/types`(명세 형식) — modeselect 와 같은 규칙(공용으로 끌어올리지 않고 그대로 import). 금지: `script/game/core`·`script/games`·`script/view`·`script/game.ts`·`script/env.ts`.
 - 명세 JSON: `web/assets/mgmcommon/spec.json` ← `web/tools/analysis/mgmcommon_web_assets.py`(제안). charsel_web_assets.py 의 레이아웃·폰트·텍스처 변환 함수와 modesel_web_assets.py 의 창 9조각 분할·부품 재질 덮어쓰기를 import 해 mgm00 20 레이아웃을 변환. 각 모드 화면은 자기 명세 + 이 공용 명세를 함께 읽는다(원본의 (자기 lyt, mgm00 lyt) 묶음과 같은 관계).
 - 공용 라이브러리 예외(2026-10-08, loader_manager.md §11.1): **import 0 인 `script/game/lib/assetcore/`(로더 관리자 코어)와 `three`·코어만 import 하는 `script/game/lib/assetcore-three/`(three 어댑터)는 모든 셸 모듈이 import 할 수 있다.** 셸은 코어의 인터페이스(`AssetManagerApi` 등)만 받고 인스턴스는 페이지가 넣는다. 두 폴더 자신의 import 규칙은 `tools/test_assetcore.ts`·`test_plaza_world.ts` 8절이 확인한다.
 - 공용 라이브러리 예외 추가(2026-10-09, [../engine/15_transition.md](../engine/15_transition.md)): import 0 인 `script/game/lib/transition/`(화면 전환 코어)도 모든 셸 모듈이 import 할 수 있다(`check_mgmcommon` LIB·`test_mgscene` 9절 허용 목록).
@@ -563,7 +563,7 @@ interface MessageWindowAdapter {          // ComUiMessageWindow 인터페이스 
 
 ### 9.6 구현 계약 (2026-10-07 고정 — 미니게임 항구 프리 플레이 1단계)
 
-프리 플레이 한 바퀴(항구 허브 B·규칙 설정 B·프리 플레이 목록 C·미니게임 틀 D)가 함께 쓰는 공용 계약이다. 코드 = `web/script/shell/mgmcommon/`(공개 진입점 `index.ts`). 원본 근거는 위 1~8절·[message_window.md](message_window.md), 원본에 없는 웹 쪽 결정은 **[설계]** 로 적는다. B/C/D 는 이 계약을 import 해서 쓰고, 계약을 바꿀 일이 생기면 이 절을 먼저 고친다.
+프리 플레이 한 바퀴(항구 허브 B·규칙 설정 B·프리 플레이 목록 C·미니게임 틀 D)가 함께 쓰는 공용 계약이다. 코드 = `web/script/app/common/ui/`(공개 진입점 `index.ts`). 원본 근거는 위 1~8절·[message_window.md](message_window.md), 원본에 없는 웹 쪽 결정은 **[설계]** 로 적는다. B/C/D 는 이 계약을 import 해서 쓰고, 계약을 바꿀 일이 생기면 이 절을 먼저 고친다.
 
 **프레임 순서 [설계]** (원본 파이버·엔티티 갱신 순서는 [미확정]): 한 틱(1/60 s, dt = `Math.fround(1/60)`) = ① `MgmInput.update()`(조작 플레이어·누름·반복 비트) → ② `FiberRunner.step()`(장면 흐름 제너레이터, 시작 순서대로 한 번씩) → ③ UI 갱신(`MgmWindow.update()`·`MgmLayout.update()`·`MessageWindow.update(dt)` — 창 상태기계 다음 글자 진행, 3절) → ④ 그리기. 메시지 창이 장면 흐름보다 뒤에 갱신되므로 흐름이 이번 틱에 건 요청(Start·RequestNext)은 같은 틱 ③ 에서 처리된다.
 

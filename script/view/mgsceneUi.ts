@@ -6,7 +6,7 @@
  */
 import { resolveSpecFonts } from '@app/scene/menu/charselect/fontSheet';
 import type { UiLayer } from '@app/scene/minigame/mgscene';
-import { loadUiImage, type UiImage } from '../shell/stage3d/assetLoader';
+import { loadUiImage, type UiImage } from '@app/common/render3d/assetLoader';
 import type { Assets } from './assets';
 import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from './lyt';
 

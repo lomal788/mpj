@@ -640,7 +640,7 @@ mg1801 웹 코드 안에 함께 있던 리듬 공용 틀(`ca::rm`)을 공용 모
 | 폴더 | 내용 | import 규칙 |
 |---|---|---|
 | `web/script/games/rhythm/` | 로직(three·DOM 없음): 박자 시계, 채보, RmGameWork, RmSoundMan 로직, 별 판정, `RmMgSceneBase`(단계 0~10, 줄 배분, 결과 흐름), 웹 MinigameFlow 대리 | **import 0**(같은 폴더만). f32·60fps 상수도 폴더 안에 둔다(`data.ts`, 값은 core 와 같다). 화면 전환은 인터페이스(`RmWipe`)로 받는다 — `lib/transition` 의 `Transition` 을 게임이 넘긴다 |
-| `web/script/games/rhythm/view/` | 화면 어댑터: 리듬 BGM 핸드셰이크·효과음 시퀀서 소리(`RmSoundMap`), 공용 2D UI(`RmUi`: 타이밍 텔롭·START/FINISH·점수 게이지·PERFECT·흰 페이드 따라가기·컨트롤 안내 와이프·결과 점수판), 공용 사건 → UI·소리(`rmTelopView`·`rmPerfectView`) | `view/*`(audio·bgm·seq·lyt·assets·input), `lib/transition`, `app/scene/menu/charselect/fontSheet`, `shell/stage3d/assetLoader`, three. 이미 공용인 것(BGM 스트림 `lib/bgmstream`→`view/bgm`, 시퀀서 `view/seq`, 레이아웃 재생기 `view/lyt`, 화면 전환 `lib/transition`)은 다시 만들지 않고 부른다 |
+| `web/script/games/rhythm/view/` | 화면 어댑터: 리듬 BGM 핸드셰이크·효과음 시퀀서 소리(`RmSoundMap`), 공용 2D UI(`RmUi`: 타이밍 텔롭·START/FINISH·점수 게이지·PERFECT·흰 페이드 따라가기·컨트롤 안내 와이프·결과 점수판), 공용 사건 → UI·소리(`rmTelopView`·`rmPerfectView`) | `view/*`(audio·bgm·seq·lyt·assets·input), `lib/transition`, `app/scene/menu/charselect/fontSheet`, `app/common/render3d/assetLoader`, three. 이미 공용인 것(BGM 스트림 `lib/bgmstream`→`view/bgm`, 시퀀서 `view/seq`, 레이아웃 재생기 `view/lyt`, 화면 전환 `lib/transition`)은 다시 만들지 않고 부른다 |
 | `web/script/games/mg1801/` | mg1801 고유(`mg1801::Scene` = `Mg1801Game extends RmMgSceneBase`) | `games/rhythm` 을 import 한다 |
 
 에셋 경로는 바꾸지 않았다. 공용 UI·소리 명세는 지금도 게임 폴더(`assets/mg1801/ui/ui.json`, `assets/mg1801/manifest.json`)에서 읽는다(14.9).

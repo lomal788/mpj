@@ -71,11 +71,109 @@
 - esbuild. 개발은 `tools/serve.ts`(watch + serve), 배포는 `tools/build.ts`. 페이지 엔트리는 `tools/esbuild_config.ts`의 `ENTRIES`.
 - 큰 중간 산출물은 `c:/dev/mpj/extracted/` 아래에 두고 web/에는 변환 결과만 둔다.
 
-## 10. 폴더·import 규칙 (2026-10-09)
+## 10. 폴더 구조·import 규칙 (2026-10-09 사용자 결정)
 
-- `script/game/core`(결정적 계산: 시계·난수·패드·f32), `script/game/lib/<이름>`(공용 코어, import 0) + `script/game/lib/<이름>-<엔진>`(어댑터: three·dom·webaudio·gamepad·localstorage).
-- `game/` 밖에서 core·lib 를 부를 때는 별칭 `@game/core/…`·`@game/lib/…` 만 쓴다(`tsconfig.json` `paths` 한 곳 — esbuild·tsx 가 같이 읽는다). 폴더를 옮기면 별칭 한 줄만 고친다.
-- `game/lib` 안의 어댑터 → 자기 코어는 상대 경로(`../sound`)로 둔다. 폴더째 다른 프로젝트(ddalkkakrider 포털 등)로 가져갈 때 별칭 설정 없이 돈다. 공용 lib 끼리, lib → shell·games·view import 는 금지(경계 시험).
-- 개발·시험 페이지는 `script/dev/` + `dev/ui.html`(주소 `/dev/ui`).
-- 화면은 `script/app/scene/<묶음>/<화면>`: `menu`(플레이어 설정·캐릭터 선택·모드 선택·보드 규칙·온라인), `world`(광장·항구 mgmet), `minigame`(한 판 틀 mgscene·결과 mgresult·장면 로더 mgstage·프리 플레이 mgm01). 화면 폴더 밖에서 부를 때는 별칭 `@app/scene/…`, 화면 폴더 안은 상대 경로.
-- 남은 정리(나중): `shell/mgmcommon`·`shell/stage3d`·`view/`·페이지 파일 → `app/common`·`app/flow`·`app/main.ts`. 화면끼리의 직접 import(광장 → 캐릭터 선택 미리보기 등)는 그때 `app/common` 으로 올려 없앤다.
+### 10.1 최상위 두 층
+
+```
+script/
+  game/        엔진 무관 핵심 (잠금) — 다른 프로젝트(ddalkkakrider 포털 등)로 폴더째 가져간다
+    core/        결정적 계산: 시계·난수·패드·f32·스케줄러
+    lib/<이름>   공용 코어(import 0) + lib/<이름>-<엔진> 어댑터(three·dom·webaudio·gamepad·localstorage)
+  app/         mpj 제품 — 원본 모듈을 옮긴 화면·모드·미니게임
+    main.ts      조립만(Composition Root)                              [나중]
+    flow/        흐름 표·등록표(화면 ID → 모듈, 다음 화면, 미니게임 ID → 게임)  [나중]
+    common/      앱 공용 서비스(원본 bq 계열: 렌더·소리·입력·에셋·저장·공용 UI)   [나중]
+    scene/       원본 NRO 중 화면·모드 — 같은 높이, 2단(분류/단위) 고정
+      menu/        setplayer · charselect · modeselect · partyrule · online      (menu01 등)
+      world/       plaza(menu00) · mgmet(항구)
+      mode/        freeplay(mgm01) · [board(bd01) · bowser(kb01) · athlon(ca01) · rhythmcooking(rc_stage01) …]
+      system/      [op · ed · matching00 · gyroPadChange …]
+    minigame/    미니게임 전부
+      frame/       한 판 틀(mgscene) · 결과(mgresult) · 장면 로더(mgstage)        (원본 main bq::MinigameScene·MGResult)
+      kit/         계열 공통: rhythm · [athlon · kb · patapata …]                (원본 main ca::rm·ca::coin_athlon·ca::kb·sb)
+      mg####/      게임 하나 = 폴더 하나, 평평하게. mps 게임은 mps_ 접두어
+  dev/         시험 페이지(script/dev + dev/ui.html, 주소 /dev/ui)
+```
+`[ ]` = 아직 없는 자리. 규칙상 위치가 정해져 있다.
+
+### 10.2 원본 모듈 → 폴더 대응
+
+| 원본 | 폴더 |
+|---|---|
+| nn::bezel·bex(엔진 모듈) | `game/core`·`game/lib` |
+| bq 공용(UI·메시지·저장·보상·사운드 그룹) | `app/common` |
+| bq::MinigameScene·MGResult | `app/minigame/frame` |
+| ca::rm·ca::coin_athlon·ca::kb·sb::PataPata·wl | `app/minigame/kit/<계열>` |
+| NRO 화면·모드(menu00·menu01·mgmet·mgm01~06·bd01·kb01·ca01·pp01·rc_stage01·op·ed·matching00 …) | `app/scene/<분류>/<단위>` |
+| NRO 미니게임 mg####(112) | `app/minigame/mg####` |
+
+### 10.3 추가할 때의 규칙
+
+1. **원본 모듈 하나 = 폴더 하나.** 깊이는 늘리지 않는다. 새 종류가 기존 분류에 안 맞으면 분류를 하나 더한다(예: `scene/system`).
+2. **공통은 원본이 둔 층에 둔다**(10.2). 두 곳 이상이 쓰면 올리고, 한 곳만 쓰면 그 폴더 안에 둔다.
+3. **게임은 모드·계열 아래에 넣지 않는다.** 원본에서 게임은 여러 모드(프리 플레이·보드·리듬 쿠킹)에 나오고, 계열 공통을 둘 이상 쓰기도 한다(mg1804·mg1809 = ca::rm + coin_athlon). 게임은 필요한 kit 를 import 한다.
+4. **서로 import 하지 않고 ID 로 요청한다.** 화면 → 다음 화면, 모드 → 미니게임은 장면 매니저에 ID 로 요청하고(10.5), 매니저가 `app/flow` 등록표에서 모듈을 찾는다(원본 CallMinigameScene(ID) → 이름표·MGList 와 같은 꼴). 그래서 추가는 "폴더 하나 + 등록 한 줄"이고 기존 파일을 고치지 않는다.
+5. **의존 방향**: `app/minigame/mg####` → `app/minigame/kit` → `app/minigame/frame` → `app/common` → `game/`. `app/scene/*` → `app/common`·`app/minigame/frame` → `game/`. `game/` 은 아무것도 부르지 않는다. 분류끼리·단위끼리 직접 import 금지(경계 시험).
+
+### 10.4 import
+
+- `game/` 밖에서 core·lib 는 별칭 `@game/core/…`·`@game/lib/…`, `app/` 의 다른 폴더는 별칭 `@app/…` 만 쓴다(`tsconfig.json` `paths` 한 곳 — esbuild·tsx 가 같이 읽는다). 폴더를 옮기면 별칭 한 줄과 해당 import 만 고친다.
+- 같은 단위 폴더 안은 상대 경로. `game/lib` 어댑터 → 자기 코어도 상대 경로(`../sound`) — 폴더째 가져갈 때 별칭 없이 돈다.
+
+### 10.5 장면 계약·전환·Work (원본 방식, 2026-10-09 사용자 결정)
+
+화면 사이 흐름은 원본처럼 **요청 API + Work 객체**로 한다. 화면이 결과값 `{next, args}` 를 돌려주는 방식은 쓰지 않는다(원본에 없는 모양이라 Work 필드 대조가 안 되고, Call/Return 의 "돌아오기"가 어색하다).
+
+**1. 장면 수명 계약** — 모든 화면·모드는 원본 `bq::SceneBase` 수명을 같은 이름으로 가진다.
+
+| 원본 [판독] | 웹 장면 계약 |
+|---|---|
+| `SceneBase` ctor `@0x71002c9bd4`·`OnEntry @0x71002c9f68` | `onEntry()` — 자원 등록·Work 읽기 |
+| `BeginScene @0x71002df258` → `SetupScene @0x71002df440` | `setup()` |
+| `SyncedSetupScene @0x71002e0270` | `syncedSetup()` (온라인 동기 뒤, 로컬은 바로) |
+| 로드 완료(`OnLoadComplete`) | `onLoadComplete()` |
+| 갱신(파이버) | `update()` — 화면 안 진행(대화·선택·연출)은 지금처럼 화면 코드(파이버·상태기계)가 맡는다 |
+| `CleanupScene @0x71002e0344`·`OnCleanupProcessing` | `cleanup()` |
+
+미니게임 장면은 여기에 `bq::MinigameScene` 흐름 훅(0~19단계, `MgGame`)을 더한 것이다(`app/minigame/frame`).
+
+**2. 전환 = 장면 매니저에 요청** — 화면은 실행 중 아무 때나 요청하고, 실제 전환은 매니저가 프레임 경계에서 한다.
+
+| 원본 [판독] | 웹 요청 API |
+|---|---|
+| `CallMinigameScene @0x71003601ac` | `scenes.call('minigame')` — 부른 장면은 스택에 남는다(push) |
+| `CallMinigameModeScene @0x710036027c` | `scenes.call('<모드 ID>')` |
+| `RequestReturnScene` | `scenes.return()` — 부른 장면으로 돌아간다(pop), 돌아간 장면은 `onReturn()` |
+| 장면 바꾸기(같은 높이 이동) | `scenes.change('<ID>')` |
+
+ID → 모듈은 `app/flow` 등록표가 정한다(원본 장면 이름표 `@0x71015d840c`).
+
+**3. 데이터 = Work 객체** — 화면 사이 데이터는 인자로 넘기지 않고 원본과 같은 영역의 Work 에 쓰고 읽는다. 필드는 원본 오프셋과 1:1 로 이름을 붙여 대조한다.
+
+| 원본 Work | 웹 | 예 |
+|---|---|---|
+| `PlayerWork` | `work.player` | 참가자·캐릭터·사람/COM·COM 강도·패드 |
+| `GameWork` | `work.game` | 부를 미니게임 ID·설정, 결과(SetMinigameResult 결과 링) |
+| `MinigameModeWork` | `work.mode` | 규칙 캐시(+0x764), 항구 복귀 지점(+0x4bc), 라운드·결과 100칸 |
+| 영구 저장(SaveData) | 공용 저장 `appSave()` | Work 가 아니라 16_save.md 섹션 — Work 는 세션 상태만 |
+
+- **쓰기 권한**: 각 화면 계약에 읽는 Work·쓰는 Work 를 적는다. Work 가 아무나 쓰는 전역 상태가 되지 않게, 쓰기는 그 영역의 주인(원본에서 쓰는 모듈)만 한다. 경계 시험으로 고정한다.
+- **미니게임 한 판은 닫힌 상자**: 미니게임 로직은 Work 를 직접 읽거나 쓰지 않는다. 틀(`app/minigame/frame`)이 시작 때 Work 에서 setup 을 만들어 넘기고, 끝날 때 결과를 Work 에 기록한다(SetMinigameResult 계약). 결정성 규칙(`docs/shell/minigame_scene.md` §12.12.6)은 그대로다.
+
+**한 판의 흐름**: 모드(예: freeplay)가 `work.game` 에 ID·설정을 쓰고 `scenes.call('minigame')` → 매니저가 `app/minigame/frame` 을 연다 → 틀이 등록표에서 `mg####` 를 받아 0~19단계를 돈다 → 결과를 `work.game` 결과 링에 쓴다 → `scenes.return()` → 모드의 `onReturn()` 이 결과를 읽는다(원본 Call/Return).
+
+### 10.6 흐름 추적
+
+등록표·요청 방식은 "정의로 이동"으로 다음 화면을 따라가기 어렵다. 그래서 세 곳에서 읽히게 한다.
+
+1. **`app/flow` 등록표 한 파일** — 장면 ID·모듈·부를 수 있는 장면(call/change 대상)·미니게임 등록이 모두 여기 있다. 화면·게임 모듈을 import 하는 유일한 곳이라 표에서 IDE 정의 이동이 된다(ID 는 문자열 유니언 타입, 요청 API 인자도 같은 타입).
+2. **장면 계약**: 각 화면 계약에 요청할 수 있는 ID 와 읽기·쓰기 Work 가 적혀 있다.
+3. **실행 기록**: 매니저가 요청·전환마다 `[flow] plaza → mgmet → freeplay → call minigame(mg1801) → return freeplay` 를 남기고, 개발 모드에서는 Work 변경도 기록한다(개발 콘솔·`window.__mpj.flow`). 등록표에서 문서용 흐름도를 만드는 도구를 둔다.
+
+### 10.7 지금 상태와 남은 이동
+
+- 됨: `game/core`·`game/lib`(별칭 `@game`), `app/scene/{menu,world}`, `script/dev`, 공용 폴더 2개 — 옛 `shell/mgmcommon` → `app/common/ui`, 옛 `shell/stage3d` → `app/common/render3d`(별칭 `@app/common`).
+- 남음: `app/scene/minigame/mgm01` → `app/scene/mode/freeplay`, `app/scene/minigame/{mgscene,mgresult,mgstage}` → `app/minigame/frame/{scene,result,stage}`, `games/rhythm` → `app/minigame/kit/rhythm`, `games/mg1801`·`mgdummy` → `app/minigame/`, `view/`·페이지 파일 → `app/common`·`app/flow`·`app/main.ts`.
+- 화면끼리의 직접 import(광장 → 캐릭터 선택 미리보기, 결과 무대 → 광장 시선 등)는 `app/common` 으로 올려 없앤다.
+- 장면 계약·요청 API·Work(10.5)는 아직 없다. 지금은 프리 플레이 목록만 `SceneStack`(Call/Return)·`MgmWork` 를 쓰고, 나머지 흐름은 `main.ts` 함수(`flowPlaza`·`flowMgmet`·`playFromList` …)가 직접 잇는다. 허브·목록 Work 가 따로 노는 감사 문서 P1 항목(규칙 캐시·복귀 지점)도 Work 통일로 같이 푼다.

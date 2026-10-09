@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { MgResultEntry } from '../script/shell/mgmcommon/contracts';
+import type { MgResultEntry } from '@app/common/ui/contracts';
 import { ANNOUNCE_HOLD, ANNOUNCE_LABEL, AnnounceState } from '@app/scene/minigame/mgm01/announce';
 import { HISTORY_ROWS, HistoryState, earliestFromRing, historyFromRing, writeRing } from '@app/scene/minigame/mgm01/historyView';
 import { HOWTO_KINDS, HOWTO_PANE_TEXT } from '@app/scene/world/mgmet/tables';

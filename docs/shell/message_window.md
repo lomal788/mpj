@@ -1,7 +1,7 @@
 # 메시지 창 (bq::ComUiMessageWindow) — 원본 분석
 
 2026-10-07. 상태: **분석 완료(판독·데이터). 웹 구현 없음, 원본·웹 실행 대조 없음.**
-2차(2026-10-07, 구현): `web/script/shell/mgmcommon/messageWindow/` 구현, 웹이 정한 것은 9.4, 시험으로 드러난 계산 착오는 6.3·10절 정정 줄.
+2차(2026-10-07, 구현): `web/script/app/common/ui/messageWindow/` 구현, 웹이 정한 것은 9.4, 시험으로 드러난 계산 착오는 6.3·10절 정정 줄.
 형식은 `F:/dev/mps/web/docs/분석.txt` 11절 구성. 모드 화면이 이 창을 여는 흐름(MessageFlow/AutoMessageFlow)은 [mgm_common.md](mgm_common.md) 5.3절, 레이아웃 재생·그리기 규칙은 [charselect.md](charselect.md) 6.4·6.5·12절과 [modeselect.md](modeselect.md) 6.1·6.2절, 메시지 태그·폰트·입력 비트는 [../engine/05_ui_input.md](../engine/05_ui_input.md), 소리 재생·FSAR·프리셋은 [../engine/04_sound.md](../engine/04_sound.md) 를 그대로 쓴다. 이 문서는 **이 창 고유 동작만** 적는다.
 
 확정 수준: **[판독]** 디컴파일 C, **[판독: 어셈블리]** C 가 반환·덮어쓰기를 잘못 보인 두 곳(넘김 판정 FUN_7100318030, 글자 속도 FUN_7100322e40)만 명령 확인, **[데이터]**, **[추정]**, **[미확정]**, **[실행: 변환]** 자체 도구 실행.
@@ -263,7 +263,7 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
 ## 9. 웹 포팅 구조 (제안, 코드 없음)
 
 ### 9.1 위치와 의존
-`web/script/shell/mgmcommon/messageWindow/`(mgm_common.md 9절 `messageFlow.ts` 가 쓰는 어댑터의 실제 구현). import 허용: 같은 폴더, `three`, `../../charselect/scene2d`·`render2d`·`types`. 명세: `web/assets/mgmcommon/meswin.json` ← 제안 도구 `mgmcommon_meswin_assets.py` (charsel_web_assets 변환으로 bq Parts.lyt 의 sys_meswin_00·choices_00·arrowicon_00·arrowchoices_00 + messageWindowList.json 의 WindowData/CharacterData/PositionData/Emotion + 사용 메시지의 ATR(msgwin_atr.py 로직)).
+`web/script/app/common/ui/messageWindow/`(mgm_common.md 9절 `messageFlow.ts` 가 쓰는 어댑터의 실제 구현). import 허용: 같은 폴더, `three`, `../../charselect/scene2d`·`render2d`·`types`. 명세: `web/assets/mgmcommon/meswin.json` ← 제안 도구 `mgmcommon_meswin_assets.py` (charsel_web_assets 변환으로 bq Parts.lyt 의 sys_meswin_00·choices_00·arrowicon_00·arrowchoices_00 + messageWindowList.json 의 WindowData/CharacterData/PositionData/Emotion + 사용 메시지의 ATR(msgwin_atr.py 로직)).
 
 ### 9.2 파일
 | 파일 | 원본 | 책임 |
@@ -286,7 +286,7 @@ isDone = after ≥ +0x8c && typing == 0      (= FUN_71003235f0, 페이지 단계
 
 ### 9.4 구현 계약 (2026-10-07, mgm_common.md 9.6 의 메시지 부분)
 
-파일: `web/script/shell/mgmcommon/messageWindow/{state,typer,layout,index}.ts`. `state.ts`·`typer.ts`·`layout.ts` 는 순수(입력·dt·애니 끝 신호 → 사건), `index.ts` 의 `MessageWindow` 가 명세 레이아웃(sys_meswin_00·arrowicon_00)에 사건을 옮긴다. 공개 API = mgm_common.md 9.2 `MessageWindowAdapter` + `addMessageLabel(label)`·`setInsert(index, value)`·`setNextMask(mask)`·`setSpeed(0|1|2)`·`setOnline(b)`·`update(dt)`·`draw()`.
+파일: `web/script/app/common/ui/messageWindow/{state,typer,layout,index}.ts`. `state.ts`·`typer.ts`·`layout.ts` 는 순수(입력·dt·애니 끝 신호 → 사건), `index.ts` 의 `MessageWindow` 가 명세 레이아웃(sys_meswin_00·arrowicon_00)에 사건을 옮긴다. 공개 API = mgm_common.md 9.2 `MessageWindowAdapter` + `addMessageLabel(label)`·`setInsert(index, value)`·`setNextMask(mask)`·`setSpeed(0|1|2)`·`setOnline(b)`·`update(dt)`·`draw()`.
 
 보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md) §8): 메시지 속도 원천 `setMessageSpeedSource(f)`(index.ts) — 앱 저장이 SystemData+0x74(`system.messageSpeed`, 기본 0)를 꽂는다. 창은 생성·start·update 때 원천 값을 `st.speed` 에 두고, 페이지 시작 때 Typer 가 읽는다(원본 FUN_7100322e40 의 페이지마다 읽기). `setSpeed(s)` 는 창별 덮어쓰기(+0x90/+0x94)로 원천보다 우선한다.
 

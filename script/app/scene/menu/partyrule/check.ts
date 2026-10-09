@@ -2,7 +2,7 @@
  * 규칙 확인 판 — menu01::ComUiBdCheckRule (ctor @0x7100063d00, Start @0x7100064ee0, SetupTurn @0x7100064f60, SetupBonus @0x7100065290,
  * SetupInst/Gyro/Choice @0x7100065550/@0x71000658a0/@0x7100065bf0, UpdateProcess @0x71000646b4, StateMessageImpl @0x71000647c4). 근거: docs/shell/partyrule.md 4.4·5.3·6.4.
  */
-import { FiberRunner, type FiberHandle, type Flow } from '../../../../shell/mgmcommon/fiber';
+import { FiberRunner, type FiberHandle, type Flow } from '@app/common/ui/fiber';
 import { PanelLife } from './panel';
 import { CHECK_ICON, CHECK_MINUTES, CHECK_NEW, CHECK_SET, CHECK_TITLE, CHECK_TURN, checkTurnIndex, checkWinAnim } from './tables';
 import type { PartyMsg, PartyRuleConfig, PIO, PSink } from './types';

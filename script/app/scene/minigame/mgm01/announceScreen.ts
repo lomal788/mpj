@@ -3,7 +3,7 @@
  * play(reason) → in → normal(0.75 s 또는 skip) → out. 잠금 선택 때 ERROR SE 는 목록 쪽이 낸다(6.2).
  */
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import type { MgmView } from '../../../../shell/mgmcommon/view';
+import type { MgmView } from '@app/common/ui/view';
 import { AnnounceState } from './announce';
 
 export class AnnounceScreen {

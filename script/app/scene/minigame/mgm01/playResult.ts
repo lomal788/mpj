@@ -4,7 +4,7 @@
  * 여기서는 장면이 세지 않은 결과(countedByScene 거짓)일 때만 센다.
  * 계약: docs/shell/minigame_scene.md §12.12.4.
  */
-import type { MgmSave, MgResultEntry } from '../../../../shell/mgmcommon/contracts';
+import type { MgmSave, MgResultEntry } from '@app/common/ui/contracts';
 
 export function countMinigamePlay(save: MgmSave, id: number): void {
   const e = save.minigame(id);

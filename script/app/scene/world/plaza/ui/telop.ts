@@ -3,7 +3,7 @@
  * 상태만(LayoutInst 를 직접 바꾼다).
  */
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import { alignPanes, plainText, type MgmDrawHost } from '../../../../../shell/mgmcommon';
+import { alignPanes, plainText, type MgmDrawHost } from '@app/common/ui';
 import { AREA_LABELS, UI_LAYOUT } from './data';
 
 /** 4.1 공통 수명(−1 숨김·0 in·1 대기·2 out). In: 상태 ≥ 2 일 때만 [판독 ComUiLocationTelop::In/Out/Update] */

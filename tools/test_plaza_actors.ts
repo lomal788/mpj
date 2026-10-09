@@ -7,7 +7,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as THREE from 'three';
-import { MeshCollider } from '../script/shell/stage3d/meshCollider';
+import { MeshCollider } from '@app/common/render3d/meshCollider';
 import { PlazaMover, NO_LEVER } from '@app/scene/world/plaza/player';
 import { DECO_NPCS, DECO_PROPS, MANAGER_NPCS, NPC_MODEL, type NpcSpecFile } from '@app/scene/world/plaza/npc';
 import { autoInterp, FOLLOW, FollowLogic, leverToward, meshRayBlocked, plazaHumans, RemoteMotion } from '@app/scene/world/plaza/follow';

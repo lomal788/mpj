@@ -4,7 +4,7 @@
 # menu00 — 광장(Party Plaza) 3D 규모·막힘 조사와 구현 지시서
 
 2026-10-08. 광장 웹 구현과 기존 판독 결과를 기록한다. 이번 보완은 원본 코드·명령·데이터와 현재 웹 소스 대조만 수행했고, 원본 실행·포팅 코드 수정은 하지 않았다. 항구 3D([mgmet_3d.md](mgmet_3d.md)) 중단 결정은 유지한다.
-공용 3D 무대는 [stage3d.md](stage3d.md)(`web/script/shell/stage3d/`)를 그대로 쓴다. 온라인 대기실은 [online.md](online.md), 대화상자는 [dialog_box.md](dialog_box.md), 공용 창·안내·메시지는 [mgm_common.md](mgm_common.md)를 따른다.
+공용 3D 무대는 [stage3d.md](stage3d.md)(`web/script/app/common/render3d/`)를 그대로 쓴다. 온라인 대기실은 [online.md](online.md), 대화상자는 [dialog_box.md](dialog_box.md), 공용 창·안내·메시지는 [mgm_common.md](mgm_common.md)를 따른다.
 
 [설계]·[근사]는 웹 선택, [측정]은 웹·변환 산출물·사용자 제공 캡처 대조다. 공통 엔진은 [engine/README.md](../engine/README.md)의 기존 확정 결과를 재사용한다.
 기존 판독 근거 C: `analysis/decomp/plaza_menu00_world.c`(166함수: Player·PlayerManager·ComPlayerUtil·ComFollowPlayer·ComMenuCamera·CameraManager·ParameterManager·MapManager), `plaza_menu00_npc_seq.c`(143: NpcManager·NonPlayerCharacter·Kinopio 등·SequenceMainMenu·SequenceBalloon·SequenceFront·Scene::BeginScene), `plaza_menu00_ui.c`(72: ComUiPlayerStatus*·ComUiLocationTelop·ComUiMainMenuLayout). 전체 원본은 `ghidra_work/online/out/menu00.nro.c`(심볼 있음, 3458함수). 이번 조사에서 Ghidra 를 새로 돌리지는 않았다.
@@ -43,7 +43,7 @@
 
 | 분야 | 그대로 쓰는 것 | 광장에서 |
 |---|---|---|
-| 3D 무대 | `web/script/shell/stage3d/`(Stage3D·MaterialSetup·Clip, 계약 [stage3d.md](stage3d.md)) | 모델·재질(라이트맵·AO·IBL·sdw)·클립·카메라 슬롯·fmab 표본. A 가 Collider·인스턴스 적재·재질 애니·포스트·하늘을 더한다(§6.7) |
+| 3D 무대 | `web/script/app/common/render3d/`(Stage3D·MaterialSetup·Clip, 계약 [stage3d.md](stage3d.md)) | 모델·재질(라이트맵·AO·IBL·sdw)·클립·카메라 슬롯·fmab 표본. A 가 Collider·인스턴스 적재·재질 애니·포스트·하늘을 더한다(§6.7) |
 | 조명 규칙 | 엔진 [07_camera_lighting.md](../engine/07_camera_lighting.md) §6.6(overwrite 회전 → 빛 방향, R = Rz·Ry·Rx, 로컬 −Z)·§7.3~7.5·§9.4~9.5, mg1801 `view/post.ts`(포스트 순서·FXAA·블룸 대응) | §6.7 env·post 값 |
 | 변환 | `graphics_convert.py`(세트 함수만 추가: menu00·menu_common)·`graphics_bntx.py`·`graphics_bfres2gltf`, 충돌 obj(`scene_apx.py` 산출물 그대로) | §6.7 |
 | 셰이더 그래프 판독 | `bnbshpk_split.py` → `bfsha_dump` → `sass_dis.py`(charselect.md 12.11 경로), 바다 p59 판독(mgmet_3d.md §10.4) | §6.8 |
@@ -199,7 +199,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 ## 6. 구현 지시서
 
 ### 6.1 모듈 위치 [설계]
-- `web/script/shell/stage3d/` — 공용(계약 stage3d.md). 광장 갈래가 채울 남은 일: 텍스처 축소(또는 KTX2), `Collider` 구현(`MeshCollider`, 원본 obj 입력), follow 카메라 슬롯 driver, `test_stage3d.ts`. import 경계는 mgm_common §9.1 을 지킨다.
+- `web/script/app/common/render3d/` — 공용(계약 stage3d.md). 광장 갈래가 채울 남은 일: 텍스처 축소(또는 KTX2), `Collider` 구현(`MeshCollider`, 원본 obj 입력), follow 카메라 슬롯 driver, `test_stage3d.ts`. import 경계는 mgm_common §9.1 을 지킨다.
 - `web/script/app/scene/world/plaza/` — 광장 전용(신규): `world.ts`(MapStructure → 배치·부착·애니), `actor.ts`(ComActor 이동 근사), `follow.ts`(ComFollowPlayer), `camera.ts`(ComMenuCamera 추종), `npc.ts`, `interact.ts`(GetArea·거리 판정·PopGuide·장소 텔롭), `balloon.ts`(기구 출발 연출), `ui/`(하단 파티 줄·장소 텔롭, online·mgmcommon 재사용), `flow.ts`(SequenceMainMenu 축소판: 광장 ↔ 친구 매치 ↔ 기구), `index.ts`.
 - 변환: `web/tools/analysis/plaza_world_assets.py`(신규) → `web/assets/plaza/world/{model,tex,anim,chara,collision.json,manifest.json}`. `graphics_convert.py` 에는 세트 함수만 추가한다.
 - 페이지: `web/script/plaza_page.ts`(신규). **index.html 진입** = `script/main.ts` 에 `?plaza=1` 한 갈래를 더한다(`?charselect=1` 과 같은 꼴: 시작 전에 광장 → 기구 → 기존 `modeselect_page`(모드 메뉴) → 미니게임 항구/프리 플레이 `mgm01_page` 목록 → 고른 게임 시작). 시험 훅 `window.__mpj.plaza`(위치·영역·상태).
@@ -225,7 +225,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 | 갈래 | 단계 | 쓰는 곳 | 지시 요점 |
 |---|---|---|---|
-| **A 무대·에셋·페이지** | 1 → 2 → 3 | `tools/analysis/plaza_world_assets.py`, `assets/plaza/world/`, `shell/stage3d/`(Collider·텍스처 축소·test), `script/plaza_page.ts`, `main.ts` `?plaza=1` | 먼저 manifest 형식(`layout` = MapStructure 항목·부착 소켓)과 `collision.json` 형식을 SHARED 에 올린다. stage3d 코어 소유자와 겹치면 계약 추가만 한다 |
+| **A 무대·에셋·페이지** | 1 → 2 → 3 | `tools/analysis/plaza_world_assets.py`, `assets/plaza/world/`, `app/common/render3d/`(Collider·텍스처 축소·test), `script/plaza_page.ts`, `main.ts` `?plaza=1` | 먼저 manifest 형식(`layout` = MapStructure 항목·부착 소켓)과 `collision.json` 형식을 SHARED 에 올린다. stage3d 코어 소유자와 겹치면 계약 추가만 한다 |
 | **B 이동·카메라** | 4 → 5 | `app/scene/world/plaza/{actor,follow,camera}.ts` | A 의 에셋 전에는 obj 충돌 + 빈 바닥으로 시작한다. 판독 ②③(ComMatter 덮기·지면 보정) 먼저. 수치는 §3 그대로, 근사는 문서에 [근사]로 적는다 |
 | **C NPC·상호작용·기구** | 6 → 7 → 8 | `app/scene/world/plaza/{npc,interact,balloon,flow}.ts` | 판독 ④⑤⑥ 먼저(어셈블리). 모드 메뉴·mgm01 목록은 기존 페이지 모듈을 부르기만 한다(수정은 SHARED 조율) |
 | **D 2D UI·온라인** | 9 | `app/scene/world/plaza/ui/`, mncom 덤프(`extracted/converted/ui/menu_common/`), online 모듈 작은 Edit | online `widgets.ts`·`view.ts` 의 알림·텔롭을 광장 위에 얹는다. 하단 줄은 새로. 스탬프도 원본대로 구현한다(main `bq::UiStamp` 판독 → `x_null_stamp` 말풍선, 가짜 온라인 멤버가 가끔 보냄 [설계]) |

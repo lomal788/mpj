@@ -3,11 +3,11 @@
  * 열 8개 = x_parts_NN(mgm01_history_01), 칸 = x_history_PP(mgm01_history_02: 일치면 win_normal, 아니면 normal), 왼쪽 = 플레이어 얼굴·승리 수.
  * 썸네일 칸 x_thumbnail 재질 칸1 = thumb(id)(mgm01_freeplay.md 6.7·7.1, 없으면 원래 텍스처). [설계] 스크롤바(x_scr_mgm)는 노드가 비어 위치만 계산.
  */
-import type { Flow } from '../../../../shell/mgmcommon/fiber';
-import type { MgmInput } from '../../../../shell/mgmcommon/input';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import type { MgmView } from '../../../../shell/mgmcommon/view';
-import { MgmWindow } from '../../../../shell/mgmcommon/window';
+import type { Flow } from '@app/common/ui/fiber';
+import type { MgmInput } from '@app/common/ui/input';
+import type { MgmSound } from '@app/common/ui/sound';
+import type { MgmView } from '@app/common/ui/view';
+import { MgmWindow } from '@app/common/ui/window';
 import { HISTORY_ROWS, HistoryState, type HistorySource } from './historyView';
 
 export class HistoryScreen {

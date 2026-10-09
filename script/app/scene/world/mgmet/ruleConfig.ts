@@ -3,7 +3,7 @@
  * SetupMgm·Update·PlayMove·GetResult·LoadWorkData, 프리 플레이 commit(Mgm01SetRuleFlow 후처리). 근거: docs/shell/mgmet_ruleconfig.md 4~8·9.1.
  * 입력 {trig, rep} → 결과 0~4 + 그리기 사건(drain). 레이아웃에는 손대지 않는다(ruleConfigView.ts).
  */
-import type { MgmWork } from '../../../../shell/mgmcommon/contracts';
+import type { MgmWork } from '@app/common/ui/contracts';
 import { COL, COL_MAX, inputVec, SE } from './tables';
 
 /** ConfigInfo 48 바이트(+0x00~+0x2c) */

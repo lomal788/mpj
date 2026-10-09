@@ -3,7 +3,7 @@
  * 그리기는 mgmcommon MgmView(= charselect render2d). 근거: docs/shell/setplayer.md 3.1·6.5·6.8·6.9·7·9.
  * 시스템 애플릿(컨트롤러 지원·유저 선택·소프트웨어 키보드)은 어댑터·페이지 몫 [설계 9.4].
  */
-import { MgmGuide, MgmView, parseMessage, plainText, RichTextPane, type MgmAssetAdapter } from '../../../../shell/mgmcommon';
+import { MgmGuide, MgmView, parseMessage, plainText, RichTextPane, type MgmAssetAdapter } from '@app/common/ui';
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import { ControllerPool } from './applet';
 import { displayName, hardIcon, hasLamp } from './names';

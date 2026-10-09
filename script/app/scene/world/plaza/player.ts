@@ -5,7 +5,7 @@
  */
 import * as THREE from 'three';
 import { characterDefaults, mpatBlendCompat, type MpatRow } from '@game/lib/character';
-import type { Collider } from '../../../../shell/stage3d';
+import type { Collider } from '@app/common/render3d';
 import type { Spec } from '@app/scene/menu/charselect';
 import { mpatTables, Preview3D } from '@app/scene/menu/charselect/preview3d';
 import type { PlazaActor, PlazaContext, PlazaPad, PlazaPart, PlazaPartFactory } from './types';

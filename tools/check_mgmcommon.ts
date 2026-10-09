@@ -14,8 +14,8 @@ import { nodeMatrix, rectOf } from '@app/scene/menu/charselect/render2d';
 import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
-import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
-const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
+import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
@@ -294,7 +294,7 @@ console.log('5. 글꼴·텍스처·소리');
 
 console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
 {
-  const dir = join(WEB, 'script/shell/mgmcommon');
+  const dir = join(WEB, 'script/app/common/ui');
   const files: string[] = [];
   const scan = (d: string): void => {
     for (const f of readdirSync(d)) {

@@ -23,7 +23,7 @@
 import * as THREE from 'three';
 import { sheetTexture } from '@app/scene/menu/charselect/fontSheet';
 import type { FontSpec } from '@app/scene/menu/charselect/types';
-import { textureFromImage, type UiImage } from '../shell/stage3d/assetLoader';
+import { textureFromImage, type UiImage } from '@app/common/render3d/assetLoader';
 import { SCREEN_H, SCREEN_W } from './renderer';
 
 export type Rgba = [number, number, number, number];

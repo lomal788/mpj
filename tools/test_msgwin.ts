@@ -1,5 +1,5 @@
 /**
- * 메시지 창·메시지 흐름 상태 시험 — script/shell/mgmcommon/messageWindow·messageFlow 를 실제 명세(assets/mgmcommon/spec.json, sys_meswin_00)로
+ * 메시지 창·메시지 흐름 상태 시험 — script/app/common/ui/messageWindow·messageFlow 를 실제 명세(assets/mgmcommon/spec.json, sys_meswin_00)로
  * 노드에서 돈다(WebGL 없음). 기대값 근거: docs/shell/message_window.md 5·6·10절, mgm_common.md 5.3·10절(판독한 규칙의 재구현 시험).
  *
  *   npx tsx tools/test_msgwin.ts
@@ -21,7 +21,7 @@ import {
   Typer,
   type MgmDrawHost,
   type MgmSpec,
-} from '../script/shell/mgmcommon';
+} from '@app/common/ui';
 import { resolveFontsFromDisk } from './fontSpecNode';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');

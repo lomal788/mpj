@@ -2,7 +2,7 @@
  * 화면별 원본 BGM 규칙(데이터) — 화면 시작 때 틀 라벨, 나가기 종류별 정지 페이드 초(null = 이어 재생). 근거: docs/engine/04_sound.md §12.14.2.
  * 페이드 = FadeTimePreset 표(mgmcommon/sound.ts FADE_TIME_PRESET): 2 = 0.7 s, 3 = 0.2 s, 6 = 0.5 s. 곡 명세 = assets/common/sound/bgm.json.
  */
-import { fadeTime } from '../shell/mgmcommon/sound';
+import { fadeTime } from '@app/common/ui/sound';
 
 export const BGM_SPEC_PATH = 'common/sound/bgm.json';
 

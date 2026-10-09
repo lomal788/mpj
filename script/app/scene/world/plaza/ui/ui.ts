@@ -4,7 +4,7 @@
  * 한 틱 순서 [설계]: 입력 → 어댑터(광장 사건 가르기) → 온라인 화면 → 메인 레이아웃 시작/끝 → 하단 줄·스탬프·텔롭 갱신.
  */
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import { IDENTITY, MgmGuide, operationPlayerId, type Mat3, type MgmDrawHost, type MgmPadSource, type MgmPlayer, type MgmSound } from '../../../../../shell/mgmcommon';
+import { IDENTITY, MgmGuide, operationPlayerId, type Mat3, type MgmDrawHost, type MgmPadSource, type MgmPlayer, type MgmSound } from '@app/common/ui';
 import { OnlineScreen, type OnlineAdapter, type OnlineEvent, type OnlineSelf, type RoomState } from '@app/scene/menu/online';
 import { CARD_BTN, CardViewer, type CardEvent, type PlazaCardExtra } from './card';
 import { listStamps, stampSe, type PlazaUiExtra } from './data';

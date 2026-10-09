@@ -63,7 +63,7 @@
 
 | 위치 | 하는 일 | 관리자로 옮길 것 |
 |---|---|---|
-| `shell/stage3d/assetLoader.ts` | 압축/소스 모드, `createGltfLoader`(meshopt·KTX2), `loadTexture`/`loadTextureInto`, `loadUiImage`/`textureFromImage`, `audioUrlFor`·`installFetchShim`, 통계 `assetStats` | **관리자의 "형식 처리기"로 그대로 쓴다**(디코드 방법은 여기, 언제·얼마나는 관리자) |
+| `app/common/render3d/assetLoader.ts` | 압축/소스 모드, `createGltfLoader`(meshopt·KTX2), `loadTexture`/`loadTextureInto`, `loadUiImage`/`textureFromImage`, `audioUrlFor`·`installFetchShim`, 통계 `assetStats` | **관리자의 "형식 처리기"로 그대로 쓴다**(디코드 방법은 여기, 언제·얼마나는 관리자) |
 | `stage3d/stage.ts loadModel` | `gltfs: Map<url, Promise<GLTF>>` 무대 안 캐시, 두 번째부터 `cloneSkinned` | 캐시를 관리자로(무대 밖 공용), 복제는 그대로 |
 | `stage3d/stage.ts warmup` | 숨김 해제 + 전체 `compileAsync` + 전체 `initTexture` | 항목별 준비(§5.4)로 쪼갬. 첫 화면 몫만 막음 |
 | `plaza/world.ts load/ensure` | 충돌 json → 필요한 모델 **차례로** `ensure`(부착 소켓·기본 애니), `loading: Map<key, Promise>` 로 중복 방지 | `ensure` 는 그대로, 호출을 우선순위 묶음으로(§6) |
@@ -438,7 +438,7 @@ interface AssetManager {
 |---|---|---|---|
 | 1 코어 | `script/game/lib/assetcore/` | **없음**(외부 라이브러리·three·프로젝트 파일·DOM 타입 모두 금지) | 논리 키 캐시(Promise 공유·중복 제거), P0~P3 링 큐(올리기), 동시 받기·풀기 수 제한, 단계 상태, 참조 수·owner release, 바이트·GPU 예산 숫자·LRU 후보, 묶음, 통계 숫자, 프레임 예산 스케줄러, json·bytes 처리기 |
 | 2 three 어댑터 | `script/game/lib/assetcore-three/` | `three` 와 코어만 | 프레임 예산 GPU 준비(`initTexture`·`compileAsync`·1×1 렌더 업로드)와 "준비 끝에만 보이기", 일반 glTF 처리기(로더 인스턴스 주입), 일반 텍스처 처리기(읽기 함수 주입), glTF 안 텍스처를 관리자로 돌리는 로더 대리 객체 |
-| 3 mpj 전용 | `script/shell/stage3d/assetHandlers.ts`, `script/view/appAssets.ts`, stage3d·plaza 연결, `tools/plaza_first.ts` | 프로젝트 의존 허용 | `assetLoader.ts` 의 압축/원본 모드·KTX2·meshopt·소리, 앱 관리자 인스턴스(키 → URL resolver), stage3d 연결, 광장 묶음·`plaza_first.json` |
+| 3 mpj 전용 | `script/app/common/render3d/assetHandlers.ts`, `script/view/appAssets.ts`, stage3d·plaza 연결, `tools/plaza_first.ts` | 프로젝트 의존 허용 | `assetLoader.ts` 의 압축/원본 모드·KTX2·meshopt·소리, 앱 관리자 인스턴스(키 → URL resolver), stage3d 연결, 광장 묶음·`plaza_first.json` |
 
 - 코어가 바깥에서 받는 것(생성 때 주입): `now()`(시계), `tick(fn)`(rAF), `io.fetch(url)`(받기 — `ok·status·arrayBuffer()·json()·text()` 만 쓰는 작은 인터페이스), `resolve(key, kind)`(논리 키 → URL). 저장소(Cache Storage)는 6단계가 서비스 워커로 하므로 코어에 두지 않는다.
 - 셸 경계(mgm_common.md §9.1)에 예외 추가: **import 0 인 코어 폴더와 three·코어만 쓰는 어댑터 폴더는 어디서나 import 가능**. 시험: 코어 폴더 import 0, 어댑터 폴더 import ⊂ {`three`, 코어} (`tools/test_assetcore.ts`·`test_plaza_world.ts` 8절).
@@ -503,7 +503,7 @@ mgr.stats                                               // 숫자 필드만(요�
 |---|---|---|
 | 1 코어 | `script/game/lib/assetcore/index.ts`(새, **import 0**) | `createAssetManager`·`AssetManager`(`AssetManagerApi`)·`FrameScheduler`·`Ring`·`jsonHandler`·`bytesHandler`·`textHandler`, 상수 P0~P3·ST_*·RUN_* |
 | 2 three 어댑터 | `script/game/lib/assetcore-three/index.ts`(새, import = `three` + 코어) | `ScenePreparer`·`PrepJob`(§11.3), `gltfHandler(로더)`, `textureHandler(읽기 함수)`, `managedTextureLoader`(glb 안 텍스처 대리), `textureBytes` |
-| 3 mpj | `script/shell/stage3d/assetHandlers.ts`(새) | assetLoader 의 createGltfLoader·loadTexture·ktx2Loader 를 처리기로(압축 모드 glb 안 KTX2 → 관리자), meshopt 워커 2 |
+| 3 mpj | `script/app/common/render3d/assetHandlers.ts`(새) | assetLoader 의 createGltfLoader·loadTexture·ktx2Loader 를 처리기로(압축 모드 glb 안 KTX2 → 관리자), meshopt 워커 2 |
 | 3 mpj | `script/view/appAssets.ts`(새) | 앱 인스턴스(`globalThis.__mpjAssetManager`), 키 = assets 기준 소스 경로, resolver = ASSETS + 키, `assetKeyOf(url)` |
 | 3 mpj | `stage3d/stage.ts`·`material.ts`·`types.ts`·`index.ts`, `assetLoader.ts`(distUrl·distReady — [loader-6] 계약) | `StageLoader` 연결(manifest·fmab json, glb = 무대 템플릿 복제, MaterialSetup 텍스처 끼움점), `prepareModel`·`warmup` 쪼개기·`budget`·`unpreparedVisible` |
 | 3 mpj | `plaza/world.ts`·`scene.ts`·`types.ts`, `plaza_page.ts` | 단계 로딩(`plazaPlan`·묶음·`startBackground`·다가가면 올리기·늦은 클립 시작 프레임), 페이지 = 앱 관리자·소리 바이트 P3·`release('plaza')` |
@@ -811,9 +811,9 @@ mgr.stats                                               // 숫자 필드만(요�
 |---|---|---|
 | 2 three 어댑터 | `lib/assetcore-three/index.ts` | `ScenePreparer` 옵션 `uploads`(source → 올린 version·data) — 같은 data 면 version 되돌림, `stats.reused` |
 | 3 mpj | `view/plazaGl.ts`(새) | `PlazaGl`(앱 수명 캔버스·렌더러·`uploads`·`keep`, enter/leave/pin/drop, 예산), `worldStarter(env)`(미리 준비·진입 공용 world 만들기 규칙), `FramePacer`, `sceneGpuBytes`, `installPlazaGl()`(흐름 사건 구독) |
-| 3 mpj | `shell/stage3d/stage.ts` | `StageGpu`(렌더러·uploads·keep) 주입, `PriorityFloor`(등급 바닥·내릴 때 올리기), gpu 모드 dispose(관리자 템플릿 기하·관리자 텍스처 복제·keep 물건 남김, 뼈 텍스처 버림), 후처리·하늘 keep |
-| 3 mpj | `shell/stage3d/material.ts` | `IblShare`(PMREM 생성기·IBL 큐브 캐시 공유), `dispose(keepManaged)` |
-| 3 mpj | `shell/stage3d/post.ts` | `precompile()`(RT 단계·화면 단계 셰이더 키로 compileAsync) |
+| 3 mpj | `app/common/render3d/stage.ts` | `StageGpu`(렌더러·uploads·keep) 주입, `PriorityFloor`(등급 바닥·내릴 때 올리기), gpu 모드 dispose(관리자 템플릿 기하·관리자 텍스처 복제·keep 물건 남김, 뼈 텍스처 버림), 후처리·하늘 keep |
+| 3 mpj | `app/common/render3d/material.ts` | `IblShare`(PMREM 생성기·IBL 큐브 캐시 공유), `dispose(keepManaged)` |
+| 3 mpj | `app/common/render3d/post.ts` | `precompile()`(RT 단계·화면 단계 셰이더 키로 compileAsync) |
 | 3 mpj | `app/scene/world/plaza/world.ts` | 옵션 `gpu`·`floor`·`budgetMs`·`pace`, 관리자 요청·준비 작업에 바닥 적용 |
 | 3 mpj | `app/scene/world/plaza/scene.ts` | 옵션 `gpu`·`world`(미리 만든 것 넘겨받기) |
 | 3 mpj | `app/scene/world/plaza/ui/view.ts`·`ui/part.ts` | UI 문맥 없앰 — 무대 렌더러에 3D 다음 패스(선형 RT → 8비트 RT → 화면 프리멀티 합성), `keep('plaza-ui')` |

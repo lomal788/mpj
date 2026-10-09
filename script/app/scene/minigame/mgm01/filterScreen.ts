@@ -2,9 +2,9 @@
  * 필터(장르) 머리 줄 그리기·흐름 — listFilter(순수 상태)를 공용 창 mgm01_base_freeplay_00 의 header 에 옮긴다. 목록 본체(thum_all 3형식·썸네일·끝 행)는 다음 단계의 listView 몫이라 숨긴다 [설계].
  * 근거: docs/shell/mgm01_freeplay.md 6.1·6.2·7(header 문구, left/right_select_00 4f → 재구성 → _01 5f, DECI_LR), mgm_common.md 9.6.
  */
-import type { Flow } from '../../../../shell/mgmcommon/fiber';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import { MgmWindow, type MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import type { Flow } from '@app/common/ui/fiber';
+import type { MgmSound } from '@app/common/ui/sound';
+import { MgmWindow, type MgmDrawHost } from '@app/common/ui/window';
 import { ListFilterState, type FilterApplied, type FilterDeps } from './listFilter';
 import type { Mgm01Catalog } from './catalog';
 

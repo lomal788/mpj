@@ -5,7 +5,7 @@
 자체 변환 실행은 **[실행: 변환]**, 웹이 원본에 없는 것을 새로 정한 것은 **[설계]**. 주소는 main NSO(`main @0x…`, 베이스 0x7100000000), menu01 NRO 는 `menu01 @0x…`.
 
 이미 분석·구현된 것은 링크만 한다: 캐릭터 선택 화면 [charselect.md](charselect.md)(이 흐름의 3단계), 그리기·레이아웃 규칙 charselect.md 6절·[modeselect.md](modeselect.md) 6절,
-공용 창·안내·소리·입력 [mgm_common.md](mgm_common.md) 9절(모듈 `web/script/shell/mgmcommon/`), 입력 비트 charselect.md 4절.
+공용 창·안내·소리·입력 [mgm_common.md](mgm_common.md) 9절(모듈 `web/script/app/common/ui/`), 입력 비트 charselect.md 4절.
 
 ---
 

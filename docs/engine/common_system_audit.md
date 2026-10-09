@@ -4,7 +4,7 @@
 
 소스 대조 기준: 2026-10-09 01:58:14 UTC. 웹 등록 게임 `mg1801` 1개. 원본 공용 기능의 웹 정의·실제 소비·우회·차이 정적 대조.
 
-경로 약칭: `G = script/games/mg1801`, `S = script/shell/stage3d`, `M = script/app/scene/minigame/mgstage`, `P = script/app/scene/menu/charselect/preview3d.ts`. 주소: 모듈명 + 기본 베이스 `0x7100000000` 기준.
+경로 약칭: `G = script/games/mg1801`, `S = script/app/common/render3d`, `M = script/app/scene/minigame/mgstage`, `P = script/app/scene/menu/charselect/preview3d.ts`. 주소: 모듈명 + 기본 베이스 `0x7100000000` 기준.
 
 판정: 사용 / 일부 사용 / 공용 미사용 / 게임별 중복 / 미구현 / 검색 범위 내 미발견 / [미확정]. P1 현재 게임·결과 정합성, P2 공용 계약·후속 이식, P3 활성 조건·근거 보완.
 

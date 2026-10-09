@@ -39,7 +39,7 @@ import type { MgmetRun } from './mgmet_page';
 import type { ModeSelectRun } from './modeselect_page';
 import type { PlazaPageRun } from './plaza_page';
 import type { SetPlayerRun } from './setplayer_page';
-import type { MgResultEntry } from './shell/mgmcommon';
+import type { MgResultEntry } from '@app/common/ui';
 import type { Mgm01PlayRequest } from '@app/scene/minigame/mgm01';
 import type { MgSceneSound } from './view/mgsceneSound';
 import type { MgSceneUi, MgSceneUiJson } from './view/mgsceneUi';

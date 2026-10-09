@@ -1,5 +1,5 @@
 /**
- * 공용 3D 무대(shell/stage3d) 계약 — 항구(mgmet)·이후 mgm01~06 무대가 함께 쓴다(docs/shell/mgmet_3d.md §5.1·§8).
+ * 공용 3D 무대(app/common/render3d) 계약 — 항구(mgmet)·이후 mgm01~06 무대가 함께 쓴다(docs/shell/mgmet_3d.md §5.1·§8).
  * import 경계(mgm_common.md §9.1): 같은 폴더·three 만. script/game/core·games·view·game.ts·env.ts 금지.
  * 시간 단위: 원본 프레임(60fps). update(dt) 의 dt 는 초, 내부에서 frame += dt·60.
  */

@@ -2,12 +2,12 @@
  * 파티 규칙 화면 묶음 — 판·흐름(순수) + 메시지 창(mgmcommon MessageWindow) + 그리기(PartyView). 한 틱 순서 [설계, partyrule.md 9.2]:
  * 입력 → 제목·띠·판 갱신(판 파이버 포함) → 단계 흐름 → 메시지 창 → 레이아웃 애니. 사건은 생기는 즉시 레이아웃에 적용한다.
  */
-import { FiberRunner } from '../../../../shell/mgmcommon/fiber';
-import { MgmInput, type MgmPlayer } from '../../../../shell/mgmcommon/input';
-import { MessageWindow } from '../../../../shell/mgmcommon/messageWindow';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import type { MgmPadSource, MgmSpec } from '../../../../shell/mgmcommon/types';
-import type { MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { FiberRunner } from '@app/common/ui/fiber';
+import { MgmInput, type MgmPlayer } from '@app/common/ui/input';
+import { MessageWindow } from '@app/common/ui/messageWindow';
+import type { MgmSound } from '@app/common/ui/sound';
+import type { MgmPadSource, MgmSpec } from '@app/common/ui/types';
+import type { MgmDrawHost } from '@app/common/ui/window';
 import { CheckPanel } from './check';
 import { MapTelop, PartyFlow, TitleHeader, updateHeaders } from './flow';
 import { MemberPanel } from './member';

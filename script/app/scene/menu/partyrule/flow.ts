@@ -2,7 +2,7 @@
  * 출발 전 단계 흐름 — menu01::SequenceStartBd 상태 스택(UpdateImpl @0x7100041290) 중 9 CheckMemberImpl @0x7100043dc0·10 SettingMemberImpl @0x7100044780·
  * 12 CheckStartImpl @0x7100045140·13 SettingRuleImpl @0x71000459c0, 제목 띠 ComUiModeTitleHeader·보드 이름 띠 ComUiBdMapNameTelop. 근거: docs/shell/partyrule.md 3·5.5.
  */
-import type { Flow } from '../../../../shell/mgmcommon/fiber';
+import type { Flow } from '@app/common/ui/fiber';
 import type { CheckPanel } from './check';
 import type { MemberPanel } from './member';
 import { PanelLife } from './panel';

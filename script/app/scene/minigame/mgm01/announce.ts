@@ -2,7 +2,7 @@
  * 잠금 안내(mgm01_mes_announce_00)와 NEW 표시 관찰 — 순수 상태. 목록 화면(listView, 다음 단계)에 끼우는 부품.
  * 근거: docs/shell/mgm01_freeplay.md 6.2(잠금 A·skip)·6.4(잠금·NEW 조건, wait < 누적 rate, NEW 소비 commit)·7(PlayAnnounce 표·AnnounceUpdate in→normal→0.75 s 또는 skip→out)·8.4(NEW 소비 저장).
  */
-import { MG_FLAG, type MgmSave, type MgmWork } from '../../../../shell/mgmcommon/contracts';
+import { MG_FLAG, type MgmSave, type MgmWork } from '@app/common/ui/contracts';
 
 export const ANNOUNCE_LABEL: readonly (string | null)[] = [null, 'mgm01_ui_announce00', 'mgm01_ui_announce01', 'mgm01_ui_announce02'];
 export const ANNOUNCE_HOLD = 0.75;

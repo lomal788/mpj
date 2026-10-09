@@ -2,7 +2,7 @@
  * 승패 표 — 결과 100칸 고리 읽기·8칸 보기·점수(순수 상태). 목록에서 Y 로 연다(DecideMinigameFlow 상태 3).
  * 근거: docs/shell/mgm01_freeplay.md 6.2(결과 입력: exact rep 좌/우 스크롤, trig B 닫기)·6.6(고리·earliest·score·raw byte 비교)·7(CANCEL, 스크롤 무음).
  */
-import { RESULT_RING, type MgmWork, type MgResultEntry } from '../../../../shell/mgmcommon/contracts';
+import { RESULT_RING, type MgmWork, type MgResultEntry } from '@app/common/ui/contracts';
 
 export const HISTORY_ROWS = 8;
 export const HISTORY_CLOSE_SE = 'SQ_SE_MGM01_CANCEL';

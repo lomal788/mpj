@@ -146,7 +146,7 @@ web/assets/font/
 | `script/app/scene/menu/charselect/fontSheet.ts`(신규) | 시트 그림·텍스처 저장소(앱 하나), `resolveFonts`(명세 자리 채우기) |
 | `script/app/scene/menu/charselect/render2d.ts` | load = resolveFonts + 미리 받기, text = 글리프별 시트 텍스처, 셰이더 `red0` |
 | `script/app/scene/menu/charselect/types.ts` | FontSpec/GlyphSpec(시트·uv) |
-| `script/shell/mgmcommon/view.ts` | mergeSpec `fonts` chars 합치기 |
+| `script/app/common/ui/view.ts` | mergeSpec `fonts` chars 합치기 |
 | `script/view/lyt.ts`, `script/games/mg1801/view/ui.ts` | mg1801 HUD 같은 방식 |
 | `script/view/flowCatalog.ts` | 글꼴 시트 키 |
 

@@ -10,7 +10,7 @@ import { GAMES } from '../script/games';
 import { mg1801Game } from '../script/games/mg1801';
 import type { Mg1801Logic } from '../script/games/mg1801/logic/game';
 import { freePlaySetup } from '../script/mgrun';
-import { MemorySave, type MgResultEntry } from '../script/shell/mgmcommon';
+import { MemorySave, type MgResultEntry } from '@app/common/ui';
 import { settlePlayResult, type Mgm01PlayRequest } from '@app/scene/minigame/mgm01';
 import { historyScores } from '@app/scene/minigame/mgm01/historyView';
 import { NodeMgRun } from './mg_node_host';

@@ -2,7 +2,7 @@
  * 미니게임 항구(mgmet) 데이터 표 — 액티비티 ID·제목·다음 모드·시작 지점(mgmet_flow.md 4.2), 앞 안내·설명 페이지(7.2), 규칙 열·값·문구(mgmet_ruleconfig.md 4·7), 정렬(ui2d_alignment.md 6.4).
  * [추정]·[설계] 표시는 docs/shell/mgmet_flow.md 9.1·mgmet_ruleconfig.md 9.1 에 적었다.
  */
-import type { AlignParams } from '../../../../shell/mgmcommon/alignment';
+import type { AlignParams } from '@app/common/ui/alignment';
 
 export interface Activity {
   id: number;

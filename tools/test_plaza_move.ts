@@ -8,7 +8,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as THREE from 'three';
-import { MeshCollider } from '../script/shell/stage3d/meshCollider';
+import { MeshCollider } from '@app/common/render3d/meshCollider';
 import { ACTOR, leverFromStick, NO_LEVER, PlazaMover, startSocketCount, transitBlend, wrapDeg, type Lever, type Transit } from '@app/scene/world/plaza/player';
 import { applyPose, isBalloonFront, MenuCameraFollow } from '@app/scene/world/plaza/camera';
 import type { PlazaCameraParam } from '@app/scene/world/plaza/types';

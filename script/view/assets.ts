@@ -4,7 +4,7 @@
  */
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { createGltfLoader } from '../shell/stage3d/assetLoader';
+import { createGltfLoader } from '@app/common/render3d/assetLoader';
 import { ASSETS } from '../env';
 import { disposeTree, type Seen } from './dispose';
 

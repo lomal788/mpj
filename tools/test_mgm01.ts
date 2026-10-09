@@ -12,7 +12,7 @@ import { nodeMatrix, rectOf, type Render2D } from '@app/scene/menu/charselect/re
 import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
-import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '../script/shell/mgmcommon';
+import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '@app/common/ui';
 import { mkdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';

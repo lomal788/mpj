@@ -5,11 +5,11 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import * as THREE from 'three';
-import { applyGraph, graphSource, type GraphDef } from '../script/shell/stage3d/graph';
-import { MaterialSetup, patchUnlit, patchVertexColor } from '../script/shell/stage3d/material';
-import { initParams } from '../script/shell/stage3d/params';
-import type { Fres } from '../script/shell/stage3d/types';
-import type { StageGlobals } from '../script/shell/stage3d/stage';
+import { applyGraph, graphSource, type GraphDef } from '@app/common/render3d/graph';
+import { MaterialSetup, patchUnlit, patchVertexColor } from '@app/common/render3d/material';
+import { initParams } from '@app/common/render3d/params';
+import type { Fres } from '@app/common/render3d/types';
+import type { StageGlobals } from '@app/common/render3d/stage';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');

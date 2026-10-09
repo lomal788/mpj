@@ -9,7 +9,7 @@
  */
 import { P1, P2 } from '@game/lib/assetcore';
 import { BgmStream, bgmChunkKey, chunkSpans, fillPcm, parseWav, planBgm, sameLoop, validLoop, type BgmContext, type BgmLoaded, type BgmPlan, type BgmSource } from '@game/lib/bgmstream';
-import { distStream } from '../shell/stage3d/assetLoader';
+import { distStream } from '@app/common/render3d/assetLoader';
 import { ASSETS } from '../env';
 import { appAssets, assetKeyOf } from './appAssets';
 import { appAudio } from './audio';

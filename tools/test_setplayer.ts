@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
-import { mergeSpec, PAD, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
+import { mergeSpec, PAD, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
 import {
   ALL_WINS,
   ControllerPool,
@@ -30,7 +30,7 @@ import {
   type SlotWork,
   type SpEvent,
 } from '@app/scene/menu/setplayer';
-const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

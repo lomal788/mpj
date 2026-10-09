@@ -3,7 +3,7 @@
  * 로딩 텔롭(sys_tlp_loading_00), 타이머(sys_timer_00), 매칭 참가자 판(matching00_base_member_00 + win_member_00).
  * 원본 엔진 동작(ComUiDialogBox·UiNoticeModule·ComUiLoadingTelop·ComUiTimer)은 미분석 → 레이아웃·문구만 원본, 동작은 단순.
  */
-import { DialogBoxState, type DialogEvent } from '../../../../shell/mgmcommon/dialogBox';
+import { DialogBoxState, type DialogEvent } from '@app/common/ui/dialogBox';
 import { BTN, type RoomMember } from './types';
 import { Life, type Ins, type OIO, type Sink } from './panels';
 

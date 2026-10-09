@@ -5,7 +5,7 @@
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
-import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from '../shell/mgmcommon';
+import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from '@app/common/ui';
 import { AnnounceScreen } from '@app/scene/minigame/mgm01/announceScreen';
 import { HistoryScreen } from '@app/scene/minigame/mgm01/historyScreen';
 import { historyFromRing, writeRing } from '@app/scene/minigame/mgm01/historyView';

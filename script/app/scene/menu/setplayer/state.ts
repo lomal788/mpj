@@ -3,7 +3,7 @@
  * DOM·three 없음(노드 시험). 입력 = 컨트롤러 trig 비트, 질의 = 애니 끝·안내 상태, 출력 = 사건 목록.
  * 근거: docs/shell/setplayer.md 3.2·3.3·6.1~6.7. 함수 주소는 각 메서드 주석.
  */
-import { FiberRunner, PAD, operationPlayerId, waitUntil, type FiberHandle, type Flow } from '../../../../shell/mgmcommon';
+import { FiberRunner, PAD, operationPlayerId, waitUntil, type FiberHandle, type Flow } from '@app/common/ui';
 import { ControllerApplet, type ControllerPool } from './applet';
 import type { ControllerInput, SetPlayerStartArg, SlotWork } from './types';
 

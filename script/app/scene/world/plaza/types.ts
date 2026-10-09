@@ -5,7 +5,7 @@
  * 시간 단위: 원본 프레임(60fps). update(df, frame) 의 df = 이번 갱신 프레임 수.
  */
 import type * as THREE from 'three';
-import type { ClipHandle, ClipOptions, Collider, SocketPose, Stage3D, StageModel } from '../../../../shell/stage3d';
+import type { ClipHandle, ClipOptions, Collider, SocketPose, Stage3D, StageModel } from '@app/common/render3d';
 
 /** 버튼 비트(script/game/core/pad.ts NPAD 와 같은 값) */
 export const PLAZA_BTN = {

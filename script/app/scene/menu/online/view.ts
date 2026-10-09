@@ -4,11 +4,11 @@
  */
 import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import type { Mat3 } from '../../../../shell/mgmcommon/itemLayout';
-import { alignPanes } from '../../../../shell/mgmcommon/alignment';
-import { layoutDialogBox } from '../../../../shell/mgmcommon/dialogBox';
-import { measure, parseMessage, plainText, RichTextPane } from '../../../../shell/mgmcommon/text';
-import type { MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import type { Mat3 } from '@app/common/ui/itemLayout';
+import { alignPanes } from '@app/common/ui/alignment';
+import { layoutDialogBox } from '@app/common/ui/dialogBox';
+import { measure, parseMessage, plainText, RichTextPane } from '@app/common/ui/text';
+import type { MgmDrawHost } from '@app/common/ui/window';
 import { faceKey, type Lay, type OEv } from './panels';
 
 export const LAYOUT: Record<Lay, string> = {

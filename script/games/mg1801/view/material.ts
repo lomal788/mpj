@@ -23,7 +23,7 @@
 import * as THREE from 'three';
 import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
-import { loadTexture } from '../../../shell/stage3d/assetLoader';
+import { loadTexture } from '@app/common/render3d/assetLoader';
 import type { Assets } from '../../../view/assets';
 
 interface TexEntry {

@@ -2,7 +2,7 @@
  * 컨트롤러 할당 — 원본 HidModule::SetNumberOfGameControllerPlayers / IsMinimalGameControllerAssigned 대역과
  * 시스템 컨트롤러 지원 애플릿(nn::hid::ShowControllerSupport) 대체 규칙 [설계: docs/shell/setplayer.md 9.4].
  */
-import { PAD } from '../../../../shell/mgmcommon';
+import { PAD } from '@app/common/ui';
 import type { ControllerInput } from './types';
 
 /** 플레이어 번호(pid 0..3) ↔ 컨트롤러 id */

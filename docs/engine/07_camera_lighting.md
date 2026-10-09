@@ -545,7 +545,7 @@ elapsed≥duration이면 반복 비트 1을 검사해 elapsed만 0으로 되돌�
 | 현재 구현 | 확인 내용 | 원본과의 차이 |
 |---|---|---|
 | [mg1801/view/camera.ts](../../script/games/mg1801/view/camera.ts)·[stage.ts](../../script/games/mg1801/view/stage.ts) | loop/result/capture 정적 값, Aim lookAt, 상태별 전환 | mg1801 정적 데이터는 §7.1과 대응. 일반 FSNB 커브·대표 노드·흔들림 evaluator는 이 정적 경로에 없음 |
-| [stage3d/types.ts](../../script/shell/stage3d/types.ts)의 `CameraDriver` | 외부 카메라 driver 주입 계약(`apply(camera,df)`) | 공용 `clip.ts`는 스켈레탈용이며 일반 CameraAnim evaluator가 아님. 광장 추종·기구 애니는 해당 문서/driver 범위 |
+| [stage3d/types.ts](../../script/app/common/render3d/types.ts)의 `CameraDriver` | 외부 카메라 driver 주입 계약(`apply(camera,df)`) | 공용 `clip.ts`는 스켈레탈용이며 일반 CameraAnim evaluator가 아님. 광장 추종·기구 애니는 해당 문서/driver 범위 |
 | WebGL PerspectiveCamera | 같은 full vertical fovy, +Y 위, 시선 −Z | 깊이는 원본 0..1, WebGL −1..1. 원본 P22/P23를 WebGL에 그대로 복사하면 안 됨 |
 
 §6.2의 Aim·twist·Euler 및 §6.3의 `entity.world·inverse(animView)`를 재사용한다. 무대 transform을 CameraAnim position에 두 번 곱하지 않는다. 슬롯 재생 시간은 09, draw camera의 split 보정·레이어는 10, 결과 무대 키와 정지/시작 시점은 minigame_result가 근거다. 단순 `frame%=FrameCount`나 두 끝점 선형 보간을 일반 원본 구현으로 제시하지 않는다.
@@ -568,7 +568,7 @@ elapsed≥duration이면 반복 비트 1을 검사해 elapsed만 0으로 되돌�
 | bloom | smoothstep, spread⁵ 보정·다운/업 탭, RGB 길이 clip | UnrealBloom 5밉·strength/radius 대응·채널별 min(clip) |
 | post utility0 | graph_last=0인 두 프리셋에서는 내장 패스 효과 없음 | 반영하지 않음(이 프리셋 범위에서 타당) |
 
-공용 [stage3d/post.ts](../../script/shell/stage3d/post.ts)는 기존 SASS 톤맵 0~4·bloom 합성식을 사용하며 FXAA 마지막 배치는 근사다([plaza_3d §6.13](../shell/plaza_3d.md)).광장 LUT·색 보정 경로를 mg1801에 옮기지 않는다. 원본 DOF와 동등한 공용 구현 여부도 광장(원본 DOF off) 화면 검증만으로 결론내릴 수 없다.
+공용 [stage3d/post.ts](../../script/app/common/render3d/post.ts)는 기존 SASS 톤맵 0~4·bloom 합성식을 사용하며 FXAA 마지막 배치는 근사다([plaza_3d §6.13](../shell/plaza_3d.md)).광장 LUT·색 보정 경로를 mg1801에 옮기지 않는다. 원본 DOF와 동등한 공용 구현 여부도 광장(원본 DOF off) 화면 검증만으로 결론내릴 수 없다.
 
 ### 9.4 기존 덤프·변환 산출물
 

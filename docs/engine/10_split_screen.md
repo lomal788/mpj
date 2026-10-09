@@ -128,8 +128,8 @@ GraphicsLayerExtension의 color/depth target 핸들과 clear flag는 별도 상�
 | 현재 소스 | 지원 | 분할에 필요한 인터페이스·차이 |
 |---|---|---|
 | [view/renderer.ts](../../script/view/renderer.ts) | 1920×1080 비율, DPR≤2, 공개 gl, 단일 render(scene,camera), setPost | 레이어별 normalized rect/depth/autoEnabled·보정 카메라·clear/target·화면전환 상태를 묶는 계약 없음. raw gl의 viewport/scissor 기능만 존재 |
-| [stage3d/stage.ts](../../script/shell/stage3d/stage.ts) | 단일 카메라·애니·resize·GPU 대여 | 시뮬레이션/애니는 tick에 한 번, 같은 상태를 여러 카메라로 render. Stage.update를 화면 수만큼 부르면 시간이 배속됨. resize가 카메라 aspect를 전체 비율로 덮는 경로도 분리 필요 |
-| [stage3d/post.ts](../../script/shell/stage3d/post.ts) | scene HDR RT→bloom→composite→선택FXAA→canvas | resize는 drawing buffer 전체, render는 target/viewport/scissor 원상복구 없음. 네 scissor 아래 render를4회 호출하는 방식으로 동일 분할이 되지 않음. 레이어 target/영역·sampling 경계·합성 출력·복구를 명시하는 인터페이스 필요 |
+| [stage3d/stage.ts](../../script/app/common/render3d/stage.ts) | 단일 카메라·애니·resize·GPU 대여 | 시뮬레이션/애니는 tick에 한 번, 같은 상태를 여러 카메라로 render. Stage.update를 화면 수만큼 부르면 시간이 배속됨. resize가 카메라 aspect를 전체 비율로 덮는 경로도 분리 필요 |
+| [stage3d/post.ts](../../script/app/common/render3d/post.ts) | scene HDR RT→bloom→composite→선택FXAA→canvas | resize는 drawing buffer 전체, render는 target/viewport/scissor 원상복구 없음. 네 scissor 아래 render를4회 호출하는 방식으로 동일 분할이 되지 않음. 레이어 target/영역·sampling 경계·합성 출력·복구를 명시하는 인터페이스 필요 |
 | [view/lyt.ts](../../script/view/lyt.ts) | 원본 pane·애니 렌더, 1920×1080 결과 합성 | 분할선 assembler·drawCamera/scissor 기반 HUD projector 없음. 원본 sys_dividing_lines 및 game layout을 연결해야 함 |
 | [assetcore-three](../../script/lib/assetcore-three/index.ts) | 카메라·scene 준비와 warmup 상태 보존 | 런타임 SplitScreenLayerList, 레이어별 clear/capture 없음. ScenePreparer의 예약 layer31을 원본 플레이어 mask와 혼용하지 않음 |
 
@@ -164,7 +164,7 @@ GPU 대여 종료 시 target·viewport·scissor/test·autoClear 및 clearColor/d
 | `script/game/lib/splitscreen/` | **코어**: Param·SplitTo·SetParam/AnimationTo 보간·IsFinished/IsSplitting(§2·§3), viewport float/scissor 정수 절삭·GL y 변환(§2), 보정 aspect/FOV(§4), 분할선 경계 모으기·병합·pane 배치·in/out 알파(§6), 3D→HUD 식(§6), mg0122 캡처 RT 크기 상수(§5). 시간은 호출자가 `step(dt)`로 넣는다(기본 f32 1/60). 매 스텝 할당 0 | **0**(외부·three·DOM·프로젝트 파일 없음, 한 파일) |
 | `script/game/lib/splitscreen-three/` | **three 어댑터**: 한 번 갱신한 장면을 레이어마다 viewport/scissor·draw용 보정 카메라로 그림, clear 정책, 레이어 영역 후처리 호출, renderer 상태 복구, 레이어별 3D→HUD 투영, 캡처 요청 자리 | `three` + 코어만 |
 | `script/game/lib/splitscreen-dom/` | **분할선 DOM**: 원본 `sys_dividing_lines` pane 26개를 div 로, 코어가 정한 위치·길이·회전·알파를 style 에 쓴다 | 코어만 |
-| `script/shell/stage3d/post.ts` | `PostChain.render(scene, camera, region?)` — 선택 인자 `region`(출력 target·viewport·scissor) 추가. 인자가 없으면 지금과 같은 출력 | 기존 그대로 |
+| `script/app/common/render3d/post.ts` | `PostChain.render(scene, camera, region?)` — 선택 인자 `region`(출력 target·viewport·scissor) 추가. 인자가 없으면 지금과 같은 출력 | 기존 그대로 |
 | `script/app/scene/minigame/mgstage/` | `MgStage.renderSplit(list, cameras, opts?)` — 무대 장면·후처리로 어댑터 호출. `update` 는 부르지 않는다 | + `../../lib/splitscreen`·`../../lib/splitscreen-three` |
 | `script/app/scene/minigame/mgscene/` | 틀이 `SplitScreen` 하나를 갖고 `ctx.split` 으로 게임에 준다. 틀 step 의 UI 틱에서 `split.step(MG_DT)` | + `../../lib/splitscreen`(import 0 코어, lib 예외 — transition 과 같은 규칙) |
 | `script/splitscreen_page.ts` | dev/ui.html 항목 "분할 화면" 보기 페이지 | 페이지 |

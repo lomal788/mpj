@@ -2,10 +2,10 @@
  * 규칙 설정 화면 — RuleConfigState 사건을 공용 창(MgmWindow, mgmet_base_rule_00 + 열 부품 mgmet_rule_option_00/01/02·mgmet_btn_play_00)에 옮긴다.
  * 열 배치 = Alignment 계산(alignment.ts, ui2d_alignment.md 6.4), 배경 = SetupBaseBg(mgmet_ruleconfig.md 6.3), 글자·아이콘 = 7.2. 근거·[추정]: mgmet_ruleconfig.md 9.1.
  */
-import { alignPanes } from '../../../../shell/mgmcommon/alignment';
-import { paneGlobal } from '../../../../shell/mgmcommon/itemLayout';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import { MgmWindow, type MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { alignPanes } from '@app/common/ui/alignment';
+import { paneGlobal } from '@app/common/ui/itemLayout';
+import type { MgmSound } from '@app/common/ui/sound';
+import { MgmWindow, type MgmDrawHost } from '@app/common/ui/window';
 import { RuleConfigState, type RuleConfigInfo, type RuleEvent, type RuleUpdate } from './ruleConfig';
 import {
   BASE_BG_WIDE_X,

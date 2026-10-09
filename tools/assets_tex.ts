@@ -14,7 +14,7 @@
  * 끝까지 미달이면 마지막(UASTC, RDO 없음)을 쓴다(ui 는 그래도 미달이면 PNG). 결과 KTX2 가 PNG 보다 크고 64K 픽셀 이하면 PNG 를 쓴다(tiny).
  *
  * 색공간: KTX2 DFD 의 sRGB 표시는 인코더의 지각 지표·밉 필터에만 쓴다. 런타임은 PNG 경로와 같게 colorSpace 를 소비자가 정한다
- * (shell/stage3d/assetLoader.ts 가 KTX2 를 NoColorSpace 로 되돌림). flipY 는 모든 소비자가 false(glTF 규칙)라 뒤집지 않는다.
+ * (app/common/render3d/assetLoader.ts 가 KTX2 를 NoColorSpace 로 되돌림). flipY 는 모든 소비자가 false(glTF 규칙)라 뒤집지 않는다.
  */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';

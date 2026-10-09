@@ -13,8 +13,8 @@
 import * as THREE from 'three';
 import { P0, P1, P3 } from '@game/lib/assetcore';
 import type { PrepJob } from '@game/lib/assetcore-three';
-import { LOAD_BUDGET_MS, MeshCollider, Stage3D, type PriorityFloor, type StageGpu, type AssetSource, type ClipHandle, type ClipOptions, type Collider, type MeshColliderData, type SocketPose, type StageLoader, type StageModel } from '../../../../shell/stage3d';
-import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '../../../../shell/stage3d/assetHandlers';
+import { LOAD_BUDGET_MS, MeshCollider, Stage3D, type PriorityFloor, type StageGpu, type AssetSource, type ClipHandle, type ClipOptions, type Collider, type MeshColliderData, type SocketPose, type StageLoader, type StageModel } from '@app/common/render3d';
+import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '@app/common/render3d/assetHandlers';
 import { decoVisible, defaultDecoState } from './deco';
 import type { PlazaCameraParam, PlazaDecoState, PlazaLayoutEntry, PlazaWorld } from './types';
 

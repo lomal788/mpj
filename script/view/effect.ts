@@ -12,7 +12,7 @@ import * as THREE from 'three';
 import { EffectCore, RULES_ORIGINAL, RULES_WEB, Xorshift128, effectDefaults, type EffectRules, type MatrixSource } from '@game/lib/effect';
 import { EffectView, type EffectLoader } from '@game/lib/effect-three';
 import type { CharacterEvent } from '@game/lib/character';
-import { loadTexture } from '../shell/stage3d/assetLoader';
+import { loadTexture } from '@app/common/render3d/assetLoader';
 import type { Assets } from './assets';
 
 /** CMN_EFFECT_ID 표 @0x71019f1aa8 [데이터 §3.4] */

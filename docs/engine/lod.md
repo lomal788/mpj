@@ -607,8 +607,8 @@ fragment는 **각 UV 성분의 fract**를 취하고 모델 buffer `c[7]+0xB0`의
 |---|---|
 | [GltfExport.cs](../../tools/analysis/graphics_bfres2gltf/GltfExport.cs) | `Opt.Lod` 기본0. `s.Meshes[min(o.Lod,Count−1)]` 한 단계만 glb에 넣고 `FirstVertex`를 더한다. `extras.lods`는 수만 기록하며 전체 인덱스 배열을 보존하지 않음 |
 | [mg1801/view/character.ts](../../script/games/mg1801/view/character.ts) | SkinnedMesh의 `frustumCulled=false`; 원본 화면 비율 Mesh 전환 코드 없음 |
-| [stage3d/stage.ts](../../script/shell/stage3d/stage.ts) | SkinnedMesh 컬링 off. 원본 LOD 컨테이너 소비·거리별 경량 모델 전환 미확인 |
-| [stage3d/assetLoader.ts](../../script/shell/stage3d/assetLoader.ts) | `texLod`는 KTX2 상위 mip 제거 설정. 모델 Mesh LOD와 다름 |
+| [stage3d/stage.ts](../../script/app/common/render3d/stage.ts) | SkinnedMesh 컬링 off. 원본 LOD 컨테이너 소비·거리별 경량 모델 전환 미확인 |
+| [stage3d/assetLoader.ts](../../script/app/common/render3d/assetLoader.ts) | `texLod`는 KTX2 상위 mip 제거 설정. 모델 Mesh LOD와 다름 |
 | [assetcore-three/index.ts](../../script/lib/assetcore-three/index.ts) | GPU 준비 중 임시 `frustumCulled=false`와 복원. LOD 선택 아님 |
 
 **재구현 계산/구현에 필요한 계약:** 복수 Mesh의 인덱스·FirstVertex·공유 VB·재질을 보존하고 컨테이너 type/enable/N/ratio/c/r/F를 별도 상태로 읽는다. 레이어 draw 카메라와 현재 정규화 viewport 높이로 원본식의 k를 계산한 뒤 각 Shape의 Mesh 수에 clamp한다. type1은 현재 Shape 경계구가 필요하다. 근거 없는 거리 표·히스테리시스·일괄 light 교체·애니 update 간격을 원본 계약으로 넣지 않는다.

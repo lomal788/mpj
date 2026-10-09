@@ -4,14 +4,14 @@
  * FirstHowToPlayFlow·HowToPlayFlow·Mgm01SetRuleFlow·FreeplayAfterFlow·FreeplayReturnFlow). 근거: docs/shell/mgmet_flow.md 3~8·9.1, mgmet_ruleconfig.md 3·8.
  * 3D(섬·NPC·카메라)는 MgmetSignals 신호로만 받는다(기본 즉시 [설계]). 한 틱 = 입력 → 흐름 → UI 갱신(mgm_common.md 9.6).
  */
-import { MODE_FLAG, playedCount, type MgmSave, type MgmWork, type SceneRouter } from '../../../../shell/mgmcommon/contracts';
-import { FiberRunner, waitTime, waitUntil, waitFrames, type Flow } from '../../../../shell/mgmcommon/fiber';
-import type { MgmetGuides } from '../../../../shell/mgmcommon/guides';
-import type { MgmInput, MgmPlayer } from '../../../../shell/mgmcommon/input';
-import { MESSSAGE_WINDOW_OFFSET, type MessageFlow } from '../../../../shell/mgmcommon/messageFlow';
-import type { MessageWindow } from '../../../../shell/mgmcommon/messageWindow';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import type { MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { MODE_FLAG, playedCount, type MgmSave, type MgmWork, type SceneRouter } from '@app/common/ui/contracts';
+import { FiberRunner, waitTime, waitUntil, waitFrames, type Flow } from '@app/common/ui/fiber';
+import type { MgmetGuides } from '@app/common/ui/guides';
+import type { MgmInput, MgmPlayer } from '@app/common/ui/input';
+import { MESSSAGE_WINDOW_OFFSET, type MessageFlow } from '@app/common/ui/messageFlow';
+import type { MessageWindow } from '@app/common/ui/messageWindow';
+import type { MgmSound } from '@app/common/ui/sound';
+import type { MgmDrawHost } from '@app/common/ui/window';
 import { ActivityTitle } from './activityTitle';
 import { Transition } from '@game/lib/transition';
 import { FreePlayInfo } from './freePlayInfo';

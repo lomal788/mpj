@@ -10,7 +10,7 @@ import { P1 } from '@game/lib/assetcore';
 import { vibDefaults } from '@game/lib/vibration';
 import { DUCKING_PRESET, pan2d, SoundCatalog, SoundCore, SoundRandom, soundDefaults, type PlayOpts, type SoundMeta, type SoundRules } from '@game/lib/sound';
 import { DecodeCache, WebAudioSoundOut, bufferVoiceFactory, type BufferPayload, type Voice, type VoiceFactory } from '@game/lib/sound-webaudio';
-import type { MgmSoundAdapter } from '../shell/mgmcommon/types';
+import type { MgmSoundAdapter } from '@app/common/ui/types';
 import { appAssets, assetKeyOf } from './appAssets';
 import { appAudio, type AudioOut } from './audio';
 import { appBgm, bgmSource, playBgmStream, setAppBgmDest, type AppBgmSource, type BgmLoop } from './bgm';

@@ -10,7 +10,7 @@ import * as THREE from 'three';
 import { Render2D } from '@app/scene/menu/charselect/render2d';
 import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
-import { IDENTITY, loadMgmSpec, splitVc, type Mat3, type MgmDrawHost, type MgmSpec } from '../../../../../shell/mgmcommon';
+import { IDENTITY, loadMgmSpec, splitVc, type Mat3, type MgmDrawHost, type MgmSpec } from '@app/common/ui';
 
 const QUAD_VS = 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
 

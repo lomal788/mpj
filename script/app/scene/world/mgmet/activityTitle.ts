@@ -2,9 +2,9 @@
  * mgmet::ActivityTitle(UI_ActivitiTitle, mgmet_act_title_00) — 제목 API 전체(docs/shell/mgmet_flow.md 7.1). 공용 창 MgmWindow 의 레이아웃에 태그를 직접 재생한다
  * (창 생애 in/normal/out 가 아니라 API 마다 정해진 태그 → 다음 태그).
  */
-import { paneGlobal } from '../../../../shell/mgmcommon/itemLayout';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
-import { MgmWindow, type MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { paneGlobal } from '@app/common/ui/itemLayout';
+import type { MgmSound } from '@app/common/ui/sound';
+import { MgmWindow, type MgmDrawHost } from '@app/common/ui/window';
 import { ACTIVITIES, SE } from './tables';
 
 export class ActivityTitle {

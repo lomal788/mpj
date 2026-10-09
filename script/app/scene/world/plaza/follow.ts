@@ -8,7 +8,7 @@
  *   AutoInterpolation 필드 = 목표 위치 +0x40·목표 회전 +0x50·위치 flag +0x60·회전 flag +0x61·속도 +0x64 [판독 main @0x710002023c·@0x7100020628].
  */
 import * as THREE from 'three';
-import { MeshCollider } from '../../../../shell/stage3d';
+import { MeshCollider } from '@app/common/render3d';
 import { ACTION_MOTION, NO_LEVER, PlazaCharaLoader, PlazaMover, shapeOf, type ActionName, type Lever, type PlazaChara } from './player';
 import { ROTATE_ONLY_DIST, TELEPORT_DIST, type RemoteMode } from './ui/net';
 import type { PlazaActor, PlazaContext, PlazaPart, PlazaPartFactory, PlazaPlayerSetup } from './types';

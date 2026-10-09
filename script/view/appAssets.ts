@@ -7,7 +7,7 @@
 import './assetMode';
 import { ASSETS } from '../env';
 import { createAssetManager, type AssetManager } from '@game/lib/assetcore';
-import { createMpjHandlers } from '../shell/stage3d/assetHandlers';
+import { createMpjHandlers } from '@app/common/render3d/assetHandlers';
 import { assetKeyFrom } from './assetKey';
 
 const G = globalThis as { __mpjAssetManager?: AssetManager };

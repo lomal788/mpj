@@ -10,7 +10,7 @@
  */
 import * as THREE from 'three';
 import { EyeLook } from '@game/lib/character';
-import { loadTextureInto } from '../../../../shell/stage3d/assetLoader';
+import { loadTextureInto } from '@app/common/render3d/assetLoader';
 import type { Heading } from './heading';
 
 type ParamV = number | number[];

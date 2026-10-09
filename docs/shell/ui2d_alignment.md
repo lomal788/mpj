@@ -181,7 +181,7 @@ if kind == 1:
 
 ### 9.1 구현 (2026-10-07)
 
-`web/script/shell/mgmcommon/alignment.ts`: `computeAlignment(params, axisSize, children)` = 6.2 고정 경로 + 6.3 stretch(kind 1 의 원점 가운데가 아닌 경우 보정량은 원점 비율로 일반화 [추정]), center 두 번째 순회는 visible·ignore 만 다시 본다(측정 실패 자식도 보정, 6.2 끝). `alignPanes(inst, path, params)` = 레이아웃 노드에 적용 — extent = 축 크기 × |배율|, bias = −원점 × extent/2(무회전·부모 원점 가운데 [근사]). ali1 의 kind/gap 은 웹 레이아웃 명세에 없어 부르는 쪽 상수(`mgmet/tables.ts` RULE_ALIGNMENT)로 준다. 시험: `tools/test_mgmet.ts` 2절(6.4 좌표·여섯 열 저장 x·숨김 폭·kind 0/1·세로 own gap/bias·stretch).
+`web/script/app/common/ui/alignment.ts`: `computeAlignment(params, axisSize, children)` = 6.2 고정 경로 + 6.3 stretch(kind 1 의 원점 가운데가 아닌 경우 보정량은 원점 비율로 일반화 [추정]), center 두 번째 순회는 visible·ignore 만 다시 본다(측정 실패 자식도 보정, 6.2 끝). `alignPanes(inst, path, params)` = 레이아웃 노드에 적용 — extent = 축 크기 × |배율|, bias = −원점 × extent/2(무회전·부모 원점 가운데 [근사]). ali1 의 kind/gap 은 웹 레이아웃 명세에 없어 부르는 쪽 상수(`mgmet/tables.ts` RULE_ALIGNMENT)로 준다. 시험: `tools/test_mgmet.ts` 2절(6.4 좌표·여섯 열 저장 x·숨김 폭·kind 0/1·세로 own gap/bias·stretch).
 
 ## 10. 검증 방법·실행 결과
 

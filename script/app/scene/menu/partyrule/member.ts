@@ -3,7 +3,7 @@
  * ComLevelImpl @0x7100077d10, ComSpeedImpl @0x710007aa60, HandicapImpl @0x710007b660, ComCharacterImpl @0x7100075de0 일부). 근거: docs/shell/partyrule.md 4.2·5.2·6.1.
  * 순수: 입력·애니 끝 조회(PIO) → 그리기 사건(PEvent)·메시지 창 호출·설정값(PartyRuleConfig) 변경.
  */
-import { FiberRunner, type FiberHandle, type Flow } from '../../../../shell/mgmcommon/fiber';
+import { FiberRunner, type FiberHandle, type Flow } from '@app/common/ui/fiber';
 import { PanelLife } from './panel';
 import { BIT, COM_LEVEL_LABEL, downMask, leftMask, listAnim, MEMBER_ROW, MEMBER_ROW_LABEL, rightMask, SPEED_LABEL, upMask } from './tables';
 import type { PartyMsg, PartyRuleConfig, PIO, PSink } from './types';

@@ -1,5 +1,5 @@
 /**
- * 미니게임 모드 공용 UI 상태 시험 — script/shell/mgmcommon 의 순수 부품(메뉴 격자·창 생애·입력·흐름·소리·글자·계약)과
+ * 미니게임 모드 공용 UI 상태 시험 — script/app/common/ui 의 순수 부품(메뉴 격자·창 생애·입력·흐름·소리·글자·계약)과
  * 실제 명세(assets/mgmcommon)로 만든 공용 창·항목 제약을 노드에서 돈다(WebGL 없음).
  * 기대값 근거: docs/shell/mgm_common.md 5·6·10절(판독한 규칙의 재구현 시험, 원본 실행 대조 아님).
  *
@@ -43,7 +43,7 @@ import {
   type MgmSceneInstance,
   type MgmSpec,
   type MgmSpecPart,
-} from '../script/shell/mgmcommon';
+} from '@app/common/ui';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

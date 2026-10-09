@@ -5,7 +5,7 @@
  */
 import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import { IDENTITY, mul, plainText, type Mat3, type MgmDrawHost } from '../../../../../shell/mgmcommon';
+import { IDENTITY, mul, plainText, type Mat3, type MgmDrawHost } from '@app/common/ui';
 import { faceKey } from '@app/scene/menu/online';
 import { UI_LAYOUT } from './data';
 

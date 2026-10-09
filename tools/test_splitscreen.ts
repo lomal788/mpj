@@ -40,7 +40,7 @@ import {
   type PerspectiveFix,
 } from '@game/lib/splitscreen';
 import { SplitRenderer, type PostRegion, type RegionPost, type SplitGl } from '@game/lib/splitscreen-three';
-import { PostChain, type PostParams } from '../script/shell/stage3d/post';
+import { PostChain, type PostParams } from '@app/common/render3d/post';
 import { localGate, MgScene, mgUiData, type MgTables, type ResultStage } from '@app/scene/minigame/mgscene';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');

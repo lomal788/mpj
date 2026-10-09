@@ -4,11 +4,11 @@
  */
 import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import { alignPanes, type AlignParams } from '../../../../shell/mgmcommon/alignment';
-import { MgmGuide } from '../../../../shell/mgmcommon/guides';
-import type { Mat3 } from '../../../../shell/mgmcommon/itemLayout';
-import { plainText } from '../../../../shell/mgmcommon/text';
-import type { MgmDrawHost } from '../../../../shell/mgmcommon/window';
+import { alignPanes, type AlignParams } from '@app/common/ui/alignment';
+import { MgmGuide } from '@app/common/ui/guides';
+import type { Mat3 } from '@app/common/ui/itemLayout';
+import { plainText } from '@app/common/ui/text';
+import type { MgmDrawHost } from '@app/common/ui/window';
 import type { PEvent, Scr } from './types';
 
 const LAYOUT: Record<Scr, string> = {

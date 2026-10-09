@@ -13,11 +13,11 @@ import { FixedClock } from '@app/scene/world/plaza/scene';
 import { DECO_ITEMS, DECO_TYPE, decoVisible, defaultDecoState, isDefaultDeco, parseDecoParam, setDecoDisplay } from '@app/scene/world/plaza/deco';
 import type { PlazaLayoutEntry } from '@app/scene/world/plaza/types';
 import { plazaPlan, type PlazaFirstFile } from '@app/scene/world/plaza/world';
-import { Clip } from '../script/shell/stage3d/clip';
-import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '../script/shell/stage3d/meshCollider';
-import { graphSource, type GraphDef, type GraphSource } from '../script/shell/stage3d/graph';
-import { patchRefraction, patchSss, patchUnlit, patchVertexColor, patchWater } from '../script/shell/stage3d/material';
-import { initParams, patchSrt0, srtMatrix } from '../script/shell/stage3d/params';
+import { Clip } from '@app/common/render3d/clip';
+import { COLLIDER_STEP, MeshCollider, type MeshColliderData } from '@app/common/render3d/meshCollider';
+import { graphSource, type GraphDef, type GraphSource } from '@app/common/render3d/graph';
+import { patchRefraction, patchSss, patchUnlit, patchVertexColor, patchWater } from '@app/common/render3d/material';
+import { initParams, patchSrt0, srtMatrix } from '@app/common/render3d/params';
 import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -294,7 +294,7 @@ for (const hz of [30, 60, 75, 120, 144, 240]) {
 }
 
 console.log('8. import 경계(mgm_common.md §9.1 — lib/assetcore·assetcore-three 는 어디서나 허용)');
-const SHELL = join(WEB, 'script', 'shell');
+const COMMON = join(WEB, 'script', 'app', 'common');
 const SCENE = join(WEB, 'script', 'app', 'scene');
 const specPath = (dir: string, spec: string): string => (spec.startsWith('@app/') ? join(WEB, 'script', 'app', spec.slice(5)) : resolve(dir, spec));
 const scan = (dir: string, allowed: string[]): void => {
@@ -313,8 +313,8 @@ const scan = (dir: string, allowed: string[]): void => {
     }
   }
 };
-scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(SHELL, 'stage3d'), join(SHELL, 'mgmcommon'), join(SCENE, 'menu', 'online'), join(SCENE, 'menu', 'charselect')]);
-scan(join(SHELL, 'stage3d'), [join(SHELL, 'stage3d')]);
+scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(COMMON, 'render3d'), join(COMMON, 'ui'), join(SCENE, 'menu', 'online'), join(SCENE, 'menu', 'charselect')]);
+scan(join(COMMON, 'render3d'), [join(COMMON, 'render3d')]);
 
 console.log('9. 단계 로딩 계획(loader_manager.md §11.4·§11.5 — plaza_first.json)');
 {

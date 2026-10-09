@@ -19,7 +19,7 @@ import * as THREE from 'three';
 import { P0, P2, type AssetManagerApi } from '@game/lib/assetcore';
 import { textureBytes, type UploadRecord } from '@game/lib/assetcore-three';
 import type { PlazaWorld } from '@app/scene/world/plaza/types';
-import type { StageGpu } from '../shell/stage3d';
+import type { StageGpu } from '@app/common/render3d';
 import { ASSET_MODE, ASSETS } from '../env';
 
 export const PREWARM_BUDGET_MS = 2;
@@ -290,7 +290,7 @@ const frameTick = (fn: () => void): void => void (typeof document !== 'undefined
 export interface WorldModules {
   createPlazaWorld: typeof import('@app/scene/world/plaza/world').createPlazaWorld;
   parseDecoParam: typeof import('@app/scene/world/plaza/deco').parseDecoParam;
-  PriorityFloor: typeof import('../shell/stage3d').PriorityFloor;
+  PriorityFloor: typeof import('@app/common/render3d').PriorityFloor;
   LOAD_BUDGET_MS: number;
   manager: AssetManagerApi;
 }
@@ -353,7 +353,7 @@ export function worldStarter(env: WorldEnv): (o: WorldStart) => PlazaWorldJob {
 
 const startWorldDefault = worldStarter({
   modules: async () => {
-    const [w, d, sd, a] = await Promise.all([import('@app/scene/world/plaza/world'), import('@app/scene/world/plaza/deco'), import('../shell/stage3d'), import('./appAssets')]);
+    const [w, d, sd, a] = await Promise.all([import('@app/scene/world/plaza/world'), import('@app/scene/world/plaza/deco'), import('@app/common/render3d'), import('./appAssets')]);
     return { createPlazaWorld: w.createPlazaWorld, parseDecoParam: d.parseDecoParam, PriorityFloor: sd.PriorityFloor, LOAD_BUDGET_MS: sd.LOAD_BUDGET_MS, manager: a.appAssets() };
   },
   tick: frameTick,

@@ -9,7 +9,7 @@
 import { ASSETS } from '../env';
 import { P0 } from '@game/lib/assetcore';
 import { createMgStage, mgStageKey, type MgCameraHandle, type MgStage } from '@app/scene/minigame/mgstage';
-import { gltfTexturesManaged } from '../shell/stage3d/assetHandlers';
+import { gltfTexturesManaged } from '@app/common/render3d/assetHandlers';
 import { appAssets } from '../view/appAssets';
 
 export interface MgStagePageRun {

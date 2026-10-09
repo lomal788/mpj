@@ -3,10 +3,10 @@
  * 근거: docs/shell/mgm01_freeplay.md 5.1·6.2·6.5(ApplySetting: 물리 rule pane 차례, hidden -1, GetCursorPaneName, CPU UV t = index×0.25)·7(mginfo in/out 10, left/right_select 8, 고유 문구), mgm_common.md 9.6.
  * 항목 애니 세트·문구 페인 배정·heart 애니·게임 넘김 창 애니는 원본 표가 문서에 없어 9절 [설계].
  */
-import type { Flow } from '../../../../shell/mgmcommon/fiber';
-import type { MgmDrawHost } from '../../../../shell/mgmcommon/window';
-import { MgmWindow } from '../../../../shell/mgmcommon/window';
-import type { MgmSound } from '../../../../shell/mgmcommon/sound';
+import type { Flow } from '@app/common/ui/fiber';
+import type { MgmDrawHost } from '@app/common/ui/window';
+import { MgmWindow } from '@app/common/ui/window';
+import type { MgmSound } from '@app/common/ui/sound';
 import { recordView, RULE_TYPE_LABEL, TEAM_FORMAT_PANE } from './catalog';
 import { SETTING_ITEM, SettingState, type SettingDeps, type SettingInit, type SettingResult } from './settingView';
 import type { Mgm01PlayRequest, Mgm01SettingValues } from './types';

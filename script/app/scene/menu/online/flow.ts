@@ -2,7 +2,7 @@
  * 온라인 화면 흐름(순수) — 프렌드 매치(menu00 OnlineMenuImpl sub 1·2·3 + 대기실) 와 전 세계 매칭(menu01 대전 상대 → matching00 Matching_Bd).
  * 근거: docs/shell/online.md 3·5. 원본 파이버 = 제너레이터(yield 한 번 = Fiber::Wait 1프레임). 네트워크는 OnlineAdapter 사건만 본다.
  */
-import { waitTime, type Flow } from '../../../../shell/mgmcommon/fiber';
+import { waitTime, type Flow } from '@app/common/ui/fiber';
 import { LobbyStatusPanel, NetMenuPanel, OpponentPanel, RoomTypePanel, SessionInfoPanel, SessionListView, StateTelopPanel, type OIO, type Sink } from './panels';
 import {
   BTN,

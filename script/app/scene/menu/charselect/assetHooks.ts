@@ -1,6 +1,6 @@
 /**
  * 에셋 읽기 끼움점 — charselect 는 셸 경계상 자기 폴더·three 만 import 한다(check_charselect 6). 기본값은 소스 모드와 같은 평범한 로더이고,
- * 페이지(script/view/assetMode.ts)가 공용 로더(shell/stage3d/assetLoader.ts: KTX2·meshopt 압축본 전환)로 바꿔 끼운다.
+ * 페이지(script/view/assetMode.ts)가 공용 로더(app/common/render3d/assetLoader.ts: KTX2·meshopt 압축본 전환)로 바꿔 끼운다.
  * 설계: docs/engine/assets_pipeline.md §6.
  * broker: 페이지가 앱 로더 관리자를 꽂는 자리(docs/engine/loader_manager.md §13). 없으면(시험·단독 페이지) Preview3D 가 직접 읽는다.
  * 등급 숫자는 관리자 등급과 같다(0 지금 막음 · 1 곧 · 2 다음 · 3 유휴).

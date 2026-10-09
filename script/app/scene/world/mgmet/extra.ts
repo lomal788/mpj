@@ -2,7 +2,7 @@
  * 항구 추가 에셋(web/assets/mgmet/extra.json ← tools/analysis/mgmet_web_assets.py)의 문구·메시지 속성·소리를 공용 명세에 더한다.
  * 텍스처는 MgmView.create({ parts: ['mgmet.json', MGMET_EXTRA_PART] }) 가 합친다.
  */
-import type { MgmSpec, MgmSpecPart, MsgAttr } from '../../../../shell/mgmcommon/types';
+import type { MgmSpec, MgmSpecPart, MsgAttr } from '@app/common/ui/types';
 
 export const MGMET_EXTRA_PART = '../mgmet/extra.json';
 

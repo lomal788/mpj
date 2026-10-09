@@ -1,6 +1,6 @@
 # stage3d — 공용 3D 무대 모듈 (계약·구현 범위·남은 것)
 
-2026-10-08. 위치 `web/script/shell/stage3d/`. 항구(mgmet) 3D 를 위해 만들기 시작했고 **항구 3D 는 사용자 결정으로 중단**했다([mgmet_3d.md](mgmet_3d.md) 머리). 다음 재사용처는 **광장(menu00) 3D**.
+2026-10-08. 위치 `web/script/app/common/render3d/`. 항구(mgmet) 3D 를 위해 만들기 시작했고 **항구 3D 는 사용자 결정으로 중단**했다([mgmet_3d.md](mgmet_3d.md) 머리). 다음 재사용처는 **광장(menu00) 3D**.
 상태: 계약(types.ts)·코어(stage.ts)·재질(material.ts)·클립(clip.ts) 까지 작성, tsc 통과. **페이지·시험·에셋이 없어 실제 화면에서 돌려 본 적은 없다.**
 
 ## 1. import 경계

@@ -24,7 +24,7 @@
 |---|---|
 | `script/view/input.ts` | `KeyboardPad`(J=A, K=B, U=X, I=Y, Q=L, E=R, Enter=+, Backspace=−, WASD/방향키=왼쪽 스틱), `GamepadPad`(표준 배치, 아래 0=B·오른쪽 1=A — 닌텐도 위치), `MergedPad`(1P = 키보드 + 패드0), `padSourcesFor(isCom, keyboard)` = 사람 순서대로 패드 0,1,… |
 | `script/game/core/pad.ts` | `PadInput{buttons, lx, ly, rx, ry, accX/Y/Z}` — 가속도 칸이 이미 있다(리듬 게임 휘두름) |
-| `shell/mgmcommon/input.ts` | 셸 화면이 쓰는 bex 비트 `PAD`(A 0x1, B 0x2, X 0x4, Y 0x8, 십자 0x100~, 스틱 방향 0x10000~) — 페이지가 Npad → bex 로 바꿔 넘김 |
+| `app/common/ui/input.ts` | 셸 화면이 쓰는 bex 비트 `PAD`(A 0x1, B 0x2, X 0x4, Y 0x8, 십자 0x100~, 스틱 방향 0x10000~) — 페이지가 Npad → bex 로 바꿔 넘김 |
 | `setplayer_page.ts` | 시스템 컨트롤러 애플릿 대체 DOM: 컨트롤러 = 키보드 `kb` 1개 + `gpN`. 할당 안 된 컨트롤러가 A → 다음 빈 칸 |
 | 터치·마우스 | **없음**. 키 배치 바꾸기 **없음**. 한 키보드를 두 사람이 나눠 쓰기 **없음** |
 

@@ -13,7 +13,7 @@ import type { Render2D } from '@app/scene/menu/charselect/render2d';
 import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
-import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '../script/shell/mgmcommon';
+import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
 import { applyOnlineExtra, BTN, FakeOnline, type OnlineExtra } from '@app/scene/menu/online';
 import {
   applyPlazaUiExtra,

@@ -11,7 +11,7 @@
  */
 import * as THREE from 'three';
 import { assetHooks } from '@app/scene/menu/charselect/assetHooks';
-import { MgmSound } from '../../../../../shell/mgmcommon';
+import { MgmSound } from '@app/common/ui';
 import { applyOnlineExtra, CHARA_PC, defaultCard, FakeOnline, ONLINE_FACES, ONLINE_PART, SocketIoOnline, type OnlineAdapter, type OnlineExtra } from '@app/scene/menu/online';
 import { PLAZA_BTN, type PlazaActor, type PlazaContext, type PlazaPad, type PlazaPart, type PlazaPartFactory } from '../types';
 import { PLAZA_CARD_PART, type PlazaCardExtra } from './card';

@@ -15,7 +15,7 @@
  *                                   (해시 없는 작업본 — 증분 비교·같은 내용 복사의 원본)
  *   assets-dist/<경로>.<sha256 8>.<확장자>   배포본(내용 해시 이름, 작업본의 복사) + 이득 있으면 .br·.gz. 배포(tools/build.ts)는 이것만 싣는다
  *   assets-dist/index.json          런타임 표 { v: 2, ktx2[], lossy[], flac[], names{압축본 이름 → 해시 이름}, streams{BGM 소스 → 조각 배치} }
- *                                   (shell/stage3d/assetLoader.ts 가 읽음, 형식: docs/engine/loader_manager.md §5.8.2, BGM 조각: docs/engine/04_sound.md §12 —
+ *                                   (app/common/render3d/assetLoader.ts 가 읽음, 형식: docs/engine/loader_manager.md §5.8.2, BGM 조각: docs/engine/04_sound.md §12 —
  *                                   조각 가상 경로 <이름>.bgm/NNN.wav 도 lossy 에 넣어 소리 이름 바꿈을 그대로 탄다)
  *   assets-dist/report.json         파일별 형식·크기·PSNR·GPU 추정, 폴더별 합
  *   assets-dist/build-state.json    증분 캐시(소스 sha1·설정·결과). 텍스처·소리는 경로만 바뀐 같은 내용(키 = 경로 뺀 내용·설정)이면 옛 결과를 복사한다

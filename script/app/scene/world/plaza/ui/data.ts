@@ -1,7 +1,7 @@
 /**
  * 광장 2D UI 명세 확장(assets/plaza/ui/plaza_ui.json) — 스탬프 표·단축·상수. 근거: docs/shell/plaza_3d.md §5.1.
  */
-import type { MgmSpec, MgmSpecPart } from '../../../../../shell/mgmcommon';
+import type { MgmSpec, MgmSpecPart } from '@app/common/ui';
 import { CHARA_PC } from '@app/scene/menu/online';
 
 export const PLAZA_UI_PART = '../plaza/ui/plaza_ui.json';

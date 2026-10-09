@@ -5,7 +5,7 @@
  * 광장 FsnbCamera 는 balloon.ts(광장 부품 의존)에 있어 import 하지 않고 같은 식을 둔다.
  */
 import * as THREE from 'three';
-import type { CameraDriver } from '../../../../shell/stage3d';
+import type { CameraDriver } from '@app/common/render3d';
 
 export interface FsnbClip {
   name?: string;

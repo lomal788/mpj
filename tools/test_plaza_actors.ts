@@ -10,7 +10,8 @@ import * as THREE from 'three';
 import { MeshCollider } from '../script/shell/stage3d/meshCollider';
 import { PlazaMover, NO_LEVER } from '../script/shell/plaza/player';
 import { DECO_NPCS, DECO_PROPS, MANAGER_NPCS, NPC_MODEL, type NpcSpecFile } from '../script/shell/plaza/npc';
-import { autoInterp, FOLLOW, FollowLogic, leverToward, meshRayBlocked, plazaHumans } from '../script/shell/plaza/follow';
+import { autoInterp, FOLLOW, FollowLogic, leverToward, meshRayBlocked, plazaHumans, RemoteMotion } from '../script/shell/plaza/follow';
+import { RemoteSender } from '../script/shell/plaza/ui/net';
 import { AREA, calcTurnDegY, getArea, InteractSystem, judge, popPosition, POINT_SOCKETS, RESULT, type InteractPoints } from '../script/shell/plaza/interact';
 import { BalloonSystem, FsnbCamera, TAKEOFF } from '../script/shell/plaza/balloon';
 import { GRAPH, layerOf, srtMaya } from '../script/shell/plaza/npcMaterial';
@@ -196,6 +197,84 @@ console.log('2. 따라가기(§6.10 ②)');
   ok(gap >= FOLLOW.stopDist - 0.11 && gap <= FOLLOW.startDist + 0.11, `멈춘 뒤 간격 2.0~2.6: ${gap.toFixed(3)}`);
   ok(maxGap < 4, `달리는 동안 간격 유지(< 4): ${maxGap.toFixed(3)}`);
   near(speeds, FOLLOW.speed, 1e-6, '따라가기 속도 = AutoInterpolation 6.0(달리기)');
+}
+
+console.log('2b. 원격 표시 actor — OnReceive 거리 분기·AutoInterpolation 하나(12_online_sync §6.2.1)');
+{
+  const floor = new MeshCollider({ vertices: [-60, 0, -60, 60, 0, -60, 60, 0, 60, -60, 0, 60], indices: [0, 2, 1, 0, 3, 2] });
+  const mover = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
+  const m = new RemoteMotion(mover);
+  const V = (x: number, y = 0, z = 0): THREE.Vector3 => new THREE.Vector3(x, y, z);
+  const ticks = (n: number): string[] => {
+    const acts: string[] = [];
+    for (let i = 0; i < n; i++) acts.push(m.tick());
+    return acts;
+  };
+  m.spawn(V(0, 3, 0), 90);
+  ok(mover.pos.y === 0 && mover.yaw === 90 && m.mode === 'spawn', `첫 표시 = 받은 x/z·지면 y·회전 즉시: ${mover.pos.toArray()} ${mover.yaw}`);
+  ok(m.receive(V(6), 0) === 'teleport' && mover.pos.x === 6 && mover.yaw === 0, '표시 위치에서 > 5 → 순간이동(위치·회전 즉시)');
+  ok(m.receive(V(6.8), 45) === 'rotate' && !m.interp.movePos && m.interp.moveRot, '≤ 1 → 회전 전용 Start(위치 flag 끔)');
+  ticks(30);
+  ok(mover.pos.x === 6 && Math.abs(mover.yaw - 45) < 1e-9, `회전만: 위치 그대로·몸 선회 도착: ${mover.pos.x} ${mover.yaw}`);
+  ok(m.receive(V(8), 90) === 'interp', '1 < d ≤ 5 → 위치·회전 Start');
+  ok(m.receive(V(8.5), 90) === 'interp', '거리 = 표시 위치(6) 기준 2.5 m → 보간(마지막 수신 8 기준이면 0.5 m 회전만)');
+  const acts = ticks(30);
+  const firstIdle = acts.indexOf('Idle');
+  ok(acts.slice(0, firstIdle).every((x) => x === 'Run') && firstIdle === 25, `보간 = Run 6 m/s(0.1 m/틱), 2.5 m = 25틱 뒤 도착: ${firstIdle}`);
+  ok(mover.pos.x === 8.5 && !m.interp.movePos, '도착 = 목표 x/z 로 맞추고 위치 flag 끔(TryFinish)');
+  ok(Math.abs(mover.yaw - 90) < 1e-9, '도착 뒤 수신 회전으로 선회');
+  m.receive(V(11), 90);
+  ticks(5);
+  const mid = mover.pos.x;
+  ok(Math.abs(mid - 9) < 1e-9, `보간 5틱 = 0.5 m: ${mid}`);
+  ok(m.receive(V(9.5), 90) === 'rotate', '진행 중 ≤ 1 수신 = 회전 전용');
+  ticks(10);
+  ok(mover.pos.x === mid, '회전 전용은 남은 위치 진행을 멈춤(원본 flag 0x0100)');
+  ok(m.receive(V(11), 90) === 'interp', '회전 전용 뒤 > 1 수신 = 다시 위치 Start');
+  ticks(30);
+  ok(mover.pos.x === 11 && mover.action === 'Idle', `회전 전용 뒤 새 목표로 정상 이동·도착: ${mover.pos.x}`);
+  m.receive(V(13), 90);
+  ticks(2);
+  ok(m.receive(V(30, 4), 90) === 'teleport' && mover.pos.x === 30 && mover.pos.y === 0, '순간이동도 지면 y 재투영');
+  ok(m.interp.movePos, '> 5 분기는 보간기를 멈추지 않음(원본 분기에 Stop 없음)');
+
+  const trial = (depth: number, moveTicks: number): { maxErr: number; finalErr: number; modes: Record<string, number>; acts: Record<string, number> } => {
+    const snd = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
+    const rcv = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
+    snd.place(V(-20, 0, 5), 90);
+    const rm = new RemoteMotion(rcv);
+    rm.spawn(snd.pos.clone(), 90);
+    const tx = new RemoteSender(0);
+    const DT = Math.fround(1 / 60);
+    let last = snd.pos.clone();
+    let maxErr = 0;
+    const modes: Record<string, number> = {};
+    const acts: Record<string, number> = {};
+    for (let i = 0; i < moveTicks + 120; i++) {
+      snd.tick(i < moveTicks ? leverToward(1, 0, depth) : NO_LEVER);
+      const a = rm.tick();
+      acts[a] = (acts[a] ?? 0) + 1;
+      const vel = [(snd.pos.x - last.x) / DT, (snd.pos.y - last.y) / DT, (snd.pos.z - last.z) / DT, 0];
+      last = snd.pos.clone();
+      if (tx.step(DT, vel)) {
+        const q = (v: number): number => Math.max(-32768, Math.min(32767, Math.round(v * 256))) / 256;
+        const md = rm.receive(V(q(snd.pos.x), q(snd.pos.y), q(snd.pos.z)), snd.yaw);
+        modes[md] = (modes[md] ?? 0) + 1;
+      }
+      if (i < moveTicks) maxErr = Math.max(maxErr, Math.hypot(snd.pos.x - rcv.pos.x, snd.pos.z - rcv.pos.z));
+    }
+    return { maxErr, finalErr: Math.hypot(snd.pos.x - rcv.pos.x, snd.pos.z - rcv.pos.z), modes, acts };
+  };
+  const walk = trial(0.5, 120);
+  const run = trial(1, 120);
+  console.log(`   직선 걷기 2 m/s 2 s(지연 0): 틱별 최대 오차 ${walk.maxErr.toFixed(3)} m, 멈춘 뒤 ${walk.finalErr.toFixed(3)} m, 수신 ${JSON.stringify(walk.modes)}, 표시 액션 ${JSON.stringify(walk.acts)}`);
+  console.log(`   직선 달리기 6 m/s 2 s(지연 0): 틱별 최대 오차 ${run.maxErr.toFixed(3)} m, 멈춘 뒤 ${run.finalErr.toFixed(3)} m, 수신 ${JSON.stringify(run.modes)}, 표시 액션 ${JSON.stringify(run.acts)}`);
+  ok(walk.maxErr <= 1 + (13 / 60) * 2 + 0.1 + 1e-6, `걷기 오차 ≤ 1(회전만 구간) + 13틱 송신 간격 × 2 m/s + 한 틱: ${walk.maxErr.toFixed(3)}`);
+  ok(run.maxErr <= (13 / 60) * 6 + 0.1 + 1e-6, `달리기 오차 ≤ 13틱 송신 간격 × 6 m/s + 한 틱: ${run.maxErr.toFixed(3)}`);
+  ok((walk.modes.rotate ?? 0) > 0 && (walk.modes.interp ?? 0) > 0, '걷기 = 회전만·보간이 섞임(0.4 m/패킷)');
+  ok((run.modes.rotate ?? 0) === 1 && (run.modes.interp ?? 0) > 0, '달리기 = 출발 첫 패킷(0.1 m)만 회전만, 나머지 보간(1.3 m/패킷 > 1)');
+  ok(!walk.acts.Walk && !run.acts.Walk, '표시 actor 는 보간 중 Run 만(원본 보간 속도 6 고정)');
+  ok(walk.finalErr <= 1 + (13 / 60) * 2 + 1e-6 && run.finalErr <= (13 / 60) * 6 + 1e-6, `멈춘 뒤 최종 차이(정지 좌표 미송신, 원본과 같음): 걷기 ${walk.finalErr.toFixed(3)}·달리기 ${run.finalErr.toFixed(3)}`);
 }
 
 console.log('3. 영역·다가가기(§6.10 ①)');

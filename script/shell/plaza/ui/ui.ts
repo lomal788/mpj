@@ -8,7 +8,7 @@ import { IDENTITY, MgmGuide, operationPlayerId, type Mat3, type MgmDrawHost, typ
 import { OnlineScreen, type OnlineAdapter, type OnlineEvent, type OnlineSelf, type RoomState } from '../../online';
 import { CARD_BTN, CardViewer, type CardEvent, type PlazaCardExtra } from './card';
 import { listStamps, stampSe, type PlazaUiExtra } from './data';
-import { RemoteSender, RemoteTable, SEND_SLOTS, type Quat, type RemoteMode, type Vec3 } from './net';
+import { RemoteSender, RemoteTable, SEND_SLOTS, type Quat, type Vec3 } from './net';
 import { PlayerStatusMgr, type PlayerStatus, type StatusPlayer } from './status';
 import { StampBalloon, StampCtrl, type StampEvent, type StampSlot } from './stamp';
 import { LocationTelop, OnlineGuide, PopGuide } from './telop';
@@ -25,7 +25,7 @@ export interface PlazaUiPlayer {
 export type PlazaUiOut =
   | { t: 'friendMenu'; open: boolean }
   | { t: 'stampList'; slot: number; open: boolean }
-  | { t: 'remote'; station: string; slot: number; chara: number; pos: Vec3; quat: Quat; mode: RemoteMode; speed: number }
+  | { t: 'remote'; station: string; slot: number; chara: number; pos: Vec3; quat: Quat }
   | { t: 'remoteLeft'; station: string }
   | { t: 'session'; on: boolean }
   | { t: 'lobby'; host: boolean; ready: boolean }
@@ -365,7 +365,8 @@ export class PlazaUi {
       if ((e.t === 'remoteInfo' || e.t === 'stamp') && !live.has(e.station)) continue;
       if (e.t === 'remoteInfo') {
         const r = this.remote.receive(e.station, e.slot, e.chara, e.pos, e.quat);
-        this.log.push(`remote ${e.station} ${r.mode}`);
+        this.log.push(`remote ${e.station} ${r.actor.rx}`);
+        this.out.push({ t: 'remote', station: e.station, slot: e.slot, chara: r.actor.chara, pos: [...r.actor.pos], quat: [...r.actor.quat] });
       } else if (e.t === 'stamp') {
         const slot = this.stamps.get(`${e.station}#${e.slot}`);
         if (slot && slot.balloon.finished) this.showStamp(slot, e.stamp);
@@ -386,9 +387,6 @@ export class PlazaUi {
         this.out.push({ t: 'remoteLeft', station: st });
       }
     this.cardTick(dt, opPad.trig);
-    this.remote.step(dt);
-    for (const a of this.remote.actors.values())
-      this.out.push({ t: 'remote', station: a.station, slot: a.slot, chara: a.chara, pos: [...a.pos], quat: [...a.quat], mode: a.mode, speed: a.speed });
 
     const df = dt * 60;
     this.status.update(df);
@@ -488,7 +486,7 @@ export class PlazaUi {
       pop: this.pop.st,
       online: this.online ? { ...this.online.summary(), netIdle: this.online.flow.netMenu.life.idle, netSel: this.online.flow.netMenu.sel, listIdle: this.online.flow.list.life.idle && !this.online.flow.list.rowsAnimating(), dialogIdle: this.online.flow.dialog.life.idle } : null,
       card: this.card ? { st: this.card.st, n: this.card.cards.length, index: this.card.index, guide: this.cardGuide?.shown ?? false } : null,
-      remote: [...this.remote.actors.values()].map((a) => `${a.station}:${a.mode}`),
+      remote: [...this.remote.actors.values()].map((a) => `${a.station}:${a.rx}`),
       log: this.log.slice(-20),
     };
   }

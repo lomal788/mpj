@@ -2,7 +2,7 @@
  * 광장 2D UI(D 갈래) 상태 시험 — script/shell/plaza/ui 를 실제 명세(mgmcommon/spec.json + online/online.json + mgm01/faces.json +
  * plaza/ui/plaza_ui.json)와 가짜 어댑터(FakeOnline)로 노드에서 돈다(WebGL 없음). 기대값 근거: docs/shell/plaza_3d.md §5.1(판독 규칙의 재구현 시험, 원본 실행 대조 아님).
  * ① 하단 줄 칸·이름·얼굴 ② 스탬프 조작부·목록·말풍선 시간·소리 ③ 장소 텔롭·다가가기 안내·온라인 안내 ④ 친구 매치 → 대기실 입장 알림·하단 줄 갱신·원격 스탬프
- * ⑤ 위치 동기(보내기 간격·받기 순간이동/회전/보간)
+ * ⑤ 위치 동기(보내기 간격·받기 표 = 수신 목표·수명, 패킷마다 net:remote — 거리 분기·보간은 test_plaza_actors.ts RemoteMotion)
  *
  *   npx tsx tools/test_plaza_ui.ts
  */
@@ -21,6 +21,7 @@ import {
   PlazaUi,
   RemoteActor,
   RemoteSender,
+  RemoteTable,
   StampBalloon,
   StampCtrl,
   STAMP_INOUT_FRAMES,
@@ -318,7 +319,12 @@ const P = (slot: number, chara: number, isCom: boolean, name: string): PlazaUiPl
   ok(c.until(() => c.sounds.includes('SQ_SE_STAMP_PC')) >= 0, '원격 스탬프 소리 SQ_SE_STAMP_PC');
   ok([...c.ui.stamps.values()].some((s) => s.remote && s.balloon.st === 0), '원격 말풍선');
   ok(c.ui.remote.actors.size >= 1, '원격 위치 받음');
-  ok(c.ui.out.some((e) => e.t === 'remote'), 'net:remote 사건');
+  ok(c.until(() => c.ui.out.some((e) => e.t === 'remote')) >= 0, 'net:remote 사건');
+  c.ui.out.length = 0;
+  c.tick(60);
+  const nRemote = c.ui.out.filter((e) => e.t === 'remote').length;
+  const nMembers = c.ui.remote.actors.size;
+  ok(nRemote >= 4 * nMembers && nRemote <= 6 * nMembers, `net:remote = 받은 패킷마다(1 s·원격 ${nMembers}: ${nRemote}건, 매 틱 발행이면 ${60 * nMembers})`);
   c.press(0, BTN.A, 3);
   eq(fl().step, 'lobby:host', '대기실 A(출발)는 막음 — 출발은 기구');  ok(c.ui.out.length >= 0 && sessionLog.includes(true), 'net:session true(방 생김)');
 
@@ -367,19 +373,15 @@ const P = (slot: number, chara: number, isCom: boolean, name: string): PlazaUiPl
   const q0: [number, number, number, number] = [0, 0, 0, 1];
   const q1: [number, number, number, number] = [0, Math.SQRT1_2, 0, Math.SQRT1_2];
   const a = new RemoteActor('st', 0, 1, [0, 0, 0], q0);
-  eq(a.receive([6, 0, 0], q1), 'teleport', '거리 > 5 순간이동');
-  eq(a.pos, [6, 0, 0], '바로 놓음');
-  eq(a.receive([6.5, 0, 0], q0), 'rotate', '거리 ≤ 1 회전만');
-  a.step(0.1);
-  eq(a.pos, [6, 0, 0], '회전만 = 위치 그대로');
-  a.step(0.1);
-  ok(Math.abs(a.quat[3] - 1) < 1e-6, '0.2 s 뒤 회전 도착');
-  eq(a.receive([9, 0, 0], q1), 'interp', '1 < 거리 ≤ 5 보간');
-  a.step(0.1);
-  ok(Math.abs(a.pos[0] - 7.5) < 1e-9, '0.1 s = 절반');
-  ok(a.speed > 14 && a.speed < 16, '보간 속도');
-  a.step(0.1);
-  ok(Math.abs(a.pos[0] - 9) < 1e-9, '0.2 s 도착');
+  a.receive([0.5, 0, 0], q1);
+  eq([a.pos, a.quat, a.rx], [[0.5, 0, 0], q1, 2], '받기 표 = 마지막 수신 목표 그대로(거리 무관, 보간 없음)');
+  const tb = new RemoteTable();
+  eq(tb.receive('s1', 0, 3, [1, 0, 0], q0).first, true, '처음 보는 (스테이션, 슬롯) = 새 항목');
+  eq(tb.receive('s1', 0, 3, [9, 0, 0], q1).first, false, '다음 수신 = 같은 항목 갱신');
+  tb.receive('s1', 1, 4, [2, 0, 0], q0);
+  tb.receive('s2', 0, 5, [3, 0, 0], q0);
+  eq(tb.remove('s1').length, 2, '이탈 = 그 스테이션의 모든 슬롯');
+  eq([...tb.actors.keys()], ['s2#0'], '다른 스테이션은 남음');
   const c = make([P(0, 0, false, 'Host')]);
   eq(c.ui.sendLocal(DT, 0, 0, [3, 0, 0, 0], [0, 0, 0], q0), false, '세션 없으면 안 보냄');
 }

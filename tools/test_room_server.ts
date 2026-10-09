@@ -42,6 +42,9 @@ import {
   type SioConnect,
 } from '../script/shell/online';
 import { applyPlazaUiExtra, PlazaUi, type PlazaUiExtra, type PlazaUiPlayer } from '../script/shell/plaza/ui';
+import * as THREE from 'three';
+import { leverToward, RemoteMotion } from '../script/shell/plaza/follow';
+import { NO_LEVER, PlazaMover, type Lever } from '../script/shell/plaza/player';
 import type { PlazaCardExtra } from '../script/shell/plaza/ui/card';
 import { createPlaza } from '../server/games/mpj-plaza';
 import { PlazaRooms } from '../server/games/mpj-plaza/rooms';
@@ -425,7 +428,7 @@ const self = (name: string, chara: number, more: [string, number][] = []): Onlin
     s.ui.tick(DT, new Map([[0, { hold: t, trig: t }]]));
     const all2 = s.ui.takeSendAll();
     if (s.ui.sendLocal(DT, 0, s.players[0].chara, [0, 0, 0, 0], [s === H ? 1 : -1, -2.4, 21], [0, 1, 0, 0], all2)) s.sent++;
-    for (const e of s.ui.out) s.outs.push(e.t === 'lobby' ? `lobby:${e.host}:${e.ready}` : e.t === 'remote' ? `remote:${e.mode}` : e.t);
+    for (const e of s.ui.out) s.outs.push(e.t === 'lobby' ? `lobby:${e.host}:${e.ready}` : e.t);
   };
   const run = async (pred: () => boolean, max = 6000): Promise<boolean> => {
     const t0 = Date.now();
@@ -552,12 +555,16 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
     /** follow.ts 와 같은 규칙(키 스테이션#순번, 이탈 = 스테이션의 모든 순번)으로 'net:remote'·'net:remoteLeft' 를 받아 둔 3D 원격 표 */
     shown: Set<string>;
     sounds: string[];
+    disp: Map<string, RemoteMotion>;
+    mover: PlazaMover | null;
+    lever: Lever;
+    lastPos: THREE.Vector3 | null;
   }
   const sides: Side[] = [];
   const make = (name: string, chara: number, x: number, net?: FakeOnline, b = base): Side => {
     const n = net ?? new SocketIoOnline({ base: b, self: { name, chara, humans: 1 }, io, timeout: 3 });
     const players = [{ slot: 0, chara, isCom: false, name }];
-    const s: Side = { name, ui: null as unknown as PlazaUi, net: n, next: 0, x, shown: new Set(), sounds: [] };
+    const s: Side = { name, ui: null as unknown as PlazaUi, net: n, next: 0, x, shown: new Set(), sounds: [], disp: new Map(), mover: null, lever: NO_LEVER, lastPos: null };
     s.ui = new PlazaUi({ host, extra: ext, net: n, players: () => players, pads: { poll: () => ({ hold: 0, trig: 0 }) }, sound: { playSe: (l: string) => s.sounds.push(l) } as never, card, selfCard: defaultCard(`${name}-card`, name) });
     sides.push(s);
     return s;
@@ -565,12 +572,34 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
   const step = (s: Side): void => {
     const t = s.next;
     s.next = 0;
+    s.mover?.tick(s.lever);
+    for (const m of s.disp.values()) m.tick();
     s.ui.out.length = 0;
     s.ui.tick(DT, new Map([[0, { hold: t, trig: t }]]));
-    s.ui.sendLocal(DT, 0, 0, [0, 0, 0, 0], [s.x, -2.4, 21], [0, 1, 0, 0], s.ui.takeSendAll());
+    if (s.mover) {
+      const p = s.mover.pos;
+      const lp = s.lastPos ?? p.clone();
+      s.lastPos = p.clone();
+      const yaw = THREE.MathUtils.degToRad(s.mover.yaw);
+      s.ui.sendLocal(DT, 0, 0, [(p.x - lp.x) / DT, (p.y - lp.y) / DT, (p.z - lp.z) / DT, 0], [p.x, p.y, p.z], [0, Math.sin(yaw / 2), 0, Math.cos(yaw / 2)], s.ui.takeSendAll());
+    } else s.ui.sendLocal(DT, 0, 0, [0, 0, 0, 0], [s.x, -2.4, 21], [0, 1, 0, 0], s.ui.takeSendAll());
     for (const e of s.ui.out) {
-      if (e.t === 'remote') s.shown.add(`${e.station}#${e.slot}`);
-      else if (e.t === 'remoteLeft') for (const k of [...s.shown]) if (k.startsWith(`${e.station}#`)) s.shown.delete(k);
+      if (e.t === 'remote') {
+        const k = `${e.station}#${e.slot}`;
+        s.shown.add(k);
+        const pos = new THREE.Vector3(e.pos[0], e.pos[1], e.pos[2]);
+        const yaw = THREE.MathUtils.radToDeg(2 * Math.atan2(e.quat[1], e.quat[3]));
+        const d = s.disp.get(k);
+        if (d) d.receive(pos, yaw);
+        else {
+          const m = new RemoteMotion(new PlazaMover({ radius: 0.9, height: 1.6 }, null));
+          m.spawn(pos, yaw);
+          s.disp.set(k, m);
+        }
+      } else if (e.t === 'remoteLeft') {
+        for (const k of [...s.shown]) if (k.startsWith(`${e.station}#`)) s.shown.delete(k);
+        for (const k of [...s.disp.keys()]) if (k.startsWith(`${e.station}#`)) s.disp.delete(k);
+      }
     }
   };
   const run = async (pred: () => boolean, max = 8000): Promise<boolean> => {
@@ -640,6 +669,7 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
   };
   const solo = (s: Side, what: string): void => {
     eq([!!s.ui.online, !!s.ui.room, stations(s), [...s.shown]], [false, false, [], []], `${what}: 혼자 광장(흐름 끝·방 없음·원격 표·3D 없음)`);
+    eq(s.disp.size, 0, `${what}: 원격 표시 actor(보간기) 없음`);
     if (s.net instanceof SocketIoOnline) eq(s.net.socketOpen, false, `${what}: 소켓 닫힘`);
   };
 
@@ -654,6 +684,59 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
     ok(await joinFirst(C), '손님 참가 → 대기실');
     ok(await run(() => stations(H).length === 1 && stations(C).length === 1 && shownSt(H).length === 1 && shownSt(C).length === 1), '양쪽 광장에 서로 보임(원격 표·3D)');
     eq([names(H), names(C)], [['Aya', 'Bo'], ['Aya', 'Bo']], '하단 줄 양쪽');
+
+    console.log('  원격 위치 보간(실제 서버·두 광장 UI → 표시 actor 의 AutoInterpolation 하나, 12_online_sync §6.2.1)');
+    eq(C.disp.size, 1, '손님 화면 원격 표시 actor 1');
+    const hKey = [...C.disp.keys()][0];
+    const disp = C.disp.get(hKey)!;
+    ok(Math.abs(disp.mover.pos.x - H.x) < 1e-6 && disp.mode === 'spawn', '첫 표시 = sendAll 좌표');
+    H.mover = new PlazaMover({ radius: 0.9, height: 1.6 }, null);
+    H.mover.place(new THREE.Vector3(H.x, -2.4, 21), 180);
+    const errOf = (): number => Math.hypot(H.mover!.pos.x - disp.mover.pos.x, H.mover!.pos.z - disp.mover.pos.z);
+    const trial = async (depth: number, moveTicks: number): Promise<{ maxErr: number; finalErr: number; modes: Record<string, number>; acts: Record<string, number>; lastWire: number }> => {
+      const modes: Record<string, number> = {};
+      const acts: Record<string, number> = {};
+      let rx = disp.rx;
+      let maxErr = 0;
+      H.lever = leverToward(1, 0, depth);
+      for (let i = 0; i < moveTicks + 90; i++) {
+        if (i === moveTicks) H.lever = NO_LEVER;
+        for (const s of sides) step(s);
+        acts[disp.mover.action] = (acts[disp.mover.action] ?? 0) + 1;
+        if (disp.rx !== rx) {
+          modes[disp.mode] = (modes[disp.mode] ?? 0) + 1;
+          rx = disp.rx;
+        }
+        if (i < moveTicks) maxErr = Math.max(maxErr, errOf());
+        await sleep(2);
+      }
+      return { maxErr, finalErr: errOf(), modes, acts, lastWire: C.ui.remote.actors.get(hKey)!.pos[0] };
+    };
+    const walk = await trial(0.5, 120);
+    console.log(`   걷기 2 m/s 2 s: 틱별 최대 오차 ${walk.maxErr.toFixed(3)} m, 멈춘 뒤 ${walk.finalErr.toFixed(3)} m(송신자 x ${H.mover.pos.x.toFixed(3)}·마지막 수신 ${walk.lastWire.toFixed(3)}·표시 ${disp.mover.pos.x.toFixed(3)}), 수신 분기 ${JSON.stringify(walk.modes)}, 표시 액션 ${JSON.stringify(walk.acts)}`);
+    ok((walk.modes.rotate ?? 0) > 0 && (walk.modes.interp ?? 0) > 0, '걷기: 표시 위치 기준 ≤ 1 회전만·> 1 보간이 섞임');
+    ok(walk.maxErr <= 1 + (13 / 60) * 2 + 0.3, `걷기 틱별 오차 ≤ 1 + 13틱×2 m/s + 지연 여유 0.3: ${walk.maxErr.toFixed(3)}`);
+    ok(!walk.acts.Walk, '표시 actor 보간 = Run(속도 6)');
+    ok(walk.finalErr <= 1 + (13 / 60) * 2 + 1e-6, `걷기 멈춘 뒤 차이 ≤ 회전만 1 + 미송신 13틱: ${walk.finalErr.toFixed(3)}`);
+    const runR = await trial(1, 120);
+    console.log(`   달리기 6 m/s 2 s: 틱별 최대 오차 ${runR.maxErr.toFixed(3)} m, 멈춘 뒤 ${runR.finalErr.toFixed(3)} m(송신자 x ${H.mover.pos.x.toFixed(3)}·마지막 수신 ${runR.lastWire.toFixed(3)}·표시 ${disp.mover.pos.x.toFixed(3)}), 수신 분기 ${JSON.stringify(runR.modes)}, 표시 액션 ${JSON.stringify(runR.acts)}`);
+    ok((runR.modes.interp ?? 0) >= 8 && (runR.modes.rotate ?? 0) <= 1, '달리기: 출발 첫 패킷 말고 모두 보간');
+    ok(runR.maxErr <= (13 / 60) * 6 + 0.1 + 0.6, `달리기 틱별 오차 ≤ 13틱×6 m/s + 한 틱 + 지연 여유 0.6: ${runR.maxErr.toFixed(3)}`);
+    ok(runR.finalErr <= (13 / 60) * 6 + 1e-6, `달리기 멈춘 뒤 차이 ≤ 미송신 13틱: ${runR.finalErr.toFixed(3)}`);
+    ok(Math.abs(disp.mover.pos.x - runR.lastWire) <= 1 + 1e-6, '멈춘 뒤 표시 = 마지막 수신에서 ≤ 1(회전만 구간)');
+    const sentStop = (H.net as SocketIoOnline).stat.sent;
+    for (let i = 0; i < 30; i++) {
+      for (const s of sides) step(s);
+      await sleep(2);
+    }
+    eq((H.net as SocketIoOnline).stat.sent, sentStop, '정지 뒤 위치 추가 송신 없음(원본과 같음)');
+    const tpX = H.mover.pos.x - 8;
+    H.mover.place(new THREE.Vector3(tpX, -2.4, 21), 90);
+    ok(await run(() => disp.mode === 'teleport'), '송신자 8 m 이동 → 표시 위치 기준 > 5 순간이동');
+    ok(Math.abs(disp.mover.pos.x - tpX) < 0.01, `순간이동 = 받은 좌표 즉시: ${disp.mover.pos.x.toFixed(3)}`);
+    H.x = H.mover.pos.x;
+    H.mover = null;
+    H.lastPos = null;
     ok(await openList(D), '셋째 방 찾기');
     eq(flow(D)!.rooms.map((r) => [r.id, r.members]), [[roomId, [0, 3]]], '목록 인원 = 2(참가 반영)');
     ok(await joinFirst(D), '셋째 참가');
@@ -683,6 +766,7 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
     ok(await joinFirst(C), '다시 참가');
     ok(await run(() => [H, C, D].every((s) => stations(s).length === 2 && shownSt(s).length === 2 && s.ui.status.bySlot.size === 3)), '다시 셋: 잔상 없이 원격 2·3D 2·하단 줄 3');
     ok(!stations(H).includes(cSt) && !shownSt(H).includes(cSt), '이전 스테이션 잔상 없음');
+    ok([H, C, D].every((s) => s.disp.size === 2) && ![...H.disp.keys()].some((k) => k.startsWith(`${cSt}#`)), '다시 셋: 원격 표시 actor(보간기) 2·이전 스테이션 잔상 없음');
     eq(stations(H), remoteSt(H), '방장 원격 표 = 방 멤버 스테이션');
 
     console.log('  네트워크 끊김(핑 시간 초과)');

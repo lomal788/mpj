@@ -4,10 +4,13 @@
  * PlayerManager::OnReceive @0x71000421e0].
  * - 광장에 만드는 플레이어 = PlayerType≠1(COM 아님)·이 기기 사람. 슬롯 i 는 슬롯 i−1 을 따른다. 시작 = pc_plaza_balloon_pos_p<사람 수>_pc<i>.
  * - 캐릭터·이동 = B 의 PlazaCharaLoader·PlazaMover(ComActor 땅 이동). AutoInterpolation 은 목표 쪽 수평 단위 방향을 깊이 1(달리기 6 = 기본 속도 6.0) 레버로 준다 [근사].
+ * - 원격 표시 actor 하나 = RemoteMotion(표시 PlazaMover + AutoInterpolation 하나 + OnReceive 거리 분기, 거리 = 표시 위치 기준) — docs/engine/12_online_sync.md §6.2.1.
+ *   AutoInterpolation 필드 = 목표 위치 +0x40·목표 회전 +0x50·위치 flag +0x60·회전 flag +0x61·속도 +0x64 [판독 main @0x710002023c·@0x7100020628].
  */
 import * as THREE from 'three';
 import { MeshCollider } from '../stage3d';
-import { ACTION_MOTION, NO_LEVER, PlazaCharaLoader, PlazaMover, shapeOf, type Lever, type PlazaChara } from './player';
+import { ACTION_MOTION, NO_LEVER, PlazaCharaLoader, PlazaMover, shapeOf, type ActionName, type Lever, type PlazaChara } from './player';
+import { ROTATE_ONLY_DIST, TELEPORT_DIST, type RemoteMode } from './ui/net';
 import type { PlazaActor, PlazaContext, PlazaPart, PlazaPartFactory, PlazaPlayerSetup } from './types';
 
 /** ComFollowPlayer 상수 [판독] */
@@ -84,7 +87,7 @@ export class FollowLogic {
 }
 
 /** ComActorAutoInterpolation::Calculate/TryFinish: 수평 단위 방향, 남은 거리 ≤ 속도·dt 면 도착 */
-export function autoInterp(self: THREE.Vector3, target: THREE.Vector3, speed = FOLLOW.speed, dt = 1 / 60): { dirX: number; dirZ: number; arrive: boolean } {
+export function autoInterp(self: THREE.Vector3, target: THREE.Vector3, speed: number = FOLLOW.speed, dt = 1 / 60): { dirX: number; dirZ: number; arrive: boolean } {
   const dx = target.x - self.x;
   const dz = target.z - self.z;
   const l = Math.hypot(dx, dz);
@@ -94,6 +97,93 @@ export function autoInterp(self: THREE.Vector3, target: THREE.Vector3, speed = F
 
 export function leverToward(dirX: number, dirZ: number, depth = 1): Lever {
   return { depth, dirX, dirZ, deg: THREE.MathUtils.radToDeg(Math.atan2(dirX, dirZ)) };
+}
+
+export class AutoInterpolation {
+  speed: number = FOLLOW.speed;
+  readonly pos = new THREE.Vector3();
+  yaw = 0;
+  movePos = false;
+  moveRot = false;
+
+  start(pos: THREE.Vector3, yawDeg: number): void {
+    this.pos.copy(pos);
+    this.yaw = yawDeg;
+    this.movePos = true;
+    this.moveRot = true;
+  }
+
+  startRotate(yawDeg: number): void {
+    this.yaw = yawDeg;
+    this.movePos = false;
+    this.moveRot = true;
+  }
+
+  stop(): void {
+    this.movePos = false;
+    this.moveRot = false;
+  }
+
+  calculate(m: PlazaMover, dt = 1 / 60): Lever {
+    if (this.movePos) {
+      const r = autoInterp(m.pos, this.pos, this.speed, dt);
+      if (!r.arrive) return leverToward(r.dirX, r.dirZ);
+      m.pos.x = this.pos.x;
+      m.pos.z = this.pos.z;
+      this.movePos = false;
+    }
+    if (this.moveRot) {
+      m.targetYaw = this.yaw;
+      this.moveRot = false;
+    }
+    return NO_LEVER;
+  }
+}
+
+export class RemoteMotion {
+  readonly interp = new AutoInterpolation();
+  mode: RemoteMode = 'spawn';
+  rx = 0;
+
+  constructor(readonly mover: PlazaMover) {}
+
+  private ground(p: THREE.Vector3): THREE.Vector3 {
+    const g = this.mover.collider?.groundHeight(p.x, p.z, p.y + 2);
+    if (g) p.y = g.y;
+    return p;
+  }
+
+  spawn(pos: THREE.Vector3, yawDeg: number): void {
+    this.mover.place(this.ground(pos.clone()), yawDeg);
+    this.interp.stop();
+    this.mode = 'spawn';
+    this.rx++;
+  }
+
+  /** OnReceive: 거리 > 5 순간이동, ≤ 1 회전만, 사이 = 위치·회전 보간 [판독] */
+  receive(pos: THREE.Vector3, yawDeg: number): RemoteMode {
+    this.rx++;
+    const d = this.mover.pos.distanceTo(pos);
+    if (d > TELEPORT_DIST) {
+      this.mover.place(this.ground(pos.clone()), yawDeg);
+      this.mode = 'teleport';
+    } else if (d <= ROTATE_ONLY_DIST) {
+      this.interp.startRotate(yawDeg);
+      this.mode = 'rotate';
+    } else {
+      this.interp.start(pos, yawDeg);
+      this.mode = 'interp';
+    }
+    return this.mode;
+  }
+
+  tick(): ActionName {
+    const a = this.mover.tick(this.interp.calculate(this.mover));
+    const p = this.mover.pos;
+    const top = this.mover.collider?.groundHeight(p.x, p.z);
+    if (top && p.y < top.y - 1) this.mover.place(new THREE.Vector3(p.x, top.y, p.z), this.mover.yaw);
+    return a;
+  }
 }
 
 /** 광선 대 삼각형(원본 충돌 메시, PhysicsModule::CastRayAll 필터 4 자리) */
@@ -149,9 +239,7 @@ interface Follower extends Body {
 
 interface Remote extends Body {
   station: string;
-  target: THREE.Vector3 | null;
-  yawTarget: number | null;
-  speed: number;
+  motion: RemoteMotion;
 }
 
 /** 원격 표시 사건(D 의 FakeOnline/online, docs §5.1) */
@@ -161,8 +249,6 @@ export interface NetRemote {
   chara: string;
   pos: number[];
   quat: number[];
-  mode: 'spawn' | 'teleport' | 'rotate' | 'interp';
-  speed: number;
 }
 
 export class FollowSystem {
@@ -172,7 +258,7 @@ export class FollowSystem {
   private loader: PlazaCharaLoader | null = null;
   private acc = 0;
   private readonly blocked: RayBlocked;
-  private readonly loading = new Set<string>();
+  private readonly loading = new Map<string, NetRemote>();
   enabled = true;
 
   constructor(private readonly ctx: PlazaContext) {
@@ -238,59 +324,39 @@ export class FollowSystem {
       this.tickBody(f, lever);
     }
     for (const r of this.remotes.values()) {
-      let lever = NO_LEVER;
-      if (r.target) {
-        const ai = autoInterp(r.mover.pos, r.target);
-        if (ai.arrive) {
-          r.mover.pos.x = r.target.x;
-          r.mover.pos.z = r.target.z;
-          r.target = null;
-        } else lever = leverToward(ai.dirX, ai.dirZ, r.speed > 2 + 1e-3 ? 1 : 0.5);
-      }
-      if (!r.target && r.yawTarget !== null) {
-        r.mover.targetYaw = r.yawTarget;
-        r.yawTarget = null;
-      }
-      this.tickBody(r, lever);
-      const p = r.mover.pos;
-      const top = this.ctx.world.collider.groundHeight(p.x, p.z);
-      if (top && p.y < top.y - 1) r.mover.place(new THREE.Vector3(p.x, top.y, p.z), r.mover.yaw);
+      const a = r.motion.tick();
+      if (a !== 'Fall') r.chara.play(ACTION_MOTION[a]);
+      r.chara.tick();
     }
   }
 
-  /** PlayerManager::OnReceive 결과(mode 는 D 가 원본 규칙 > 5 순간이동·≤ 1 회전만·그 사이 보간으로 정함) */
+  /** PlayerManager::OnReceive 결과(mode 는 RemoteMotion.receive 가 표시 위치 기준 원본 규칙 > 5 순간이동·≤ 1 회전만·그 사이 보간으로 정함) */
   async remote(e: NetRemote): Promise<void> {
     const key = `${e.station}#${e.slot}`;
-    let r = this.remotes.get(key);
+    const r = this.remotes.get(key);
     const pos = new THREE.Vector3(e.pos[0], e.pos[1], e.pos[2]);
-    const ground = this.ctx.world.collider.groundHeight(pos.x, pos.z, pos.y + 2);
-    if (ground) pos.y = ground.y;
     const yaw = yawOfQuat(new THREE.Quaternion(e.quat[0], e.quat[1], e.quat[2], e.quat[3]));
     if (!r) {
-      if (this.loading.has(key)) return;
-      this.loading.add(key);
+      if (this.loading.has(key)) {
+        this.loading.set(key, e);
+        return;
+      }
+      this.loading.set(key, e);
       const b = await this.body(e.chara, e.slot, 'remote');
-      if (!this.loading.delete(key)) {
+      const last = this.loading.get(key);
+      if (!last) {
         this.drop(b.actor, b.chara);
         return;
       }
-      b.mover.place(pos, yaw);
-      r = { ...b, station: e.station, target: null, yawTarget: null, speed: 0 };
-      this.remotes.set(key, r);
-      this.sync(r);
+      this.loading.delete(key);
+      const motion = new RemoteMotion(b.mover);
+      motion.spawn(new THREE.Vector3(last.pos[0], last.pos[1], last.pos[2]), yawOfQuat(new THREE.Quaternion(last.quat[0], last.quat[1], last.quat[2], last.quat[3])));
+      const nr: Remote = { ...b, station: e.station, motion };
+      this.remotes.set(key, nr);
+      this.sync(nr);
       return;
     }
-    r.speed = e.speed;
-    if (e.mode === 'spawn' || e.mode === 'teleport') {
-      r.mover.place(pos, yaw);
-      r.target = null;
-    } else if (e.mode === 'rotate') {
-      r.target = null;
-      r.yawTarget = yaw;
-    } else {
-      r.target = pos;
-      r.yawTarget = yaw;
-    }
+    r.motion.receive(pos, yaw);
   }
 
   private drop(actor: PlazaActor, chara: PlazaChara): void {
@@ -301,7 +367,7 @@ export class FollowSystem {
 
   /** 스테이션 이탈·세션 끝(ResetRemotePlayer) — 그 스테이션의 모든 슬롯 */
   removeRemote(station: string): void {
-    for (const k of [...this.loading]) if (k.startsWith(`${station}#`)) this.loading.delete(k);
+    for (const k of [...this.loading.keys()]) if (k.startsWith(`${station}#`)) this.loading.delete(k);
     for (const [k, r] of [...this.remotes]) {
       if (r.station !== station) continue;
       this.drop(r.actor, r.chara);
@@ -337,7 +403,7 @@ export class FollowSystem {
         trail: f.logic.count,
         motion: f.chara.motion,
       })),
-      remotes: [...this.remotes.values()].map((r) => ({ station: r.station, slot: r.actor.slot, pc: r.chara.spec.pc, pos: r.mover.pos.toArray(), motion: r.chara.motion })),
+      remotes: [...this.remotes.values()].map((r) => ({ station: r.station, slot: r.actor.slot, pc: r.chara.spec.pc, pos: r.mover.pos.toArray(), motion: r.chara.motion, mode: r.motion.mode, rx: r.motion.rx, target: r.motion.interp.movePos ? r.motion.interp.pos.toArray() : null, rot: r.motion.interp.moveRot })),
     };
   }
 

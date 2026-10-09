@@ -1,6 +1,6 @@
 /**
  * 광장 원격 플레이어 위치 동기 — ComPlayerUtil::ReceiveMessageImpl(보내기)·PlayerManager::OnReceive(받기). docs/shell/plaza_3d.md §2·§5.1 ⑥.
- * 순수 계산(three 없음). 보간 시간은 [미확정] → 0.2 s 선형·slerp [근사].
+ * 순수 계산(three 없음). 받기 표는 수신 목표·(스테이션, 슬롯)·수명만 — 보간·거리 분기는 표시 actor(follow.ts RemoteMotion) 하나가 한다(docs/engine/12_online_sync.md §6.2.1).
  */
 
 export type Vec3 = [number, number, number];
@@ -14,8 +14,6 @@ export const MOVE_SPEED2 = 0.1;
 export const TELEPORT_DIST = 5;
 /** 회전만 거리 [판독] */
 export const ROTATE_ONLY_DIST = 1;
-/** 보간 시간 [근사] */
-export const INTERP_SEC = 0.2;
 /** 보내는 로컬 슬롯 상한(+0x28 < 4) [판독] */
 export const SEND_SLOTS = 4;
 
@@ -39,37 +37,13 @@ export class RemoteSender {
   }
 }
 
-const dist = (a: Vec3, b: Vec3): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
-
-function slerp(a: Quat, b: Quat, t: number): Quat {
-  let d = a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
-  let bb: Quat = b;
-  if (d < 0) {
-    d = -d;
-    bb = [-b[0], -b[1], -b[2], -b[3]];
-  }
-  if (d > 0.9995) {
-    const q = a.map((v, i) => v + (bb[i] - v) * t) as Quat;
-    const l = Math.hypot(...q);
-    return q.map((v) => v / l) as Quat;
-  }
-  const th = Math.acos(d);
-  const s = Math.sin(th);
-  const wa = Math.sin((1 - t) * th) / s;
-  const wb = Math.sin(t * th) / s;
-  return a.map((v, i) => v * wa + bb[i] * wb) as Quat;
-}
-
 export type RemoteMode = 'spawn' | 'teleport' | 'rotate' | 'interp';
 
-/** 원격 플레이어 하나(스테이션·슬롯) — 받은 값을 표시 위치로 */
+/** 원격 플레이어 하나(스테이션·슬롯) — 받은 값(표시 actor 의 목표) */
 export class RemoteActor {
   pos: Vec3;
   quat: Quat;
-  mode: RemoteMode = 'spawn';
-  private from: { pos: Vec3; quat: Quat } | null = null;
-  private to: { pos: Vec3; quat: Quat } | null = null;
-  private t = 0;
+  rx = 1;
   constructor(
     readonly station: string,
     readonly slot: number,
@@ -81,46 +55,10 @@ export class RemoteActor {
     this.quat = [...quat];
   }
 
-  /** OnReceive: 거리 > 5 순간이동, ≤ 1 회전만, 사이 = 위치·회전 보간 [판독] */
-  receive(pos: Vec3, quat: Quat): RemoteMode {
-    const d = dist(this.pos, pos);
-    if (d > TELEPORT_DIST) {
-      this.pos = [...pos];
-      this.quat = [...quat];
-      this.to = null;
-      this.mode = 'teleport';
-    } else if (d <= ROTATE_ONLY_DIST) {
-      this.from = { pos: [...this.pos], quat: [...this.quat] };
-      this.to = { pos: [...this.pos], quat: [...quat] };
-      this.t = 0;
-      this.mode = 'rotate';
-    } else {
-      this.from = { pos: [...this.pos], quat: [...this.quat] };
-      this.to = { pos: [...pos], quat: [...quat] };
-      this.t = 0;
-      this.mode = 'interp';
-    }
-    return this.mode;
-  }
-
-  /** 수평 속도(m/s, 걷기·달리기 모션 고르기용 — 부르는 쪽) */
-  speed = 0;
-
-  step(dt: number): void {
-    if (!this.from || !this.to) {
-      this.speed = 0;
-      return;
-    }
-    const before = this.pos;
-    this.t = Math.min(1, this.t + dt / INTERP_SEC);
-    const k = this.t;
-    this.pos = this.from.pos.map((v, i) => v + (this.to!.pos[i] - v) * k) as Vec3;
-    this.quat = slerp(this.from.quat, this.to.quat, k);
-    this.speed = dt > 0 ? Math.hypot(this.pos[0] - before[0], this.pos[2] - before[2]) / dt : 0;
-    if (this.t >= 1) {
-      this.from = null;
-      this.to = null;
-    }
+  receive(pos: Vec3, quat: Quat): void {
+    this.pos = [...pos];
+    this.quat = [...quat];
+    this.rx++;
   }
 }
 
@@ -131,15 +69,16 @@ export class RemoteTable {
     return `${station}#${slot}`;
   }
   /** 처음 보는 (스테이션, 슬롯) = 그 캐릭터로 만들고 바로 놓음 [판독] */
-  receive(station: string, slot: number, chara: number, pos: Vec3, quat: Quat): { actor: RemoteActor; mode: RemoteMode } {
+  receive(station: string, slot: number, chara: number, pos: Vec3, quat: Quat): { actor: RemoteActor; first: boolean } {
     const k = this.key(station, slot);
     let a = this.actors.get(k);
     if (!a) {
       a = new RemoteActor(station, slot, chara, pos, quat);
       this.actors.set(k, a);
-      return { actor: a, mode: 'spawn' };
+      return { actor: a, first: true };
     }
-    return { actor: a, mode: a.receive(pos, quat) };
+    a.receive(pos, quat);
+    return { actor: a, first: false };
   }
   remove(station: string): RemoteActor[] {
     const out: RemoteActor[] = [];
@@ -149,8 +88,5 @@ export class RemoteTable {
         this.actors.delete(k);
       }
     return out;
-  }
-  step(dt: number): void {
-    for (const a of this.actors.values()) a.step(dt);
   }
 }

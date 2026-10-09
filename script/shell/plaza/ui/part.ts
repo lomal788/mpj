@@ -2,7 +2,7 @@
  * 광장 D 갈래 부품(PlazaPart 'ui') — 하단 파티 줄·장소 텔롭·다가가기 안내·스탬프·온라인(친구 매치·대기실)·위치 동기를 광장에 붙인다.
  * 계약: ../types.ts(A). 갈래 신호(SHARED 합의, docs/shell/plaza_3d.md §5.1):
  *   듣기 'interact:telop' {area, visible, detail?} · 'interact:decide' {result}(3 = 친구 매치 메뉴) · 'interact:pop' {visible, x, y}(레이아웃 좌표) 또는 {visible, ndc:[x,y]} · 'ui:mainLayout' boolean
- *   내기 'ui:friendMenu' boolean · 'ui:stampList' {slot, open} · 'net:remote' {station, slot, chara 'pcNN', pos, quat, mode, speed} · 'net:remoteLeft' {station} · 'net:session' boolean(방 접속 여부가 바뀔 때)
+ *   내기 'ui:friendMenu' boolean · 'ui:stampList' {slot, open} · 'net:remote' {station, slot, chara 'pcNN', pos, quat}(받은 패킷마다) · 'net:remoteLeft' {station} · 'net:session' boolean(방 접속 여부가 바뀔 때)
  *   대기실(docs/shell/plaza_3d.md §5.2): 내기 'net:lobby' {host, ready} · 'net:started'(PlaySession — 모두 모드 메뉴로), 듣기 'net:playSession'(방장 기구 결정)
  * 온라인(docs/shell/online.md 9.5·9.6): 기본 = 실제 방 서버(SocketIoOnline, HTTP + socket.io 바이너리, 페이지와 같은 출처 — npm run dev·server/main.ts), server=http://호스트:포트 로 바꿈.
  * 시험값(URL): online=fake = 가짜 온라인(시험·데모: join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7)), online=off = 가짜·방 없음, first=1.
@@ -185,7 +185,7 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
     for (const e of ui.out) {
       if (e.t === 'friendMenu') ctx.emit('ui:friendMenu', e.open);
       else if (e.t === 'stampList') ctx.emit('ui:stampList', { slot: e.slot, open: e.open });
-      else if (e.t === 'remote') ctx.emit('net:remote', { station: e.station, slot: e.slot, chara: CHARA_PC[e.chara] ?? CHARA_PC[0], pos: e.pos, quat: e.quat, mode: e.mode, speed: e.speed });
+      else if (e.t === 'remote') ctx.emit('net:remote', { station: e.station, slot: e.slot, chara: CHARA_PC[e.chara] ?? CHARA_PC[0], pos: e.pos, quat: e.quat });
       else if (e.t === 'remoteLeft') ctx.emit('net:remoteLeft', { station: e.station });
       else if (e.t === 'session') ctx.emit('net:session', e.on);
       else if (e.t === 'lobby') ctx.emit('net:lobby', { host: e.host, ready: e.ready });

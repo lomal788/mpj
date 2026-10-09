@@ -1973,11 +1973,51 @@
  },
  "graphs": [
   {
+   "material": "grass00_mt",
+   "models": [
+    "mg0101_cliff00"
+   ],
+   "program": "graph:9c5e8f1498319b1d3bcec201a44ca61f81748c521644be2730ead37702ae59d9:342840ee7de5",
+   "samplers": {
+    "sgLayer10": "mg0101_windnoise00"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgWindD = ENV0.y * 1000.0; float sgWindPhase = float(mpjWorldFrame % uint(sgWindD)) / sgWindD; float sgWindA = (-ENV0.z - 45.0) * 0.01745329238474369; vec2 sgWindQ = (worldPos.xz * 0.10000000149011612) * ENV0.x; vec2 sgWindUV = fract(vec2(cos(sgWindA)*sgWindQ.x - sin(sgWindA)*sgWindQ.y, sin(sgWindA)*sgWindQ.x + cos(sgWindA)*sgWindQ.y) + sgWindPhase); float sgWindAmp = T(\"sgLayer10\", sgWindUV).r * ENV0.w; float sgWindDir = ENV0.z * 0.01745329238474369;",
+   "positionOffset": "(sgWindAmp * vec3(sin(sgWindDir), 0.0, -cos(sgWindDir))) * c0.y + (sgWindAmp * nrmW) * c0.x",
+   "positionSpace": "world",
+   "approx": "Stage60fps 누적 프레임·원본 renderer epoch/gate 대응 미확정; 원본 env sampler filter/address/LOD 미확정",
+   "samplerSources": {
+    "sgLayer10": "environment"
+   }
+  },
+  {
+   "material": "grass00_mt",
+   "models": [
+    "mg0101_cliff01"
+   ],
+   "program": "graph:9c5e8f1498319b1d3bcec201a44ca61f81748c521644be2730ead37702ae59d9:342840ee7de5",
+   "samplers": {
+    "sgLayer10": "mg0101_windnoise00"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgWindD = ENV0.y * 1000.0; float sgWindPhase = float(mpjWorldFrame % uint(sgWindD)) / sgWindD; float sgWindA = (-ENV0.z - 45.0) * 0.01745329238474369; vec2 sgWindQ = (worldPos.xz * 0.10000000149011612) * ENV0.x; vec2 sgWindUV = fract(vec2(cos(sgWindA)*sgWindQ.x - sin(sgWindA)*sgWindQ.y, sin(sgWindA)*sgWindQ.x + cos(sgWindA)*sgWindQ.y) + sgWindPhase); float sgWindAmp = T(\"sgLayer10\", sgWindUV).r * ENV0.w; float sgWindDir = ENV0.z * 0.01745329238474369;",
+   "positionOffset": "(sgWindAmp * vec3(sin(sgWindDir), 0.0, -cos(sgWindDir))) * c0.y + (sgWindAmp * nrmW) * c0.x",
+   "positionSpace": "world",
+   "approx": "Stage60fps 누적 프레임·원본 renderer epoch/gate 대응 미확정; 원본 env sampler filter/address/LOD 미확정",
+   "samplerSources": {
+    "sgLayer10": "environment"
+   }
+  },
+  {
    "material": "mg0101_fld12_mt",
    "models": [
     "mg0101_fld1"
    ],
-   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:f787c271dd57",
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:8805d806bda5",
    "samplers": {
     "pack_texture2d1": "mg0101_fld12_pack0_b",
     "sg_utility_texture2d4": "mg0101_detail00_nml",
@@ -2003,7 +2043,7 @@
    "models": [
     "mg0101_fld2"
    ],
-   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:f787c271dd57",
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:8805d806bda5",
    "samplers": {
     "pack_texture2d1": "mg0101_fld12_pack0_b",
     "sg_utility_texture2d4": "mg0101_detail00_nml",
@@ -2025,11 +2065,31 @@
    "aoMode": "replace"
   },
   {
+   "material": "grass00_mt",
+   "models": [
+    "mg0101_fld2"
+   ],
+   "program": "graph:9c5e8f1498319b1d3bcec201a44ca61f81748c521644be2730ead37702ae59d9:342840ee7de5",
+   "samplers": {
+    "sgLayer10": "mg0101_windnoise00"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgWindD = ENV0.y * 1000.0; float sgWindPhase = float(mpjWorldFrame % uint(sgWindD)) / sgWindD; float sgWindA = (-ENV0.z - 45.0) * 0.01745329238474369; vec2 sgWindQ = (worldPos.xz * 0.10000000149011612) * ENV0.x; vec2 sgWindUV = fract(vec2(cos(sgWindA)*sgWindQ.x - sin(sgWindA)*sgWindQ.y, sin(sgWindA)*sgWindQ.x + cos(sgWindA)*sgWindQ.y) + sgWindPhase); float sgWindAmp = T(\"sgLayer10\", sgWindUV).r * ENV0.w; float sgWindDir = ENV0.z * 0.01745329238474369;",
+   "positionOffset": "(sgWindAmp * vec3(sin(sgWindDir), 0.0, -cos(sgWindDir))) * c0.y + (sgWindAmp * nrmW) * c0.x",
+   "positionSpace": "world",
+   "approx": "Stage60fps 누적 프레임·원본 renderer epoch/gate 대응 미확정; 원본 env sampler filter/address/LOD 미확정",
+   "samplerSources": {
+    "sgLayer10": "environment"
+   }
+  },
+  {
    "material": "mg0101_fld34_mt",
    "models": [
     "mg0101_fld3"
    ],
-   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:14fd42af11af",
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:fc8b76265aad",
    "samplers": {
     "pack_texture2d1": "mg0101_fld34_pack0_b",
     "sg_utility_texture2d4": "mg0101_detail00_nml",
@@ -2054,7 +2114,7 @@
    "models": [
     "mg0101_fld4"
    ],
-   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:14fd42af11af",
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:fc8b76265aad",
    "samplers": {
     "pack_texture2d1": "mg0101_fld34_pack0_b",
     "sg_utility_texture2d4": "mg0101_detail00_nml",
@@ -2075,11 +2135,31 @@
    "aoMode": "replace"
   },
   {
+   "material": "grass00_mt",
+   "models": [
+    "mg0101_fld4"
+   ],
+   "program": "graph:9c5e8f1498319b1d3bcec201a44ca61f81748c521644be2730ead37702ae59d9:342840ee7de5",
+   "samplers": {
+    "sgLayer10": "mg0101_windnoise00"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgWindD = ENV0.y * 1000.0; float sgWindPhase = float(mpjWorldFrame % uint(sgWindD)) / sgWindD; float sgWindA = (-ENV0.z - 45.0) * 0.01745329238474369; vec2 sgWindQ = (worldPos.xz * 0.10000000149011612) * ENV0.x; vec2 sgWindUV = fract(vec2(cos(sgWindA)*sgWindQ.x - sin(sgWindA)*sgWindQ.y, sin(sgWindA)*sgWindQ.x + cos(sgWindA)*sgWindQ.y) + sgWindPhase); float sgWindAmp = T(\"sgLayer10\", sgWindUV).r * ENV0.w; float sgWindDir = ENV0.z * 0.01745329238474369;",
+   "positionOffset": "(sgWindAmp * vec3(sin(sgWindDir), 0.0, -cos(sgWindDir))) * c0.y + (sgWindAmp * nrmW) * c0.x",
+   "positionSpace": "world",
+   "approx": "Stage60fps 누적 프레임·원본 renderer epoch/gate 대응 미확정; 원본 env sampler filter/address/LOD 미확정",
+   "samplerSources": {
+    "sgLayer10": "environment"
+   }
+  },
+  {
    "material": "mg0101_fld5_mt",
    "models": [
     "mg0101_fld5"
    ],
-   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:f787c271dd57",
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:8805d806bda5",
    "samplers": {
     "pack_texture2d1": "mg0101_fld5_pack0_b",
     "sg_utility_texture2d4": "mg0101_detail00_nml",
@@ -2099,6 +2179,26 @@
    "ao": "(min(T(\"pack_texture2d0\",sgU).a,T(\"global_ao_texture2d\",uv1).r)) * (clamp(1.0+T(\"sg_utility_texture2d6\",sgQ).r-clamp(P4.w,0.0,1.0),0.0,1.0))",
    "approx": "[근사] 그래프 표면값·원본 AO min 조합은 판독. 표준 PBR·IBL·AO 반사 결합은 기존 stage3d 계약 유지; 임의 색 보정 없음.",
    "aoMode": "replace"
+  },
+  {
+   "material": "grass00_mt",
+   "models": [
+    "mg0101_fld5"
+   ],
+   "program": "graph:9c5e8f1498319b1d3bcec201a44ca61f81748c521644be2730ead37702ae59d9:342840ee7de5",
+   "samplers": {
+    "sgLayer10": "mg0101_windnoise00"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgWindD = ENV0.y * 1000.0; float sgWindPhase = float(mpjWorldFrame % uint(sgWindD)) / sgWindD; float sgWindA = (-ENV0.z - 45.0) * 0.01745329238474369; vec2 sgWindQ = (worldPos.xz * 0.10000000149011612) * ENV0.x; vec2 sgWindUV = fract(vec2(cos(sgWindA)*sgWindQ.x - sin(sgWindA)*sgWindQ.y, sin(sgWindA)*sgWindQ.x + cos(sgWindA)*sgWindQ.y) + sgWindPhase); float sgWindAmp = T(\"sgLayer10\", sgWindUV).r * ENV0.w; float sgWindDir = ENV0.z * 0.01745329238474369;",
+   "positionOffset": "(sgWindAmp * vec3(sin(sgWindDir), 0.0, -cos(sgWindDir))) * c0.y + (sgWindAmp * nrmW) * c0.x",
+   "positionSpace": "world",
+   "approx": "Stage60fps 누적 프레임·원본 renderer epoch/gate 대응 미확정; 원본 env sampler filter/address/LOD 미확정",
+   "samplerSources": {
+    "sgLayer10": "environment"
+   }
   },
   {
    "material": "mg904_floor00_mt",
@@ -2434,7 +2534,7 @@
    "models": [
     "mg0101_river"
    ],
-   "program": "graph:e8e6f3c1404aeac800700b693ec4ac08f832b57f27f2c64ec895b7ce49cadb45:b6382ad44ee7",
+   "program": "graph:e8e6f3c1404aeac800700b693ec4ac08f832b57f27f2c64ec895b7ce49cadb45:0e1b117d9443",
    "samplers": {
     "_a0": "mg0101_river_stone00_alb",
     "sg_utility_texture2d0": "mg0101_underwater_mask",
@@ -2447,7 +2547,7 @@
    "models": [
     "mg0101_river"
    ],
-   "program": "graph:e8e6f3c1404aeac800700b693ec4ac08f832b57f27f2c64ec895b7ce49cadb45:ee13e095c8bd",
+   "program": "graph:e8e6f3c1404aeac800700b693ec4ac08f832b57f27f2c64ec895b7ce49cadb45:aea36572f2ac",
    "samplers": {
     "_a0": "mg0101_underwater_alb",
     "sg_utility_texture2d0": "mg0101_underwater_mask",
@@ -3671,15 +3771,6 @@
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p141.fs.txt"
     },
     {
-     "material": "grass00_mt",
-     "model": "mg0101_cliff00",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "2522730817"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p158.fs.txt"
-    },
-    {
      "material": "mg0101_cliff01_mt",
      "model": "mg0101_cliff01",
      "graph": {
@@ -3698,15 +3789,6 @@
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p141.fs.txt"
     },
     {
-     "material": "grass00_mt",
-     "model": "mg0101_cliff01",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "2522730817"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p158.fs.txt"
-    },
-    {
      "material": "weed00_mt",
      "model": "mg0101_fld2",
      "graph": {
@@ -3714,15 +3796,6 @@
       "vertex_shader_graph_color": "3705221208"
      },
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p137.fs.txt"
-    },
-    {
-     "material": "grass00_mt",
-     "model": "mg0101_fld2",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "2522730817"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p155.fs.txt"
     },
     {
      "material": "weed00_mt",
@@ -3734,15 +3807,6 @@
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p141.fs.txt"
     },
     {
-     "material": "grass00_mt",
-     "model": "mg0101_fld4",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "2522730817"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p158.fs.txt"
-    },
-    {
      "material": "weed00_mt",
      "model": "mg0101_fld5",
      "graph": {
@@ -3750,15 +3814,6 @@
       "vertex_shader_graph_color": "3705221208"
      },
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p137.fs.txt"
-    },
-    {
-     "material": "grass00_mt",
-     "model": "mg0101_fld5",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "2522730817"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p155.fs.txt"
     },
     {
      "material": "water_mt",

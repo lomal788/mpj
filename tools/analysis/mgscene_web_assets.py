@@ -192,7 +192,7 @@ def tables():
             "bgmNoIntro": s(r["mg_bgm_label_no_intro"]), "introSkipRegion": s(r["mg_bgm_intro_skip"]), "bgmOffset": r["mg_bgm_play_offset"],
             "bgmStopOffset": r["mg_bgm_stop_offset"], "bgmStopFade": r["mg_bgm_stop_fade"], "finishJingle": s(r["finish_jingle_label"]),
             "finishJingleOffset": r["finish_jingle_play_offset"], "resultPos": ENUM["ResultPos"][r["result_jingle_play_position"]],
-            "resultOffset": r["result_jingle_play_offset"], "whistle": r["whistle_entry_type"],
+            "resultOffset": r["result_jingle_play_offset"], "whistle": r["whistle_entry_type"], "splitSe": s(r["camera_split_se_label"]),
         }
     return out
 

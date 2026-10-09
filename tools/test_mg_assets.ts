@@ -273,7 +273,7 @@ console.log('9. 압축 분류(converted.json)');
 console.log('10. import 경계');
 {
   const dir = join(WEB, 'script', 'shell', 'mgstage');
-  const allow = /^(three|\.\/[a-z]+|\.\.\/stage3d|\.\.\/stage3d\/assetHandlers|\.\.\/plaza\/world|\.\.\/\.\.\/lib\/assetcore|\.\.\/\.\.\/lib\/assetcore-three)$/;
+  const allow = /^(three|\.\/[a-z]+|\.\.\/stage3d|\.\.\/stage3d\/assetHandlers|\.\.\/plaza\/world|\.\.\/\.\.\/lib\/assetcore|\.\.\/\.\.\/lib\/assetcore-three|\.\.\/\.\.\/lib\/splitscreen|\.\.\/\.\.\/lib\/splitscreen-three)$/;
   for (const fn of readdirSync(dir)) {
     const src = readFileSync(join(dir, fn), 'utf8');
     for (const mm of src.matchAll(/from '([^']+)'/g)) ok(allow.test(mm[1]), `${fn}: import '${mm[1]}'`);

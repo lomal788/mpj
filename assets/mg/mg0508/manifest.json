@@ -1107,7 +1107,28 @@
    "vignetteAspect": 0.8
   }
  },
- "graphs": [],
+ "graphs": [
+  {
+   "material": "mg0508_grass00_mt",
+   "models": [
+    "mg0508_bg00"
+   ],
+   "program": "graph:9c5e8f1498319b1d3bcec201a44ca61f81748c521644be2730ead37702ae59d9:342840ee7de5",
+   "samplers": {
+    "sgLayer10": "mg0508_leafnoise00"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgWindD = ENV0.y * 1000.0; float sgWindPhase = float(mpjWorldFrame % uint(sgWindD)) / sgWindD; float sgWindA = (-ENV0.z - 45.0) * 0.01745329238474369; vec2 sgWindQ = (worldPos.xz * 0.10000000149011612) * ENV0.x; vec2 sgWindUV = fract(vec2(cos(sgWindA)*sgWindQ.x - sin(sgWindA)*sgWindQ.y, sin(sgWindA)*sgWindQ.x + cos(sgWindA)*sgWindQ.y) + sgWindPhase); float sgWindAmp = T(\"sgLayer10\", sgWindUV).r * ENV0.w; float sgWindDir = ENV0.z * 0.01745329238474369;",
+   "positionOffset": "(sgWindAmp * vec3(sin(sgWindDir), 0.0, -cos(sgWindDir))) * c0.y + (sgWindAmp * nrmW) * c0.x",
+   "positionSpace": "world",
+   "approx": "Stage60fps 누적 프레임·원본 renderer epoch/gate 대응 미확정; 원본 env sampler filter/address/LOD 미확정",
+   "samplerSources": {
+    "sgLayer10": "environment"
+   }
+  }
+ ],
  "asset": {
   "archive": "mg~mg0508.nx.bea",
   "category": "mg",
@@ -1248,15 +1269,6 @@
   },
   "pending": {
    "graphs": [
-    {
-     "material": "mg0508_grass00_mt",
-     "model": "mg0508_bg00",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "2522730817"
-     },
-     "sass": "analysis/mat/conv/mg/mg0508/sass/mg0508__forward_plus__p67.fs.txt"
-    },
     {
      "material": "mg0508_treeleaf00_mt",
      "model": "mg0508_bg00",

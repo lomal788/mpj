@@ -26,14 +26,14 @@ const glb = (v: Variant): { materials: { extras: { fres: Fres } }[]; meshes: { p
 };
 const material = (v: Variant): Fres => glb(v).materials.find((m) => m.extras?.fres?.name === v.material)!.extras.fres;
 const python = join(ROOT, '.venv/Scripts/python.exe');
-const requests = records.flatMap((r) => r.variants.map((v) => ({ name: r.name, variant: v, options: material(v).shader!.options, material: material(v) })));
+const requests = records.flatMap((r) => r.variants.map((v) => ({ name: r.name, variant: v, options: material(v).shader!.options, material: material(v), environment: JSON.parse(readFileSync(join(WEB, 'assets/mg', v.game, 'manifest.json'), 'utf8')).env })));
 const selected = spawnSync(python, ['-c', String.raw`import json,sys
 from pathlib import Path
 sys.path.insert(0,str(Path.cwd()/"tools/analysis"))
 import shader_graph_dictionary as d
 out=[]
 for r in json.load(sys.stdin):
-    graph=d.load_definition(r["options"],material=r["material"])
+    graph=d.load_definition(r["options"],material=r["material"],environment=r["environment"])
     if graph:out.append(dict(name=r["name"],variant=r["variant"],graph=graph))
 print(json.dumps(out,ensure_ascii=False))`], { cwd: WEB, input: JSON.stringify(requests), encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' }, maxBuffer: 16 * 1024 * 1024 });
 ok(selected.status === 0, `실제 재질 사전 분기 ${selected.stderr}`);
@@ -52,7 +52,7 @@ for (const r of effective) {
   const def = r.graph;
   for (const v of r.variants) {
     const f = material(v);
-    const manifest = JSON.parse(readFileSync(join(WEB, 'assets/mg', v.game, 'manifest.json'), 'utf8')) as { graphs: GraphDef[] };
+    const manifest = JSON.parse(readFileSync(join(WEB, 'assets/mg', v.game, 'manifest.json'), 'utf8')) as { graphs: GraphDef[]; env: { windNoise?: string }; textures: Record<string, unknown> };
     const applied = manifest.graphs.find((g) => g.material === v.material && g.models.includes(v.model));
     ok(applied?.program === def.program, `${v.game}/${v.material} manifest 해시 반영`);
     for (const [key, value] of Object.entries(def)) {
@@ -61,9 +61,9 @@ for (const r of effective) {
     }
     const params = f.params ?? {};
     const source = graphSource(def, (n) => { const value = params[n]?.value; return Array.isArray(value) ? value.length : 1; });
-    for (const sampler of source.texIndex.keys()) ok(f.samplers?.some((s) => s.sampler === sampler || s.slots.includes(sampler)) === true, `${v.game}/${v.material} 샘플러 ${sampler}`);
+    for (const sampler of source.texIndex.keys()) ok(def.samplerSources?.[sampler] === 'environment' ? manifest.env.windNoise === def.samplers[sampler] && !!manifest.textures[def.samplers[sampler]!] : f.samplers?.some((s) => s.sampler === sampler || s.slots.includes(sampler)) === true, `${v.game}/${v.material} 샘플러 ${sampler}`);
     for (const raw of source.raws) ok(raw in params, `${v.game}/${v.material} 파라미터 ${raw}`);
-    const texts = JSON.stringify({ ...def, material: undefined, models: undefined, program: undefined, approx: undefined, samplers: undefined });
+    const texts = JSON.stringify({ ...def, material: undefined, models: undefined, program: undefined, approx: undefined, samplers: undefined, samplerSources: undefined });
     const utilities = [...texts.matchAll(/\b([PC])([0-7])\b/g)];
     for (const m of utilities) ok(`material_utility_${m[1] === 'P' ? 'parameter' : 'color'}${m[2]}` in params, `${v.material} 유틸리티 ${m[0]}`);
     const attrs = glb(v).meshes.flatMap((m) => m.primitives.map((p) => p.attributes));
@@ -118,6 +118,21 @@ branch["graphVariants"].append(variants[0])
 with patch("shader_graph_dictionary.Path.read_text",return_value=json.dumps(branch)):
     try: d.load_definition(opts0,material=f); raise AssertionError("분기 중복 허용")
     except ValueError: checks+=1
+wind=next(r for r in records if r["options"].get("vertex_shader_graph_color")=="2522730817")
+f={"name":"환경대상","shader":{"attribAssign":{"_c0":"_c0"}},"samplers":[]}
+assert d.load_definition(wind["options"],material=f) is None; checks+=1
+w=d.load_definition(wind["options"],material=f,environment={"windNoise":"다른게임잡음"})
+assert w["samplers"]=={"sgLayer10":"다른게임잡음"}; checks+=1
+assert d.bind_definition(w,f,"환경모델")["samplers"]==w["samplers"]; checks+=1
+assert d.load_definition(wind["options"],material={"shader":{"attribAssign":{}}},environment={"windNoise":"다른게임잡음"}) is None; checks+=1
+film=next(r for r in records if r["options"].get("fragment_shader_graph_color")=="2077426685")
+v=next(v for v in film["graphVariants"] if len(v.get("requiresMissingSamplers",[]))==2)
+f={"samplers":[{"sampler":"_a0","texture":"알베도","slots":[]}]}
+g=d.load_definition(dict(film["options"],**v["selector"]),material=f)
+assert g and 'vec3(0.0)' in g['fsPrelude']; checks+=1
+f["samplers"]+=[{"sampler":"sg_utility_texture2d0","texture":"필름","slots":[]},{"sampler":"sg_utility_texture2d1","texture":"잡음","slots":[]}]
+g2=d.load_definition(dict(film["options"],**v["selector"]),material=f)
+assert g2 and g2['program']!=g['program'] and 'sg_utility_texture2d1' in g2['fsPrelude']; checks+=1
 print(json.dumps({"checks":checks}))
 `;
 const dictTest = spawnSync(python, ['-c', py], { cwd: WEB, input: JSON.stringify(records), encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
@@ -237,11 +252,31 @@ for (const [program, readUnder, expectedMuddy] of [['graph:test', '0', false], [
   const f = { name: 'waterFixture', shader: { options: { static_opt_shader_graph: '1', static_opt_water_enable: '1', static_opt_water_muddy_enable: '1', static_opt_read_under_water: readUnder, static_opt_state_type: '0' } }, params: { material_water_opacity: { value: 0 }, material_water_muddy_range: { value: 50 }, material_water_muddy_color: { value: [0.8, 1, 1] } } } as Fres;
   const m = new THREE.MeshStandardMaterial(); m.userData.fres = f;
   const setup = new MaterialSetup({ url: () => '' }, null as unknown as THREE.WebGLRenderer, {}, { pmrem: {} as THREE.PMREMGenerator, cubes: new Map() });
-  setup.globals = { env: { P: Array.from({ length: 4 }, () => new THREE.Vector4()) }, ms: { value: 0 }, sunDir: new THREE.Vector3(0, 1, 0) } as unknown as StageGlobals;
+  setup.globals = { env: { P: Array.from({ length: 4 }, () => new THREE.Vector4()) }, ms: { value: 0 }, worldFrame: { value: 0 }, sunDir: new THREE.Vector3(0, 1, 0) } as unknown as StageGlobals;
   setup.graphs = { waterFixture: [{ material: 'waterFixture', models: ['fixture'], program, samplers: {}, baseColor: 'vec3(0.1)' }] };
   await setup.prepare(new THREE.Mesh(new THREE.PlaneGeometry(), m), 'fixture');
   ok(m.customProgramCacheKey().includes('mpj-water') === expectedMuddy, `water 원본 옵션 ${program}/${readUnder} 범위 보존`);
 }
+const windCase = effective.find((r) => r.options.vertex_shader_graph_color === '2522730817')!;
+const windDef = windCase.graph;
+const windFres = material(windCase.variants[0]);
+const windParams = initParams(new THREE.MeshStandardMaterial(), windFres);
+const windGlobals = { env: { P: Array.from({ length: 4 }, () => new THREE.Vector4()) }, ms: { value: 0 }, sunDir: { value: new THREE.Vector3(0, 1, 0) } } as unknown as StageGlobals;
+let rejected = false;
+try { await applyGraph(new THREE.MeshStandardMaterial(), windDef, windFres, windParams, windGlobals, async () => ({ tex: new THREE.Texture(), snorm: false })); } catch (e) { rejected = String(e).includes('World 프레임 입력 누락'); }
+ok(rejected, 'G01 필수 worldFrame 누락 거절');
+windGlobals.worldFrame = { value: 0xffffffff };
+rejected = false;
+try { await applyGraph(new THREE.MeshStandardMaterial(), windDef, windFres, windParams, windGlobals, async () => null); } catch (e) { rejected = String(e).includes('환경 샘플러 누락'); }
+ok(rejected, 'G01 환경 잡음 로드 실패 거절');
+const clockMaterial = new THREE.MeshStandardMaterial();
+await applyGraph(clockMaterial, windDef, windFres, windParams, windGlobals, async () => ({ tex: new THREE.Texture(), snorm: false }));
+const clockShader = { vertexShader: THREE.ShaderLib.standard.vertexShader, fragmentShader: THREE.ShaderLib.standard.fragmentShader, uniforms: THREE.UniformsUtils.clone(THREE.ShaderLib.standard.uniforms) };
+clockMaterial.onBeforeCompile(clockShader as Parameters<typeof clockMaterial.onBeforeCompile>[0], {} as THREE.WebGLRenderer);
+ok(clockShader.uniforms.mpjWorldFrame === windGlobals.worldFrame && clockShader.uniforms.mpjWorldFrame.value === 0xffffffff, 'World u32 참조 공급·float24 경계 보존');
+windGlobals.worldFrame.value = 60;
+ok(clockShader.uniforms.mpjWorldFrame.value === 60 && windGlobals.ms.value === 0, '프레임 업데이트 참조·ms 독립');
+for (const [frame, divisor, expected] of [[60, 2000, 0.03], [60, 800, 0.075], [0xffffffff, 2000, 0.6475]]) ok(Math.abs(Math.fround((frame >>> 0) % divisor / divisor) - expected) < 1e-7, `World 프레임 나머지 ${frame}/${divisor}`);
 console.log(`사전 ${records.length}, 단일 정의 ${active.length}, 실제 적용 재질 ${effective.length}; SASS RGB/alpha304·시간/SIN176·screen5, 최대절대오차 ${maxError}`);
 
 const resolveChunks = (s: string): string => s.replace(/^[ \t]*#include +<([\w\d./]+)>/gm, (_m, n: string) => resolveChunks((THREE.ShaderChunk as Record<string, string>)[n] ?? `#error missing ${n}`));
@@ -255,7 +290,7 @@ for (const r of effective) {
   for (const reverse of [false, true]) {
     const v = r.variants[0]; const f = material(v); const m = new THREE.MeshStandardMaterial(); const p = initParams(m, f);
     let priorRenderCalls = 0; m.onBeforeRender = () => { priorRenderCalls++; };
-    const globals = { env: { P: Array.from({ length: 4 }, () => new THREE.Vector4()) }, ms: { value: 0 }, sunDir: new THREE.Vector3(0, 1, 0) } as unknown as StageGlobals;
+    const globals = { env: { P: Array.from({ length: 4 }, () => new THREE.Vector4()) }, ms: { value: 0 }, worldFrame: { value: 0 }, sunDir: new THREE.Vector3(0, 1, 0) } as unknown as StageGlobals;
     const patch = (): void => { if (f.shader?.options?.static_opt_shading_type === '0') patchUnlit(m); if (f.shader?.options?.static_opt_mul_vertex_base_color === '1') patchVertexColor(m, 0); };
     if (reverse) patch();
     await applyGraph(m, r.graph!, f, p, globals, async () => ({ tex: new THREE.Texture(), snorm: false }));

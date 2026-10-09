@@ -712,7 +712,7 @@ def handle_graph(job):
         if (name, model) in seen:
             continue
         seen.add((name, model))
-        shared_src = sgd.load_definition(f["shader"]["options"], material=f)
+        shared_src = sgd.load_definition(f["shader"]["options"], material=f, environment=job.man.get("env"))
         src = shared_src or own_defs.get(name) or plaza.get(graph_key(f["shader"]["options"]))
         if not src:
             need.append((model, f))

@@ -1,6 +1,6 @@
 # 08 이펙트 (파티클 · VFXB · bex::Effect)
 
-상태: **부분 판독**. mg1800 반짝이 VS·mg1801 물결 CS의 개별 운동식(6.3~6.4)에 더해 6,232개 CPU 정의의 공통 생성·수명·적분 경로, 16종 형상 함수, 난수·속성 작성과 주요 필드·이미터 애니 연결을 판독했다(6.1~6.2). 좌표 옵션·일부 형상/필드·자식 속성 상속의 전체 분기와 별도 GPU 프로그램은 남아 있다(11절).
+상태: **부분 판독**. CPU 6,232개 정의의 공통 계산·기판독 mg1800/mg1801 GPU 식은 6.1~6.4에 보존했다. Effect 내부 Start/Stop·selfDestroy·부착 갱신(5.3), 자식 속성 평가(6.2), 정렬·draw 입력과 추가 billboard 대표 식(6.5), 전체 9,642개 정의의 분석 범위(10.4)를 연결했다. 별도 GPU·완전한 render state·좌표 옵션의 남은 분기는 11절, 구현 차단 조건은 13절에 있다.
 
 확정 수준 표기는 작업 지침 [분석.txt](../../../../web/분석.txt)(`c:/dev/web/분석.txt`)를 따른다.
 
@@ -75,15 +75,15 @@ mg1801(싹둑싹둑 수프)에서 보이는 파티클은 네 가지다.
 | `Create(name)` | 0x710011be04 | 내부 객체를 만들고 EffectModule 목록에 등록한다(FUN_710011c020). FUN_710011d070(내부, name)으로 이미터셋을 찾아 이미터를 만든다. 실패하면 빈 핸들 |
 | `Create(name, World3d)` | 0x710011bec0 | 같은 일을 지정 월드로 한다(FUN_710011d1e0) |
 | `Setup(name)` | 0x710011bfa4 | FUN_710011d070 을 다시 부른다. 기존 이미터가 있으면 vtable+0x28 로 정리한 뒤 다시 만든다 |
-| `Start(bool)` | 0x710011c170 | FUN_710011d538: 인자가 참이면 먼저 vtable+0x18(되감기로 추정)을 부른다. 이어서 이미터 vtable+0x58(시작)을 부르고 내부+0x120 = 0 |
-| `Stop(bool)` | 0x710011c178 | 내부 vtable+0x10 으로 넘긴다(본문 미판독) |
+| `Start(bool)` | 0x710011c170 | FUN_710011d538: 인자가 참이면 내부 Update(011f090)를 먼저 부른다. 이어 이미터 Start(07262a8), 내부+0x120=0. 최초 계산 조건은 5.3 |
+| `Stop(bool)` | 0x710011c178 | 011cbdc→0725b10. false=즉시 kill, true=fade 요청(5.3) |
 | `StopImmediately()` | 0x710011c188 | FUN_7100725b10(이미터, 0) |
-| `SetPosition(v)` | 0x710011c334 | 내부+0x80 = v(16 B), 내부+0x119 = 1(위치 갱신 필요). 실제 반영은 다음 갱신 때다 [판독], 그 시점은 [미확정] |
+| `SetPosition(v)` | 0x710011c334 | 내부+0x80 = v(16 B), 내부+0x119 = 1(위치 갱신 필요). 실제 행렬 반영은 내부 Update 또는 Start(true)의 선행 Update(5.3) |
 | `SetSelfDestroyEnabled(b)` | 0x710011c714 | 내부+0x118 = b |
 | `SetLayerVisibilityBit(bits)` | 0x710011c798 | `ParticleFx2Emitter::SetLayerVisibilityBit` |
 | `SetScale/SetRotation/SetTransform/Attach/SetMultiplyColor/SetParticleGlobalScale/SetAnimationSpeed/…` | 0x710011c358~ | mg1801 은 쓰지 않는다 |
 
-- 생성 직후 레이어 비트는 `EffectModule` 기본값이다(`FUN_71001186bc`, `EffectModule::GetDefaultLayerVisibilityBit` 계열). 값은 [미확정].
+- 생성 직후 레이어 비트는 `EffectModule` 기본값이다(`FUN_71001186bc`, `EffectModule::GetDefaultLayerVisibilityBit` 계열). 생성 기본값은 **0xFFF**(0117610). 카메라 마스크와의 최종 교집합은 6.5.
 
 ### 3.3 이름 → 이미터셋 해석 [판독: effect_main2.c FUN_710072c680]
 
@@ -123,7 +123,7 @@ mg1801(싹둑싹둑 수프)에서 보이는 파티클은 네 가지다.
 | Player::UpdateAttack | 0x710000cfe0 | 판정 `w20==0`(JUST) → id 0 `mg1800_success01`, 그 밖 → id 1 `mg1800_success00` | (Player+0xB0.x, 1.5, 0) | `ShowCommonEffect` |
 | 같은 곳 | 0x710000d0d4 | `RmStarEffectMan::Start(pos=(pid·2−3, 1.5, 0), vec=DAT_71000315a0, beatToSec(0,1), pid, pts)` | — | **pts = JUST 2, FAST·SLOW 1** (`mov w4,w20`; w20 = 2 또는 1) |
 
-- `PlayEffect`는 `Start` 뒤에 `SetPosition`을 부른다. SetPosition 은 "갱신 필요" 표시만 한다(3.2). 그래서 첫 방출 전에 위치가 반영되는지는 이미터 갱신 순서에 달렸다 [미확정]. mg1801 의 위치는 원점이라 결과는 같다.
+- `PlayEffect`의 Start→SetPosition 순서는 5.3의 일반 생성 경로에서는 방출 전에 행렬을 제출할 수 있다. 별도 생성 콜백·선계산 경로까지 같은 첫 위치라고 일반화하지 않는다. mg1801 steam 위치는 원점이다.
 - mg1801 에는 FX(파티클) 트리거가 없다. 칼 모션의 트리거는 SE·VO 뿐이다([05_ui_input.md](05_ui_input.md), ui 담당 덤프 `extracted/converted/ui/ftrg/mg1801_triggers.json`) [데이터].
 
 ---
@@ -248,7 +248,7 @@ Static 블록 세부(0x070~0xCBF):
 | 필드 | 값 → 의미 | 근거 |
 |---|---|---|
 | volumeType | 0 Point, 1 Circle, **2 CircleDiv**, 3 CircleFill, 4 Sphere, 5 SphereDiv, 6 SphereDiv64, 7 SphereFill, 8 Cylinder, 9 CylinderFill, 10 Box, 11 BoxFill, 12 Line, **13 LineDiv**, 14 Rectangle, 15 Primitive | EffectLibrary 열거와 16개 CPU 함수표를 대조 [판독: 6.2]. SphereDiv64의 실제 표본 수는 DB4가 선택 |
-| blendType | 0(5,014) 일반 알파, 1(4,585) 가산, 2 감산, 3 곱, 4 스크린, 5(27) ? | EffectLibrary 열거 [추정]. 김(0)=반투명 연기, 물보라·고리(1)=가산 발광이라는 화면 기대와 맞음 |
+| blendType | 0 일반 알파, 1 가산, 2 역감산, 3 곱, 4 스크린, 5 ONE / ONE_MINUS_SRC_ALPHA | 공용 writer·NVN 변환표 대조 [판독: 6.6]. isBlendEnable과 RGB/alpha의 별도 factor/op를 함께 적용 |
 | billboardType | 0(6,546), 3, 4, 5, 6, 7, 1, 10, 2 | EffectLibrary 의 VertexTransformMode(0 Billboard, 1 PlateXY, 2 PlateXZ, 3 DirectionalY, 4 DirectionalPolygon, …)는 이 버전과 맞지 않는다. 물결(4)의 판독된 VS는 로컬 `(x,y,z)→(x,z,−y)` 축 치환으로 XZ 판을 만든다 [판독: 6.4]. 거품/왕관(3)은 메시 정점과 입자 변환을 읽는다. 다른 프로그램까지의 열거형 전체 의미는 미확정 |
 | calcType | 0 CPU, 1 GPU, 2 GPU+스트림아웃 | 이름은 EffectLibrary. 확인한 0은 현재 위치 속성, 1은 초기 위치/속도의 해석식, 2는 CS 상태 갱신 + VS를 사용 [판독: 6.3]. 2의 실제 버퍼 제출 방식은 미확정 |
 | color*Type | 0 고정, 2 8키 애니 | 키 개수와 타입 2 가 함께 나타남 [데이터]. 1(랜덤) [추정] |
@@ -261,9 +261,9 @@ Static 블록 세부(0x070~0xCBF):
 | +0x10 / +0x18 / +0x20 | ParticleFx2Emitter* / 약한참조 블록 / 세대 | FUN_710011d070 | 모든 Set* |
 | +0x28..+0x38 | 소속 엔티티(월드) 핸들 | FUN_710011d070 / d1e0 | |
 | +0x80 | 위치 Vector3f(16 B) | SetPosition | GetPosition, 갱신 |
-| +0x118 | selfDestroy (u8) | SetSelfDestroyEnabled | 갱신(파티클이 다 끝나면 스스로 파괴) [추정] |
+| +0x118 | selfDestroy (u8) | SetSelfDestroyEnabled | 011f3ac 생존·pause 검사 → 0118820 지연 정리 목록(5.3) |
 | +0x119 | 위치 갱신 필요 (u8) | SetPosition | 갱신 |
-| +0x120 | Start 때 0 | FUN_710011d538 | |
+| +0x120 / +0x121 | 캐시된 pause / 수동 pause | Start·011d7b8 | 갱신·selfDestroy 조기 반환 |
 | +0x128 | 핸들 블록(Create 가 반환) | | Create |
 
 ### 4.6 EMTR 하위 섹션(attr 체인) [실행: 파서 — 종류·개수만]
@@ -285,17 +285,9 @@ Static 블록 세부(0x070~0xCBF):
 
 ## 5. 상태 전이와 전체 수명
 
-### 5.1 이펙트 하나의 수명 [판독 + 추정]
+### 5.1 이펙트 하나의 수명 [판독]
 
-```
-Create(name)
-  ├ 이름 해석 실패 → 빈 핸들. 게임 유틸(EffectCreate/ShowCommonEffect/PlayEffect)은 이때 AbortImpl
-  └ 성공 → ParticleFx2Emitter(=vfx2 EmitterSet 인스턴스) 생성, 레이어 비트 = EffectModule 기본값
-Start(false)    → 방출 시작(시간 0)
-매 프레임         → 이미터마다 방출 판정(6.1) → 입자 생성(초기 위치·속도·수명) → 셰이더가 시간 t 로 그림
-Stop(false)     → 방출 중단. 남은 입자의 처리는 [미확정] (`vtable+0x10`)
-selfDestroy=1   → 모든 이미터가 끝나고 입자가 다 사라지면 파괴 [추정]
-```
+`Create`는 Effect를 등록하고 emitter handle을 구성한다. `Start`는 활성 emitter set을 만들거나 재개한다. `Stop(false)`와 `StopImmediately`는 즉시 kill 경로이고, `Stop(true)`는 계산을 계속하는 fade 요청이다. `selfDestroy`는 pause가 해제되고 emitter가 더 이상 살아 있지 않을 때 정리 목록에 넣은 뒤 후속 단계에서 Effect를 해제한다(5.3).
 
 ### 5.2 mg1801 이펙트별 수명
 
@@ -308,6 +300,37 @@ selfDestroy=1   → 모든 이미터가 끝나고 입자가 다 사라지면 파
 
 - 일시정지·장면 끝의 일괄 정지는 `EffectModule::StopAll`/`Cleanup`(0x7100117188/0x7100117110)이 있다. 호출 시점은 [미확정].
 
+### 5.3 내부 갱신·정지·부착 행렬
+
+근거: [effect_runtime_b1.c](../../../analysis/decomp/effect_runtime_b1.c), [b2](../../../analysis/decomp/effect_runtime_b2.c), [b3](../../../analysis/decomp/effect_runtime_b3.c), [b4](../../../analysis/decomp/effect_runtime_b4.c), [b5](../../../analysis/decomp/effect_runtime_b5.c), [b6](../../../analysis/decomp/effect_runtime_b6.c), [b7](../../../analysis/decomp/effect_runtime_b7.c). 주소는 모두 main. 이하 `I`=Effect 내부, `B`=ParticleFx2Emitter, `W`=vfx2 EmitterSet, `E`=개별 emitter, `D`=EmitterData.
+
+| 경로 | 판독 결과 |
+|---|---|
+| `Start(true)` 011d538 | `I.vt+18`=011f090 Update → `B.vt+58`=07262a8 Start → `I[120]=0`. 되감기 호출이 아니다 |
+| `Start(false)` 07262a8 | 유효 W가 정지 상태이면 W[38] bit1을 켜 재개. 이미 실행 중이면 기존 W를 kill하고 07676ac→07674a0→0745f60→07461e0으로 새 emitter set을 구성한 뒤 B[80] 행렬을 074786c로 제출 |
+| 최초 방출 | 07461e0→07463bc→073b83c는 emitter 생성·초기화이며 이 직접 경로에 입자 방출 호출은 없다. 0745f60의 생성 콜백(W+220)·074f620의 콜백 경로는 별도다. 따라서 **별도 콜백/선계산 없이 첫 Effect Update→vfx 계산으로 진행하는 경우** Start 뒤 SetPosition도 첫 방출 전에 반영된다. 모든 호출 모드에 대한 무조건 보장은 남음 |
+| Effect 갱신 011f090 | 011d7b8의 pause 또는 유효하지 않은 emitter이면 반환. I[119]가 켜지면 scale I[60]·quat I[70]·position I[80]로 로컬 행렬 I[90..CF]를 재작성하고 dirty를 지운다. B.vt+40=0727ba8이 B[80..BF]와 W[100..13F]에 제출 |
+| 일반 행렬 분해 074786c | 열벡터 `b_j`의 길이 `s_j=sqrt(dot(b_j,b_j))`를 W[1A0..1A8]에 저장. `s_j>0`이면 정규화한 basis, 아니면 0을 W[140..16F]에 저장. translation은 W[170..17F], 전체 행렬은 W[100..13F] |
+| `Stop(false)` 011cbdc→0725b10 | 0746d30→07678a0으로 W 전체 kill. 잔여입자를 수명만큼 유지하는 동작이 아니다. steam00→steam01 호출도 이 경로 |
+| `Stop(true)` 0727250→0746d3c | W[38]에 `0x20`만 OR. 0746d4c가 이를 fade 인수로 074d580에 전달한다. D[CC8] 조건으로 방출 허용을 바꾸며 D[CCB]/D[CCC]가 켜진 경우 fade 값 `F=max(0,F−dt/D[CD8])`; CD8<1 또는 F≤1.1920929e−7이면 0. 종료 임계점에서는 074d580이 false를 반환한다. fade 옵션 없는 분기는 duration·잔여수명 종료 조건으로 계속 계산한다 |
+| 생존 판정 0727394 | handle 세대 일치·W[E8]>0·W[38]&0x400 필요. W[38] bit1 또는 W[28]==−1이면 alive. 입자 수 하나만으로 판정하지 않는다 |
+| selfDestroy 011f3ac/0118820 | I[118]!=0, I[120]==0이고 emitter handle이 무효이거나 alive=false이면 활성 목록(Module+10)에서 정리 목록(+28)으로 이동. 0118990→011d528이 후속 단계에서 해제 |
+| 모듈 순서 0116f58 | Effect Update wrapper 01170d8→0118820은 timing **0x12**, 지연 해제 01170ec→0118990은 **0x14**에 등록. Scene→Fiber(0x0E), fixed physics(0x0F)와 혼동하지 않는다. vfx 계산과 모든 생성 콜백의 세부 선후는 미확정 |
+
+`Attach`는 입자 `followType`과 다른 Effect 단위의 부착이다. `011f550`은 entity 약한 handle을 I[40/48/50]에 저장하고 attribute bit8을 지운다. 모델 본 부착 `011f584/011f64c`는 owner entity와 본 번호 I[110]을 저장하고 bit8을 켠다.
+
+| attribute / 경로 | 행렬·시점 |
+|---|---|
+| low bits `1/2/4` (011d900) | entity scale/rotation/translation을 각각 선택한다. 7은 CalculateTransform 전체. 본 부착은 SkeletonPose::CalculateWorldTransform(I[110]); 선택한 parent TRS와 로컬 TRS를 합성한다. 열벡터 표기로 `M_out=M_parent_selected·M_local` |
+| bit3/bit4 (011f090) | bit3 경로는 B.vt+50=0727cd0의 현재 행렬을 I[D0..10F]에 capture. bit4=0은 I[11A]로 1회, bit4=1은 매 Update capture하고 dirty 표시. capture 합성은 별도 경로이며 일반 entity follow와 동일 옵션이 아니다 |
+| bit5/bit7 (011ea74/011eefc) | socket pose의 0x54 B 원소(본 번호)와 +50 유효 바이트를 검사하고 행렬·가시성을 제출한다. bit7이 켜지고 bit5가 꺼진 경우 ComModel+2C의 가시성 bit0을 B에 동기화. 완전한 socket 상태 의미와 잘못된 본 번호 경계는 남음 |
+| bit6 (011e480) | Scene graphics layer **0xC**를 얻어 `(x/width+0.5, 0.5−y/height, 0)`를 camera helper 0862914로 변환하고 capture translation을 덮는다. 단순 world 따라가기와 다르다 |
+| pause (011d7b8) | MainModule pause query(01968a4, I[11C]) 또는 수동 I[121]을 I[120]에 캐시. alive emitter의 vt+68/+70으로 pause/resume 전이를 전달. pause 중에는 selfDestroy도 보류 |
+
+입자 `followType` D[CC3]은 정렬 reader 073e3a0에서 구분된다. 0은 현재 E[100..13F], 1은 입자별 E[350/358/360] 세 행의 basis·translation, 2는 입자별 basis와 **현재 E[130..138] translation**을 쓴다. 저장 행렬이 없으면 현재 E 행렬로 fallback한다. 셰이더 제출·초기화의 모든 조합까지 확정한 것은 아니다.
+
+`E[30] bit18`은 followType이 아니다. 074c3a0의 **EAER/EAES/EAET**가 R[B7]을 켜고 073b83c가 이를 bit18로 옮긴다. 074d010은 bit18=0이면 E[180..1FF] 행렬을 E[200..27F]로 복사하고, bit18=1이면 identity에서 이미터 애니 TRS를 재구성한다. 자식·상속 행렬은 이 뒤 별도 분기다.
+
 ---
 
 ## 6. 계산식·조건·의사코드
@@ -319,11 +342,11 @@ selfDestroy=1   → 모든 이미터가 끝나고 입자가 다 사라지면 파
 1. **one-time 보정**(FUN_71007491a0 끝) [판독]: `isOneTime && !isEmitDistEnabled && duration < interval` 이면 `interval = duration`.
 2. **방출 창**(FUN_710074d580) [판독]:
    - 일반 이미터: 시작 = `start`, 끝 = `start + duration`.
-   - 자식 이미터(플래그 bit 0x11): 시작 = 부모 수명 × `timing`/100, 끝 = 시작 + duration.
-   - 시간 ≥ 시작이고, (끝 제한이 없거나 시간 < 끝) 일 때 방출 함수(FUN_710074cb60)를 부른다. 끝 제한이 걸리는 조건은 플래그 bit 0x14, bit 0 이다. 연속 이미터(isOneTime=0)는 duration 과 무관하게 계속 낸다 [추정: 플래그 뜻].
+   - 자식(bit0) 중 부모 수명 timing(bit17) 경로: 시작 `S=parent.life·timing/100`; one-time(bit20)이면 끝 `S+duration`, 아니면 끝 `parent.life`. bit17이 없는 경로의 S/end는 일반 start/duration 값이다.
+   - 시간 ≥ 시작이고, (끝 제한이 없거나 시간 < 끝) 일 때 방출 함수(FUN_710074cb60)를 부른다. `F=E[30]`, one-time=bit20(D[D68]), child=bit0(R[BF]), 부모 수명 timing=bit17(D[D5C])다. 실제 허용식은 `emitAllowed && bit3 && (!bit0 || bit17) && t>=S && ((!bit20 && !bit0) || t<end || !bit1)`이다. 첫 방출 상태 bit1이 꺼진 예외를 포함하며 일반 연속 이미터(!bit20&&!bit0)는 duration으로 닫지 않는다.
 3. **방출 간격**(FUN_710074cb60) [판독 일부]: 간격 = `interval + 1` 프레임. 간격마다 다음 값을 누적한다(`u = oldSeed·2⁻³²`를 먼저 읽고, 이미터 LCG `seed = oldSeed·0x41C64E6D + 0x3039`를 u32로 갱신).
    - `rate × emissionScale(인스턴스+0xDC) × 모듈 배율(+0x24C) × (100 − u·rateRandom)/100`
-   - 누적 값의 정수 부분만큼 입자를 만든다. 한 분기에서 누적값을 1 이상으로 올린다(`if (fVar15 <= 1.0) fVar15 = 1.0`) [판독: 분기 조건 뜻은 미확정].
+   - 누적 값의 정수 부분만큼 입자를 만든다. 방출 상태 E[30] bit1=0인 분기에서 **이번 rate 값을** 최소1로 올린다(`if (fVar15 <= 1.0) fVar15 = 1.0`). 이 값과 누적 remainder는 별도이며 interval·dt 경계를 함께 적용한다.
    - 다음 간격은 `073dcec`에서 `(float(interval)+1+float(int32(high32(uint64(oldSeed)·int64(intervalRandom)))))·E[E0]·W[250]`로 정한다. 랜덤은 %가 아닌 정수 간격 증가이며 LCG 1회 소비. 최초 캐시는 `073b83c`의 interval+1이다. 음수 intervalRandom도 이 명령의 signed 값·상위32비트 변환을 따르며 clamp를 가정하지 않는다.
    - `074f620`은 방출 batch마다 추가 LCG 1회를 소비한다. primEmitType=0의 CircleDiv/LineDiv는 `nDiv−trunc(u·uint32(divRand)·0.01·nDiv)`를 방출 수에 곱한다. 다음 슬롯이 살아 있거나 사용자 데이터를 보유하면 batch를 중단한다.
 4. **최대 입자 수**(FUN_710073d51c, FUN_7100760da4) [판독]:
@@ -342,7 +365,7 @@ if (자식 이미터) n *= 부모 최대 입자 수;
 
 웹 풀 크기를 정하는 데 쓴다.
 
-- mg1801 one-time 이미터의 방출 일정은 아래와 같다. 1·2·3을 적용한 값이고, 끝 프레임 포함 여부는 [미확정]이다.
+- mg1801 one-time 이미터의 방출 일정은 아래와 같다. 1·2·3을 적용한 값이다. 일반 one-time의 시간 창은 `t<end`이며, 초기 bit1=0 예외·첫 계산 dt/콜백 선후는 5.3·위 방출 조건을 함께 적용한다.
 
 | 이미터 | duration | interval→보정 | 간격 | 방출 프레임 | 1회 수 |
 |---|---|---|---|---|---|
@@ -502,6 +525,14 @@ FCOL은 F[0] 모드, F[1] 월드 평면, F[4] 높이, F[8] 반발, F[C] 최대 �
 
 payload +0 enable, +1 loop, +2 interpolation, +4 keyCount, +C 첫 xyz, +18 첫 time. E[28]로 평가하며 루프는 마지막 key time의 fmod, interpolation=0 선형·1 이전 키 유지다. EASS에는 W[190..198], EAOV에는 W[254] 배율이 적용된다. EATR의 전체 시간 전달·상속/콜백 옵션은 남음.
 
+**자식 속성의 현재 나이 평가** [판독: 074f278·0755ccc·0756134·0756990·07571ec, b4]
+
+부모 생성 payload와 현재 부모 속성을 선택하는 E[30] bit17 분기가 있다. 현재 부모를 읽는 경로는 `age=(parent.E[28]−birth)−parent.dt`, `L=meta.life`로 다시 평가한다. D[D50]이면 `V_child += D[D60]·V_parent`; D[D51]이면 `scale_child=D[D64]·ScaleEval(L,age,baseScale,U)`; D[D52]이면 `RotationEval(age,θ₀,U)`를 자식 회전 속성에 기록한다. D[D54/55]는 color0/1 RGB, D[D56/57]는 각각 alpha를 독립적으로 상속한다. color helper 인수는 부모 E[42C]·E[B0/C0] 및 E[3FC..404] 곱셈 계수이며, 부모의 완성 RGBA를 생성 시점에 한 번 복사하는 식으로 대체하지 않는다.
+
+크기 helper는 키가 2개 이상이면 `s=s_base·Key((age+period·U·randomPhase) mod period / period)`(loop>0), 아니면 `s=s_base·Key(age/L)`; 단일 키는 곱셈만 한다. fluctuation은 `τ=(phase+age)/period+U·randomPhase`, `q=τ−trunc(τ)`를 사용한다. mode0의 배율은 `1−A·(CosCPU(2πτ)+1)/2`, mode1은 `abs(1−Aq)`, mode2는 `abs(1−A·(q<0.5 ? 1:0))`. scale fluctuation은 X/Y에 적용하며 FC6=0이면 같은 배율, FC6!=0이면 Y의 별도 amplitude/period/phase를 사용한다. alpha helper는 같은 세 mode 후 [0,1]로 clamp한다. `CosCPU`는 원본 범위 축소·계수 다항식이며 host cos로의 대체는 비트 동등하지 않다.
+
+회전 fluctuation이 없는 기본 누적은 `θ_j=σ_j·θ₀,j+randInit_j·(U_j−0.5)+G(age)·σ_j·ω_j`, `G=t`(regist=1), 그 밖 `(1−powResult)/(1−regist)`다. regist≠0이면 `powResult=regist^t`, 0이면 원본이 1로 두므로 G=0이다. `ω=rotateAdd+randAdd⊙((U_x+U_y),(U_y+U_z),(U_x+U_z))/2`; rotRevRand X/Y/Z가 켜지고 각각 U_z/U_x/U_y≥0.5이면 해당 σ=−1, 아니면 +1이다. 회전 fluctuation의 채널 배치·색 키 보간 모드 전체는 남은 항목이다.
+
 ### 6.3 입자 프로그램별 운동·시간·키 [판독]
 
 기존 광장 분석의 [sass_dis.py](../../tools/analysis/sass_dis.py)·[bnsh_sass.py](../../tools/analysis/bnsh_sass.py)를 재사용했다([plaza_3d.md](../shell/plaza_3d.md) 6.8·6.13, [charselect.md](../shell/charselect.md) 12.11). BNSH 변형 번호는 0부터이며 VS/FS/CS 단계는 1/5/6이다. 이 절의 주소·슬롯 오프셋은 16진수다. 아래 주소는 해당 BNSH 파일 시작 기준 코드 헤더 주소 `pa`; VS/FS 명령은 `pa+0x80`, 이 CS는 `pa+0x100`부터다. `c[n][offset]`·`a[offset]`은 실제 SASS 슬롯이며 BFSHA 재질용 도구의 의미 이름을 이펙트에 적용하지 않았다.
@@ -637,6 +668,112 @@ alpha <= c[9][8D8]이면 discard
 mg1800 twinkle FS 변형 4(pa=17A00)는 `RGB=C₁+tex.rgb²·(C₀−C₁)`, `alpha=sat(sat(tex.r²·C₀.a)·fade)`다. 변형 8/11(pa=1A500)은 같은 구조에서 tex를 제곱하지 않는다. 따라서 컴바이너를 일괄 `tex·color0`로 확정할 수 없다. shader00 FS의 `c[D][0..8]` 색 계수 등 CSDP reader 일부는 보이지만, CSDP payload 전체 배치·버퍼 작성부·노말/깊이 조합은 아직 미확정이다.
 
 분석 범위는 표의 실제 프로그램과 해당 경로다. mg0508의 oil/fire GPU와 smoke CS는 이 표의 success와 다른 코드이며 운동식을 공유한다고 확인하지 않았다. CPU 공통 경로와 writer 연결은 6.2에 통합했으며 남은 좌표·필드·프로그램 분기는 11절에 구별했다.
+
+---
+
+### 6.5 추가 billboard 대표·정렬·draw state
+
+v53의 공식 enum 이름은 확보하지 못했다. 참고 이름은 `tools/oss/EffectLibrary/EffectLibrary/Enums.cs`의 구판 0~8이며, 아래 동작 구분은 실제 프로그램의 설명이다.
+
+각 `.bnsh`는 2절 원본 `_Vfx` 경로의 동반 파일이다. 기존 `bnsh_sass.py`로 VS(stage1)를 읽었다. 표의 주소는 BNSH 기준 stage blob 시작이며 SASS PC는 +0x80 뒤 명령 기준이다. 별도 계산식·shader define를 가진 같은 billboard 값에 표의 대표 식을 확대 적용하지 않는다.
+
+| billboard | v53 동작 구분 / 참고 이름 | 정의·프로그램 근거 | 판독 범위 |
+|---|---|---|---|
+| 0 | 카메라 basis quad / 구판 Billboard | 기판독 mg1800 twinkle (6.3) | 카메라 basis의 회전·크기 적용 보존 |
+| 1 | 카메라 위치 방향 quad / 구판 PlateXY와 불일치 | ca00_fountain_00 / ca00_waterfall01, k37 @150A00, PC05F8..0AD0 | 중심 `P_w=M_A·P`(c[A]40..6C). 법선 `n=normalize(c[8]1D0..1D8−P_w)`, 오른쪽 `r=normalize(n×(−c[8]10..18))`, 두 번째 축 `n×r`. 코너 ±0.5·scale·offset의 방향축을 만든다. 추가 회전/fluctuation 전체는 미확정 |
+| 2 | strip payload / 구판 PlateXZ와 불일치 | mg1607_rock_hit00 / Light_Shaft00, k7 @3A900, PC0008..03D0 | 일반 quad 속성 대신 **0x30 B strip payload**: `i=int(c[C]48·c[C]5C)+(vertexID>>2)`, P=record[0..8], V=record[10..18], 폭=abs(record[0C]). `n=normalize(V)`, `r=normalize(n×c[8]1C0..1C8)`, 양측 `P±width·r/2`. `(c[9]74 & 0x100000)==c[1]00` 조건(P0)이면 `normalize(cameraPos−M_A.translation)·c[9]12C`를 추가. 연속 strip UV는 `(vertexID>>2)/(c[C]44−1)` |
+| 3 | 메시·입자 변환 / 구판 DirectionalY를 그대로 적용 불가 | 기판독 mg1801 bubble/crown (6.4) | 실제 메시 속성·입자 변환; 전체 모드 미확정 |
+| 4 | XZ 판 / 구판 DirectionalPolygon을 그대로 적용 불가 | 기판독 mg1801 wave (6.4) | 로컬 `(x,y,z)→(x,z,−y)` 보존 |
+| 5 | tangent 방향 + 카메라 cross / 구판 Stripe를 그대로 적용 불가 | bd00_dice_cursed_decide00 / 02_line00, k5 @20F600 | `d=normalize(M_A.xyz·a[D0..D8])`(PC0818..0AD8), `r=normalize((−c[8]1C0..1C8)×d)`(PC0BB0..0DB8). 이 두 축과 cross 항을 입자 3축 sin/cos에 합성(PC0DC8..0FF8). 방향/카메라 평행의 퇴화·전체 rotation/fluctuation 조합은 미확정 |
+| 6 | 입자 행렬 축 정규화 / 구판 ComplexStripe를 그대로 적용 불가 | bd00_dice_hit00 / sparks00, k30 @223D00, PC0108..0368 | a[D0..D8] 위치를 a[E0/F0/100]의 세 행으로 변환. 행렬의 Y열 `(E4,F4,104)`, Z열 `(E8,F8,108)` 길이를 각각 계산하고 >0인 축만 정규화(아니면 0). orientation이 카메라 고정 quad와 다르며 최종 축 합성은 미확정 |
+| 7 | 카메라 yaw + 3축 회전 / 구판 Primitive를 그대로 적용 불가 | bd06_fireball_down00 / glare00, k44 @1C5900 | 카메라 yaw `ψ=atan2(c[8]1C0,c[8]1C8)`의 원본 근사·0/∞ 특수 분기(PC0C78..0F40)를 각도에 더한다. 코너 회전은 `R_x(γ)·R_z(α)·R_y(β+ψ)`(α=PC0F50 R14, β+ψ=PC0F90 R6, γ=PC0F70 R7). depth varying=`projectedZ−c[8]1F8`(PC12A8). 상수 풀 π, 2.3561945, −0.82336295, 28.842468, −6.565555, 19.696671. 이전 rotation/fluctuation 조합과 특수 분기의 비트 동등성은 남음 |
+| 8 | 원본 의미 미확정 / 구판 YBillboard | 전체 정의 0개 | 대응 v53 프로그램 부재. 이름/축을 구판에서 이식하지 않는다 |
+| 9 | 원본 의미 미확정 / 구판 대응 이름 없음 | 전체 정의 0개 | 대응 v53 프로그램 부재. 지원 완료로 세지 않는다 |
+| 10 | Y 기준 카메라 basis / 구판 대응 이름 없음 | mg1806_spot_00 / glare00, k21 @71000, PC0210..0568 | `f=normalize(c[8]20..28)`. c[8]14 부호에서 선택한 Y축과 cross로 r을 만들고 정규화, 퇴화 판정이면 normalize(c[8]00..08)로 fallback. `up=f×r`; 코너 크기·offset으로 `P_w+r·x+up·y+f·z`를 만든다. 입력 위치의 입자별 행렬 reader도 PC0378..0550에 존재 |
+
+**정렬** [판독: 073e3a0→0745100, b2·b3]
+
+| D[CC1] | 키·순서 |
+|---|---|
+| 0 | 정렬하지 않고 instancing. ring buffer가 감기면 두 구간으로 draw |
+| 1 | 속도 속성 vec4의 w(6.2의 생성 시각 b)를 key로 **내림차순**, 같으면 입자 index 오름차순(073fe30) |
+| 2 | key=`cameraRowZ·(M_follow·P,1)`; D[E0B] depth-write가 0이면 내림차순(0741ee0), 켜지면 오름차순(0740d30). **두 key가 모두 음수이면 비교 방향을 뒤집는 원본 comparator**도 보존해야 한다 |
+| 3 | 같은 속성 w key 오름차순, 같으면 index 오름차순(073ef30) |
+| 4 | E[3D0] 등록 콜백. 전체 데이터 사용 0개, 의미는 미확정 |
+
+정렬 대상 필터는 `(E.time−E.dt)−birth < life`; 실제 draw 필터는 `meta.valid && life>0 && E.time−birth<=life`다. VS의 `age>=life` 제거 및 CPU 갱신 경계와 각각 다르다. emitter 사이/장면 전체 투명 오브젝트 정렬로 대체하면 이 순서가 보존되지 않는다.
+
+**제출 상태·레이어** [판독: 0744910·0743fd8·0743af0, b2·b3]
+
+- 렌더 state override 값이 −1일 때 R[1F8]·R[220]·R[23C]를 각각 087d430/087d4d4/087d32c에 제출한다. vertex state는 R[C8+bufferIndex·20]. 프리미티브가 없으면 4정점 instance draw, 있으면 primitive vt+58/+60 경로다.
+- static UBO는 0xCC0 B, 현재 emitter UBO는 0x160 B, 추가 resource UBO도 0x160 B. VS/FS의 메타데이터 슬롯(+3A..3C/+7C..7E)별로 **둘 다** 연결한다. sampler는 최대6개를 각각의 VS/FS 슬롯에 제출한다.
+- Effect 기본 visibility bit는 **0xFFF**(0117610). 0768400은 `calcMask & W[18]==0` 또는 비활성 W이면 dt=0으로 계산한다. 이 값은 카메라의 최종 draw mask와 별개다. graphics layer 0xC는 5.3의 screen-space 변환 경로에서만 확정했다.
+- 공용 blend/depth/raster 생성과 NVN 제출값은 6.6에서 판독했다. alpha test·Combiner/soft particle·layer override는 해당 근거와 별도로 구별한다.
+
+---
+
+### 6.6 공용 blend·depth·raster 생성과 제출 [판독]
+
+근거: [b8](../../../analysis/decomp/effect_runtime_b8.c), [b9](../../../analysis/decomp/effect_runtime_b9.c), [b10](../../../analysis/decomp/effect_runtime_b10.c), [b11](../../../analysis/decomp/effect_runtime_b11.c). `075bbb4→07480c4→0759784`가 `D+E08` Render를 읽는다. `R+1C0`을 기준으로 blend는 `+38=R[1F8]`, depth/stencil은 `+60=R[220]`, raster는 `+7C=R[23C]`다. 일반 draw(0744910)와 strip draw(0760e84)가 이 상태들을 087d430/087d4d4/087d32c로 제출한다.
+
+**Blend.** 0759784의 6바이트 선택표는 srcRGB=`0x10500060606`, dstRGB/dstAlpha=`0x70102010107`, srcAlpha=`0x10500010101`, RGB/alpha op=`0x20000`; 각 `type*8` shift의 하위 바이트를 쓴다. 0884dd0→0882aa0/0882a90의 원본 표는 @1607F5C/@1607F48이다. `087ef00`의 함수명 로딩과 최종 `nvnBlendStateSetBlendFunc/SetBlendEquation`, `nvnColorStateSetBlendEnable`까지 연결했다. NVN 수치 이름은 [NVN 헤더](https://codeviewer.zeldamods.org/uking/uking/lib/NintendoSDK/include/nvn/nvn.h.html)의 enum과 대조했다.
+
+`C_s,A_s`는 FS 출력, `C_d,A_d`는 대상 framebuffer다. isBlendEnable=false(981개)이면 아래 합성은 비활성이다. true는 8,661개다.
+
+| blend / 정의 수 | srcRGB,dstRGB,op (nn::gfx → NVN) | srcAlpha,dstAlpha,op | 합성식 |
+|---|---|---|---|
+| 0 / 5,014 | 6,7,0 → 5,6,1 | 1,7,0 → 2,6,1 | `C=C_s A_s+C_d(1−A_s); A=A_s+A_d(1−A_s)` |
+| 1 / 4,585 | 6,1,0 → 5,2,1 | 1,1,0 → 2,2,1 | `C=C_s A_s+C_d; A=A_s+A_d` |
+| 2 / 6 | 6,1,2 → 5,2,3 | 1,1,2 → 2,2,3 | **역감산** `C=C_d−C_s A_s; A=A_d−A_s` |
+| 3 / 2 | 0,2,0 → 1,3,1 | 0,2,0 → 1,3,1 | `C=C_d C_s; A=A_d A_s` |
+| 4 / 8 | 5,1,0 → 10,2,1 | 5,1,0 → 10,2,1 | `C=C_s(1−C_d)+C_d; A=A_s(1−A_d)+A_d` |
+| 5 / 27 | 1,7,0 → 2,6,1 | 1,7,0 → 2,6,1 | `C=C_s+C_d(1−A_s); A=A_s+A_d(1−A_s)`; FS 출력의 premultiply 여부는 각 FS에서 확인 |
+
+**Depth/raster.** depth test=D[E09], write=D[E0B]를 descriptor bit0/1에 복사하고 0884ffc의 NVN setter로 전달한다. depthFunc D[E0A]는 0..7만 허용하며 @15D4538의 `[1,2,3,4,5,6,7,8]`로 변환한다.
+
+| depthFunc | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|---|
+| 비교 | NEVER | LESS | EQUAL | LEQUAL | GREATER | NOTEQUAL | GEQUAL | ALWAYS |
+
+실제 데이터는 3=9,627, 1=14, 6=1이다. test 활성 8,456, write 활성 2,168이며 두 값은 독립이다. displaySide D[E0F]는 0→cull0(NONE), 1→cull2(BACK), 2→cull1(FRONT), @160803C로 NVN 값에 변환해 0884bdc의 CullFace setter로 전달한다. 전체 9,642개 정의의 blend<6·depthFunc<8·displaySide≤2를 확인했다. 이는 **공통 고정 state 생성 적용 9,642/9,642·60/60조합**이며 shader/alpha/override를 포함한 원본 draw 완료율은 아니다.
+
+**Alpha의 경계.** 0759784는 Render +4/+5/+8(D[E0C/E0D/E10])을 읽지 않고 blend/depth/raster를 설정한다. 이를 depthFunc와 같은 표로 고정 alpha test에 배정할 근거는 없다. 기판독 FS discard는 Static UBO `c[9][8D8]` threshold를 쓴다(6.4). Render isAlphaTest true/false=9,517/125, alphaFunc 4=9,641·6=1이라는 분포는 확인했으나 전체 FS predicate/threshold writer 연결은 미확정이다. ShaderRef·define·각 FS SASS가 필요하며 blend 식만으로 해소되지 않는다.
+
+### 6.7 렌더 패스·draw mask·저해상도 blend override [판독]
+
+근거: [b11](../../../analysis/decomp/effect_runtime_b11.c)의 00a7f70 생성자, [b12](../../../analysis/decomp/effect_runtime_b12.c)의 00a9798/00a9ccc, [b13](../../../analysis/decomp/effect_runtime_b13.c)의 00a9f2c/00a92b0. 패스 mask 표 @15D29F0과 추가 판독 072da44→072d7c4→0729b90→0768c1c, blend profile writer 00b3f10을 연결했다.
+
+| 생성 mode / 패스 | pass[50] mask | draw 경로 |
+|---|---|---|
+| 0 / ParticleFx2 (등록명 Translucent) | 1 | graphics layer의 color/depth target, 없으면 draw 인수의 color target |
+| 1 / AfterPosteffect | 2 | 동일 target 선택; 실제 렌더 순서는 장면 pass 배열에 따름 |
+| 2 / AfterLayout | 4 | 동일 target 선택 |
+| 3 / ShrinkBuffer (등록명 LowResolution) | 8 | 자체 color target, 00a9798이 mask 16도 별도 조회. 00a9ccc→00aa6dc/00aaab8 합성 경로 |
+
+layer의 ParticleFx2 확장 `L+10/+14/+18`은 각각 해당 pass의 입자 존재 / color 복사 필요 / depth 필요 mask다(0729050/0728f40/0729160). 0727940은 유효·alive set의 살아 있는 emitter `E[38]`에서 `1<<(drawPath&31)`을 OR한다. 0729b90은 layer의 emitter 배열을 증가 순서로 순회하며 pass mask와 교집합이 있는 set만 보낸다. 작업 분할은 draw descriptor `+68/+6C`로 6구간 경계를 선택한다.
+
+최종 set 제출(0768c1c)은 `W[28]==−1`이고 아래 세 조건이 모두 참일 때다. `W[18]` 계산 mask(6.5)와 이 draw 검사를 혼동하지 않는다.
+
+```text
+(threadDrawMask & W[34]) != 0
+(W[30] & passMask) != 0
+(moduleMask64 & W[20]) != 0
+```
+
+일반 draw descriptor의 override 인수는 6개 모두 −1로 초기화된다(0768be0). 00a7f70이 등록한 00a92b0은 073e904의 render callback에서 추가 blend state를 bind한다. isBlendEnable=false이면 반환하며, drawPath mask가 8/16일 때만 Renderer[8E0]의 아래 profile을 선택한다. 00b5044의 profile 위치는 `object+8+profile·28+targetGroup·208`이고 여기서는 targetGroup=0이다. 00b3f10→0884dd0이 쓰는 profile의 RGB/alpha factor·op를 같은 NVN 변환으로 읽었다.
+
+| drawPath mask | blend | profile | 최종 RGB / alpha |
+|---|---|---|---|
+| 8 | 0 | 10 | `C=C_s A_s+C_d(1−A_s); A=A_d(1−A_s)` |
+| 8 | 1 | 11 | `C=C_s A_s+C_d; A=A_s+A_d` |
+| 8 | 5 | 12 | `C=C_s+C_d(1−A_s); A=A_d(1−A_s)` |
+| 16 | 0 | 1 | 6.6의 blend 0과 동일 |
+| 16 | 5 | 8 | 6.6의 blend 5와 동일 |
+| 8/16 | 그 외 | 4 | blend 비활성, `C=C_s; A=A_s` |
+
+profile 10/12의 **srcAlpha=ZERO**가 기본 state와 다르다. 0744910/0760e84는 공통 state를 bind한 **뒤** 073e904를 호출하므로 이 표가 콜백 후 blend 값이다. mask 8/16 이외에는 override하지 않는다. 다른 custom render callback이 false를 반환하면 draw 제출이 중단된다(073e904). 00a8c00은 shader metadata가 요청한 추가 VS/FS UBO 슬롯에 viewport·공용 렌더/환경 버퍼를 제출하는 콜백이며 운동 계산식의 대체가 아니다.
+
+남은 최종 layer 검증에는 장면의 **pass 배열 순서·drawPath 지정**, viewport/thread draw-mask 작성값, 별도 custom callback 등록과 저해상도 resolve FS가 필요하다. 계산을 위해 모든 카메라를 실행하거나 0xFFF를 곧바로 draw mask로 대입하면 이 조건들을 보존하지 못한다.
 
 ---
 
@@ -785,7 +922,7 @@ graphics_bfres2gltf gltf primitives.bfres prim/primitives.glb --all
 | `particle.life`(+0xE28), `lifeRandom` | `life`, `lifeRandom` |
 | `static.gravityDir/Scale`(+0x100/0x10C), `airRes`(+0x110) | `gravity`, `drag` |
 | `color0/alpha0/color1/alpha1/scale` 키표 | `curves.color0` 등 `{t, v}` |
-| `render.blendType` 0/1 | `THREE.NormalBlending` / `THREE.AdditiveBlending` |
+| `render.blendType` 0/1 | 6.6의 RGB/alpha 별도 factor/op를 ShaderMaterial 상태에 전달; preset 이름만으로 일치 판정하지 않음 |
 
 ### 9.3 업데이트 순서 후보 (프레임마다, 로직 step 뒤 화면 onStep)
 
@@ -806,7 +943,7 @@ for (const fx of effects) {
 // 그리기: 키 보간으로 색·알파·크기, billboardType 별 정점 변환
 ```
 
-- 위 순서는 웹 설계 후보다. 셰이더의 그리기 제외와 풀 삭제는 별개이며, 첫 방출·위치 반영·selfDestroy 순서는 미확정이다. 난수는 방출·형상·생성 속성의 LCG 소비 순서와 N/Q cursor를 함께 보존해야 한다(6.2).
+- 위 순서는 웹 설계 후보다. 셰이더의 그리기 제외와 풀 삭제는 별개이며, 일반 첫 방출·위치 반영·selfDestroy 경로는 5.3에서 판독했다. 특수 콜백 선후는 남아 있다. 난수는 방출·형상·생성 속성의 LCG 소비 순서와 N/Q cursor를 함께 보존해야 한다(6.2).
 
 ### 9.4 원본과 다를 근사 목록
 
@@ -819,7 +956,7 @@ for (const fx of effects) {
 | 필드(FRND·FSPN·FRN1) | CPU 위치 흔들림/회전·테이블 속도 힘(6.2), wave CS sine 힘(6.3) | 임의 랜덤 가속은 근사 | 필드별 대상 P/V·실행 순서·위상·남은 옵션 구별 |
 | 소프트 파티클·깊이 페이드 | 있음(softParticle 파라미터) | 없음(depthWrite false) | — |
 | billboardType 3/4 | 메시 정점·입자 변환 / 물결 XZ 축 치환 판독(6.4) | 메시 변환을 생략하면 다름 | 프로그램별 속성·행렬 유지 |
-| 정렬(sortType) | 이미터별 | three.js 투명 정렬 | — |
+| 정렬(sortType) | 6.5의 birth/depth key·depth-write·음수 비교 분기 | three.js 투명 정렬 | 원본 입자 순서 보존 필요 |
 
 ### 9.5 우선순위 (mg1801 최소 기능부터)
 
@@ -869,23 +1006,67 @@ for (const fx of effects) {
 | water_entry00 하나 | 프레임 0 에 shader00 5 + splash01 15 + splash02 12 + bubble00 4,800(120 × 분할 40, 위 표 정정) + wave00·wave01·white_wave00 각 1. wave00 은 프레임 8·16, wave01 은 5~25, white_wave00 은 2~8 에 더 남 [6.1 표 — 판독 식 적용, 끝 포함 여부 미확정] |
 | steam00 정상 상태 입자 수 | 배율1에서 lifeRandom30은 k=0..29, 수명85.2~120. 10프레임마다6개이므로 경계·콜백을 제외한 대략51~72개 [판독 식 기반 계산] |
 
+### 10.4 전체 모집단·원본 재현 판독 범위 [데이터]
+
+전체 149파일의 ESET·자식 EMTR를 한 번씩 센 **9,642개 정의(자식 943)**다. calcType 0/1/2=6,232/3,011/399, 실제 `calc×billboard×blend` 조합 **60종**. 아래는 같은 조합별 정의 수이며 파일 간 복제도 원본 정의로 센다.
+
+| billboard | CPU(0): blend=개수 | GPU(1): blend=개수 | GPU+SO(2): blend=개수 |
+|---|---|---|---|
+| 0 | 0=2,301, 1=2,159, 2=3, 5=6 | 0=907, 1=906, 2=2, 5=3 | 0=123, 1=136 |
+| 1 | 0=27, 1=37, 4=2, 5=8 | 0=3, 1=16, 5=1 | 0=2 |
+| 2 | 0=8, 5=4 | 1=4 | 0 |
+| 3 | 0=463, 1=73 | 0=197, 1=115, 4=1, 5=1 | 0=47, 1=5 |
+| 4 | 0=341, 1=328, 2=1, 5=1 | 0=110, 1=121, 5=2 | 0=1, 1=8 |
+| 5 | 0=133, 1=146, 4=3 | 0=44, 1=330 | 0=8, 1=10 |
+| 6 | 0=79, 1=44 | 0=119, 1=63, 3=2 | 0=44, 1=15 |
+| 7 | 0=29, 1=33 | 0=28, 1=15, 4=2 | 0 |
+| 10 | 1=2, 5=1 | 1=19 | 0 |
+
+`followType` 0/1/2=5,712/3,291/639, `sortType` 0/1/2/3=8,485/84/935/138. 이 분포는 샘플 게임 수나 웹 구현률이 아니다.
+
+| 판독 기준 | 정의 범위 | 제외·차단 조건 |
+|---|---|---|
+| CPU 공통 생성·적분·payload 연결 | 6,232 / 9,642 (64.63%) | 좌표/override·형상/필드 일부 분기와 최종 draw를 모두 해결했다는 뜻은 아니다 |
+| 기존에 완전히 읽은 VS·FS blob과 바이트 동일 | **12 / 9,642 (0.124%)** | mg1800 k4/5/8/11·mg1801 k13/14/15의 stage1+stage5 blob 조합을 대조. 해당 정의의 모든 CS·custom writer·render state 완료를 뜻하지 않는다 |
+| 공통 blend/depth/raster state 생성 | **9,642 / 9,642; 60 / 60 조합** | 0759784의 입력 범위·6.6의 NVN 변환 검증. alpha test·pass override·모든 draw 완료는 제외 |
+| 위 12개의 calc×billboard×blend | (0,4,1)=2, (1,0,1)=5, (2,4,1)=5 | 신규 6종 대표 VS의 부분 판독은 이 완전 pair 수에 더하지 않았다 |
+| 원본대로 draw 가능한 정의: **식 ∧ 입력 writer ∧ 모든 사용 stage ∧ render state ∧ layer/sort** | **완료 판정 보류** | 전체 정의에서 모든 조건을 통과시킨 집계는 없다. 12개도 모든 alpha/shader·최종 layer 조건을 검증하지 않았으므로 12개를 원본 drawable 완료로 보고하지 않는다 |
+
+동일 blob 대조는 companion BNSH의 ShaderRef index가 가리키는 stage 머리·SPH·코드 범위 그대로 수행했다. 전체 고유 VS/FS(+보조 shader) blob 조합은 **2,369종**이다. 고유 shader 수, 정의 수, 계산 경로 coverage는 서로 다른 분모다.
+
 ---
 
 ## 11. 미확정 사항과 추가 분석에 필요한 근거
 
-미확정 표는 **12개 주제**로 묶었다. 기존 GPU·형식·API·호출 분석을 재사용하고 CPU 공통 경로를 6.2에 통합했다. 아래에는 실제 남은 가지를 적는다.
+이전 12개 주제의 번호를 유지한다. 해결한 내부 경로와 실제 남은 분기를 구별한다.
 
-| # | 현재 상태·남은 항목 | 영향 | 필요한 근거 |
-|---|---|---|---|
-| 1 | **공통 경로 해결:** 6,232개 CPU 정의의 적분·수명·난수·P/V/scale/m/U/θ₀ 작성(6.2), 판독 GPU 프로그램(6.3). 남음: Sphere 경도 helper/분할 방향표, world velocity·override/follow 조합, 자식 속성 상속의 fluctuation·색 인수 옵션, mg0508 oil/fire·smoke 별도 GPU | 일부 초기 분포·좌표·표현 | 0753370·방향표, 074fea4/074d010 분기, 0755ccc/0756134/0756990/07571ec, 미판독 프로그램 SASS |
-| 2 | **부분 해결:** B0~D4·E0~FC의 런타임 루프 슬롯과 작성 원본 확인. A8/AC·D8/DC 및 추가 애니 채널별 사용은 미확정 | 루프 위상·추가 애니 | FUN_71007491a0의 나머지 작성과 해당 슬롯 reader |
-| 3 | **부분 해결:** 물결(4)의 XZ 축 치환, 메시(3)의 실제 속성 경로 확인. 3의 전체 모드 및 5/6/7/10 열거 의미 미확정 | 방향·좌표계 | 해당 billboard 프로그램과 변환 UBO 작성부 |
-| 4 | **부분 해결:** ShaderRef→표의 실제 VS/CS, flowmap·twinkle FS 판독. Combiner 나머지·CSDP 전체·노말/깊이 합성은 미확정 | 커스텀 셰이딩 | CSDP→c[D] 작성·프로그램별 FS/메타데이터 |
-| 5 | **주요 연결 해결:** FRN1→GPU50..5C와 CPU N 힘, FRND 기본 차분·FSPN·FMAG/FCOV·로컬FCOL·FPAD·EA 애니(6.2~6.3). 남음: FRND 전체 시간 조합/전역주파수, FCLN 전체 식, 월드 충돌·목표 좌표 옵션, FGWD/FCSF 개별 콜백·EATR 시간 전달 | 일부 흔들림·충돌·커스텀 힘 | 0758260/DAT_7101c405f8, 0745630, 0754958/0753ec0/0754cc4, 등록 콜백과 시간 호출부 |
-| 6 | Stop(bool) 동작(vtable+0x10), selfDestroy 시점, 남은 입자 처리 | steam00 → steam01 전환 모습 | `effect_bex.c` 내부 vtable(PTR_DAT_7101a851e8) 함수 판독 |
-| 7 | SetPosition 이 Start 뒤에 불릴 때 첫 방출 위치 | 원점이 아닌 PlayEffect 사용 게임 | 내부 갱신 함수(+0x119 읽는 곳) |
-| 8 | 같은 이미터셋 이름의 리소스 등록 순서 | 다른 게임의 이름 충돌 | ParticleFx2Module 등록 함수 |
-| 9 | 기본 레이어 비트와 카메라 레이어 마스크 | 표시 여부 | `FUN_71001186bc`, 카메라 문서 |
-| 10 | G3NT 8바이트·ID 해시, TRMA/TRIM | 프리미티브 대응(순서 추정 포함) | 기존 파일 분석의 미확인 대응 |
-| 11 | **간격 식 해결:** 073dcec의 정수 랜덤·배율(6.1). 남음: duration 경계 플래그 의미·누적량 최소1 분기·각 호출 모드의 첫 방출 시각 | 물결 개수 ±1 | FUN_710074cb60/074d580 남은 분기; CPU/CS/VS 수명 경계와 별개 |
-| 12 | `mg_common_pt_effect_00`의 mg1801 사용 여부 | 미니게임 공용 연출 | FUN_710043ce38 호출자 |
+| # | 현재 상태·남은 항목 | 필요한 근거 |
+|---|---|---|
+| 1 | CPU 공통(6.2), 부착 TRS·follow reader(5.3), 자식 속성의 현재 나이 평가 해결. 남음: Sphere helper/분할표, world velocity·override 전체, 회전 fluctuation 채널, mg0508 oil/fire·smoke 별도 GPU | 0753370·방향표, 074fea4 옵션, 07571ec 채널 원본 명령, 해당 프로그램 SASS |
+| 2 | B0~D4·E0~FC 런타임 슬롯 해결. A8/AC·D8/DC·추가 애니 채널 사용 남음 | 07491a0 나머지 writer와 프로그램별 reader |
+| 3 | 기판독 0/3/4와 1/2/5/6/7/10 대표 축·yaw reader 추가(6.5). 남음: 1/5/6/7 상류 rotation/fluctuation·퇴화 분기, 같은 값의 다른 프로그램, 8/9 의미 | 1/5/6/7은 기존 대표의 나머지 SASS·UBO/attribute writer; 8/9는 사용 정의/BNSH 또는 v53 enum·shader compiler 정의 |
+| 4 | 기판독 VS/CS·flowmap/twinkle FS·draw UBO/sampler 제출 및 blend 6종·depth 8종·raster 최종 state 해결(6.6). 남음: Render alpha↔FS discard, Combiner/CSDP 전체·soft depth/normal | Render alpha의 shader define/threshold writer, FS·sampler별 데이터 |
+| 5 | 주요 CPU/GPU 필드 연결 해결. FRND 전역주파수, FCLN, 월드 충돌·목표 좌표 옵션, FGWD/FCSF 콜백·EATR 시간 남음 | 0758260/테이블, 0745630, 0754958/0753ec0/0754cc4·콜백 |
+| 6 | **해결:** Stop(false)=즉시kill, true=fade 요청, alive 판정·pause·selfDestroy 0x12→0x14 지연 정리(5.3) | fade 옵션별 첫/끝 프레임 시각 동등성은 원본 실행 미확인 |
+| 7 | **일반 경로 해결:** Start 직접 초기화에는 방출 없음, dirty TRS→W 제출. 별도 생성 콜백·선계산과 vfx 계산 단계까지의 전체 선후 남음 | 0745f60 생성 콜백·074f620 콜백 및 ParticleFx2Module timing |
+| 8 | 이름 resolver의 등록 순서 우선 확정. 충돌 이름 리소스의 실제 등록 순서 남음 | ParticleFx2Module 등록 함수·장면 로딩 순서 |
+| 9 | 기본 **0xFFF**·계산 mask, 4개 pass mask·최종 set draw 교집합·저해상도 blend override 해결(6.7). 장면 pass 순서·viewport/thread mask 작성·custom/resolve 전체 남음 | 장면 pass 배열·drawPath 데이터, threadDrawMask writer, custom callback 등록·resolve FS |
+| 10 | G3NT 8바이트·ID 해시, TRMA/TRIM 대응 남음 | 기존 파일 분석의 고유 미확인 연결 |
+| 11 | **경계 해결:** duration bit20·child bit0/17, 첫 방출 bit1 예외, 최초 rate 최소1, 계산·sort·VS 수명 경계 구별(6.1/6.5). 별도 콜백/선계산의 첫 방출은 #7 | 074cb60/074d580·073b83c(b5), 특수 strip 종료 분기 전체 |
+| 12 | mg_common_pt_effect_00의 mg1801 사용 여부 남음 | 기존 043ce38 호출자 분석 재사용; 고유 연결만 추적 |
+
+## 12. 사용자 확인 필요
+
+원본 시각 검증 자료가 없으므로 첫 방출·fade 종료의 화면 동등성은 판독 결과와 구별해야 한다. 후속 구현 범위는 **mg1801·리듬 공용의 판독된 프로그램**인지 **전체 9,642개 정의**인지 먼저 정해야 한다. 전체 목표에는 11절의 미판독 shader/render 분기가 차단 조건이다.
+
+## 13. 런타임 구현 준비도
+
+| 필요한 항목 | 상태 | 차단 여부 |
+|---|---|---|
+| CPU 공통 운동·난수·키·주요 필드 | 판독(6.1~6.2), 일부 옵션 남음 | 기본 CPU 경로 가능, 모든 정의 동등성 차단 |
+| Start/Stop/selfDestroy·부착/행렬 | 내부 경로 판독(5.3), 특수 콜백 선후 남음 | 일반 경로 가능, 첫 방출 전체 보장 차단 |
+| GPU 계산·최종 VS/FS | 기판독 식 보존, 추가 대표 입력/basis 부분 판독 | 미판독 프로그램 차단 |
+| blend/depth/raster | 공통 최종 state·전체 입력 범위 판독(6.6) | 패스별 override는 별도 |
+| alpha·soft particle·layer | 패스 mask·set 제출·저해상도 blend override 판독(6.7); alpha writer/모든 FS·장면 pass 순서 남음 | 원본 drawable 완료 판정 차단 |
+| 자식 상속·follow·특수 형상/필드 | 현재 나이 평가·reader 판독, 조합 전체 남음 | 해당 옵션 정의 차단 |
+| 검증 범위 | 원본 데이터·C·SASS·9,642개 모집단 대조 | 실행·화면 동등성 미검증 |

@@ -14,10 +14,11 @@ import type { GameView, SoundSnapshot, ViewContext } from '../../../game';
 import type { Assets, Progress } from '../../../view/assets';
 import { Hud } from '../../../view/hud';
 import type { Mg1801Event, Mg1801State, ObjView } from '../state';
+import { rmPerfectView, rmTelopView } from '../../rhythm/view/events';
+import { RmSoundMap as SoundMap } from '../../rhythm/view/sound';
 import { type CharaInfo, CharacterActor, CharacterTemplate } from './character';
 import { EffectSystem } from './effects';
 import { NpcView } from './npc';
-import { SoundMap } from './sound';
 import { Stage } from './stage';
 import { disposeMg1801Ui, mg1801Ui } from './ui';
 import { Vegetable, type VegetableTemplate } from './vegetable';
@@ -88,7 +89,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
   ) {
     this.hud = new Hud(ctx.hud);
     this.assets = assets;
-    this.sound = new SoundMap(assets, ctx.audio);
+    this.sound = new SoundMap(assets, ctx.audio, 'mg1801');
     this.scene.background = new THREE.Color(0x2a2d36);
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     this.scene.add(ambient);
@@ -245,9 +246,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
           break;
         case 'telop':
           /* 원본 레이아웃 텔롭(ui.ts). 글자 텔롭은 ?debug=1 일 때만 */
-          mg1801Ui(this, this.assets, () => this.camera).push(e, state.frame);
-          if (e.judge === 'FINISH') this.sound.onEvent({ k: 'se', label: 'SQ_SE_MG_FINISH' }, state.bpm, this.camera);
-          if (e.judge === 'START' || e.judge === 'FINISH') for (const label of [`SQ_SE_TLP_${e.judge}`, `WD_VOI_LOC_SYS_${e.judge}`]) this.sound.onEvent({ k: 'se', label }, state.bpm, this.camera);
+          rmTelopView(mg1801Ui(this, this.assets, () => this.camera), this.sound, e, state.frame, state.bpm, this.camera);
           if (!Hud.debug) break;
           if (e.player < 0) {
             this.telops.push({ text: e.judge, color: '#ffffff', pos: new THREE.Vector3(0, 5.5, 0), t: 0 });
@@ -256,8 +255,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
           this.telops.push({ text: e.judge, color: e.judge === 'JUST' ? '#ffe14d' : e.judge === 'FAST' ? '#4db8ff' : '#ff6b6b', pos: new THREE.Vector3(e.pos.x, e.pos.y + 1.2, e.pos.z), t: 0 });
           break;
         case 'perfect': {
-          mg1801Ui(this, this.assets, () => this.camera).push(e, state.frame);
-          this.sound.onEvent({ k: 'se', label: 'SQ_SE_MG1800_PERFECT' }, state.bpm, this.camera);
+          rmPerfectView(mg1801Ui(this, this.assets, () => this.camera), this.sound, e, state.frame, state.bpm, this.camera);
           /* CaComUiPerfectTelop::SettingEffect(위치, 1.5, 레이어 1) → In → FUN_710043ce38: mg_common_pt_effect_00 을 (그 플레이어 엔티티 x,
              네 플레이어 엔티티 y 의 최소, z)에 배율 1.5 로 [판독 FUN_710043af00]. 속도 PlayRate·레이어 비트는 effects.ts 근사 11 */
           const p = state.players[e.player]?.pos;

@@ -1,6 +1,7 @@
 # 02. 리듬 미니게임 공용 프레임워크 (`ca::rm`, mg1801~mg1810)
 
 2026-10-02. 상태: **분석 진행**(공용 흐름·박자·채보·점수 판독 완료, 원본 실행 확인 없음). 웹 코드는 고치지 않았다(11절은 명세다).
+2026-10-09: 웹 공용 모듈로 분리했다(`web/script/games/rhythm/`, 동작 불변) — 14절.
 확정 수준: **[실행]** 원본 실행 확인, **[판독]** 원본 명령 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 [실행]은 없다. 판독한 식·데이터를 옮겨 돌린 결과는 **[재구현 계산]**으로 따로 적는다.
 
 주소는 SwitchLoader 기본 베이스(0x7100000000) 기준이고 **모듈 이름과 함께** 쓴다. 따로 적지 않은 주소는 main NSO 다.
@@ -624,3 +625,234 @@ onGameMain(): boolean {
 | 게임별 points·텔롭 type | mg1802~1810 점수 | 각 게임 판독 |
 | `SQ_SE_RC_JUST` 가 로컬 변수 0 을 쓰는 방식 | JUST 소리 | 시퀀스 판독(sound) |
 | 시퀀서 시뮬레이터 동등성 | 5.3 | 원본 실행 또는 nn::atk 시퀀서 판독 |
+
+## 14. 웹 공용 모듈 분리 (2026-10-09, [rhythm])
+
+mg1801 웹 코드 안에 함께 있던 리듬 공용 틀(`ca::rm`)을 공용 모듈로 옮겼다. **동작은 바꾸지 않았다**(구조 분리만).
+- 식·상수·호출 순서·난수 소비·f32 처리는 그대로다.
+- mg1801 은 공용 모듈 위에 자기 고유 부분만 얹어 다시 조립했다.
+- 결과가 같은지는 분리 전/후 골든을 바이트 단위로 비교해 확인했다(14.8).
+
+11절의 `_rhythm/` 안은 구현 전 명세다. 실제 위치·이름은 이 절이 기준이다.
+
+### 14.1 위치
+
+| 폴더 | 내용 | import 규칙 |
+|---|---|---|
+| `web/script/games/rhythm/` | 로직(three·DOM 없음): 박자 시계, 채보, RmGameWork, RmSoundMan 로직, 별 판정, `RmMgSceneBase`(단계 0~10, 줄 배분, 결과 흐름), 웹 MinigameFlow 대리 | **import 0**(같은 폴더만). f32·60fps 상수도 폴더 안에 둔다(`data.ts`, 값은 core 와 같다). 화면 전환은 인터페이스(`RmWipe`)로 받는다 — `lib/transition` 의 `Transition` 을 게임이 넘긴다 |
+| `web/script/games/rhythm/view/` | 화면 어댑터: 리듬 BGM 핸드셰이크·효과음 시퀀서 소리(`RmSoundMap`), 공용 2D UI(`RmUi`: 타이밍 텔롭·START/FINISH·점수 게이지·PERFECT·흰 페이드 따라가기·컨트롤 안내 와이프·결과 점수판), 공용 사건 → UI·소리(`rmTelopView`·`rmPerfectView`) | `view/*`(audio·bgm·seq·lyt·assets·input), `lib/transition`, `shell/charselect/fontSheet`, `shell/stage3d/assetLoader`, three. 이미 공용인 것(BGM 스트림 `lib/bgmstream`→`view/bgm`, 시퀀서 `view/seq`, 레이아웃 재생기 `view/lyt`, 화면 전환 `lib/transition`)은 다시 만들지 않고 부른다 |
+| `web/script/games/mg1801/` | mg1801 고유(`mg1801::Scene` = `Mg1801Game extends RmMgSceneBase`) | `games/rhythm` 을 import 한다 |
+
+에셋 경로는 바꾸지 않았다. 공용 UI·소리 명세는 지금도 게임 폴더(`assets/mg1801/ui/ui.json`, `assets/mg1801/manifest.json`)에서 읽는다(14.9).
+
+### 14.2 공용 / mg1801 고유 경계
+
+| 원본 단위 | 웹 공용(`games/rhythm/`) | 옮겨 온 곳(분리 전) | mg1801 에 남은 것 |
+|---|---|---|---|
+| `snd::*` + 마스터 시퀀스 | `clock.ts` `RhythmClock`(G14·G12·L0 관측/프레임 모델, `beatToSec`, `beatState`, `bgmStartBar`) | `mg1801/logic/rhythm.ts` 전체 | — |
+| static 표 | `data.ts` `BEAT_SCALE`·`BEATS_PER_BAR`·`BPM`(120)·`RC_SPEEDUP_BPM`·`PREROLL_FRAMES`·`WIPE_WHITE_FRAMES`·`RESULT_PANEL_DELAY_BEATS`·`RESULT_PANEL_FRAMES`·`RESULT_MOTIONS`·`CALIBRATION_FRAMES` | `mg1801/logic/data.ts`·`game.ts` 끝 | `MAIN_BEAT_TYPE`, 채소·의자·시선·칼 모션·NPC 표, `RESULT_CAMERA_POS`(mg1801_cam02 값 → 공용 결과 시작에 넘긴다) |
+| `RmChartDataMan` | `chart.ts` `RmChartRow`·`readChartRows(raw)` | `mg1801/logic/chart.ts` 의 행 만들기 | 채보 JSON 3개 import·이름 표(`chartRows(name)`) |
+| `RmGameWork` | `gameWork.ts` `RmGameWork`(isCom·점수 0..999·팀 합·총점·개인 횟수·Ext·`resultPlayerScoreMax`), `resolveRmConfig`(모드·코스·BPM·chart01·remixShort·컨트롤 와이프) | `world.ts`(scores·addScore·teamScore), `game.ts` `resolveConfig` | 채보 이름 규칙, 리믹스 A 슬롯 고정(`remixCourse`) |
+| `RmSoundMan` | `soundMan.ts` `RmSoundMan`(PlayExcellentSe 파이버·겹침 수, 곡 교대 확인 +0x38~+0x3E), `rmGameBgmName`·`rmEndingBgmName`·`rmInterEndBgmName`(접두 `SQ_BGM_<MG>`) | `world.ts` ExcellentSe, `game.ts` 곡 교대 4함수·이름 3함수 | 이름 함수의 mg1801 포장(시험이 그 이름으로 부른다) |
+| `RmUiStatusMan` | `status.ts` `starJudge` | `game.ts` | `calcTotalPoint`(mg1801 `Scene::CalcTotalPoint`) |
+| `RmMgSceneBase` | `scene.ts` `RmMgSceneBase`: 단계 0~10, 줄 배분 꼬리(Entry·Lock·NextEntry, BeforeOneBeat), OnGameStartAfter/End/Finish/EndingBefore/Ending, 결과 기록·PERFECT·결과 연출 파이버·결과 모션 진행, 웹 MinigameFlow 대리(PREROLL·흐름 8~13) | `game.ts` 의 해당 메서드 전부 | 훅 구현(14.5), NPC(MapImpl), 카메라 라벨, 제품 파이버(Object → Player), state 조립, 결과 객체 |
+| 로직 → 화면 계약 | `types.ts` `RmEvent`(telop·justSound·seLocal·soundStop·soundPreset·perfect + se·bgm), `RmSceneState`(공용 state 필드), `RmPhase` | `mg1801/state.ts` | `Mg1801State extends RmSceneState`(objs·players·counts·camera·npc), `Mg1801Event = GameEvent | RmEvent | fxTrigger` |
+| 공용 소리 | `view/sound.ts` `RmSoundMap`(manifest 소리, 렌더 BGM 핸드셰이크, 실시간 시퀀서, observe) | `mg1801/view/sound.ts` 전체 | 장면 프리셋 이름 `'mg1801'` 을 넘김 |
+| 공용 UI | `view/ui.ts` `RmUi` | `mg1801/view/ui.ts` 의 `Mg1801Ui` 클래스 | 와이프 레이아웃 이름 `mg1801_wip_bg_01/00`, 화면마다 하나 만드는 `mg1801Ui()`·`disposeMg1801Ui()` |
+| 공용 사건 소리 | `view/events.ts` `rmTelopView`(START/FINISH SE·보이스, SQ_SE_MG_FINISH), `rmPerfectView`(SQ_SE_MG1800_PERFECT) | `mg1801/view/index.ts` onStep 안 몇 줄 | 디버그 글자 텔롭, PERFECT 3D 이펙트(effects.ts), 3D 장면 전부 |
+
+mg1801 고유로 남긴 것(공용에 넣지 않음): 판정 창(±GetBeatToSec(1,1)·JustRangeFrame 5), CPU(PadDriver·CpuMiss), 채소 풀·외곽선, 칼 모션, 의자·시선, NPC 헤이호, 수프 결과 모델, 3D 화면 전부(무대·재질·후처리·캐릭터·이펙트).
+
+### 14.3 근거: 나머지 리듬 9종이 공용 부분을 같은 규칙으로 쓰는지 [게임 문서 확인]
+
+mg1802~1810·rc_stage01 문서(각 3·5·6절, mg1810 부록 A·B)를 확인했다.
+
+| 공용으로 둔 것 | 9종 사용 | 근거 |
+|---|---|---|
+| 박자 시계·단계 0~10·꼬리 순서(Lock → Entry → NextEntry) | 10종 모두 같은 기반 슬롯 배치 | mg1810 부록 A, 4.1 표 |
+| BeforeOneBeat·NextOffset·MainBeatType | 설정값만 다름: (1,0) 1801·1803·1807, (1,1) 1805, 없음 나머지 / NextOffset 2·1·4·−1 / MainBeatType 전부 1 | 각 문서 3.2~3.4, 10절 |
+| 점수 가산 clamp 0..999, 별 판정 80/40/0, 결과 기록, PERFECT = ExtA·ExtB + 횟수·2 | 10종 같은 경로(points 는 게임마다: 1807 누적, 1810 KB 1점) | 8절, mg1807 5.2, mg1810 6.5 |
+| 게임 BGM `_B`/`_C`/REMIX 변환, 결과 앰비언트·징글 이름 | 10종 공용 함수 | 6.3, 각 문서 BGM 절 |
+| `PlayExcellentSe` 본체 | 1801·1803·1805·1806·1809·1810 (−1, true), 1804 (n, true), 1808 일부. 1802·1807 은 자체 소리 | 각 문서 6절 |
+| 타이밍 텔롭 type 0 FAST·1 SLOW·2 JUST | 9종 모두 | 각 문서 3절 |
+| RmGameWork +0x2C 분기(코스 중간: 종료 BGM 바로, PERFECT 없음, 7박 대기 없음, 징글 없음) | rc_stage01 이 쓰고 10종 공용 단계가 읽음 | rc_stage01 6.4 |
+
+훅·설정으로 연 것(게임마다 다름): Entry/Lock/NextEntry 훅, WipeFadeOutStart(1807)·PracticeFinish(1808)·TopStart(1803 제외)·OnRmGameEnd(1803·1805·1810) 훅, OnRmGameStartAfter 반환값(1809 는 시퀀스 완료 여부), 채보 경로 고르기, 게임/종료 BGM 이름, GENERIC 여부, 총점·개인 횟수(PID 매핑 포함)·Ext, `SetGameEndForce`(1808), 상태 UI Hide(1807).
+
+### 14.4 프레임 순서 (분리 전과 같음)
+
+`Mg1801Game.step()`(원본 한 프레임):
+1. `pads.read` (mg1801)
+2. `RmMgSceneBase.stepFrame(sound)`:
+   사건 비우기 → 사운드 관측(`clock.observe`) → `frame++` → 흰 페이드 1프레임(`wipe.step`) → 흐름 단계 갱신(`flow = nextFlow`)
+   → **`update()`**: RmSoundMan 파이버(`tickExcellentSe`) → 박자 시계 1프레임 → 결과 연출 파이버 → (끝나지 않았으면) 제품 파이버 `updateProducts()`(mg1801: Object → Player)
+   → 흐름 처리기 하나(0 대기 / 8 `onGameStartAfter` / 9 `onGameMain` / 10 `onGameEnd` / 11 `onGameFinish` / 12 `onGameEndingBefore` / 13 `onGameEnding`)
+   → **`updateAnimation()`**: 게임 모션(`updateGameAnimation`, mg1801 NPC) → 결과 모션 프레임
+
+분리 전에는 "사건 비우기"가 `pads.read` 앞이었다. 둘은 서로 다른 상태만 건드리므로 결과가 같다(골든 일치로 확인).
+
+### 14.5 공용 API
+
+```ts
+// games/rhythm/scene.ts — 원본 ca::rm::RmMgSceneBase
+abstract class RmMgSceneBase {
+  constructor(opts: RmOptions, init: RmSceneInit);
+  readonly cfg: RmConfig;  readonly clock: RhythmClock;  readonly gameWork: RmGameWork;  readonly soundMan: RmSoundMan;
+  get done(): boolean;
+  // 게임이 생성자(원본 RmSyncedSetupGame 자리)에서 부르는 설정
+  protected setMainBeatType(t: number): void;                                  // RmGameWork::SetMainBeatType
+  protected setMgBgmBeforeOneBeatStart(useBeatCheck: boolean, beatType: number): void;
+  protected setNextChartDataOffset(n: number): void;
+  protected setChartData(rows: readonly RmChartRow[]): void;                   // RmChartDataMan::ReadChartData 결과
+  protected setGameBgmLabel(label: string): void;                              // SetGameBgmName + FUN_7100441990 결과
+  protected setGameBgmFinName(name: string): void;                             // SetGameBgmFinName(변환은 단계 6 에서)
+  protected setPlayerEntities(list: readonly RmPlayerEntity[]): void;          // RmGameWork::SetPlayerEntity
+  protected setGameEndForce(): void;                                           // SetGameEndForce
+  // 한 프레임(웹 MinigameFlow 대리) — 게임 step() 이 패드를 읽은 뒤
+  protected stepFrame(sound: RmSoundSnapshot | null): void;
+  update(): void;  updateAnimation(): void;                                    // mgscene MgGame.update 자리 / 애니메이션 갱신
+  // MinigameScene 흐름 슬롯(mgscene MgGame 훅과 같은 이름·bool 반환)
+  onGameStartAfter(): boolean;  onGameMain(): boolean;  onGameEnd(): boolean;
+  onGameFinish(): boolean;  onGameEndingBefore(): boolean;  onGameEnding(): boolean;
+  // 게임이 덮는 훅(원본 vtable 이름, 기본 = 원본 기반 구현)
+  protected onRmGameStartAfter(): boolean;              // +0x2B0, 기본 true
+  protected trigRmGameWipeFadeOutStart(): void;         // +0x2B8
+  protected trigRmGameMainBgmPracticeStart(): void;     // +0x2C0
+  protected trigRmGameMainBgmPracticeFinish(): void;    // +0x2C8
+  protected trigRmGameMainBgmIntroStart(): void;        // +0x2D0
+  protected trigRmGameMainBgmTopStart(): void;          // +0x2D8
+  protected onRmGameMain(): boolean;                    // +0x2E0, 기본 true(원본). 10종 모두 0 을 돌려주게 덮는다
+  protected trigRmGameMainChartEnd(): void;             // +0x2E8
+  protected onRmGameEnd(): boolean;                     // +0x2F0, 기본 true
+  protected onRmGameFinish(): boolean;                  // +0x2F8, 기본 true
+  protected trigRmGameEndingSetting(): void;            // +0x300
+  protected onRmRecieveBeatEntry(d: RmBeatData): void;  // +0x328
+  protected onRmRecieveBeatEntryLock(d: RmBeatData): void;  // +0x330
+  protected onRmRecieveBeatNextEntry(d: RmBeatData): void;  // +0x338
+  // 웹 전용
+  protected abstract updateProducts(): void;            // 제품 파이버(MaintainProduct)
+  protected updateGameAnimation(): void;                // 게임 모션(기본 없음)
+  protected abstract onResultReady(): void;             // 끝(RequestReturnScene·결과 점수판 끝) — 게임이 결과 객체를 만든다
+}
+interface RmSceneInit {
+  mg: string;                                   // 'mg1801' → BGM 접두 SQ_BGM_MG1801, 결과 프리셋 mg1801_result, SM_AMB/SM_JIN 이름
+  chart: { chartName(mode: number): string; remixCourse?(c: RmCourse): RmCourse };
+  events: RmEventSink;                          // 게임 사건 배열(이번 프레임)
+  wipe: RmWipe;                                 // 흰 페이드(lib/transition Transition)
+  isCom: readonly boolean[];
+  resultCameraPos: RmV3;                        // 결과 시작 FUN_7100446b60 이 머리를 돌리는 카메라 위치
+}
+interface RmBeatData { row: number; beat: number; item: RmChartRow }   // 원본 RmMgSceneBase::Data
+```
+
+게임 쪽 조립 예(mg1801): 생성자에서 `super(opts, init)` → `setMainBeatType(1)`·`setMgBgmBeforeOneBeatStart(true, 0)` → `setChartData(chartRows(cfg.chart))` → 난수·World·ObjectMan·PlayerMan(분리 전 순서 그대로) → `setPlayerEntities(players)` → 총점·개인 횟수 → `setGameBgmLabel`·`setGameBgmFinName`. 덮는 훅: PracticeStart(입력 켬), TopStart(NPC), ChartEnd(Player::Finish·NPC), EndingSetting(상태 UI 숨김·채널 0,6), Entry(`ObjectMan.entry`), OnRmGameMain(false).
+
+화면 쪽: `new RmSoundMap(assets, audio, 'mg1801')`, `new RmUi(assets, camera, { name: 'mg1801', wipeLayouts: ['mg1801_wip_bg_01', 'mg1801_wip_bg_00'] })`, `rmTelopView(ui, sound, e, frame, bpm, camera)`, `rmPerfectView(…)`.
+
+### 14.6 mgscene 연결 계획 (이번에는 하지 않음)
+
+공용 리듬 모듈의 흐름 슬롯 이름·반환형은 `shell/mgscene` 의 `MgGame`([../shell/minigame_scene.md](../shell/minigame_scene.md) §12.3)과 같게 맞춰 두었다. 나중에 할 일:
+1. 어댑터 하나: `MgGame = { setup, update: () => scene.update(), onGameStartAfter: () => scene.onGameStartAfter(), onGameMain, onGameEnd, onGameFinish, onGameEndingBefore, onGameEnding }`. 틀의 `ctx.dt`·`ctx.rand`·`ctx.pad` 는 지금 게임이 직접 쓰는 `RM_DT`·`BexRandModule`·`Pads` 자리에 넣는다. `updateAnimation()` 은 틀의 흐름 처리기 뒤에 부른다(원본 엔티티 갱신 자리, 순서 [추정]).
+2. 웹 MinigameFlow 대리(`stepFrame` 의 흐름 0·8~13 switch, `PREROLL_FRAMES`, 흐름 11 두 프레임)를 지우고 틀의 단계 1~13 이 대신한다.
+3. 흰 페이드(`RmWipe`)는 틀의 `MgWipe`(같은 `lib/transition` 코어)로 넘긴다.
+
+**BGM·박자 시작 프레임이 바뀌는 이유.** 지금 웹은 OnGameStartAfter 전 MinigameFlow 1~7(장면 사운드 시작·첫 페이드·오프닝·시작 텔롭)을 `PREROLL_FRAMES` 60 프레임 대기로 대신한다. 마스터 박자 시퀀스(`SQ_BGM_RC_MAIN_RHYTHM`)는 OnGameStartAfter 프레임에 시작하고, 박자(G14)·단계 0~10·게임 BGM 마디 동기·줄 배분은 모두 그 프레임을 0 으로 센다. 틀의 1~7 은 첫 페이드 22 프레임, 오프닝 길이(게임 훅), 시작 텔롭 단계 등으로 이루어져 길이가 60 과 다르다(리듬 장면의 시작 텔롭 설정은 이 작업에서 다시 판독하지 않았다). 그래서 OnGameStartAfter 프레임이 옮겨 가고, 그 뒤 모든 사건(마스터 시작, 게임 BGM 접수, 줄 배분, 종료 BGM, 결과)이 같은 양만큼 밀린다. 줄–BGM 상대 시각은 그대로지만 `test_mg1801` 의 절대 프레임 기대값(예: 단계 0~1 "OnGameStartAfter + 121", 결과 끝 프레임 수)과 골든이 달라진다. 그래서 연결은 원본 근거로 1~7 길이를 정하고 기대값을 다시 정하는 별도 작업으로 둔다.
+
+### 14.7 원본과 다른 점 (분리로 새로 생긴 것 없음)
+
+분리 전 mg1801 의 웹 근사(PREROLL, 컨트롤 안내 와이프 길이, 리믹스 L0 2박, 흐름 11 두 프레임, 결과 점수판 241 프레임 등)는 그대로 공용 모듈로 옮겼다. 새 근사는 없다.
+
+공용 모듈에 새로 연 훅(Lock·NextEntry·PracticeFinish·IntroStart·WipeFadeOutStart·OnRmGameStartAfter·OnRmGameEnd·OnRmGameFinish·SetGameEndForce)은 mg1801 이 쓰지 않거나 기본값이 분리 전과 같은 결과를 내는 자리에만 넣었다. 부르는 자리는 7.1·7.2 표 그대로다.
+
+### 14.8 검증 (분리 전/후 골든, 노드)
+
+분리 **전에** 기록을 떠 두고, 분리 **후** 같은 조건으로 다시 떠서 파일을 바이트 단위로 비교했다(`cmp`). 기록 도구는 시험 기대값과 무관한 scratchpad 스크립트다(golden_rec·view_trace·comments).
+
+**로직 골든** — 프레임마다 한 줄 `[프레임, state, events, 내부]`. 숫자는 비트 보존(−0·NaN·무한은 비트 16진). 마지막 줄은 결과.
+- 내부에 넣은 것:
+  - 장면: 단계·타이머·줄·Lock·박 수·흐름·와이프·보정·결과 기록·결과 연출·NPC.
+  - RmSoundMan: 곡 교대 +0x38~+0x3E, ExcellentSe.
+  - 그 밖: 경과 프레임, 점수, 외곽선 점유, 박자 시계(masterFrame·관측·요청 틱), 난수 소비 횟수(비동기·동기), 채소 풀 75개 전 필드, 레인 집계, 플레이어 4명 전 필드.
+
+| 경우 | 프레임 | 전/후 |
+|---|---|---|
+| 노멀 단독 시드 1(옵션 있음·없음 두 경로) | 3,255 ×2 | 같음 |
+| 하드 단독 시드 7 | 3,255 | 같음 |
+| 리듬 쿠킹 노멀 1번째 / 마지막, 하드 마지막 | 3,045 / 3,255 / 3,255 | 같음 |
+| 롱 1번째(BPM 120) / 4번째(BPM 180, _B·_B_INTER_END) / 마지막(BPM 180) | 3,045 / 2,145 / 2,285 | 같음 |
+| 리믹스(A 슬롯) | 879 | 같음 |
+| CpuMiss 켬(노멀 / 롱 BPM 180) | 3,255 / 2,145 | 같음 |
+| 사람 1P 무입력 / 4명 무입력 / 1P 판정 시점 A / 리듬 쿠킹 마지막에서 1P A | 3,255 ×4 | 같음 |
+| 사람 아무 때나 A·가속도 섞기(하드 4명 / 롱 BPM 180 2명) | 3,255 / 2,285 | 같음 |
+| 의자·시선 예외 캐릭터(pc51·pc58·pc12·pc62) | 3,255 | 같음 |
+| 컨트롤 안내 와이프 400(SQ_BGM_RC_CALIBRATION) / PREROLL 5 | 3,405 / 3,200 | 같음 |
+| 사운드 관측 경로(지연 0 / 3 / 롱 BPM 180 지연 0 / 리믹스 지연 2 / 리듬 쿠킹+사람 섞기 지연 5) | 3,255 / 3,258 / 2,145 / 881 / 3,260 | 같음 |
+| `check_logic` 경로(등록 GameDef createLogic, 전원 CPU 시드 1) | 3,255 | 같음 |
+
+27개 기록 모두 바이트 단위로 같다. 판정·점수·소리 사건(bgm·se·justSound·seLocal·soundStop·soundPreset)·박자 시각(g14·bar·bgmTime·masterFrame)이 모두 들어 있다.
+
+**화면 추적** — `Mg1801View` 를 노드에서 상자 모드(에셋 없음, WebGL 없음)로 만들고, 로직 state·events 를 onStep/render 에 넣었다(노멀·롱 BPM 180·리믹스·하드 리듬 쿠킹, render 는 1~3 스텝마다).
+- 기록한 것:
+  - 렌더러 `render(scene, camera)` 마다 카메라 위치·회전·fov·near·far·종횡비·투영 행렬.
+  - 보이는 객체 전부의 월드 행렬·재질 종류·색·불투명도·빛 세기(해시).
+  - 소리 라우팅(`onEvent` 인자 순서).
+  - UI 호출(push·draw·vibrate) 순서, HUD 호출.
+- 결과: 4,777 렌더·16,296 줄이 전/후 같다.
+- 분리 후 추적은 새 클래스(`RmSoundMap`·`RmUi`)의 메서드를 가로챘다(옛 파일은 옮겨서 없음).
+- `RmUi`·`RmSoundMap` 의 몸체 차이(옛 파일 대비 diff)는 다음뿐이다.
+  - 형 이름: `Mg1801State` → `RmUiState`, `Mg1801Event` → `RmEvent`.
+  - 주입값 3개: 와이프 레이아웃 이름, 경고 문구 이름, 장면 프리셋 이름. mg1801 은 옛 값을 그대로 넘긴다.
+
+**주석 보존** — TypeScript 구문 트리로 전/후 주석을 모두 모아 비교했다.
+- 분리 전 mg1801 24파일의 주석 문장(줄)은 분리 후 mg1801 + rhythm 34파일에 모두 있다(없어진 문장 0).
+- 주석 줄 수: 전 1,078 / 후 1,266(새 머리 주석·가리킴이 늘어남).
+
+**기존 시험(기대값 수정 0)** — 아래 14.8.1.
+
+#### 14.8.1 기존 시험 (시험 파일 무수정)
+
+| 시험 | 분리 전 | 분리 후 |
+|---|---|---|
+| `test_mg1801` | 통과 84 / 실패 0 | 통과 84 / 실패 0 |
+| `check_logic` | mg1801 3,255 프레임 같음 | 같음 |
+| `test_mgscene` | 69/69 | 69/69 |
+| `test_prefetch` | 133/133 | 133/133 |
+| `test_transition` | 119/119 | 119/119 |
+| `test_build_cache` | 46 / 실패 0 | 46 / 실패 0(광장 진입 JS 에 mg1801 몸체 없음 포함) |
+| 그 밖 `tools/test_*`·`check_*` 전부(29개) | — | 모두 종료 코드 0, 실패 0 |
+| `tsc --noEmit`, `npm run build` | — | 통과 |
+
+헤드리스·페이지 확인은 하지 않았다. 받기 경로(에셋 URL)를 바꾸지 않았기 때문이다.
+
+### 14.9 나머지 리듬 9종에 남는 일
+
+공용 모듈 위에 게임마다 얹어야 할 것(각 게임 문서 근거, 14.3):
+
+| 게임 | 설정 | 덮을 훅·고유 부분(예상) |
+|---|---|---|
+| mg1802 | NextOffset 2 | Entry·NextEntry(줄 r+2 Ready), Lock 빈 함수. Sequence STATE 알림, 자체 JUST 소리(JustRCSound), 채보 조각 표, 결과 ed_obj00~02, PERFECT 위치 보정 |
+| mg1803 | BeforeOneBeat(1,0) | Lock(OBJ1 "R" 재장전), TopStart 안 덮음, OnRmGameEnd(정리 후 1), 판정 ±7·JUST ±3, 레인 = PID 그대로(원본 특이점), 꼬치 결과 |
+| mg1804 | NextOffset 2 | NextEntry(티켓 2줄 뒤), `PlayExcellentSe(min(n,3)+1, true)`(n 인자 경로 — 공용 `playExcellentSe` 에 인자 열기 필요), **흐름 파이버가 제품보다 먼저**(공용 update 순서를 열어야 함), 동기 난수 3회/프레임 |
+| mg1805 | BeforeOneBeat(1,1) | Entry → EntryNext·Lock → Entry(이름 엇갈림), OnRmGameEnd, 사람/CPU 판정 창 다름, 빵 결과, PERFECT 위치 |
+| mg1806 | NextOffset 1 | Lock 빈 함수, NextEntry(ReadyChart), STATE 알림(리믹스·inst 에서 연습 생략), 프레임 고정 판정 창, 카레 결과 |
+| mg1807 | BeforeOneBeat(1,0), NextOffset −1 | **WipeFadeOutStart**(오프닝 그릇·카메라), Lock 에서 판정 음표 투입, 자체 JUST 소리, 누적 점수 한 번에 Start, `SetPersonalPlayNumExt`, EndingSetting 에서 상태 UI Hide |
+| mg1808 | NextOffset 4 | Entry 빈 함수, Lock(손님·BREAK → `SetGameEndForce`), PracticeFinish 빈 함수, FAST/SLOW 에도 PlayExcellentSe, L 은 SQ_SE_RC_JUST 직접 |
+| mg1809 | NextOffset 2 | NextEntry 빈 함수, **OnRmGameStartAfter 반환값 = 시퀀스 완료**(공용 흐름 8 이 반환을 써야 함), 흐름 먼저 파이버, 동기 난수 3회, PERFECT −14° |
+| mg1810 | — | KB 연타(Ext, 텔롭 없음), `SetResultSkip`, 자체 프레임 카운터 판정, 샐러드 결과, 종료 BGM 시작 이름 `SQ_BGM_MG1810_MG_ENDING` |
+| 공통 | — | 게임별 채보 고르기(`RmChartRule`), 결과 모델, 판정 창·CPU, 연습 화살표 모델(arrow00/arrow_op00/크기), 게임 UI 에셋 폴더(14.10) |
+
+공용 모듈 쪽에 아직 없는 것(나중에 그 게임을 할 때 원본 근거로 더한다): `PlayExcellentSe(n, keepMax)` 의 n·keepMax 인자, 흐름/제품 파이버 순서 선택, OnRmGameStartAfter 반환 사용, 단계 6 의 "끝/강제 플래그" 분기, `SetResultSkip`, StatusType, comScoreIgnore, inst(조작 설명) 경로, 결과 메들리 분기 세부.
+
+### 14.10 사용자 확인 필요 (이 절)
+
+모두 "결과 불변"을 먼저 지키는 쪽으로 정했다.
+
+| 항목 | 정한 것 | 이유 |
+|---|---|---|
+| 공용 UI·소리 에셋 위치 | 그대로 `assets/mg1801/ui`·`assets/mg1801/manifest.json` 에서 읽는다(공용 레이아웃 mg1800_*·RC 공용 소리도 이 안에 있다) | 받기 경로를 바꾸면 미리 받기 목록·캐시 키(`test_prefetch`)와 페이지 동작이 바뀐다. 나머지 리듬 게임을 붙일 때 `assets/rhythm/` 같은 공용 폴더로 나누는 일을 따로 정한다 |
+| OnRmGameStartAfter 반환값 | 부르기만 하고 흐름 8 은 늘 한 프레임 | mg1809 만 반환을 쓴다. 반환을 쓰면 OnGameStartAfter 를 여러 프레임 부르는 경우가 생겨 마스터 시작 사건이 되풀이된다(원본은 재생 중 플래그로 막음) — 그 게임 때 같이 정한다 |
+| OnGameFinish 페이드 대기 | 웹 지금처럼 기다리지 않고 참(흐름 11 두 프레임) | 4절 표의 "페이드 후 vt+0x2F8" 을 따르면 흐름 11 길이가 바뀐다(결과 변경). 분리 전 동작 유지 |
+| SetGameEndForce | 줄 배분 꼬리(7.2)에만 반영, 단계 6 의 강제 종료 분기는 아직 없음 | 7.1 표 "끝/강제 플래그" 의 정확한 동작(종료 BGM 요청 여부)을 판독하지 않았다. mg1801 은 부르지 않아 결과 같음 |
+| 종료 BGM 이름 규칙 | `rmEndingBgmName(SetGameBgmFinName 값, …)` = mg1801 판독 규칙 그대로 | `_A_MG_ENDING` 으로 시작하는 게임(1804~1809)의 변환 세부는 [미확정](mg1810 11.2) |
+| `phase = 'ending'` 위치 | 기반 OnGameEndingBefore 가 TrigRmGameEndingSetting 훅 바로 뒤에 둔다(분리 전에는 mg1801 훅 안의 마지막 줄) | 웹 화면 계약 값이라 공용 쪽으로 올렸다. 사이에 읽는 곳이 없어 결과 같음 |
+| 화면 사건 라우팅 | START/FINISH·PERFECT 소리만 공용(`rmTelopView`·`rmPerfectView`), 나머지 onStep(3D 이펙트·디버그)은 게임 | 3D 화면은 게임마다 다르다 |

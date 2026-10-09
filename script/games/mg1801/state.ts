@@ -6,8 +6,9 @@
 import type { V3 } from '../../core/fmath';
 import type { GameEvent } from '../../core/events';
 import type { GameResult } from '../../game';
+import type { Phase, RmEvent, RmSceneState } from '../rhythm/types';
 
-export type Phase = 'ready' | 'main' | 'ending' | 'result';
+export type { Phase };
 
 export interface ObjView {
   id: number;
@@ -56,86 +57,24 @@ export interface LaneCount {
   miss: number;
 }
 
-export interface Mg1801State {
-  frame: number;
-  phase: Phase;
-  /** 원본 OnGameMain 단계(RmMgSceneBase+0x370) */
-  stage: number;
-  chart: string;
-  bpm: number;
-  /** 사운드 전역 14(마디 안 16분 위치 1..16)와 마디 번호 */
-  g14: number;
-  bar: number;
-  /** 게임 BGM(SQ_BGM_MG1801_A) 시작 뒤 초(시작 전 −1) */
-  bgmTime: number;
-  row: number;
-  rows: number;
+/** 공용 리듬 state 필드(frame·phase·stage·박자·점수·별 판정·페이드·결과 점수판 등)는 games/rhythm/types.ts RmSceneState */
+export interface Mg1801State extends RmSceneState {
   objs: ObjView[];
   players: PlayerView[];
   /** 레인별 판정 수 */
   counts: LaneCount[];
-  /** 플레이어 점수(원본 RmGameWork+0xEBC, JUST 2·FAST/SLOW 1) */
-  scores: number[];
-  /** CalcTotalPoint 합계(별 총점)와 레인별 자르기 수 */
-  totalPoint: number;
-  personal: number[];
-  /** 달성률(0..100)과 별 판정 0..3(= 결과 수프 번호) */
-  rate: number;
-  starJudge: number;
-  /** 리듬 모드(RmGameWork+0x20): 0 노멀, 1 롱, 2 하드, 3 리믹스 */
-  mode?: number;
   /** 카메라 모션(원본 MapImpl: loop / result 채널(0,6) / capture 채널(2,2)) */
   camera?: 'loop' | 'result' | 'capture';
   /** NPC HEYHO(원본 MapImpl 채널 0,1·0,2·0,5). motion = 원본 모션 이름, frame = 원본 프레임, speed = 재생 배속 */
   npc?: { visible: boolean; motion: string; frame: number; speed: number };
-  /** 플레이어별 PERFECT(점수 = GetResultPlayerScoreMax) */
-  perfect?: boolean[];
-  /** PERFECT 텔롭이 떠 있는지(단계 8 에 띄우고 OnGameEndingBefore 에서 숨김) */
-  perfectTelop?: boolean;
-  /** 원본 MinigameFlow 단계(8 OnGameStartAfter, 9 OnGameMain, 10 OnGameEnd, 11 OnGameFinish, 12 OnGameEndingBefore, 13 OnGameEnding, 14 결과) */
-  flow?: number;
-  /**
-   * 흰 페이드(bq::WipeModule FadeOut/FadeIn(1.0, White) → 레이아웃 "WipeWhite_out"/"_in" 20프레임, out 뒤에는 "WipeWhite_normal" 로 하얗게 머문다).
-   * frame = 그 애니 재생 프레임. null = 페이드 없음
-   */
-  fade?: { anim: 'WipeWhite_out' | 'WipeWhite_normal' | 'WipeWhite_in'; frame: number } | null;
-  /** 리듬 점수판(RmUiStatusMan) 표시 — 단계 5 에 켜고 OnGameEnd 에서 끈다 */
-  statusUi?: boolean;
-  /** 연습 화살표(RmPracticeArrowMan) — 단계 2 에 켜고 단계 3 에서 4분 상태 > 2 면 끈다 */
-  practiceArrow?: boolean;
-  /**
-   * 결과 점수판(FUN_7100448610)을 시작한 로직 프레임. 원본은 결과 람다 @0x7100447d10 이 승패 모션(FUN_71004475d0) 바로 뒤에 부른다.
-   * 점수판 람다(@0x71004495f0)는 그 뒤 약 0.5 + 1/60 + 0.5 + 3.0 초 돌고 끝 플래그(+0x48)를 세운다. 없으면 화면이 결과 모션으로 짐작한다
-   */
-  resultPanelFrame?: number;
-  /** 지금 게임 BGM 라벨(FUN_7100441990 규칙) */
-  bgmLabel?: string;
-  /** 리듬 쿠킹 코스 안: index·count 와 RmGameWork+0x2C(뒤에 게임이 더 남음). null = 미니게임 모드(단독) */
-  course?: { index: number; count: number; midCourse: boolean } | null;
 }
 
+/** 공용 리듬 사건(telop·justSound·seLocal·soundStop·soundPreset·perfect)은 games/rhythm/types.ts RmEvent */
 export type Mg1801Event =
   | GameEvent
-  /** 판정 텔롭(원본 RmUiTelopMan::ShowTimingTelop) 과 시작·끝 텔롭(player −1) */
-  | { k: 'telop'; player: number; judge: 'JUST' | 'FAST' | 'SLOW' | 'START' | 'FINISH'; pos: V3 }
+  | RmEvent
   /** FX 트리거(원본 ComFxTrigger::Play — 진동·소리 묶음) */
-  | { k: 'fxTrigger'; player: number; name: string }
-  /**
-   * JUST 판정음(원본 PlayExcellentSe → 프리셋 치환 SQ_SE_MG1801_JUST_SOUND). combo = 지역 변수 L0.
-   * play = 새로 SoundModule::Play(SQ_SE_RC_JUST) 했는지(거짓이면 재생 중인 핸들의 L0 만 바꿈)
-   */
-  | { k: 'justSound'; combo: number; play?: boolean }
-  /** 효과음 + 지역 변수 쓰기(원본 SoundModule::Play → SoundHandle::WriteLocalVariable(index, value)) */
-  | { k: 'seLocal'; label: string; index: number; value: number }
-  /**
-   * 그 라벨의 소리만 멈춤(원본 SoundHandle::Stop). 단계 9 의 FUN_7100426264 는 게임 BGM 핸들만, StopMainBgm 은 마스터·OP 만 멈춘다 —
-   * 종료 BGM(MG_ENDING/INTER_END)은 다른 핸들이라 계속 울린다
-   */
-  | { k: 'soundStop'; label: string }
-  /** 사운드 세팅 프리셋 적용(원본 SoundModule::LoadSettingPreset) — 단계 5 "mg1800_cmn", OnGameEnding "mg1801_result" */
-  | { k: 'soundPreset'; name: string }
-  /** PERFECT 텔롭(원본 FUN_710043af00) */
-  | { k: 'perfect'; player: number };
+  | { k: 'fxTrigger'; player: number; name: string };
 
 export interface Mg1801Result extends GameResult {
   counts: LaneCount[];

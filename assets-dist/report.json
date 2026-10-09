@@ -1,16 +1,16 @@
 {
  "note": "MB 단위(1e6). dist = 압축본(소리는 ogg 만, m4a 는 따로), transferDist = json·glb 는 brotli q9 추정 + 나머지 그대로. gpu = 모든 텍스처를 한 번에 올렸을 때(밉 포함) 추정",
  "total": {
-  "src": 1130.14,
-  "dist": 471.14,
+  "src": 1130.18,
+  "dist": 471.18,
   "distOgg": 41.61,
   "distM4a": 52.46,
-  "transferSrc": 1130.14,
-  "transferDist": 384.68,
-  "gpuSrc": 3270.22,
+  "transferSrc": 1130.18,
+  "transferDist": 384.69,
+  "gpuSrc": 3270.23,
   "gpuDesk": 1168.02,
   "gpuMob": 1053.14,
-  "n": 3816
+  "n": 3818
  },
  "folders": {
   "chara": {
@@ -47,7 +47,7 @@
    "gpuSrc": 9.84,
    "gpuDesk": 5.06,
    "gpuMob": 5.06,
-   "n": 161
+   "n": 162
   },
   "font": {
    "src": 9.67,
@@ -74,11 +74,11 @@
    "n": 316
   },
   "mg/mg0101": {
-   "src": 212.09,
+   "src": 212.1,
    "dist": 66.94,
    "distOgg": 3.57,
    "distM4a": 4.75,
-   "transferSrc": 212.09,
+   "transferSrc": 212.1,
    "transferDist": 47.94,
    "gpuSrc": 145.74,
    "gpuDesk": 40.27,
@@ -86,11 +86,11 @@
    "n": 286
   },
   "mg/mg0102": {
-   "src": 55.29,
-   "dist": 29.95,
+   "src": 55.3,
+   "dist": 29.96,
    "distOgg": 2.01,
    "distM4a": 2.37,
-   "transferSrc": 55.29,
+   "transferSrc": 55.3,
    "transferDist": 15.22,
    "gpuSrc": 156.64,
    "gpuDesk": 43.14,
@@ -313,6 +313,18 @@
    "gpuMob": 0,
    "n": 1
   },
+  "splitscreen": {
+   "src": 0.02,
+   "dist": 0.02,
+   "distOgg": 0,
+   "distM4a": 0,
+   "transferSrc": 0.02,
+   "transferDist": 0,
+   "gpuSrc": 0,
+   "gpuDesk": 0,
+   "gpuMob": 0,
+   "n": 1
+  },
   "README.md": {
    "src": 0,
    "dist": 0,
@@ -334,10 +346,10 @@
    "distM4a": 0,
    "transferSrc": 442.2,
    "transferDist": 261.77,
-   "gpuSrc": 3270.22,
+   "gpuSrc": 3270.23,
    "gpuDesk": 1168.02,
    "gpuMob": 1053.14,
-   "n": 1967
+   "n": 1968
   },
   "mesh": {
    "src": 266.45,
@@ -364,16 +376,16 @@
    "n": 274
   },
   "json": {
-   "src": 26.67,
-   "dist": 15.17,
+   "src": 26.71,
+   "dist": 15.21,
    "distOgg": 0,
    "distM4a": 0,
-   "transferSrc": 26.67,
-   "transferDist": 1.06,
+   "transferSrc": 26.71,
+   "transferDist": 1.07,
    "gpuSrc": 0,
    "gpuDesk": 0,
    "gpuMob": 0,
-   "n": 321
+   "n": 322
   },
   "copy": {
    "src": 76.03,
@@ -460,11 +472,11 @@
    "meanPsnr": 41.53
   },
   "ui:png": {
-   "n": 151,
+   "n": 152,
    "src": 0.52,
    "dist": 0.52,
    "minPsnr": 35.12,
-   "meanPsnr": 7.86
+   "meanPsnr": 7.8
   },
   "ui:etc1s": {
    "n": 105,
@@ -6577,6 +6589,25 @@
     "B": 100,
     "maxErr": 0
    },
+   "tries": [
+    "etc1s:ok"
+   ]
+  },
+  {
+   "src": "common/tex/sys_dividing_line_s.png",
+   "kind": "tex",
+   "out": [
+    "common/tex/sys_dividing_line_s.png"
+   ],
+   "srcBytes": 83,
+   "distBytes": 83,
+   "cls": "ui",
+   "codec": "png",
+   "reason": "tiny",
+   "w": 8,
+   "h": 8,
+   "alpha": true,
+   "psnr": null,
    "tries": [
     "etc1s:ok"
    ]
@@ -70518,9 +70549,9 @@
    "out": [
     "mg/mg0101/manifest.json"
    ],
-   "srcBytes": 169930,
-   "distBytes": 133781,
-   "br": 11422
+   "srcBytes": 174080,
+   "distBytes": 137756,
+   "br": 11744
   },
   {
    "src": "mg/mg0101/sound/sound.json",
@@ -70848,9 +70879,9 @@
    "out": [
     "mg/mg0102/manifest.json"
    ],
-   "srcBytes": 31483,
-   "distBytes": 25231,
-   "br": 3807
+   "srcBytes": 36881,
+   "distBytes": 30419,
+   "br": 3926
   },
   {
    "src": "mg/mg0102/sound/sound.json",
@@ -70988,9 +71019,9 @@
    "out": [
     "mg/mg0106/manifest.json"
    ],
-   "srcBytes": 46725,
-   "distBytes": 35040,
-   "br": 4827
+   "srcBytes": 46863,
+   "distBytes": 35178,
+   "br": 4884
   },
   {
    "src": "mg/mg0106/sound/sound.json",
@@ -71088,9 +71119,9 @@
    "out": [
     "mg/mg0122/manifest.json"
    ],
-   "srcBytes": 40824,
-   "distBytes": 30441,
-   "br": 5142
+   "srcBytes": 43320,
+   "distBytes": 32832,
+   "br": 5562
   },
   {
    "src": "mg/mg0122/sound/sound.json",
@@ -71168,9 +71199,9 @@
    "out": [
     "mg/mg0508/manifest.json"
    ],
-   "srcBytes": 35030,
-   "distBytes": 26815,
-   "br": 3473
+   "srcBytes": 35862,
+   "distBytes": 27610,
+   "br": 3986
   },
   {
    "src": "mg/mg0508/sound/sound.json",
@@ -72248,9 +72279,9 @@
    "out": [
     "mgscene/tables.json"
    ],
-   "srcBytes": 77176,
-   "distBytes": 77176,
-   "br": 2847
+   "srcBytes": 78911,
+   "distBytes": 78911,
+   "br": 2927
   },
   {
    "src": "mgscene/ui.json",
@@ -72811,6 +72842,16 @@
    "srcBytes": 168159,
    "distBytes": 155057,
    "br": 8146
+  },
+  {
+   "src": "splitscreen/lines.json",
+   "kind": "json",
+   "out": [
+    "splitscreen/lines.json"
+   ],
+   "srcBytes": 24692,
+   "distBytes": 23522,
+   "br": 1196
   },
   {
    "src": "README.md",

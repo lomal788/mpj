@@ -37,6 +37,12 @@ export interface PostParams {
   vignetteAspect?: number;
 }
 
+export interface PostRegion {
+  target: THREE.WebGLRenderTarget | null;
+  viewport: THREE.Vector4;
+  scissor: THREE.Vector4;
+}
+
 const VS = /* glsl */ `
 varying vec2 vUv;
 void main() {
@@ -53,10 +59,11 @@ vec3 clipLen(vec3 y, float clip) {
 const FIRST_FS = /* glsl */ `
 uniform sampler2D src;
 uniform float exposure, threshold, invSpread5, clip;
+uniform vec4 region;
 varying vec2 vUv;
 ${CLIP}
 void main() {
-  vec3 c = max(texture2D(src, vUv).rgb, 0.0) * exposure;
+  vec3 c = max(texture2D(src, clamp(vUv, region.xy, region.zw)).rgb, 0.0) * exposure;
   float l = dot(c, vec3(0.2125244, 0.715332, 0.07208252));
   float h = clamp(l - threshold, 0.0, 1.0);
   float w = h * h * (3.0 - 2.0 * h);
@@ -95,6 +102,7 @@ void main() {
 const COMPOSITE_FS = /* glsl */ `
 uniform sampler2D scene, bloom, lut;
 uniform float useBloom, intensity, exposure, exposureOffset, outputScale, vignette, vignetteAspect, useLut;
+uniform vec4 vigRect;
 varying vec2 vUv;
 vec3 tonemap(vec3 x) {
 #if TONEMAP == 0
@@ -133,7 +141,7 @@ void main() {
   if (useBloom > 0.5) c += texture2D(bloom, vUv).rgb * intensity;
   vec3 x = c * exposure + exposureOffset;
   vec3 t = tonemap(x);
-  vec2 ndc = vUv * 2.0 - 1.0;
+  vec2 ndc = (vUv - vigRect.xy) / vigRect.zw * 2.0 - 1.0;
   t *= 1.0 - vignette * length(vec2(ndc.x * vignetteAspect, ndc.y));
   vec3 g = pow(abs(t), vec3(0.4545898));
   if (useLut < 0.5) { gl_FragColor = vec4(g, 1.0); return; }
@@ -174,6 +182,12 @@ export class PostChain {
   private readonly comp: THREE.ShaderMaterial;
   private readonly fxaaMat: THREE.ShaderMaterial;
   readonly mips = { n: 0 };
+  private out: THREE.WebGLRenderTarget | null = null;
+  private inRegion = false;
+  private readonly prevVp = new THREE.Vector4();
+  private readonly prevSc = new THREE.Vector4();
+  private readonly outVp = new THREE.Vector4();
+  private readonly outSc = new THREE.Vector4();
 
   constructor(
     private readonly gl: THREE.WebGLRenderer,
@@ -182,7 +196,7 @@ export class PostChain {
   ) {
     this.scene = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, depthBuffer: true, samples: 0 });
     this.ldr = new THREE.WebGLRenderTarget(1, 1, { depthBuffer: false });
-    this.first = mat(FIRST_FS, { src: { value: null }, exposure: { value: p.exposure }, threshold: { value: p.bloomThreshold }, invSpread5: { value: 1 / p.bloomSpread ** 5 }, clip: { value: p.bloomClip } });
+    this.first = mat(FIRST_FS, { src: { value: null }, exposure: { value: p.exposure }, threshold: { value: p.bloomThreshold }, invSpread5: { value: 1 / p.bloomSpread ** 5 }, clip: { value: p.bloomClip }, region: { value: new THREE.Vector4(0, 0, 1, 1) } });
     this.downMat = mat(DOWN_FS, { src: { value: null }, texel: { value: new THREE.Vector2() }, spread: { value: p.bloomSpread }, clip: { value: p.bloomClip } });
     this.upMat = mat(UP_FS, { cur: { value: null }, low: { value: null }, lowTexel: { value: new THREE.Vector2() }, a: { value: 0 }, tent: { value: 0 } });
     this.comp = mat(
@@ -199,6 +213,7 @@ export class PostChain {
         vignette: { value: p.vignetteIntensity ?? 0 },
         vignetteAspect: { value: p.vignetteAspect ?? 1 },
         useLut: { value: lut ? 1 : 0 },
+        vigRect: { value: new THREE.Vector4(0, 0, 1, 1) },
       },
       { TONEMAP: p.tonemapType ?? 3 },
     );
@@ -219,7 +234,7 @@ export class PostChain {
   }
 
   private resize(): void {
-    const s = this.gl.getDrawingBufferSize(new THREE.Vector2());
+    const s = this.out ? new THREE.Vector2(this.out.width, this.out.height) : this.gl.getDrawingBufferSize(new THREE.Vector2());
     if (s.equals(this.size)) return;
     this.size.copy(s);
     this.scene.setSize(s.x, s.y);
@@ -240,7 +255,11 @@ export class PostChain {
     this.quad.render(this.gl);
   }
 
-  render(scene: THREE.Scene, camera: THREE.Camera): void {
+  render(scene: THREE.Scene, camera: THREE.Camera, region?: PostRegion): void {
+    if (region && !this.inRegion) {
+      this.renderRegion(scene, camera, region);
+      return;
+    }
     const gl = this.gl;
     this.resize();
     gl.setRenderTarget(this.scene);
@@ -272,8 +291,71 @@ export class PostChain {
     if (this.p.fxaa) {
       this.pass(this.comp, this.ldr);
       this.fxaaMat.uniforms.tDiffuse.value = this.ldr.texture;
-      this.pass(this.fxaaMat, null);
-    } else this.pass(this.comp, null);
+      this.pass(this.fxaaMat, this.out);
+    } else this.pass(this.comp, this.out);
+  }
+
+  private renderRegion(scene: THREE.Scene, camera: THREE.Camera, r: PostRegion): void {
+    const gl = this.gl;
+    const out = r.target;
+    const sc = r.scissor;
+    const prevTarget = gl.getRenderTarget();
+    const prevAuto = gl.autoClear;
+    const prevTest = gl.getScissorTest();
+    gl.getViewport(this.prevVp);
+    gl.getScissor(this.prevSc);
+    let outTest = false;
+    if (out) {
+      this.outVp.copy(out.viewport);
+      this.outSc.copy(out.scissor);
+      outTest = out.scissorTest;
+    }
+    this.out = out;
+    this.inRegion = true;
+    try {
+      this.resize();
+      const W = this.size.x;
+      const H = this.size.y;
+      const s = this.scene;
+      s.viewport.copy(r.viewport);
+      s.scissor.copy(sc);
+      s.scissorTest = true;
+      this.first.uniforms.region.value.set((sc.x + 0.5) / W, (sc.y + 0.5) / H, (sc.x + sc.z - 0.5) / W, (sc.y + sc.w - 0.5) / H);
+      this.comp.uniforms.vigRect.value.set(sc.x / W, sc.y / H, sc.z / W, sc.w / H);
+      if (out) {
+        out.viewport.set(0, 0, W, H);
+        out.scissor.copy(sc);
+        out.scissorTest = true;
+      } else {
+        gl.setRenderTarget(null);
+        const pr = gl.getPixelRatio();
+        gl.setViewport(0, 0, (W + 0.25) / pr, (H + 0.25) / pr);
+        gl.setScissor((sc.x + 0.25) / pr, (sc.y + 0.25) / pr, (sc.z + 0.25) / pr, (sc.w + 0.25) / pr);
+        gl.setScissorTest(true);
+      }
+      gl.autoClear = true;
+      this.render(scene, camera);
+    } finally {
+      const s = this.scene;
+      s.viewport.set(0, 0, this.size.x, this.size.y);
+      s.scissor.set(0, 0, this.size.x, this.size.y);
+      s.scissorTest = false;
+      this.first.uniforms.region.value.set(0, 0, 1, 1);
+      this.comp.uniforms.vigRect.value.set(0, 0, 1, 1);
+      if (out) {
+        out.viewport.copy(this.outVp);
+        out.scissor.copy(this.outSc);
+        out.scissorTest = outTest;
+      }
+      this.out = null;
+      this.inRegion = false;
+      gl.autoClear = prevAuto;
+      gl.setRenderTarget(null);
+      gl.setViewport(this.prevVp);
+      gl.setScissor(this.prevSc);
+      gl.setScissorTest(prevTest);
+      gl.setRenderTarget(prevTarget);
+    }
   }
 
   precompile(): Promise<unknown> {

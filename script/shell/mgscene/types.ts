@@ -2,6 +2,7 @@
  * 미니게임 공용 틀 형식 — 표(tables.json)·UI 애니 길이·플레이어·사건·게임 훅(MgGame) 계약.
  * 근거·설계: docs/shell/minigame_scene.md §12. 이 폴더는 import 0(셸 경계, mgm_common §9.1) — 같은 폴더만 import 한다.
  */
+import type { SplitScreenLayerList } from '../../lib/splitscreen';
 import type { Transition } from '../../lib/transition';
 import type { CreateResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
 
@@ -54,6 +55,7 @@ export interface MgSoundRow {
   resultPos: number;
   resultOffset: number;
   whistle: number;
+  splitSe?: string;
 }
 
 export interface MgTables {
@@ -152,6 +154,13 @@ export interface MgStatusApi {
   out(immediate?: boolean): void;
 }
 
+export interface MgSplitApi {
+  to(cols: number, rows: number, focus: number, sec: number): void;
+  isFinished(): boolean;
+  isSplitting(): boolean;
+  readonly list: SplitScreenLayerList;
+}
+
 /** 틀이 게임에 주는 문맥(§12.3) */
 export interface MgSceneContext {
   readonly mgId: string;
@@ -189,6 +198,7 @@ export interface MgSceneContext {
   se(label: string): void;
   whistle(type: number): void;
   fading(): boolean;
+  readonly split: MgSplitApi;
 }
 
 /** 게임이 구현하는 것(원본 훅 이름 그대로, bool 훅 기본 참) — §12.3 */

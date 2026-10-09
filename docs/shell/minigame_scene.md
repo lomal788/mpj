@@ -537,6 +537,8 @@ mg1801 로직(`games/mg1801/logic/game.ts`)은 이미 MinigameFlow 8~13 을 자�
 3. 리듬 장면은 시작 텔롭·결과 점수판을 RmMgSceneBase 가 직접 띄우므로 결과는 갈래 B 그대로 간다.
 → 2 단계는 기존 시험의 기대값을 바꾸는 일이라 이번에는 하지 않는다.
 
+2026-10-09 [rhythm] 갱신: 리듬 공용 틀을 mg1801 에서 분리했다 — `web/script/games/rhythm/`(로직 import 0) + `games/rhythm/view/`. 기반 `RmMgSceneBase` 의 흐름 슬롯(`onGameStartAfter`·`onGameMain`·`onGameEnd`·`onGameFinish`·`onGameEndingBefore`·`onGameEnding`, bool 반환)과 `update()`(파이버)·`updateAnimation()` 이 위 `MgGame` 이름·자리와 맞춰져 있어, 2 단계는 어댑터 하나 + 웹 MinigameFlow 대리(PREROLL·흐름 switch) 제거가 된다. 연결 계획·BGM·박자 시작 프레임이 바뀌는 이유는 [../engine/02_rhythm.md](../engine/02_rhythm.md) §14.6. 이번 분리는 동작 불변(골든 바이트 일치)이고 위 2 단계는 여전히 하지 않았다.
+
 ### 12.11 사용자 확인 필요 (이 절)
 
 | 항목 | 정한 것(원본 쪽) | 이유 |

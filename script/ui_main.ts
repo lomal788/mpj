@@ -19,6 +19,7 @@ import { onlineTestValues, runOnline, type OnlineRun } from './online_page';
 import { runMgResult, type MgResultRun } from './mgresult_page';
 import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
 import { runMgStagePage, type MgStagePageRun } from './mgstage_page';
+import { runSplitScreenPage, type SplitScreenPageRun } from './splitscreen_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
 import { installTransition, sceneIn, sceneOut } from './view/appTransition';
@@ -203,6 +204,15 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: MgStagePageRun = await runMgStagePage(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
       (window as unknown as { __mgstage?: MgStagePageRun }).__mgstage = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'splitscreen',
+    name: '분할 화면',
+    async run(stage, cfg) {
+      const r: SplitScreenPageRun = await runSplitScreenPage(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
+      (window as unknown as { __splitscreen?: SplitScreenPageRun }).__splitscreen = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

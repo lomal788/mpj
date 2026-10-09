@@ -1,6 +1,6 @@
 # 05. UI·입력·FX 트리거 — 레이아웃(.lyt), 폰트, 메시지 태그, 입력·자이로, FX 트리거·진동
 
-2026-10-02. 상태: **분석 진행**(포맷 파서 완료, 입력·트리거 판독 일부). 웹 코드는 고치지 않았다(10절은 명세다).
+2026-10-09. 상태: **분석 진행**(포맷 파서 완료, §7 공통 FTRG 최초 평가·참조·보이스·발소리 추가 판독). 웹 코드는 고치지 않았다(10절은 명세다).
 확정 수준: **[실행]** 원본 실행 확인, **[판독]** 원본 명령 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 원본 [실행]은 없다. 자체 파서·렌더를 돌린 결과는 **[실행: 파서 실행 확인]** 으로 따로 적는다.
 주소는 SwitchLoader 기본 베이스(0x7100000000) 기준이고 따로 적지 않으면 main NSO다(`main @0x…`).
 
@@ -353,8 +353,8 @@ MinPlayer 1, MaxPlayer 1, Style `GameControllerStyle_FullKey`, 컨트롤러 지�
 | +0x18 | **FX(파티클) 트리거** 배열 |
 | +0x20 | **VB(진동) 트리거** 배열 |
 | +0x28 | 0x9104 배열: 파라미터 {이름, u32 형식, 기본값} (예 `se_dice_speed`) |
-| +0x30, +0x38 | 문자열 |
-| +0x40 | **애니 프레임 이벤트**(0x9106): {모션 이름, fskb 경로, 문자열, f32, [0x9107{트리거 키, u32 프레임, u32×3, u32}], …, 속성{IsAvailable, AnimationLength}} |
+| +0x30, +0x38 | 참조 FTRG 이름·경로. 이름 접근자 `@0x710110f8a0`, 예 `vo_pc_base`·`../../ftrgBase/ftrg/vo_pc_base.ftrg` [판독+데이터] |
+| +0x40 | **애니 프레임 이벤트**(0x9106): {모션 이름, fskb 경로, 문자열, f32, [0x9107{트리거 키, f32 프레임, 방향/구간/최초 플래그, f32 길이, 루프 인덱스·모드}], …, 속성{IsAvailable, AnimationLength}} |
 | +0x48 | 0x9108 배열: 트리거 범주(`SoundEventTrigger`, `ProgramEventTrigger`, `SoundSystemTrigger`…) |
 | +0x50 | u32 해시 |
 | +0x54 | 모델 경로(대상 fmdb, 예 `chara/pc/pc01_mario/model/pc01_mario.fmdb`) |
@@ -369,7 +369,7 @@ MinPlayer 1, MaxPlayer 1, Style `GameControllerStyle_FullKey`, 컨트롤러 지�
 | FX (+0x00 = 1) | SE와 같은 앞부분 + 자원 `.eset` 이름 + f32 배율류 7개(1.0) — 파티클 세부는 [08_effects.md](08_effects.md) |
 | VB (+0x00 = 2) | +0x10~+0x2C f32 쌍 4개(1.0 등), +0x30 **키**, +0x50 속성(ParentGroupPath, VibrationHookFlag, PlayOffsetSec), +0x5C 자원[0x9105{`<폴더>/<bnvib 이름>`, f32 50.0}] |
 
-자원 f32 50.0 은 전 파일 공통값이다(가중치/확률 [추정]). 자원 경로의 마지막 성분이 사운드 라벨·bnvib 이름이다(`…/SQ_SE_MG1801_SWING`, `…/bv_vib_mg1801_just` → `vib/bnvib/bv_vib_mg1801_just.bnvib`) [데이터].
+자원 +8의 f32(관측 기본값 50.0)는 **가중 선택 모드의 가중치**다 [판독 `@0x7101117380`]. `W=Σwᵢ`, `r=TinyMtU32×2.3283064e−10×W`를 만들고 배열 순서대로 `r≤wᵢ`인 첫 자원을 고르며 아니면 `r−=wᵢ` 한다(`@0x710110f2e0`). 순차 선택 플래그가 켜지면 카운터를 먼저 사용하고(`@0x710110f4a0/4b0`), 가중 모드가 아니면 `@0x710110f284`의 개수 기반 선택으로 간다. 따라서 50을 볼륨이나 항상 50% 확률로 해석하지 않는다. 자원 경로의 마지막 성분이 사운드 라벨·bnvib 이름이다(`…/SQ_SE_MG1801_SWING`, `…/bv_vib_mg1801_just` → `vib/bnvib/bv_vib_mg1801_just.bnvib`) [데이터].
 
 ### 7.4 mg1801 연결 [데이터 `extracted/converted/ui/ftrg/mg1801_triggers.json`]
 
@@ -383,23 +383,79 @@ MinPlayer 1, MaxPlayer 1, Style `GameControllerStyle_FullKey`, 컨트롤러 지�
 
 진동 설정(`vibration.msgpack` vib_define): `bv_vib_mg1801_just`·`_success` 모두 Gain_Master 1.3, priority 72, vib_slot 0, 3D 아님. mg1801 의 JUST 소리 `SQ_SE_MG1801_JUST`·`SUCCESS` 는 FX 트리거가 아니라 코드가 직접 `Play3D` 한다(mg1801.md 6.5). 보이스는 세팅 프리셋 `mg1800_cmn` 이 MUTE로 바꾼다([04_sound.md](04_sound.md)).
 
-### 7.5 `ComFxTrigger::Play` 흐름 [판독]
+### 7.5 `ComFxTrigger::Play`·참조·애니 이벤트 [판독]
 
-1. 캐릭터 엔티티에 `actor::Util::AddFxTrigger` @0x71000376c0 가 `<폴더>/ftrg/<이름>.ftrg` 경로를 만들어 `bex::ComFxTrigger::AttachFxTrigger` 로 붙인다(공용 base + 캐릭터별).
-2. 게임 코드(mg1801 `UpdateAttack`)는 플레이어 엔티티의 컴포넌트 목록(엔티티 +0x38..+0x40, 0x20 B 단위)에서 `ComFxTrigger` 타입을 찾고 `bex::ComFxTrigger::Play(키)`.
-3. `bex::ComFxTrigger::Play` @0x710010d224 → 핸들 검증 → `nn::bezel::ComFxTrigger::Play(impl, key)` @0x71005f0cec. 이후 키 검색·재생은 엔진 내부(미판독). 진동 대상 플레이어는 `SetVibrationPlayerId`(impl +0x7638).
-4. 애니 프레임 이벤트는 모션 재생 중 해당 프레임에 엔진이 같은 키를 발생시킨다 [추정: 7.2 +0x40 데이터].
-- 용량(boot.nbinit `bezel_fx_trigger_init`): 사운드 512, 파티클 256, 진동 64, 애니 이벤트 384/플레이어 192/트리거 1,024, 플레이어 256.
+**부착과 키 해석.** `actor::Util::AddFxTrigger @0x71000376c0`는 모델 경로에서 PC의 `_light`를 제거하고 `<캐릭터>/ftrg/<접두><모델명>.ftrg`를 찾는다. 접두 배열 `@0x71019cccc0`은 `fx_ → se_ → vb_ → vo_ → pg_ → st_` 6개다. 존재하는 파일만 `AttachFxTrigger` 하고 각각 `Play("CO_INITIALIZE")` 한다. `rc_`를 이 6개 자동 탐색 접두에 추가하지 않는다(§7.4의 RC 데이터는 그대로 유효). 파일이 없으면 빈 컴포넌트만 만들 수 있다.
+
+`bex::Play @0x710010d224 → nn::Play @0x71005f0cec → @0x7101112b40`은 소유자에 묶인 최대 8개 소스의 SE/FX/VB를 각각 탐색한다(`@0x7101115690/5b00/5f70`). 한 소스 안에서 같은 키의 조건에 맞는 행들을 처리하며, 조건 불일치 결과 2에서는 `@Default` 분기를 다시 검사한다. 키 없음(결과 3) 또는 `IsPostReferenceTrigger`이면 루트 +0x30 이름으로 참조 소스를 따라간다. 자원·위치 덮어쓰기 속성은 참조 행의 자원·오프셋 상속에도 적용된다(`IsAssetFilePathOverwritten`, `IsPositionOffsetOverwritten`, `@0x7101117380`). **캐릭터 표와 base 표를 무조건 합집합으로 실행하거나 첫 키 하나로 전 종류를 덮어쓰는 계약이 아니다.** 애니 트랙도 모션명·애니 자원 경로를 맞춘 뒤 참조 여부에 따라 부모 트랙을 찾는다(`@0x7101113120 → 1119040 → 11193a0`).
+
+[데이터] `vo_pc01_mario`는 `VO_RHY_KNIFE_SWING00` 행·트랙 없이 `vo_pc_base`를 참조한다. `vo_pc02_luigi`에는 자기 `SQ_VOI_PC02_JUMP` 행과 프레임 3 트랙이 있다. `vo_pc62_pauline`의 참조 이름/경로는 비어 있고 자기 행은 `SQ_VOI_PC62_ACTION_HIGH`다. 자원 선택 후 `@0x710012e4f0` 콜백은 경로의 마지막 성분을 라벨로 넘기며, `@0x710012fa90`은 SoundWorld 라벨 치환과 SoundVolume/Pan/LPF/Aux/Ducking/PlayOffsetSec 등의 속성을 적용한다. `SoundAnimeSlot`은 현재 애니 자원 경로를 검사하고(`@0x710012f760`), ignore-key 검사도 별도다(`@0x710012f650`). 원본 VO 키 발생과 실제 들리는 보이스는 §7.4의 프리셋 MUTE까지 구분한다.
+
+**최초 평가와 프레임 통과.** 근거는 [슬롯·모듈 C](../../../analysis/decomp/character_ftrg_c_runtime.c), [노드 콜백 C](../../../analysis/decomp/character_ftrg_c_missing.c), [자원·음성 C](../../../analysis/decomp/character_ftrg_c_sound.c)와 기존 [참조 엔진 C](../../../analysis/decomp/ui_ftrg_res.c)다. 슬롯 0~3마다 `owner+0x10+slot×0x14`의 독립 문맥을 둔다(`@0x710110e8f4`). 노드 변경 리스너 `@0x71005f10dc`가 이전 이벤트 플레이어를 해제하고, 새 노드의 자원 경로와 시작 프레임으로 등록한다(`@0x71005f8830 → 111347c`). 초기화 `@0x710111c280`은 현재/이전 프레임을 모두 시작값으로, 루프를 0으로, 최초 플래그를 1로 둔다.
+
+| 단계 | 원본 판정·순서 |
+|---|---|
+| 노드 진행 수집 | `@0x71005f3ccc`가 현재 프레임을 읽는다. `abs(f−old)≤1.1920929e−7`이면 wrap=0, 그 밖에는 speed와 `f−old`의 **부호 비트 XOR**으로 wrap을 판정하고 루프 카운터를 더한다. speed의 부호 비트가 1이면 `@0x710111c2a8`, 그 밖에는 `111c298` |
+| 이벤트 평가 | `FxModule @0x71005f7f84 → 1111800 → 111b850/111bc10 → 콜백 5f7d80 → 1112940`. 통과형 이벤트의 방향 enum 0=양쪽, 1=정방향, 2=역방향이며 허용 방향만 평가 |
+| 정방향, wrap 없음 | 이전 p, 현재 f, 이벤트 e일 때 **p<e≤f**, 또는 **최초이고 e=f**. 초기 p=f=0이면 프레임 0도 포함. 시작 프레임이 5면 그 이전 이벤트를 소급하지 않음 |
+| 역방향, wrap 없음 | **f<e≤p**. 정방향의 최초 `e=f` 예외를 추가하지 않음 |
+| 루프 | 이벤트 +0x14=루프 인덱스 K, +0x18=u16 모드 M. 정방향 M0=K부터 반복, M1=K 한 루프, M2=K까지. M0·이전 루프 P≥K의 일반 통과 수는 `C−P+[e≤f]−[e≤p]`이고 최초 equality는 별도다. 반환 횟수만큼 콜백을 호출하므로 건너뛴 루프를 한 번으로 축약하지 않음 |
+| 역방향 wrap | 이 콜백은 M/K 분기를 사용하지 않는다. p<f이면 **`P−C−1+[e≤p 또는 f<e]`**, 그 밖에는 **`P−C+[f<e≤p]`**. 양수 반환만 실행한다. `@0x71005f7d9c~7dc4/7e1c`의 정수 load/sub로 부호 확인; 정방향 반복식을 역방향에 복제하지 않음 |
+| 구간·즉시 플래그 | `@0x7101119680`은 원본 +0x08 frame, +0x10 duration으로 시작/끝을 만든다. 구간 이벤트는 방향에 따라 시작/끝을 고르고, +0x0F 즉시 플래그는 플레이어 최초 평가에서 방향·통과 검사 없이 처리(`@0x710111bc10`) |
+| 평가 후 확정 | 이벤트 처리 뒤 `@0x710111c2f4`가 4슬롯의 최초 플래그를 지우고 현재 프레임/루프를 이전 값으로 복사 |
+
+§7.4 swing 트랙의 관측 루프 값은 K=0, M=1이다. 시간 기준은 [09 §6.6](09_character.md)의 애니 프레임 진행과 같으며 벽시계 타이머를 따로 만드는 근거는 없다. 첫 화면 포즈가 언제 렌더되는지는 09의 미해소 연결이고, 여기의 첫 평가 포함식과 구분한다.
+
+용량(boot.nbinit `bezel_fx_trigger_init`): 사운드 512, 파티클 256, 진동 64, 애니 이벤트 384/플레이어 192/트리거 1,024, 플레이어 256. 진동 대상은 impl +0x7638의 `SetVibrationPlayerId`다. FX 콜백 이후 Effect Start/Stop·Emitter·GPU 계약은 [08_effects.md](08_effects.md)의 담당 분석을 참조한다.
 
 ### 7.6 BNVIB [데이터 `web/tools/analysis/ui_bnvib.py`, 463개]
 
 u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32 loopStart, loopEnd, [loopInterval]), u32 데이터 크기, 샘플 4 B. 바이트 0·2 = 진폭(감쇠하는 쪽), 1·3 = 주파수 코드. `nn::hid::VibrationValue` 순서 {ampLow, freqLow, ampHigh, freqHigh} 로 본다 [추정]. `vibration.msgpack` 의 `vib_setting`(값 지정형)은 저역 160 Hz·고역 320 Hz 를 쓴다. 주파수 코드 → Hz 식 [미확정]. 진동 시퀀스(`vib/seq/*.msgpack`)는 {play 라벨·gain, wait 초, loop_start/end} 명령 목록.
 
-### 7.7 웹 설계
+### 7.7 발소리 지면·재질 선택 [판독]
 
-- 로직은 지금처럼 원본 키(`VB_MG1801_JUST`)를 `events` 로 낸다. 화면 층이 **키 → 동작 표**(이 문서 도구로 생성)를 보고 소리·파티클·진동을 낸다. 애니 프레임 이벤트는 모션 재생기가 프레임 통과 시 같은 키를 낸다.
-- 진동: Gamepad `vibrationActuator.playEffect('dual-rumble', {duration, strongMagnitude, weakMagnitude})` — strong ← ampLow, weak ← ampHigh, Gain_Master 곱 후 1로 자른다. 브라우저가 연속 갱신을 지원하지 않으므로 50 ms 구간 포락선(`webDualRumble50ms`)을 순서대로 다시 부르거나 첫 구간 최대값·전체 길이로 한 번 부른다. 주파수는 표현할 수 없다.
-- 키가 표에 없으면 원본처럼 조용히 무시한다(엔진 설정 `IsSuppressWarningTriggerKeyNotFound: false` 는 경고만).
+근거: [등록·갱신 C](../../../analysis/decomp/character_ftrg_c_footstep.c), [공간 선택 C](../../../analysis/decomp/character_ftrg_c_contract.c), [영역·혼합·사운드 변수 C](../../../analysis/decomp/character_ftrg_c_space.c).
+
+`SetFootstepSpaceToEnable @0x710010da88`은 SoundModule의 설정 이름(`core+0x28+0x516E`)이 있고 아직 등록하지 않았을 때 0x124 B 상태를 만들고 SoundWorld에 등록한다. slotId는 impl +0x763C(기본 0), selector는 +0x7634(기본 0)다. `@0x7100137940 → 010db68 → 00c11d8 → 00fb530 → 00f1158`이 엔티티 위치(활성 모델 위치 레코드가 있으면 그 값)로 **Sound Space**를 조회한다. 일반 Actor의 접지 법선/IsGrounded와 같은 소비자가 아니다([11_moving_collision.md](11_moving_collision.md)).
+
+| Sound Space 모드/영역 | 선택 |
+|---|---|
+| 모드 1 | 첫 항목의 +0x98가 −1이 아니면 고정 자원 적용(`@0x71000f326c`) |
+| 모드 0 | 0xD0 B 항목을 순서대로 검사. 맞는 영역을 누적하되 항목 +0x94가 참이면 이후 적용 중단 |
+| 모드 2 | 첫 항목 다음부터 검사하고, 하나도 맞지 않으면 첫 항목을 기본값으로 적용 |
+| 영역 종류 0/3 | 6개 평면의 내적이 모두 ≥0인 상자. 종류 3은 연결 엔티티의 회전/이동을 반영하고 일치한 엔티티를 반환(`@0x71000f2620`) |
+| 영역 종류 1/2 | 1은 거리≤반경(마스크 불일치면 true인 분기 있음); 2는 영역 +0x9C 값과 selector 일치. 종류 0은 마스크 일치가 먼저 필요(+0xA0 & 모델 +0x28, 모델 없으면 0xFFFFFFFF) |
+
+일치 영역의 +0x98가 가리키는 0x30 B 자원은 `{시작값, 끝값, 재질 ID}`×4다. 종류 0/3의 값은 `a+t(b−a)`, `t=d₀/(d₀+d₁)`(조회점에서 두 기준점까지 거리), 종류 1은 `a+(b−a)×distance/radius`, 종류 2는 a다(`@0x71000f2d58`). −1 ID는 생략하고 최대 4채널의 상태 +0x00 값/+0x10 ID/+0x20 유효 플래그에 채운다. 고정 자원도 같은 상태 형식으로 채운다.
+
+첫 채널이 유효하면 +0x10 ID를 0x104 B 재질 표의 +0x100 ID와 대조하여 이름을 상태 +0x24에 복사한다. `@0x710010db68`은 유효 채널이 있고 이전 이름과 달라질 때 FTRG enum **`co_ground`**를 새 이름으로 설정한다. 원본 `audio.nx.bea/audio/sound_space/footstep_param.msgpack`의 `GroundParam` 39행은 `{co_ground, prg}`다 [데이터]: 0~20=`earth, earth_soft, stone, rock, sand, wood_heavy, wood_light, bridge_wood, carpet, iron_1~4, snow_soft, snow_hard, ice, cloud, paper, cloth, pane, water_soak`; 64~81=`grass, lawn, gravel, water_1~4, wood_squeak_1~3, iron_squeak_1~3, snow_layer_1~3, ice_layer_1~2`. 이름 범위는 순서대로 연속 ID에 대응한다. `nnMain @0x7100003660`이 이 경로를 오디오 설정 +0x140에 넣는다(기존 `core_b3.c`); 일반 충돌 재질 enum과 동일 번호라고 단정하지 않는다. 재생된 사운드의 플래그 0x100000과 SoundWorld 존재 조건을 만족하면(`@0x71000fb548`), `@0x71000f1708`이 유효 채널 i의 로컬 변수 7+i에 **`int(sqrt(valueᵢ)×127) | (materialIdᵢ<<7)`**, 무효이면 0xFFFFFFFF를 쓰고 선택 채널을 변수 6에도 쓴다. 단일 문자열 치환만으로는 이 다중 재질 혼합을 재현하지 못한다.
+
+### 7.8 공통 `play(motion)` 이벤트 계약·웹 설계
+
+- 모션 요청→노드 교체→이전 슬롯 등록 해제→시작값/first 초기화→애니 진행 수집→구간 평가/키 해석→SE·VO·VB·FX 콜백→이전값 확정 순서를 유지한다. `forceRestart`의 노드 교체는 새 최초 평가를 만들고 같은 모션의 비재시작 유지에는 임의 초기화를 추가하지 않는다(09 §6.4~6.6). 이벤트 문맥은 슬롯별이며 Sub를 Main으로 합치지 않는다.
+- 수동 프레임 변경도 조회된 프레임 차로 검사한다. `@0x71005f3ccc`에는 **speed=0이면 이벤트를 끄는 검사**가 없다. `SetFrame @0x7100813730 → 080f86c`의 가상 +0x40/+0xB0을 [노드별 C](../../../analysis/decomp/character_ftrg_c_follow_setframe.c)와 생성자/vtable로 연결했다: Skeletal(`VT @0x7101a04f60`)은 `696e68`에서 +0x90 평가 플래그를 세우고 FrameCtrl을 설정한 뒤 `811884`에서 +0x60 변경 카운터를 1 증가한다. Bundle(`VT @0x7101a0e0a0`)은 `810630`에서 모든 자식에 같은 SetFrame을 전달하고 +0xB0=`80fe94`는 빈 함수다. Mirror(`VT @0x7101a0e330`)는 `810184`에서 자식 +0x40/+0xB0을 호출하며 자신의 +0xB0도 빈 함수다. **이 세 경로는 노드 교체 리스너/FTRG 재등록/first 초기화를 호출하지 않는다.** 따라서 같은 노드의 수동 변경은 이전 문맥을 보존하여 §7.5 통과식을 따른다. mg0122의 수동 SE와 모션 SE의 중복 여부에는 해당 모델의 트랙 등록/활성 조건까지 필요하다([mg0122 §7.3](../minigame/mg0122.md)).
+- 로직의 명시 키(`VB_MG1801_JUST`)와 모션 데이터 키는 같은 디스패처로 보낸다. 디스패처 입력은 key·slot·현재/이전 frame·loop·direction·first·자원 경로·소유자/진동 대상·`co_ground`이며, 참조/조건/가중·순차 선택 후 콜백을 낸다. 원본 첫 평가와 반복 횟수를 단순 `floor(frame)==eventFrame`로 치환하지 않는다.
+- 진동: Gamepad `vibrationActuator.playEffect('dual-rumble', {duration, strongMagnitude, weakMagnitude})` — strong ← ampLow, weak ← ampHigh, Gain_Master 곱 후 1로 자른다. 50 ms 구간 포락선(`webDualRumble50ms`)을 순서대로 다시 부르거나 첫 구간 최대값·전체 길이로 한 번 부르는 기존 웹 설계를 유지한다. 주파수는 표현할 수 없고 코드→Hz 식은 §7.6 미해소다.
+- 키 미존재는 조용히 무시한다(`IsSuppressWarningTriggerKeyNotFound: false`는 경고 설정). Effect 내부 구현은 08, 사운드 프리셋/재생은 04의 계약을 재사용한다.
+
+### 7.9 남은 근거·사용자 확인 필요
+
+| 구분 | 결과·남은 근거 |
+|---|---|
+| 기존 참조 해소 | mg1801 RC/VO 프레임·JUST VB, `mg1800_cmn` MUTE, 사운드 재생·Effect 내부·일반 접지는 기존 담당 문서 재사용 |
+| 신규 판독 | 슬롯 0~3 최초/정·역/루프 횟수, FTRG 종류별 참조/덮어쓰기, VO 자원 선택, 수동 SetFrame의 노드별 가상 경로/문맥 유지, Sound Space 모드·재질 혼합→`co_ground`/사운드 변수와 GroundParam 39 ID |
+| 자료 부족 | 장면별 footstep space 설정 이름/slot/selector 생산자와 실제 영역·재질 자원 매핑은 추가 데이터 대조 필요. 등록 소스 식별자의 생성/그룹 순서와 모든 조건 그래프의 소비까지 전부 닫힌 것은 아님. mg0122 등 개별 모델의 FTRG 등록/활성 조건과 BNVIB 주파수 코드→Hz도 유지 |
+
+사용자 확인 필요: 브라우저 진동의 주파수 손실과 다중 발소리 재질 혼합을 어디까지 지원할지는 제품 범위 결정이다. 이 결정으로 원본 수식이나 미확정 자료를 바꾸지는 않는다.
+
+### 7.10 런타임 구현 준비도
+
+| 항목 | 분석 상태 | 구현 차단 여부 |
+|---|---|---|
+| 모션 최초/방향/루프 이벤트 | §7.5 확정 식·순서 | 공통 슬롯 이벤트 진행 가능; 첫 렌더 시점은 09 별도 공백 |
+| base/캐릭터·VO | 종류별 참조·조건·자원 선택 판독 | 확인된 트리거/자원은 진행 가능; 모든 그래프/소스 로딩 동등성은 부분 차단 |
+| 발소리 | 공간 조회·혼합·39 지면 ID/재질명/변수 전달 판독 | 상태/디스패처는 진행 가능; 장면별 공간 데이터 연결은 차단 |
+| FX·사운드·진동 출력 | 08·04 기존/병렬 결과와 §7.6 참조 | 출력 내부는 담당 결과 확인, BNVIB 정확한 Hz 재현은 차단 |
 
 ## 8. HUD 포팅 방침
 

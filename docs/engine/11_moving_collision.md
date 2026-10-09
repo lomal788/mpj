@@ -1,6 +1,6 @@
 # 11. 움직이는 충돌 — 부착 포즈·강체 동기화·Ray/Capsule 질의
 
-2026-10-08. 상태: **공통 경로 정적 판독 완료 / 웹 API 설계 제안 / 게임별 세부 실행 순서 미확정**.
+2026-10-09. 상태: **공통 캡슐·접촉·접지 규약 판독 완료 / 웹 API 설계 제안 / 게임별 포즈 시점·ActorParam 소비 미확정**.
 
 확정 수준 표기: **[실행]** 원본 실행 확인, **[판독]** 원본 코드 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 [실행]은 없다. 재구현 계산은 **재구현 계산**이라고 따로 적는다.
 
@@ -83,7 +83,7 @@ CastShape는 지정한 **형상의 선형 이동 sweep**이다. 시작 quat는 �
 
 형상은 자체 local translation(+0x10)·quat(+0x20)·geometry(+0x40)·종류(+0x80)를 가진다. `FUN_71006051f8`→`FUN_71006045f0`에서 질의 포즈/형상 로컬 포즈를 SDK 입력으로 변환하므로 **로컬 중심과 회전을 버리면 안 된다**. Capsule 변환에는 Z축 quarter-turn을 구성하는 sin/cos(π/4)가 있어 SDK 축 변환을 한다. 임의로 웹 캡슐의 축을 X로 고정하지 않는다.
 
-크기는 Box의 **halfExtents**와 Capsule의 radius를 구분한다. `CreateCapsule @0x7100602e44`는 두 float를 +0x40/+0x44에 그대로 저장하고 SDK geometry 변환도 두 값을 그대로 복사한다. 두 번째 인자를 임의로 반으로 나누지 않는다. **캡슐 전체 높이/축 선분 끝점으로 환산하는 최종 규약은 미확정**이며 데이터 어댑터에서 추적해야 한다.
+크기는 Box의 **halfExtents**와 Capsule의 **radius·halfHeight**를 구분한다. `CreateCapsule @0x7100602e44`는 radius를+0x40, halfHeight를+0x44에 저장한다. `GetCapsuleRadius @0x7100603554` / `GetCapsuleHalfHeight @0x710060359c`가 각각 그대로 반환한다. 생성 호출의 두 번째 인자를 다시 반으로 나누지 않는다. 끝점 입력형 ActorHitShape와의 변환은 아래 §3.3에 둔다.
 
 ### 3.2 필터·단일 결과
 
@@ -104,11 +104,66 @@ Ray callback `FUN_7100625eb0`, Sweep callback `FUN_710062a834`는 block hit가 �
 
 질의 성공 bool과 유효 handle/position/normal을 함께 확인한다. 단일 block 결과와 All 질의의 결과 목록은 구분한다. `CastRayAll @0x7100618420` / `CastShapeAll @0x71006184f0`의 존재는 확인되지만 목록 정렬·동점 처리 계약은 이 분석 범위에서 미확정이다.
 
+### 3.3 캡슐 반높이와 끝점 [판독]
+
+근거: [runtime_A_collision_core.c](../../../analysis/decomp/runtime_A_collision_core.c)의 `GetCapsuleRadius/HalfHeight @0x7100603554/359c`, `ActorHitShape::SetSourceCapsule @0x710001cd20`, `FUN_710001c6cc`; 기존 SDK 변환은 [runtime_A_collision_reuse.c](../../../analysis/decomp/runtime_A_collision_reuse.c)의 `FUN_71006045f0`을 재사용한다.
+
+`CreateCapsule(r,h)`의 h는 **구 중심을 잇는 축 선분의 반길이**다. 기본 엔진 축은Y이며, 원본 SDK 변환은 Z축 90° 회전을 추가한다. shape의 로컬 중심c·회전q 아래 축 끝점은 `c+R(q)·(0,−h,0)`, `c+R(q)·(0,+h,0)`이다. Entity/world 포즈를 한 번 더 합성하며 SDK 축 보정을 엔진 Y축 끝점에 중복 적용하지 않는다. 전체 외형 높이는 **재구현 계산** `2h+2r`이다.
+
+별도 API `ActorHitShape::SetSourceCapsule(a,b,r)`는 **끝점 입력**이다. source 종류7의 `FUN_710001c6cc`는 source 선분 길이L의 절반을 CreateCapsule의 h로 전달하고, 중심을 `a+axis·L/2`, 회전을 UnitY→axis로 구성한다. 따라서 `h=|b−a|/2`, `c=(a+b)/2`이며 source 길이만 이 단계에서 반으로 나눈다. 길이0은 identity 회전·h0 경로다.
+
+mg0106의 A/E 직접 생성 `(r,h)=(0.7,3.5)/(1.3,2.0)`은 축 선분 길이7/4, 외형 높이8.4/6.6이다(**재구현 계산**). Actor의 끝점 입력과 직접 CreateCapsule 인자를 같은 height 필드로 합치지 않는다.
+
+### 3.4 캐릭터 크기와 스케일 [판독·데이터]
+
+근거: [runtime_A_collision_reuse.c](../../../analysis/decomp/runtime_A_collision_reuse.c)의 `FUN_71002b2e00 / 71002bb0a0`, [runtime_A_collision_core.c](../../../analysis/decomp/runtime_A_collision_core.c)의 `FUN_710001cf80 / PCIndividualScale @0x71001d665c`, [runtime_A_collision_finish.c](../../../analysis/decomp/runtime_A_collision_finish.c)의 `bex::CollisionShape::Transform @0x710004d164`.
+
+| 입력/경로 | 확인한 적용 범위 |
+|---|---|
+| MatterType2 기본 Adjust 형상 | `SetSourceCapsule(a=(0,.5,0),b=(0,1,0),r=.5)`; 중심Y .75·halfHeight .25·전체 높이1.5(**재구현 계산**). Actor 분류 mask **0x2022(번호1·5·13)**, hit name Adjust |
+| 별도 Attack 형상 | 중심(0,.75,.8)·반지름.8의 sphere, mask0x10(번호4), 초기 test disabled. Adjust 캡슐의 반지름으로 사용하지 않음 |
+| `PCIndividualScale` | CharacterData PC 행+0x76C 값을 XYZ로 복제. mg0106 `ComPlayer::ComPlayer @0x710001b9c0`는 해당 값, 캐릭터ID13은 XYZ=.8로 **대체**하여 `ComActor.SetScale @0x71000146a4`에 전달 |
+| Actor/Entity scale | SetScale은 Actor 기본 scale과 modifier scale을 합성해 Entity.SetScale. **비본 ActorHitShape 갱신**은 CalculateRotation/GetTranslation으로 행렬을 만들며 Entity scale을 읽지 않음. transformed capsule도 길이/radius를 그대로 복사; SDK 캐시 geometry는 source 생성값을 유지. 시각 scale을 공통 캡슐 크기에 곱할 근거가 없음 |
+| 본 부착 형상 | SkeletonPose.CalculateWorldTransform을 사용하는 별도 분기. 임의 비균등/음수 본 scale에서 capsule을 다시 정규화·등방화하는 규칙까지 확정한 것은 아님 |
+| mg0106 ActorParam.json | ModelScale=.8·ColRadius=.8은 데이터 확인. NRO SetParams는 MapParam·ComParam을 읽고, 위 생성자 scale도 별도 경로다. **이 파일의 공용 소비/형상 재설정은 미확정**. 최종 radius=.8 또는 `.5×.8`로 확정하지 않음 |
+
+따라서 공통 기본 형상과 PC 시각 scale의 분리는 구현할 수 있다. **mg0106의 최종 캐릭터 형상**을 확정하려면 ActorParam 파일의 실제 로드·consumer 또는 후속 SetSourceCapsule 호출을 추가로 확보해야 한다. 다른 게임의 ColRadius를 대입하지 않는다.
+
 ## 4. Actor 접촉·접지와 플랫폼 carry [판독]
 
-[mg0912 §6.4](../minigame/mg0912.md)의 일반 Map 접촉은 **침투 벡터(+0x30)를 수집하고 평균을 위치에 적용**하는 경로다. 단일 Sweep의 distance/normal로 이 접촉 자료를 대체하지 않는다. 반복 투영·순차 push·모든 벡터 합산은 동일한 보정식이 아니다. 캐릭터끼리의 접촉 허용/레이어도 Map 접촉과 분리한다.
+### 4.1 Map과 Actor 접촉의 공통점·차이
 
-접지는 GroundedTest enabled와 actor 조건을 확인한 뒤 grounded를 지우고, 중력 방향 `g`에 대해 `d=max(dot(vVert·dt,g),0.01)`를 사용한다. 접지용 **layer1 HitShape**마다 시작점 `shape.pos−g·d`, 방향g, 거리**d+0.4**, MapCollisionLayerBit로 CastShape한다. **initialOverlap을 거부**하고, 점프 상태에서 거리>d+0.01이면 거부하며, normal 판정값<0.70710이면 거부한다. 거리>d+0.02이면 `g·(거리−d)`를 위치에 적용하고 접지 이벤트를 발생시킨다. Ray fallback의 붙이기 임계는d+0.01이다. normal 판정이 항상 world n.y인지 `dot(n,−g)`인지, groundedLimit 관련 세부 및 최종 위치 반영 연결의 남은 범위는 기존 문서의 미확정을 유지한다.
+[mg0912 §6.4](../minigame/mg0912.md)의 Map 경로와 [runtime_A_collision_core.c](../../../analysis/decomp/runtime_A_collision_core.c)의 `DetectContactsAA @0x7100027f40 / AB @0x7100028720 / Map @0x7100028ee0`을 대조했다. 원본은 한 단계에서 접촉을 모아 callback 결과를 packed finalizer에 전달한다. **검출 즉시 순차 push하거나 모든 침투 벡터를 합산하는 식이 아니다.**
+
+| 경로 | 필터·검출·보정 |
+|---|---|
+| Actor–Actor(AA) | 유효 owner/shape 쌍과 같은 Entity 접촉 허용 조건 검사. 추가로 양쪽 ComModel+0x28 mask의 AND, 모델이 없거나 override 조건일 때 ComActorCollision의 `FUN_710001b7d8/e0` fallback을 사용. 이 mask와 PhysX Map layer 번호를 합치지 않음. `HitShapeShape`는 transformed bex 형상을 사용 |
+| AA adjust | `FUN_710002a054`는 일반 쌍에 양쪽 응답 가능하면 `(+m/2,−m/2)`, 한쪽이면 그쪽에 전체 m/−m을 배분. **양쪽 Actor가 capsule인 경우** XZ 분배와 Y 처리 분리: 중심Y×10000의 정수 비교·grounded/jump 상태에 따라 Y 응답과 PushJump/Fall/ReflectionJump를 선택. 항상 수평 반반 push로 대체할 수 없음 |
+| AA finalize | `DefaultFinalizeCharacterRigidBody @0x710002a650`는 owner가 A/B인지에 따라 contact+0x40/+0x50을 선택해 평균 Δ를 계산. Actor가 있고 `dot(Δ,g)<0`이면 `Δ−g·dot(Δ,g)`로 중력 반대 성분 제거; 투영 뒤0인 경우 별도 quaternion·0.01 우회 분기. 단순 Map 평균과 동일하지 않음 |
+| Actor–Map(AB/Physics) | `FUN_710002ae40`가 `ListShapes(...,13,2)` 및 추가 등록 쌍을 수집, DetectContactsAB와 DetectContactsMap을 함께 실행. Physics Map mask는 Actor 설정값, Actor 없음은4. Overlap 후보 버퍼16개→각 rigid의 world pose/shape→ComputePenetration. **depth>.01**인 것만 contact+0x30=`direction×depth`에 저장 |
+| Map adjust/finalize | `DefaultAdjustCharacterVsMap @0x710002a624`가 raw m을+0x40에 복사. `DefaultFinalizeCharacterVsMap @0x710002aac0`는 **adjusted +0x40 벡터의 평균**을 위치에 적용. 여러 AB/Physics 접촉은 같은 packed 경로에 들어감 |
+
+Map capsule의 Overlap 후보 형상은 source 종류7에서 transformed radius와 **길이×2를 halfHeight에 전달**하는 넓힌 형상이다. 실제 침투 판정은 원래 SDK geometry+0x190, world center/quat+0x160/+0x170을 사용한다. 후보 형상의 길이를 최종 충돌 크기로 가져오지 않는다. 이 특수 후보 범위와16개 제한까지 원본과 맞추려면 해당 경로를 별도로 보존한다.
+
+AA·Map 모두 공통 contact/owner/packed 구조를 사용하지만 **필터·geometry·응답 callback·최종 projection은 다르다**. [mgB_main_actorcoord.c](../../../analysis/decomp/mgB_main_actorcoord.c)의 완료 판독을 재사용하며 전용 callback과 simple-adjust 모드도 원본 선택에 따라 보존한다. SDK 접촉 동점 순서를 새로 확정한 것은 아니다.
+
+### 4.2 접지 법선·groundedLimit·최종 위치
+
+근거: [runtime_A_collision_finish.c](../../../analysis/decomp/runtime_A_collision_finish.c)의 `FUN_7100006670`, [runtime_A_collision_filters.c](../../../analysis/decomp/runtime_A_collision_filters.c)의 layer 검사, [runtime_A_collision_limit.c](../../../analysis/decomp/runtime_A_collision_limit.c)의 `FUN_710002c96c`; 기본 접지 callback은 `ActorWorld.Reset @0x7100005770`가 등록한다.
+
+GroundedCheck enabled 및 Actor+0x44 조건을 확인한 뒤 grounded를 지우고, 중력 방향g에 대해 `d=max(dot(vVert·dt,g),.01)`을 계산한다. Actor 분류 **번호1(mask0x2)**에 포함된 HitShape마다 SDK geometry로 `start=shapeCenter−g·d`, `dir=g`, `distance=d+.4`, MapCollisionLayerBit를 사용해 CastShape한다. **CastResult validity(+0x54)가0이 아니면 거부**하며, 점프 상태에서 hit.distance>d+.01이면 거부한다. 초기 중첩 flag(+0x70)를 직접 검사하는 분기는 이 콜백에 없다. 기존 문서의 초기 중첩 거부 해석을 여기서 정정한다. 법선 판정은 CastResult normal+0x10의 **world Y 성분 ≥ .707**이다. `dot(n,−g)`로 일반화한 구현은 원본과 다르다.
+
+`CheckCollsionLayerBit(CollisionLayer) @0x710001c558`은 `mask>>(번호&31)&1`, unsigned-mask 오버로드 `@0x710001c568`은 `(mask&queryMask)!=0`이다. 접지 호출 `@0x7100006808`은 **번호 오버로드**에1을 전달한다. 두 오버로드를 혼동하면 기본 Adjust mask0x2022의 접지 형상을 누락한다.
+
+Sweep hit.distance>d+.02이면 `SetPosition(current+g·(distance−d))`; 성공 때 grounded 설정과 ComActorGroundedEvent 전달이 이어진다. Sweep 후 IsGrounded가 false면 Actor 위치에서 Ray fallback: 같은 validity·점프·world normal.y 조건, 위치 붙이기 임계는d+.01이다. IsGrounded 자체는 GroundedTest가 꺼지면 true, 켜졌을 때 grounded flag와 jump status1을 함께 검사한다(`@0x710001178c`).
+
+지역 CollisionLimit가 없으면 `FUN_710002c96c`가 **current world Y ≤ groundedLimit.y**를 검사하고 Y만 limit.y로 고정하여 SetPosition, 이어 강제 grounded를 설정한다. X/Z 또는 g 방향 평면을 사용하지 않는다. 지역 제한이 있으면 해당 enabled/접지 callback 경로를 사용하므로 기본 Y 제한과 합산하지 않는다. groundedLimit setter/getter는 `@0x7100014df8/4e0c`다.
+
+Map 평균의 `FUN_710001b320`, AA finalizer, 접지·Y 제한은 모두 **ComActor.SetPosition @0x7100011d64**으로 연결된다. SetPosition은 MoveConstraint가 있으면 요청 이동량을 제약하고 최종 위치 callback을 거쳐 Entity.Translate, 없으면 최종 callback→Entity.SetTranslation이다. 기본 callback **@0x7100014564는 입력 Vector를 그대로 반환**한다. 이전 `FUN_710001454c` C의 함수 경계가 잘못 합쳐져 해당 32byte만 ARM64로 확인했다. 게임별 custom finalizer를 생략하지 않는다.
+
+### 4.3 기본 작업 순서와 carry
+
+`ActorWorld.DefaultCollision @0x7100006ef8`의 기본 순서는 **Attack→Map packed 보정→Limit→ActorBody(AA)→Event→Map packed 보정→Limit**이다. Map 작업은 기본+0x1C0 callback `FUN_710002ae40`, ActorBody는+0x190 callback `FUN_710002abd0` 또는 simple-adjust `FUN_710002acb4`다. 접지 `FUN_7100006670`은 별도 ActorJob callback(+0x160)이다. Map·접지·Actor push를 하나의 solver 함수로 합치지 않으며, custom CollisionFunction/ActorJob을 사용하는 게임은 별도 선택을 따라야 한다. **이 공통 함수 내부 순서가 mg0106의 Entity·소켓·dirty commit 전체 시점을 확정하지는 않는다.**
 
 일반 ComActor와 별도 CCT 경로는 구분한다. mg0912의 선택적 CCT는 기본 비활성 캐릭터 충돌 설정과 `CreateCapsule(.4,.25)`·TickFix→MoveTo 경로가 있지만, 이것을 모든 플레이어의 기본 이동기로 확대하지 않는다.
 
@@ -120,7 +175,7 @@ Ray callback `FUN_7100625eb0`, Sweep callback `FUN_710062a834`는 block hit가 �
 
 RigidArg는 **layer2 / motion0 / detection0**, friction0.5·0.5, restitution0.9다. 따라서 이 장애물은 **부착으로 포즈가 갱신되는 Static**이며 Kinematic target·동적 힘 이동으로 분류하지 않는다. identity 부모 조건의 위치·회전 관계는 `p=Tfloor+Rfloor·socketPosition`, `q=qY(angle)·qSocket`이다. 모델 외관의 AABB를 매번 Box 크기로 쓰면 회전과 형상 크기가 함께 바뀌므로 원본과 다르다.
 
-Boo는 `UpdateAnim @0x710000fd00~fd6c`에서 애니메이션 소켓 translation과 Rotate를 따른다. A/E Capsule radius는0.7/1.3, 두 번째 원본 인자는3.5/2.0이다. 앞 절의 축/길이 어댑터 규약과 분리하여 원값을 보존한다.
+Boo는 `UpdateAnim @0x710000fd00~fd6c`에서 애니메이션 소켓 translation과 Rotate를 따른다. A/E Capsule radius는0.7/1.3, halfHeight는3.5/2.0이다. §3.3의 끝점·반높이 규약으로 변환한다.
 
 Route는 `Setup @0x7100011360`의 CastShape로 0=빈 곳/1=ObjA/2=ObjE/3=기타를 분류하고, `GetTarget @0x71000118d0`에서 mask4의 Ray 첫 hit ObjA 허용, E의 위쪽1 Sweep 등 **게임 고유 규칙**을 적용한다. 태그 분류·경로 거리·후보 순서·fallback 난수는 [mg0106 §6.5](../minigame/mg0106.md)를 그대로 사용한다. Shape 등록 완료 전 Setup을 실행하거나 태그를 geometry 종류만으로 대체하지 않는다.
 
@@ -147,7 +202,7 @@ Route는 `Setup @0x7100011360`의 CastShape로 0=빈 곳/1=ObjA/2=ObjE/3=기타�
 | `beginStep(frame)` / `setEntityPose(id,pose)` / `commitPoses()` | previous/현재 pose와 dirty를 구분. 소켓 평가 결과를 localPose와 합성하고 broad phase AABB도 갱신. commit마다 pose epoch를 부여하고 한 질의 묶음은 동일 epoch를 사용 |
 | `raycast({origin,unitDir,distance,mask,excludeEntity})` | 단일 결과 또는null. world position/normal/distance/entity/shape/tag/initialOverlap/validity를 반환. layer와 mask를 혼용하지 않음 |
 | `sweepCapsule({capsule,pose,unitDir,distance,mask,excludeEntity})` | 캡슐 선형 sweep. pose는 시작 quat; 회전 궤적 sweep은 별도 기능. 초기 중첩을 숨기지 않음 |
-| `contacts({shape,pose,mask,excludeEntity})` / `resolveMapContacts(list)` | 이동0이어도 overlap을 검사. normal·침투 벡터·상대 shape와 pose epoch를 반환. 원본 Actor 경로는 평균 보정을 선택; 게임 고유 순차 보정과 분리 |
+| `contacts({shape,pose,mask,excludeEntity})` / `resolveMapContacts(list)` / `resolveActorContacts(list)` | 이동0이어도 overlap을 검사. normal·침투 벡터·상대 shape와 pose epoch를 반환. Map은 adjusted 벡터 평균, AA는 양쪽 분배·owner별 평균·중력 projection을 분리. 게임 고유 순차 보정도 별도 |
 | `stepPhysics(dt)` / `applyPhysicsPoses()` | Static 직접 pose, Kinematic target, Dynamic 적분을 구분. 원본 호환이 필요한 기능과 단순 query-only backend 지원 범위를 명시 |
 | `teleport(id,pose)` / `removeShape(id)` / `dispose()` | teleport는 이전=현재로 맞춰 허위 sweep을 방지하고 Dynamic velocity reset을 명시. 제거는 query index·contact cache·owner 목록과 handle generation을 함께 정리 |
 
@@ -159,7 +214,7 @@ Route는 `Setup @0x7100011360`의 CastShape로 0=빈 곳/1=ObjA/2=ObjE/3=기타�
 2. 논리 step 시작에 previous snapshot을 잡고, 기존 sequence가 읽는 종료/탈락 플래그의 지연 관계를 유지한다. mg0106은 Fiber 판정이 같은 프레임 Entity 갱신보다 앞선다.
 3. 게임 Entity 의존 관계에 맞춰 Map/애니메이션/Actor/Player를 갱신하고 **논리 시간의 소켓 TRS**를 평가한다. 원본 세부 순서가 미확정인 곳은 adapter의 명시 phase로 유지한다.
 4. 각 adapter가 지정한 query 경계에서 부착 및 dirty 포즈를 commit한다. 모든 query를 자동으로 최신 render pose에 맞추지 않는다. Route가 이전 물리 snapshot을 읽어야 하는지는 추가 근거가 필요하다.
-5. Actor의 적분→접촉 자료 수집/평균 보정→접지 질의를 연결한다. 정지 Actor도 움직이는 Map과 접촉을 검사한다. mg0106 carry·Boo push 등 고유 계산은 게임 순서대로 별도 실행한다.
+5. Actor의 적분·Map/AA 자료 수집·각 finalizer·접지 callback을 adapter의 원본 단계에 연결한다. 정지 Actor도 움직이는 Map과 접촉을 검사한다. mg0106 carry·Boo push 등 고유 계산은 게임 순서대로 별도 실행한다.
 6. 지원하는 물리 backend를 step하고 Dynamic pose를 논리 Entity에 적용한 뒤 state/events를 확정한다. view는 이 확정 pose를 읽으며 보간은 렌더에만 적용한다.
 
 pause는 논리 시간·포즈 commit·물리 step을 정지시키고 pending dirty와 형상 수명을 보존한다. 재개 때 stale contact는 새 snapshot으로 검증한다. 종료 phase는 게임에서 허용한 후처리까지 갱신하며 pause와 합치지 않는다. warp/소켓 대상 교체는 discontinuity 여부를 지정하여 previous=current 또는 연속 이동을 선택한다. dispose는 형상·접촉·질의 핸들을 제거하고 view/asset owner 해제는 해당 lib 수명주기에 연결한다.
@@ -171,7 +226,7 @@ pause는 논리 시간·포즈 commit·물리 step을 정지시키고 pending di
 | 검증 사례 | 확인할 조건 |
 |---|---|
 | 부착 Box 이동·회전 | 중심이 원점 밖인 Box를 회전: world 중심·quat·AABB가 같이 변하고 halfExtents는 유지. model scale0 부착과 SyncScale 옵션을 분리 |
-| 이동0인 Actor | 회전/이동 장애물이 정지 Actor와 겹쳐도 contact가 발생. sweep 시작 overlap은 접지에서 거부하고 침투 보정은 별도 처리 |
+| 이동0인 Actor | 회전/이동 장애물이 정지 Actor와 겹쳐도 contact가 발생. 접지는 validity와 거리/법선 조건을 검사하며 초기 overlap flag와 침투 보정은 별도 처리 |
 | 필터/ID | layer2는 mask4에 hit, mask0x6은1·2에 hit. 제외 Entity 아래 모든 shape 제거, 폐기 세대 handle·비활성 shape는 hit 불가 |
 | 질의 출력 | 양의 distance·0·음수와 initialOverlap, NaN/누락 normal validity를 구분. 여러 shape의 Entity/tag 분류 유지 |
 | 접촉 보정 | 두 침투 벡터는 원본 평균 경로에서 평균 적용. Ray distance나 sequential push 결과로 바꾸지 않음 |
@@ -179,12 +234,30 @@ pause는 논리 시간·포즈 commit·물리 step을 정지시키고 pending di
 | 시간·순서 | 동일 frame/pose epoch의 query 결과 재현, render/rAF 빈도에 독립. commit 전후 결과의 차이를 기록하여 미확정 adapter 순서 검증 |
 | lifecycle | Dynamic teleport velocity0·previous=current, pause 중 dirty 보존, resume 재평가, disable/dispose 후 query/contact 없음 |
 
-| 남은 미확정 | 확정한 범위 / 추가로 필요한 근거 |
-|---|---|
-| 게임별 같은 프레임 세부 순서 | 공통 message·의존 정렬·부착 수신·dirty→강체 경로는 확인. **mg0106 활성 의존 그래프/부품 순서, Rigger Timing 실제 설정, dirty 큐 완료 장벽과 Route/Actor 질의 선후**가 필요. 일반 Map→Actor→Player 목록만으로 대체하지 않음 |
-| 회전 충돌의 내부 접촉/CCD | Static pose 교체와 선형 Shape sweep 확인. **PhysX narrow phase·동점 접촉 순서·고속 회전 중간 궤적 충돌**은 미확정. mg1002 DetectionType1을 mg0106 Static에 확대하지 않음 |
-| Capsule 길이·scale | 원본 두 float 무변환 저장/SDK 전달 및 축 변환 확인. **전체 높이·끝점 환산과 비균등/음수 scale 규약**, mg0106 ActorParam/PCIndividualScale의 최종 캐릭터 충돌 크기 소비 경로가 필요 |
-| Query 옵션·All 정렬 | 레이어·제외 Entity·단일 block 결과·거리/validity 확인. **+0x41/42·E1/E2의 이름/세부 의미, All 결과 정렬·동점**은 미확정 |
-| 접지 세부 | 기존 mg0912의 threshold·initialOverlap 거부·평균 보정 재사용. **normal 판정 좌표·groundedLimit·최종 SetPosition의 세부 연결**은 기존 미확정 유지 |
+| 항목 | 이번 판독에서 해소된 내용 | 남은 미확정 |
+|---|---|---|
+| Capsule | radius/halfHeight·Y축·SDK quarter-turn·끝점 환산·일반 Actor scale 분리·기본 캐릭터 capsule | mg0106 ActorParam의 실제 consumer/후속 형상 덮어쓰기; 임의 본의 비균등/음수 scale |
+| Actor/Map 응답 | AA 분류 필터·양쪽 분배·owner별 평균/중력 projection; AB/Physics Map 합류·depth>.01·adjusted 평균 | SDK narrow phase의 동점·후보 순서, 모든 게임의 custom adjust 선택 |
+| 접지/최종 위치 | world normal.y≥.707; validity/initialOverlap 구분·Sweep/Ray 임계·기본 world Y limit·SetPosition 및 기본 passthrough | 게임별 custom ActorJob/finalizer가 덮어쓰는 설정 |
+| 게임별 포즈 시점 | 공통 DefaultCollision 내부 작업 순서·Entity dirty→강체 연결 | mg0106 활성 의존 그래프/부품 순서·Rigger Timing·dirty 큐 장벽과 Route/Actor 질의 선후 |
+| CCD/All 옵션 | Static pose 교체·선형 Sweep·단일 block 출력/필터 | 회전 중간 궤적·DetectionType1 내부 solver·추가 flag 이름·All 정렬/동점. **기본 단일 질의/캐릭터 경로의 착수 차단 아님** |
+
+### 사용자 확인 필요
+
+공통 query/캐릭터 런타임은 위 확정 규약으로 설계·구현을 시작할 수 있다. **mg0106 원본 동작 일치 완료를 목표로 하면** ActorParam consumer와 게임별 포즈 시점은 먼저 추가 판독해야 한다. 공통 capsule radius=.5를 임시 게임 값으로 채택할지는 구현 범위 결정이며, 여기서는 최종 게임 값으로 승인하거나 대입하지 않았다. Dynamic/회전 중간 궤적 CCD·All 질의를 첫 구현 범위에 넣을지도 별도 선택이 필요하다. 이번 문서 보완 자체에는 사용자 응답이 필요하지 않다.
+
+### 런타임 구현 준비도
+
+| 필요 항목 | 판독 상태 | 구현 차단 여부 |
+|---|---|---|
+| 형상 크기·local/world 중심·캡슐 축/끝점 | Box 및 Capsule 공통 규약 확정 | 아니오 |
+| register/enable/remove·세대·단일 Ray/Sweep 필터/출력 | 공통 계약 판독, 웹 API는 §6 제안 | 아니오; 웹 구현은 아직 없음 |
+| Actor–Map 보정 | 후보/침투·adjusted 평균·SetPosition 확정 | 아니오; SDK와 후보 순서까지 완전 일치는 추가 검증 |
+| Actor–Actor 보정 | 분배·capsule Y 분기·jump 전이·owner 평균/projection 근거 확보 | 아니오; 단순 반반 수평 push로 축약하면 불일치 |
+| 기본 접지·groundedLimit·finalizer | 법선 좌표/임계·Y 제한·위치 연결 확정 | 아니오 |
+| mg0106 최종 캐릭터 capsule | 공통 기본값/PC scale 분리 확정, ActorParam consumer 미확정 | **해당 게임 크기 확정은 차단**; 공통 런타임 착수 가능 |
+| mg0106 움직이는 장애물 query 시점 | 부착 Static·dirty 경로 확정, 게임별 commit 경계 미확정 | **원본 프레임 일치 완료는 차단** |
+| 일반 비균등/음수 본 scale | 일부 경로만 판독 | 해당 입력 지원 시 차단; 고정 크기·비본 경로는 착수 가능 |
+| CCD·Dynamic solver·All 정렬 | 내부 의미/정렬 일부 미확정 | 해당 기능의 원본 일치에만 차단; mg0106 기본 단일 query에는 비차단 |
 
 이번 검증 범위는 **기존 완료 문서 재사용, 원본 함수·ARM64/디컴파일의 누락 연결 정적 판독, 현재 웹 소스 대조, 문서 링크/형식 확인**이다. 공통 Entity·Collision·Physics 주소는 위 절에 기록했으며 추가 판독은 원본을 변경하지 않은 임시 Ghidra 프로젝트의 `-noanalysis -readOnly`로 수행했다. 게임 구현·원본 실행·스테이징은 하지 않았다.

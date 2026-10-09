@@ -9,7 +9,7 @@
 - **[판독] 입력을 프레임 버퍼로 교환한다.** SDK는 버튼·스틱·터치·SixAxis 채널 `0~5`와 플레이어 사용자 데이터 채널 `8~15`를 별도로 처리한다. `0x78 B` 사용자 레코드를 컨트롤러 입력 패킷으로 해석하면 안 된다.
 - **[판독] SDK 진행은 입력 가용 범위로 제한된다.** 현재 프레임 `F`에 지연 `D`를 더한 프레임에 로컬 입력을 넣고, 진행 가능 범위가 부족하면 `0x4c2c`로 멈춘다. 확인한 계약은 아래 필드·조건으로 표현한다. 전체 구조를 lockstep/rollback/상태복제 중 하나로 단정할 근거는 아직 부족하다.
 - **[판독] seed 배포자·씬 데이터 배포자·입력 소유자는 서로 다른 역할이다.** 세션 호스트를 모든 점수·판정의 단일 권한자로 보는 분기는 대표 게임의 판정/결과 호출부에서 확인되지 않았다.
-- **[웹] 광장 수신 좌표와 표시 좌표는 별개다.** `RemoteActor`의 0.2 s 보간 뒤 `FollowSystem`이 목표 추종·로컬 충돌을 다시 계산한다. 정지 최종 좌표 미전송과 이중 보간은 코드로 확인했으며, 보고된 각 증상의 직접 원인은 §6.2 관측으로 구분해야 한다.
+- **[웹] 광장 수신 목표와 표시 좌표는 별개다.** `RemoteActor`는 마지막 수신 pos/quat·수명만 보관하고 패킷마다 목표를 전달한다. 표시 actor의 `RemoteMotion`이 표시 위치 기준 5/1 m 분기와 `AutoInterpolation` 하나를 소유한다. 수정 전 이중 보간은 §6.2의 과거 원인 후보로 구분했다. 정지 최종 좌표 미전송·1 m 회전 전용 분기·로컬 충돌/접지 차이는 현재도 남으며, 구현·시험은 §6.2.1을 따른다.
 - **[웹] 현재 미니게임은 로컬 실행이다.** 서버와 `wire.ts`에는 게임 중 입력·seed·배리어·결과 합의 메시지가 없다. 기존 광장 동기화 완료가 게임 동기화 완료를 뜻하지 않는다.
 
 근거 자료는 `C:\dev\mpj\extracted\exefs\main.decomp.bin`, `analysis/functions/main.nso.tsv`, 기존 `analysis/decomp/core_b*.c`와 대표 NRO 디컴파일이다. 누락된 함수는 복제한 임시 Ghidra 프로젝트의 `-noanalysis -readOnly` 판독과 ARM64 직접 분기·vtable 대조로 확인했다. 원본 프로젝트·웹 구현은 수정하지 않았다.
@@ -217,8 +217,9 @@ plaza_page.ts: readPads → run.step(1)
   → RemoteSender → PlazaUi.sendLocal → SocketIoOnline.sendPlayerInfo
   → encInfo → socket.emit('m') → Rooms INFO → others/relay
   → REMOTE_INFO → 현재 멤버 station/slot 조회 → remoteInfo queue
-  → PlazaUi.tick → RemoteTable.receive/step → 매 틱 net:remote
-  → FollowSystem.remote → 다음 follow 틱 이동·충돌 → sync(root.position) → render
+  → PlazaUi.tick → RemoteTable.receive(수신 목표 저장) → 패킷마다 net:remote
+  → FollowSystem.remote → 표시 RemoteMotion.receive(표시 위치 기준 분기)
+  → 다음 follow 틱 AutoInterpolation.calculate → PlazaMover.tick(이동·충돌/접지) → sync(root.position) → render
 ```
 
 | 단계/파일 | 실제 값·조건 |
@@ -227,29 +228,29 @@ plaza_page.ts: readPads → run.step(1)
 | 실제 payload [wire.ts](../../script/shell/online/wire.ts) | `INFO=0x10`: `[type:u8,slot:u8,x/y/z:i16 LE,yaw:u16 LE]`, 10 B. 서버 삽입 후 `REMOTE_INFO=0x90`: `[type:u8,station:u16 LE,slot:u8,x/y/z:i16 LE,yaw:u16 LE]`, 12 B. `qpos=clamp(round(pos×256),−32768,32767)`, 복원 `q/256`; 표현 범위 `[-128,127.99609375] m`. `qyaw=round(frac(yaw/2π)×65536)`를 u16으로 저장. frame/timestamp/sequence/velocity/버튼/충돌 상태 없음 |
 | 중계 [rooms.ts](../../server/games/mpj-plaza/rooms.ts), [index.ts](../../server/games/mpj-plaza/index.ts) | INFO 길이10·slot<발신자의 프로필 사람 수만 검사. station은 연결에서 주입하며 호스트 조건 없이 다른 station으로 동일 좌표 relay. `others` 기본 volatile=false, 현재 INFO도 그 경로: 일반 Socket.IO emit. 서버의 250 ms tick은 연결 정리이며 이동 송신 주기가 아님. 마지막 위치 저장/늦은 참가자 snapshot·서버 이동/충돌 계산은 없음 |
 | 수신 [socketio.ts](../../script/shell/online/socketio.ts), [ui.ts](../../script/shell/plaza/ui/ui.ts) | 멤버 매핑 없는 station/slot은 폐기. UI도 live remote station만 수용. 첫 INFO가 있어야 RemoteTable actor 생성. 누적 event queue를 틱에서 비우며 좌표의 원래 frame/나이를 판정할 정보 없음. 참가/준비의 강제 송신이 최초 표시를 담당함 |
-| 1차 좌표 처리 `RemoteActor` | **렌더 mover와 다른 내부 pos**로 5/1 m 분기. ≤1 m 새 위치는 버리고 회전만 0.2 s slerp; 1~5 m는 내부 pos를 0.2 s 선형 보간. 마지막 목표 하나만 있고 frame history/외삽·입력 예측·rollback buffer는 없음. 완료 후에도 mode를 유지하며 UI는 패킷이 없어도 같은 mode/pos를 매 틱 발행 |
-| 2차 이동 [follow.ts](../../script/shell/plaza/follow.ts), [player.ts](../../script/shell/plaza/player.ts) | `net:remote.pos`의 y를 `groundHeight(x,z,y+2)`로 바꿈. interp 목표를 `autoInterp(speed=6,dt=1/60)`의 방향으로 추종하되 보간 산출 speed>2.001이면 run6, 아니면 walk2. 도착 거리≤0.1이면 x/z snap. 로컬 collider·접지·선회를 다시 적용한 `mover.pos`가 actor와 root에 복사됨. rotate는 target=null; spawn/teleport는 매 틱 place. 따라서 UI 내부 좌표 도달이 렌더 actor 도달을 뜻하지 않음 |
+| 수신 목표 저장 `RemoteActor`·`RemoteTable` | 마지막 수신 pos/quat·(station,slot)·수신 수(rx)·수명만 보관한다. 보간·5/1 m 분기·mode·speed는 없다. `PlazaUi`가 받은 패킷마다 `remote` 사건을 내고 `ui/part.ts`가 `net:remote`로 전달한다. frame history/외삽·입력 예측·rollback buffer는 없음 |
+| 단일 표시 보간 [follow.ts](../../script/shell/plaza/follow.ts), [player.ts](../../script/shell/plaza/player.ts) | `RemoteMotion.receive`는 **표시 mover 위치**와 수신 위치의 3D 거리로 d>5이면 place, d≤1이면 startRotate, 그 사이이면 start(pos,yaw)를 한 번 적용한다. `AutoInterpolation` 하나가 수평 이동 레버를 주고 `PlazaMover`가 로컬 충돌·접지·선회를 처리한다. 위치 진행 중 Run6 대응은 [근사]이며 수신 목표가 표시 좌표와 즉시 일치하는 계약은 아니다. 최초 spawn·teleport만 수신 y를 바닥에 재투영하고, 이동 중 접지·낙하 보정은 mover가 맡는다 |
 
-**확인된 경로와 재현 후보:**
+**현재 남은 조건·재현 후보와 수정 전 원인 후보:**
 
 | 구분 | 위치 불일치/실시간성에 미치는 구체 조건 | 확인할 재현·관측 |
 |---|---|---|
 | 확인: 정지 최종 위치 미전송 | timer가 남은 동안 움직인 뒤 멈추면 마지막 이동분은 다음 송신 시각의 vel=0에 막힘. 이후 움직임/force까지 원격 목표가 오래된 좌표에 머묾. 원본 송신 조건도 같지만 정지 좌표 일치 보장은 없음 | 마지막 INFO 직후 0.2 s 이내 짧게 이동→완전 정지. `P_local`과 마지막 `P_wire` 차이가 남고 stopped 상태에서 INFO가 추가되지 않는지 비교. 단순 신뢰 전송으로 해결되지 않음 |
-| 확인: 중복 보간·다른 거리 기준 | 원본은 실제 Player 위치를 기준으로 하나의 보간기를 시작한다. 웹은 RemoteActor 내부 좌표 기준 분기 뒤 충돌하는 렌더 mover를 다시 추종시킴. 모드가 rotate가 되면 렌더 mover가 남은 목표를 잃을 수 있음 | 평지 직선→회전/정지와 벽·계단 근처를 비교. 동일 틱 `P_wire,P_ui,P_mover,P_root` 및 mode/target/speed를 함께 기록. `P_wire≈P_ui`인데 `P_mover`만 뒤처지면 수신 누락보다 후단 이동 경로가 원인 |
-| 확인: 1 m 무시 구간·0.2 s 근사 | `d≤1` 위치 무시는 원본 규칙이다. 걷기2 m/s×0.2 s≈0.4 m라 연속 패킷을 받아도 위치 갱신이 매번 되지 않음. 웹의 0.2 s 선형 보간시간은 원본 확정 상수가 아님 | 평지 걷기/달리기에서 매 수신 d와 mode를 비교. 패킷 도착은 규칙적인데 rotate가 이어지면 지연·누락으로 오진하지 않음. 실시간 위치 일치를 목표로 하면 해당 deadband 정책을 별도로 결정 |
-| 후보: 최초 표시/로더/장면 보임 | 멤버 매핑 전 INFO 폐기, 최초 INFO 부재, `FollowSystem.loading` 중 새 이벤트 폐기, 기구 전환 `setVisible(false)`는 각기 다른 조건. 로더 완료는 첫 이벤트 좌표로 spawn하고 다음 UI 틱에서 회복 가능 | 둘 다 정지한 상태의 순차 참가·여러 로컬 사람·느린 모델 로드·기구 출발을 각각 비교. `(station,slot)` 프로필/INFO/RemoteTable/remote actor 존재·root.visible을 구분. 최초 송신과 UI 적용의 실제 순서가 필요 |
-| 후보: 좌표 범위·충돌면·슬롯 | 범위 밖은 i16 포화; 수신 y는 로컬 바닥 재투영. `createPlayer`는 local slot0을 먼저 선택해 isCom을 검사하지 않으나 송신 순번은 비COM만 포함. 정상 설정이 이런 조합을 허용하는지는 별도 확인 필요 | `abs(x/y/z)≥128`, 계단/복층, CPU가 slot0인 설정을 따로 확인. 송신 전/복원 좌표, collider hit y, 실제 actor slot과 프로필 순번을 비교. 카메라·캐릭터 문서의 병행 변경은 해당 작업에서 검증 |
+| 과거 원인 후보: 수정 전 중복 보간·다른 거리 기준 | 수정 전에는 RemoteActor 내부 pos의 0.2 s 선형·slerp 뒤 렌더 mover를 다시 추종시켰다. 당시 내부 좌표 기준과 표시 위치 기준이 달라 rotate 전환 때 남은 목표를 잃을 수 있었다. **현재는 §6.2.1의 단일 RemoteMotion 경로로 교체됨**. 현재 startRotate가 위치 진행을 끄는 것은 원본 분기와 같은 동작 | 당시 `P_wire,P_ui,P_mover,P_root` 비교는 과거 원인 후보의 진단 기록이다. 현재 증상에 이중 보간을 원인으로 적용하지 않고 아래 수신 목표·표시 위치 관측을 쓴다 |
+| 확인: 1 m 회전 전용 구간 | d≤1의 위치 진행 중단은 원본 규칙이며 현재 웹도 **표시 위치 기준**으로 적용한다. 웹 송신은 이동 중 13틱(0.2167 s) 간격이고, 걷기2 m/s라면 약0.433 m/패킷이다(재구현 계산). 원격은 1 m가 쌓일 때까지 서 있다가 Run6으로 따라잡을 수 있다. 0.2 s 선형 보간은 수정 전 근사이며 현재 경로에는 없음 | 평지 걷기/달리기에서 수신 d와 표시 actor의 mode/target을 비교. rotate가 이어지는 현상을 수신 지연·누락만으로 판단하지 않는다. Run 액션 선택의 원본 화면 대응은 §6.2.1의 [근사]로 유지 |
+| 후보: 최초 표시/로더/장면 보임 | 멤버 매핑 전 INFO 폐기, 최초 INFO 부재, 기구 전환 setVisible(false)는 별개 조건이다. 현재 `FollowSystem.loading`은 로딩 중 **최신 수신 하나를 보관**하고 완료 시 그 좌표로 spawn한다. 로딩 중 이탈하면 보관도 지운다(§6.2.1). 수정 전 새 이벤트 폐기·다음 매 틱 발행으로 회복하던 경로와 구분한다 | 둘 다 정지한 상태의 순차 참가·여러 로컬 사람·느린 모델 로드·기구 출발을 각각 비교. (station,slot) 프로필/INFO/RemoteTable/표시 actor 존재·최신 보관 목표·root.visible을 구분한다 |
+| 후보: 좌표 범위·충돌면·슬롯 | 범위 밖은 i16 포화; 첫 표시·teleport에서 수신 y는 로컬 바닥에 재투영되고 이동 중 y는 mover 접지가 정한다. `createPlayer`는 local slot0을 먼저 선택해 isCom을 검사하지 않으나 송신 순번은 비COM만 포함. 정상 설정이 이런 조합을 허용하는지는 별도 확인 필요 | `abs(x/y/z)≥128`, 계단/복층, CPU가 slot0인 설정을 따로 확인. 송신 전/복원 좌표, collider hit y, 실제 actor slot과 프로필 순번을 비교. 카메라·캐릭터 문서의 병행 변경은 해당 작업에서 검증 |
 | 후보: 부하·호출자 | 광장 FixedClock은 최대4틱 이후 밀린 시간을 버린다. `scene.step(df>1)` 직접 사용은 part별 여러 틱 실행으로 마지막 pos만 송신 샘플링할 수 있지만 **현재 plaza_page는 항상 step(1)을 반복**하므로 이 배치 문제를 현재 기본 실행 원인으로 단정할 수 없음 | 정상/30 fps/탭 복귀에서 실제 wall time, 실행 틱수와 INFO 간격을 비교. 직접 df>1 호출은 별도 API 재현으로 분리 |
 
-기존 관측은 `window.__plaza.debug()`의 `actors`, `parts.player`, `parts.follow.remotes`, `parts.ui.remote/log`다. 프로토콜 단계는 디버거에서 `encInfo/decInfo/RemoteActor.receive/FollowSystem.remote/sync`를 관측한다. 최소 비교 record는 `(local wallTime,실행 tick,station,wireSlot,actorSlot,tx/rx,mode,P_local,P_wire,P_ui,P_mover,P_root,target,root.visible)`와 `Etx=|P_local−P_wire|,Erx=|P_wire−P_ui|,Efollow=|P_ui−P_mover|,Erender=|P_mover−P_root|`다. 다른 기기의 wallTime은 공통 frame이 아니므로 RTT 없이 단방향 지연으로 계산하지 않는다. 현재 debug에는 패킷별 좌표/시각·target/visible 전체가 없어서 그 값은 추가 관측이 필요하다.
+현재 관측은 `window.__plaza.debug()`의 `actors`, `parts.player`, `parts.follow.remotes`(mode/rx/target/rot), `parts.ui.remote/log`다. 프로토콜 단계는 디버거에서 `encInfo/decInfo/RemoteActor.receive/RemoteMotion.receive/FollowSystem.remote/sync`를 관측한다. 최소 비교 record는 `(local wallTime,실행 tick,station,wireSlot,actorSlot,tx/rx,mode,P_local,P_wire,P_target,P_mover,P_root,target,root.visible)`와 `Etx=|P_local−P_wire|,Erx=|P_wire−P_target|,Efollow=|P_target−P_mover|,Erender=|P_mover−P_root|`다. **P_target은 마지막 수신 목표이며 보간 좌표가 아니다.** Efollow에는 단일 보간·1 m 분기·로컬 충돌/접지의 영향이 섞이므로 이중 보간 증거로 보지 않는다. 다른 기기의 wallTime은 공통 frame이 아니므로 RTT 없이 단방향 지연으로 계산하지 않는다. 패킷별 송수신 좌표/시각·root.visible 전체는 추가 관측이 필요하다.
 
-광장 수정의 검토 계약 [설계]: 정지 전이·최종 좌표 dirty/회전 dirty·초기 전체 송신을 명시하고, 수신 원본 목표를 한 actor 보간기에 공급한다. 원본 동등성을 원하면 5/1 m 분기는 **표시 actor 위치** 기준으로 한 번만 적용한다. 렌더용 충돌/접지 보정의 허용 오차와 수정 권한을 정하고 UI 논리 좌표와 물리 좌표의 차이를 측정한다. timestamp/sequence·최신 좌표 backfill의 필요성은 웹 계약으로 정하되, 광장 위치 메시지를 미니게임 input/frame 버퍼로 재사용하지 않는다.
+광장 후속 검토 계약 [설계]: 수신 목표를 표시 actor의 단일 보간기에 공급하고 5/1 m 분기를 **표시 위치 기준**으로 한 번만 적용하는 구조는 구현됐다(§6.2.1). 정지 최종 좌표 dirty/회전 dirty 송신은 현재 구현에 없으며, 추가하면 원본 송신 조건과 달라진다. 로컬 충돌/접지 보정·Run 액션 대응의 허용 오차는 마지막 수신 목표와 표시 위치를 구분해 검토한다. timestamp/sequence·최신 좌표 backfill의 필요성은 웹 계약으로 정하되, 광장 위치 메시지를 미니게임 input/frame 버퍼로 재사용하지 않는다.
 
-#### 6.2.1 원격 위치 보간 구조 수정안 [설계] (2026-10-09, plaza-interp)
+#### 6.2.1 원격 위치 단일 보간의 변경 내역·현재 구현 [웹·설계] (2026-10-09, plaza-interp)
 
 근거는 §3.4 표(OnReceive·원본 보간 줄)와 [plaza_3d.md](../shell/plaza_3d.md) §5.1 ⑥·§6.10 ②다. 판독을 새로 하지 않았고, 확인한 것은 OnReceive 분기 끝뿐이다(`plaza_menu00_world.c` `LAB_7100042568`): `d>5`는 `SetPosition`·`SetRotation` 뒤 곧바로 return하며 이 분기에 `Stop` 호출은 없다. `d`는 `Player::GetPosition` 4성분과 수신 레코드 `+0x20` 4성분의 차의 길이다(w 차는 0이라 3D 거리와 같다).
 
-| 항목 | 수정 전(위 표) | 수정 후 |
+| 항목 | 수정 전(과거 경로) | 수정 후(현재 구현) |
 |---|---|---|
 | 수신 표 `ui/net.ts RemoteActor`·`RemoteTable` | 내부 좌표 기준 5/1 m 분기, 0.2 s 선형·slerp, 패킷이 없어도 매 틱 `net:remote` 발행 | **수신 목표·(station,slot)·수명만** 맡는다: 마지막 수신 pos/quat과 수신 수(`rx`)를 저장한다. 보간·mode·speed를 없앤다. `PlazaUi`는 **수신 패킷 하나마다** `remote` 사건 하나를 낸다(원본 OnReceive 1회 = 사건 1회). 비멤버 폐기·`remoteLeft`(online.md §9.6)는 그대로 |
 | 보간기 소유 | 없음(웹 2단계 근사) | `follow.ts`의 원격 표시 actor(`Remote`)가 `RemoteMotion` 하나를 가진다. `RemoteMotion` = 표시 `PlazaMover` + 원본식 `AutoInterpolation` 하나 + OnReceive 분기 |
@@ -261,15 +262,15 @@ plaza_page.ts: readPads → run.step(1)
 | 이동 모션 | UI 보간 속도 > 2.001이면 run6, 아니면 walk2(레버 0.5) | 위치 진행 중에는 항상 **레버 깊이 1 = Run 6 m/s**다. 원본 보간 속도는 6 고정이고, payload에 속도가 없으며, OnReceive는 속도를 바꾸지 않는다(분기에 `SetTranslationSpeed` 없음). 따라서 송신자의 걷기/달리기를 수신측이 구분할 근거가 없다. Run 액션 대응은 §6.10 ②와 같은 [근사]다(ComActor가 보간 출력을 받는 액션 미판독, 속도 6 = actorparam 달리기 6). 도착 문턱 6·dt = Run 한 틱 이동량 0.1 m라 둘이 맞는다 |
 | 사건 순서 | 매 틱 `net:remote` → 다음 follow 틱 | `plaza_page` 순서(player → … → follow → … → ui): ui 틱의 수신이 `FollowSystem.remote`에 동기로 반영되고, 다음 틱 follow가 `calculate → mover.tick`을 한다 |
 | 모델 로딩 중 수신 | 폐기(다음 매 틱 발행으로 회복) | 매 틱 발행이 없어졌으므로 로딩 중 **최신 수신 하나를 보관**하고, 로드가 끝나면 그 좌표로 첫 표시한다. 로딩 중 `remoteLeft`면 보관도 지운다 |
-| 정지 전이 | 송신 없음(원본과 같음) | **바꾸지 않는다**(§3.4: 정지 좌표 별도 송신 없음). 멈춘 뒤 표시 위치는 마지막 `start` 목표다. 송신자와의 차이 ≤ (회전 전용으로 버린 ≤1 m) + (마지막 송신 뒤 0.2 s 미만 이동분)이다. 다음 움직임·`sendAll`(참가·새 멤버)까지 유지된다 |
-| 송신·wire·서버 | — | 그대로(INFO 10 B / REMOTE_INFO 12 B, 0.2 s·`Σvel²>0.1`, force는 `sendAll`만) |
+| 정지 전이 | 송신 없음(원본과 같음) | **바꾸지 않는다**(§3.4: 정지 좌표 별도 송신 없음). 정지 뒤 마지막 목표는 다음 움직임·sendAll(참가·새 멤버)까지 갱신되지 않는다. 회전 전용의 ≤1 m 차이와 마지막 송신 뒤 이동분이 남을 수 있다. 웹의 실제 송신 간격은 13틱(0.2167 s)이며, 로컬 충돌/접지까지 포함한 보편적 위치 오차 상한은 이 합만으로 보장하지 않는다. 평지 시험값은 아래 구현·시험 표를 참조한다 |
+| 송신·wire·서버 | — | 그대로(INFO 10 B / REMOTE_INFO 12 B, 송신 타이머0.2 s·`Σvel²>0.1`, 웹 고정60 Hz 실제 간격13틱, force는 `sendAll`만) |
 
 **사용자 확인 필요** (진행은 원본 쪽으로 정했다)
 
 | 항목 | 정한 것(원본) | 선택지 |
 |---|---|---|
 | 정지 최종 좌표 | 보내지 않음. 걷기는 최대 약 1.4 m, 달리기는 마지막 송신 뒤 이동분이 남을 수 있다 | (a) 원본 그대로 (b) 송신측이 움직임→정지 전이 때 최종 좌표를 INFO 1회 force 송신(wire 그대로, 원본에 없음). 단 수신측 `d≤1`이면 회전만이라 1 m 안쪽 차이는 여전히 남는다 (c) (b) + 수신측 `d≤1`도 위치 진행(원본 분기와 다름) |
-| 걷는 원격의 모습 | 표시 actor는 1 m가 쌓일 때까지 서 있다가 6 m/s로 달려 따라잡는다(걷기 2 m/s × 0.2 s = 0.4 m/패킷이므로 약 3패킷마다) | 원본 화면 대조 전까지 유지. 원본 실기에서 걷는 원격이 걷기 모션이면 ComActor의 보간 액션 선택을 판독해야 함 |
+| 걷는 원격의 모습 | 표시 actor는 1 m가 쌓일 때까지 서 있다가 6 m/s로 달려 따라잡는다(웹 고정60 Hz 송신13틱 × 2 m/s ≈ 0.433 m/패킷이므로 약3패킷마다; 재구현 계산) | 원본 화면 대조 전까지 유지. 원본 실기에서 걷는 원격이 걷기 모션이면 ComActor의 보간 액션 선택을 판독해야 함 |
 | `d>5` 때 진행 중 보간 | 멈추지 않음(분기에 Stop 없음) | 순간이동 뒤 남은 목표로 되돌아가는 장면이 보이면 `stop` 추가(원본과 다름) |
 
 **구현·시험 (2026-10-09)** [웹]: `ui/net.ts`(목표·수명만), `ui/ui.ts`(패킷마다 `remote`, 매 틱 발행 제거), `ui/part.ts`(`net:remote`에서 mode·speed 제거), `follow.ts`(`AutoInterpolation`·`RemoteMotion`, 로딩 중 최신 수신 보관, debug `remotes[].mode/rx/target/rot`). 송신·wire·서버는 바꾸지 않았다. 송신 간격은 정확히 13틱(0.2167 s)이다(타이머 0.2를 다 깎은 다음 틱, test_plaza_ui ⑤).

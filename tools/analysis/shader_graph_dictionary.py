@@ -18,7 +18,7 @@ def graph_id(options):
     return hashlib.sha256(raw).hexdigest()
 
 
-def load_definition(options, directory=None, material=None):
+def load_definition(options, directory=None, material=None, environment=None):
     ident = graph_id(options)
     path = Path(directory or DIRECTORY) / f"{ident}.json"
     if not path.exists():
@@ -37,13 +37,16 @@ def load_definition(options, directory=None, material=None):
                 textures[slot] = sampler.get("texture")
         matches = [v for v in record["graphVariants"]
                    if all(str(options.get(k)) == str(value) for k, value in v["selector"].items())
-                   and all(textures.get(k) is not None for k in v["requiresSamplers"])]
+                   and all(textures.get(k) is not None for k in v["requiresSamplers"])
+                   and all(textures.get(k) is None for k in v.get("requiresMissingSamplers", []))
+                   and all(k in material.get("shader", {}).get("attribAssign", {}) for k in v.get("requiresAttributes", []))
+                   and all((environment or {}).get(slot) for slot in v.get("environmentSamplers", {}).values())]
         if not matches:
             return None
         if len(matches) != 1:
             raise ValueError(f"그래프 사전 옵션 분기 중복: {path}")
         chosen = matches[0]
-        branch_id = ":" + hashlib.sha256(json.dumps(chosen["selector"], sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:12]
+        branch_id = ":" + hashlib.sha256(json.dumps({k: chosen[k] for k in ("selector", "requiresSamplers", "requiresMissingSamplers", "requiresAttributes", "environmentSamplers") if k in chosen}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:12]
     else:
         chosen = record
     if chosen.get("status") == "pending":
@@ -51,6 +54,9 @@ def load_definition(options, directory=None, material=None):
     if chosen.get("status") not in ("decoded", "approx") or not isinstance(chosen.get("graph"), dict):
         raise ValueError(f"그래프 사전 상태/정의 불일치: {path}")
     graph = copy.deepcopy(chosen["graph"])
+    for sampler, slot in chosen.get("environmentSamplers", {}).items():
+        graph["samplers"][sampler] = environment[slot]
+        graph.setdefault("samplerSources", {})[sampler] = "environment"
     needed = set(re.findall(r'T\(\s*"([^"]+)"\s*,', json.dumps(graph).replace('\\"', '"')))
     missing = needed - set(graph.get("samplers", {}))
     if missing:
@@ -66,10 +72,10 @@ def bind_definition(graph, material, model):
         for slot in s.get("slots", []):
             tex[slot] = s.get("texture")
     result = copy.deepcopy(graph)
-    missing = [k for k, v in graph["samplers"].items() if not k.startswith("@") and tex.get(k) is None and v is not None]
+    missing = [k for k, v in graph["samplers"].items() if not k.startswith("@") and graph.get("samplerSources", {}).get(k) != "environment" and tex.get(k) is None and v is not None]
     if missing:
         raise ValueError(f"그래프 대상 샘플러 누락 {missing}: {material.get('name')}/{model}")
-    result["samplers"] = {k: (v if k.startswith("@") else tex.get(k)) for k, v in graph["samplers"].items()}
+    result["samplers"] = {k: (v if k.startswith("@") or graph.get("samplerSources", {}).get(k) == "environment" else tex.get(k)) for k, v in graph["samplers"].items()}
     result["material"] = material["name"]
     result["models"] = [model]
     return result

@@ -1,6 +1,6 @@
 # 10. 화면 분할 — 레이어·뷰포트·보정 카메라·경계 UI
 
-2026-10-09. 상태: **공통 계약 정적 판독·수치 검산 완료 / 웹 분할 인터페이스 없음**.
+2026-10-09. 상태: **공통 계약 정적 판독·수치 검산 완료 / 웹 공용 런타임 구현(§9 웹 구현 계약)**.
 확정 수준: **[판독]** 원본 코드·ARM64 호출 인자, **[데이터]** 원본 자산, **[계산]** 정적 재구현 계산으로 원본식을 독립 검산, **[웹]** 현재 구현, **[미확정]** 미판독·원본 출력 대조가 필요한 항목. 주소는 모듈과 SwitchLoader 베이스 `0x7100000000`을 함께 쓴다. 원본 게임 실행·구현 변경은 하지 않았다.
 
 ## 1. 기존 근거와 적용 게임
@@ -152,3 +152,124 @@ GPU 대여 종료 시 target·viewport·scissor/test·autoClear 및 clearColor/d
 | 원본 UI 파싱 | 대상 BFLYT·in/out/normal BFLAN의 parser check=[]; pane26개·curve endpoint·비루프 확인 |
 
 [미확정] §5의 GPU 제출/clear/캡처 시점과 원본 사진 출력 픽셀, 포스트가 경계 밖을 샘플하는 정확한 처리, 현재 웹에서의 분할 렌더·UI 합성 결과는 미검증이다. 원본 실행 없이 확보한 호출·데이터·수치와 이 항목들을 구분하여 후속 구현/대조한다.
+
+## 9. 웹 구현 계약 (2026-10-09, [splitscreen])
+
+§2~§8 판독을 웹 공용 런타임 하나로 옮긴다. mg0102(2×2)·mg0122(2×2)·mg0508(2×1)이 같은 모듈을 쓰고 게임마다 분할 코드를 만들지 않는다. 구현이 이 절과 달라지면 이 절을 먼저 고친다. §7의 "이 문서에서 코드를 추가하지 않았다"는 2026-10-09 이전 상태다.
+
+### 9.1 모듈과 경계
+
+| 폴더 | 내용 | import |
+|---|---|---|
+| `script/lib/splitscreen/` | **코어**: Param·SplitTo·SetParam/AnimationTo 보간·IsFinished/IsSplitting(§2·§3), viewport float/scissor 정수 절삭·GL y 변환(§2), 보정 aspect/FOV(§4), 분할선 경계 모으기·병합·pane 배치·in/out 알파(§6), 3D→HUD 식(§6), mg0122 캡처 RT 크기 상수(§5). 시간은 호출자가 `step(dt)`로 넣는다(기본 f32 1/60). 매 스텝 할당 0 | **0**(외부·three·DOM·프로젝트 파일 없음, 한 파일) |
+| `script/lib/splitscreen-three/` | **three 어댑터**: 한 번 갱신한 장면을 레이어마다 viewport/scissor·draw용 보정 카메라로 그림, clear 정책, 레이어 영역 후처리 호출, renderer 상태 복구, 레이어별 3D→HUD 투영, 캡처 요청 자리 | `three` + 코어만 |
+| `script/lib/splitscreen-dom/` | **분할선 DOM**: 원본 `sys_dividing_lines` pane 26개를 div 로, 코어가 정한 위치·길이·회전·알파를 style 에 쓴다 | 코어만 |
+| `script/shell/stage3d/post.ts` | `PostChain.render(scene, camera, region?)` — 선택 인자 `region`(출력 target·viewport·scissor) 추가. 인자가 없으면 지금과 같은 출력 | 기존 그대로 |
+| `script/shell/mgstage/` | `MgStage.renderSplit(list, cameras, opts?)` — 무대 장면·후처리로 어댑터 호출. `update` 는 부르지 않는다 | + `../../lib/splitscreen`·`../../lib/splitscreen-three` |
+| `script/shell/mgscene/` | 틀이 `SplitScreen` 하나를 갖고 `ctx.split` 으로 게임에 준다. 틀 step 의 UI 틱에서 `split.step(MG_DT)` | + `../../lib/splitscreen`(import 0 코어, lib 예외 — transition 과 같은 규칙) |
+| `script/splitscreen_page.ts` | ui.html 항목 "분할 화면" 보기 페이지 | 페이지 |
+| `assets/splitscreen/lines.json` | 원본 `bq.nx.bea/Parts.lyt` 의 `sys_dividing_lines` bflyt·in/out/normal bflan 정리본 ← `tools/analysis/splitscreen_web_assets.py`(mgscene 변환기 함수 재사용). 그림 `sys_dividing_line^s`(8×8, 열 3·4 만 불투명 흰색 [데이터])는 공용 규칙대로 `assets/common/tex/sys_dividing_line_s.png` | — |
+
+### 9.2 코어 API (`lib/splitscreen`)
+
+```ts
+class SplitParam { id; x; y; w; h; minDepth; maxDepth; autoEnable }          // §2 Param 0x20 B
+createParams(cols, rows, focus, out: SplitParam[]): number                     // CreateParams, 행 우선 ID = row*cols+col
+class SplitScreenLayerList {                                                   // §3 레이어 상태 0x80
+  count; cols; rows; layers: SplitLayer[]                                      // layer = { cur, target, start, duration, elapsed }
+  splitTo(cols, rows, focus, sec)        // CreateParams → AnimationTo(sec)
+  setParam(params, n)                    // 크기 맞춤·전환 취소·현재값 설정(즉시 Apply 아님)
+  animationTo(params, n, sec)            // sec ≤ 0 → setParam, 개수 다르면 Error(원본 Abort), 진행 중 재호출 = 현재값에서 다시 시작
+  update(dt)                             // f32 elapsed += dt → 완료면 목표 전체 복사·duration/elapsed 0, 아니면 x/y/w/h/min/maxDepth 보간(ID·autoEnable 제외)
+  isFinished()  isSplitting()  clear()   // clear = ResetAll(레이어 0개 = 보통 한 화면 그리기)
+}
+viewportPx(p, W, H, out) / scissorPx(p, W, H, out)       // f32 곱 / 성분마다 정수 절삭(right−left 로 다시 계산하지 않음)
+glViewportY(vp, H) / glScissorY(sc, H)                    // H−(y+h) / H−trunc(y·H)−trunc(h·H)
+drawAspect(w, h, rtAspect = f32(16/9))                    // A = (w/h)·보정 RT aspect(0x3FE38E39)
+correctPerspective(fovy0, aspect0, A, out)                // §4 모드3 type0. 면적 < FLT_EPSILON 이면 건너뜀
+correctFrustum(l, r, b, t, A, out)                        // §4 type1·type3
+ndcToLayout(u, v, rect, out) / ndcToLayoutPx(u, v, scissor, W, H, out)   // §6 3D→HUD(1920×1080 중심 원점, y 위)
+class DividingLines { panes[26]; alpha; in(immediate); out(immediate); advance(); layout(list) }  // §6
+class SplitScreen { list; lines; splitting; to(cols, rows, focus, sec); step(dt = STEP_SEC); finish(); reset() }  // ComSplitScreen
+```
+
+- `SplitScreen.step(dt)` 순서 = §3 ComSplitScreen tick: ① 분할선 애니 1프레임 진행 ② `list.update(dt)` ③ (Apply 는 그리기 때 어댑터가 현재값으로) ④ `isSplitting()` 이 바뀌었으면 거짓→참 `lines.in(false)`, 참→거짓 `lines.out(false)` ⑤ 현재 경계로 pane 배치. 애니 진행을 상태 변화보다 먼저 두어 In 을 부른 스텝의 그림은 in 0 프레임(알파 0)이고 9 스텝 뒤 normal(255)이다 [추정: 레이아웃 애니 갱신과 컴포넌트 tick 의 상대 순서 미판독].
+- f32: dt·elapsed·보간·aspect·FOV 식은 `Math.fround` 로 각 연산 뒤 반올림(§3·§4). 1/60 누적 완료 0.5 s = 30 스텝, 1 s = 61 스텝.
+- 경계 모으기: 레이어마다 네 변 중 0<좌표<1 인 것만, 길이 0 인 변은 뺀다(보이는 결과 같음). 같은 축 좌표 |Δ| ≤ 0.0001 이고 구간이 접하거나 겹치면 합친다. pane 배정 = 좌표 오름차순(x_v_00 부터) [추정: Line2DPacker 출력 순서 미판독]. 13 개를 넘는 선은 그리지 않는다. 남는 pane 은 숨긴다.
+- `finish()` = 지금 cols×rows 로 `splitTo(cols, rows, 0, 0)`(mg0102 SetFinishCamera·mg0508 ResetSplit 와 같은 호출). `reset()` = ResetAll(레이어 0개·선 즉시 숨김).
+- 위치·길이 식: §6 그대로(수직 paneX = −960+1920x, 끝점 Y = 540−1080y; 수평 paneY = 540−1080y, 끝점 X = −960+1920x). 알파 = Null_all FLVC hermite(in (0,0,0)→(9,255,0), out (0,255,0)→(9,0,0), normal 255).
+- 원본 값 상수 `DIVIDING_LINES`(pane 8×1080 / 8×1920·회전 0°/90°·재질 black #00000000 white #020202ff·UV V 끝 38.57143/66.206894·애니 키·DrawPriority 0x8100)는 시험이 `assets/splitscreen/lines.json`(원본 변환본)과 대조한다.
+
+### 9.3 three 어댑터 (`lib/splitscreen-three`)
+
+```ts
+interface PostRegion { target: WebGLRenderTarget | null; viewport: Vector4; scissor: Vector4 }  // target 픽셀, GL 원점(왼쪽 아래), 정수
+interface RegionPost { render(scene, camera, region?: PostRegion): void }                       // stage3d PostChain 이 구조적으로 맞는다
+class SplitRenderer {
+  constructor(gl)                                   // WebGLRenderer(시험은 같은 모양 가짜)
+  render(scene, cameras, list, { post?, target?, clear?, rtAspect?, enabled? })
+  drawCamera(i)                                     // 지난 그리기의 레이어 i draw 카메라
+  project(world, i, out)                            // 레이어 i 의 draw 카메라·scissor 로 1920×1080 레이아웃 좌표
+  capture(req: { layer, target, type, flags, post?, onDone? })   // mg0122 캡처 자리(§9.6)
+}
+```
+
+한 프레임 순서(§7 필요한 처리 경계):
+1. 저장: 현재 render target, `getViewport`·`getScissor`·`getScissorTest`(논리 단위), `autoClear`, 그림자 `autoUpdate`/`needsUpdate`, 출력이 RT 면 그 RT 의 `viewport`·`scissor`·`scissorTest`.
+2. 출력 크기 W×H = canvas 면 `getDrawingBufferSize`(물리 픽셀), RT 면 그 크기. 레이어 0개(ResetAll 뒤)면 지금처럼 `post.render(scene, cameras[0])` 또는 `gl.render` 한 번.
+3. clear: `clear` 기본 참 = 레이어를 그리기 전에 출력 전체를 scissor 없이 color+depth 한 번(원본 layer0 = 씬 clear 값, 추가 레이어 clear=false — §5). 레이어 rect 는 화면을 나누므로(면적 합 1) 레이어 ≥1 은 clear 하지 않는다. 홀수 크기에서 어느 scissor 에도 들지 않는 마지막 1 px 열/행은 clear 색으로 남는다.
+4. 레이어 ID 순(목록 순)으로, 자동 적용 flag 가 참이면 w>0 && h>0 인 레이어만(거짓이면 `enabled[i]`): 카메라 = `cameras[id]`(없으면 건너뜀) → draw 카메라 = 원본 카메라 값을 복사(fov·aspect·near·far·zoom·`layers.mask`·`matrixWorld`·`matrixWorldInverse`, `matrixWorldAutoUpdate=false`)한 뒤 §4 보정. 원본 카메라는 바꾸지 않는다(사진 판정 행렬 보존). A0 = 원본 카메라 aspect(웹 Stage3D.resize 가 화면 비율 16:9 로 둔 값). three `Layers` 마스크 = 원본 visibility bit(mg0508 팀 bit = `1<<team`)를 카메라마다 그대로 쓴다.
+5. viewport = float 를 가장자리 반올림한 정수(WebGL viewport 는 정수 [근사: 1920×1080 과 정수배에서 같음, 그 밖 ≤ 0.5 px]), scissor = §2 정수 절삭. GL 원점 y 는 §2 식. canvas 에 걸 때는 three 가 pixelRatio 를 곱하므로 물리 픽셀을 `(px + 0.25) / pixelRatio` 논리 값으로 넘긴다(DPR 한 번만, three 의 round·floor 양쪽에서 같은 정수). RT 면 RT 의 viewport/scissor 필드에 물리 값 그대로.
+6. 후처리 없음: 출력에 viewport·scissor·scissor test 를 걸고 `autoClear=false` 로 `gl.render(scene, draw)`. 후처리 있음: `post.render(scene, draw, region)`(§9.4).
+7. 그림자 맵은 프레임 첫 레이어에서만 다시 그린다(이후 레이어는 `autoUpdate=false·needsUpdate=false`) [근사: 원본은 레이어 패스마다 shadow 계열 등록. 웹 Stage3D 그림자 맞춤은 `stage.camera`(화면 0 카메라) 하나 기준].
+8. 복구: target·viewport·scissor·scissor test·autoClear·그림자 갱신값, 출력 RT 의 viewport/scissor/scissorTest 를 저장값으로. 렌더러·장면·원본 카메라는 dispose 하지 않는다. **Stage3D.update 는 부르지 않는다**(호출자가 프레임마다 한 번).
+
+### 9.4 레이어 영역 후처리 (`PostChain.render(scene, camera, region)`)
+
+- 장면 패스: 후처리 HDR RT 의 viewport/scissor 를 레이어 값으로, 그 scissor 안만 color+depth clear(WebGL clear 는 scissor 를 따른다) → `autoClear=false` 로 그린다 → RT 필드를 전체·scissor 끔으로 되돌린다.
+- 블룸: 체인은 지금과 같은 전체 크기 RT 로 돈다. first_down 표본 UV 를 레이어 scissor 안(반 텍셀 안쪽)으로 clamp 해 **레이어 하나를 clamp-to-edge 그림처럼** 다룬다 — 다른 레이어·지난 프레임 값이 번지지 않는다. 비용 = 레이어 수 × 블룸 [근사: 원본 포스트가 레이어 viewport 밖을 어떻게 표본하는지 §8 미확정].
+- 합성(+FXAA): 출력(region.target, 없으면 canvas)에 viewport 전체·scissor = 레이어 scissor 로 쓴다. 비네트 좌표는 레이어 rect 안 정규화 좌표 [추정]. FXAA 는 경계 1 px 이웃을 다른 레이어에서 읽을 수 있다 [근사].
+- 끝나면 유니폼(clamp·비네트 rect)을 기본 (0,0,1,1) 로, 바꾼 gl·RT 상태를 들어올 때 값으로 되돌린다. `region` 이 없으면 셰이더 결과·패스 순서가 지금과 같다(clamp 기본값은 내부 표본점에서 무효, 비네트 rect 기본 = 전체 화면).
+- `region.target` 이 RT 이면 내부 RT 크기를 그 RT 크기로 맞춘다(크기가 바뀌면 다시 만든다 — 캡처처럼 드문 호출용).
+
+### 9.5 분할선 DOM (`lib/splitscreen-dom`)
+
+- 웹의 장점대로 three 를 거치지 않는다. 1920×1080 기준 div 하나(Null_all)를 부모 크기에 맞춰 `transform: scale(k)`, 알파 = `opacity`(Null_all influencedAlpha → 자식에 곱). pane 26 개 = 절대 위치 div(폭 8, 높이 = 코어 길이, `transform: translate(…) rotate(0 | −90deg)` — 레이아웃 y 위·회전 +90° = CSS 반시계).
+- 재질: `background-color: #020202` + `mask-image: url(sys_dividing_line_s.png)`(`mask-size: 100% 100%`, 브라우저 쌍선형 = 원본 linear). 원본 식 색 = black + (white−black)·tex 에서 그림 RGB 가 전부 255 라 RGB = 2, 알파 = tex.a 와 정확히 같다. 정점색 흰색은 곱해도 그대로. 원본 UV V 끝 38.57143/66.206894 + clamp 는 그림 행이 모두 같아 V 를 늘인 것과 같은 결과다. **render2d 로 그려야 할 부분은 없다**(원본과 다른 점 0).
+- 시간은 CSS transition 을 쓰지 않는다. `draw(lines)` 가 그리기마다 바뀐 값만 style 에 쓴다.
+- 겹침 순서: 게임 3D canvas < **분할선(DrawPriority 0x8100)** < 틀 2D HUD canvas(텔롭 0x8800·타이머 0x8900·안내 0x8a00 [판독 minigame_scene §12.1]) < 디버그 글(z 2) < 화면 전환 DOM(z 1000). 분할선 div 는 z-index 를 두지 않고 HUD 앞(`before`)에 넣어 DOM 순서로 정한다. 카메라별 HUD 스케일로 줄이지 않는다(§5).
+
+### 9.6 게임 연결
+
+- **틀(`shell/mgscene`)**: `MgScene.split: SplitScreen`, `ctx.split = { to(cols, rows, focus, sec), isFinished(), isSplitting(), list }`. `to` 가 sec > 0 이면 그 프레임에 `{k:'se', label}`(MgSound 표 `camera_split_se_label` → tables.json `mgSound[id].splitSe`, 없으면 내지 않음; mg0102 = `SQ_SE_SYS_MNG_CMR_SPLT_4`, mg0122·mg0508 = 없음 [데이터]) [추정: MGSound::SetSplitScreen 미판독, 소리 파일은 아직 변환하지 않음]. 틀 step 의 UI 틱(와이프·텔롭 다음)에서 `split.step(MG_DT)` — 게이트가 닫히면 분할도 멈춘다(로직). 결과 무대(갈래 A)를 시작할 때 분할 중이면 `split.finish()`(focus0 즉시) [설계: 원본은 게임이 SetFinishCamera/ResetSplit 을 부름 — 같은 값이라 이중 호출 무해].
+- **게임 화면**: 게임은 로직에서 `ctx.split.to(...)` 만 부르고, 화면은 프레임마다 `stage.update(dt)` 1회 → 레이어 카메라 갱신 → `mgStage.renderSplit(scene.split.list, cameras)` → `domLines.draw(scene.split.lines)` → 틀 2D. 카메라 배열 index = GraphicsLayer ID(mg0102 Camera00~03, mg0122 index p, mg0508 화면 t = TeamID t).
+- **mg0102**: 초기 `(2,2,0,0)` → 오프닝 끝 `(2,2,−1,skip?0:1)` → 닫기 `(2,2,0,skip?0:1)` → 결과 `(2,2,0,0)`. **mg0122**: `(2,2,0,0)` → 시작 전 `(2,2,−1,0)` → 0x29 균등 → FadedOut focus0. **mg0508**: `(2,1,0,0)` → BeginSplit `(2,1,−1,duration)` → ResetSplit `(2,1,0,0)`.
+- **결과 무대(`shell/mgresult`)**: 수정 없음. 틀이 focus0 로 돌리고, 어댑터가 매 프레임 renderer 상태를 되돌리므로 결과 무대의 전체 화면 그리기에 viewport/scissor 가 남지 않는다.
+- **mg0122 캡처 자리**: 코어 `MG0122_CAPTURE = { perCamera: [960, 540], extra: [1920, 1080], extraCamera: 0 }`, 어댑터 `capture({ layer, target, type, flags, post?, onDone? })` = 다음 `render` 끝에 그 레이어 draw 카메라로 target 전체에 한 번 그리고(기본 후처리 없음) `onDone`. 복사 시점·포스트 포함·type0/flags1·3 의미는 §5 [미확정] 그대로, 사진 판정은 게임 포팅 때 붙인다.
+
+### 9.7 보기 페이지 (`ui.html?ui=splitscreen`)
+
+`mgstage` 장면 위에 분할 런타임을 그대로 쓴다. `?mg=mg0508|mg0102|mg0122`(기본 mg0508), 단추·키로 바꾼다. 레이어 카메라는 서로 다르게 둔다: 레이어 0 = 장면 카메라 클립(`mg.camera.game`, 무대 anim 슬롯), 레이어 1 = 다른 원본 클립, 레이어 2·3 = 레이어 0 자세를 월드 원점 Y 축으로 90°·270° 돌린 것(보기용, 원본 아님). 각 레이어 왼쪽 위에 카메라 이름을 보기 전용 DOM 글로 띄운다.
+
+| 조작 | 동작 |
+|---|---|
+| 단추 "전체(focus0)"·"균등 분할", 키 **S** | focus0 ↔ 균등(−1) 을 지금 전환 시간으로 |
+| 키 **1~4** | 그 화면 focus(2×1 은 1·2) |
+| 단추·키 **T** | 전환 시간 0 / 0.5 / 1 초 순환 |
+| 단추·키 **G** | 다음 게임(mg0508 → mg0102 → mg0122) |
+
+### 9.8 시험 (`tools/test_splitscreen.ts`, 노드 — 헤드리스 없음)
+
+rect·ID(2×1·2×2·균등·모든 focus), 1920×1080·3840×2160·1919×1079 scissor 절삭, GL y, 전환 중간값(focus0→4분할 진행 0.5 = (0,0,.75,.75) 등)·완료 스텝 30/61·진행 중 재호출·개수 다름 Error, IsFinished/IsSplitting, 보정 FOV(A0 16/9·fovy 20°: A=8/9·16/9 → 20°, 32/9 → 10.076737°)·type1/3, 분할선 개수·위치·길이·알파 9f·원본 json 대조, 3D→HUD, 어댑터(가짜 renderer·실제 three 카메라): 레이어 render 호출 순서·viewport/scissor 값·DPR·clear 정책·상태 복구·원본 카메라 무변경·그림자 1회·Stage3D.update 1회, post region 가짜 renderer 상태 복구, 틀 ctx.split·SE·결과 focus0, 코어 import 0·어댑터 import 경계, 매 스텝 할당 0(같은 객체 재사용 검사).
+
+### 9.9 사용자 확인 필요 (이 절)
+
+| 항목 | 정한 것(원본 쪽) | 이유 |
+|---|---|---|
+| 레이어 clear | 프레임 처음 출력 전체 color+depth 1회, 레이어 ≥1 clear 없음, 후처리 HDR RT 는 레이어 scissor 안 clear | GPU clear 전체/사각 §5 미확정. 레이어가 화면을 나누므로 두 해석의 결과가 같다(홀수 크기 1 px 만 다름) |
+| 레이어 영역 후처리 | 레이어마다 전체 체인, 블룸 표본을 레이어 안으로 clamp, 비네트 = 레이어 rect | 원본 Posteffect 는 레이어 패스마다 등록(§5). 경계 밖 표본 처리 §8 미확정. 비용 = 레이어 수배 |
+| 그림자 맵 | 프레임당 1회(화면 0 카메라 기준 맞춤) | Stage3D 그림자 맞춤이 카메라 하나 기준 [근사] |
+| 분할선 pane 배정 순서·애니 진행 순서 | 좌표 오름차순, 애니 진행 → 상태 변화 | Line2DPacker 출력 순서·레이아웃 애니 갱신 순서 미판독 |
+| 분할 SE | `to(sec>0)` 그 프레임에 표 라벨 SE, 소리 파일 미변환 | MGSound::SetSplitScreen 미판독 |
+| 결과 무대 진입 | 틀이 분할 중이면 focus0 즉시 | 원본은 게임 몫(같은 값) |
+| viewport 정수화 | float 가장자리 반올림 | WebGL viewport 정수 |

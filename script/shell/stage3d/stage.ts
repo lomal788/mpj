@@ -49,8 +49,9 @@ export interface StageEnv {
 /** 모든 무대 재질이 같이 쓰는 값(셰이더 그래프 유니폼): 시간(초)·env 재질 파라미터(env_utility_parameterN → P) */
 export interface StageGlobals {
   time: { value: number };
-  /** 원본 World[0x4] 자리(경과 ms [추정]) */
+  /** 이전 광장 그래프의 경과 ms 계약. 원본 World[0x4]는 worldFrame. */
   ms: { value: number };
+  worldFrame?: { value: number };
   /** 표면→태양(월드, 원본 Layer[0x220]) */
   sunDir: { value: THREE.Vector3 };
   env: MatParams;
@@ -203,7 +204,7 @@ export class Stage3D {
   readonly floor: PriorityFloor;
   readonly keep: Map<string, unknown> | null;
   private readonly clipsLive: { step(df: number): void }[] = [];
-  readonly globals: StageGlobals = { time: { value: 0 }, ms: { value: 0 }, sunDir: { value: new THREE.Vector3(0, 1, 0) }, env: emptyParams() };
+  readonly globals: StageGlobals = { time: { value: 0 }, ms: { value: 0 }, worldFrame: { value: 0 }, sunDir: { value: new THREE.Vector3(0, 1, 0) }, env: emptyParams() };
   post: PostChain | null = null;
   private sky: THREE.Object3D | null = null;
   private readonly updaters = new Set<StageUpdater>();
@@ -582,6 +583,7 @@ export class Stage3D {
     this.frame += df;
     this.globals.time.value = this.frame / 60;
     this.globals.ms.value = (this.frame / 60) * 1000;
+    this.globals.worldFrame!.value = Math.floor(this.frame) >>> 0;
     for (const c of this.clipsLive) c.step(df);
     for (const u of this.updaters) u.update(df, this.frame);
     for (const x of this.overridden) x.o.update?.(x.mat, this.frame, this.fmabFor(x.name));

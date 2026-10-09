@@ -898,11 +898,11 @@
    "fsHelpers": [
     "vec3 sgSpotlight(vec3 a, vec3 b, vec3 c, vec3 d, vec2 p, float phase) { vec3 q = b * ((a + c) * p.x); return mix(q, d, p.y) + phase * mix(a.x, b.x, p.x) * c; }"
    ],
-   "fsPrelude": "vec3 sgA = T(\"sg_utility_texture2d0\", uv0).rgb; vec3 sgB = T(\"sg_utility_texture2d1\", uv1).rgb; float sgPhase = sin(float(uint(mpjMs) % 360u) * 0.008726646192371845) * 0.5 + 0.5;",
+   "fsPrelude": "vec3 sgA = T(\"sg_utility_texture2d0\", uv0).rgb; vec3 sgB = T(\"sg_utility_texture2d1\", uv1).rgb; float sgPhase = sin(float(mpjWorldFrame % 360u) * 0.008726646192371845) * 0.5 + 0.5;",
    "baseColor": "sgSpotlight(sgA, sgB, C0.rgb, C1.rgb, P0.xy, sgPhase)",
    "alpha": "modelOpacity",
    "emissive": "vec3(0.0)",
-   "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정",
+   "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정; World+4 u32 누적 프레임, Stage60fps epoch/gate 대응 근사",
    "material": "mg0602_spotlight00_mt",
    "models": [
     "mg0106_search_light"
@@ -917,11 +917,11 @@
    "fsHelpers": [
     "vec3 sgSpotlight(vec3 a, vec3 b, vec3 c, vec3 d, vec2 p, float phase) { vec3 q = b * ((a + c) * p.x); return mix(q, d, p.y) + phase * mix(a.x, b.x, p.x) * c; }"
    ],
-   "fsPrelude": "vec3 sgA = T(\"sg_utility_texture2d0\", uv0).rgb; vec3 sgB = T(\"sg_utility_texture2d1\", uv1).rgb; float sgPhase = sin(float(uint(mpjMs) % 360u) * 0.008726646192371845) * 0.5 + 0.5;",
+   "fsPrelude": "vec3 sgA = T(\"sg_utility_texture2d0\", uv0).rgb; vec3 sgB = T(\"sg_utility_texture2d1\", uv1).rgb; float sgPhase = sin(float(mpjWorldFrame % 360u) * 0.008726646192371845) * 0.5 + 0.5;",
    "baseColor": "sgSpotlight(sgA, sgB, C0.rgb, C1.rgb, P0.xy, sgPhase)",
    "alpha": "modelOpacity",
    "emissive": "vec3(0.0)",
-   "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정",
+   "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정; World+4 u32 누적 프레임, Stage60fps epoch/gate 대응 근사",
    "material": "mg0602_spotlight01_mt",
    "models": [
     "mg0106_search_light"

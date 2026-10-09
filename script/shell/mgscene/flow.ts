@@ -4,6 +4,7 @@
  * 한 프레임(tick, 게이트가 열린 때만 step): 입력 → game.update → MGSound 갱신 → OnGameSequenceBefore → 처리기 1개 → After →
  *   바뀌면 하위 0·OnSetGameSequence → (7~9) 종료 타이머 검사 → UI 틱(§12.4 순서 [추정]).
  */
+import { SplitScreen } from '../../lib/splitscreen';
 import type { FrameGate } from './gate';
 import type { ResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
 import { DEFAULT_RESULT_OPTIONS } from './resultContract';
@@ -76,6 +77,7 @@ export class MgScene {
   readonly wipe: MgWipe;
   readonly sound: MgSound;
   readonly uiMgr = new MgUiMgr();
+  readonly split = new SplitScreen();
   frame = 0;
   stage = 1;
   sub = 0;
@@ -202,6 +204,12 @@ export class MgScene {
       se: (label) => sc.emitFn({ k: 'se', label }),
       whistle: (type) => sc.sound.whistle(type),
       fading: () => sc.wipe.playing(),
+      split: {
+        to: (cols, rows, focus, sec) => sc.splitTo(cols, rows, focus, sec),
+        isFinished: () => sc.split.list.isFinished(),
+        isSplitting: () => sc.split.list.isSplitting(),
+        list: sc.split.list,
+      },
     };
   }
 
@@ -217,6 +225,12 @@ export class MgScene {
 
   private makeTelop(slot: TelopSlot): void {
     slot.telop = slot.type >= 0 && slot.type < 3 ? new MgTelop(slot.type, this.telopDeps()) : null;
+  }
+
+  splitTo(cols: number, rows: number, focus: number, sec: number): void {
+    this.split.to(cols, rows, focus, sec);
+    const se = this.sound.rec?.splitSe;
+    if (sec > 0 && se) this.emitFn({ k: 'se', label: se });
   }
 
   /** CreateWinTelop / CreateDrawTelop — P 면 아무것도 안 한다 */
@@ -326,6 +340,7 @@ export class MgScene {
     this.endTimer?.timer.tick(MG_DT);
     this.status?.tick();
     this.skipGuide?.tick();
+    this.split.step(MG_DT);
   }
 
   private hook(name: BoolHook): boolean {
@@ -721,6 +736,7 @@ export class MgScene {
   }
 
   private startResultStage(): void {
+    this.split.finish();
     const input = this.resultInput();
     this.emitFn({ k: 'resultStage', input });
     this.resultWaiting = true;

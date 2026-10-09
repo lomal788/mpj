@@ -1,6 +1,6 @@
 # 09. 캐릭터 — ID·에셋·뼈, 모션 재생·전이, 시선·눈·흔들림 본, 캐릭터 glb
 
-2026-10-09. 상태: **공용 22명 에셋·웹 구현 있음 / 전이 제한·물리 본·눈 좌표 추가 판독 / 남은 근거는 §11**.
+2026-10-09. 상태: **공용 22명 에셋·웹 구현 있음 / neck 기저·보조물리 활성 추가 판독 / 공통 FTRG 계약은 05 §7 / 남은 근거는 §11**.
 문서 형식과 확정 수준은 [../../../../web/분석.txt](../../../../web/분석.txt)(실제 위치 `c:/dev/web/분석.txt`)를 따른다.
 - **[실행]**: 이 문서에서는 "변환·로드·재구현 실행 확인"이다. 원본 게임을 돌린 것은 없다.
 - **[판독]** 원본 코드 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**.
@@ -202,7 +202,7 @@ PlayerCharacterID는 `characterlist.json`의 `PlayerCharacterData` 배열 인덱
 **mpat** = 장면·캐릭터별 모션 전이표다(포맷 [06 §2.5](06_scene_data.md)). `characterlist.json`의 `anim transit table`(`anim_transit.mpat`)은 파일이 없다. 실제로는 `chara/mpat/<장면>_<pcNN|pc>.mpat`·`sys_*`를 붙인다 [판독 main FUN_71002b3a30]. mg1801은 `mg1801_pc.mpat` 3항목이다(§6.5).
 
 **표정**: 따로 된 표정 텍스처 패턴은 없다(`ftsb.fmab`의 `patterns`가 비어 있다) [데이터]. 표정은 세 경로다.
-1. 얼굴 뼈 스켈레탈 모션 `fcl_*`(`chara~pcMot_fcl`, 상주): `fcl_blink00`(pc01 380프레임 루프, 눈꺼풀 뼈 4개 RotateX 곡선), `fcl_default00`·`happy00`·`sorrow00`·`smile00`·`sad00`·`standard00`·`blink01`·`blink02`(1프레임 포즈) [데이터]. `face_param.json` = `fcl_notice00, happy00, sad00, sorrow00, dizzy00, bad_item00, close_tight00` 7개 이름 목록이다 [데이터]. 독립 슬롯의 실제 사례는 NPC `ComPataPataActor`다: `FaceSlot`을 추가/조회(@main 0x7100498604~0x7100498644), 핸들을 +0x688에 보관하고 `PlayFaceAnim(index)` @0x7100499fc0이 정적 이름표(@0x71019f5f40: 0=`fcl_default00`, 1=`fcl_happy00`)를 `ActorAnimationSlot::Play` @0x710049a07c로 보낸다 [판독]. 이는 슬롯 이름 목록 7개를 로드하는 경로가 아니며 **22명 공통 `face_param` 소비자·겹침 우선순위는 미확정**이다. main과 NRO 문자열 대조에서 `face_param` 직접 참조를 찾지 못했으나 미사용으로 단정하지 않는다.
+1. 얼굴 뼈 스켈레탈 모션 `fcl_*`(`chara~pcMot_fcl`, 상주): `fcl_blink00`(pc01 380프레임 루프, 눈꺼풀 뼈 4개 RotateX 곡선), `fcl_default00`·`happy00`·`sorrow00`·`smile00`·`sad00`·`standard00`·`blink01`·`blink02`(1프레임 포즈) [데이터]. `face_param.json` = `fcl_notice00, happy00, sad00, sorrow00, dizzy00, bad_item00, close_tight00` 7개 이름 목록이다 [데이터]. 독립 슬롯의 실제 사례는 NPC `ComPataPataActor`다: `FaceSlot`을 추가/조회(@main 0x7100498604~0x7100498644), 핸들을 +0x688에 보관하고 `PlayFaceAnim(index)` @0x7100499fc0이 정적 이름표(@0x71019f5f40: 0=`fcl_default00`, 1=`fcl_happy00`)를 `ActorAnimationSlot::Play` @0x710049a07c로 보낸다 [판독]. 이는 슬롯 이름 목록 7개를 로드하는 경로가 아니며 **22명 공통 `face_param` 소비자·겹침 우선순위는 미확정**이다. main과 NRO 문자열 대조에서 `face_param` 직접 참조를 찾지 못했으나 미사용으로 단정하지 않는다. `CharacterDataModule::LoadData` @0x71001d5a0c에서 확인한 입력도 characterlist·pcMotionArcList이며 FaceParam 소비는 연결되지 않는다. 7개 이름 데이터 자체에는 슬롯 번호·모드·겹침 우선순위가 없어 NPC FaceSlot이나 blink 묶음 순서만으로 이를 채울 수 없다.
 2. 몸 모션마다 딸린 `.ftsb.fmab` = body_m 셰이더 파라미터 애니다. 눈동자 UV(`material_utility_parameter0/1`, `material_texture_srt1/2`)를 움직인다. 예: `rhy_knife_idle00` 상수 (0.0144, 0.09)·(2.0144, 0.09). swing은 v가 −0.160 → 0.090으로 20프레임 동안 변한다 [데이터].
 3. 몸 모션의 `.fvbb`(뼈 표시)와 `.fclb.fmab`·`.fcmb.fmab`(색 애니 — 젖음 시작·끝 `co_wet_start00/end00` 등) [데이터]. `rhy_knife_*.fvbb`는 애니 뼈 0개다(전부 보임 고정).
 
@@ -315,8 +315,19 @@ PlayerCharacterID는 `characterlist.json`의 `PlayerCharacterData` 배열 인덱
 - 원천 데이터는 `chara~pcNN/…/model/pcNN_*.apx`(PhysX 4.1 컬렉션, [06 §5](06_scene_data.md))다. 11명에게만 있다: pc03, 04, 08, 11, 12, 13, 14, 50, 52, 56, 61 [데이터].
 - **컴포넌트 생성 기본값은 enabled=1·teleportPending=1** [판독 main @0x71004f1ee4~0x71004f1ee8: `mov w8,#0x101; str w8,[x19,#0x60]`, 다른 생성 경로 @0x71004f1f8c도 같음]. 갱신 @0x71004f350c는 +0x60, @0x71004f3620은 +0x61을 검사한다. 따라서 컴포넌트가 붙은 캐릭터는 기본 켜짐이고 mg1801 KOOPA_JR의 끄기가 예외다. `.apx` 없는 캐릭터까지 물리가 있다는 뜻은 아니다.
 - `RequestTeleport`는 +0x61=1, `Teleport`는 현재 애니 포즈로 강체를 옮기고 +0x61을 0으로 지운다(@0x71004f4a5c). 이 예약은 다음 활성 갱신에서 소비된다 [판독].
-- 생성 후 활성은 고정값이 아니다. `FUN_71004f3780`은 준비 조건을 +0x5C 비트 마스크에 모으고 **popcount=5일 때 +0x60=1**로 갱신한다(@0x71004f3940~0x71004f3974). 스케일·슬롯 상태도 그 검사에 들어간다. 다섯 비트의 의미 전체는 부분 판독이다.
+- 생성 후 활성은 고정값이 아니다. `FUN_71004f3780`은 준비 조건을 +0x5C 비트 마스크에 모으고 **popcount=5일 때 +0x60=1**로 갱신한다(@0x71004f3940~0x71004f3974). 스케일·슬롯 상태도 그 검사에 들어간다. 다섯 비트의 판정은 다음과 같다 [판독: [활성/부모 C](../../../analysis/decomp/character_ftrg_c_runtime.c), [노드 user data C](../../../analysis/decomp/character_ftrg_c_callbacks.c), [요청 비트 C](../../../analysis/decomp/character_ftrg_c_sound.c)].
+
+| +0x5C 비트 | 활성 조건·쓰기 근거 |
+|---|---|
+| 0 | `SetEnabled(v)`의 요청 `v&1`(@0x71004f5000) |
+| 1 | 이벤트 `0x5f454e0d`에서 1, `0x5f454e0e`에서 0(@0x71004f47b0); 이벤트의 상위 발생 주체 이름은 미확정 |
+| 2 | `abs(Entity.scale.y−component[+0x58])<1e−6`(@0x71004f3780) |
+| 3 | Animator 노드 순회 중 `bezel_physical_animation` user data의 첫 int가 0인 노드가 **하나도 없음**(@0x71004f6de8). 속성 없음은 허용, Animator 없음도 1 |
+| 4 | `ComAnimator[+0x23E]==0`(@0x71004f3780); Animator 없음은 1. 이 플래그를 pause로 명명할 근거는 부족 |
+
+  `popcount(mask)==5`가 바뀔 때 boneIndex≠−1·role≠0 레코드의 collision을 함께 Enable/Disable하고, 다시 활성되면 +0x61=1로 포즈 동기화를 예약한다. 따라서 API 요청 비트 하나와 실제 +0x60 활성 상태를 같은 값으로 취급하지 않는다.
 - **APX→본 연결** [판독]: `FUN_71004f5550`은 collision 생성 `FUN_7100960ba0`의 이름을 `FUN_71004f4010`에 넘긴다(@0x71004f5668~0x71004f5674). 후자는 stride **0x48** 레코드에 handle(+0), 복사 이름(+0x28), **`ComModel::FindBoneIndex(name)` 결과(+0x40, 없으면 −1)**를 저장한다(@0x71004f41b0). +0x44는 collision+0x274가 참이면 0, 아니고 +0x275가 참이면 1, 둘 다 거짓이면 2다. 단순 파일 순서나 glTF node 번호로 본을 선택하지 않는다.
+- **스켈레톤 부모 레코드** [판독 `FUN_71004f2110`]: boneIndex≠−1·role≠0마다 `SkeletonPose::GetBoneParentIndex` @0x71006dd430으로 부모 본을 찾고, 그 boneIndex와 같은 물리 레코드의 collision weak handle을 +0x10/+0x18/+0x20에 저장한다(없으면 0). 아래 Constraint actor0/1 연결과 별도의 관계다.
 - **11명 전수 대조** [데이터]: 각 APX extra data의 길이 접두 actor 이름을 원본 FRES `boneIndex`가 보존된 공용 `assets/chara/pcNN/*.glb`와 대조했다. **RigidDynamic 81개 전부 이름 일치, Constraint 44개**다. 아래 `[n]`은 원본 boneIndex이며, 화살표는 Constraint의 actor0→actor1 참조이지 스켈레톤 부모 관계가 아니다.
 
 | pc | RigidDynamic 이름[원본 boneIndex] | Constraint 연결 |
@@ -563,8 +574,12 @@ else heading.setTargetLookAtPosition({ x: player.translation.x, y: pos.y, z: pos
 - 눈: +0xC0 = 1 이면 t = min(2, clamp(+0x230 + 1.8, 0, 2)·(eyesW − 머리 w)), qe = slerp(단위, qT, t)(1 을 넘으면 연장). qe 의 X(pitch)·Y(yaw)로 uv = t_offset + (yaw·cos r + pitch·sin r, −(−yaw·sin r + pitch·cos r))·t_scale 를 [t_min, t_max]로 자른다. 출력(+0x100/+0x140) += (uv − 출력)·0.6, 섞임비(+0xF8/+0x138) += 0.6·(1 − 섞임비). 대상 없음·눈 꺼짐이면 uv = t_offset, 둘 다 0.3 이고 섞임비는 0 쪽. 셰이더 파라미터(모드 2) = 모션 값 + (출력 − 모션 값)·섞임비, 그 값이 다음 출력.
 - impl 기본값(`FUN_71001bee00`): limitMin/Max (−10°, −90°)/(10°, 90°), speedCoef 0.12, linearSpeed 5, headLookWeight 0.5, eyesLookWeight 1, 눈 따라가기 0.6, +0x230 = 1, +0x240 = 1.
 - chin 본이 있고 coef≠0일 때의 보정 [판독 @0x71001c3780~0x71001c38b8]: `GetLocalMtxRt(chinBone=impl+0x5C)`에서 얻은 X각을 θchin, 자르기 전 머리 X각을 θhead라 하면 `effectiveMax.x = limitMax.x + chinCoef·max(0, θchin−θhead)`, 이어 각 성분을 `[limitMin,effectiveMax]`로 자른다. 턱 본 자체를 새 시선 회전으로 덮는 식이 아니다.
-- 뒤쪽 진입 [판독 @0x71001bfe40~0x71001bfec8]: 캐릭터 공간 단위 방향 d에 대해 `a=acos(clamp(d·(0,0,−1),−1,1))`, `impl+0x230=−d·(0,0,−1)`이다. **a≤60°이고 `π−|atan2(d.x,d.z)|<20°`**인 갈래가 지난 회전(+0x200)을 읽는다. +0xAC=40°의 후속 보정 전체와 경계에서의 결과 회전은 아직 부분 판독이다.
-- neck 보정 [판독 @0x71001c4948~]: +0xC9가 1이고 neck(+0x60)·spine(+0x64) 인덱스가 모두 −1이 아니어야 한다. 앞서 계산한 3×3 기저의 역행렬·행렬식 0 우회까지 확인했다. 최종 neck 로컬 축·부호를 식으로 옮길 근거는 아직 부족하다. 데이터상 pc54의 `neck_roll` 경로와 다른 캐릭터의 본 없음 우회를 구분한다.
+- 뒤쪽 진입 [판독 기존 `character_motion.c @0x71001bfe08`]: **캐릭터 공간** 단위 방향 c로 `a=acos(clamp(c·(0,0,−1),−1,1))`, `impl+0x230=−c·(0,0,−1)`를 정한다. 회전을 만들 방향 d는 **head 부모 공간**이다. `a≤A` 및 `π−|atan2(d.x,d.z)|<D`이면 지난 qP(+0x200)의 정면 벡터 x=`2(qP.x·qP.z+qP.w·qP.y)`의 **부호 비트만** d.x에 복사한다(@0x71001bfed0~1bffb4). d.x의 크기·d.y/z·a는 그대로다. A=+0xA8=60°, B=+0xAC=40°, D=+0xA4=20°이며 경계 D와 정확히 같으면 부호 유지 분기에 들어가지 않는다.
+- 뒤 보정 회전: `qS=ShortestArc((0,0,1),d)`; `r=normalize₀((0,1,0)×d)`, `u=normalize₀(d×r)`, `qU=normalize₀(Q([r,u,d]))`다. normalize₀는 길이 0일 때 0을 반환한다. 기저는 열벡터 r/u/d이며 Q는 최대 대각 성분을 선택하는 행렬→quat 변환이다: 대각 후보 `(1+rx−uy−dz, 1−rx+uy−dz, 1−rx−uy+dz, 1+rx+uy+dz)` 중 최대(동률은 뒤 x→y→z→w)를 골라 해당 quat 후보를 정규화한다. w 후보는 `(uz−dy, dx−rz, ry−ux, 1+rx+uy+dz)`다. **a>A는 qS**(@0x71001bffd0~1c008c), **a<B는 qU**(@0x71001c0090~1c02d0), **B≤a≤A는 `t=(a−A)/(B−A)`로 qS→qU 보간**(@0x71001c02d4~1c089c). 따라서 B 경계는 qU, A 경계는 qS다.
+- 보간은 dot의 부호를 맞춘 slerp다: `h=qS·qU`, `s=h<0?−1:1`, `θ=acos(|h|)`, `q=qS·sin((1−t)θ)/sinθ + s·qU·sin(tθ)/sinθ`. `|h|>1−FloatQuaternionEpsilon`이면 `(1−t)qS+s·t·qU`를 사용하며 **보간 뒤 정규화는 없다**. 원본은 atan/sin 계수 다항식과 NEON 역제곱근 보정을 쓰므로 위 식은 연산 의미이며 비트 단위 libc 동등성을 주장하지 않는다. 마지막 offset quat 곱(@0x71001c08a0 이후)은 세 분기 공통이며 현재 기본 offset=(0,0,0)이다.
+- **neck 최종 기저·부호** [판독 @0x71001c4948~0x71001c4de0]: +0xC9=1, neck(+0x60)·spine(+0x64)≠−1일 때만 실행한다. `H`는 바로 앞에서 **head_aimcont에 쓴 로컬 RT 행렬**이고 `N`은 기존 neck 로컬 RT다. `det(H.rotation)==0`이면 neck 쓰기를 건너뛴다. spine 인덱스는 이 구간에서 존재 검사만 하며 spine 월드 기저를 곱하지 않는다. `qH=Q(inverse(H).rotation)`, `qN=Q(N.rotation)`를 각각 정규화한 뒤 **`q=qN+0.5·(qH−qN)`**로 섞는다(@0x71001c4d08~0x71001c4d18). 이 뒤의 재정규화·dot<0 부호 맞춤·slerp는 없다. 기존 C의 `GetLocalMtxRt` 반환형(16 B)이 실제 q0~q3 **64 B 반환**(@0x71006dd6d4~0x71006dd6d8)을 누락해 이 구간에 한해 기존 `character_heading_dis.c`와 상수 표를 대조했다.
+  - `Q(M)`는 `a=(1+m00−m11−m22, 1−m00+m11−m22, 1−m00−m11+m22, 1+trace(M))`의 최대 성분을 선택한다(동률은 y→z→w 후순위가 이김). x/y/z/w 후보는 각각 `(a.x,m01+m10,m02+m20,m21−m12)`, `(m01+m10,a.y,m12+m21,m02−m20)`, `(m02+m20,m12+m21,a.z,m10−m01)`, `(m21−m12,m02−m20,m10−m01,a.w)`이고 선택한 후보를 정규화한다(@0x71001c4aa4~0x71001c4bec, 기존 N도 같은 식). `mij`는 행 i·열 j다.
+  - `q=(x,y,z,w)`에서 neck의 최종 3×3은 `[[1−2(y²+z²),2(xy−zw),2(xz+yw)],[2(xy+zw),1−2(x²+z²),2(yz−xw)],[2(xz−yw),2(yz+xw),1−2(x²+y²)]]`이며 **로컬 이동은 0**으로 쓴다(@0x71001c4c20·0x71001c4d1c~0x71001c4de0). 보통 라이브러리의 자동 quaternion normalize를 추가하면 원본 식과 달라진다. pc54의 `neck_roll`과 다른 캐릭터의 본 없음 우회를 구분한다.
 - mg1801 모션 중 `headLookWeight` user data(값 0.0)가 있는 것은 pc01·pc02·pc06·pc13 의 co_win00a/b 뿐이다 [데이터].
 
 ### 6.9 눈동자 UV·마스크 [판독 + 데이터]
@@ -690,7 +705,7 @@ mg1801 Player는 mg1801.md §6.5와 이 문서 §5.2·§4.3의 MotionArg 값으�
 
 ### 9.7 남은 포팅 순서 (권장)
 
-기존 공용 변환을 다시 수행하는 대신, §6.5의 type/mode·초 단위 블렌드·mpat 시작 프레임과 §6.6의 dt/모델 속도 계약부터 대조한다. 이어 mg1801 재질을 charselect 판독과 맞추고, chin 식·표시 본·표정 묶음의 캐릭터별 차이를 검증한다. 자료가 부족한 neck/뒤쪽 전체식·물리 조인트 제한값·얼굴/눈 최종 합성은 §11에 남긴다.
+기존 공용 변환을 다시 수행하는 대신, §6.5의 type/mode·초 단위 블렌드·mpat 시작 프레임과 §6.6의 dt/모델 속도 계약부터 대조한다. 이어 mg1801 재질을 charselect 판독과 맞추고, chin 식·표시 본·표정 묶음의 캐릭터별 차이를 검증한다. 뒤쪽 분기·neck은 §6.8 판독 식을 사용하고, 물리 조인트의 남은 USER 정책·공통 표정 소비자는 §11에 남긴다.
 
 ### 9.8 웹 환경 때문에 바꾸는 부분과 동등성
 
@@ -728,12 +743,14 @@ mg1801 Player는 mg1801.md §6.5와 이 문서 §5.2·§4.3의 MotionArg 값으�
 | blend 단위·mpat a/우선순위·slot mode | 초·a/60·b·α/β 유지; Actor 생성 mode=0, menu00 퀘스트 취소 Sub mode=2 호출 추가 판독(§6.5) | mg1801의 확인된 경로는 0; 다른 장면 설정의 전용 금지 |
 | dt·FrameMax | 신규 판독 완료: dt×60·slotSpeed·ModelModule 속도, FSKA FrameCount/loop bit2(§6.6) | 장면별 전역 모델 속도 값은 추가 호출/설정 근거 필요 |
 | 새 모션 첫 진행/표시 | 동기 Play와 진행 후 큐 교체 차이 신규 판독(§6.6); 공통 틱 순서는 기존 참조(§8) | **mg1801 평가→첫 렌더의 전체 연결** 부족; 표시 0/speed 및 요청~관찰 ±1은 유지 |
-| chin·neck·뒤 데드존 | chin 상한 식·뒤 진입 조건·neck 활성 조건 신규 판독(§6.8) | **neck 최종 로컬 기저·부호, 뒤 +0xAC 이후 전체 보정** 부분 판독 |
+| chin·neck·뒤 데드존 | chin 상한·neck 역기저/부호/0.5 성분 보간, 뒤 40°/60° 기저·slerp·이전 부호 유지 판독 완료(§6.8) | 원본 부동소수점 비트 일치는 별도 검증 |
 | fcl 슬롯·얼굴 모프 | blink/표시 본 기존 참조·shape 구동 유지; NPC FaceSlot의 생성→PlayFaceAnim 경로 추가 판독(§4.2) | **22명 face_param 소비자·겹침 우선순위** 부족; NPC/광장 슬롯을 공통 규칙으로 일반화 금지 |
-| 물리 기본값·본 대응 | 기본값 유지; 11명 81강체/44Constraint·USER 참조·FindBoneIndex·양방향 포즈 경로 추가 판독(§4.7) | **USER+0x18 의미·D6 제한/감쇠값·활성 5비트 전체** 부족 |
+| 물리 기본값·본 대응 | 기본값 유지; 11명 81강체/44Constraint·USER 참조·FindBoneIndex·양방향 포즈 경로 추가 판독(§4.7) | **USER+0x18 의미·D6 제한/감쇠값**, 활성 bit1 상위 이벤트·Animator +0x23E 쓰기 주체 부족; 비트별 판정 자체는 해소 |
 | `_light` 사용 장면 | 설정+6→CharacterDataPath 인자 bit0→fmdb light/m1 선택 경로 추가 판독(§4.2) | **장면별 설정+6 쓰기 호출자** 부족; 거리 LOD 단정 금지 |
 | body UV·눈 합성 | body/눈 회귀 기존 참조; 눈 VS selector·pc01 layer·영역 마스크·normal 식 추가 판독(§6.9) | **특수 캐릭터 전체식·c1 바인딩·RGB/눈꺼풀 최종 합성** 부족 |
 | MotionArg +0x4C | `Play(name)` 기본 blend/type 초기화 래치 신규 판독(§4.3) | 설명용 이름이며 bezel mode와 다른 객체 |
+
+**FTRG 연계**는 [05 §7.5·§7.7](05_ui_input.md)로 해소한다. 애니 슬롯 0~3의 첫 평가·방향·루프를 독립 이벤트 문맥으로 추적하므로 첫 화면 포즈의 미확정과 프레임 0 이벤트 포함 여부를 혼동하지 않는다.
 
 목록 밖에 반복되던 본/shape user data의 미해소 설명도 **초 단위 전이 시간 클램프의 설정→소비 주소**로 해소했다(§4.2·§9.4). 목록 밖의 actorparam·이동/충돌·본 부착·결과 배치·광장 캐릭터는 §4.8·§9.4의 기존 문서를 근거로 해소했다. 병렬 07 카메라/조명·온라인 문서는 읽기 전용 범위이며 이번 변경 대상이 아니다.
 
@@ -752,3 +769,19 @@ MSYS_NO_PATHCONV=1 ./tools/ghidra_12.1.2_PUBLIC/support/analyzeHeadless.bat c:/d
   -process main.nso -noanalysis -readOnly -scriptPath c:/dev/mpj/tools/ghidra_scripts \
   -postScript CharacterDecompAddr.java <out.c> <주소> name:<전체이름> ptr:<주소>:<개수>
 ```
+
+## 12. 사용자 확인 필요
+
+- 원본 동등성이 필요한 범위: 22명 공통 7표정의 독립 슬롯, APX D6 솔버까지인지 결정이 필요하다. 아래 공백을 기존 웹 근사값으로 확정하지 않는다.
+- 보조물리를 생략/근사하는 제품 결정과 원본의 활성 조건은 별개다. 생략을 선택해도 컴포넌트·본 존재 검사와 예약 teleport 계약은 유지할 수 있다.
+
+## 13. 런타임 구현 준비도
+
+| 필요한 항목 | 분석 상태 | 구현 차단 여부 |
+|---|---|---|
+| 모델·본·모션·mpat·부착·액터값 | 기존 참조 해소 + §4·§6 확정 식 | 기본 캐릭터 런타임 비차단; 충돌 수치는 11 담당 결과 참조 |
+| 모션→SE/VO/VB/FX 이벤트 | [05 §7](05_ui_input.md)의 첫 평가·참조·자원·Sound Space 계약 | 확인된 디스패처 진행 가능; 장면별 발소리 공간은 추가 매핑 필요, Effect 내부는 08 담당 결과 참조 |
+| head/chin/neck | neck 기저·뒤 40°/60° 분기·보간 신규 판독 | 수식 구현 비차단; 원본 비트 일치는 별도 검증 |
+| 공통 face_param 독립 슬롯 | 데이터 7개·NPC 예만 확인; 공통 소비자/겹침 정책 부족 | 독립 표정 자동 적용은 차단; blink 묶음은 기존 참조 사용 |
+| 보조물리 | 81본/44Constraint·활성 판정·양방향 포즈 해소; USER/D6 수치 부족 | 본 연결·활성 관리 비차단, 원본 솔버 동등성은 차단 |
+| `_light`·특수 눈 최종색 | 기존 부분 판독 유지, 셰이더는 별도 담당 | 일반 모델/확정 눈 좌표 비차단; 장면 light 선택·특수색 동등성은 차단 |

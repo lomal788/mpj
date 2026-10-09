@@ -3,7 +3,7 @@
  * three 표준 재질에 끼운다(docs/shell/stage3d.md §5, plaza_3d.md §6.8). 식은 판독 GLSL 그대로이고 이름만 아래로 묶는다.
  *   정점: uv0 uv1 uv2(vec2), c0 c1 c2(vec4 정점색 _C0.._C2), pos(object 위치), nrm(object 노멀), worldPos(모델 행렬 뒤 위치), nrmW(월드 노멀)
  *   값: P0..P7 = material_utility_parameterN, C0..C3 = material_utility_colorN, srt0(uv)..srt3(uv) = material_texture_srtN, material_*(그 밖 재질 파라미터),
- *       ENV0..ENV3 = env_utility_parameterN, mpjMs = 장면 경과 ms(원본 World[0x4] [추정: ms]), T("샘플러", uv) = 텍스처 표본(SNORM 은 −1..1 로 되돌림)
+ *       ENV0..ENV3 = env_utility_parameterN, mpjMs = 이전 광장 경과 ms, mpjWorldFrame = World[0x4] u32 프레임(웹 tick·epoch [근사]), T("샘플러", uv) = 텍스처 표본(SNORM 은 −1..1 로 되돌림)
  *   조각: worldPos, viewDir(표면→카메라), Nw(노멀맵 뒤 월드 노멀), NgW(노멀맵 전 월드 노멀), Tw·tw(월드 탄젠트·부호), sunDir(표면→태양), base(표준 기본색)
  * 넣는 자리: vsPrelude·uv·positionOffset → begin_vertex 뒤(world 공간 오프셋은 모델 행렬 역으로 object 로), 조각 식은 emissivemap_fragment 뒤 한곳
  * (노멀이 정해진 뒤·조명 앞)에서 diffuseColor·roughnessFactor·metalnessFactor·totalEmissiveRadiance·normal 을 덮고, ao 는 간접광에 곱한다
@@ -20,6 +20,7 @@ export interface GraphDef {
   program?: string;
   /** 샘플러 이름 → 텍스처 이름(null = 원본도 미할당 — 기본값 텍스처) */
   samplers: Record<string, string | null>;
+  samplerSources?: Record<string, 'environment'>;
   vsHelpers?: string[];
   vsPrelude?: string | null;
   uv?: Record<string, string>;
@@ -67,6 +68,7 @@ uniform vec4 mpjC[4];
 uniform mat3 mpjSrt[4];
 uniform vec4 mpjEnvP[4];
 uniform float mpjMs;
+uniform uint mpjWorldFrame;
 uniform vec3 mpjSunDir;
 vec2 srt0(vec2 u) { return (mpjSrt[0] * vec3(u, 1.0)).xy; }
 vec2 srt1(vec2 u) { return (mpjSrt[1] * vec3(u, 1.0)).xy; }
@@ -115,10 +117,14 @@ export async function applyGraph(
   load: (name: string) => Promise<GraphTex | null>,
 ): Promise<void> {
   const src = graphSource(def, (n) => (mp.raw[n] ?? RAW_DEFAULT[n] ?? [0]).length);
+  const needsWorldFrame = JSON.stringify({ vsPrelude: def.vsPrelude, fsPrelude: def.fsPrelude }).includes('mpjWorldFrame');
+  if (needsWorldFrame && !g.worldFrame) throw new Error(`그래프 World 프레임 입력 누락: ${def.program}`);
   const texs: GraphTex[] = [];
   for (const [n, i] of src.texIndex) {
     const tname = n.startsWith('@') ? n.slice(1) : n in def.samplers ? def.samplers[n] : (f?.samplers?.find((s) => s.sampler === n || s.slots.includes(n))?.texture ?? null);
-    texs[i] = (tname ? await load(tname) : null) ?? { tex: defaultTexture(n), snorm: false };
+    const loaded = tname ? await load(tname) : null;
+    if (def.samplerSources?.[n] === 'environment' && !loaded?.tex) throw new Error(`그래프 환경 샘플러 누락: ${n}/${tname}`);
+    texs[i] = loaded ?? { tex: defaultTexture(n), snorm: false };
   }
   const raws: Record<string, { value: unknown }> = {};
   for (const r of src.raws) {
@@ -142,7 +148,7 @@ export async function applyGraph(
   const prevKey = m.customProgramCacheKey;
   m.onBeforeCompile = (sh, r) => {
     prev.call(m, sh, r);
-    Object.assign(sh.uniforms, { mpjP: { value: mp.P }, mpjC: { value: mp.C }, mpjSrt: { value: mp.srt }, mpjEnvP: { value: g.env.P }, mpjMs: g.ms, mpjSunDir: g.sunDir, mpjGraphViewport: viewport }, raws);
+    Object.assign(sh.uniforms, { mpjP: { value: mp.P }, mpjC: { value: mp.C }, mpjSrt: { value: mp.srt }, mpjEnvP: { value: g.env.P }, mpjMs: g.ms, mpjWorldFrame: g.worldFrame ?? { value: 0 }, mpjSunDir: g.sunDir, mpjGraphViewport: viewport }, raws);
     texs.forEach((t, i) => (sh.uniforms[`mpjGT${i}`] = { value: t.tex }));
     const vsDecl = src.vsDecl.replace(/attribute \w+ \w+;/g, (decl) => sh.vertexShader.includes(decl) ? '' : decl);
     const head = HELPERS + src.rawDecl + texs.map((t, i) => `uniform sampler2D mpjGT${i};\nvec4 mpjT${i}(vec2 u) { vec4 v = texture2D(mpjGT${i}, u); return ${t.snorm ? 'v * 2.0 - 1.0' : 'v'}; }`).join('\n');

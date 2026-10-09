@@ -15,9 +15,9 @@ def spotlight():
     return {
         "samplers": {"sg_utility_texture2d0": "원본 재질 바인딩", "sg_utility_texture2d1": "원본 재질 바인딩"},
         "fsHelpers": [SPOTLIGHT],
-        "fsPrelude": 'vec3 sgA = T("sg_utility_texture2d0", uv0).rgb; vec3 sgB = T("sg_utility_texture2d1", uv1).rgb; float sgPhase = sin(float(uint(mpjMs) % 360u) * 0.008726646192371845) * 0.5 + 0.5;',
+        "fsPrelude": 'vec3 sgA = T("sg_utility_texture2d0", uv0).rgb; vec3 sgB = T("sg_utility_texture2d1", uv1).rgb; float sgPhase = sin(float(mpjWorldFrame % 360u) * 0.008726646192371845) * 0.5 + 0.5;',
         "baseColor": "sgSpotlight(sgA, sgB, C0.rgb, C1.rgb, P0.xy, sgPhase)",
         "alpha": "modelOpacity",
         "emissive": "vec3(0.0)",
-        "approx": "[근사] World[0x4]의 정수는 기존 stage3d 장면 ms 계약으로 전달; CPU 시간 단위 바인딩 미확정",
+        "approx": "[판독] World+4 u32 누적 프레임; [근사] Stage60fps 프레임·원본 gate/epoch 대응",
     }

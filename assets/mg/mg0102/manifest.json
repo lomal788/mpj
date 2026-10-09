@@ -876,7 +876,7 @@
    "models": [
     "mg0102_bg_ground00"
    ],
-   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:7dc56f2e8372",
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:cc7b4135d1bb",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_thinfilm00_00",
     "sg_utility_texture2d1": "mg0102_thinfilm00_noise",
@@ -888,14 +888,14 @@
    "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = T(\"sg_utility_texture2d1\", sgUv * P0.z).r; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
    "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
    "alpha": "modelOpacity",
-   "approx": "[근사] ModelOpacity=1·PBR/IBL 기존 stage3d 계약 유지. thin-film baseColor 식·원본 옵션 분기는 판독."
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
   },
   {
    "material": "spco_05_under_mt",
    "models": [
     "mg0102_bg_ground00"
    ],
-   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:7dc56f2e8372",
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:cc7b4135d1bb",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_thinfilm00_00",
     "sg_utility_texture2d1": "mg0102_thinfilm00_noise",
@@ -907,14 +907,31 @@
    "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = T(\"sg_utility_texture2d1\", sgUv * P0.z).r; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
    "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
    "alpha": "modelOpacity",
-   "approx": "[근사] ModelOpacity=1·PBR/IBL 기존 stage3d 계약 유지. thin-film baseColor 식·원본 옵션 분기는 판독."
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_09_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:6575cc48c3e1",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(material_base_color, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
   },
   {
    "material": "spco_01_mt",
    "models": [
     "mg0102_bg_ground00"
    ],
-   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:031378e3f0f6",
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:b358ddd322ff",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_thinfilm00_00",
     "sg_utility_texture2d1": "mg0102_thinfilm00_noise",
@@ -926,14 +943,31 @@
    "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = T(\"sg_utility_texture2d1\", sgUv * P0.z).r; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
    "baseColor": "mix((T(\"_a0\", sgUv).rgb) * material_mul_base_color, sgFilm, sgWeight)",
    "alpha": "modelOpacity",
-   "approx": "[근사] ModelOpacity=1·PBR/IBL 기존 stage3d 계약 유지. thin-film baseColor 식·원본 옵션 분기는 판독."
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_02_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:7fd4e95b1c67",
+   "samplers": {
+    "_a0": "mg0102_iron_raw_alb"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = vec3(0.0); float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
   },
   {
    "material": "spco_00_under_mt",
    "models": [
     "mg0102_bg_ground00"
    ],
-   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:7dc56f2e8372",
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:cc7b4135d1bb",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_thinfilm00_00",
     "sg_utility_texture2d1": "mg0102_thinfilm00_noise",
@@ -945,14 +979,85 @@
    "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = T(\"sg_utility_texture2d1\", sgUv * P0.z).r; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
    "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
    "alpha": "modelOpacity",
-   "approx": "[근사] ModelOpacity=1·PBR/IBL 기존 stage3d 계약 유지. thin-film baseColor 식·원본 옵션 분기는 판독."
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_11_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:6575cc48c3e1",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(material_base_color, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_06_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:3e4ad16156a3",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00",
+    "_a0": "mg0102_iron_shiny_alb"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_03_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:3e4ad16156a3",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00",
+    "_a0": "mg0102_iron_raw_alb"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_04_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:3e4ad16156a3",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00",
+    "_a0": "mg0102_iron_raw_alb"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
   },
   {
    "material": "spco_00_up_mt",
    "models": [
     "mg0102_bg_ground00"
    ],
-   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:7dc56f2e8372",
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:cc7b4135d1bb",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_thinfilm00_00",
     "sg_utility_texture2d1": "mg0102_thinfilm00_noise",
@@ -964,14 +1069,67 @@
    "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = T(\"sg_utility_texture2d1\", sgUv * P0.z).r; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
    "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
    "alpha": "modelOpacity",
-   "approx": "[근사] ModelOpacity=1·PBR/IBL 기존 stage3d 계약 유지. thin-film baseColor 식·원본 옵션 분기는 판독."
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_08_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:3e4ad16156a3",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00",
+    "_a0": "mg0102_iron_shiny_alb"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_07_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:6575cc48c3e1",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(material_base_color, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
+  },
+  {
+   "material": "spco_10_mt",
+   "models": [
+    "mg0102_bg_ground00"
+   ],
+   "program": "graph:44796e19c05e3683e62ab89c08dbc00e8e8fb30f69830290a7c3db2122332105:3e4ad16156a3",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0102_thinfilm00_00",
+    "_a0": "mg0102_iron_shiny_sp_alb"
+   },
+   "uv": {
+    "sgUv": "srt0(uv0)"
+   },
+   "fsPrelude": "float sgNdV = clamp(dot(normalize(Nw), viewDir), 0.0, 1.0); float sgNoise = 0.0; vec3 sgFilm = T(\"sg_utility_texture2d0\", vec2(fract(sgNdV + sgNoise), 0.5)).rgb; float sgWeight = pow(1.0 - sgNdV, P0.y) * P0.x;",
+   "baseColor": "mix(T(\"_a0\", sgUv).rgb, sgFilm, sgWeight)",
+   "alpha": "modelOpacity",
+   "approx": "기존 stage3d Nw·PBR/IBL/TBN 경로를 재사용할 때 그 경로의 기존 근사 유지; modelOpacity 현재 graph.ts 1 치환은 기존 [근사]; 결과 식은 named input을 유지"
   },
   {
    "material": "hologram_ball_mt",
    "models": [
     "mg0102_hologram00"
    ],
-   "program": "graph:0d49812d1426f2b13fdf20634223593acb3461444eede429e57d3adc1a0ccd14:dc853e20f51a",
+   "program": "graph:0d49812d1426f2b13fdf20634223593acb3461444eede429e57d3adc1a0ccd14:59c0b47ec58a",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_hologram_scan_line00"
    },
@@ -989,7 +1147,7 @@
    "models": [
     "mg0102_hologram00"
    ],
-   "program": "graph:0d49812d1426f2b13fdf20634223593acb3461444eede429e57d3adc1a0ccd14:dc9eb2bda869",
+   "program": "graph:0d49812d1426f2b13fdf20634223593acb3461444eede429e57d3adc1a0ccd14:b67a5762b450",
    "samplers": {
     "sg_utility_texture2d0": "mg0102_hologram_scan_line00",
     "_a0": "mg0102_hologram_00",
@@ -1076,87 +1234,6 @@
   },
   "pending": {
    "graphs": [
-    {
-     "material": "spco_09_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p27.fs.txt"
-    },
-    {
-     "material": "spco_02_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p35.fs.txt"
-    },
-    {
-     "material": "spco_11_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p27.fs.txt"
-    },
-    {
-     "material": "spco_06_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p43.fs.txt"
-    },
-    {
-     "material": "spco_03_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p35.fs.txt"
-    },
-    {
-     "material": "spco_04_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p43.fs.txt"
-    },
-    {
-     "material": "spco_08_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p43.fs.txt"
-    },
-    {
-     "material": "spco_07_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p27.fs.txt"
-    },
-    {
-     "material": "spco_10_mt",
-     "model": "mg0102_bg_ground00",
-     "graph": {
-      "fragment_shader_graph_color": "2077426685",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0102/sass/mg0102__forward_plus__p43.fs.txt"
-    },
     {
      "material": "fake_plght00_mt",
      "model": "mg0102_fake_plight01",

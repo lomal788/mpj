@@ -1,4 +1,7 @@
 /**
+ * 리듬 공용 소리(화면 어댑터) — mg1801/view/sound.ts 에서 옮겼다(docs/engine/02_rhythm.md 14절). 장면 프리셋 이름만 게임이 넘긴다.
+ * manifest 는 게임 Assets 폴더 기준 'manifest.json' 이다(mg1801 = assets/mg1801/manifest.json). 아래는 옮기기 전 설명 그대로다.
+ *
  * mg1801 소리 — 로직 사건(원본 라벨) → assets/mg1801/manifest.json(tools/mg1801_web_assets.py 가 만든다).
  * - 시퀀스 BGM(SQ_BGM_*)은 BPM(G11)별 자체 렌더 wav 를 그 BPM 으로 고른다(렌더에 없는 BPM 이면 가장 가까운 것 [근사]). 사운드 volume 이 렌더에 들어 있다.
  * - 리듬 마스터 SQ_BGM_RC_MAIN_RHYTHM 과 오프닝 SQ_BGM_RC_MGCMN_OP(OnGameStartAfter, FUN_71004263c8)는 실시간 시퀀스(view/seq.ts)로 돈다.
@@ -135,12 +138,12 @@ const ENDPLAY_TICK = 376;
 /** 게임 BGM 트랙 1 이 L0 = 1 을 쓰는 틱(접수 뒤 2박) [데이터] */
 const BGM_L0_TICK = 192;
 
-export class SoundMap {
+export class RmSoundMap {
   private m: Manifest = { bpms: [], sounds: {}, substitute: {}, listener3d: { default: { interiorSize: 10, maxVolumeDistance: 20, unitDistance: 50 }, preset: [] } };
   private readonly buffers = new Map<string, AudioBuffer>();
   private readonly pending = new Map<string, Promise<AudioBuffer | undefined>>();
   private readonly streams = new Map<string, AppBgmSource>();
-  private readonly presets = new Set<string>(['mg1801']);
+  private readonly presets: Set<string>;
   private readonly handles = new Set<Handle>();
   private readonly glob = new Array<number>(16).fill(-1);
   /** 전역 변수별 쓰기 기록 [오디오 시각, 값] — 시각 순. 게임 관측(observe)이 지난 시각의 값을 찾는다 */
@@ -157,7 +160,10 @@ export class SoundMap {
   constructor(
     private readonly assets: Assets,
     private readonly audio: AudioOut | null,
+    /** 장면 적재 때 켜지는 세팅 프리셋(미니게임 이름, 예 'mg1801') */
+    scenePreset: string,
   ) {
+    this.presets = new Set<string>([scenePreset]);
     if (audio) {
       this.engine = new SeqEngine(audio, {
         get: (i, time) => this.global(i, time),

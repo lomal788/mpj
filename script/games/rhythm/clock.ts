@@ -12,13 +12,8 @@
  *   게임 BGM 지역 변수 L0 을 넘긴다(observe). 원본 구조 그대로다. 그 시각은 지금 들리는 소리 기준이다(출력 지연 보정 — 원본에 없는 [근사], main.ts).
  * - 프레임 모델(노드 시험·무음): 마스터 시작 뒤 프레임 수로 같은 값을 계산한다. 관측 지연 0 [미확정: 원본 사운드 → 프레임 관측 지연].
  */
-import { F } from '../../../core/fmath';
-import { FPS } from '../../../core/clock';
-import type { SoundSnapshot } from '../../../game';
-import { BEAT_SCALE } from './data';
-
-/** 박자 종류별 마디당 상태 수 [데이터: main @0x71015d8eb0] */
-export const BEATS_PER_BAR = [4, 8, 8, 16, 16, 32] as const;
+import { BEAT_SCALE, F, RM_FPS as FPS } from './data';
+import type { RmSoundSnapshot as SoundSnapshot } from './types';
 
 /** 마디 틱 수(timebase 96 × 4박), 게임 BGM 트랙 1 이 L0 = 1 을 쓰는 틱(시작 2박 뒤) [데이터: 02_rhythm.md 5.3] */
 const BAR_TICKS = 384;

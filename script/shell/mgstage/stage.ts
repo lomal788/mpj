@@ -8,6 +8,8 @@
 import * as THREE from 'three';
 import { P0, P1, P3 } from '../../lib/assetcore';
 import type { PrepJob } from '../../lib/assetcore-three';
+import type { SplitScreenLayerList } from '../../lib/splitscreen';
+import { SplitRenderer, type SplitRenderOptions } from '../../lib/splitscreen-three';
 import { attachToSocket } from '../plaza/world';
 import { LOAD_BUDGET_MS, Stage3D, type AssetSource, type ClipHandle, type ClipOptions, type PriorityFloor, type SocketPose, type StageGpu, type StageLoader, type StageModel } from '../stage3d';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '../stage3d/assetHandlers';
@@ -55,6 +57,8 @@ export interface MgStage {
   resultWorld(socket?: string): Promise<MgResultWorld>;
   update(dt: number): void;
   render(): void;
+  renderSplit(list: SplitScreenLayerList, cameras: readonly (THREE.Camera | null | undefined)[], opts?: Omit<SplitRenderOptions, 'post'>): void;
+  readonly splitRenderer: SplitRenderer;
   resize(w: number, h: number): void;
   dispose(): void;
   debug(): Record<string, unknown>;
@@ -132,6 +136,8 @@ class MgStageImpl implements MgStage {
   private readonly camClips = new Map<string, Promise<FsnbClip | null>>();
   private cam: MgCamera | null = null;
   private rest: MgLayoutEntry[] | null = null;
+  private split: SplitRenderer | null = null;
+  private readonly splitOpts: SplitRenderOptions = {};
   private readonly stats = { p0: 0, p0Ms: 0, allMs: 0, t0: 0, planned: false };
 
   constructor(
@@ -407,12 +413,27 @@ class MgStageImpl implements MgStage {
     this.stage.render();
   }
 
+  get splitRenderer(): SplitRenderer {
+    return (this.split ??= new SplitRenderer(this.stage.renderer));
+  }
+
+  renderSplit(list: SplitScreenLayerList, cameras: readonly (THREE.Camera | null | undefined)[], opts: Omit<SplitRenderOptions, 'post'> = {}): void {
+    const o = this.splitOpts;
+    o.post = this.stage.post;
+    o.target = opts.target;
+    o.clear = opts.clear;
+    o.rtAspect = opts.rtAspect;
+    o.enabled = opts.enabled;
+    this.splitRenderer.render(this.stage.scene, cameras, list, o);
+  }
+
   resize(w: number, h: number): void {
     this.stage.resize(w, h);
   }
 
   dispose(): void {
     this.stopCamera();
+    this.split?.dispose();
     this.stage.dispose();
   }
 

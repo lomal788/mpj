@@ -808,6 +808,9 @@ def handle_collision(job):
     if col:
         job.w.put("collision.json", jbytes(col))
     job.ext["collision"] = "collision.json" if col else None
+    import collision_apx
+    phys = collision_apx.build(job.arc.root, "~".join(job.arc.parts), lambda rel, data: job.w.put(f"physics/{rel}", data, share=False), None, log=job.report["warnings"].append)
+    job.ext["physics"] = "physics/physics.json" if phys["entities"] else None
     job.ext["collisionModels"] = sorted(n for n in job.man.get("models", {}) if re.search(r"_col(\d+)?$", n))
 
 

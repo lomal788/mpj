@@ -34,7 +34,7 @@ const swap = new Map<string, string>();
 const bundle: string[] = [];
 for (const [o, meta] of Object.entries(built.metafile?.outputs ?? {})) {
   const rel = outRel(o);
-  if (/\.(js|css)$/.test(rel)) bundle.push(rel);
+  if (/\.(js|css|wasm)$/.test(rel)) bundle.push(rel);
   const entry = Object.entries(ENTRIES).find(([, src]) => meta.entryPoint === src);
   if (!entry) continue;
   swap.set(`./bundle/${entry[0]}.js`, `./${rel}`);

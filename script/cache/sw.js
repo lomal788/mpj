@@ -8,7 +8,7 @@
 const CACHE = 'mpj-cache-v1';
 const CACHE_PREFIX = 'mpj-cache-';
 const MANIFEST = 'assets-dist/index.json';
-const HASHED = /\.[0-9a-f]{8}\.[a-z0-9]+$|\.[A-Z2-7]{8}\.(js|css)(\.map)?$/;
+const HASHED = /\.[0-9a-f]{8}\.[a-z0-9]+$|\.[A-Z2-7]{8}\.(js|css|wasm)(\.map)?$/;
 /** 매니페스트 → 지금 배포의 해시 URL(워커 범위 기준 상대). 배포 매니페스트가 아니면 null(정리 안 함) */
 function liveUrls(m) {
   if (!m || !Array.isArray(m.bundle) || !m.names) return null;

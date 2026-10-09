@@ -1,16 +1,16 @@
 {
  "note": "MB 단위(1e6). dist = 압축본(소리는 ogg 만, m4a 는 따로), transferDist = json·glb 는 brotli q9 추정 + 나머지 그대로. gpu = 모든 텍스처를 한 번에 올렸을 때(밉 포함) 추정",
  "total": {
-  "src": 1133.16,
-  "dist": 474.02,
+  "src": 1133.67,
+  "dist": 474.53,
   "distOgg": 41.61,
   "distM4a": 52.46,
-  "transferSrc": 1133.16,
-  "transferDist": 385.07,
+  "transferSrc": 1133.67,
+  "transferDist": 385.58,
   "gpuSrc": 3270.23,
   "gpuDesk": 1168.02,
   "gpuMob": 1053.14,
-  "n": 3844
+  "n": 3863
  },
  "folders": {
   "chara": {
@@ -74,16 +74,16 @@
    "n": 316
   },
   "mg/mg0101": {
-   "src": 212.1,
-   "dist": 66.94,
+   "src": 212.46,
+   "dist": 67.3,
    "distOgg": 3.57,
    "distM4a": 4.75,
-   "transferSrc": 212.1,
-   "transferDist": 47.94,
+   "transferSrc": 212.46,
+   "transferDist": 48.29,
    "gpuSrc": 145.74,
    "gpuDesk": 40.27,
    "gpuMob": 37.08,
-   "n": 286
+   "n": 299
   },
   "mg/mg0102": {
    "src": 55.3,
@@ -110,16 +110,16 @@
    "n": 204
   },
   "mg/mg0122": {
-   "src": 71.09,
-   "dist": 28.32,
+   "src": 71.1,
+   "dist": 28.33,
    "distOgg": 3.65,
    "distM4a": 3.83,
-   "transferSrc": 71.09,
-   "transferDist": 24.74,
+   "transferSrc": 71.1,
+   "transferDist": 24.75,
    "gpuSrc": 172.41,
    "gpuDesk": 47.63,
    "gpuMob": 42.91,
-   "n": 249
+   "n": 252
   },
   "mg/mg0508": {
    "src": 64.32,
@@ -218,16 +218,16 @@
    "n": 98
   },
   "plaza/world": {
-   "src": 172.44,
-   "dist": 105.64,
+   "src": 172.58,
+   "dist": 105.78,
    "distOgg": 0,
    "distM4a": 0,
-   "transferSrc": 172.44,
-   "transferDist": 78.64,
+   "transferSrc": 172.58,
+   "transferDist": 78.78,
    "gpuSrc": 690.54,
    "gpuDesk": 187.84,
    "gpuMob": 159.77,
-   "n": 697
+   "n": 700
   },
   "mgdummy": {
    "src": 10.24,
@@ -377,7 +377,7 @@
   },
   "json": {
    "src": 29.69,
-   "dist": 18.05,
+   "dist": 18.06,
    "distOgg": 0,
    "distM4a": 0,
    "transferSrc": 29.69,
@@ -385,19 +385,19 @@
    "gpuSrc": 0,
    "gpuDesk": 0,
    "gpuMob": 0,
-   "n": 348
+   "n": 351
   },
   "copy": {
-   "src": 76.03,
-   "dist": 76.03,
+   "src": 76.53,
+   "dist": 76.53,
    "distOgg": 0,
    "distM4a": 0,
-   "transferSrc": 76.03,
-   "transferDist": 31.45,
+   "transferSrc": 76.53,
+   "transferDist": 31.95,
    "gpuSrc": 0,
    "gpuDesk": 0,
    "gpuMob": 0,
-   "n": 407
+   "n": 423
   }
  },
  "codecs": {
@@ -70814,6 +70814,16 @@
    "br": 11744
   },
   {
+   "src": "mg/mg0101/physics/physics.json",
+   "kind": "json",
+   "out": [
+    "mg/mg0101/physics/physics.json"
+   ],
+   "srcBytes": 4965,
+   "distBytes": 3005,
+   "br": 777
+  },
+  {
    "src": "mg/mg0101/sound/sound.json",
    "kind": "json",
    "out": [
@@ -71382,6 +71392,16 @@
    "srcBytes": 43320,
    "distBytes": 32832,
    "br": 5562
+  },
+  {
+   "src": "mg/mg0122/physics/physics.json",
+   "kind": "json",
+   "out": [
+    "mg/mg0122/physics/physics.json"
+   ],
+   "srcBytes": 872,
+   "distBytes": 532,
+   "br": 274
   },
   {
    "src": "mg/mg0122/sound/sound.json",
@@ -73084,6 +73104,16 @@
    "br": 18627
   },
   {
+   "src": "plaza/world/physics/physics.json",
+   "kind": "json",
+   "out": [
+    "plaza/world/physics/physics.json"
+   ],
+   "srcBytes": 927,
+   "distBytes": 587,
+   "br": 279
+  },
+  {
    "src": "plaza/world/plaza_first.json",
    "kind": "json",
    "out": [
@@ -73520,6 +73550,114 @@
    ],
    "srcBytes": 79352,
    "distBytes": 79352
+  },
+  {
+   "src": "mg/mg0101/physics/apx/150b250016cf9da5dcd72dba698a2bbb.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/150b250016cf9da5dcd72dba698a2bbb.apx"
+   ],
+   "srcBytes": 1568,
+   "distBytes": 1568
+  },
+  {
+   "src": "mg/mg0101/physics/apx/277011c09a11372da847e53d7650938b.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/277011c09a11372da847e53d7650938b.apx"
+   ],
+   "srcBytes": 1568,
+   "distBytes": 1568
+  },
+  {
+   "src": "mg/mg0101/physics/apx/2ef5d29ce270a36cf0f541f30c1d2416.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/2ef5d29ce270a36cf0f541f30c1d2416.apx"
+   ],
+   "srcBytes": 73168,
+   "distBytes": 73168
+  },
+  {
+   "src": "mg/mg0101/physics/apx/4397cc7f2241f88df152a7084d2bd9bd.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/4397cc7f2241f88df152a7084d2bd9bd.apx"
+   ],
+   "srcBytes": 72608,
+   "distBytes": 72608
+  },
+  {
+   "src": "mg/mg0101/physics/apx/52c648362cfc1ad9dadced7302913b23.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/52c648362cfc1ad9dadced7302913b23.apx"
+   ],
+   "srcBytes": 1568,
+   "distBytes": 1568
+  },
+  {
+   "src": "mg/mg0101/physics/apx/5b06bce53b384c8ef51b17f0c4dd9472.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/5b06bce53b384c8ef51b17f0c4dd9472.apx"
+   ],
+   "srcBytes": 53792,
+   "distBytes": 53792
+  },
+  {
+   "src": "mg/mg0101/physics/apx/71a7b45f79f164cd8aa741a15ac73221.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/71a7b45f79f164cd8aa741a15ac73221.apx"
+   ],
+   "srcBytes": 53568,
+   "distBytes": 53568
+  },
+  {
+   "src": "mg/mg0101/physics/apx/7fdf0ab11ff046bd9a224457cd4e4f1d.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/7fdf0ab11ff046bd9a224457cd4e4f1d.apx"
+   ],
+   "srcBytes": 1568,
+   "distBytes": 1568
+  },
+  {
+   "src": "mg/mg0101/physics/apx/86517d7dcb956427fccc1bc484ee67d4.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/86517d7dcb956427fccc1bc484ee67d4.apx"
+   ],
+   "srcBytes": 4112,
+   "distBytes": 4112
+  },
+  {
+   "src": "mg/mg0101/physics/apx/8e77ec3428912b09e660cd1e6958db6c.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/8e77ec3428912b09e660cd1e6958db6c.apx"
+   ],
+   "srcBytes": 44224,
+   "distBytes": 44224
+  },
+  {
+   "src": "mg/mg0101/physics/apx/ac31c1d7d83c0d41f294a167d6d881c2.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/ac31c1d7d83c0d41f294a167d6d881c2.apx"
+   ],
+   "srcBytes": 45456,
+   "distBytes": 45456
+  },
+  {
+   "src": "mg/mg0101/physics/apx/e78fe6721f11f088db0145e2a5e1a9cd.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0101/physics/apx/e78fe6721f11f088db0145e2a5e1a9cd.apx"
+   ],
+   "srcBytes": 1568,
+   "distBytes": 1568
   },
   {
    "src": "mg/mg0101/tex/mg0101_cha_irr_00.hdr",
@@ -75652,6 +75790,24 @@
    "distBytes": 21128
   },
   {
+   "src": "mg/mg0122/physics/apx/02eb32c466b748195786df7ec3417a48.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0122/physics/apx/02eb32c466b748195786df7ec3417a48.apx"
+   ],
+   "srcBytes": 1504,
+   "distBytes": 1504
+  },
+  {
+   "src": "mg/mg0122/physics/apx/a0ca640bc25e4231d242b22dbd468c3e.apx",
+   "kind": "copy",
+   "out": [
+    "mg/mg0122/physics/apx/a0ca640bc25e4231d242b22dbd468c3e.apx"
+   ],
+   "srcBytes": 7216,
+   "distBytes": 7216
+  },
+  {
    "src": "mg/mg0122/tex/mg0122_b_shop_gi.hdr",
    "kind": "copy",
    "out": [
@@ -76690,6 +76846,24 @@
    "srcBytes": 4388,
    "distBytes": 4388,
    "br": 2627
+  },
+  {
+   "src": "plaza/world/physics/apx/72cbf6799dc022826ea52ed8ed6d9c3f.apx",
+   "kind": "copy",
+   "out": [
+    "plaza/world/physics/apx/72cbf6799dc022826ea52ed8ed6d9c3f.apx"
+   ],
+   "srcBytes": 136832,
+   "distBytes": 136832
+  },
+  {
+   "src": "plaza/world/physics/apx/8fd195287993206ecec0115f93468058.apx",
+   "kind": "copy",
+   "out": [
+    "plaza/world/physics/apx/8fd195287993206ecec0115f93468058.apx"
+   ],
+   "srcBytes": 3232,
+   "distBytes": 3232
   },
   {
    "src": "plaza/world/tex/bd03_catsle_gold_rad_00.hdr",

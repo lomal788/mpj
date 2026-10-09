@@ -56,6 +56,7 @@ assets/<분류>/<이름>/
   anim/<파일>.fmab.json|.fvbb.json   재질 애니·뼈 보임(프레임별 구운 값)
   cam/<파일>.fsnb.json               카메라 클립(프레임별 구운 값, 광장 FsnbCamera 형식)
   collision.json     nbmap 충돌 엔티티 → 삼각형(월드)·기본 형상 — 데이터만
+  physics/           physics.json + apx/*.apx — 충돌 런타임(game/lib/physx·collision) 데이터, collision_apx.build(11_moving_collision.md §9), 필터 없이 아카이브 전부
   ui/ui.json, ui/tex/   lyt(SARC) 레이아웃·애니·그림·글꼴 참조·글
   msg/<파일>.json    msbt(아카이브에 있을 때)
   sound/sound.json, sound/*.wav   시퀀스 렌더 [근사]·BFSTM 디코드

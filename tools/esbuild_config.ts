@@ -46,6 +46,7 @@ export function options(dev: boolean, outdir: string): BuildOptions {
     minify: !dev,
     logLevel: "info",
     define: { __DEV__: JSON.stringify(dev) },
-    ...(dev ? {} : { splitting: true, entryNames: '[name].[hash]', chunkNames: 'chunks/[name].[hash]', metafile: true }),
+    loader: { '.wasm': 'file' },
+    ...(dev ? {} : { splitting: true, entryNames: '[name].[hash]', chunkNames: 'chunks/[name].[hash]', assetNames: '[name].[hash]', metafile: true }),
   };
 }

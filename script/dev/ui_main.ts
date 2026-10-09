@@ -23,6 +23,7 @@ import { runSplitScreenPage, type SplitScreenPageRun } from './splitscreen_page'
 import { runCharacterPage, type CharacterPageRun } from './character_page';
 import { runEffectPage, type EffectPageRun } from './effect_page';
 import { runSoundPage, type SoundPageRun } from './sound_page';
+import { runCollisionPage, type CollisionPageRun } from './collision_page';
 import { KeyboardPad, padSourcesFor } from '../view/input';
 import { appBgm } from '../view/bgm';
 import { appSave } from '../view/save';
@@ -245,6 +246,15 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: SoundPageRun = await runSoundPage(stage, { params: new URLSearchParams(location.search), muted: cfg.muted, onDone: cfg.onDone });
       (window as unknown as { __sound?: SoundPageRun }).__sound = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'collision',
+    name: '충돌 질의',
+    async run(stage, cfg) {
+      const r: CollisionPageRun = await runCollisionPage(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
+      (window as unknown as { __collision?: CollisionPageRun }).__collision = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

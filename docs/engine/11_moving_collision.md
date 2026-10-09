@@ -264,7 +264,7 @@ pause는 논리 시간·포즈 commit·물리 step을 정지시키고 pending di
 
 ## 8. PhysX 4.1 공개 소스 기준 (2026-10-09)
 
-앞 절에서 "SDK 내부(narrow phase·접촉 순서·CCD)는 판독 범위 밖"으로 둔 항목은 **디컴파일이 아니라 공개 소스로 확정할 수 있다.** 원본은 PhysX 4.1.2를 정적 링크했고, 같은 버전의 소스가 BSD-3으로 공개돼 있다. 충돌 런타임은 이 절을 기준으로 **원본 알고리즘을 옮기는 방식**으로 구현한다(표준 알고리즘으로 새로 설계하지 않는다).
+앞 절에서 "SDK 내부(narrow phase·접촉 순서·CCD)는 판독 범위 밖"으로 둔 항목은 **디컴파일이 아니라 공개 소스로 확정할 수 있다.** 원본은 PhysX 4.1.2를 정적 링크했고, 같은 버전의 소스가 BSD-3으로 공개돼 있다. 충돌 런타임은 이 절을 기준으로 **원본 알고리즘을 옮기는 방식**으로 구현한다(표준 알고리즘으로 새로 설계하지 않는다). **2026-10-09: TS 이식 대신 같은 소스의 WASM 빌드로 결정(§9).**
 
 ### 8.1 근거 [데이터]
 
@@ -321,3 +321,191 @@ BSD-3-Clause 는 소스 형태 재배포 시 **저작권 고지·조건·면책 
 - §7 남은 미확정 중 "SDK narrow phase·동점 접촉 순서·고속 회전 CCD", "Query 옵션(+0x41/42·E1/E2) 비트 의미·All 정렬" 은 **공개 소스로 확정할 수 있는 항목**이 됐다. 이식 착수 때 §8.2 대응을 [판독]으로 올리면서 해소한다.
 - 런타임 구현 준비도의 "SDK와 후보 순서까지 완전 일치는 추가 검증" 은 **원본 알고리즘 이식 + 네이티브 골든 대조**로 검증 경로가 생겼다.
 - 게임 고유 판단(포즈 commit 시점, ActorParam 소비)은 공개 소스와 무관하며 기존대로 게임별 디컴파일로 판독한다.
+
+## 9. 웹 런타임 계약 (2026-10-09, P0 질의)
+
+상태: **P0 구현 완료(노드 시험 78/78)**. 사용자 결정: 원본 규칙 기본, PhysX 는 TS 손 이식 대신 **같은 PhysX 4.1.2 공개 소스를 WebAssembly 로 빌드**해 쓴다. 소비자(광장 PlazaMover·follow, mgstage)는 아직 옮기지 않았다(다음 작업 actor 계층이 이 API 를 포트로 쓴다).
+
+### 9.1 계층과 의존 방향
+
+```
+script/game/lib/physx            PhysX 4.1.2 wasm + TS 바인딩(import 0). 원본 PhysX 구조·이름(Px*, PxHitFlag …). BSD-3 고지는 이 폴더만
+script/game/lib/collision        원본 nn::bezel PhysicsWorld 규약 API(import 0). 백엔드는 포트(CollisionBackend)로만 안다
+script/game/lib/collision-physx  어댑터: collision 포트를 physx 로 구현. import = ../collision + ../physx 만
+script/game/lib/collision-three  디버그 그리기 어댑터(보기 전용). import = three + ../collision 만
+script/view/collision.ts         mpj 연결: physx.wasm 받기(번들 해시 이름)·충돌 에셋(physics.json + apx) → 몸체
+script/dev/collision_page.ts     /dev/ui?ui=collision 보기 페이지
+
+  dev/collision_page ─▶ view/collision ─▶ collision-physx ─▶ collision
+                                    │                └──────▶ physx (wasm)
+                                    └─▶ collision-three ─▶ collision (+three)
+```
+
+actor·미니게임은 `collision`(CollisionWorld·CastResult)만 부른다. `physx` 는 mpj·collision 을 모르고, 나중에 P1 Cct·P2 강체 웹 API 도 이 폴더에 붙는다.
+
+### 9.2 PhysX WASM 빌드 [데이터]
+
+| 항목 | 내용 |
+|---|---|
+| 폴더 | `lib/physx/`: `physx.wasm`(커밋된 빌드 결과), `index.ts`(바인딩), `apx.ts`(.apx 리더), `wasm.d.ts`, `LICENSE.md`(PhysX BSD-3 원문 사본), `native/PhysX-4.1/`(컴파일에 실제로 쓴 .cpp·헤더만 920개·10.96 MB, 경로는 PhysX 저장소 그대로), `native/SOURCES.txt`(경로·sha1, 커밋 a2c0428), `native/shim/px_shim.cpp`(C ABI), `build/build.py` |
+| 명령 | `python web/script/game/lib/physx/build/build.py`(→ `../physx.wasm`) · `--sizes`(네 구성 크기) · `--vendor C:/dev/mpj/tools/oss/PhysX-4.1`(체크아웃에서 컴파일하며 쓴 파일만 `native/` 로 다시 복사) · `--emsdk`·`--obj`·`--clean`·`--jobs`. 경로는 폴더 기준 상대 |
+| 도구 고정 | emsdk `C:/dev/mpj/tools/emsdk`(web 밖) **6.0.12**(emscripten 5488e087, LLVM clang 24.0.0git 55ea1f4e). 오브젝트 캐시 `C:/dev/mpj/tools/physx_wasm_obj`. 평소 개발·`npm run build` 는 커밋된 wasm 만 쓰고 emsdk 가 필요 없다 |
+| 컴파일 | `em++ -std=c++11 -O3 -fno-rtti -fno-exceptions -fno-fast-math -ffp-contract=off -fstrict-aliasing`, 정의 `NDEBUG PX_SUPPORT_PVD=0 PX_SIMD_DISABLED PX_PHYSX_STATIC_LIB PX_FOUNDATION_DLL=0 DISABLE_CUDA_PHYSX PX_NVTX=0 PX_SUPPORT_GPU_PHYSX=0`(PhysX linux release 정의 + 스칼라 경로) |
+| 링크 | `-O3 -sSTANDALONE_WASM=1 --no-entry -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=16777216 -sSTACK_SIZE=1048576 -sFILESYSTEM=0 -sMALLOC=dlmalloc`, export = shim 의 `PXW_API` 함수 + `memory`·`_initialize`. JS 글루 없음 |
+| 재현 | 같은 입력 두 번 빌드 → sha256 같음(`ad33e4f9…`) |
+| 뺀 것 | GPU(physxgpu)·쿠킹(physxcooking)·차량·PVD·직렬화(Sn*·RepX·fastxml)·스레드 디스패처(ExtDefaultCpuDispatcher·ExtCpuWorkerThread) |
+
+구성별 크기(같은 플래그, `build.py --sizes`):
+
+| 구성 | 모듈 | export | raw | gz | br |
+|---|---|---|---|---|---|
+| query | foundation·common·geomutils(PxGeometryQuery 만) | 21 | 403,738 | 177,157 | 137,767 |
+| scene | + physx(Np)·scenequery·simulationcontroller·lowlevel·lowlevelaabb·lowleveldynamics·task(PxScene 질의) | 42 | 2,133,557 | 836,656 | 614,632 |
+| cct | + physxcharacterkinematic + physxextensions(Cct 가 PxRigidBodyExt·PxMeshOverlapUtil 을 씀) | 48 | 2,222,151 | 871,487 | 641,371 |
+| **full(채택)** | + D6 조인트 노출 | 50 | **2,259,161** | **886,528** | **652,542** |
+
+원본 질의는 `PxScene::raycast/sweep`(Sq 프루너·NpSceneQueries)을 거치므로 scene 구성이 P0 의 최소다. NpScene 이 Sc·LL 을 붙들어 시뮬레이션 코드가 함께 들어오고, P1·P2 를 더해도 +5%(br +38 KB)라 full 을 싣는다. 참고로 쿠킹 모듈은 +약 200 KB(raw)이고 싣지 않는다(§9.3).
+
+**결정성·호환(근거):** 스레드 없음(CPU 디스패처 = 0 스레드 인라인 실행, SharedArrayBuffer 없음) · `PX_SIMD_DISABLED`(Ps::aos 스칼라 구현) · wasm 실수 연산은 IEEE 단정·배정밀도로 브라우저 사이에 같다(코어 wasm 에는 FMA 명령이 없고 `-ffp-contract=off`) · 수학 함수(sinf 등)는 wasm 안의 musl 이라 엔진 차이 없음 · PhysX 타이머(통계용)는 shim 의 `clock_gettime` 이 0 을 돌려 벽시계를 읽지 않는다(그 덕에 WASI import 도 없음). **원본(NX64 NEON)과 비트 일치는 하지 않는다 [근사]**: Ps::aos NEON 경로의 연산 순서·FMA, RTree 광선 순회의 `V4RecipFast`(NEON `vrecpe`+뉴턴 1회 vs 스칼라 1/x — 노드 자르기 경계에서만 차이), GJK/EPA 반복 수렴값. 알고리즘(후보·순서·동점·MTD 방향 규칙)은 같은 소스라 같다.
+
+**번들:** esbuild `loader: { '.wasm': 'file' }`(tools/esbuild_config.ts) → 배포 `bundle/physx.<해시>.wasm`(assetNames `[name].[hash]`) + `.br`·`.gz` 사전 압축, 매니페스트 `assets-dist/index.json` 의 `bundle` 목록(tools/build.ts 가 wasm 도 넣음), 서비스 워커 `HASHED` 에 wasm 추가(cache-first). 코드는 `new URL(physxWasmUrl, import.meta.url)` 로 받는다(file 로더 경로는 그 청크 기준 상대).
+
+### 9.3 데이터: 원본 .apx 를 직접 읽기 [실행·판단]
+
+`PxSerialization::createCollectionFromBinary` 로 원본 .apx 를 그대로 넣는 길(0.5일 안에 확인):
+
+| 안 | 결과 |
+|---|---|
+| 1. PxBinaryConverter + NX64 메타데이터 | 메타데이터를 만들려면 NX64 와 같은 LP64 배치 빌드가 필요하고, 컬렉션 1,493개 중 1,479개에 있는 게임 정의 객체 USER_1024/1025 는 직렬화기·메타데이터가 없어 변환·역직렬화 모두 막힌다 |
+| 2. wasm Memory64 빌드 | 배치는 맞출 수 있으나(Itanium LP64) USER 객체 문제는 같고, 브라우저 지원(Safari)이 불확실하다 |
+| 3. 형상만 꺼내 같은 쿠킹으로 다시 굽기 | 쿠킹 시험 빌드(scratch)로 원본 faceRemap 순서의 입력을 기본 파라미터(BVH33 eSIM_PERFORMANCE, 0.55)로 다시 구웠다: 광장 Main(4,440삼각형)·광장 First·mg0122 Bg_col 은 삼각형 순서·RTree 페이지가 **바이트까지 같고**, mg0101 cource_a0 는 **116 대 118쪽으로 다르다**(원본 입력 순서·정리 전 메시를 되살릴 수 없음). eSIM_PERFORMANCE 가 아닌 힌트는 넷 다 다름 |
+| **채택: 구운 데이터를 쿠킹 스트림으로 재포장** | `.apx` 의 정점·인덱스·RTree 헤더·페이지(112 B × N)·extraTrigData·materialIndices·faceRemap·adjacency 를 PhysX 쿠킹 스트림(`NXS MESH` v15 / `RTRE` v2 / `NXS CVXM` v13 + `ICE CLHL` v13) 형식으로 바이트 그대로 옮겨 공개 API `PxPhysics::createTriangleMesh(PxInputStream&)`·`createConvexMesh` 로 싣는다(`physx/apx.ts`). 다시 굽지 않으니 원본 트리가 그대로 들어가고 쿠킹 모듈도 필요 없다 |
+
+남는 차이 [근사]: 메시·볼록체 AABB 는 원본 CenterExtents 를 스트림의 min/max(f32 c±e)로 넘기므로 1 ulp 차이가 날 수 있다(프루너 경계에만 쓰임). bigConvex(가우스 맵) 볼록체는 지원하지 않는다(`stream = null`).
+
+.apx 에서 새로 쓴 배치(NX64, Sc::ShapeCore·PxsShapeCore 소스 배치로 계산 후 전체 분포로 확인) [데이터]:
+
+| 객체 | 오프셋 | 값 |
+|---|---|---|
+| Shape | +0x50 query filter data, +0x60 simulation filter data, +0x90 PxShapeFlags(u8), +0xB8 trimesh meshFlags / convex 메시 포인터, +0xC0 trimesh 메시 포인터 | 맵 셰이프 필터 데이터는 **전부 0**(레이어는 런타임에 nbmap 속성으로 정함). 플래그: trimesh 3,098개 전부 **0x0A**(scene query·visualization, simulation 없음), 나머지 0x0B. 질의에 원본 플래그를 그대로 쓴다 |
+| Material | +0x30 dynamicFriction, +0x34 staticFriction, +0x38 restitution | 06 §5.1 과 같음 |
+
+**에셋 처리기(범용):** `web/tools/analysis/collision_apx.py <아카이브> --out <폴더> [--nbmap 이름,…]` → `<폴더>/physics.json` + `<폴더>/apx/<원본 이름>.apx`(바이트 그대로). physics.json = `{format:"mpj.physics", version:1, archive, entities:[{nbmap, name, tag(ENTY+0x38), attr[4], layer, pos, quat, scale, apx, sha1}]}`. world 자세는 asset_convert 의 nbmap 행렬 곱(부모 기준 [미확정], 06 §3.3)과 같다. **layer = attr[1] − 2**(attr[1] ≥ 2), mg0912 §4.10 의 "비트 = 1 << (attr − 2)" 를 따른 **[추정]**. 압축본은 build_assets 가 `copy` 로 해시 이름을 붙인다(.apx 는 사전 압축 대상 확장자가 아님). (2026-10-10) 공용 에셋 변환기 `asset_convert.py` 충돌 처리기도 같은 함수 `collision_apx.build` 를 불러 `physics/physics.json`·`physics/apx/*` 를 함께 낸다 — 게임을 변환하면 충돌 데이터가 자동으로 나온다. 충돌 데이터는 어댑터 `collision_nbmaps` 필터 없이 아카이브 전부(엔티티에 nbmap 이름이 있어 런타임이 고른다). 출력은 LF 바이트(단독 실행·변환기 경로 바이트 같음).
+
+| 변환한 세트 | 엔티티 | 크기 |
+|---|---|---|
+| `assets/plaza/world/physics/` (menu~menu00) | menu00_central_plaza_col(=광장 CollisionMain)·menu00_start_ev_col(=CollisionFirst), attr (0,4,4,0) → layer 2 | 144 KB |
+| `assets/mg/mg0122/physics/` | Bg_col·Bg_col1(tag Stage), attr (0,16,3,0) → layer 14 | 16 KB |
+| `assets/mg/mg0101/physics/` | cource a0~c1·fld0·parts p~t 12개, attr (0,4,3,0) → layer 2 | 388 KB |
+
+mg0107 은 nbmap 에 충돌 컴포넌트가 없어 mg0101 을 대신 시험했다.
+
+### 9.4 C ABI (px_abi_version = 1)
+
+한 벌의 export 를 JS(바인딩)와 다른 wasm(import `px.*`)이 같이 쓴다. 인자·반환은 i32/f32 숫자뿐이고, 객체는 핸들, 메모리는 physx 메모리 안 오프셋(i32)이다. 콜백·문자열·객체를 넘기지 않는다(질의 필터는 원본 prefilter 와 같은 숫자 규약: 레이어 마스크·제외 핸들).
+
+| 규칙 | 내용 |
+|---|---|
+| 시작 | `instantiate(wasm, { env: { emscripten_notify_memory_growth(i32) } })` → `_initialize()` → `px_init()`(=1). import 는 이것 하나 |
+| 핸들 | `(세대 << 16) | (칸 + 1)`, 0 = 실패. 세대 15비트, 해제하면 칸을 재사용하며 세대가 오른다 → 옛 핸들은 `invalid handle`. 종류(메시·씬·액터·셰이프·CCT·조인트)가 다르면 거부 |
+| 메모리 | `memory.grow` 뒤에도 모든 오프셋(io·hit 버퍼·px_alloc 결과)은 그대로다. JS 는 typed array 뷰만 다시 만든다 — 바인딩 `Physx.views()` 한 곳(buffer 가 바뀌었으면 새로 만듦, 모든 뷰 접근이 거친다). 외부 입력은 `px_alloc` 으로 받은 곳에 쓰고 `px_free` |
+| 오류 | `px_error_offset()`(512 B, NUL 끝 문자열)·`px_error_count()`. PhysX 오류 콜백(eDEBUG_INFO 제외)과 shim 오류 |
+
+io 버퍼(`px_io_offset`, 256 × 32비트 슬롯 = 1,024 B, f32/u32 겸용):
+
+| 슬롯 | 내용 |
+|---|---|
+| 기하 블록(9) | [g] type u32(0 sphere·1 plane·2 capsule·3 box·4 convex·5 trimesh), [g+1..] sphere r / capsule r·halfHeight(**SDK X축**) / box hx·hy·hz / mesh·convex scale x·y·z + scale 회전 x·y·z·w, [g+8] 메시 핸들 |
+| 자세 블록(7) | px py pz qx qy qz qw |
+| 0–6 / 0–10 | 광선: 원점 0–2, 단위 방향 3–5, 거리 6, hitFlags 7, mask 8, 제외 9–10 · 액터 자세 입출력 0–6 |
+| 0–8, 9–15 | 질의 기하 GEOM0, 질의 자세 POSE0 (sweep·overlap·penetration·셰이프 생성) |
+| 16–24 | sweep 방향 16–18, 거리 19, hitFlags 20, mask 21, 제외 22–23, inflation 24 · 셰이프 생성 때 simulation filter word0..3 16–19, 재질(정·동 마찰·반발) 20–22, PxShapeFlags 23 |
+| 32–35 | 출력: 침투 방향 xyz·깊이 |
+| 40–48, 49–55 | PxGeometryQuery 대상 기하 GEOM1·자세 POSE1 |
+
+hit 버퍼(`px_hits_offset`, 256건 × 64 B): 슬롯 0–2 position, 3–5 normal, 6 distance, 7–8 u·v, 9 PxHitFlags, 10 faceIndex, 11–14 셰이프 simulation filter word0..3, 15 셰이프 핸들.
+
+| 함수(반환 i32, f32 인자 표시) | 쓰는 슬롯 |
+|---|---|
+| `px_abi_version` `px_physx_version`(0x04010200) `px_io_offset` `px_io_size` `px_hits_offset` `px_hits_capacity` `px_hit_stride` `px_error_offset` `px_error_size` `px_error_count` | — |
+| `px_alloc(size)` → 오프셋(16 정렬) · `px_free(offset)` · `px_init()` | — |
+| `px_tri_mesh_create(offset, len)` · `px_convex_mesh_create(offset, len)` → 메시 핸들(쿠킹 스트림) · `px_mesh_release(h)` · `px_tri_mesh_info(h)` → io 0 nbV, 1 nbT, 2 flags, 3–8 bounds | — |
+| `px_geom_raycast(maxHits)` · `px_geom_sweep()` · `px_geom_overlap()` · `px_geom_penetration()` | PxGeometryQuery: 광선 0–7 / GEOM0·POSE0·16–24 / GEOM1·POSE1 → hit 0·io 32–35 |
+| `px_scene_create(gx f32, gy f32, gz f32)` · `px_scene_release(scene)`(안의 액터·셰이프 핸들도 해제) | — |
+| `px_actor_create(motion)`(0 static·1 kinematic·2 dynamic, 자세 io 0–6) · `px_actor_release` · `px_scene_add(scene, actor)` · `px_scene_remove` | — |
+| `px_actor_set_pose(actor, mode)`(0 = setGlobalPose, Dynamic 은 선·각속도 0 / 1 = kinematic target) · `px_actor_get_pose(actor)` → io 0–6 | — |
+| `px_shape_create(actor)` → 셰이프 핸들(배타 셰이프 부착) · `px_shape_set_flags(shape, PxShapeFlags)` · `px_shape_set_filter(shape)` · `px_shape_set_local_pose(shape)` · `px_shape_get_world_pose(shape)` → io 0–6 + 7 액터 | GEOM0·POSE0·16–23 |
+| `px_scene_raycast(scene, all, maxOut)` · `px_scene_sweep(scene, all, maxOut)` · `px_scene_overlap(scene, maxOut)` · `px_shape_penetration(shape)` | 위 슬롯 → hit 버퍼 / io 32–35 |
+| P2 노출만: `px_scene_simulate(scene, dt f32)` `px_actor_set_velocity` `px_actor_get_velocity` `px_actor_set_mass(actor, mass f32)` · P1: `px_cct_manager_create(scene)` `px_cct_manager_release` `px_cct_capsule_create(mgr)` `px_cct_release` `px_cct_move(cct)` `px_cct_get_position(cct)` · 조인트: `px_ext_d6_create(a0, a1)` `px_ext_joint_release` | shim 머리 주석 |
+
+씬 질의 필터는 원본 래퍼 그대로다: `PxQueryFilterData.flags = 7`(eSTATIC|eDYNAMIC|ePREFILTER), data 0, prefilter = 셰이프 **simulation filter data** 의 word2·word3 이 제외 핸들과 같으면 eNONE, 아니면 `mask >> (word0 & 31) & 1` 이 0 이면 eNONE, 1 이면 단일 질의 eBLOCK / All 질의 eTOUCH. All 은 128건 touch 버퍼로 받고 processTouches 를 maxOut 까지 적는다(PhysX 보고 순서).
+
+### 9.5 collision 코어 계약(원본 PhysicsWorld 규약)
+
+| 웹 API(`CollisionWorld`) | 원본 |
+|---|---|
+| `castRay(RayArg, out)` / `castRayAll(arg, out[], max)` | `PhysicsModule::CastRay @0x71006183c0` / `CastRayAll @0x7100618420`. hitFlags 0x403, +0x41 → 0x423, +0x42 → +0x80. All 은 +0x40 이면 거리 정렬 |
+| `castShape(ShapeArg, out)` / `castShapeAll` | `CastShape @0x7100618490` / `CastShapeAll @0x71006184f0`. 질의 자세 × 형상 로컬 자세(캡슐 quarter-turn 포함) 선형 sweep, hitFlags 0x403·+0xE1 → 0x603(MTD)·+0xE2 → +0x80, +0xE0 정렬 |
+| `overlap`·`penetration`·`mapContacts`·`resolveMapContacts` | §4.1 Actor–Map: overlap 후보 16 → computePenetration → depth > .01 → `vector = direction × depth` → adjust(복사) → **평균** |
+| `createBody`·`addShape`·`stage`/`unstage`·`setShapeEnabled`·`setShapeLayer`·`syncPose`·`teleport`·`removeBody`·`dispose` | §2.2~2.3: Static 은 자세 교체, Kinematic 은 목표(다음 물리 step 에 반영 — P0 질의만으로는 이전 자세가 보인다, 원본과 같음), Dynamic 은 일반 동기화가 덮어쓰지 않고 teleport 만 set(속도 0). enabled off = PxShapeFlags 의 simulation·scene query 비트 끔. 제거 = 세대 무효화 |
+| `CastResult` | position·normal(world), body(Collision +0x20), entity(+0x38), distance(+0x50, SDK 값 그대로), validity(+0x54), shape(+0x58), initialOverlap(+0x70 = distance ≤ 0), + faceIndex·flags·tag |
+| 형상 | 엔진 Y축 `capsule`(CreateCapsule r·h) → SDK 에 줄 때 로컬 q·qZ(+90°)(sin/cos(π/4) f32), `capsuleX` = .apx 에 구운 SDK 축 캡슐(더하지 않음), `capsuleFromSegment(a,b,r)` = SetSourceCapsule(h = |b−a|/2) |
+| 필터 | 셰이프 filter = [layer, 셰이프 핸들, 엔티티 번호, 엔티티 세대]. 질의 mask 는 u32 비트마스크(1 << layer 의 합) |
+
+원본 스위치 `collisionDefaults.rules`: `RULES_ORIGINAL`(기본: touch 128·Map 후보 16·depth .01·All 정렬 libc++ introsort) / `RULES_WEB`(All 정렬만 안정 정렬). f32 계산(쿼터니언 곱·회전·평균)은 `Math.fround` 로 단계마다 맞추고 PxQuat/PxTransform 연산 순서를 따른다.
+
+### 9.6 새 판독 (2026-10-09) [판독]
+
+근거: [runtime_A_collision_castall.c](../../../analysis/decomp/runtime_A_collision_castall.c)(Ghidra `-noanalysis -readOnly`).
+
+- `CastRayAll`→`FUN_7100625110`, `CastShapeAll`→`FUN_7100625480`: 스택에 **touch 128건**(0x80) PxHitBuffer, 필터 콜백 플래그 +0x14 = 0 → prefilter 가 **eTOUCH**(단일 질의는 1 → eBLOCK). processTouches(`FUN_7100625ef0`/`FUN_710062a870`)는 hit 마다 `FUN_710062c3bc` 로 CastResult(0x80 B)를 채우고 결과 수 < 인자 max 일 때만 계속. 끝나고 RayArg **+0x40** / ShapeArg **+0xE0** 이 켜져 있으면 `FUN_7100625f80(begin, end, 2·⌊log2 n⌋)` = libc++ `std::sort` introsort(경우 0~5, 30 이하 삽입 정렬, 1000 이상 sort5 중앙값, 깊이 소진 시 힙 정렬, 부분 삽입 정렬 8회 한도), 비교 = **CastResult+0x50 distance `<`**. 반환 = 결과 수. 앞 절의 "All 정렬·동점 미확정"을 해소한다
+- `FUN_710062c8b4`(prefilter): 셰이프 vtable **+0xB0 = PxShape::getSimulationFilterData**(Itanium vtable: PxBase 6칸 + PxShape 16번째) → word0 = 레이어, word2·word3 = 엔티티. 반환 `-(mask >> (word0 & 31) & 1) & (block ? 2 : 1)`
+- `FUN_710062c3bc`(hit → CastResult): actor → bezel Collision 이 없으면 기록하지 않음. validity 는 **위치 먼저**: position 길이 NaN 또는 ePOSITION 없음 → 4, 아니면 normal NaN 또는 eNORMAL 없음 → 2, 아니면 0(OR 아님). Shape(+0x58)는 faceIndex = 0xFFFFFFFF 이면 `getMaterials(…,1,0)`, 아니면 `getMaterialFromInternalFaceIndex(faceIndex)` 의 **PxMaterial 소유 CollisionShape**(셰이프당 재질 1개라 웹은 셰이프 핸들로 둔다)
+- `PhysicsWorldExtension::CastRay @0x7100624fe8`/`CastShape @0x71006252e0`: PxQueryFilterData flags **7**, filter data 0, block 버퍼 거리 초기값 FLT_MAX. 제외 엔티티 weak handle 이 무효(세대 불일치)면 0 으로 넘김
+- `FUN_71006045f0` 캡슐 분기: 반각 `π·0.5·0.5` 의 다항식 sin/cos, 축 (0,0,1) → **Z축 +90°** 쿼터니언과 곱한다(곱 순서는 캡슐 대칭이라 질의 결과에 무관 [추정])
+
+### 9.7 검증
+
+`npx tsx tools/test_collision.ts` 78/78(노드, wasm 그대로):
+
+| 묶음 | 내용·수치 |
+|---|---|
+| ABI | import 1개(env.emscripten_notify_memory_growth), io 1,024 B·hit 256×64 B, 48 MiB `px_alloc` 로 memory.grow 뒤 오프셋 유지, 무효 핸들 거부 |
+| 해석 기대값 | 광선→구 4·박스 8·캡슐 원통 4.5·반구 5−√(.25−.09)·내부 시작 0/−dir, sweep 구→박스 3.5·구→구 3.5·눕힌 캡슐→박스 2.5, 박스→박스 2.4975(**PhysX GJK 가 0.0025 앞에서 멈춤 [데이터]**), 초기 겹침 eDEFAULT 0·−dir / eMTD −0.3·+Y, penetration .5·+Y, overlap 경계 |
+| hit flag | 0x403/0x423/0x483/0x603/0x683, 단면 메시는 뒤에서 BOTH_SIDES 일 때만 hit·법선은 삼각형 법선 그대로(PhysX DE7458), eNORMAL 없으면 법선 플래그 없음 |
+| 데이터 | 광장 Main(2,666정점·4,440삼각형·RTree 410쪽)·mg0101 a0(833·1,522·118쪽)·mg0122(109·180·21쪽): 쿠킹 스트림의 RTree 페이지가 원본 .apx 바이트와 같고 PhysX 가 읽은 정점·삼각형·플래그가 같음 |
+| RTree 순서 | 여러 hit 광선(광장 117개·mg0101 41개)의 touch 순서가 **원본 페이지의 DFS 순서**(뿌리 N−1..0, 쪽마다 자식 0..3 을 넣고 LIFO)와 전부 같음 — mg0101 a0 는 다시 구운 트리와 다르므로 원본 트리를 쓴다는 증거 |
+| wasm→wasm | 시험 안에서 바이트로 만든 70 B 모듈이 `px.px_scene_raycast` 를 import 해 부른 결과가 JS 경로와 81/81 바이트 같음(hit 121) |
+| 계약(가짜 백엔드) | 필터 word, mask·제외 그대로, validity 4/2/위치 먼저, initialOverlap(0·음수), 캡슐 quarter-turn(SDK X → 엔진 Y), capsuleX, CastShape 자세 합성·0x603, SetSourceCapsule, All 정렬, libc++ 동점 순서 ≠ 안정 정렬, Map 평균, 수명(Static set·Kinematic target·Dynamic 무시·teleport set·enabled·세대) |
+| 통합 | 레이어 1·2 벽: mask 2/4/0x6/8, 제외(번호·세대), Unstage·enabled·teleport, All 정렬, 엔진 캡슐 sweep 3·초기 겹침 0 / MTD −0.2, Map 접촉 2건 평균, penetration |
+| 원본 에셋 | 광장(몸체 2·4,516삼각형)·mg0122(2·186)·mg0101(12·11,633) 로드, 광선 격자·캡슐 sweep validity 0 |
+| 결정성 | 광장 질의 묶음(광선·All·MTD sweep) 해시가 같은 인스턴스 두 번·새 인스턴스에서 같음 |
+| 경계·할당 | physx 바인딩 import 0(자기 apx 만)·collision import 0·collision-physx = ../collision + ../physx·collision-three = three + ../collision, three·DOM·Math.random·벽시계 없음, shim 시계 0·스레드 없음, LICENSE 원문, `PhysxExports` = wasm `px_*` 50개(숨은 함수 없음), 새 프로세스에서 castRay+castShape 4,000회 구간 new space 증가 중앙값 **0 B** |
+
+광장 MeshCollider 대비(같은 CollisionMain 메시, 0.5 m 격자 16,385점, `groundHeight(x,z,20)` vs `castRay` 아래로 mask 4, 광장 코드는 바꾸지 않음): 둘 다 hit 8,430·한쪽만 0·둘 다 없음 7,955. 높이 차 평균 8.19e−4 m(차이 3점 포함), 1 mm 넘는 점 **3**개 — 전부 PhysX 가 맞힌 면의 법선 y = 0.041(거의 수직 면)이고 MeshCollider 는 n.y ≤ 0.05 면을 지면에서 뺀다(UP_MIN). 원본 접지 법선 기준(normal.y ≥ .707, §4.2) 미달 지점 56.
+
+페이지: `/dev/ui?ui=collision`(:51816, src·`assets=dist` 각 맵) 콘솔 오류 0·4xx 0, 페이지 안 질의 정상.
+
+### 9.8 자리만 둔 것
+
+- P1 캐릭터 컨트롤러: wasm 에 PhysXCharacterKinematic 포함, ABI `px_cct_*` 노출만. 웹 API·필터 콜백 규약(원본 Cct 필터)은 mg0912 CCT 이식 때.
+- P2 강체: Sc·LL·dynamics 포함, `px_scene_simulate`(인라인 0 스레드)·속도·질량·D6 노출만. Dynamic 자세 → Entity 반영·ComRigidBody 동기화·접촉 콜백은 게임 이식 때.
+- actor 계층(§4 Map/AA adjust·finalize·접지 콜백·groundedLimit)은 다음 작업에서 `CollisionWorld` 를 포트로 쓴다.
+
+### 9.9 [근사]·남은 차이
+
+| 항목 | 내용 |
+|---|---|
+| SIMD·FMA | NX64 NEON Ps::aos 와 스칼라 경로의 연산 순서·FMA·`vrecpe` 차이 → 결과 비트가 다를 수 있음(알고리즘·분기 규칙은 같음) |
+| 씬 프루너 순서 | PxScene 의 정적·동적 AABB 트리 빌드는 simulate/fetchResults 시점에 따라 단계적으로 바뀐다. P0 는 simulate 없이 질의하므로 원본과 프루너 상태가 다를 수 있다 → 여러 셰이프 사이의 touch 보고 순서·같은 거리 block 동점(`<=` 로 나중 것)에 영향. 메시 안 순서(RTree)·정렬된 All 은 영향 없음 |
+| libc++ std::sort | 원본 introsort 구조를 디컴파일과 대조해 LLVM 14 계열 libc++ 원문대로 재구성. 깊이 소진(힙 정렬) 경로는 디컴파일 줄 단위로 대조하지 않음 |
+| 캡슐 quarter-turn 값 | 원본은 다항식 sin/cos(π/4), 웹은 `fround(√½)` |
+| 메시 AABB | CenterExtents → min/max → CenterExtents 왕복 1 ulp |
+| nbmap 자세 | 부모 기준 곱셈 가정(06 §3.3 [미확정]), scale 은 기록만(강체 scale 동기화 옵션 미적용) |
+
+### 9.10 사용자 확인 필요
+
+- (해소 2026-10-10 사용자 결정: 아래 재포장 방식으로 확정 — 원본 RTree 바이트 그대로, wasm 에 쿠킹 모듈 없음) 원본 .apx 를 `createCollectionFromBinary` 로 바로 읽는 길은 막혀 있어(§9.3: NX64 배치·USER_1024/1025) **구운 데이터를 쿠킹 스트림으로 재포장**하는 길로 진행했다. 다시 굽기는 3/4 메시만 원본과 같아 쓰지 않았다. 이 판단으로 진행해도 되는지.
+- nbmap 속성 → 레이어 `attr[1] − 2` 는 mg0912 의 [추정]을 따랐다. 게임별 래퍼(ComCollision 생성)에서 확인하기 전까지 [추정]이다.
+- 씬 프루너 상태(simulate 시점) 차이를 원본에 맞출지(P2 에서 고정 스텝 simulate 를 돌리면 원본 흐름에 가까워진다), P0 처럼 질의만 할지.
+- .apx 를 사전 압축(br) 대상에 넣을지(지금 copy, 세 세트 합 548 KB).

@@ -521,6 +521,7 @@ interface MgGame {
 - 호스트 `ResultStageHost` = { gl(THREE.WebGLRenderer, unknown 으로 넘김), fade(dir, speed)·fading(), winTelop{start(no, place), out(), finished()}, coinShow(pid, coin), se, bgm, resultSound(no), uiTimingOut(n), url }.
 - 출력 `ResultStage` = { step()(1/60 = 파이버 Wait 1번), done, render()(3D만), dispose() }.
 - 틀: 단계 13 에서 `OnEndingInit` 참 + 등록 1명 이상 → 무대 생성(비동기: 준비될 때까지 단계 13 에 머문다), 매 프레임 step → done 이면 14 → 16. 무대 팩토리가 없거나 만들기 실패면 갈래 B(엔딩 5단계)로 넘어가고 `console.warn`.
+- 게임 3D 장면(2026-10-09): 공용 변환기로 만든 게임은 장면 로더 `shell/mgstage` 의 `MgStage` 가 "게임 3D" 를 그리고(`render()`), 갈래 A 에서 `await stage.resultWorld()`(= `{scene, origin: pos_result 소켓}`)를 `resultHost.world` 로 넘긴다 — [../engine/13_asset_converter.md](../engine/13_asset_converter.md) §7.3.
 
 ### 12.9 시험 (`tools/test_mgscene.ts`, 노드)
 

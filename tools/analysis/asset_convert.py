@@ -68,10 +68,22 @@ def load_json(p):
     return json.loads(Path(p).read_text(encoding="utf-8-sig"))
 
 
+def json_safe(o):
+    """JSON 표준 밖 값(NaN·±Infinity — VFXB 원본 실수에 있음)을 문자열로(브라우저 JSON.parse 가 읽게, 값 뜻은 그대로)"""
+    if isinstance(o, float) and (o != o or o in (float("inf"), float("-inf"))):
+        return "NaN" if o != o else ("Infinity" if o > 0 else "-Infinity")
+    if isinstance(o, dict):
+        return {k: json_safe(v) for k, v in o.items()}
+    if isinstance(o, list):
+        return [json_safe(v) for v in o]
+    return o
+
+
 def jbytes(obj, pretty=False):
+    obj = json_safe(obj)
     if pretty:
-        return json.dumps(obj, ensure_ascii=False, indent=1).encode("utf-8")
-    return json.dumps(obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        return json.dumps(obj, ensure_ascii=False, indent=1, allow_nan=False).encode("utf-8")
+    return json.dumps(obj, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
 
 
 def sha1(b):
@@ -405,6 +417,10 @@ class TexAdder:
         return float((a @ np.array([0.2126, 0.7152, 0.0722])).mean())
 
 
+# glb 이미지(PBR 근사) 밖에서 재질이 직접 읽는 슬롯(mg1801_web_models.EXTRA_SLOTS + 라이트맵 그림자·그래프 입력). 그래프 재질은 샘플러 전부(판독 식이 _r0 등을 읽음)
+EXTRA_SLOTS = ("gi_diffuse_texture2d", "local_specular_texturecube", "shadow_texture2d")
+
+
 def ship_glb(job, name):
     """glb 복사 — 이미지 uri ../tex/x 를 실제로 쓴 곳(아카이브 tex 또는 공용 폴더)으로. 바뀐 게 없으면 바이트 그대로"""
     raw = (job.cache / "model" / f"{name}.glb").read_bytes()
@@ -421,8 +437,10 @@ def ship_glb(job, name):
             im["uri"] = new
             change = True
     for m in js.get("materials", []):
-        for s in ((m.get("extras") or {}).get("fres") or {}).get("samplers", []):
-            if job.tex(s["texture"]):
+        f = (m.get("extras") or {}).get("fres") or {}
+        graph = ((f.get("shader") or {}).get("options") or {}).get("static_opt_shader_graph") == "1"
+        for s in f.get("samplers", []):
+            if (graph or any(sl in EXTRA_SLOTS or sl.startswith("sg_utility_texture") for sl in s["slots"])) and job.tex(s["texture"]):
                 used.extend(job.tex.puts[s["texture"]])
     if change:
         import chara_shared
@@ -488,11 +506,6 @@ def handle_gfx(job):
         else:
             job.w.put(f"anim/{fn}.json", data)
             anims[fn] = f"anim/{fn}.json"
-    for js in job.glb_js.values():
-        for m in js.get("materials", []):
-            for s in ((m.get("extras") or {}).get("fres") or {}).get("samplers", []):
-                if any(sl in ("gi_diffuse_texture2d", "local_specular_texturecube", "shadow_texture2d") or sl.startswith("sg_utility_texture") for sl in s["slots"]):
-                    job.tex(s["texture"])
     job.man.update({"models": models, "anims": anims})
     job.ext["cameras"] = cams
     job.ext["sockets"] = sorted({nd.get("name") for js in job.glb_js.values() for nd in js.get("nodes", []) if re.match(r"^(pos_|attach_|loc_)", nd.get("name") or "")})
@@ -1052,7 +1065,7 @@ def run(spec, adapter=None, out_root=None, only=None, force=False, models_filter
         if not job.want(part) or models_filter:
             for k in keys:
                 job.ext.setdefault(k, prev.get(k))
-    job.ext["shared"] = sorted({s[1] for s in job.report["shared"]})
+    job.ext["shared"] = sorted({s[1] for s in job.report["shared"]} | (set(prev.get("shared") or []) if job.only else set()))
     man = {k: job.man[k] for k in ("set", "source", "generator", "adapter", "version", "models", "textures", "anims", "env", "graphs") if k in job.man}
     man["asset"] = job.ext
     if job.want("gfx") and getattr(job, "ad_ext", None):

@@ -14,4 +14,5 @@
 | [08_effects.md](08_effects.md) | VFXB 파티클 구조, bex::Effect 런타임, mg1801 이펙트, 웹 파티클 설계 | 작성 중 |
 | [09_character.md](09_character.md) | 캐릭터 ID·에셋·뼈, 모션 시스템(재생·블렌드), 시선·흔들림 본, 캐릭터 glb 변환 | 작성 중 |
 | [chara_assets.md](chara_assets.md) | 캐릭터·NPC 공용 에셋 폴더 `assets/chara/`(텍스처·모델·모션 한 벌, 화면 명세가 가리킴) | 구현 |
+| [13_asset_converter.md](13_asset_converter.md) | 공용 에셋 변환기(아카이브 무관 코어·형식별 처리기·분류별 어댑터, 미니게임 어댑터 `mg_assets.py`), 출력 폴더·압축 분류 규칙, 기존 변환기 이전 표, 미니게임 장면 로더 `shell/mgstage`·보기 페이지 | 구현 |
 | [common_assets.md](common_assets.md) | 시스템 효과음·공용 UI 그림 공용 폴더 `assets/common/{sound,tex}/`(SQ_SE_SYS_*·sys_* 전부 + 여러 화면이 같이 쓰던 것 한 벌, 화면 명세가 가리킴) | 구현 |

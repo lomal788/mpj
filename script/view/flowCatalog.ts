@@ -16,6 +16,7 @@ import { defaultDecoState } from '../shell/plaza/deco';
 import type { PlazaLayoutEntry } from '../shell/plaza/types';
 import { plazaP0Paths, type PlazaFirstFile } from '../shell/plaza/world';
 import { ONLINE_FACES, ONLINE_PART } from '../shell/online/screen';
+import { mgStageKey, mgStageP0Paths, type MgManifest } from '../shell/mgstage';
 import type { FlowJson, FlowKeys } from './flow';
 import { BGM_SPEC_PATH } from './screenBgm';
 
@@ -159,6 +160,13 @@ export async function flowKeys(bundle: string, json: FlowJson, o: FlowCatalogOpt
   if (bundle.startsWith('game:')) {
     const dir = o.gameDir?.(bundle.slice(5));
     return dir ? [[normPath(`${dir}manifest.json`), 'json']] : null;
+  }
+  if (bundle.startsWith('mgstage:')) {
+    const id = bundle.slice('mgstage:'.length);
+    const idx = await json<{ games: Record<string, unknown> }>('mg/index.json');
+    if (!idx.games[id]) return null;
+    const man = await json<MgManifest>(mgStageKey(id, 'manifest.json'));
+    return [['mg/index.json', 'json'], [mgStageKey(id, 'manifest.json'), 'json'], ...mgStageP0Paths(man, o.gltfTextures).map(([p, k]) => [mgStageKey(id, p), k] as [string, string])];
   }
   return null;
 }

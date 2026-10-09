@@ -1,0 +1,38 @@
+{
+ "generator": "tools/analysis/asset_convert.py",
+ "roles": {
+  "model/": "mesh",
+  "tex/": "3d",
+  "anim/": "json",
+  "cam/": "json",
+  "fx/tex/": "3d",
+  "fx/": "keep",
+  "ui/tex/": "ui",
+  "ui/": "json",
+  "sound/": "audio",
+  "data/": "keep",
+  "msg/": "json"
+ },
+ "roots": {
+  "mg/mg0101": {
+   "archive": "mg~mg0101.nx.bea",
+   "adapter": "mg"
+  },
+  "mg/mg0102": {
+   "archive": "mg~mg0102.nx.bea",
+   "adapter": "mg"
+  },
+  "mg/mg0106": {
+   "archive": "mg~mg0106.nx.bea",
+   "adapter": "mg"
+  },
+  "mg/mg0122": {
+   "archive": "mg~mg0122.nx.bea",
+   "adapter": "mg"
+  },
+  "mg/mg0508": {
+   "archive": "mg~mg0508.nx.bea",
+   "adapter": "mg"
+  }
+ }
+}

@@ -18,6 +18,7 @@ import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
 import { onlineTestValues, runOnline, type OnlineRun } from './online_page';
 import { runMgResult, type MgResultRun } from './mgresult_page';
 import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
+import { runMgStagePage, type MgStagePageRun } from './mgstage_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
 import { FLOW_END_FADE } from './view/screenBgm';
@@ -192,6 +193,15 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: MgScenePageRun = await runMgScenePage(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
       (window as unknown as { __mgscene?: MgScenePageRun }).__mgscene = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'mgstage',
+    name: '미니게임 장면 보기',
+    async run(stage, cfg) {
+      const r: MgStagePageRun = await runMgStagePage(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
+      (window as unknown as { __mgstage?: MgStagePageRun }).__mgstage = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

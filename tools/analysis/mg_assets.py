@@ -47,7 +47,7 @@ SCENES = {
     "mg0106": {
         "evidence": "docs/minigame/mg0106.md §7 — ComMap 생성자 @0x7100008784·CreateObj @0x7100009020(GetGameStage 0 → grp05), ComCamera @0x7100003d50 [판독]",
         "base": ["mg0106_bg00", "mg0106_bg01", "mg0106_bg_roof00", "mg0106_rotate_floor00", "mg0106_search_light"],
-        "hidden": ["mg0106_col00"],
+        "hidden": ["mg0106_col00", "mg0106_pos_obj_grp05"],
         "hooks": [("mg0106_pos_obj_grp05", "mg0106_rotate_floor00", "pos_locator00")],
         "spawn": [("mg0106_pos_obj_grp05", r"^pos_obj(?P<t>[A-E])\d+$", "mg0106_obj{t}00", None)],
         "anims": {"mg0106_bg00": [("fmab", "mg0106_bg00_light.fmab")], "mg0106_bg_roof00": [("fmab", "mg0106_roof00_light.fmab")]},

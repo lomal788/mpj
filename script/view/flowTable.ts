@@ -48,6 +48,6 @@ export const FLOW_TABLE: Readonly<Record<FlowScreen, FlowEntry>> = {
     states: { 'cursor:mgm': [{ bundle: 'mgmet', pri: P2, next: true }, { bundle: 'bgm:SM_JIN_MGMET_OPENING', pri: P2, next: true }, { bundle: 'bgm:SM_BGM_MGMET_ENTRANCE_JMP', pri: P2, next: true }], 'cursor:*': [{ bundle: 'plaza:p0', pri: P2, next: true }] },
   },
   mgmet: { own: ['mgmet', 'bgm:SM_JIN_MGMET_OPENING', 'bgm:SM_BGM_MGMET_ENTRANCE_JMP'], predict: [{ bundle: 'mgm01', pri: P2, next: true }, { bundle: 'bgm:SM_BGM_MGM01_FREEPLAY', pri: P2, next: true }, { bundle: 'modeselect', pri: P3, next: false }] },
-  mgm01: { own: ['mgm01', 'bgm:SM_BGM_MGM01_FREEPLAY', 'bgm:SM_JIN_MGM01_FREEPLAY_ENDSTINGER'], predict: [], states: { 'game:*': [{ bundle: 'game:{v}', pri: P2, next: true }] } },
+  mgm01: { own: ['mgm01', 'bgm:SM_BGM_MGM01_FREEPLAY', 'bgm:SM_JIN_MGM01_FREEPLAY_ENDSTINGER'], predict: [], states: { 'game:*': [{ bundle: 'game:{v}', pri: P2, next: true }, { bundle: 'mgstage:{v}', pri: P2, next: true }] } },
   game: { own: [], predict: [{ bundle: 'mgm01', pri: P3, next: true }, { bundle: 'bgm:SM_BGM_MGM01_FREEPLAY', pri: P3, next: true }] },
 };

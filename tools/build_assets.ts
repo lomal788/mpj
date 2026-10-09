@@ -28,7 +28,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
-import { classify, CLASS_RECIPE, encodeTexture, gpuBytes, pngInfo, TEX3D_ROOTS, TEX_RECIPE, type TexHint, type TexPlan, type TexResult } from './assets_tex';
+import { classify, CLASS_RECIPE, encodeTexture, gpuBytes, isTex3d, pngInfo, TEX_RECIPE, type TexHint, type TexPlan, type TexResult } from './assets_tex';
 import { imageSlots, MESH_RECIPE, packGlb, readGlb, type MeshStats } from './assets_mesh';
 import { AUDIO_RECIPE, audioKind, BGM_RECIPE, encodeAudio, wavInfo, type AudioOut } from './assets_audio';
 import { bgmChunkKey, sameLoop, validLoop, type BgmPlan } from '../script/lib/bgmstream';
@@ -528,7 +528,7 @@ function writeReport(state: State): void {
   const total = zero();
   const files: Record<string, unknown>[] = [];
   for (const e of Object.values(state.entries)) {
-    const top = e.rel.split('/').slice(0, e.rel.startsWith('plaza/') ? 2 : 1).join('/');
+    const top = e.rel.split('/').slice(0, e.rel.startsWith('plaza/') || e.rel.startsWith('mg/') ? 2 : 1).join('/');
     const rows = [(folders[top] ??= zero()), (kinds[e.kind] ??= zero()), total];
     let dist = 0;
     let ogg = 0;
@@ -542,7 +542,7 @@ function writeReport(state: State): void {
     let gpuDesk = 0;
     let gpuMob = 0;
     if (e.tex) {
-      const mipped = TEX3D_ROOTS.some((r) => e.rel.startsWith(r));
+      const mipped = isTex3d(e.rel);
       gpuSrc = gpuBytes({ out: 'png', codec: 'png', w: e.tex.w, h: e.tex.h }, true, mipped, 'desktop');
       gpuDesk = gpuBytes(e.tex, e.tex.alpha, mipped, 'desktop');
       gpuMob = gpuBytes(e.tex, e.tex.alpha, mipped, 'mobile');

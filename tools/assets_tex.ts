@@ -21,6 +21,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
 export type TexClass = 'keep' | 'ui' | 'color' | 'data' | 'normal';
 
@@ -69,6 +70,30 @@ export interface TexResult {
 
 /** 3D 텍스처가 있는 폴더(나머지는 2D UI). assets/ 기준 */
 export const TEX3D_ROOTS = ['chara/', 'plaza/world/', 'plaza/player/', 'charselect/chara/', 'mg1801/tex/', 'mg1801/chara/', 'mg1801/effect/', 'mg1801/npc/', 'mg1801/model/'];
+/**
+ * 공용 변환기(tools/analysis/asset_convert.py) 출력 루트 — assets/converted.json { roots{루트: …}, roles{폴더: 역할} } 을 변환기가 적는다.
+ * 루트 아래 역할 '3d' 폴더(tex/·fx/tex/)는 3D, 'ui' 폴더(ui/tex/)는 UI — 새 아카이브를 변환해도 압축 분류가 자동으로 맞는다(docs/engine/13_asset_converter.md §8)
+ */
+let converted: { roots: string[]; dirs3d: string[] } | null = null;
+function convertedRoots(): { roots: string[]; dirs3d: string[] } {
+  if (converted) return converted;
+  const file = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'converted.json');
+  try {
+    const j = JSON.parse(fs.readFileSync(file, 'utf8')) as { roots?: Record<string, unknown>; roles?: Record<string, string> };
+    converted = { roots: Object.keys(j.roots ?? {}).map((r) => `${r}/`), dirs3d: Object.entries(j.roles ?? {}).filter(([, v]) => v === '3d').map(([k]) => k) };
+  } catch {
+    converted = { roots: [], dirs3d: [] };
+  }
+  return converted;
+}
+
+/** 3D 텍스처(밉·색/데이터/노멀 분류)인가 — TEX3D_ROOTS 또는 공용 변환기 루트의 3d 역할 폴더 */
+export function isTex3d(rel: string): boolean {
+  if (TEX3D_ROOTS.some((r) => rel.startsWith(r))) return true;
+  const c = convertedRoots();
+  const root = c.roots.find((r) => rel.startsWith(r));
+  return !!root && c.dirs3d.some((d) => rel.startsWith(root + d));
+}
 /** new Image() 로 2D 캔버스에 직접 그리는 그림(페이지 배경) */
 export const CANVAS_IMAGES = ['modeselect/backdrop_temp.png'];
 
@@ -105,7 +130,7 @@ export function classify(rel: string, w: number, h: number, hint: TexHint): TexP
   if (hint.cube) return keep('cube');
   if (/(^|_)(lut|ramp|diff)(_|$)/i.test(name)) return keep('lut');
   if (w % 4 || h % 4) return keep('size%4');
-  const is3d = TEX3D_ROOTS.some((r) => rel.startsWith(r));
+  const is3d = isTex3d(rel);
   if (!is3d) return { cls: 'ui', srgb: true, mips: false, reason: 'ui' };
   if (hint.slot === 'normal' || /_(nml|nrm)(_|$)/.test(name)) return { cls: 'normal', srgb: false, mips: true, reason: hint.slot === 'normal' ? 'glb normalTexture' : 'name' };
   const colorByName = /_(alb|emi|col|base)(_|$)/.test(name);

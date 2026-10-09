@@ -4,6 +4,7 @@
  * 한 프레임(tick, 게이트가 열린 때만 step): 입력 → game.update → MGSound 갱신 → OnGameSequenceBefore → 처리기 1개 → After →
  *   바뀌면 하위 0·OnSetGameSequence → (7~9) 종료 타이머 검사 → UI 틱(§12.4 순서 [추정]).
  */
+import { FADE_TIME_PRESET } from '../../lib/sound';
 import { SplitScreen } from '../../lib/splitscreen';
 import type { FrameGate } from './gate';
 import type { ResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
@@ -110,6 +111,7 @@ export class MgScene {
   resultOpts = { ...DEFAULT_RESULT_OPTIONS, pcPosOffset: [0, 0, 0] as [number, number, number], motions: {} as ResultStageInput['opts']['motions'] };
   resultStage: ResultStage | null = null;
   private resultWaiting = false;
+  private returnRequested = false;
   /** 결과 무대 승리 텔롭(MGResult+0x68) */
   resultTelop: MgTelop | null = null;
   readonly ctx: MgSceneContext;
@@ -156,6 +158,19 @@ export class MgScene {
       players: sc.players,
       seed: sc.setup.seed,
       rand: sc.setup.rand,
+      rng: sc.setup.rng ?? null,
+      play: sc.setup.play ?? null,
+      wipe: {
+        fadeOut: (type, speed) => sc.wipe.direct(true, type, speed),
+        fadeIn: (type, speed) => sc.wipe.direct(false, type, speed),
+        get playing() {
+          return sc.wipe.core.playing;
+        },
+        core: sc.wipe.core,
+      },
+      requestReturnScene: () => {
+        sc.returnRequested = true;
+      },
       get frame() {
         return sc.frame;
       },
@@ -165,7 +180,7 @@ export class MgScene {
       get instRetry() {
         return sc.retry;
       },
-      pad: (pid) => sc.pads[pid] ?? { now: 0, down: 0, lx: 0, ly: 0, rx: 0, ry: 0 },
+      pad: (pid) => sc.pads[pid] ?? { now: 0, down: 0, lx: 0, ly: 0, rx: 0, ry: 0, accX: 0, accY: 0, accZ: 0 },
       setStartTelop: (type, user) => {
         sc.startTelop = new TelopSlot(type, user ?? null);
         sc.makeTelop(sc.startTelop);
@@ -297,13 +312,13 @@ export class MgScene {
     return true;
   }
 
-  private step(inputs: readonly ({ buttons: number; lx: number; ly: number; rx: number; ry: number } | null)[]): void {
+  private step(inputs: readonly ({ buttons: number; lx: number; ly: number; rx: number; ry: number; accX?: number; accY?: number; accZ?: number } | null)[]): void {
     this.events.length = 0;
     this.pads = [];
     for (let i = 0; i < 4; i++) {
       const p = inputs[i];
       const b = p?.buttons ?? 0;
-      this.pads[i] = { now: b, down: b & ~this.prevButtons[i], lx: p?.lx ?? 0, ly: p?.ly ?? 0, rx: p?.rx ?? 0, ry: p?.ry ?? 0 };
+      this.pads[i] = { now: b, down: b & ~this.prevButtons[i], lx: p?.lx ?? 0, ly: p?.ly ?? 0, rx: p?.rx ?? 0, ry: p?.ry ?? 0, accX: p?.accX ?? 0, accY: p?.accY ?? 0, accZ: p?.accZ ?? 0 };
       this.prevButtons[i] = b;
     }
     this.game.update?.();
@@ -313,6 +328,7 @@ export class MgScene {
     const next = this.handler(cur);
     this.game.onGameSequenceAfter?.();
     if (next !== cur) this.setStage(next);
+    if (this.returnRequested && this.stage !== STAGE_END) this.setStage(STAGE_END);
     if (this.stage >= 7 && this.stage <= 9 && this.endTimer && this.endTimerStep()) {
       this.game.onThreeMinTimerEnd?.();
       this.setStage(10);
@@ -821,7 +837,7 @@ export class MgScene {
         this.sound.stopBgm(false);
       }
       this.wipe.fadeOut(1);
-      this.emitFn({ k: 'groupStop', groups: [0x20], sec: 0 });
+      this.emitFn({ k: 'groupStop', groups: [0x20], sec: FADE_TIME_PRESET[6] });
       this.sub = 1;
       return 16;
     }

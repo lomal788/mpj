@@ -895,7 +895,7 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 | 소비자 | 이전 | 어떻게 | 골든 |
 |---|---|---|---|
 | `shell/charselect/preview3d.ts`(캐릭터 선택, 광장 플레이어·NPC·결과 무대가 빌림) | 이전 | 칸 시간축 = `CharacterCore` 주 슬롯(`RULES_WEB`), 믹서·깜빡임·보임 = `CharacterView`, 몸·눈 그래프·GPU 준비·broker 는 그대로. `playMotion` 추가(속도·시작·force) | 같음 |
-| `shell/plaza/player.ts`(PlazaChara) | 이전 | Preview3D 경유, `transitBlend` = 코어 `mpatBlendCompat` | 같음(4명) |
+| `shell/plaza/player.ts`(PlazaChara) | 이전 | Preview3D 경유, `transitBlend` = 코어 `mpatBlendCompat`(원본 규칙 기본 뒤에는 코어 mpat 조회 a/b·α/β, §14.7) | 같음(4명) |
 | `shell/plaza/heading.ts` | 이전 | `Heading` = 코어 `HeadLook` + 어댑터 `HeadView`(광장 이름 잇기만) | 같음 |
 | `shell/plaza/npc.ts`·`npcMaterial.ts` | 이전 | Preview3D·Heading 경유, `isFinished` = 코어, 눈 = 코어 `EyeLook('npc')`. NPC 그래프 재질은 그대로 | 같음 |
 | `shell/mgresult/stage.ts` | 이전(파일 무수정) | Preview3D·plaza Heading 경유 | 같음(4 패턴) |
@@ -908,7 +908,7 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 
 ### 14.6 검증(노드, 헤드리스 없음)
 
-- `tools/test_character.ts`(123건): 0 해시 · 1 같은 모션 · 2 시작 프레임·f32 0.1·shift · 3 블렌드 곡선(type 4 elapsed/blend, type 1 이전 포즈 고정, mode 2) · 4 mpat(mg1801_pc a=1→f32(1/60), α/β 식, 표 순서, 광장 호환) · 5 본·shape clamp · 6 진행(BPM 90/100/120/150/180/240 → 27/24/20/16/14/10 스텝 §6.7, 루프 감김, 역재생, 속도 곱, 가변 dt) · 7 큐 순서 · 8 시선(60°/40° 경계·사이 보간·데드존 20° 부호·chin·neck) · 9 눈·깜빡임(묶음 프레임 mod 380) · 10 FTRG(최초 e=f·루프 M0/1/2·역방향·즉시 플래그·가중 선택, 실제: pc01 swing 2 RC→`SQ_SE_MG1801_SWING`·3 VO→`SQ_VOI_PC01_JUMP`(vo_pc_base 참조), pc02 자기 보이스, pc62 프레임 2 `ACTION_HIGH`, pc02 co_walk00 발소리 17·39 + 지면, VO_CO_WALK00 모드 1) · 11 import 경계·할당 · 12 소비자 골든 · 13 어댑터 원본 전이(pc01 co_chr_slct00a→co_walk00: 눈꺼풀 뼈·얼굴 shape 0.07 s → 5 스텝째, 골반 0.1 s → 6 스텝째부터 새 모션 그대로).
+- `tools/test_character.ts`(이전 때 123건, 원본 규칙 기본 뒤 135건): 0 해시 · 1 같은 모션 · 2 시작 프레임·f32 0.1·shift · 3 블렌드 곡선(type 4 elapsed/blend, type 1 이전 포즈 고정, mode 2) · 4 mpat(mg1801_pc a=1→f32(1/60), α/β 식, 표 순서, 광장 호환) · 5 본·shape clamp · 6 진행(BPM 90/100/120/150/180/240 → 27/24/20/16/14/10 스텝 §6.7, 루프 감김, 역재생, 속도 곱, 가변 dt) · 7 큐 순서 · 8 시선(60°/40° 경계·사이 보간·데드존 20° 부호·chin·neck) · 9 눈·깜빡임(묶음 프레임 mod 380) · 10 FTRG(최초 e=f·루프 M0/1/2·역방향·즉시 플래그·가중 선택, 실제: pc01 swing 2 RC→`SQ_SE_MG1801_SWING`·3 VO→`SQ_VOI_PC01_JUMP`(vo_pc_base 참조), pc02 자기 보이스, pc62 프레임 2 `ACTION_HIGH`, pc02 co_walk00 발소리 17·39 + 지면, VO_CO_WALK00 모드 1) · 11 import 경계·할당 · 12 소비자 골든 · 13 어댑터 원본 전이(pc01 co_chr_slct00a→co_walk00: 눈꺼풀 뼈·얼굴 shape 0.07 s → 5 스텝째, 골반 0.1 s → 6 스텝째부터 새 모션 그대로).
 - 2026-10-09 사용자 결정(기본 = 원본 규칙) 뒤: `GOLDEN_SHA256` = 원본 규칙 기본값으로 돌린 새 기준(결과가 바뀌는 것이 정상), `GOLDEN_SHA256_WEB` = 이전 전 기준 그대로 — `characterDefaults`를 RULES_WEB·HEAD_RULES_WEB로 돌린 실행이 여전히 같아야 한다(시험 12절 두 줄). 시나리오별로 바뀐 까닭은 아래 표.
 
 | 시나리오 | 원본 규칙에서 바뀐 것(전 = RULES_WEB 실행) | 바뀌지 않은 것 |
@@ -927,7 +927,7 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 
 2026-10-09 사용자 결정: **기본 = 원본 규칙**. 모든 소비자의 기본값이 `RULES_ORIGINAL`·`HEAD_RULES_ORIGINAL`이다(코어 `characterDefaults`). `RULES_WEB`·`HEAD_RULES_WEB` 정의는 남기고 기본 경로에서 쓰지 않는다 — 끄는 길은 `characterDefaults` 전체 또는 `createCharacter({original:false})`.
 
-| 스위치 | `RULES_WEB`(기본, 이전 소비자) | `RULES_ORIGINAL`·`HEAD_RULES_ORIGINAL`(`createCharacter({original:true})`) | 근거 |
+| 스위치 | `RULES_WEB`(끔, 이전 웹 결과) | `RULES_ORIGINAL`·`HEAD_RULES_ORIGINAL`(기본) | 근거 |
 |---|---|---|---|
 | 기본 블렌드 | 0.1(double) | f32 0.1(0x3DCCCCCD) | §6.4 |
 | mpat a/b | 안 씀(광장은 소비자가 a/60 만 넘김) | 일치 행 a≥0 → blend f32(a/60), b≠−1 → type | §6.5 |
@@ -969,3 +969,6 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 - 경계 시험 허용 목록 1줄씩(check_charselect 6·test_plaza_world 8)에 `lib/character`·`lib/character-three`를 넣었다(전례: transition·splitscreen). 캐릭터 선택 폴더의 "자기 폴더·three 만" 규칙에 공용 lib 예외를 두는 것이다.
 - 캐릭터 SE·보이스·발소리 파일(SQ_SE_FS_PC*, SQ_VOI_PC*)은 웹 에셋에 없다. 런타임은 라벨 사건만 낸다 — 변환 범위 결정 필요.
 - 다중 발소리 재질 혼합(05 §7.7 변수 7+i)은 지면 이름 하나만 넘긴다.
+- 클립에 트랙 없는 뼈를 처음 만난 값(쉬는 자세)으로 두는 것과 스프링 속도 초기값 0 은 [추정]이다(§14.7 표).
+- 같은 모션 다시 재생 무시(`playForce` 끔)로, 캐릭터 선택에서 대기 중 취소처럼 같은 모션을 다시 부르는 경로는 처음부터 다시 시작하지 않는다. 원본 `Play(name)` 규칙이지만 원본 화면이 그 경로에서 forceRestart 를 켜는지는 판독하지 않았다.
+- FTRG 조건 행·이벤트 플래그 바이트 1·2·구간 길이는 근사다(§14.8).

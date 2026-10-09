@@ -257,9 +257,9 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
         case 'perfect': {
           rmPerfectView(mg1801Ui(this, this.assets, () => this.camera), this.sound, e, state.frame, state.bpm, this.camera);
           /* CaComUiPerfectTelop::SettingEffect(위치, 1.5, 레이어 1) → In → FUN_710043ce38: mg_common_pt_effect_00 을 (그 플레이어 엔티티 x,
-             네 플레이어 엔티티 y 의 최소, z)에 배율 1.5 로 [판독 FUN_710043af00]. 속도 PlayRate·레이어 비트는 effects.ts 근사 11 */
+             네 플레이어 엔티티 y 의 최소, z)에 배율 1.5 로 [판독 FUN_710043af00]. 속도 PlayRate = BPM/120(GetPlayRate @0x7100425e60), 레이어 비트는 effects.ts 근사 8 */
           const p = state.players[e.player]?.pos;
-          if (p && this.fxLoaded) this.fx.spawn('mg_common_pt_effect_00', { x: p.x, y: Math.min(...state.players.map((q) => q.pos.y)), z: p.z }, 1.5);
+          if (p && this.fxLoaded) this.fx.spawn('mg_common_pt_effect_00', { x: p.x, y: Math.min(...state.players.map((q) => q.pos.y)), z: p.z }, 1.5, state.bpm / 120);
           break;
         }
         case 'effect':

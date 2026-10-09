@@ -539,6 +539,8 @@ mg1801 로직(`games/mg1801/logic/game.ts`)은 이미 MinigameFlow 8~13 을 자�
 
 2026-10-09 [rhythm] 갱신: 리듬 공용 틀을 mg1801 에서 분리했다 — `web/script/games/rhythm/`(로직 import 0) + `games/rhythm/view/`. 기반 `RmMgSceneBase` 의 흐름 슬롯(`onGameStartAfter`·`onGameMain`·`onGameEnd`·`onGameFinish`·`onGameEndingBefore`·`onGameEnding`, bool 반환)과 `update()`(파이버)·`updateAnimation()` 이 위 `MgGame` 이름·자리와 맞춰져 있어, 2 단계는 어댑터 하나 + 웹 MinigameFlow 대리(PREROLL·흐름 switch) 제거가 된다. 연결 계획·BGM·박자 시작 프레임이 바뀌는 이유는 [../engine/02_rhythm.md](../engine/02_rhythm.md) §14.6. 이번 분리는 동작 불변(골든 바이트 일치)이고 위 2 단계는 여전히 하지 않았다.
 
+2026-10-09 [mg-connect] 갱신: 2·3 단계를 했다 — 어댑터 `games/rhythm/mgGame.ts`, 실행 경로·결과 기록·설정 전달·결정성 규칙은 12.12.
+
 ### 12.11 사용자 확인 필요 (이 절)
 
 | 항목 | 정한 것(원본 쪽) | 이유 |
@@ -553,3 +555,159 @@ mg1801 로직(`games/mg1801/logic/game.ts`)은 이미 MinigameFlow 8~13 을 자�
 | 승리 텔롭 여러 명 정렬 | PlayerID 오름차순 | `FUN_7100215d00` 정렬 키 미판독 |
 | 상태 얼굴 In/Out 등록 | MGSetting StatusIn/Out 으로 MGUiMgr 에 등록 | ComUiStatus 생성자가 EntryUi 를 부르는 줄은 보지 못함(데이터 41행이 Telop/FadeOut 인 것과 맞음) |
 | 더미 게임 기본값 | mg0101 표 행, 오프닝 660 프레임(MG BGM 614 프레임 지연이 들리도록), 본편 480 프레임 | 원본 게임이 아닌 시험용 |
+
+### 12.12 웹 게임 연결 계약 (2026-10-09, [mg-connect])
+
+이 절부터 모든 미니게임은 이 틀 위에서 돈다. 예전 `GameDef.createLogic → logic.step(pads, sound)` 경로(게임 안 MinigameFlow 대리)는 없앴다. 첫 소비자는 mg1801(리듬)이다. 12.10 의 2·3 단계를 이번에 했다.
+
+#### 12.12.1 게임 등록 (`script/game.ts` `GameDef`)
+
+| 칸 | 뜻 |
+|---|---|
+| `id`·`title`·`assetsDir`·`players`·`options` | 그대로(게임 manifest 폴더, 패널 설정) |
+| `load()` | 몸체 코드 분할 받기(그대로) |
+| `createLogic(setup, play)` | **`GameLogic` = `MgGame` 훅 + `state`·`events`·`done`·`result`·`sound`** 를 돌려준다. 실제 로직 객체는 틀이 부르는 `setup(ctx)`(원본 SetupGame/SyncedSetupGame 자리)에서 만든다. `play` = 프리 플레이 설정(12.12.5) |
+| `createView(ctx, assets)` | 게임 3D·게임 2D·게임 소리(그대로). 매 tick 뒤 `onStep(state, events)`, rAF 마다 `render(state)`, tick 전 `observe(t)` = 사운드 관측 |
+| `describeResult(r, setup)` | 페이지 결과 글(표시만). 기록 byte 는 여기서 만들지 않는다(12.12.4) |
+
+호스트(`script/mgrun.ts` `createMgRun`, DOM 없음 — 노드 시험도 같은 함수를 쓴다)가 한 판을 조립한다.
+1. 난수: `new BexRandModule(seed)` → `SetSyncRandSeed(async.Rand())` = 원본 장면 시작 상태 8 의 오프라인 시드([../engine/01_core.md](../engine/01_core.md) §6.7). 이 모듈을 `MgSceneSetup.rng`(게임용 async·sync 전부)와 `rand`(틀용 sync u32)로 같이 넘긴다 — 원본 RandModule 싱글턴 하나.
+2. `game = def.createLogic(setup, play)`, `scene = new MgScene({ mgId, players, seed, rand, rng, tables, ui, wipe, endless, judgeType, playMode: 1, play }, game, gate)`.
+3. 매 프레임: `game.sound = view.observe(t)` → `scene.tick()`(게이트가 열면 한 프레임) → `view.onStep(game.state, game.events)` + 틀 사건 → `MgSceneSound` → 그리기 `view.render(state)` 뒤 틀 2D `MgSceneUi.draw(scene.layers())`.
+4. 끝 = `scene.stage === STAGE_END`(단계 0x13). 결과 = 12.12.4.
+
+실행 경로: `index.html?game=<id>`(패널 시작)과 광장 → 프리 플레이 목록의 `playFromList` 가 같은 `start()` → `createMgRun` 을 쓴다. 시험 페이지 `ui.html?ui=mgscene&game=mg1801` 도 등록 게임을 같은 호스트로 돌린다(사운드 관측 없음 = 로직 프레임 모델, 끝나면 기록 byte 를 글로 보인다). `game` 이 없으면 예전처럼 더미 게임이다.
+
+끼움점: 게임 에셋은 `assetsDir`(게임 manifest), 틀 에셋은 `assets/mgscene/`(tables·ui·sound)를 호스트가 판마다 읽는다. 화면 전환은 `MgSceneSetup.wipe = logicWipe()`(앱 전환이 로직 전환을 비춘다, [../engine/15_transition.md](../engine/15_transition.md)) — 장면 시작 단계 3 FadeIn(마지막 종류), 나갈 때 단계 16 FadeOut(White, 1.0).
+
+#### 12.12.2 리듬 어댑터 (`games/rhythm/mgGame.ts` `RmMgGame`)
+
+`RmMgGame` 하나가 `RmMgSceneBase`(리듬 10종 기반)의 흐름 슬롯을 `MgGame` 훅에 잇는다. 리듬 폴더는 import 0 을 지키려고 틀 문맥을 구조 형식(`RmHost`)으로만 받는다. 게임(mg1801)은 `new RmMgGame((ctx) => new Mg1801Game(…))` 로 쓴다.
+
+| MinigameFlow 단계 | mg1801 vtable 훅 [판독] | 웹 |
+|---|---|---|
+| 1 OnGameInit | `RmMgSceneBase::OnGameInit` @0x7100443e74: 리듬 쿠킹 2번째 이후·메인 BGM 재생 중이 아니면 1 | 틀 기본 참(앞 게임 BGM 이 이어지는 경로는 웹에 없다) |
+| 3 OnGameFirstFade | inline `return 1` mg1801 @0x710000f1a4 | 틀 기본 참, 틀 와이프 in 20 |
+| 4 OnGameOpening / 5 Skip | inline 1 @0x710000f1ac / @0x710000f1b4, MGSetting mg1801 OpeningSkip 0 | 틀 기본 참 → 바로 6 |
+| 6 OnGameStartBefore | inline 1 @0x710000f1bc | 기본 참 |
+| 7 OnGameStartTelopBefore / OnGameStart | inline 1 @0x710000f1c4 / @0x710000f1cc. 시작·끝 텔롭 = −1(`RmMgSceneBase::SetupGame` @0x71004415a4 "시작/끝 텔롭 끔") | `setup` 에서 `setStartTelop(−1)`·`setFinishTelop(−1)` → 텔롭 없이 1 프레임 |
+| 8 OnGameStartAfter | `RmMgSceneBase::OnGameStartAfter` @0x7100443fa8 | `scene.onGameStartAfter()` |
+| 9 OnGameMain | @0x71004441e8 | `scene.onGameMain()` |
+| 10 OnGameEnd | @0x71004453c4 | `scene.onGameEnd()`. 리믹스 연속(페이드 끝 → `RequestReturnScene`)이면 `ctx.requestReturnScene()` → 틀이 그 프레임 끝에 단계 0x13 |
+| 11 OnGameFinish | vt+0x2F8 = 1 | `scene.onGameFinish()`. 끝 텔롭 −1 이라 틀 단계 11 이 2 프레임(옛 웹 `finishFrames` 대신 — 길이 같음) |
+| 12 OnGameFinishAfter | inline 1 @0x710000f1d4 | 기본 참 |
+| 13 OnEndingInit | inline 1 @0x710000f1dc(SetPlayer 없음) | 기본 참 → **갈래 B**, EndingChangeCut 0 → 엔딩 2단계부터 |
+| 14 엔딩 2 OnGameEndingBefore | @0x7100445518 | `scene.onGameEndingBefore()` |
+| 14 엔딩 3 OnGameEnding | @0x7100445620 — 끝에서 vt+0x308 OnRmGameEndingFree(결과 연출 끝) | `scene.onGameEnding()`; 결과 점수판 끝(`done`)이면 참 |
+| 14 엔딩 4 OnGameEndingAfter | inline 1 @0x710000f1f4 | 기본 참 |
+| 16 OnGameLastFade / 17 OnGameExit | `RmMgSceneBase` (stage=0 / vt+0x320 = 1) | 기본 참. 틀이 FadeOut(White, 1.0) 20 |
+
+프레임 안 순서(01_core §5.3, 02_rhythm §14.4 와 같은 자리):
+- 틀 ① 패드 → ② `game.update()` = **리듬 패드 읽기(ctx.pad → Pads) → 사건 비우기·사운드 관측·frame++·흐름 단계 갱신 → RmSoundMan 파이버 → 박자 시계 → 결과 연출 파이버 → 제품 파이버**
+- → ④ 흐름 처리기 하나(위 표) → `onGameSequenceAfter` = `updateAnimation()`(게임 모션·결과 모션) → 바뀌면 `onSetGameSequence(다음)` = 리듬 `flow` 는 다음 프레임부터(옛 `flow = nextFlow` 규칙 그대로) → ⑤ UI 틱(틀 와이프 1 스텝).
+- 결과 연출이 끝난 프레임(`done`)에는 옛 경로처럼 처리기·애니 갱신을 하지 않고, 그 뒤 프레임은 리듬 갱신을 멈추고 사건만 비운다(옛 경로는 페이지가 스텝을 멈췄다).
+
+흰 페이드(원본 `bq::WipeModule` 직접 호출, 02_rhythm §14.6-3): 리듬의 `RmWipe` = `ctx.wipe`(틀 `MgWipe` 의 **같은 Transition 코어**). `fadeOut/fadeIn(type, speed)` = `MgWipe.direct` — 진행은 틀 UI 틱이 한 번만 한다. `playing` = 코어 `playing`(WipeModule::IsPlayingFadeAnim). 옛 경로는 프레임 **앞**에서, 새 경로는 프레임 **끝**에서 한 스텝 가므로 처리기가 읽는 값(어느 프레임에 끝났는지)은 같다. 화면은 앱 전환이 로직 전환을 비추므로 리듬 UI(`RmUi`)는 앱 전환이 이미 무엇을 비추고 있으면 따로 follow 하지 않는다.
+
+난수: `ctx.rng`(호스트 BexRandModule). 옛 `Mg1801Game` 안의 `new BexRandModule(setup.seed); setSyncRandSeed(rand())` 를 호스트로 옮겼다 — 소비 순서·값 같음.
+입력: `FrameGate → ctx.pad(pid)` 만. 체감 입력(가속도)을 잃지 않게 `MgPadInput`·`MgPadState` 에 `accX/accY/accZ` 를 더했다(감사 §2 체감 입력 "acc 손실" 해소, mg1801 `Player::humanSwing` 이 읽는다).
+
+#### 12.12.3 시작 프레임이 바뀌는 까닭과 새 값 (원본 근거)
+
+PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프레임(옛 `state.frame`, 1 부터) 기준 **OnGameStartAfter 가 61 → 27(−34)**. 틀 프레임(0 부터)으로:
+
+| 틀 프레임 | 단계 | 근거 |
+|---|---|---|
+| 0 | 1 OnGameInit 참 → 3 | @0x7100443e74, 단계 1 처리기(§5.1) |
+| 1~22 | 3 첫 페이드: 하위 0 FadeIn → 와이프 in 20 → 끝 본 다음 프레임 판단 | 와이프 20 프레임·속도 1.0 [판독 12.1], 1 + N + 1 규칙(12.5, [추정 12.11]) |
+| 23 | 4 오프닝: 훅 참·OpeningSkip 0 → 6 | inline 1 @0x710000f1ac, MGSetting |
+| 24 | 6 시작 전: 훅 참·건너뛰지 않음 → 7 | inline 1 @0x710000f1bc, FUN_71002e14e8 |
+| 25 | 7 시작: 텔롭 −1 → 하위 99 → OnGameStart 참 → 8 | SetupGame 텔롭 끔, inline 1 @0x710000f1cc, FUN_71002e16c0 |
+| 26 | 8 OnGameStartAfter(마스터 SQ_BGM_RC_MAIN_RHYTHM 시작) | @0x7100443fa8 |
+
+그 뒤 사건(마스터·게임 BGM 접수·줄 배분·종료 BGM·결과·끝)은 모두 같은 양(−34)만큼 당겨지고 서로의 간격은 그대로다. 확인: **바꾸기 전 코드에 `prerollFrames: 26` 만 준 실행**과 새 코드(틀 위 실행)의 로직 기록(프레임마다 state·events, 내부 박자·난수 소비 포함)이 `flow`·`fade` 두 칸을 빼고 바이트 단위로 같다(12.12.7). `flow` 는 이제 원본 MinigameFlow 단계 번호(1·3·4·6·7·8…·12 FinishAfter·13 EndingInit·14 결과 대기)이고, `fade` 는 틀 와이프 코어(처음 덮음·단계 3 FadeIn 포함, 프레임 끝 스텝)를 보인다.
+
+시험 기대값: `test_mg1801` 의 프레임 기대값은 모두 상대값(OnGameStartAfter·BGM 시작 기준)이라 **바뀐 것이 없다**. 절대 프레임이 들어간 기록 해시만 바뀐다 — `character_golden` 의 mg1801 두 시나리오(12.12.7).
+
+#### 12.12.4 결과 갈래와 기록 계약
+
+- 갈래: 리듬은 시작 텔롭(START)·결과 점수판을 `RmMgSceneBase` 가 직접 띄우고 OnEndingInit 에서 SetPlayer 하지 않으므로 **갈래 B** 다(결과 3D 무대 없음).
+- 기록(원본 `MinigameModeWork::SetMinigameResult` 계약 `{id, judge, results[4]}` raw byte, [mgm01_freeplay.md](mgm01_freeplay.md) §6.6). 한 판 끝 쪽 writer 는 [미확정]이므로 같은 칸을 쓰는 main `FUN_71001f271c`(analysis/decomp/mgm01_main_contract.c) 규칙을 따른다 [판독, 호출자 미확정] — `shell/mgscene/resultEntry.ts` `minigameResultEntry`:
+  - `id` = MinigameID, `judge` = GameJudgeType.
+  - GameRule 8 또는 10(`(rule | 2) == 10`): 네 byte 를 한 번에 — judge 0 이면 0xFF×4, 아니면 0x02×4.
+  - 그 밖: judge 0 이면 PlayerList 순(PlayerID 순 [추정: 목록 종류 1])의 `GetMinigameRank` byte, judge ≠ 0 이면 `GetMinigameWinLose` byte(−1 = 0xFF). 이 값들은 게임이 OnEndingInit 까지 `ctx.setRank/setWinLose` 로 쓴 PlayerWork 값이다(초기 −1, `FUN_71001f1e20`).
+- judge(프리 플레이) = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60: `SetGameJudgeType(GameRule ≠ 7 && GameRule ≠ 0)` [판독, analysis/decomp/mgmet_main_work.c] → `freePlayJudgeType(rule)`. 같은 값을 `MgSceneSetup.judgeType`(결과 무대)에도 넘긴다.
+- mg1801(GameRule 10 Rhythm, judge 1) → **`[2, 2, 2, 2]`**. 승패 표 점수는 `byte == (judge ≠ 0)` 일 때만 오르므로 리듬 게임은 승을 주지 않는다(원본 그대로). 옛 웹은 표시 순위 0 → 1 이라 네 명 모두 승 1 을 기록했다.
+- 실패: 미등록 게임·몸체/에셋 로딩 실패·실행 중 오류·중단은 `play()` 가 **null** 을 돌려주고, 목록(`mgm01_page`)은 기록·Round·플레이 횟수를 건드리지 않고 돌아온다. 시험용 `fakeResult`(Math.random 승자)는 `cfg.play` 가 없는 ui.html 단독 시험에서만 쓴다.
+- 플레이 횟수(MG save head +1): 원본은 이 장면의 `save`(단계 11·16, `FUN_71002dbb80`)가 쓴다. 웹은 결과가 돌아온 때 목록 페이지가 +1(최대 999) 한다 [근사: 세이브 사건 처리 자리 미구현].
+
+#### 12.12.5 설정 전달 (프리 플레이 → setup)
+
+| 값 | 원본 | 웹 경로 | mg1801 |
+|---|---|---|---|
+| 팀 | `FUN_71001f1930`·`FUN_71001f1e20` → PlayerWork TeamID·IsGamePlay | `req.team.teamIdByPid/gamePlayByPid` → `MgPlayerSetup.teamId/gamePlay` | 소비 안 함(GameRule 10, 4명 전원) |
+| CPU | ComLevel | `GameSetup.players[].comLevel`, `play.comLevel` | 소비 안 함(RmGameWork +0xE70 읽는 곳 없음, mg1801/index.ts 머리) |
+| 리듬 모드 | `RhythmWork::SetMode`(0 노멀·1 하드) | `play.rhythm` | **소비**: `RmMgSceneBase::SyncedSetupGame` @0x7100443340 PlayMode 1 → `+0x20 = mode ? 2 : 0` → `Mg1801Options.mode` |
+| 엔드리스 | flag 1 | `MgSceneSetup.endless` | 소비 안 함(mg1801 은 ID {4,5,9,11,21} 밖, 타이머 −1) |
+| 설명 요청 | flag 4 + MGList IsCallInst → mgInst 장면 | `play.callInst` | 전달만. 설명 장면(mgInst)은 웹에 없다 — `isInst`(P)는 거짓으로 둔다 |
+| 자이로 | MGList UseGyro → flag 6(`Mgm01SetupMinigamePlayInfo`) | `play.useGyro` | 전달만. 입력은 게이트 패드의 acc(있으면 Params.acc 비교), 없으면 A |
+| 순서 | GetOrder | `order` = pid | 레인 = pid(그대로) |
+
+직접 실행(`index.html?game=mg1801`)은 패널 설정(`mode`·`course`·`cpuMiss`)을 쓰고, 프리 플레이에서 온 `play.rhythm` 이 있으면 그것이 모드를 정한다.
+
+#### 12.12.6 결정성 규칙 (2026-10-09 사용자 결정 — 게임 계약)
+
+원본 온라인은 **입력만** 동기화하고 기기마다 같은 계산을 한다([../engine/12_online_sync.md](../engine/12_online_sync.md) §1·§3·§4). 그래서 웹 로직(`games/<id>/logic`, `games/rhythm`(view 밖), `shell/mgscene`, `core`)은 다음을 지킨다.
+
+1. 시간: 고정 1/60 스텝(`MG_DT`·`RM_DT`, f32)만. 벽시계·`performance.now`·`Date`·rAF dt 는 로직에서 쓰지 않는다(화면 보간은 예외).
+2. 난수: `BexRandModule` 만(sync/async 용도는 원본대로). 로직에서 `Math.random` 금지.
+3. 입력: `FrameGate` 를 거친 패드(`ctx.pad`)만. 로직이 DOM·Gamepad API 를 직접 읽지 않는다.
+4. 원본 f32 값은 `Math.fround` 로 맞춘다.
+5. seed 는 게임이 만들지 않는다. 호스트가 판 시작에 한 번 만들어(`script/mgrun.ts` `localSeed`: URL·패널 값 또는 한 번의 무작위) setup 으로 넘기고, 호스트가 `BexRandModule` 을 만든다. 온라인은 나중에 합의 seed(원본 main seed @0x7100162210, 12_online_sync §4.1)를 같은 자리로 넘긴다(구현 안 함). 원본 시드 규칙은 01_core §6.6~6.7.
+6. 로직과 화면 분리: 화면 상태가 로직 결과에 영향을 주면 안 된다. **예외(원본 그대로)**: 리듬의 사운드 관측(`view.observe` → `game.sound`, 원본이 게임 프레임에서 시퀀서 전역 G14·G12·L0 을 읽는다, 02_rhythm §5.1)은 화면 쪽 값이 로직에 들어간다. 결정성 시험은 이것을 입력 기록에 넣는다. 온라인에서 이 값을 어떻게 맞출지는 [미확정](사용자 확인 필요).
+
+검사: `tools/mg_determinism.ts` — `determinismCheck`(같은 seed·입력 기록으로 두 번 돌려 매 틱 로직 상태 해시 비교)와 `staticLogicCheck`(`Math.random`·`performance.now`·`Date.now`·`new Date`·`navigator.getGamepads`·`requestAnimationFrame`·`document.`·`window.` 검색). 새 게임은 이 도우미 하나를 시험에서 부른다.
+
+#### 12.12.7 시험·검증 기록
+
+**옛 코드 ↔ 새 코드 로직 기록.** 바꾸기 전 코드 사본(scratchpad)에 `prerollFrames: 26` 만 준 실행과 새 코드(틀 위, `tools/mg_node_host.ts`)를 같은 입력으로 돌려, 프레임마다 `[state, events, Mg1801Game 객체 전체]`(박자 시계·MT 상태·RmGameWork·채소 풀·플레이어·결과 기록 포함, `flow`·`nextFlow`·와이프·`fade`·옛 `preroll`·`finishFrames` 칸 제외)의 해시와 마지막 결과를 비교했다. 기록기는 시험 기대값과 무관한 scratchpad 스크립트다.
+
+| 경우 | 기록 줄(프레임 + 결과) | 전/후 |
+|---|---|---|
+| 노멀 시드 1 / 하드 시드 7 / CpuMiss 시드 3 | 3,222 ×3 | 같음 |
+| 리듬 쿠킹 노멀 1번째 / 마지막 | 3,012 / 3,222 | 같음 |
+| 롱 4번째(BPM 180) / 6번째 | 2,112 / 2,252 | 같음 |
+| 리믹스(A 슬롯, RequestReturnScene) | 846 | 같음 |
+| 사람 4명 A·가속도 섞기(하드) / 사람 1P 37 프레임마다 A·예외 캐릭터 | 3,222 / 3,222 | 같음 |
+| 컨트롤 안내 와이프 400 | 3,372 | 같음 |
+| 사운드 관측 지연 0 / 롱 BPM 180 지연 3 | 3,222 / 2,115 | 같음 |
+
+13 경우 36,263 줄이 모두 같다. 틀 위 실행은 리듬 끝(`done`) 뒤 단계 14 → 16(FadeOut White 20 + 1) → 17 → 0x13 까지 24 틱을 더 돈다(리믹스는 RequestReturnScene 으로 0 틱). 그 동안 리듬 사건은 0 이다.
+
+**바뀐 기대값(원본 근거: 12.12.3).**
+
+| 시험 | 이전 값 | 새 값 | 근거 |
+|---|---|---|---|
+| `test_mg1801` 프레임 기대값 | — | 바뀐 것 없음(모두 상대값). 출력의 절대 프레임만 −34(OnGameStartAfter 61 → 27, 전원 CPU 길이 3,255 → 3,221) | 12.12.3 표 |
+| `character_golden` `GOLDEN_SHA256.mg1801_normal` | d1c02490…fb70 | ec256e91…68a9 | 옛 코드 + PREROLL 26 실행 해시와 같음(원본 규칙·RULES_WEB 둘 다) |
+| `GOLDEN_SHA256.mg1801_long180` | e595f09c…1216 | 1e7dc177…647e | 같음 |
+| `GOLDEN_SHA256_WEB.mg1801_normal` | d1c02490…fb70 | ec256e91…68a9 | 같음 |
+| `GOLDEN_SHA256_WEB.mg1801_long180` | c260ce24…a72e | eb7564fb…9ab4 | 같음 |
+| `check_logic` mg1801 프레임 수 | 3,255 | 3,245 | 리듬 끝 3,221 + 틀 끝 24 |
+
+`character_golden` 은 틱마다 캐릭터 포즈를 기록하므로 시작 프레임이 당겨지면 해시가 바뀐다. 옛 코드에서 PREROLL 만 60 → 26 으로 바꿔 돌린 해시가 새 해시와 같아(위 표 "같음"), 캐릭터 런타임(`lib/character`)과 mg1801 포즈 경로는 바뀌지 않았음을 확인했다.
+
+**시험(노드).** `test_mg1801` 97/0(옛 84 + 틀 단계 대응·단계 11 두 프레임·갈래 B·나갈 때 White·기록 byte·리믹스 RequestReturnScene·프리 플레이 리듬 설정·설정 전달·acc 입력·결정성·정적 검사 13), `test_mgscene` 79/79(옛 69 + acc 전달·직접 와이프 20·RequestReturnScene·judge·byte 3·더미 결정성·정적 검사), `test_mg_freeplay` 13/13, `check_logic` mg1801 3,245 프레임 같음.
+
+#### 12.12.8 사용자 확인 필요 (이 절)
+
+| 항목 | 정한 것(원본 쪽) | 이유 |
+|---|---|---|
+| 한 판 끝 기록 writer | `FUN_71001f271c` 규칙 | 같은 칸을 쓰는 유일한 판독 함수지만 호출자 미확정(mgm01_freeplay §11-1) |
+| PlayerList 순서(rank/WinLose byte 칸) | PlayerID 순 | `GetPlayerList(…,1)` 목록 종류 1 의 순서 미판독. mg1801 은 GameRule 10 이라 영향 없음 |
+| 플레이 횟수 +1 자리 | 결과가 돌아오면 목록 페이지가 | 원본 save 사건(FUN_71002dbb80) 처리 미구현 |
+| 사운드 관측의 결정성 | 입력 기록에 넣어 재현 | 원본도 시퀀서 값을 읽는다. 온라인 합의 방법 미정 |
+| 설명 요청(callInst) | 전달만, P 거짓 | mgInst 설명 장면 미구현 |
+| 리듬 쿠킹 2번째 이후 OnGameInit 대기 | 없음(바로 1) | 웹엔 앞 게임 메인 BGM 이 이어지는 코스 실행이 없다 |
+| 틀 단계 16 의 소리 그룹 0x20 정지 | 틀 BGM·징글만 멈추고 게임 소리(리듬 종료 BGM·앰비언트)는 화면을 버릴 때 멈춘다 | 웹 소리 그룹 대응 미구현 |
+| 낡은 코드 주석 | 고치지 않았다(주석 임의 추가·삭제 금지 규칙). 옛 PREROLL·`stepFrame`·흐름 번호 12/13 을 설명하는 줄이 남아 있다: `games/rhythm/scene.ts` 머리 17·22~23행과 `beginFrame` 위 문서 주석·`onGameFinish` 문서 주석 끝 줄, `games/mg1801/logic/game.ts` 머리 5~10·17행, `games/rhythm/types.ts` `RmSceneState.flow`, `games/rhythm/data.ts` `PREROLL_FRAMES`·`gameWork.ts` `prerollFrames`(이제 읽는 곳 없음), `script/game.ts`·`script/main.ts` 머리의 `logic.step` 설명 | 고칠지 사용자 결정 |

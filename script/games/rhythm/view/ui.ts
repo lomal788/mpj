@@ -281,7 +281,7 @@ export class RmUi {
     if (state.perfectTelop) this.perfectOn = true;
     /* 흰 페이드(bq::WipeModule, 공용 wipe.bflyt): 로직이 애니·프레임을 준다 */
     const f = state.fade;
-    if (f) {
+    if (f && (this.fadeOn || !appTransition().following)) {
       this.fade.set(f.anim === 'WipeWhite_in' ? OPENING : f.anim === 'WipeWhite_out' ? CLOSING : CLOSED, WIPE_WHITE, f.frame);
       if (!this.fadeOn) appTransition().follow(this.fade);
       this.fadeOn = true;

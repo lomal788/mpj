@@ -93,7 +93,7 @@ export const mg1801Game: GameDef<Mg1801State, Mg1801Event, Mg1801Result> = {
   load: async () => {
     body ??= await import('./body');
   },
-  createLogic: (setup) => new body!.Mg1801Game(setup, mg1801Options(setup.options)),
+  createLogic: (setup, play) => new body!.Mg1801Logic(setup, body!.mg1801PlayOptions(mg1801Options(setup.options), play)),
   createView: (ctx, assets) => new body!.Mg1801View(ctx, assets),
   describeResult(r, setup) {
     return {

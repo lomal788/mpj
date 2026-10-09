@@ -11,6 +11,9 @@ export interface MgPadInput {
   ly: number;
   rx: number;
   ry: number;
+  accX?: number;
+  accY?: number;
+  accZ?: number;
 }
 
 export interface FrameGate {

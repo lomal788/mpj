@@ -46,6 +46,8 @@
 | 모드 선택·보드 규칙 | [판독] menu01 MapMenuImpl `@0x710003df70`·next sequence; [모드 선택](../shell/modeselect.md), [보드 규칙](../shell/partyrule.md) | modeselect/types.ts key·next; shell/partyrule·지역 config | main:423 key=mgm만 허브, 그 외 광장. partyrule_page:210~218→ui_main:149 시험 | next 미소비; bd/rc/mf/pp/kb/ca 진입 없음. 보드 화면·본편 Work 연결 분리 | 일부 사용·미포팅 미구현 | 6모드·보드 시험 | P2 — 모드 진입 |
 | 플레이어 설정 공유 | [판독] main ComUiSettingPlayer `@0x7100344a00~710034be24`; [플레이어 설정](../shell/setplayer.md) | `main.ts::flowPlayers` chars/com/names/pads | :477~489 설정 반환→허브 :409~410·목록 :397~398·게임 :373 | 현재 참가자·캐릭터·패드 공유 연결. [미확정] PlayerWork 전체 속성·모드 인원 제한 | 사용·일부 사용 | 현재 상위 흐름 | P2 — 속성 범위 |
 
+2026-10-09 [mg-connect] 갱신(위 표의 판정은 감사 시점 기준으로 두고 상태만 적는다): **장면 등록·시작·종료** — GameDef 실행 경로를 없애고 mg1801 이 공용 틀 0~18단계 위에서 돈다(`script/mgrun.ts`, 어댑터 `games/rhythm/mgGame.ts`). **결과 byte·judge(P1)** — `FUN_71001f271c` 규칙 + judge = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60(GameRule ∉ {0,7})로 raw byte 를 전달(mg1801 = judge 1·[2,2,2,2]). **미등록·실패 결과(P1)** — 실제 실행 경로에서 `fakeResult` 유입 차단, 실패는 null(기록·Round·플레이 횟수 그대로). **팀·참가·리듬·설명 설정(P1)** — teamId·gamePlay·comLevel·rhythm·endless·callInst·useGyro 가 틀 setup·문맥까지 가고 mg1801 은 rhythm 만 소비. §2 **체감 입력**의 게이트 acc 손실도 해소(`MgPadInput`·`MgPadState` acc). 근거·남은 확인은 [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12.
+
 ## 2. 시간·난수·입력·이동·물리
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |

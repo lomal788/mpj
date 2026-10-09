@@ -1127,3 +1127,124 @@ for (const fx of effects) {
 | alpha·soft particle·layer | alpha UBO·310 FS 폐기 조건(6.6), 패스 mask·thread 초기화/set 제출·저해상도 blend override 판독(6.7); Combiner/soft FS 전체·장면 pass 순서·resolve FS 남음 | 원본 drawable 완료 판정 차단 |
 | 자식 상속·follow·특수 형상/필드 | 현재 나이 평가·reader 판독, 조합 전체 남음 | 해당 옵션 정의 차단 |
 | 검증 범위 | 원본 데이터·C·SASS·9,642개 모집단 대조 | 실행·화면 동등성 미검증 |
+
+## 14. 웹 런타임 계약 (2026-10-09, [effect-runtime])
+
+모든 미니게임·셸이 같이 쓰는 이펙트(VFX) 공용 런타임이다. 게임은 `fx.play('mg1801_water_entry00', pos)`처럼 이름으로 부르고 고정 스텝만 돌린다. 판독 근거는 이 문서 §3~§7이며 이 절은 웹 쪽 계약만 적는다. 2026-10-09 사용자 결정으로 **기본 = 원본 규칙**(`RULES_ORIGINAL`)이고, 이전 웹 근사는 `RULES_WEB`으로 남겨 이전 전후 골든을 대조한다. 층 구조·원본 스위치·골든 방식은 캐릭터 런타임([09 §14](09_character.md))과 같다.
+
+### 14.1 계층
+
+| 계층 | 파일 | import | 하는 일 |
+|---|---|---|---|
+| 코어 | `script/lib/effect/index.ts` | 0(three·DOM·프로젝트 파일 없음) | `EffectRegistry`(§3.3 해석·등록 순서), `EffectCore`(bex::Effect 목록: Create·Start·Stop(bool)·StopImmediately·SetPosition/Rotation/Scale·SetSelfDestroy·SetLayerVisibilityBit·SetAnimationSpeed·Attach, 핸들 = 칸 + 세대), `ParticlePool`(이미터 정의 하나의 입자 배열 — 모든 인스턴스가 공유하는 링 버퍼), `EmitterRt`(정의마다 미리 계산: 키 표·최대 입자 수 §6.1 식 4·raw 플래그), 난수(`Lcg`·`Xorshift128`·N/Q 표·`sinCpu`), 정렬 key(`packDepth`). 숫자·사건만 낸다 |
+| three 어댑터 | `script/lib/effect-three/index.ts` | three + 코어 | `EffectView`: effects.json·텍스처·프리미티브 읽기(`EffectLoader` 끼움점), 풀마다 InstancedBufferGeometry 하나에 코어 출력(월드 위치·크기·회전·색 2개·나이·수명·UV 난수·fade·기저)을 그리기 순서대로 올림. 셰이더는 billboard 0/3/4 변환·UV 애니·조각 합성·알파 시험만(입자 운동 없음). blend·depth·cull·FS 변형은 규칙에 따름 |
+| mpj 연결 | `script/view/effect.ts` | 코어·어댑터·셸 | `MpjEffects`/`createEffectSystem(parent, {loader})`, `assetsLoader(Assets)`(json·gltf = Assets 캐시, 텍스처 = stage3d `loadTexture`), `play(name, pos, {scale, selfDestroy, layer, rate, attach})`, `showCommonEffect(id, pos)`(CMN_EFFECT_ID), `objectSource(obj)`(Attach 행렬 원천), `routeCharacterFx(ch, fx)`(캐릭터 FTRG fx 사건 연결) |
+| 게임 | `script/games/mg1801/view/effects.ts` | mpj 연결 | `EffectSystem` 이름·생성자·공개 메서드(load·spawn·start·stop·update·dispose·activeCount) 유지, 내부만 공용 런타임 |
+
+- 시간: 고정 스텝 1/60(`step()`), 재생 속도는 `SetAnimationSpeed` 배율(원본 규칙). `update(dt)`는 벽시계 → 스텝(최대 15 = 0.25 s, 이전 웹 clamp 와 같음).
+- 결정성: 코어에 `Math.random`·벽시계 없음. 원본 공유 seed 원천은 생성자에 주입(`seed: () => u32`, mpj 기본 = 고정 씨앗 xorshift128). web 규칙은 이전 웹 시스템 LCG `0x12345678`.
+- 할당: 입자 갱신·출력(`step()`+`sync()`)은 할당 0(실수 인자는 스크래치 칸으로 넘김). 방출이 있는 스텝은 최적화 밖 실수 상자가 남는다(김 2개 정상 상태 스텝당 약 150 B, 14.6). 풀은 모자랄 때만 두 배로, 이펙트·이미터 인스턴스는 이미터셋별 예비 목록으로 다시 쓴다.
+
+### 14.2 API
+
+```ts
+// mpj 연결
+const fx = await createEffectSystem(scene, { loader: assetsLoader(new Assets('mg1801/')), files: ['effect/effects.json'], original?: boolean, seed? });
+const h = fx.play('mg1801_water_entry00', { x, y: -0.5, z }, { scale?, selfDestroy? /*기본 true*/, layer?, rate?, attach? });
+fx.showCommonEffect(0 /*JUST*/, pos);       // ca::rm::util::ShowCommonEffect — 0 = mg1800_success01, 1 = mg1800_success00
+fx.attach(h, bone); fx.setPosition(h, x, y, z);
+fx.stop(h, fade? /*false = 즉시 kill*/); fx.release(h);
+fx.update(dt) | fx.step();                  // 스텝 → GPU 올리기
+const off = routeCharacterFx(character, fx); // fx 사건 → .eset 를 훅 본에 Attach 해 재생, '<KEY>_Stop' = Stop(true)
+// 코어만(다른 게임에 파일 하나로 복사)
+const core = new EffectCore({ rules: RULES_ORIGINAL | RULES_WEB, seed: () => u32 });
+core.registry.registerJson(effectsJson);     // resources 순서 = 이름 충돌 우선순위
+const h = core.create(name); core.setPosition(h, …); core.setSelfDestroy(h, true); core.start(h);
+core.step(); core.view.set(cameraViewMatrix); core.sync();  // pools[k].order[0..count) 순서의 o* 출력 배열
+```
+
+- `create` 실패 = −1(원본 Abort, 웹은 한 번 경고 + `missing` 사건). 사건 고리 64개: create·start·stop·fade·kill·release·missing·emit(만든 입자 수).
+- `start`: web = 즉시 방출(이전 웹 create), original = 다음 `step`의 첫 계산에서 방출(§5.3 일반 경로). 이미 시작한 것을 다시 Start 하면 이미터셋을 kill 하고 새로 만든다(§5.3 07262a8).
+- 그리기 나이(original) = `E[28] − dt − b`(§6.4 동적 UBO writer 인수1=0 보정): 새 입자는 생성 스텝에 한 번 적분된 위치를 나이 0 으로 그린다. GPU 해석식의 T = 나이 + dt.
+
+### 14.3 데이터(`tools/analysis/mg1801_web_effects.py`, 원본 읽기만)
+
+`assets/mg1801/effect/effects.json`(받는 경로 그대로)에 원본 규칙용 값을 덧붙였다. 기존 필드는 재생성 전후 값이 같고 텍스처·glb 는 그대로다.
+
+| 추가 | 내용 |
+|---|---|
+| `resources` | 등록 순서 `[{name, sets}]`: mg/mg1801 → mg/mg1800 → libca/mg_common — 이름 충돌 우선순위(§3.3, 실제 장면 등록 순서는 [미확정] §11 #8) |
+| `sets.*.path` | ESFT 경로(이름 해석 1·2단계). ESFT 순서 = ESET 순서로 대응 |
+| `Emitter.orig.info0` | EmitterData+0xCC0..0xCCF u8×16 원본 오프셋 그대로(CC1 정렬, CC3 follow, **CC4 seed 선택**, CC5 이미터 TRS 재추출, **CCB/CCC fade**). 파서 이름(isFadeEmit 등)은 런타임 의미와 어긋나 쓰지 않는다 |
+| `orig.seed/drawPath/alphaFadeTime/depthFunc/alphaFunc/shader` | D[CD0]·CD4·CD8·E0A·E0D·ShaderRef(변형 번호) |
+| `orig.fluct/fluctParam` | FC4 alpha·FC5 scale·FC6 scaleY·FC7, Static 130..14C(amplitude·cycle·phaseRnd·phaseInit) |
+| `orig.loopOn/loopRandom/loopPeriod` | E48..E4C·E51..E55·E5C..E64(§6.3 루프 슬롯 writer) |
+| `orig.soft/inherit0/inheritD58/inheritRate/velInheritMax` | isSoftParticle·soft 거리, D48..D57 u8·D58 u64·D60/D64, F64 |
+| `orig.fspn/frn1/frnd` | 필드 payload f32·u32 둘 다(FSPN axis·FRN1 K·FRND K 는 u32 — f32 표기로 읽으면 0) |
+
+### 14.4 소비자 이전 표
+
+| 소비자 | 이전 | 어떻게 | 골든 |
+|---|---|---|---|
+| `games/mg1801/view/effects.ts` `EffectSystem` | 이전 | 내부 = `MpjEffects`(코어 + 어댑터). 계산·셰이더·재질·풀 코드와 그 주석은 코어·어댑터로 옮김. `view/index.ts` 무수정 | `RULES_WEB` 9 시나리오 이전 전과 같음(14.6) |
+| 캐릭터 런타임 fx 사건(`view/character.ts` `routeCharacterEvents`가 받지 않던 것) | 연결 | `view/effect.ts` `routeCharacterFx(ch, fx)` — `ch.on`에 붙여 fx 사건만 받는다(`view/character.ts` 무수정) | 시험 없음(웹 자료에 bq 상주 `fx_*`·bd00 eset 없음 → 경고 후 무시) |
+| 리듬 공용 성공 이펙트 | 별칭 | `showCommonEffect(id)` + effects.json 별칭 `ca::rm::util::ShowCommonEffect#0/1` | common_success 시나리오 |
+| 다른 게임(mg18xx·mg0508 등) | 미룸 | 각 게임 `_Vfx` 덤프를 effects.json 형식으로 만들어 `load(files)`에 더하면 등록 순서대로 해석 | — |
+
+### 14.5 원본 스위치
+
+기본 `effectDefaults.rules = RULES_ORIGINAL`. `RULES_WEB` 정의는 남기고 기본 경로에서 쓰지 않는다(끄는 길 = `effectDefaults.rules`, `createEffectSystem({original:false})`, `new EffectSystem(scene, assets, {rules})`).
+
+| 항목(스위치) | `RULES_WEB`(이전 웹 근사) | `RULES_ORIGINAL`(기본) | 근거 | mg1801 에서 바뀌는 것 |
+|---|---|---|---|---|
+| 이름 해석(resolve) | 별칭 → 소문자 basename·확장자 제거, 모든 셋 한 표 | 등록 순서로 ESFT 경로(소문자·`/`→`\`) → `..\`+경로 → 마지막 `.` 앞 이름 strcmp | §3.3 | 없음(쓰는 이름이 모두 셋 이름) |
+| 운동식 순서(motion) | 속도에 drag 먼저 곱한 닫힌 식, m 은 v₀ 에 곱함 | CPU: `P += Δt·m·V` 뒤 `V·a^Δt`, `V += Δt·g`(m 없음) → 필드. calcType 1: `p₀ + m(v₀F(T)+gG(T))`. calcType 2: wave CS | §6.2·§6.3 | 모든 입자 위치 |
+| 방출(emission) | 생성 즉시 방출(첫 그리기 나이 1) | Start 뒤 첫 step 에서 방출, 그리기 나이 0, 첫 방출 rate≤1 → 1, intervalRandom(LCG 1회) | §5.3·§6.1 | 모든 입자가 한 프레임 일찍 보이고 수명 L 프레임 동안 그려짐 |
+| 표본 분포·난수(sampling) | LCG 균등 단위벡터(Point·Sphere·positionRandom·diffusion), 회전 `init + u·initRand` 뒤 1/2 부호, 정수 수명 `trunc(L(1−⌊u·r⌋/100))`, 이미터 seed = 시스템 LCG | Point = Q 표, diffusion = N 표(cursor = seed 하위/상위 16비트), CircleFill ρ=√(u+(1−u)(1−c)²), 회전 `σ⊙(θ₀+H·ω)+(U−0.5)⊙initRand`, ω 의 (Uₐ+U_b)/2(CPU)·(Uₐ+U_b−1)(GPU), float 수명 `L(1−0.01k)` k=high32(seed·r), U 4개, seed 선택 CC4(0 공유 xorshift·1 셋 seed·2 D[CD0]·DFDC1C35), 이미터 TRS 난수 6회 | §6.2 | 김 회전 범위(±π/2 + 누적), 수명 소수, 반짝이·물결 흩어짐 |
+| 필드(fields) | 없음 | FSPN(축 평면 회전·반경 +Δt·m·radial), FRN1(CPU), wave CS 주기 힘 N. FRND 는 둘 다 없음(14.7) | §6.2·§6.3 | 물보라 bubble00(FSPN axis 1 → xz 로 퍼짐), wave00(N) |
+| 키·흔들림(keys) | 선형 키, 루프·fluctuation·color type 3 없음 | 8슬롯 패딩 키, 루프 위상 fmod, scale(FC5/FC6)·alpha(FC4, [0,1]) 흔들림 mode0 cos, color type 3 | §6.2·§6.3 | 반짝이 twinkle00~02 크기·알파 깜빡임, 물보라 bubble00 크기 흔들림 |
+| fade-in(fadeIn) | info CCB 를 시작 페이드인(fadeInTime)으로 | 쓰지 않음(CCB/CCC = 정지 fade 선택) | §5.3 | water_entry shader00 의 첫 10 프레임 알파 |
+| 정지(stop) | 방출만 멈추고 입자 수명대로 | Stop(false) = 이미터셋 즉시 kill, Stop(true) = fade `F = max(0, F − dt/D[CD8])`(CCB 알파·CCC 크기), 0 이면 kill | §5.3 | 결과 연출 (0,6) steam00 → steam01 교체 때 김 입자가 바로 사라짐 |
+| 정렬(sort) | 풀의 칸 순서 | 이미터셋 key(상위 8비트 priority + min(0, 카메라 깊이) 압축, unsigned 내림차순, 같으면 생성 순서) → 셋 안 sortType 1/2/3(2 = 깊이, depthMask 0 내림차순, 둘 다 음수면 방향 뒤집기) | §6.5·§6.7 | wave01·white_wave00(sortType 2) 그리기 순서, 여러 물보라 사이 순서 |
+| follow(follow) | 생성 때 월드 고정 | 0 = 현재 이미터 행렬, 1 = 생성 때 행렬, 2 = 생성 때 기저 + 현재 이동 | §5.3 | 정지한 이펙트는 f32 반올림 차이뿐(움직이는 부착에서만 보임) |
+| 상속(inherit) | 없음 | 자식 D[D50/51/52] 속도·크기·회전 | §6.2 | 없음(mg1801 자료 상속 플래그 0) |
+| PlayRate(playRate) | 쓰지 않음 | SetAnimationSpeed → 이미터 dt | §3.2 | 없음 — mg1801 view/index.ts 가 PERFECT `mg_common_pt_effect_00` 에 BPM/120 을 넘기지 않음(14.8) |
+| 그리기 상태(render) | NormalBlending/AdditiveBlending, depthWrite false, DoubleSide | blend 표 6종(RGB·alpha 별도, isBlendEnable), depthMask(D[E0B])·depthFunc(D[E0A])·cull(displaySide 0 없음/1 뒤/2 앞)·alphaFunc 6 = `<`, billboard 4 = 로컬 Rᵧ·Rₓ·R_z 뒤 `(x,y,z)→(x,z,−y)` + 이미터 기저(billboard 3 도 기저), FS: mg1800 twinkle 변형 4 = `C₁+tex²(C₀−C₁)`·`sat(sat(tex.r²C₀.a)·fade)`, 8/11 = 같은 식 tex 그대로, mg1801 wave 13/15 = flowmap(0.74/0.37·이중 샘플 cos 혼합, RGB = T·C₀) | §6.4·§6.6 | 모든 재질(가산 alpha = A_s+A_d), water_entry·반짝이 뒷면 컬링, 물결 판 방향·흐름, success/PERFECT depthMask(depthTest 꺼져 깊이 쓰기는 없음) |
+| soft depth | 없음 | 없음 | §11 #4 soft FS 미판독 | 없음 — isSoftParticle 2 인 shader00·splash01/02·white_wave00 은 [미확정] |
+| f32 | double | Math.fround | — | 비트 |
+
+- 그리기 순서용 카메라: 배치 메시 `onBeforeRender`가 마지막 카메라 view 행렬을 코어에 넘기고 다음 `sync`가 쓴다(한 프레임 늦음 [근사]).
+- 원본 규칙에서도 웹 근사로 둔 것: 커스텀 FS(물보라·거품 노말맵·매트캡 합성·CSDP), billboard 0 의 화면 Z 회전, 텍스처 repeat/Mirror·스크롤 식, UV 반전 난수(U.w·U.z 를 씀 [근사]), Sphere 경도(helper 0753370 미판독, φ = start + sweep(u−0.5) [근사]), 이미터 회전 순서 ZYX, 자식 입자 원점(부모 입자 월드 위치 + 자식 E, follow 1 처럼 [근사]).
+
+### 14.6 검증(노드, 헤드리스 없음)
+
+- `tools/test_effect.ts` 106건: 0 이름 해석(등록 순서·경로·확장자·strcmp 대소문자·별칭·없는 이름) · 1 핸들 세대·Start 전 무계산 · 2 방출 수(water_entry00 프레임 0 = 5·15·12·4800·1·1·1, wave00 0/8/16, wave01 0~25/5, white_wave00 0~8/2, one-time 보정, 최대 입자 수, 첫 방출 최소 1, intervalRandom) · 3 float 수명·죽음 경계 · 4 운동 단계값(CPU 순서, web 과 차이, GPU F(T), wave CS N·K=1, FSPN 반경) · 5 N/Q 표·LCG·회전 분포 · 6 키 패딩·보간·고정색·루프 · 7 정렬(내림/오름/음수 뒤집기, key 압축, 먼 셋 먼저) · 8 Stop(false)/web stop/fade·selfDestroy 지연 해제 · 9 PlayRate·follow 0/1 · 10 결정성(Math.random 0회, 같은 씨앗 같음) · 11 import 경계·할당(입자 갱신·출력 0.00 B/스텝, 방출 포함 약 147 B/스텝) · 12 §10.3 기대값(success01 이미터 5, `.eset` 해석, JUST/FAST 별칭, steam00 정상 상태 51~72) · 13 골든 18건.
+- 골든 `tools/effect_golden.ts`: 9 시나리오(steam00 시작·150 틱 정지, steam01, water_entry00/01, success00/01, pt_effect ×1.5, common_success 4명, mix = mg1801 흐름 축약 + 없는 이름)를 1/60 틱마다 돌려 장면 그룹의 배치 메시를 읽는다. 입자 기록 = 월드 위치·크기·회전·색0·색1·나이·수명·UV 난수 2·fade(f32). 줄 = 틱·renderOrder·이름·수·집합 sha1·그리기 상태 sha1·그리기 순서 sha1. 이전 전 코드(GPU 닫힌 식)는 그 정점 셰이더 식을 도구가 그대로 계산해 같은 기록으로 만든다.
+  - **이전 검증(a)**: 이전 전 코드 트리를 스크래치에 재구성해 같은 도구로 돌린 기록 = `GOLDEN_SHA256_WEB`. `RULES_WEB` 실행이 9/9 시나리오 기록 파일 바이트까지 같다(입자 집합·순서·그리기 상태).
+  - **원본 기준(b)**: `GOLDEN_SHA256` = `RULES_ORIGINAL`(기본) 실행. 항목 하나씩 되돌려 본 영향(이미터): fields → 물보라 bubble00·wave00, keys → 물보라 bubble00·twinkle00/01/02, sort → white_wave00·wave01, render → 모든 그리기 상태(입자 값 불변), follow → wave00·white_wave00·twinkle(f32 반올림만), stop → steam00·bubble00·crown00(교체 시점), inherit·playRate → 없음. 운동·방출·표본은 원본 경로 자체라 모든 이미터.
+- 이펙트는 시각 전용이라 로직·카메라·캐릭터 값과 연결이 없다(기존 노드 시험 전체 통과로 확인).
+
+### 14.7 자리만 둔 것·남은 것
+
+- FRND(김 steam00/01 흔들림): 기본 가지 식은 있으나 `ν = DAT_7101c405f8/K`의 전역 분자 미판독(§6.2) → 두 규칙 모두 적용하지 않음 [미확정]. 자료는 F[2]=1(a* 경로)·A=(0.005,0,0.005)·K=1000.
+- soft particle·Combiner/CSDP 커스텀 FS(물보라 shader00·splash·bubble/crown): §11 #4 미판독 → 웹 근사(매트캡) [근사].
+- 회전 fluctuation(D[E7E..]·Static C80..)·색/알파 상속 D[D54..D57]·FCOL/FMAG/FCOV/FCLN/FPAD·이미터 이동 속도 상속(F64)·world velocity·EA** 이미터 애니: mg1801 자료에서 쓰지 않아 미구현.
+- 파형 선택(FC7, 자료 값 8)·flags1 비트 → mode 연결 미판독 → cos(mode0) [근사].
+- 이미터 scale(예 twinkle 0.05)을 입자 크기에 곱하는지: VS 의 `c[A][120..]` = E[280..] 원천 미확정 → 위치·속도에만 곱함(이전 웹과 같음) [미확정].
+- 저해상도 패스(drawPath 8/16 profile)·layer 마스크·장면 pass 배열: 그리지 않음(§6.7, 장면 값 필요). `layerBits`는 저장만.
+- intervalRandom 으로 간격이 1 미만이 되면 1(무한 반복 방지) [근사].
+- §6.1 표의 success twinkle "1회 수 10"은 rate 이고, CircleDiv 는 rate × 분할(twinkle00 6 → 60, twinkle02 8 → 80)이다(bubble00 정정과 같은 규칙, 이전 웹·원본 규칙 모두 60/80).
+
+### 14.8 사용자 확인 필요
+
+- **crown00(김 거품 위 왕관)의 시점**: 원본 식에서 자식 방출 S = parent.life·timing/100 은 bit17(D[D5C])일 때만이고, 자료의 D[D5C]=0 이다. bit17 없는 자식 경로(§6.1 허용식의 `!bit0 || bit17`, 073eb0c 소멸/자식 처리)는 판독되지 않아 이전 웹처럼 부모 수명 ⌊L·85/100⌋ 프레임에 방출한다 [근사]. 원본은 부모 소멸 때일 수 있다.
+- **CCB(파서 이름 isAlphaFadeIn)**: §5.3 판독은 CCB/CCC 를 Stop(true) fade 선택으로 읽는다. 원본 규칙에서 water_entry shader00 의 시작 10 프레임 페이드인을 없앴다. 시작 페이드인이 다른 칸에 있는지는 미확인.
+- (해소 2026-10-09) **PlayRate**: PERFECT `mg_common_pt_effect_00`은 원본대로 BPM/120 속도로 재생한다(mg1801.md `camgcmm_tlp_perfect`, GetPlayRate @0x7100425e60). `index.ts`가 `spawn(name, pos, 1.5, state.bpm / 120)`으로 넘긴다.
+- 캐릭터 FTRG fx 키 `<KEY>_Stop` = 같은 키 이펙트의 Stop(true)로 본 것은 키 이름 규칙 [추정]. 웹 자료에 캐릭터 fx eset(bq 상주 `fx_*`, `bd00_*`)이 없어 지금은 경고만 난다 — 변환 범위 결정 필요.
+- 이름 충돌 등록 순서(mg/mg1801 → mg/mg1800 → libca/mg_common)는 §11 #8 [미확정]이다(mg1801 이 쓰는 이름은 충돌 없음).
+- 원본 공유 xorshift seed 원천의 초기 상태는 미판독 → 고정 주입 씨앗(결정성 규칙). 원본과 같은 난수 열은 기대할 수 없다.
+- billboard 4 원본 변환으로 물결 판이 위(+Y)를 향하고 displaySide 1 컬링이 켜졌다. 화면 확인은 사용자가 직접(`ui.html?ui=effect`).
+
+### 14.9 보기 페이지(`ui.html?ui=effect`)
+
+`script/effect_page.ts`: 이미터셋 고르기, 재생·정지(Stop false/true)·반복, 원본 스위치(다시 만듦), 부착 대상(없음·원 궤도 물체), 이미터별 입자 수·사건 로그. URL `&set=mg1801_water_entry00&original=0`. 화면 확인은 사용자가 직접.

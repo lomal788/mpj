@@ -790,3 +790,170 @@ BGM 을 통파일 디코드 대신 **조각 스트리밍**으로 재생한다. �
 | 광장 3D 층 `SM_BGM_MENU_RHYTHM`(음악 상점 위치 Play3D, 볼륨 27) | 생략 — 2D `SM_BGM_MENU` 만 |
 | 덕킹(인원 설정 `ST_DUCKING_ON_SETTING`, 프렌드 메뉴, 메시지 창 0x0d·0x13) | 생략 |
 | 흐름 끝(취소)·ui.html 화면 바꾸기 | 0.5 s 페이드로 멈춤 [설계] |
+
+---
+
+## 13. 웹 런타임 계약 [2026-10-09, sound-runtime]
+
+공용 사운드 런타임(로드맵 B6 ①②)과 게임 경로 소비자 이전. 기본값은 **원본 규칙**(사용자 결정, 캐릭터 [09 §14](09_character.md)·이펙트 [08 §14](08_effects.md) 와 같은 방식). 셸 화면 20여 개(`MgmSound`·화면별 `AudioBuffer` 맵)·캐릭터 효과음/보이스 파일 변환은 이번 범위 밖이다. BGM 스트리밍(§12, `lib/bgmstream`·`view/bgm.ts`)은 바꾸지 않고 재생기 하나(목소리 처리기)로 꽂는다.
+
+### 13.1 계층
+
+| 층 | 파일 | import | 하는 일 |
+|---|---|---|---|
+| 코어 | `script/lib/sound/index.ts` | 0 | 라벨 → 정의 해석(세팅 프리셋 치환), SoundHandle(칸 + 세대)·수명, 플레이어 한도·우선순위, 소리 그룹 소속(정지·덕킹), FadeTimePreset 표, 3D 계산(§6.7, `view/audio.ts` 에서 옮김), 시퀀스 엔진 난수(LCG). **숫자·명령만** 낸다. 시간(오디오 시각)·난수는 주입, `Math.random`·벽시계 없음 |
+| WebAudio 어댑터 | `script/lib/sound-webaudio/index.ts` | 코어만 | 명령 → 핸들 하나 = `GainNode`(핸들 음량: 3D·덕킹·SetVolume) → (팬이 있을 때만 `StereoPannerNode`) → 버스. 소리 재생 자체는 **목소리 처리기**(꽂기): 내장 `buffer`(AudioBufferSourceNode, 반복·늦은 시작), 디코드 캐시 `DecodeCache`(받기·풀기 주입) |
+| mpj 연결 | `script/view/sound.ts` | 코어·어댑터·`view/audio`·`view/bgm`·`view/appAssets` | `soundSystem(audio)` = `AudioOut` 하나에 코어·어댑터 하나(같은 페이지의 틀 소리·게임 소리가 핸들·그룹·한도를 같이 쓴다). 디코드 캐시 = 로더 관리자 `bytes`(압축 모드 소리 이름 바꿈 shim 통과) + 전역 디코드 맵 하나. 처리기 `buffer`·`bgmstream`(§12 재생기), 시퀀서 처리기는 소비자가 꽂는다 |
+| 소비자 | `view/mgsceneSound.ts`(틀 소리 `MgSceneSound`), `games/rhythm/view/sound.ts`(`RmSoundMap`, mg1801 view 가 씀), `view/character.ts` `routeCharacterEvents`(se·voice 라벨 사건) | — | 사건 → 코어 `play/stop/stopGroup` |
+| 로직(사건만) | `shell/mgscene/sound.ts`(`MgSound`), `games/rhythm/soundMan.ts`(`RmSoundMan`) | 코어 표만(`fadeTimeSec`) | 원본 MGSound·RmSoundMan 상태 → 사건. 소리 재생·핸들은 모른다 |
+| 보기 | `script/sound_page.ts`(`ui.html?ui=sound`) | — | 라벨 재생·정지, 그룹, 덕킹, 3D 위치, 원본 스위치, 핸들 목록·사건 로그 |
+
+`view/audio.ts` `AudioOut`(버스·`load`·`play`·`track`·`stopAll`·`setMuted`)은 그대로다 — 셸 화면이 계속 쓸 수 있다. `calc3d`·`Listener3d`·`Sound3dInfo`·`SOUND3D_MANAGER`·`Ambient3d` 는 코어로 옮기고 `view/audio.ts` 가 같은 이름으로 다시 내보낸다.
+
+### 13.2 API
+
+코어(`lib/sound`):
+
+| 이름 | 원본 | 뜻 |
+|---|---|---|
+| `SoundCatalog(rules)` · `define(label, def)` · `substitute(src, dst, preset)` · `loadPreset(name)` · `resolve(label)` | 아카이브 STRG/INFO(§3.2) + 세팅 프리셋 U 레코드(§4.7) | 라벨 표 하나(웹 manifest 하나). `def = {kind, bus, player, playerMax, priority, sound3d, voice, payload}` — `voice`·`payload` 는 어댑터 처리기 이름과 그 자료(코어는 보지 않음) |
+| `SoundCore({rules, now, probe})` · `play(cat, label, opts) → h` | `SoundModule::Play / Play2D / Play3D` | `opts = {pos, priority, payload, at, local, flags, voice, onAdmit}`(`voice` = 처리기 덮기, `onAdmit` = 한도 통과 뒤·시작 명령 전 — 웹 규칙의 BGM 끼리 정지 자리). 실패(라벨 없음·한도 거절) = 0. `probe(h)` = 어댑터가 목소리가 살아 있는지 바로 답한다(한도 판정 때 끝난 소리를 먼저 비운다 — 이전 리듬 코드와 같은 시점) |
+| `stop(h, fadeSec)` · `stopAt(h, t)` · `pause(h, on, fadeSec)` · `setVolume(h, v, fadeSec)` · `writeLocal(h, i, v)` · `setPosition(h, pos)` | `SoundHandle::Stop_Time·Pause·SetVolume·WriteLocalVariable`, `Play3DHookPosition` | 핸들이 낡았으면(세대 다름) 아무 일 없음 |
+| `alive(h)` · `label(h)` · `target(h)` · `forEach(fn, cat?)` · `find(label, cat?)` | `SoundHandle::IsAttached` | 핸들 = `세대 × 1024 + 칸`, 0 = 없음 |
+| `stopGroup(group, fadeSec)` · `duckGroup(group, on, preset = group)` · `duckValue(group)` | `StopGroup_Type`, `DuckingGroup` | 소속 = 13.4 표 |
+| `ended(h)` | (사운드 스레드가 끝을 알림) | 어댑터가 목소리가 끝났다고 알리면 칸을 비우고 세대 + 1 |
+| `update()` | 사운드 프레임 갱신 | 덕킹 진행, (원본 규칙) 3D 다시 계산 |
+| `drain(fn)` | — | 쌓인 명령 `{op: start/stop/stopAt/gain/pan/pause/local, h, …}` 를 넘기고 비운다(명령 객체는 다시 씀) |
+| `calc3d(listeners, info, pos, f32)` · `calc3dInto(out, …)` | §6.7 FUN_71005b8858·8918·8ab8 | f64 = `view/audio.ts` 의 식을 글자 그대로 옮김(웹 규칙), f32 = 같은 식을 연산마다 `Math.fround`(원본 규칙, 할당 없음) |
+| `SoundRandom` | FUN_71005df19c(13.10) | `range(min,max)`·`randvar(n)`·`frame(t)` |
+| `FADE_TIME_PRESET`·`fadeTimeSec(name)`·`DUCKING_PRESET`·`soundGroupsOf(label, kind)` | [mgm_common 6.9](../shell/mgm_common.md) | 표 |
+| `RULES_WEB`·`RULES_ORIGINAL`·`soundDefaults` | — | 13.4 |
+
+어댑터(`lib/sound-webaudio`): `WebAudioSoundOut(ctx, {bus(name), track?(src)})` · `register(name, VoiceFactory)` · `apply(core)`(명령 비우기 → 노드) · `poll(core)`(끝난 목소리 → `core.ended`) · `handleNode(h)`. `VoiceFactory.start(cmd, out) → Voice {alive, stop(fade), stopAt?, setLocal?, pause?, setPan?, ownsPan?}`. `DecodeCache(bytes, decode, onError)` · `get(key) / peek(key)` · `stats`. 내장 처리기 `bufferVoiceFactory(cache, keyOf)`: 자료 `{url, gain?, loop?, durationSec?, late: 'skip' | 'wait', at?}` — skip = 시작 시각이 지났으면 늦은 만큼 건너뜀(리듬 이전 `startFile` 그대로), wait = 풀리는 대로 처음부터(틀 SE 이전 `AudioOut.load().then(play)` 그대로, 늘 한 마이크로태스크 뒤).
+
+mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out, decode, random, rules, play, stop, flush, update, key, load, peek, stream}` · 처리기 `buffer`(`DecodeCache` 전역 하나)·`bgmstream`(§12 `bgmSource`·`playBgmStream`, 자료 `{source?, url?, loop?, gain?, owner?, at?, resume?}`) · `decodeCache(ctx)`.
+
+### 13.3 소비자 이전
+
+| 소비자 | 전 | 후 | 바뀌지 않는 것 |
+|---|---|---|---|
+| `view/mgsceneSound.ts` `MgSceneSound` | SE·보이스 = `AudioOut.load/play`(핸들 없음), BGM·징글 = `BgmChannel` 두 개(출력 = `ctx.destination`), 그룹 정지 = 0x22·0x20 만 채널 정지 | 표마다 `SoundCatalog`, SE·보이스 = `buffer` 처리기, BGM·징글 = `bgmstream` 처리기 핸들 두 칸(같은 라벨이면 그대로), 그룹 정지 = 코어 `stopGroup`(원본 규칙) | `load(audio, sources)`·`onEvents`·`log`·`dispose` |
+| `games/rhythm/view/sound.ts` `RmSoundMap`(mg1801 view) | 자체 핸들 집합·`admit`·`resolve`·`calc3d`·`startFile`·`fetch`(AudioOut.load) | 핸들·한도·치환·3D = 코어, 파일 = `buffer`·`bgmstream` 처리기, 시퀀스 = 이 파일이 꽂는 시퀀서 처리기(전역 변수 G0..G15 를 같이 쓰는 `SeqEngine` 하나), 핸드셰이크 BGM = 이 파일이 꽂는 처리기(요청부터 출발·끝까지 핸들 하나, 출발 때 `bgmstream` 재생기를 그 시각에 연다) | 리듬 핸드셰이크(G10·G12·G13), 전역 변수 기록·`observe`, 공개 API(`load`·`onEvent`·`playJust`·`observe`·`stopBgm`) |
+| `games/rhythm/soundMan.ts` | 로직(사건만) | 그대로. 경계: 로직은 핸들을 모르고 `justSound{combo, play}`·`se`·`soundStop` 사건만 낸다. PlayExcellentSe 의 핸들 수명 근사(그 파일 주석)는 로직 쪽에 남는다 — 실제 핸들 수명은 코어가 안다 | — |
+| `shell/mgscene/sound.ts` `MgSound` | `FADE_PRESET_SEC` 한 칸 | 코어 `fadeTimeSec`(6.9 표 전체, 모르는 이름 0.7) | 사건 형식 |
+| `games/mg1801/view/index.ts` | `RmSoundMap` 사용 | 그대로(파일 무수정) — 내부가 코어로 간다 | — |
+| `view/character.ts` `routeCharacterEvents` | `sound.onEvents([{k, label}])` | 그대로 `MgSceneSound` 로 → 코어 해석(파일 없음 = 라벨 사건까지) | — |
+
+미룬 것: 셸 화면(mgm01·mgmet·online·partyrule·setplayer·charselect·mgmcommon 등)의 `MgmSound`·화면별 `AudioBuffer` 맵, 캐릭터 효과음·보이스·발소리 파일 변환, 리전 점프(`*_JMP`), 메시지 창 덕킹 연결(코어 API 만 있음).
+
+### 13.4 원본 스위치
+
+`RULES_WEB` = 이전 전 웹 결과 그대로(골든 같음), `RULES_ORIGINAL` = 원본(기본).
+
+| 항목 | 웹 근사(`RULES_WEB`) | 원본(`RULES_ORIGINAL`) | 근거 |
+|---|---|---|---|
+| `groups` 그룹 정지 | 틀 소리만: 0x22 → MG BGM 채널(사건 초), 0x20 → MG BGM·징글 0.7 s, 그 밖 무시. 게임 소리는 화면을 버릴 때 멈춤 | 소속 규칙으로 **같은 코어의 모든 살아 있는 핸들**(틀 + 게임)을 사건 초로 페이드 정지 | [판독] mgm_common 6.9 소속 표(FUN_71000c4730·FUN_71000c3dcc) |
+| 그룹 소속 0x00~0x1f | — | 사운드 사용자 파라미터 비트 29 칸. 웹 명세에 값이 없어 라벨 접두로 대신: `SQ_SE` → 0x01, `SQ_VOI` → 0x02 | [데이터] 6.9 fspj 집계(SQ_SE 2,089 전부 0x01). 나머지 비트는 [미확정] |
+| `random` 시퀀스 엔진 난수 | `Math.random` | nn::atk LCG `u = u·0x19660D + 0x3C6EF35F`, 값 = u >> 16, 초기 `0x12345678`. random 인자 = `min + ((r·(max−min+1)) >> 16)`, randvar = `±((r·(|n|+1)) >> 16)`, 사운드 프레임(5 ms)마다 1회 더 소비 | [판독, 새로] 13.10 |
+| `supersede` BGM 끼리 | 새 SQ_BGM/SM_BGM 이 시작하면 반복하는 이전 BGM 을 **지금** 멈춤 | 그런 규칙 없음 — 리듬 BGM 은 핸드셰이크(ENDPLAY_CHECK_VOLOFF)가 정한 시각 `stopAt`, 그 밖은 플레이어 한도·명시 정지만 | [데이터] §5.3 시퀀스 골격, 웹 쪽은 리듬 sound.ts 머리 "[근사: 즉시]" |
+| `instanceLimit` 아카이브 전체 한도 | 없음 | 시퀀스 64·스트림 6·웨이브 16(넘치면 플레이어 한도와 같은 우선순위 규칙) | [데이터] 플레이어 최대치 0x220B(§4.1). 넘칠 때 규칙은 [추정: nn::atk 공개 동작] |
+| `resolve` 프리셋 치환 | 같은 이름만, 치환 대상이 명세에 있을 때만 | `**` 를 두 글자 와일드카드로 맞추고 같은 글자를 대상에 넣음(`SQ_VOI_PC**_JUMP` → `SQ_VOI_PC01_MUTE`). 대상이 명세에 없으면 원래 라벨(웹 명세는 치환된 파일을 원래 라벨 아래 두기도 한다: mg1801 `SM_JIN_MG1801_MG_RESULT_GOOD` = `SM_JIN_RC01_MG_SUCCESS.wav`) | [데이터] 프리셋 레코드 이름 쌍(§4.7). 치환 함수 판독 안 함 → [추정]. 처음엔 "대상이 없어도 치환(= 무음)"으로 적었으나 골든에서 결과 징글이 사라져 고쳤다(13.7) |
+| `track3d` 3D 갱신 | 재생할 때 한 번 | 살아 있는 3D 핸들을 `update()` 마다 다시 계산(`setPosition`·리스너 바뀜 반영) | [판독] §6.7 계산 함수, 프레임마다 부르는 것은 [추정: nn::atk Sound3DEngine] |
+| `f32` | 3D 식 f64 | 3D 식 `Math.fround` | 원본 float 산술 |
+| FadeTimePreset | 틀 `MgSound` 이 `FADE_TIME_02` 만 0.7 | 6.9 표 전체(0 = 0.1 … 10 = 10.0 s) | [판독] mgm_common 6.9. 지금 데이터(`mg_bgm_stop_fade` 전부 `FADE_TIME_02`)에서는 값이 같다 — 로직이라 스위치 없이 표를 쓴다 |
+| 틀 단계 16 `StopGroup_Type(0x20, 6)` 초 | 사건 `sec: 0`(웹 소리는 0.7 로 무시) | 사건 `sec` = FadeTimePreset 6 = 0.5 s | [판독] [minigame_scene §6](../shell/minigame_scene.md) 단계 16 |
+
+규칙과 무관하게 바뀌는 것: 틀 BGM·징글 출력이 `ctx.destination` 직결 → `AudioOut` 의 bgm 버스(음소거 체크가 먹는다). 경로 이득 곱은 1 이라 골든 무관.
+
+플레이어 한도(`playableSoundMax`)·우선순위는 두 규칙이 같다: 같은 플레이어 소리가 한도면 우선순위가 가장 낮은(같으면 가장 오래된) 소리와 비교해, 새 소리가 더 낮으면 내지 않고 아니면 그 소리를 멈춘다 [추정: nn::atk 공개 동작 — 리듬 sound.ts 의 이전 규칙 그대로]. 3D 우선순위 감소(§6.7)를 더한 값으로 비교한다.
+
+### 13.5 디코드 캐시
+
+- 키 = 로더 관리자 논리 키(`assetKeyOf(url)`, web/assets 기준 소스 경로 — 압축 모드에서도 `.wav` 이름). 받기 = `appAssets().get(key, 'bytes')`(전역 fetch shim 이 `.wav` → `.ogg/.m4a/.flac`·해시 이름으로 바꿈, §12.5·assets_pipeline), 풀기 = `decodeAudioData`(바이트를 복사해 넘김 — 관리자가 든 원본이 떼어지지 않게). 키가 없는 URL 은 URL 그대로 fetch.
+- 풀린 `AudioBuffer` 는 전역 맵 하나(`globalThis` — 번들이 나뉘어도 하나)에 표본율마다 키로 둔다. 같은 파일을 소비자·판·AudioOut 마다 다시 받고 풀지 않는다(13.7 측정).
+- 풀기는 표본율마다 `OfflineAudioContext(1, 1, rate)` 하나로 한다 — 시험 페이지처럼 `AudioOut` 을 판마다 만들고 닫아도(닫힌 컨텍스트) 캐시가 계속 쓰인다. 없으면 그 페이지 컨텍스트로.
+- BGM 조각(§12)은 `bgmstream` 이 그대로 받는다(바꾸지 않음).
+
+### 13.6 결정성·할당
+
+- 코어는 `Math.random`·`performance.now`·`Date` 를 쓰지 않는다. 시각 = 생성 때 주입한 `now()`(mpj 연결 = `ctx.currentTime`), 난수 = `SoundRandom`(원본 규칙) — 소리 쪽 값이라 로직에 들어가지 않는다([minigame_scene §12.12.6](../shell/minigame_scene.md) 6번 예외: 리듬 사운드 관측 G14·G12·L0 만).
+- f32 는 3D 식(원본 규칙). 웹 규칙은 옮기기 전 f64 식을 글자 그대로 쓴다(골든 같음).
+- 할당: `update()`·`drain()` 은 정상 상태 할당 0(명령 객체 풀, 핸들 칸 배열 고정). `play` 는 핸들 칸·명령 객체를 다시 쓴다.
+
+### 13.7 검증 [실행 2026-10-09, 노드만 — 헤드리스·촬영 없음]
+
+**시험 `tools/test_sound.ts` 77/77**: 해석(mg1801 manifest 치환 41줄·와일드카드·대상 없음), 핸들(칸·세대·낡은 핸들·표 거르기), 그룹 소속(SQ_SE·SM_BGM·SM_JIN·SQ_VOI·SM_AMB)·FadeAndEntryCancel = 징글만 남음, FadeTimePreset 표, 덕킹(0x0d 0.6 배 0.3 s·중간 값 선형·해제), 3D(옮긴 calc3d = view/audio 다시 내보냄, 감쇠 곡선 1·2, 팬 θ/30°·0.9, 출력 리스너 둘이면 팬 0, f32 1e-6 안), 동시 발음(플레이어 한도·거절·3D 우선순위 감소·아카이브 한도 웹 65/원본 64), 엔진 난수(LCG·random 인자·randvar·advance·5 ms 프레임), 결정성, 어댑터(핸들 노드·팬 노드·명령·끝 판정·SetVolume 램프·디코드 캐시 1회·늦은 시작 offset·시작 전 페이드 정지·pause), import 경계·정적 검사, 할당(원본 규칙 3D 핸들 24개 `update()+drain()` 스텝당 0.00 B), 골든 10(자식 프로세스).
+
+**골든 `tools/sound_golden.ts`.** 가짜 AudioContext(노드 연결·이득 자동화·소스 시작/정지·ended, 가상 시계·가상 타이머·rAF, 가짜 fetch, `Math.random` 고정 시드)로 소비자를 돌리고, 틱마다 [로직이 낸 소리 사건] + [소스 시작(버퍼 파일·when·offset·속도·반복·목적지까지 경로별 이득 곱·팬·채널)·정지·이득 자동화(위쪽 첫 소스 기준)] + 로직 상태 해시를 줄로 남긴다. 위쪽에 소스가 아직 없는 노드의 자동화와 이미 끝난 소스의 stop 은 소리에 영향이 없어 남기지 않는다(핸들 GainNode 가 하나 더 끼는 그래프 차이를 지우려고). 이전 전 기준은 scratchpad 에 이전 전 코드 트리(`script`·`tools`)를 복사해 같은 도구로 기록했다.
+
+| 시나리오 | 내용 | 줄 · 시작 · 정지 · 자동화(이전 전) |
+|---|---|---|
+| `mg1801_normal` | 노멀 시드 1, 1P 사람(37 프레임마다 A), 틀 소리 포함, 3,245 틱 | 80,546 · 680 · 237 · 69,598 |
+| `mg1801_long180` | 같은 AudioOut 에서 이어 롱 4번째(BPM 180) 시드 3 | 62,637 · 655 · 277 · 55,031 |
+| `mgscene_dummy` | 틀 더미(mg0101) 한 판, 건너뛰기 없음 | 3,037 · 9 · 6 · 3 |
+| `mgscene_skip` | 같은 판 + 단계 4 건너뛰기(그룹 정지 0x22·0x23·1·0x25) | 1,841 · 10 · 6 · 3 |
+| `rhythm_script` | 리듬 소리 직접: 마스터·OP·핸드셰이크·물보라 7발(한도 5)·3D·JUST 콤보·지역 변수·반복 BGM 둘·결과 SE 정지·프리셋 치환 + 틀 사건(호루라기·캐릭터 보이스/발소리 라벨·징글·설명 BGM·그룹 정지) | 4,851 · 61 · 30 · 4,233 |
+
+(a) `RULES_WEB` 전후: 지금 코드에서 `flow.ts` 단계 16 사건의 sec 만 되돌린 사본 → **다섯 시나리오 모두 이전 전 기록과 바이트까지 같음**. 지금 코드 그대로는 네 시나리오에서 그 사건 줄(`"sec":0` → `0.5`) 하나만 다르다(웹 규칙 소리는 이 값을 쓰지 않아 소리 줄은 같다). 해시: `GOLDEN_SHA256_PRE`(이전 전)·`GOLDEN_SHA256_WEB`(지금).
+
+(b) `RULES_ORIGINAL`(기본, `GOLDEN_SHA256`): **로직 해시(틱마다 상태·사건) 다섯 모두 웹 규칙과 같다** — 소리와 무관한 값은 바뀌지 않았다. 사운드 관측(`obs`)은 `mg1801` 두 판에서 단계 16 뒤 22 틱만 다르다(게임 BGM 핸들이 그룹 정지로 끝나 L0 가 비어 감 — 리듬은 이미 끝난 뒤라 로직이 읽지 않는다). 항목별(웹 규칙에서 그 항목만 원본으로, `GOLDEN_ITEMS`):
+
+| 항목 | 바뀐 소리 |
+|---|---|
+| `groups` | mg1801 노멀: 단계 16(53.72 s)에 `SM_AMB_MG1801_MG_RESULT`·환호 `SQ_SE_RC_CHEER_MG_FIN`(rc_cmn war2_013 반복)·결과 징글 `SM_JIN_RC01_MG_SUCCESS` 를 0.5 s 페이드 정지(웹: 틀 채널만, 게임 소리는 화면을 버릴 때). 롱 180: 마스터 `SQ_BGM_RC_MAIN_RHYTHM`·`SM_AMB`·환호 같은 식. 틀 건너뛰기: `SQ_SE_SYS_SKIP`(그룹 0x01)이 0.3 s 페이드로 짧아짐(웹: 끝까지). 리듬 직접: [0x23,1,0x25] 0.3 s 로 징글 `SM_JIN_MG_WIN`·환호 SE 둘, 0x20 0.5 s 로 결과 징글·환경음·설명 BGM 조각 |
+| `random` | 물보라(`FOOD_FALL_WAT_*`) 피치·volume2(예 속도 1.1811 → 1.2288), 환호 시퀀스의 무작위 갈래(rc_cmn war2_012/013/014 → 015/016), 롱 180 물보라 시작 62 → 64(음 길이가 바뀌어 플레이어 한도 5 판정 시점이 바뀜) |
+| `supersede` | 리듬 직접: `SQ_BGM_RC_CALIBRATION` 이 시작해도 반복 중인 `SQ_BGM_RC_GENERIC` 을 멈추지 않음(웹: 138.22 s 에 끊음) → `bgmStop` 까지 이어짐(조각 시작 +1) |
+| `instanceLimit` · `resolve` · `track3d` · `f32` | 이 시나리오들에서 차이 없음: 시퀀스 64·스트림 6 을 넘지 않음, 와일드카드 대상(`*_MUTE`·`SQ_SE_DUMMY`)이 명세에 없음, 카메라 고정·출력 리스너 여럿(팬 0·음량 1), 3D 값이 1·0 |
+
+처음 원본 규칙 실행에서 결과 징글 `SM_JIN_MG1801_MG_RESULT_GOOD` 이 사라졌다 — `resolve` 원본 규칙을 "대상이 없어도 치환"으로 둔 탓(웹 명세는 치환된 파일을 원래 라벨 아래 둔다). 13.4 를 먼저 고치고 코드를 고쳤다.
+
+**디코드 캐시 통합(같은 골든 실행의 받기·풀기 수, 파일 내용 기준):**
+
+| 시나리오 | 이전 전 받기 / 풀기 | 지금 |
+|---|---|---|
+| mg1801 노멀(처음) | 76 / 70 | 76 / 70 |
+| mg1801 롱 180(같은 AudioOut 두 번째) | 2 / 0 | 2 / 0 |
+| 틀 더미(새 AudioOut) | 6 / 5 | 6 / 5 |
+| 틀 건너뛰기(새 AudioOut) | 6 / 6 | 1 / 1 |
+| 리듬 직접(새 AudioOut) | 73 / 71 | 2 / 0 |
+| 합 | **163 / 152**(같은 파일 두 번 이상 75 / 75) | **87 / 76**(두 번 이상 0 / 0) |
+
+즉 같은 페이지의 AudioOut 하나 안에서는 이전에도 URL 캐시가 있어 줄지 않았고, **AudioOut 을 새로 만드는 경로**(ui 시험 페이지 `mgscene`·`character`, 판마다 새 컨텍스트)에서 다시 받기·풀기가 0 이 됐다. 받기는 이제 로더 관리자 `bytes` 를 지나므로 미리 받기·다른 화면이 같은 키를 받았으면 그것을 쓴다. BGM 조각(§12)은 원본 모드 골든에서 풀기가 없어 이 표에 없다.
+
+기존 노드 시험(일괄 1회): `test_mg1801` 97/0·`test_mgscene` 79/79·`check_logic` mg1801 3,245 프레임 같음·`test_bgm_stream` 43/43·`test_character` 135/135(일괄 때 GC 측정 1건 실패, 단독 재실행 통과 — 이전 작업들과 같은 현상)·`test_effect` 106/106·`character_golden`·`effect_golden` 기준과 같음, 나머지 전부 통과. `test_room_server` 255/256 — 광장 원격 달리기 틱별 오차(실시간 소켓 타이밍, 소리 코드를 부르지 않음)로 단독 재실행도 같음. `tsc`·`npm run build` 통과. 받는 경로(통파일 = 로더 관리자 bytes)가 바뀌어 :51811 페이지 콘솔 확인 1회(촬영 없음): `ui.html?ui=sound&auto=1`·`ui.html?ui=mgscene&game=mg1801&auto=1` 콘솔 오류 0·4xx 0(swiftshader GL 경고만), 소리 요청 76개.
+
+### 13.8 자리만 둔 것
+
+- `pause` 는 `buffer` 처리기만(위치 기억 뒤 다시 시작). 시퀀스·스트림 처리기는 무시.
+- 페이드 정지: `buffer` 는 핸들 GainNode 램프 + 끝에 stop(풀리기 전에 받은 페이드 정지도 시작한 뒤 페이드 [추정: 원본은 같은 프레임에 낸 소리도 그룹 정지를 받는다]), 리듬 시퀀스는 핸들 GainNode 램프 뒤 타이머로 시퀀스 정지, 스트림은 `BgmStream.stop(fade)`. 웹 규칙에서 리듬 소리 정지는 늘 0 초다.
+- 3D 팬 갱신(`track3d`)은 `buffer` 처리기 팬 노드만. 시퀀스는 재생 때 음마다 더하는 팬(§6.6)이라 재생 중 바뀌지 않는다(mg1801 은 출력 리스너가 여럿이라 팬 0, §6.7).
+- 메시지 덕킹(0x0d·0x13)·`SetVolume`·리전 점프는 API 만(셸 이전 때 연결).
+- 도플러·필터(§6.7)는 계산하지 않는다.
+
+### 13.9 사용자 확인 필요
+
+| 항목 | 정한 것(원본 쪽) | 이유·선택지 |
+|---|---|---|
+| 틀 단계 16 그룹 정지 초 | 로직 사건 `sec` 를 FadeTimePreset 6 = 0.5 s 로 고침(`shell/mgscene/flow.ts` 한 줄, 로직 상태·다른 사건 무변화) | 원본 `StopGroup_Type(0x20, 6)` [판독]. 로직 파일이라 알림. 단계 6 의 `[0x23,1,0x25], sec 0` 은 프리셋 번호 미판독이라 그대로 |
+| 원본 규칙 그룹 정지 범위 | 같은 AudioOut 의 틀 + 게임 소리 모두(단계 16 에 리듬 결과 징글·환경음도 0.5 s 페이드) | 웹 규칙은 게임 소리를 화면을 버릴 때 끊었다 |
+| 그룹 0x00~0x1f 소속 | 라벨 접두(SQ_SE → 0x01, SQ_VOI → 0x02) | 원본은 사운드마다 사용자 파라미터 비트. 명세 변환기에 `userGroups` 를 넣으면 정확해진다(0x0d BGM·0x13 메시지 덕킹 대상에 필요) |
+| 엔진 난수 시작 상태 | AudioOut 마다 `0x12345678` 에서, 그 코어를 만든 오디오 시각부터 5 ms 마다 한 칸 | 원본은 부팅 뒤 모든 소리 소비에 따라 다름 — 같은 값 재현은 불가, 식·분포만 원본 |
+| 플레이어·아카이브 한도 넘칠 때 | 가장 낮은(같으면 가장 오래된) 소리와 비교 | nn::atk 공개 동작 [추정]. 판독하려면 SoundInstanceManager·SoundPlayer 할당 경로 |
+| `resolve` 와일드카드 | `**` = 두 글자, 대상이 명세에 있을 때만 | 치환 함수 미판독. 캐릭터 보이스 파일을 넣을 때 `SQ_VOI_PC**_MUTE`·`SQ_SE_DUMMY` 를 무음 항목으로 명세에 넣어야 원본처럼 꺼진다 |
+| `supersede` 끔 | 리듬 직접 재생 BGM 이 겹칠 수 있음(핸드셰이크 밖 경로: 마스터가 없을 때의 `bgm` 사건) | 원본에 그런 규칙이 없음. 실제 mg1801 흐름에서는 핸드셰이크가 끊는다 |
+| 틀 BGM 출력 버스 | `ctx.destination` 직결 → AudioOut bgm 버스(음소거 체크가 먹음) | 이전엔 음소거해도 틀 BGM·징글이 났다 |
+| 낡은 주석 | (해소 2026-10-09) 사용자 지시로 지금 코드에 맞게 고침: `view/mgsceneSound.ts` 머리(코어 핸들 두 칸·그룹 정지 규칙), `view/audio.ts` 머리(calc3d 는 lib/sound 에서 다시 내보냄), `games/rhythm/view/sound.ts` 머리(코어 담당·BGM 끼리 정지 규칙별)·`startFile` 문서 주석 | — |
+
+### 13.10 새 판독: 시퀀스 엔진 난수 [판독 2026-10-09]
+
+`analysis/decomp/sound_seq_player.c`(기존)와 CoreTool 덤프(새, `dec:71005df19c`·`71005c9b10`·`71005de7f0`·`71005dd1e0`, ghidra_work/sound):
+
+| 함수 | 내용 |
+|---|---|
+| FUN_71005df19c | `DAT_7101adbc08 = DAT_7101adbc08 * 0x19660d + 0x3c6ef35f; return DAT_7101adbc08 >> 16` — 전역 LCG 하나. 초기값 `0x12345678`(데이터 @0x7101adbc08) |
+| FUN_71005c9b10 case 4(random 접두 인자) | `s16 min, s16 max` 를 읽고 `min + ((r & 0xffff) + (r & 0xffff)·(max − min)) >> 16` |
+| FUN_71005c9c80 case 0x86(randvar) | n = 값(음수면 −값), `((r & 0xffff) + (r & 0xffff)·n) >> 16`, 값이 음수면 부호를 뒤집음 |
+| FUN_71005dd1e0(사운드 프레임) | 모든 갱신 뒤 `FUN_71005df19c()` 를 한 번 부른다(값 버림) — 프레임마다 상태가 한 칸 간다 |
+| FUN_71005de7f0 | `(r & 0xffff) / 65535.0` 실수 난수. FUN_71005de6ec 가 함수 포인터로 등록 — 쓰는 곳 [미확정] |
+
+그래서 원본 물보라 피치·볼륨(§6.4)은 부팅 뒤 지난 사운드 프레임 수와 그 사이 모든 소리의 무작위 소비에 따라 다르다. 웹(원본 규칙)은 AudioOut 하나에 LCG 하나를 두고 그 코어를 만든 오디오 시각을 기준으로 5 ms 프레임마다 한 칸 돌린다.

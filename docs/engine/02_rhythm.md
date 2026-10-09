@@ -751,6 +751,8 @@ interface RmBeatData { row: number; beat: number; item: RmChartRow }   // 원본
 
 ### 14.6 mgscene 연결 계획 (이번에는 하지 않음)
 
+2026-10-09 [mg-connect]: 아래 계획대로 연결했다 — [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12(어댑터 `games/rhythm/mgGame.ts` `RmMgGame`, 단계 대응, 새 시작 프레임: OnGameStartAfter 리듬 프레임 61 → 27, 원본 근거 §12.12.3). 웹 MinigameFlow 대리(`stepFrame` 흐름 switch·PREROLL·흐름 11 두 프레임)는 지웠고, `PREROLL_FRAMES`·`RmOptions.prerollFrames` 는 이제 읽는 곳이 없다.
+
 공용 리듬 모듈의 흐름 슬롯 이름·반환형은 `shell/mgscene` 의 `MgGame`([../shell/minigame_scene.md](../shell/minigame_scene.md) §12.3)과 같게 맞춰 두었다. 나중에 할 일:
 1. 어댑터 하나: `MgGame = { setup, update: () => scene.update(), onGameStartAfter: () => scene.onGameStartAfter(), onGameMain, onGameEnd, onGameFinish, onGameEndingBefore, onGameEnding }`. 틀의 `ctx.dt`·`ctx.rand`·`ctx.pad` 는 지금 게임이 직접 쓰는 `RM_DT`·`BexRandModule`·`Pads` 자리에 넣는다. `updateAnimation()` 은 틀의 흐름 처리기 뒤에 부른다(원본 엔티티 갱신 자리, 순서 [추정]).
 2. 웹 MinigameFlow 대리(`stepFrame` 의 흐름 0·8~13 switch, `PREROLL_FRAMES`, 흐름 11 두 프레임)를 지우고 틀의 단계 1~13 이 대신한다.

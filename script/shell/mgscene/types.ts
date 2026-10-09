@@ -89,6 +89,7 @@ export interface MgPlayerSetup {
   teamId: number;
   /** GetOrder */
   order: number;
+  gamePlay?: boolean;
 }
 
 /** PlayerWork 미니게임 기록(원본 값 그대로) */
@@ -102,6 +103,29 @@ export interface MgSyncRand {
   u32(): number;
 }
 
+export interface MgRandModule {
+  randMod(n: number): number;
+  rand(): number;
+  syncRandF(): number;
+  syncRandMod(n: number): number;
+  setSyncRandSeed(s: number): void;
+  readonly calls: number;
+}
+
+export interface MgWipeApi {
+  fadeOut(type: number, speed: number): void;
+  fadeIn(type: number, speed: number): void;
+  readonly playing: boolean;
+  readonly core: Transition;
+}
+
+export interface MgPlaySettings {
+  rhythm: number;
+  callInst: boolean;
+  useGyro: boolean;
+  comLevel: number;
+}
+
 /** 이번 프레임 패드(NPAD 비트, 스틱 −32767..32767) — 게이트가 준 입력에서 만든다 */
 export interface MgPadState {
   now: number;
@@ -110,6 +134,9 @@ export interface MgPadState {
   ly: number;
   rx: number;
   ry: number;
+  accX: number;
+  accY: number;
+  accZ: number;
 }
 
 /** 시작/종료 텔롭 종류 3·4 의 사용자 구현(IUserStartFinish vt+0x18/0x20) */
@@ -169,6 +196,10 @@ export interface MgSceneContext {
   readonly seed: number;
   /** 동기 난수 — 게이트가 연 프레임 안에서만 쓴다 */
   readonly rand: MgSyncRand;
+  readonly rng: MgRandModule | null;
+  readonly play: MgPlaySettings | null;
+  readonly wipe: MgWipeApi;
+  requestReturnScene(): void;
   /** 지금 프레임 번호(틀 step 수) */
   readonly frame: number;
   /** GetDeltaTime(f32 1/60) */
@@ -245,6 +276,8 @@ export interface MgSceneSetup {
   seed: number;
   /** 시드로 만든 동기 난수(페이지가 core/rng 로 만든다 — 셸 경계) */
   rand: MgSyncRand;
+  rng?: MgRandModule;
+  play?: MgPlaySettings;
   tables: MgTables;
   ui: MgUiData;
   /** flag 0 */

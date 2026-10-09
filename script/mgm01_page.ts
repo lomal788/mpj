@@ -16,6 +16,8 @@ import {
   Mgm01Catalog,
   Mgm01Scene,
   SettingScreen,
+  countMinigamePlay,
+  settlePlayResult,
   type Mgm01Carry,
   type Mgm01PlayRequest,
   type FilterApplied,
@@ -516,8 +518,7 @@ function fakeResult(env: Mgm01Env, req: Mgm01PlayRequest): MgResultEntry {
   const w = pids.length ? pids[Math.floor(Math.random() * pids.length)] : 0;
   const team = req.team.teamIdByPid[w];
   const results = [0, 1, 2, 3].map((p) => (!play[p] ? 255 : p === w || (team >= 0 && req.team.teamIdByPid[p] === team && req.team.format !== 0 && req.team.format !== 3) ? 1 : 0)) as [number, number, number, number];
-  const e = env.save.minigame(req.id);
-  env.save.setMinigame(req.id, { head: Math.min(999, e.head + 1), flags: e.flags });
+  countMinigamePlay(env.save, req.id);
   return { id: req.id, judge: 1, results };
 }
 
@@ -581,7 +582,7 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
         step() {
           if (done || real === undefined) return;
           done = true;
-          stack.ret(real ?? fakeResult(env, req));
+          stack.ret(settlePlayResult(env.save, req.id, !!cfg.play, real, () => fakeResult(env, req)));
         },
         render() {},
         dispose() {},

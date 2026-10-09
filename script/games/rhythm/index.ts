@@ -10,3 +10,4 @@ export { type RmChartRule, type RmConfig, type RmCourse, RmGameWork, type RmOpti
 export { RmSoundMan, rmEndingBgmName, rmGameBgmName, rmInterEndBgmName } from './soundMan';
 export { starJudge } from './status';
 export { type RmBeatData, RmMgSceneBase, type RmSceneInit } from './scene';
+export { type RmHost, type RmHostPad, RmMgGame } from './mgGame';

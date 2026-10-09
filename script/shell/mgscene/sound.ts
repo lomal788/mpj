@@ -3,11 +3,14 @@
  * 판독: docs/shell/minigame_scene.md §12.1 (mgscene_web1.c·mgscene_web2.c: FUN_71001e4a54·4c9c·4af0·4f28·4308·559c·51e0·597c,
  * TryStartResultSound·TryStartWhistle). 실제 재생은 화면 쪽(view/mgsceneSound.ts)이 사건을 받아 한다.
  */
+import { fadeTimeSec } from '../../lib/sound';
 import type { MgPlayer, MgSceneEvent, MgSoundRow } from './types';
 
 const F = Math.fround;
 /** FADE_TIME_02 = Stop_Preset(2) = 0.7 초 [04_sound.md §12 표] */
 const FADE_PRESET_SEC: Record<string, number> = { FADE_TIME_02: 0.7 };
+/** FadeTimePreset 이름 → 초(공용 코어 표, docs/shell/mgm_common.md 6.9). 이름 꼴이 아니면 위 표·0.7 */
+const fadeSec = (name: string): number => fadeTimeSec(name, FADE_PRESET_SEC[name] ?? 0.7);
 
 interface Slot {
   label: string;
@@ -103,7 +106,7 @@ export class MgSound {
         this.bgmStopDelay = F(r.bgmStopOffset / 60);
         return;
       }
-      this.emit({ k: 'bgmStop', fadeSec: FADE_PRESET_SEC[r.bgmStopFade] ?? 0.7 });
+      this.emit({ k: 'bgmStop', fadeSec: fadeSec(r.bgmStopFade) });
     }
     this.bgm = null;
   }
@@ -169,7 +172,7 @@ export class MgSound {
       this.bgmStopDelay = F(this.bgmStopDelay - dt);
       if (!(this.bgmStopDelay > 0)) {
         this.bgmStopDelay = 0;
-        this.emit({ k: 'bgmStop', fadeSec: FADE_PRESET_SEC[this.rec?.bgmStopFade ?? ''] ?? 0.7 });
+        this.emit({ k: 'bgmStop', fadeSec: fadeSec(this.rec?.bgmStopFade ?? '') });
         this.bgm = null;
       }
     }

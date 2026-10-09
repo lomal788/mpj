@@ -21,6 +21,8 @@ import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
 import { runMgStagePage, type MgStagePageRun } from './mgstage_page';
 import { runSplitScreenPage, type SplitScreenPageRun } from './splitscreen_page';
 import { runCharacterPage, type CharacterPageRun } from './character_page';
+import { runEffectPage, type EffectPageRun } from './effect_page';
+import { runSoundPage, type SoundPageRun } from './sound_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
 import { installTransition, sceneIn, sceneOut } from './view/appTransition';
@@ -223,6 +225,24 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: CharacterPageRun = await runCharacterPage(stage, { params: new URLSearchParams(location.search), pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
       (window as unknown as { __character?: CharacterPageRun }).__character = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'effect',
+    name: '이펙트 런타임',
+    async run(stage, cfg) {
+      const r: EffectPageRun = await runEffectPage(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
+      (window as unknown as { __effect?: EffectPageRun }).__effect = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'sound',
+    name: '사운드 런타임',
+    async run(stage, cfg) {
+      const r: SoundPageRun = await runSoundPage(stage, { params: new URLSearchParams(location.search), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __sound?: SoundPageRun }).__sound = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

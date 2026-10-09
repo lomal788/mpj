@@ -11,3 +11,4 @@ export * from './scene';
 export * from './settingScreen';
 export * from './settingView';
 export * from './types';
+export * from './playResult';

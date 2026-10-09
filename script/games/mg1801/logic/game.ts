@@ -1,6 +1,6 @@
 /**
  * mg1801 한 판 — 원본 mg1801::Scene(+ 기반 ca::rm::RmMgSceneBase, bq::MinigameScene::MinigameFlow)과 MaintainProduct 를 묶는다.
- * 기반(RmMgSceneBase·웹 MinigameFlow 대리)은 리듬 공용 모듈 games/rhythm/scene.ts 로 옮겼다(docs/engine/02_rhythm.md 14절).
+ * 기반(RmMgSceneBase)은 리듬 공용 모듈 games/rhythm/scene.ts, 흐름 단계 진행은 공용 틀 shell/mgscene 이 맡는다(docs/engine/02_rhythm.md 14절).
  * 이 파일은 mg1801 고유 부분: 원본 vtable 훅 덮어쓰기, 제품 파이버(Object → Player), MapImpl NPC·카메라, state·결과 조립.
  * step() 한 번 = 원본 한 프레임 [판독: docs/engine/01_core.md, analysis/notes/mg1801_core.md 2절]:
  *   패드 읽기 → RmSoundMan 파이버(JUST 판정음 타이머) → 결과 연출 파이버 → 제품 파이버(Stage → Object → Player)
@@ -14,7 +14,8 @@
  * 1·3 은 리듬 쿠킹(rc_stage01) 코스 안에서만 나오므로 그 경로(+0x1C = 1, 코스 index, +0x2C)를 함께 둔다(web/docs/minigame/rc_stage01.md).
  *
  * 원본과 다른 점:
- * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 PREROLL_FRAMES 대기로 대신한다 [미확정 길이].
+ * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 공용 틀 shell/mgscene 이 돈다(리듬 장면 훅은 모두 1,
+ *   docs/shell/minigame_scene.md §12.12.3).
  * - 리듬 쿠킹의 컨트롤 안내 와이프(RmUiCntWipe 표시)는 닫히는 때를 정하는 내부 갱신을 판독하지 못했다 [미확정]. 웹은 바로 끝난 것으로 둔다
  *   (시험은 controlWipeFrames 로 길이를 넣어 SQ_BGM_RC_CALIBRATION 조건을 본다).
  * - 리믹스 BGM(SQ_BGM_RC_REMIX)의 L0=1 시점은 mg18xx A·C 와 같은 "시작 2박 뒤"로 둔다 [추정].
@@ -22,11 +23,14 @@
  */
 import { F } from '../../../core/fmath';
 import { Pads, type PadInput } from '../../../core/pad';
-import { BexRandModule } from '../../../core/rng';
-import type { GameLogic, GameSetup, SoundSnapshot } from '../../../game';
-import { CLOSED, CLOSING, OPENING, Transition } from '../../../lib/transition';
+import type { RandModule } from '../../../core/rng';
+import type { GameLogic, GameSetup } from '../../../game';
+import { CLOSED, CLOSING, OPENING, type Transition } from '../../../lib/transition';
+import type { MgPlaySettings, MgSceneContext } from '../../../shell/mgscene';
 import { type RmConfig, type RmOptions, resolveRmConfig } from '../../rhythm/gameWork';
+import { RmMgGame } from '../../rhythm/mgGame';
 import { type RmBeatData, RmMgSceneBase } from '../../rhythm/scene';
+import type { RmWipe } from '../../rhythm/types';
 import { rmEndingBgmName, rmGameBgmName, rmInterEndBgmName } from '../../rhythm/soundMan';
 import { starJudge } from '../../rhythm/status';
 import type { Mg1801Event, Mg1801Result, Mg1801State } from '../state';
@@ -77,7 +81,7 @@ export function interEndBgmName(mode: number, bpm: number, chart01: boolean): st
   return rmInterEndBgmName(PREFIX, mode, bpm, chart01);
 }
 
-/** 공용 옵션(chart·mode·course·controlWipeFrames·prerollFrames)은 games/rhythm/gameWork.ts RmOptions */
+/** 공용 옵션(chart·mode·course·controlWipeFrames)은 games/rhythm/gameWork.ts RmOptions */
 export interface Mg1801Options extends RmOptions {
   /** Params.CpuMiss(원본 기본 0) */
   cpuMiss?: boolean;
@@ -96,7 +100,13 @@ export function resolveConfig(opts: Mg1801Options): Mg1801Config {
   return resolveRmConfig(opts, CHART_RULE);
 }
 
-export class Mg1801Game extends RmMgSceneBase implements GameLogic<Mg1801State, Mg1801Event, Mg1801Result> {
+export interface Mg1801Env {
+  rng: RandModule;
+  wipe: RmWipe;
+  fade: Transition;
+}
+
+export class Mg1801Game extends RmMgSceneBase {
   private readonly w: World;
   private readonly pads = new Pads();
   private readonly total: { total: number; personal: number[] };
@@ -105,21 +115,18 @@ export class Mg1801Game extends RmMgSceneBase implements GameLogic<Mg1801State, 
   private readonly npc: { visible: boolean; motion: string; frame: number; speed: number; restarted: boolean };
   private res: Mg1801Result | null = null;
 
-  constructor(setup: GameSetup, opts: Mg1801Options = {}) {
+  constructor(setup: GameSetup, opts: Mg1801Options, env: Mg1801Env) {
     if (setup.players.length !== 4) throw new Error('mg1801: 플레이어는 4명');
     const events: Mg1801Event[] = [];
-    const fade = new Transition();
-    super(opts, { mg: 'mg1801', chart: CHART_RULE, events, wipe: fade, isCom: setup.players.map((p) => p.isCom), resultCameraPos: RESULT_CAMERA_POS });
-    this.fade = fade;
+    super(opts, { mg: 'mg1801', chart: CHART_RULE, events, wipe: env.wipe, isCom: setup.players.map((p) => p.isCom), resultCameraPos: RESULT_CAMERA_POS });
+    this.fade = env.fade;
     /* RmSyncedSetupGame: SetMainBeatType(1), SetMgBgmBeforeOneBeatStart(1,0), 채보 읽기 [판독 mg1801 @0x710000e914] */
     this.setMainBeatType(MAIN_BEAT_TYPE);
     this.setMgBgmBeforeOneBeatStart(true, 0);
     this.setChartData(chartRows(this.cfg.chart));
-    const rng = new BexRandModule(setup.seed);
-    rng.setSyncRandSeed(rng.rand());
     this.w = new World(
       this.clock,
-      rng,
+      env.rng,
       setup.players.map((p) => p.isCom),
       setup.players.map((p) => p.char),
       events,
@@ -160,10 +167,8 @@ export class Mg1801Game extends RmMgSceneBase implements GameLogic<Mg1801State, 
     this.npc.restarted = true;
   }
 
-  step(input: readonly (PadInput | null | undefined)[], sound?: SoundSnapshot | null): void {
-    if (this.finished) return;
+  readInput(input: readonly (PadInput | null | undefined)[]): void {
     this.pads.read(input);
-    this.stepFrame(sound ?? null);
   }
 
   /** 제품 파이버(Stage → Object → Player) */
@@ -299,4 +304,45 @@ export class Mg1801Game extends RmMgSceneBase implements GameLogic<Mg1801State, 
   get world(): World {
     return this.w;
   }
+}
+
+export class Mg1801Logic extends RmMgGame<Mg1801Game, MgSceneContext> implements GameLogic<Mg1801State, Mg1801Event, Mg1801Result> {
+  constructor(setup: GameSetup, opts: Mg1801Options = {}) {
+    super((ctx) => {
+      if (!ctx.rng) throw new Error('mg1801: 호스트가 난수 모듈(ctx.rng)을 넘기지 않았다');
+      const w = ctx.wipe;
+      return new Mg1801Game(setup, opts, {
+        rng: ctx.rng,
+        wipe: {
+          fadeOut: (t, sp) => w.fadeOut(t, sp),
+          fadeIn: (t, sp) => w.fadeIn(t, sp),
+          get playing() {
+            return w.playing;
+          },
+        },
+        fade: w.core,
+      });
+    });
+  }
+
+  get game(): Mg1801Game {
+    if (!this.scene) throw new Error('mg1801: 틀이 아직 setup 을 부르지 않았다');
+    return this.scene;
+  }
+
+  get state(): Mg1801State {
+    return this.game.state;
+  }
+
+  get events(): readonly Mg1801Event[] {
+    return this.game.events;
+  }
+
+  get result(): Mg1801Result | null {
+    return this.game.result;
+  }
+}
+
+export function mg1801PlayOptions(opts: Mg1801Options, play: MgPlaySettings | undefined): Mg1801Options {
+  return play ? { ...opts, mode: play.rhythm ? 2 : 0, course: null } : opts;
 }

@@ -31,12 +31,6 @@ export const BPM = 120;
 export const RC_SPEEDUP_BPM = 180;
 
 /**
- * 장면 흐름 앞부분 대기(원본 아님) — MinigameFlow 단계 1~7(장면 사운드 시작·페이드인·오프닝)을 지나 OnGameStartAfter 가 불릴 때까지.
- * 길이는 로딩·페이드·오프닝 객체에 따라 정해져 [미확정]이고, 줄–BGM 상대 시각에는 영향이 없다. 이 뒤의 단계 0~10 은 원본대로 돈다.
- */
-export const PREROLL_FRAMES = 60;
-
-/**
  * 흰 페이드(bq::WipeModule::FadeOut/FadeIn(1.0, WipeType 1 = "White")) 레이아웃 애니 길이
  * [데이터: bq_Parts wipe_WipeWhite_out / _in .bflan frameSize 20, 판독: FadeOut @0x710029c940 은 속도 1.0 으로 재생].
  * 레이아웃 1프레임 = 게임 1프레임으로 둔다 [추정].

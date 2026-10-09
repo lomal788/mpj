@@ -4,6 +4,7 @@
 export * from './flow';
 export * from './gate';
 export * from './resultContract';
+export * from './resultEntry';
 export * from './simple';
 export * from './sound';
 export * from './types';

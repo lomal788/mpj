@@ -24,6 +24,9 @@ effects.json 형식(값은 vfxb.json raw 그대로, 단위 = 원본: 프레임·
   textures  이름 → {file, width, height, format, srgb, alpha}
   primitives  ID(hex) → 모델 이름
   sets      이미터셋 이름 → {source, emitters: [Emitter]}
+            + path(ESFT 경로, 이름 해석 1·2단계)
+  resources 등록 순서 [{name(_Vfx 경로), sets}] — 이름 충돌 우선순위(08_effects.md 3.3)
+  Emitter.orig  원본 규칙용 raw 값(orig_fields)
 """
 import json
 import shutil
@@ -49,6 +52,8 @@ ALIASES = {
     "ca::rm::util::ShowCommonEffect#1": "mg1800_success00",
 }
 NONE_ID = (0, 0xFFFFFFFFFFFFFFFF)
+# 리소스 이름(_Vfx 경로)과 등록 순서 — mg1801 장면의 _Vfx: mg/mg1801, mg/mg1800, libca/mg_common(08_effects.md 3.3, 순서 [미확정])
+RESOURCE = {"mg1801": "mg/mg1801", "mg1800": "mg/mg1800", "mg_common": "libca/mg_common"}
 
 
 def r6(v):
@@ -63,6 +68,39 @@ def r6(v):
 
 def keys(table, n):
     return [[k["x"], k["y"], k["z"], k["time"]] for k in table["keys"][:n]]
+
+
+INFO_U8 = ["isParticleDraw", "sortType", "calcType", "followType", "isFadeEmit", "isFadeAlphaFade", "isScaleFade", "randomSeedType",
+           "isUpdateMatrixByEmit", "testAlways", "interpolateEmissionAmount", "isAlphaFadeIn", "isScaleFadeIn", "pad1", "pad2", "pad3"]
+INHERIT_U8 = ["velocity", "scale", "rotate", "colorScale", "color0", "color1", "alpha0", "alpha1", "drawPath", "preDraw",
+              "alpha0EachFrame", "alpha1EachFrame", "enableEmitterParticle", "pad1", "pad2", "pad3"]
+
+
+def orig_fields(d, em):
+    """원본 규칙(08_effects.md '웹 런타임 계약')이 쓰는 raw 값. 파서 이름이 런타임 의미와 다른 칸은 원본 오프셋 배열로 둔다:
+    info0 = EmitterData+0xCC0..0xCCF u8×16(CC1 정렬, CC3 follow, CC4 seed 선택, CC5 이미터 TRS 재추출, CCB/CCC fade), inherit0 = +0xD48..0xD57 u8×16,
+    field 는 u32 칸(FSPN axis, FRN1 K, FRND K)을 비트 그대로 쓰도록 f32·u32 를 함께 둔다."""
+    i, r, p, c, st, f, em_ = d["info"], d["render"], d["particle"], d["color"], d["static"], d["fluctuation"], d["emission"]
+    out = {
+        "info0": [i[k] for k in INFO_U8],
+        "seed": i["randomSeed"], "drawPath": i["drawPath"], "alphaFadeTime": i["alphaFadeTime"], "fadeInTime": i["fadeInTime"],
+        "depthFunc": r["depthFunc"], "alphaFunc": r["alphaFunc"],
+        "shader": [d["shaderRef"]["shaderIndex"], d["shaderRef"]["shaderIndex2"], d["shaderRef"]["computeShaderIndex"]],
+        "fluct": [f["isApplyAlpha"], f["isApplyScale"], f["isApplyScaleY"], f["isWaveType"]],
+        "fluctParam": [st[k] for k in ["amplitudeX", "amplitudeY", "cycleX", "cycleY", "phaseRndX", "phaseRndY", "phaseInitX", "phaseInitY"]],
+        "loopOn": [int(bool(p[k])) for k in ["loopColor0", "loopAlpha0", "loopColor1", "loopAlpha1", "scaleLoop"]],
+        "loopRandom": [int(bool(p[k])) for k in ["loopRandomColor0", "loopRandomAlpha0", "loopRandomColor1", "loopRandomAlpha1", "scaleLoopRandom"]],
+        "loopPeriod": [p[k] for k in ["color0LoopRate16", "alpha0LoopRate16", "color1LoopRate16", "alpha1LoopRate16", "scaleLoopRate16"]],
+        "soft": [c["isSoftParticle"], st["softParticleDist"], st["softParticleVolume"]],
+        "inherit0": [d["inherit"][k] for k in INHERIT_U8], "inheritD58": d["inherit"]["unknownV40"],
+        "inheritRate": [d["inherit"]["velocityRate"], d["inherit"]["scaleRate"]],
+        "velInheritMax": d["unknownV36"][0],
+        "worldOrientedVelocity": int(bool(em_["isWorldOrientedVelocity"])),
+    }
+    for a in em["subsections"]:
+        if a["magic"] in ("FSPN", "FRN1", "FRND"):
+            out[a["magic"].lower()] = {"f32": a["f32"][:16], "u32": a["u32"][:16]}
+    return out
 
 
 def emitter(em, texmap, primmap, used_tex, used_prim):
@@ -94,6 +132,7 @@ def emitter(em, texmap, primmap, used_tex, used_prim):
     for a in em["subsections"]:
         if a["magic"] in ("FRND", "FRN1", "FSPN", "CSDP"):
             fields[a["magic"]] = a["f32"][:16] if a["magic"] != "CSDP" else a["f32"][:16] + a["f32"][48:50]
+    orig = orig_fields(d, em)
     out = {
         "name": d["name"],
         "flag": d["flag"],
@@ -164,6 +203,7 @@ def emitter(em, texmap, primmap, used_tex, used_prim):
                    "alphaThreshold": rs["alphaThreshold"]},
         "samplers": samplers,
         "fields": fields,
+        "orig": orig,
         "children": [emitter(c, texmap, primmap, used_tex, used_prim) for c in em["children"]],
     }
     return r6(out)
@@ -238,6 +278,7 @@ def main():
         "textures": {},
         "primitives": {},
         "sets": {},
+        "resources": [],
     }
     used_tex, used_prim = set(), set()
     texdir = {}
@@ -258,10 +299,14 @@ def main():
                 primmap[int(p["id"], 16)] = m["name"]
                 doc["primitives"][p["id"]] = m["name"]
         doc["source"][arc] = v["source"]
-        for es in v["emitterSets"]:
+        res = {"name": RESOURCE[arc], "sets": []}
+        for k, es in enumerate(v["emitterSets"]):
             if es["name"] in names:
                 doc["sets"][es["name"]] = {"source": arc, "emitters": [emitter(e, texmap, primmap, used_tex, used_prim)
                                                                         for e in es["emitters"]]}
+                doc["sets"][es["name"]]["path"] = v["esft"][k]
+                res["sets"].append(es["name"])
+        doc["resources"].append(res)
     for arc, names in SETS.items():
         for n in names:
             if n not in doc["sets"]:

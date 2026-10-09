@@ -4,7 +4,7 @@
  * 스텝 시계: 스텝 n 은 시계 시각 base + n/60 을 나타내고, rAF 마다 지금까지 와야 할 스텝을 돈다(밀린 스텝은 rAF 당 MAX_STEPS 까지 따라잡고,
  * MAX_BACKLOG_STEPS 보다 밀리면 넘친 시간을 버린다). 시계는 소리가 돌면 "지금 들리는 AudioContext 시각", 아니면 performance.now 다.
  * 원본은 게임 프레임이 사운드 스레드가 쓴 값(박자 G14 등)을 읽는다 — 웹도 오디오 시계로 스텝을 맞추고, 스텝마다 그 시각의 사운드 관측을
- * view.observe 로 받아 logic.step 에 넘긴다(game.ts SoundSnapshot). 탭이 숨으면 AudioContext 를 멈춰 두 시계가 함께 선다(원본 일시정지처럼).
+ * view.observe 로 받아 run.tick 에 넘긴다(game.ts SoundSnapshot, 한 판 호스트 mgrun.ts). 탭이 숨으면 AudioContext 를 멈춰 두 시계가 함께 선다(원본 일시정지처럼).
  *
  * URL 옵션: ?game=<id> 시작할 게임, ?seed=<n> 시드, ?com=1111 플레이어별 CPU 여부, ?debug=1 디버그 줄,
  *           ?fast=N rAF 마다 N 스텝(시험용, 사운드 관측 없음), ?mute=1, ?auto=1 페이지를 열자마자 시작,
@@ -21,9 +21,12 @@ import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from './core/clock';
 import { DEV } from './env';
 import { type GameDef, type GameLogic, type GameSetup, type GameView, type PlayerSetup, readOptions } from './game';
 import { GAMES } from './games';
+import type { LogicTransition } from './lib/transition';
+import { createMgRun, freePlaySetup, localSeed, type MgRun } from './mgrun';
+import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from './shell/mgscene';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
-import { installTransition, sceneIn, sceneOut } from './view/appTransition';
+import { installTransition, logicWipe, sceneIn, sceneOut } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
 import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
@@ -37,6 +40,8 @@ import type { PlazaPageRun } from './plaza_page';
 import type { SetPlayerRun } from './setplayer_page';
 import type { MgResultEntry } from './shell/mgmcommon';
 import type { Mgm01PlayRequest } from './shell/mgm01';
+import type { MgSceneSound } from './view/mgsceneSound';
+import type { MgSceneUi, MgSceneUiJson } from './view/mgsceneUi';
 
 const runCharSelect: typeof import('./charselect_page').runCharSelect = async (...a) => (await import('./charselect_page')).runCharSelect(...a);
 const runMgm01List: typeof import('./mgm01_page').runMgm01List = async (...a) => (await import('./mgm01_page')).runMgm01List(...a);
@@ -69,6 +74,8 @@ interface Hook {
   plaza?: () => Record<string, unknown> | null;
   /** 광장 P0 진행(n/total 항목) — 화면 문구 대신(loader_manager.md §13.5) */
   plazaLoad?: string;
+  entry?: MgResultEntry | null;
+  scene?: () => { stage: number; frame: number } | null;
 }
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] => {
@@ -109,8 +116,6 @@ function savePrefs(p: Prefs): void {
   }
 }
 
-const randomSeed = (): number => (Math.random() * 0x100000000) >>> 0;
-const parseSeed = (s: string | null): number | null => (s && /^\s*(0x[0-9a-f]+|\d+)\s*$/i.test(s) ? Number(s) >>> 0 : null);
 
 // ---------------------------------------------------------------- DOM
 const app = document.getElementById('app')!;
@@ -254,6 +259,12 @@ const hook: Hook = {
 
 let def: GameDef | null = null;
 let logic: GameLogic | null = null;
+let run: MgRun | null = null;
+let runWipe: LogicTransition | null = null;
+let mgSound: MgSceneSound | null = null;
+let curSetup: GameSetup | null = null;
+let mgHost: Promise<{ tables: MgTables; data: MgUiData; ui: MgSceneUi }> | null = null;
+let mgUi: MgSceneUi | null = null;
 let view: GameView | null = null;
 let pads: (PadSource | null)[] = [];
 let audio: AudioOut | null = null;
@@ -269,26 +280,48 @@ const dispose = (): void => {
   view?.dispose();
   view = null;
   logic = null;
+  run = null;
+  mgSound?.dispose();
+  mgSound = null;
+  runWipe?.release();
+  runWipe = null;
   def = null;
   hud.clear();
 };
+
+type SetupDraft = Omit<GameSetup, 'seed'>;
+
+const loadMgHost = (): Promise<{ tables: MgTables; data: MgUiData; ui: MgSceneUi }> =>
+  (mgHost ??= (async () => {
+    const sa = new Assets('mgscene/');
+    const [uiJson, tables, { MgSceneUi: Ui }] = await Promise.all([sa.json<MgSceneUiJson & Parameters<typeof mgUiData>[0]>('ui.json'), sa.json<MgTables>('tables.json'), import('./view/mgsceneUi')]);
+    return { tables, data: mgUiData(uiJson), ui: await Ui.load(sa) };
+  })().catch((e: unknown) => {
+    mgHost = null;
+    throw e;
+  }));
 
 const finish = (stage: Stage): void => {
   hook.stage = stage;
   startBtn.disabled = GAMES.length === 0;
 };
 
-const readSetup = (): GameSetup => {
+const readSetup = (): SetupDraft => {
   const players: PlayerSetup[] = comIns.map((c, i) => ({ char: chosenChars?.[i] ?? `pc0${i + 1}`, isCom: c.checked, comLevel: 0 }));
-  return { players, seed: parseSeed(seedIn.value) ?? randomSeed(), practice: false, options: readGameOptions() };
+  return { players, practice: false, options: readGameOptions() };
 };
 
-async function start(d: GameDef, setup: GameSetup): Promise<void> {
+async function start(d: GameDef, draft: SetupDraft, play?: MgPlaySettings, endless = false): Promise<void> {
   const my = ++token;
   dispose();
   result.replaceChildren();
-  prefs.options[d.id] = { ...(setup.options ?? {}) };
-  savePrefs({ game: d.id, com: setup.players.map((p) => p.isCom), muted: muteIn.checked, options: prefs.options });
+  const setup: GameSetup = { ...draft, seed: localSeed(seedIn.value) };
+  curSetup = setup;
+  hook.entry = undefined;
+  if (!play) {
+    prefs.options[d.id] = { ...(setup.options ?? {}) };
+    savePrefs({ game: d.id, com: setup.players.map((p) => p.isCom), muted: muteIn.checked, options: prefs.options });
+  }
   hook.stage = 'loading';
   hook.seed = setup.seed;
   hook.result = null;
@@ -311,13 +344,25 @@ async function start(d: GameDef, setup: GameSetup): Promise<void> {
   const assets = new Assets(d.assetsDir);
   try {
     await d.load?.();
-    logic = d.createLogic(setup);
+    const host = await loadMgHost();
     view = d.createView({ renderer, hud: hudCtx, audio, setup, pads }, assets);
     view.setFreeCamera?.(freeCam);
     setMsg('에셋 읽는 중…');
     await view.load((n, total, what) => {
       if (my === token && hook.stage === 'loading') setMsg(`에셋 읽는 중 ${n}/${total}\n${what}`);
     });
+    const { MgSceneSound: Snd } = await import('./view/mgsceneSound');
+    const snd = await Snd.load(audio, [{ assets: new Assets('mgscene/'), path: 'sound/sound.json' }]);
+    if (my !== token) {
+      snd.dispose();
+      return;
+    }
+    mgSound = snd;
+    mgUi = host.ui;
+    const padsNow = pads;
+    runWipe = logicWipe();
+    run = createMgRun({ def: d, setup, tables: host.tables, ui: host.data, gate: localGate(() => padsNow.map((p) => p?.read() ?? null)), play, endless, wipe: runWipe });
+    logic = run.logic;
   } catch (e) {
     console.error(e);
     if (my === token) {
@@ -377,8 +422,9 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
   hook.flow = 'game';
   appFlow().enter('game');
   chosenChars = flowPlayers.chars;
-  const setup: GameSetup = { ...readSetup(), players: flowPlayers.com.map((c, i) => ({ char: flowPlayers.chars[i] ?? `pc0${i + 1}`, isCom: c, comLevel: req.cpu ?? 0 })) };
-  await start(d, setup);
+  const fp = freePlaySetup(req, flowPlayers.chars, flowPlayers.com);
+  const draft: SetupDraft = { ...readSetup(), options: {}, players: fp.players };
+  await start(d, draft, fp.play, fp.endless);
   await new Promise<void>((res) => {
     const t = setInterval(() => {
       if (hook.stage === 'done' || hook.stage === 'error' || hook.stage === 'idle') {
@@ -387,16 +433,15 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
       }
     }, 100);
   });
-  const r = hook.result;
-  const rows = r && def ? def.describeResult(r as never, setup).rows : [];
+  const entry: MgResultEntry | null = hook.stage === 'done' && run?.ended ? run.resultEntry(req.id) : null;
   await sceneOut();
   dispose();
   glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
   for (const c of others) c.style.visibility = '';
   sceneIn();
   hook.flow = 'mgm01';
-  const results = [0, 1, 2, 3].map((p) => (!req.team.gamePlayByPid[p] ? 255 : rows.find((x) => x.player === p)?.rank === 0 ? 1 : 0)) as [number, number, number, number];
-  return { id: req.id, judge: 1, results };
+  hook.entry = entry;
+  return entry;
 }
 
 function flowMgm01(): void {
@@ -499,6 +544,7 @@ function plazaFlow(): void {
   }).then((r: SetPlayerRun) => flowStep('setplayer', r));
 }
 hook.plaza = () => plazaPage?.debug() ?? null;
+hook.scene = () => (run ? { stage: run.scene.stage, frame: run.scene.frame } : null);
 
 startBtn.addEventListener('click', () => {
   if (q.get('plaza') === '1') {
@@ -543,6 +589,7 @@ stopBtn.addEventListener('click', () => {
   token++;
   audio?.stopAll();
   dispose();
+  sceneIn();
   setMsg('그만뒀다');
   finish('idle');
 });
@@ -560,25 +607,28 @@ document.addEventListener('visibilitychange', () => {
 
 // ---------------------------------------------------------------- 루프
 function stepOnce(): void {
-  if (!logic || !view || !def) return;
+  if (!run || !logic || !view || !def) return;
   /* 이 스텝이 나타내는 시각(스텝 n+1 은 시계가 base + (n+1)/FPS 를 지나면 돈다) */
   const t = base + (hook.frame + 1) / FPS;
   const sound = clockKind === 'audio' ? (view.observe?.(t) ?? null) : null;
-  logic.step(
-    pads.map((p) => p?.read() ?? null),
-    sound,
-  );
+  if (!run.tick(sound)) return;
   view.onStep(logic.state, logic.events);
+  mgSound?.onEvents(run.scene.events);
   hook.frame++;
   if (hook.sync) logSync(t, sound !== null);
-  if (logic.done) {
+  if (run.ended) {
     const r = logic.result;
     hook.result = r;
-    if (r) {
-      const { head, rows } = def.describeResult(r, readSetup());
+    if (r && curSetup) {
+      const { head, rows } = def.describeResult(r, curSetup);
       result.replaceChildren(el('h2', '', head), ...rows.map((row) => el('div', 'jw-row', `${row.player + 1}P ${row.rank + 1}위 ${row.value}`)));
     }
     finish('done');
+    if (hook.flow !== 'game') {
+      runWipe?.release();
+      runWipe = null;
+      sceneIn();
+    }
   }
 }
 
@@ -602,6 +652,12 @@ function clockNow(): number {
   return clockKind === 'audio' ? (heardTime() ?? performance.now() / 1000) : performance.now() / 1000;
 }
 
+function drawFrame(): void {
+  if (!view || !logic) return;
+  view.render(logic.state);
+  if (run) mgUi?.draw(hudCtx, run.scene.layers());
+}
+
 function logSync(t: number, observed: boolean): void {
   const st = logic!.state as { g14?: number; row?: number; stage?: number };
   const ev = (logic!.events as { k: string; label?: string }[]).filter((e) => (e.k === 'bgm' || e.k === 'se') && e.label?.startsWith('SQ_BGM')).map((e) => `${e.k}:${e.label}`);
@@ -614,11 +670,11 @@ const loop = (): void => {
   if (hook.held !== null && hook.frame >= hook.held) {
     /* 멈춘 동안은 시계를 따라 옮긴다(풀면 그 자리부터) */
     base = clockNow() - hook.frame / FPS;
-    view.render(logic.state);
+    drawFrame();
     return;
   }
   if (Number.isNaN(base)) {
-    view.render(logic.state);
+    drawFrame();
     base = clockNow() - hook.frame / FPS;
     return;
   }
@@ -641,7 +697,7 @@ const loop = (): void => {
   }
   if (hook.sync) hook.sync.frames.push([heardTime(), base + hook.frame / FPS]);
   if (view && logic) {
-    view.render(logic.state);
+    drawFrame();
     const s = view.status(logic.state);
     status.textContent = `${def?.id ?? ''} 프레임 ${hook.frame} ${s.phase}${s.timeLeft !== null ? ` 남은 ${s.timeLeft}` : ''}`;
     if (debugOn) debugLine.textContent = view.debug(logic.state, logic.events);

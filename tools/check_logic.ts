@@ -6,7 +6,9 @@
  *   npx tsx tools/check_logic.ts mg1801 --seed 7 --frames 5000
  */
 import { GAMES } from '../script/games';
-import type { GameDef, GameSetup } from '../script/game';
+import type { GameSetup } from '../script/game';
+import { determinismCheck } from './mg_determinism';
+import { NodeMgRun } from './mg_node_host';
 
 function argValue(name: string): string | null {
   const i = process.argv.indexOf(name);
@@ -17,38 +19,18 @@ const only = process.argv.slice(2).filter((a, i, all) => !a.startsWith('--') && 
 const seed = Number(argValue('--seed') ?? 1) >>> 0;
 const maxFrames = Number(argValue('--frames') ?? 36000);
 
-function run(def: GameDef, setup: GameSetup): { frames: string[]; done: boolean } {
-  const logic = def.createLogic(setup);
-  const frames: string[] = [];
-  for (let f = 0; f < maxFrames && !logic.done; f++) {
-    logic.step([null, null, null, null]);
-    frames.push(JSON.stringify([logic.state, logic.events]));
-  }
-  return { frames, done: logic.done };
-}
-
 const games = only.length ? GAMES.filter((g) => only.includes(g.id)) : GAMES;
 if (games.length === 0) console.log(GAMES.length === 0 ? '등록된 게임이 없다(script/games/index.ts).' : `없는 게임: ${only.join(', ')}`);
 let bad = 0;
 for (const def of games) {
   await def.load?.();
   const setup: GameSetup = { players: [0, 1, 2, 3].map((i) => ({ char: `pc0${i + 1}`, isCom: true, comLevel: 0 })), seed, practice: false };
-  const a = run(def, setup);
-  const b = run(def, setup);
-  const n = Math.min(a.frames.length, b.frames.length);
-  let diff = -1;
-  for (let i = 0; i < n; i++) {
-    if (a.frames[i] !== b.frames[i]) {
-      diff = i;
-      break;
-    }
-  }
-  if (diff < 0 && a.frames.length !== b.frames.length) diff = n;
-  if (diff >= 0) {
+  const r = determinismCheck(() => new NodeMgRun(def, setup), () => ({ pads: () => [null, null, null, null] }), { maxTicks: maxFrames });
+  if (!r.ok) {
     bad++;
-    console.log(`${def.id}: 프레임 ${diff} 에서 달라짐`);
+    console.log(`${def.id}: 프레임 ${r.firstDiff} 에서 달라짐`);
   } else {
-    console.log(`${def.id}: ${a.frames.length} 프레임 같음${a.done ? '' : ` (끝나지 않음, 최대 ${maxFrames})`}`);
+    console.log(`${def.id}: ${r.ticks} 프레임 같음${r.ended ? '' : ` (끝나지 않음, 최대 ${maxFrames})`}`);
   }
 }
 process.exitCode = bad ? 1 : 0;

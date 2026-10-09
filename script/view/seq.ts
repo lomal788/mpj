@@ -52,6 +52,13 @@ export interface SeqData {
   waves: SeqWave[];
 }
 
+/** 엔진 난수(원본 규칙 = lib/sound SoundRandom, docs/engine/04_sound.md §13.10). 없으면 Math.random */
+export interface SeqRandom {
+  range(min: number, max: number): number;
+  randvar(n: number): number;
+  frame(time: number): void;
+}
+
 /** 전역 변수(G0..G15) — time 은 그 틱이 처리되는 AudioContext 시각(프레임 시작) */
 export interface SeqGlobals {
   get(i: number, time: number): number;
@@ -343,7 +350,7 @@ export class SeqSound {
     private readonly globals: SeqGlobals,
     bus: Bus,
     readonly t0: number,
-    opts: { gain?: number; pan?: number; local?: Record<number, number>; onNote?: (key: number, time: number, start: number) => void } = {},
+    opts: { gain?: number; pan?: number; local?: Record<number, number>; onNote?: (key: number, time: number, start: number) => void; dest?: AudioNode; random?: SeqRandom | null } = {},
   ) {
     this.d = bytes;
     this.onNote = opts.onNote ?? null;
@@ -352,12 +359,14 @@ export class SeqSound {
     this.vol = (data.volume / 127) * (opts.gain ?? 1);
     this.extraPan = opts.pan ?? 0;
     this.out.gain.setValueAtTime(this.vol, t0);
-    this.out.connect(audio.busNode(bus));
+    this.out.connect(opts.dest ?? audio.busNode(bus));
+    this.random = opts.random ?? null;
     for (const [k, v] of Object.entries(opts.local ?? {})) this.local[Number(k)] = v;
     this.tracks[0] = new Track(0, data.start, ctx, this.out, t0);
   }
 
   private readonly extraPan: number;
+  private readonly random: SeqRandom | null;
   /** 시험 기록(?synclog=1): 음 시작 — 틱 시각과 실제 start 시각(늦게 처리하면 뒤로 밀린다) */
   private readonly onNote: ((key: number, time: number, start: number) => void) | null;
 
@@ -377,7 +386,7 @@ export class SeqSound {
   private argval(t: Track, x: Arg | undefined, time: number): number {
     if (x === undefined) return 0;
     if (typeof x === 'number') return x;
-    if ('rnd' in x) return x.rnd[0] + Math.floor(Math.random() * (x.rnd[1] - x.rnd[0] + 1));
+    if ('rnd' in x) return this.random ? this.random.range(x.rnd[0], x.rnd[1]) : x.rnd[0] + Math.floor(Math.random() * (x.rnd[1] - x.rnd[0] + 1));
     return this.getvar(t, x.v, time);
   }
 
@@ -579,6 +588,7 @@ export class SeqSound {
       case 'shiftvar':
         return this.setvar(t, v, val >= 0 ? cur << val : cur >> -val);
       case 'randvar':
+        if (this.random) return this.setvar(t, v, this.random.randvar(val));
         return this.setvar(t, v, val >= 0 ? Math.floor(Math.random() * (val + 1)) : -Math.floor(Math.random() * (-val + 1)));
       case 'andvar':
         return this.setvar(t, v, cur & val);
@@ -697,6 +707,7 @@ export class SeqEngine {
   constructor(
     private readonly audio: AudioOut,
     readonly globals: SeqGlobals,
+    private readonly random: SeqRandom | null = null,
   ) {}
 
   private dataBytes(d: SeqData): Uint8Array {
@@ -715,9 +726,9 @@ export class SeqEngine {
     data: SeqData,
     buffers: (AudioBuffer | undefined)[],
     bus: Bus,
-    opts: { gain?: number; pan?: number; local?: Record<number, number>; onNote?: (key: number, time: number, start: number) => void } = {},
+    opts: { gain?: number; pan?: number; local?: Record<number, number>; onNote?: (key: number, time: number, start: number) => void; dest?: AudioNode; random?: SeqRandom | null } = {},
   ): SeqSound {
-    const s = new SeqSound(this.audio, data, this.dataBytes(data), buffers, this.globals, bus, this.audio.ctx.currentTime, opts);
+    const s = new SeqSound(this.audio, data, this.dataBytes(data), buffers, this.globals, bus, this.audio.ctx.currentTime, this.random ? { ...opts, random: this.random } : opts);
     this.sounds.add(s);
     this.timer ??= setInterval(() => this.pump(), PUMP_MS);
     return s;
@@ -742,6 +753,7 @@ export class SeqEngine {
       let next: SeqSound | null = null;
       for (const s of this.sounds) if (!s.finished && s.nextFrameTime < until && (!next || s.nextFrameTime < next.nextFrameTime - 1e-9)) next = s;
       if (!next) break;
+      this.random?.frame(next.nextFrameTime);
       try {
         next.stepFrame();
       } catch (e) {

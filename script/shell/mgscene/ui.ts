@@ -123,6 +123,16 @@ export class MgWipe {
     this.state = 3;
   }
 
+  direct(out: boolean, type: number, speed: number): void {
+    if (out) {
+      this.core.fadeOut(type, speed);
+      this.state = 1;
+    } else {
+      this.core.fadeIn(type, speed);
+      this.state = 3;
+    }
+  }
+
   /** MgWipeModule::IsPlayingFadeAnim */
   playing(): boolean {
     return this.state === 1 || this.state === 3;

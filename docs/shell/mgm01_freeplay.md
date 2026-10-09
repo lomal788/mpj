@@ -547,6 +547,8 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 [판독] `MgStartFlow_SetupOmakaseMgList` — mgm01 @0x710001c2a0는 flag6 off일 때 UseGyro 항목을 제거한다(`FUN_7100020b10` — mgm01 @0x7100020b10). 실제 사람>1이고 filter enum0이면 TeamOrderData+4==3 항목도 제거한다(`FUN_7100020b74` — mgm01 @0x7100020b74). `MgIdList_Erase` — mgm01 @0x710001c8b0가 erase predicate를 적용한다. 체감 설정 흐름의 내부는 분석하지 않는다.
 
+[웹 2026-10-09, mg-connect] 호출 값 → 한 판 setup: `script/mgrun.ts` `freePlaySetup`(팀·참가·CPU·리듬·엔드리스·설명·자이로). 복귀 기록 = `shell/mgscene/resultEntry.ts`(`FUN_71001f271c` byte 규칙, judge = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60). 실패 = null → 기록 없음. 가짜 결과는 `cfg.play` 가 없는 단독 시험에서만 쓴다(`shell/mgm01/playResult.ts`). 계약: [minigame_scene.md](minigame_scene.md) §12.12.4~12.12.5.
+
 ### 8.4 Work·Sync·세이브에 저장되는 값
 
 | 값 | writer [판독] | 저장 위치 | reader/저장 요청 |

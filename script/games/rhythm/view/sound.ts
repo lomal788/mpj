@@ -28,8 +28,10 @@
  *   mg1800_cmn·mg1801_result 는 로직의 soundPreset 사건 때부터.
  * - 전역 변수: G11 = BPM(사건과 함께 받는 state.bpm), G8 = 지금 BGM 렌더에서 기록한 코드 진행을 오디오 시계로 읽는다. 처음 −1.
  *   나머지(G9·G10·G12·G13·G14)는 실시간 시퀀스들과 위 렌더 대리가 함께 쓰는 한 벌이다.
+ * - 핸들·동시 재생 한도·라벨 치환·3D 는 공용 코어 lib/sound 가 한다(규칙 스위치, 기본 RULES_ORIGINAL — 04_sound.md §13.4).
  * - 같은 플레이어(PLY_*) 동시 재생 한도: 넘치면 우선순위가 가장 낮고(같으면 가장 오래된) 소리를 멈추고, 새 소리가 그보다 낮으면 내지 않는다 [추정: nn::atk 공개 동작].
- * - BGM 끼리(핸드셰이크 밖에서 바로 낸 BGM): 새 SQ_BGM 이 시작하면 반복(loop)하는 이전 BGM 을 멈춘다 [근사: 즉시].
+ * - BGM 끼리(핸드셰이크 밖에서 바로 낸 BGM): 웹 규칙(supersede 'web')은 새 SQ_BGM 이 시작하면 반복(loop)하는 이전 BGM 을 멈춘다 [근사: 즉시].
+ *   원본 규칙(기본)은 멈추지 않는다(04_sound.md §13.9).
  *   반복하지 않는 BGM 은 soundStop 이나 자연 끝까지 둔다(원본 단계 9 는 게임 BGM 핸들만 멈춘다).
  * - 렌더 BGM 은 공용 스트리밍 재생기(view/bgm.ts → lib/bgmstream, docs/engine/04_sound.md §12.8)로 낸다: 표본 0 = 출발 오디오 시각(통파일 start(at) 와 같은 식),
  *   처음 받는 BPM 의 곡은 로드 때 첫 조각을 풀어 두고(원본 prefetch), 나머지는 요청 때 푼다. 늦으면 지금처럼 늦은 만큼 건너뛴다.
@@ -44,9 +46,12 @@ import type * as THREE from 'three';
 import type { V3 } from '../../../core/fmath';
 import type { SoundSnapshot } from '../../../game';
 import type { Assets } from '../../../view/assets';
-import { calc3d, type AudioOut, type Bus, type Listener3d, type Sound3dInfo } from '../../../view/audio';
-import { bgmSource, playBgmStream, type AppBgmSource } from '../../../view/bgm';
-import { SeqEngine, type SeqData, type SeqSound } from '../../../view/seq';
+import { SoundCatalog, soundDefaults, type SoundDef } from '../../../lib/sound';
+import type { BufferPayload, Voice } from '../../../lib/sound-webaudio';
+import type { AudioOut, Bus, Listener3d, Sound3dInfo } from '../../../view/audio';
+import { bgmSource, type AppBgmSource } from '../../../view/bgm';
+import { SeqEngine, type SeqData } from '../../../view/seq';
+import { soundSystem, type MpjSound, type StreamPayload } from '../../../view/sound';
 
 interface PlayerInfo {
   name: string;
@@ -88,20 +93,15 @@ export type SoundEvent =
   | { k: 'soundPreset'; name: string }
   | { k: 'justSound'; combo: number; play?: boolean };
 
-interface Handle {
-  label: string;
-  player: string | null;
-  prio: number;
-  started: number;
-  bgm: boolean;
-  loop: boolean;
-  seq: SeqSound | null;
-  stop(): void;
-  alive(): boolean;
-}
+type SeqEntry = Extract<Entry, { kind: 'seq' }>;
+
+/** 핸들 표시 비트(코어 flags) — 웹 규칙의 BGM 끼리 정지가 본다 */
+const H_BGM = 1;
+const H_LOOP = 2;
+let rmSeq = 0;
 
 /** 파일 소리 하나(렌더 BGM·스트림) */
-interface FileHandle extends Handle {
+interface FileHandle extends Voice {
   /** 오디오 시각 t 에 끊는다 */
   stopAt(t: number): void;
 }
@@ -112,7 +112,10 @@ interface RhythmBgm {
   songId: number;
   render: BgmRender;
   entry: Extract<Entry, { kind: 'bgm' }>;
-  handle: Handle;
+  /** 코어 핸들(요청부터 끝까지 하나) */
+  h: number;
+  /** 핸들 GainNode — 출발 때 스트림을 여기에 잇는다 */
+  out: AudioNode | null;
   /** G12 == 곡 ID 가 된 오디오 시각(= BGM 틱 0). null = 출발 대기 */
   acceptAt: number | null;
   /** 출발 뒤 G13 이 다른 곡으로 바뀐 시각 */
@@ -140,11 +143,12 @@ const BGM_L0_TICK = 192;
 
 export class RmSoundMap {
   private m: Manifest = { bpms: [], sounds: {}, substitute: {}, listener3d: { default: { interiorSize: 10, maxVolumeDistance: 20, unitDistance: 50 }, preset: [] } };
-  private readonly buffers = new Map<string, AudioBuffer>();
-  private readonly pending = new Map<string, Promise<AudioBuffer | undefined>>();
   private readonly streams = new Map<string, AppBgmSource>();
-  private readonly presets: Set<string>;
-  private readonly handles = new Set<Handle>();
+  /** 라벨 표·세팅 프리셋(코어 SoundCatalog). 핸들·한도·치환·3D 는 공용 코어(view/sound.ts soundSystem) */
+  private readonly cat: SoundCatalog;
+  private readonly sys: MpjSound | null;
+  private readonly seqVoice: string;
+  private readonly bgmVoice: string;
   private readonly glob = new Array<number>(16).fill(-1);
   /** 전역 변수별 쓰기 기록 [오디오 시각, 값] — 시각 순. 게임 관측(observe)이 지난 시각의 값을 찾는다 */
   private readonly hist: [number, number][][] = Array.from({ length: 16 }, () => []);
@@ -163,17 +167,46 @@ export class RmSoundMap {
     /** 장면 적재 때 켜지는 세팅 프리셋(미니게임 이름, 예 'mg1801') */
     scenePreset: string,
   ) {
-    this.presets = new Set<string>([scenePreset]);
-    if (audio) {
-      this.engine = new SeqEngine(audio, {
-        get: (i, time) => this.global(i, time),
-        set: (i, v, time) => this.setGlobal(i, v, time),
-      });
+    this.cat = new SoundCatalog('rhythm').loadPreset(scenePreset);
+    this.sys = audio ? soundSystem(audio) : null;
+    const id = ++rmSeq;
+    this.seqVoice = `rm-seq#${id}`;
+    this.bgmVoice = `rm-bgm#${id}`;
+    if (audio && this.sys) {
+      this.engine = new SeqEngine(
+        audio,
+        {
+          get: (i, time) => this.global(i, time),
+          set: (i, v, time) => this.setGlobal(i, v, time),
+        },
+        this.sys.rules.random === 'original' ? this.sys.random : null,
+      );
+      this.sys.out.register(this.seqVoice, { ownsPan: true, start: (c, out) => this.startSeq(c.target, c.payload as SeqEntry, c.pan, c.local, out) });
+      this.sys.out.register(this.bgmVoice, { start: (c, out) => this.startRhythm(c.payload as RhythmBgm, out) });
     }
+  }
+
+  /** manifest → 라벨 표(코어 SoundDef). 처리기: seq = 이 맵의 시퀀서, stream = buffer, bgm = bgmstream(핸드셰이크 BGM 은 rm-bgm) */
+  private define(): void {
+    for (const [label, e] of Object.entries(this.m.sounds)) {
+      const def: SoundDef = {
+        kind: e.kind,
+        bus: e.bus,
+        player: e.player?.name ?? null,
+        playerMax: e.player?.max ?? 0,
+        priority: e.kind === 'seq' ? e.playerPriority : 64,
+        sound3d: e.kind === 'seq' ? e.sound3d : null,
+        voice: e.kind === 'seq' ? this.seqVoice : e.kind === 'stream' ? 'buffer' : 'bgmstream',
+        payload: e,
+      };
+      this.cat.define(label, def);
+    }
+    for (const [src, s] of Object.entries(this.m.substitute)) this.cat.substitute(src, s.to, s.preset);
   }
 
   async load(onFile?: (n: number, total: number, name: string) => void): Promise<void> {
     this.m = await this.assets.json<Manifest>('manifest.json');
+    this.define();
     if (!this.audio) return;
     const eager = new Set<string>();
     const eagerBgm = new Map<string, BgmRender>();
@@ -214,21 +247,60 @@ export class RmSoundMap {
   }
 
   private fetch(file: string): Promise<AudioBuffer | undefined> {
-    let p = this.pending.get(file);
-    if (!p) {
-      p = this.audio!.load(this.assets.url(file)).then(
-        (b) => {
-          this.buffers.set(file, b);
-          return b;
-        },
-        (e) => {
-          console.warn(`소리를 읽지 못해 건너뛴다: ${file}`, e);
-          return undefined;
-        },
-      );
-      this.pending.set(file, p);
-    }
-    return p;
+    return this.sys ? this.sys.load(this.assets.url(file)) : Promise.resolve(undefined);
+  }
+
+  /** 웹 규칙(supersede = web): 반복하는 BGM 핸들을 지금 멈춘다(except 빼고) */
+  private stopLoopingBgm(except: number): void {
+    const sys = this.sys;
+    if (!sys) return;
+    sys.core.forEach((h, _l, f) => {
+      if (f & H_BGM && f & H_LOOP && h !== except) sys.core.stop(h);
+    }, this.cat);
+    sys.flush();
+  }
+
+  /** 시퀀서 처리기 — 원본 시퀀스 사운드 하나(SeqEngine 이 전역 변수를 같이 쓴다) */
+  private startSeq(target: string, e: SeqEntry, pan: number, local: Readonly<Record<number, number>> | null, out: AudioNode): Voice | null {
+    const sys = this.sys;
+    if (!this.engine || !sys) return null;
+    const bufs = e.seq.waves.map((w) => sys.peek(this.assets.url(w.file)));
+    if (target === MASTER) this.masterStarted = true;
+    const log = target === MASTER ? syncLog() : null;
+    const onNote = log ? (key: number, time: number, start: number): void => void log.push(['note', key, time, start]) : undefined;
+    const s = this.engine.play(e.seq, bufs, e.bus, { pan, local: (local ?? undefined) as Record<number, number> | undefined, onNote, dest: out });
+    return {
+      alive: () => !s.finished,
+      stop: (fade) => {
+        /* 페이드 정지(원본 규칙 그룹 정지): 핸들 이득을 줄이고 끝에 시퀀스를 멈춘다. 웹 규칙의 정지는 늘 0 */
+        if (fade > 0 && !s.finished && this.audio) {
+          const g = (out as GainNode).gain;
+          const now = this.audio.ctx.currentTime;
+          g.cancelScheduledValues(now);
+          g.setValueAtTime(g.value, now);
+          g.linearRampToValueAtTime(0, now + fade);
+          setTimeout(() => s.stop(), fade * 1000);
+          return;
+        }
+        s.stop();
+      },
+      setLocal: (i, v) => {
+        s.local[i] = v;
+      },
+    };
+  }
+
+  /** 핸드셰이크 BGM 처리기 — 요청부터 핸들 하나. 살아 있음 = 출발 대기·재생 목록에 있거나 스트림이 돎 */
+  private startRhythm(rb: RhythmBgm, out: AudioNode): Voice {
+    rb.out = out;
+    return {
+      alive: () => this.rhythm.includes(rb) || (rb.file?.alive() ?? false),
+      stop: (fade) => {
+        this.dropRhythm(rb);
+        rb.file?.stop(fade);
+      },
+      stopAt: (t) => rb.file?.stopAt(t),
+    };
   }
 
   private global(i: number, time: number): number {
@@ -293,8 +365,8 @@ export class RmSoundMap {
     this.record(8, 0, time);
     this.record(9, 0, time);
     if (r.render.g8.length) this.g8Src = { start: time, g8: r.render.g8 };
-    for (const h of this.handles) if (h.bgm && h.loop && h !== r.handle) h.stop();
-    r.file = this.startFile(r.label, r.entry, r.render.file, r.render.loop, undefined, r.render.durationSec, time, true);
+    if (this.sys?.rules.supersede === 'web') this.stopLoopingBgm(r.h);
+    r.file = this.startFile(r.label, r.entry, r.render.file, r.render.loop, undefined, r.render.durationSec, time, true, r.out);
     syncLog()?.push(['bgmStart', r.label, time, this.audio?.ctx.currentTime ?? null]);
   }
 
@@ -325,6 +397,7 @@ export class RmSoundMap {
    * 마스터를 튼 적이 없으면 null(로직은 자기 프레임 모델). 마스터가 멈춘 뒤에도 기록된 마지막 값을 준다(원본 전역 변수도 그대로 남는다).
    */
   observe(time: number): SoundSnapshot | null {
+    this.sys?.update();
     if (!this.audio || !this.engine || !this.masterStarted) return null;
     this.engine.pump();
     const globals = this.hist.map((_, i) => (i === 8 || i === 11 ? this.global(i, time) : this.valueAt(i, time)));
@@ -338,8 +411,7 @@ export class RmSoundMap {
   }
 
   private masterAlive(): boolean {
-    for (const h of this.handles) if (h.label === MASTER && h.alive()) return true;
-    return false;
+    return !!this.sys && this.sys.core.find(MASTER, this.cat) !== 0;
   }
 
   /**
@@ -349,28 +421,14 @@ export class RmSoundMap {
   private request(label: string): boolean {
     const e = this.m.sounds[this.resolve(label)];
     if (!e || e.kind !== 'bgm') return false;
-    if (!this.audio || !this.masterAlive()) return true;
+    const sys = this.sys;
+    if (!this.audio || !sys || !this.masterAlive()) return true;
     const r = this.pickBgm(e);
     if (!r || r.songId === null) return true;
-    for (const h of this.handles) if (!h.alive()) this.handles.delete(h);
-    if (!this.admit(e.player, 64)) return true;
     const now = this.audio.ctx.currentTime;
-    const rb: RhythmBgm = { label, songId: r.songId, render: r, entry: e, handle: null as unknown as Handle, acceptAt: null, supersededAt: null, ended: false, file: null };
-    rb.handle = {
-      label,
-      player: e.player?.name ?? null,
-      prio: 64,
-      started: now,
-      bgm: true,
-      loop: !!r.loop,
-      seq: null,
-      stop: () => {
-        this.dropRhythm(rb);
-        rb.file?.stop();
-      },
-      alive: () => this.rhythm.includes(rb) || (rb.file?.alive() ?? false),
-    };
-    this.handles.add(rb.handle);
+    const rb: RhythmBgm = { label, songId: r.songId, render: r, entry: e, h: 0, out: null, acceptAt: null, supersededAt: null, ended: false, file: null };
+    rb.h = sys.play(this.cat, label, { payload: rb, voice: this.bgmVoice, flags: H_BGM | (r.loop ? H_LOOP : 0) });
+    if (!rb.h) return true;
     this.rhythm.push(rb);
     void this.stream(r).pin(0);
     this.setGlobal(13, r.songId, now);
@@ -379,14 +437,14 @@ export class RmSoundMap {
 
   /** 프리셋 라벨 치환(켜진 프리셋만) */
   private resolve(label: string): string {
-    const s = this.m.substitute[label];
-    if (s && this.presets.has(s.preset) && this.m.sounds[s.to]) return s.to;
-    return label;
+    return this.cat.resolve(label, this.sys?.rules ?? soundDefaults.rules);
   }
 
   /** view/index.ts onStep 의 소리 사건. bpm = state.bpm(G11), camera = 리스너(3D) */
   onEvent(e: SoundEvent, bpm: number, camera: THREE.Camera): void {
     this.bpm = bpm;
+    const sys = this.sys;
+    sys?.update();
     switch (e.k) {
       case 'bgm':
         /* 요청해 둔 렌더 BGM 은 핸드셰이크(G12)가 이미 냈거나 곧 낸다 */
@@ -394,7 +452,10 @@ export class RmSoundMap {
         this.play(e.label, {});
         break;
       case 'bgmStop':
-        for (const h of this.handles) if (h.bgm) h.stop();
+        sys?.core.forEach((h, _l, f) => {
+          if (f & H_BGM) sys.core.stop(h);
+        }, this.cat);
+        sys?.flush();
         break;
       case 'se':
         if (this.request(e.label)) break;
@@ -407,10 +468,13 @@ export class RmSoundMap {
         this.play(e.label, { local: { [e.index]: e.value } });
         break;
       case 'soundStop':
-        for (const h of this.handles) if (h.label === e.label) h.stop();
+        sys?.core.forEach((h, l) => {
+          if (l === e.label) sys.core.stop(h);
+        }, this.cat);
+        sys?.flush();
         break;
       case 'soundPreset':
-        this.presets.add(e.name);
+        this.cat.loadPreset(e.name);
         break;
       case 'justSound':
         this.playJust(e.combo, e.play ?? true);
@@ -427,7 +491,12 @@ export class RmSoundMap {
       this.play('SQ_SE_RC_JUST', { local: { 0: combo } });
       return;
     }
-    for (const h of this.handles) if (h.label === 'SQ_SE_RC_JUST' && h.seq && h.alive()) h.seq.local[0] = combo;
+    const sys = this.sys;
+    if (!sys) return;
+    sys.core.forEach((h, l) => {
+      if (l === 'SQ_SE_RC_JUST') sys.core.writeLocal(h, 0, combo);
+    }, this.cat);
+    sys.flush();
   }
 
   private listeners(camera: THREE.Camera): Listener3d[] {
@@ -441,149 +510,55 @@ export class RmSoundMap {
     return out;
   }
 
-  /** 같은 플레이어 한도 검사. 내도 되면 true(밀려난 소리는 멈춘다) */
-  private admit(player: PlayerInfo | null, prio: number): boolean {
-    if (!player) return true;
-    const same = [...this.handles].filter((h) => h.player === player.name && h.alive());
-    if (same.length < player.max) return true;
-    let low = same[0];
-    for (const h of same) if (h.prio < low.prio || (h.prio === low.prio && h.started < low.started)) low = h;
-    if (prio < low.prio) return false;
-    low.stop();
-    return true;
-  }
-
   private play(label: string, o: { pos?: V3; camera?: THREE.Camera; local?: Record<number, number> }): void {
-    if (!this.audio) return;
-    for (const h of this.handles) if (!h.alive()) this.handles.delete(h);
+    const sys = this.sys;
+    if (!this.audio || !sys) return;
     const target = this.resolve(label);
     const e = this.m.sounds[target];
     if (!e) return;
     const now = this.audio.ctx.currentTime;
     if (e.kind === 'seq') {
-      let gain = 1;
-      let pan = 0;
-      let prio = e.playerPriority;
-      if (o.pos && o.camera && e.sound3d) {
-        const a = calc3d(this.listeners(o.camera), e.sound3d, o.pos);
-        gain = a.volume;
-        pan = a.pan;
-        prio += a.priority;
-      }
-      if (!this.admit(e.player, prio)) return;
-      const bufs = e.seq.waves.map((w) => this.buffers.get(w.file));
-      if (target === MASTER) this.masterStarted = true;
-      const log = target === MASTER ? syncLog() : null;
-      const onNote = log ? (key: number, time: number, start: number): void => void log.push(['note', key, time, start]) : undefined;
-      const s = this.engine!.play(e.seq, bufs, e.bus, { gain, pan, local: o.local, onNote });
-      this.handles.add({ label, player: e.player?.name ?? null, prio, started: now, bgm: e.bus === 'bgm', loop: false, seq: s, stop: () => s.stop(), alive: () => !s.finished });
+      const is3d = !!(o.pos && o.camera && e.sound3d);
+      if (is3d) sys.core.setListeners(this.listeners(o.camera!));
+      sys.play(this.cat, label, { pos: is3d ? o.pos : null, local: o.local, flags: e.bus === 'bgm' ? H_BGM : 0 });
       return;
     }
     const isBgm = target.startsWith('SQ_BGM') || target.startsWith('SM_BGM');
-    let file: string;
     let loop: { startSec: number; endSec: number } | null;
-    let gain: number | undefined;
-    let duration = Infinity;
+    let payload: StreamPayload | BufferPayload;
     if (e.kind === 'bgm') {
       const r = this.pickBgm(e);
       if (!r) return;
-      file = r.file;
       loop = r.loop;
-      duration = r.durationSec;
       if (r.g8.length) this.g8Src = { start: now, g8: r.g8 };
+      payload = { source: this.stream({ file: r.file, loop: r.loop }), at: now };
     } else {
-      file = e.file;
       loop = e.loop;
-      gain = e.gain;
+      payload = { url: this.assets.url(e.file), gain: e.gain, loop: e.loop, durationSec: Infinity, late: 'skip', at: now };
     }
-    if (!this.admit(e.player, 64)) return;
-    if (isBgm) for (const h of this.handles) if (h.bgm && h.loop) h.stop();
-    this.handles.add(this.startFile(label, e, file, loop, gain, duration, now, isBgm));
+    const supersede = isBgm && sys.rules.supersede === 'web';
+    sys.play(this.cat, label, { payload, flags: (isBgm ? H_BGM : 0) | (loop ? H_LOOP : 0), onAdmit: supersede ? () => this.stopLoopingBgm(0) : undefined });
   }
 
   /**
    * 파일 소리(렌더 BGM·스트림)를 오디오 시각 at 에 0 초부터 시작한다(at 이 지났거나 버퍼가 늦게 오면 그만큼 건너뛴다).
-   * 핸들은 만들기만 한다 — handles 에 넣는 것은 부르는 쪽.
+   * 재생기(목소리)만 만든다 — 코어 핸들과 묶는 것은 부르는 쪽(핸드셰이크·파일 처리기).
    */
   private startFile(
     label: string,
-    e: Extract<Entry, { kind: 'bgm' | 'stream' }>,
+    e: Extract<Entry, { kind: 'bgm' }>,
     file: string,
     loop: { startSec: number; endSec: number } | null,
     gain: number | undefined,
     duration: number,
     at: number,
     isBgm: boolean,
+    dest: AudioNode | null,
   ): FileHandle {
-    if (e.kind === 'bgm' && this.audio) {
-      let stopped = false;
-      const st = playBgmStream(this.audio.ctx, this.stream({ file, loop }), { dest: this.audio.busNode(e.bus), gain, at });
-      return {
-        label,
-        player: e.player?.name ?? null,
-        prio: 64,
-        started: at,
-        bgm: isBgm,
-        loop: !!loop,
-        seq: null,
-        stop: () => {
-          stopped = true;
-          st.stop(0);
-        },
-        stopAt: (t: number) => st.stopAt(t),
-        alive: () => !stopped && st.alive(),
-      };
-    }
-    let src: AudioBufferSourceNode | null = null;
-    let stopped = false;
-    let stopTime = Infinity;
-    let ended = false;
-    const h: FileHandle = {
-      label,
-      player: e.player?.name ?? null,
-      prio: 64,
-      started: at,
-      bgm: isBgm,
-      loop: !!loop,
-      seq: null,
-      stop: () => {
-        stopped = true;
-        try {
-          src?.stop();
-        } catch {
-          /* 이미 멈춤 */
-        }
-      },
-      stopAt: (t: number) => {
-        stopTime = t;
-        try {
-          src?.stop(t);
-        } catch {
-          /* 이미 멈춤 */
-        }
-      },
-      alive: () => !stopped && !ended && (src !== null || this.audio === null || this.audio.ctx.currentTime < stopTime),
-    };
-    const start = (buf: AudioBuffer): void => {
-      if (stopped || !this.audio) return;
-      const cur = this.audio.ctx.currentTime;
-      if (cur >= stopTime) return;
-      let offset = Math.max(0, cur - at);
-      if (loop && offset >= loop.endSec) offset = loop.startSec + ((offset - loop.startSec) % (loop.endSec - loop.startSec));
-      if (!loop && offset >= Math.min(duration, buf.duration)) return;
-      src = this.audio.play(buf, e.bus, { gain, loop: !!loop, loopStart: loop?.startSec, loopEnd: loop?.endSec, when: at > cur ? at : 0, offset });
-      if (stopTime < Infinity) src.stop(stopTime);
-      src.addEventListener('ended', () => {
-        ended = true;
-      });
-    };
-    const ready = this.buffers.get(file);
-    if (ready) start(ready);
-    else
-      void this.fetch(file).then((b) => {
-        if (b) start(b);
-      });
-    return h;
+    void label;
+    void duration;
+    void isBgm;
+    return this.sys!.stream({ source: this.stream({ file, loop }), gain, at }, dest ?? this.audio!.busNode(e.bus)) as FileHandle;
   }
 
   private pickBgm(e: Extract<Entry, { kind: 'bgm' }>): BgmRender | undefined {
@@ -603,8 +578,13 @@ export class RmSoundMap {
 
   /** 모든 소리를 멈춘다(view dispose 가 부른다) */
   stopBgm(): void {
-    for (const h of this.handles) h.stop();
-    this.handles.clear();
+    const sys = this.sys;
+    if (sys) {
+      sys.core.forEach((h) => sys.core.stop(h), this.cat);
+      sys.flush();
+      sys.out.unregister(this.seqVoice);
+      sys.out.unregister(this.bgmVoice);
+    }
     this.rhythm.length = 0;
     this.engine?.stopAll();
   }

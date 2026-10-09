@@ -1,5 +1,5 @@
 /**
- * 리듬 장면 기반 — 원본 main ca::rm::RmMgSceneBase(+ 웹 MinigameFlow 대리). 게임 Scene 은 이것을 상속해 원본 vtable 훅만 덮는다
+ * 리듬 장면 기반 — 원본 main ca::rm::RmMgSceneBase. 게임 Scene 은 이것을 상속해 원본 vtable 훅만 덮는다
  * (docs/engine/02_rhythm.md 4절 훅, 7절 단계, 14절 웹 공용 모듈). import 0(같은 폴더만).
  *
  * step 한 번 = 원본 한 프레임 [판독: docs/engine/01_core.md, analysis/notes/mg1801_core.md 2절]:
@@ -14,13 +14,14 @@
  * 1·3 은 리듬 쿠킹(rc_stage01) 코스 안에서만 나오므로 그 경로(+0x1C = 1, 코스 index, +0x2C)를 함께 둔다(web/docs/minigame/rc_stage01.md).
  *
  * 원본과 다른 점:
- * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 PREROLL_FRAMES 대기로 대신한다 [미확정 길이].
+ * - OnGameStartAfter 전(MinigameFlow 1~7: 장면 사운드 시작·페이드인·오프닝)은 공용 틀 shell/mgscene 이 돈다(리듬 장면 훅은 모두 1,
+ *   docs/shell/minigame_scene.md §12.12.3).
  * - 리듬 쿠킹의 컨트롤 안내 와이프(RmUiCntWipe 표시)는 닫히는 때를 정하는 내부 갱신을 판독하지 못했다 [미확정]. 웹은 바로 끝난 것으로 둔다
  *   (시험은 controlWipeFrames 로 길이를 넣어 SQ_BGM_RC_CALIBRATION 조건을 본다).
  * - 리믹스 BGM(SQ_BGM_RC_REMIX)의 L0=1 시점은 mg18xx A·C 와 같은 "시작 2박 뒤"로 둔다 [추정].
  * - 원본 결과 점수판(FUN_7100448610)을 시작한 프레임을 state.resultPanelFrame 에 남기고, 점수판 람다가 끝날 때(RESULT_PANEL_FRAMES 뒤) done.
- * mgscene(shell/mgscene MgGame) 위로 올릴 때는 흐름 슬롯(onGameStartAfter…onGameEnding)·update()·updateAnimation() 을 그대로 쓰고
- * 웹 MinigameFlow 대리(stepFrame 의 흐름 switch·PREROLL)를 뺀다 — 02_rhythm.md 14.6.
+ * mgscene(shell/mgscene MgGame) 위에서 흐름 슬롯(onGameStartAfter…onGameEnding)·update()·updateAnimation() 을 그대로 쓴다
+ * (어댑터 mgGame.ts RmMgGame, 흐름 단계 진행은 틀 MinigameFlow) — 02_rhythm.md 14.6.
  */
 import type { RmChartRow } from './chart';
 import { RhythmClock } from './clock';
@@ -28,7 +29,6 @@ import {
   BEATS_PER_BAR,
   CALIBRATION_FRAMES,
   F,
-  PREROLL_FRAMES,
   RESULT_MOTIONS,
   RESULT_PANEL_DELAY_BEATS,
   RESULT_PANEL_FRAMES,
@@ -38,7 +38,7 @@ import {
 import { type RmChartRule, type RmConfig, RmGameWork, type RmOptions, resolveRmConfig } from './gameWork';
 import { RmSoundMan, rmEndingBgmName, rmInterEndBgmName } from './soundMan';
 import { starJudge } from './status';
-import type { Phase, RmEventSink, RmPlayerEntity, RmSoundSnapshot, RmV3, RmWipe } from './types';
+import type { Phase, RmEventSink, RmPadInput, RmPlayerEntity, RmSoundSnapshot, RmV3, RmWipe } from './types';
 
 /** 원본 RmMgSceneBase::Data(훅 인자) — 줄 번호, 박 상태, 그 줄 8칸 문자열 */
 export interface RmBeatData {
@@ -86,7 +86,6 @@ export abstract class RmMgSceneBase {
   /** "SQ_BGM_" + 대문자 미니게임 이름 */
   private readonly bgmPrefix: string;
   private readonly resultCameraPos: RmV3;
-  private readonly preroll: number;
   private readonly controlWipeFrames: number;
   /** RmChartDataMan 줄(게임이 RmSyncedSetupGame 에서 읽는다) */
   protected rows: readonly RmChartRow[] = [];
@@ -149,11 +148,9 @@ export abstract class RmMgSceneBase {
   protected resultPanelFrame: number | undefined = undefined;
   protected resultTimer = 0;
   protected finished = false;
-  protected finishFrames = 0;
 
   constructor(opts: RmOptions, init: RmSceneInit) {
     this.cfg = resolveRmConfig(opts, init.chart);
-    this.preroll = opts.prerollFrames ?? PREROLL_FRAMES;
     this.controlWipeFrames = opts.controlWipeFrames ?? 0;
     this.eventSink = init.events;
     this.wipe = init.wipe;
@@ -261,43 +258,22 @@ export abstract class RmMgSceneBase {
 
   // ------------------------------------------------------------------ 한 프레임
 
-  /** 원본 한 프레임(웹 MinigameFlow 대리 포함). 게임 step() 이 패드를 읽은 뒤 부른다 */
-  protected stepFrame(sound: RmSoundSnapshot | null): void {
+  abstract readInput(input: readonly (RmPadInput | null)[]): void;
+
+  /** 원본 한 프레임 머리(사건 비우기·사운드 관측·frame++·틀이 정한 흐름 단계 반영). 게임 update() 가 패드를 읽은 뒤 부른다 */
+  beginFrame(sound: RmSoundSnapshot | null): void {
     this.eventSink.length = 0;
     this.clock.observe(sound);
     this.frame++;
-    this.wipe.step();
     this.flow = this.nextFlow;
-    this.update();
-    if (this.finished) return;
-    switch (this.flow) {
-      case 0:
-        if (this.frame >= this.preroll) this.nextFlow = 8;
-        break;
-      case 8:
-        if (this.onGameStartAfter()) this.nextFlow = 9;
-        break;
-      case 9:
-        if (this.onGameMain()) this.nextFlow = 10;
-        break;
-      case 10:
-        if (this.onGameEnd()) this.nextFlow = 11;
-        break;
-      case 11:
-        if (this.onGameFinish()) {
-          /* MinigameFlow 단계 11 FUN_71002e1910 의 끝 텔롭 하위 단계(onGameFinish 머리 주석) */
-          this.finishFrames++;
-          if (this.finishFrames >= 2) this.nextFlow = 12;
-        }
-        break;
-      case 12:
-        if (this.onGameEndingBefore()) this.nextFlow = 13;
-        break;
-      case 13:
-        this.onGameEnding();
-        break;
-    }
-    this.updateAnimation();
+  }
+
+  onSetGameSequence(stage: number): void {
+    this.nextFlow = stage;
+  }
+
+  clearEvents(): void {
+    this.eventSink.length = 0;
   }
 
   /** 파이버들(흐름 처리기 앞) — RmSoundMan 파이버 → 박자 시계 → 결과 연출 파이버 → 제품 파이버 */
@@ -362,9 +338,10 @@ export abstract class RmMgSceneBase {
   /**
    * 원본 MinigameFlow 단계 11 FUN_71002e1910: OnGameFinish(=1) 뒤 하위 0 에서 끝 텔롭(FUN_71002e2e90)을 시작한다.
    * 리듬 장면은 SetupGame 이 SetFinishTelop(−1) 이라 텔롭이 없어 하위 99 → 다음 프레임 단계 12 [판독 + 추정: 엔티티 없음 → 0].
-   * (그 두 프레임 세기는 웹 MinigameFlow 대리 stepFrame 의 흐름 11 이 한다)
+   * (그 두 프레임 세기는 공용 틀 shell/mgscene 의 단계 11 이 한다)
    */
   onGameFinish(): boolean {
+    /* MinigameFlow 단계 11 FUN_71002e1910 의 끝 텔롭 하위 단계(onGameFinish 머리 주석) */
     return this.onRmGameFinish();
   }
 

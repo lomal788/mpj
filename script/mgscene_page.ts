@@ -8,7 +8,10 @@
 import { BexRandModule } from './core/rng';
 import { FPS, STEP_MS } from './core/clock';
 import { ASSETS } from './env';
+import type { GameSetup, GameView } from './game';
+import { GAMES } from './games';
 import { createDummyGame } from './games/mgdummy/logic';
+import { createMgRun } from './mgrun';
 import { DummyView } from './games/mgdummy/view';
 import { localGate, MgScene, mgUiData, STAGE_END, STAGE_NAME, type MgPadInput, type MgSettingRow, type MgTables } from './shell/mgscene';
 import { createResultStage } from './shell/mgresult';
@@ -36,6 +39,8 @@ export async function runMgScenePage(
   cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; onDone(result: string): void },
 ): Promise<MgScenePageRun> {
   const q = new URLSearchParams(location.search);
+  const reg = GAMES.find((g) => g.id === q.get('game'));
+  if (reg) return runRegistered(stage, cfg, reg, q);
   const mgId = q.get('mg') ?? 'mg0101';
   const seed = Number(q.get('seed') ?? 0x5eed) >>> 0;
   const inst = q.get('inst') === '1';
@@ -155,6 +160,89 @@ export async function runMgScenePage(
         `소리 ${sound.log.slice(-4).join(', ')}`,
       ];
       return lines.join('\n');
+    },
+  };
+}
+
+async function runRegistered(
+  stage: HTMLElement,
+  cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; onDone(result: string): void },
+  def: (typeof GAMES)[number],
+  q: URLSearchParams,
+): Promise<MgScenePageRun> {
+  const canvas = document.createElement('canvas');
+  canvas.className = 'jw-gl';
+  const hudCanvas = document.createElement('canvas');
+  hudCanvas.className = 'jw-hud';
+  hudCanvas.width = 1920;
+  hudCanvas.height = 1080;
+  stage.append(canvas, hudCanvas);
+  const hud = hudCanvas.getContext('2d')!;
+  const renderer = new Renderer(canvas);
+  const onResize = (): void => renderer.resize();
+  window.addEventListener('resize', onResize);
+  appBgm().stop(0.2);
+  const audio = cfg.muted ? null : new AudioOut();
+  void audio?.resume();
+  const sa = new Assets('mgscene/');
+  const [uiJson, tables] = await Promise.all([sa.json<MgSceneUiJson & Parameters<typeof mgUiData>[0]>('ui.json'), sa.json<MgTables>('tables.json')]);
+  const [ui, sound] = await Promise.all([MgSceneUi.load(sa), MgSceneSound.load(audio, [{ assets: sa, path: 'sound/sound.json' }]), def.load?.()]);
+  const setup: GameSetup = {
+    players: cfg.com.map((c, i) => ({ char: CHARAS[i], isCom: c, comLevel: 0 })),
+    seed: Number(q.get('seed') ?? 0x5eed) >>> 0,
+    practice: false,
+    options: Object.fromEntries((def.options ?? []).filter((o) => q.has(o.key)).map((o) => [o.key, q.get(o.key)!])),
+  };
+  const view: GameView = def.createView({ renderer, hud, audio, setup, pads: cfg.pads }, new Assets(def.assetsDir));
+  await view.load(() => undefined);
+  const wipe = logicWipe();
+  const run = createMgRun({ def, setup, tables, ui: mgUiData(uiJson), gate: localGate(() => cfg.pads.map((p) => p?.read() ?? null)), wipe });
+  let raf = 0;
+  let last = performance.now();
+  let acc = 0;
+  let stopped = false;
+  let reported = false;
+  const frame = (now: number): void => {
+    if (stopped) return;
+    acc += now - last;
+    last = now;
+    let n = 0;
+    while (acc >= STEP_MS && n < MAX_STEPS_PER_RAF) {
+      acc -= STEP_MS;
+      n++;
+      if (run.tick(null)) {
+        view.onStep(run.logic.state, run.logic.events);
+        sound.onEvents(run.scene.events);
+      }
+    }
+    if (n === MAX_STEPS_PER_RAF) acc = Math.min(acc, STEP_MS);
+    view.render(run.logic.state);
+    ui.draw(hud, run.scene.layers());
+    if (run.ended && !reported) {
+      reported = true;
+      const e = run.resultEntry(-1);
+      cfg.onDone(`${def.id} 끝 — 기록 judge ${e.judge} byte ${e.results.join(',')}`);
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  raf = requestAnimationFrame(frame);
+  return {
+    scene: run.scene,
+    stop() {
+      stopped = true;
+      cancelAnimationFrame(raf);
+      wipe.release();
+      window.removeEventListener('resize', onResize);
+      sound.dispose();
+      view.dispose();
+      audio?.dispose();
+      renderer.dispose();
+      canvas.remove();
+      hudCanvas.remove();
+    },
+    debug() {
+      const s = run.scene;
+      return [`${def.id} 단계 ${s.stage} ${STAGE_NAME[s.stage] ?? ''}  하위 ${s.sub}  프레임 ${s.frame} (${(s.frame / FPS).toFixed(1)} s)  결과 ${s.branch ?? '-'}`, view.debug(run.logic.state, run.logic.events)].join('\n');
     },
   };
 }

@@ -2,14 +2,14 @@
  * 게임 등록 틀 — 페이지(main.ts)는 이 인터페이스로만 게임을 다룬다(DESIGN 5절).
  * 새 게임은 games/<id>/ 에 logic·view·state 를 두고 index.ts 에서 GameDef 를 만들어 games/index.ts 의 GAMES 에 더한다.
  *
- *   logic = def.createLogic(setup)              로직(DOM 없음, 60Hz 고정 스텝, 노드에서도 돈다)
+ *   logic = def.createLogic(setup, play)        로직 = MgGame 훅(DOM 없음, 60Hz 고정 스텝, 노드에서도 돈다). 한 판 호스트 mgrun.ts 가 공용 틀 MgScene 에 꽂는다
  *   view  = def.createView(ctx, assets)         화면(three.js·HUD·소리), view.load() 로 에셋을 읽는다
- *   매 스텝: logic.step(pads, view.observe?.(t)) → view.onStep(logic.state, logic.events)   (소리·이펙트·진동은 여기서)
+ *   매 스텝: run.tick(view.observe?.(t)) → view.onStep(logic.state, logic.events)   (소리·이펙트·진동은 여기서, 입력은 FrameGate 경유)
  *   rAF 마다: view.render(logic.state)
  * 스텝 시각 t: 소리가 있으면 페이지가 오디오 시계(지금 들리는 AudioContext 시각)로 스텝을 맞추고, 스텝마다 그 스텝이 나타내는 시각을 준다(main.ts).
- *   끝: logic.done → def.describeResult(logic.result, setup)
+ *   끝: run.ended → def.describeResult(logic.result, setup), 모드 기록 = run.resultEntry(id)
  */
-import type { PadInput } from './core/pad';
+import type { MgGame, MgPlaySettings } from './shell/mgscene';
 import type { Assets, Progress } from './view/assets';
 import type { AudioOut } from './view/audio';
 import type { PadSource } from './view/input';
@@ -21,6 +21,8 @@ export interface PlayerSetup {
   isCom: boolean;
   /** CPU 강도(원본 단계 수는 게임 판독 후 정한다) */
   comLevel: number;
+  teamId?: number;
+  gamePlay?: boolean;
 }
 
 export interface GameSetup {
@@ -72,9 +74,9 @@ export interface SoundSnapshot {
   locals: Readonly<Record<string, readonly number[]>>;
 }
 
-export interface GameLogic<S = unknown, E = unknown, R extends GameResult = GameResult> {
+export interface GameLogic<S = unknown, E = unknown, R extends GameResult = GameResult> extends MgGame {
   /** sound: 이 스텝의 사운드 관측(없으면 null·생략 → 로직 자체 모델) */
-  step(pads: readonly (PadInput | null | undefined)[], sound?: SoundSnapshot | null): void;
+  sound: SoundSnapshot | null;
   readonly state: S;
   readonly events: readonly E[];
   readonly done: boolean;
@@ -131,7 +133,7 @@ export interface GameDef<S = unknown, E = unknown, R extends GameResult = GameRe
   options?: readonly GameOption[];
   /** 로직·뷰 코드를 받는다(코드 분할 — 메타만 정적, 몸체는 import()). 있으면 createLogic·createView 전에 한 번 기다린다 */
   load?(): Promise<void>;
-  createLogic(setup: GameSetup): GameLogic<S, E, R>;
+  createLogic(setup: GameSetup, play?: MgPlaySettings): GameLogic<S, E, R>;
   createView(ctx: ViewContext, assets: Assets): GameView<S, E>;
   describeResult(r: R, setup: GameSetup): { head: string; rows: ResultRow[] };
 }

@@ -21,8 +21,6 @@ export interface RmOptions {
   course?: RmCourse | null;
   /** 시험 전용: 리듬 쿠킹 컨트롤 안내 와이프가 닫기 요청(단계 0) 뒤 끝나는 프레임 수 */
   controlWipeFrames?: number;
-  /** 시험 전용: OnGameStartAfter 전 대기 프레임 */
-  prerollFrames?: number;
 }
 
 /** 모드·코스에서 정해지는 RmGameWork·RmMgSceneBase 값 */

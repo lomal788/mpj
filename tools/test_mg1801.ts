@@ -11,12 +11,15 @@
  */
 import { NPAD, emptyPad, type PadInput } from '../script/core/pad';
 import type { GameSetup, SoundSnapshot } from '../script/game';
-import { mg1801Options } from '../script/games/mg1801/index';
-import { Mg1801Game, calcTotalPoint, endingBgmName, gameBgmName, interEndBgmName, type Mg1801Options } from '../script/games/mg1801/logic/game';
+import { mg1801Game, mg1801Options } from '../script/games/mg1801/index';
+import { type Mg1801Game, calcTotalPoint, endingBgmName, gameBgmName, interEndBgmName, type Mg1801Options } from '../script/games/mg1801/logic/game';
 import { chartRows } from '../script/games/mg1801/logic/chart';
 import type { Mg1801Event } from '../script/games/mg1801/state';
 import { fileURLToPath } from 'node:url';
 import { fmabRepeatBad } from './anim_repeat';
+import { Mg1801Harness, NodeMgRun } from './mg_node_host';
+import { determinismCheck, staticLogicCheck } from './mg_determinism';
+import { WIPE_WHITE } from '../script/lib/transition';
 
 let bad = 0;
 const check = (name: string, ok: boolean, info = ''): void => {
@@ -26,11 +29,11 @@ const check = (name: string, ok: boolean, info = ''): void => {
 
 const setup = (com: boolean[]): GameSetup => ({ players: com.map((c, i) => ({ char: `pc0${i + 1}`, isCom: c, comLevel: 0 })), seed: 1, practice: false });
 
-function run(com: boolean[], press?: (g: Mg1801Game) => boolean): Mg1801Game {
-  const g = new Mg1801Game(setup(com));
+function run(com: boolean[], press?: (g: Mg1801Game) => boolean): Mg1801Harness {
+  const g = new Mg1801Harness(setup(com));
   for (let f = 0; f < 60 * 120 && !g.done; f++) {
     const p1: PadInput = emptyPad();
-    if (press?.(g)) p1.buttons |= NPAD.A;
+    if (press?.(g.g)) p1.buttons |= NPAD.A;
     g.step([p1, null, null, null]);
   }
   return g;
@@ -54,7 +57,7 @@ const allCom = run([true, true, true, true]);
 }
 {
   /* 줄 r 배분 = BGM 시작 마디 + (6+r)·8분(15 프레임) [mg1801_rhythm.md 3.4] */
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   let bgmFrame = -1;
   const rowFrames: number[] = [];
   let lastRow = 0;
@@ -97,8 +100,8 @@ const perfect = run([false, true, true, true], (g) => {
 const c3 = perfect.result!.counts;
 check('1P 판정 시점에 A → 1P 전부 JUST', c3[0].just === 26 && c3[0].miss === 0, JSON.stringify(c3[0]));
 
-const a = new Mg1801Game(setup([true, true, true, true]));
-const b = new Mg1801Game(setup([true, true, true, true]));
+const a = new Mg1801Harness(setup([true, true, true, true]));
+const b = new Mg1801Harness(setup([true, true, true, true]));
 let same = true;
 for (let f = 0; f < 3000; f++) {
   a.step([null, null, null, null]);
@@ -113,7 +116,7 @@ check('결정성(같은 시드 두 번)', same);
 // ------------------------------------------------------------------ 외곽선 안내 [판독: Obj::UpdateOutlineOnOff @0x7100008e40]
 {
   /* 점유 규칙: OutlineAloneSize2 && 자르기 ≥ 2 면 레인 0..3 전체, 아니면 자기 레인. 막히면 안 보인다 */
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   const w = g.world;
   const pool = w.objectMan.pool;
   const tomatoes = pool.filter((o) => o.type === 0);
@@ -134,7 +137,7 @@ check('결정성(같은 시드 두 번)', same);
   check('외곽선: 가지도 다음 프레임 낙하 끄기로 레인을 푼다', eggplant.view().outline === false && w.outlinePlace.join() === '0,0,0,0', w.outlinePlace.join());
 }
 const outlineFrames = (mode: number): number => {
-  const g = new Mg1801Game(setup([true, true, true, true]), { mode });
+  const g = new Mg1801Harness(setup([true, true, true, true]), { mode });
   let n = 0;
   for (let f = 0; f < 6000 && !g.done; f++) {
     g.step([null, null, null, null]);
@@ -151,7 +154,7 @@ const outlineFrames = (mode: number): number => {
 
 // ------------------------------------------------------------------ JUST 판정음 [판독: RmSoundMan::PlayExcellentSe @0x7100426e38]
 {
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   const w = g.world;
   const just = (): { combo: number; play?: boolean } => {
     w.events.length = 0;
@@ -172,7 +175,7 @@ const outlineFrames = (mode: number): number => {
 }
 {
   /* 실채보: 당근(4 레인)을 CPU 넷이 같은 프레임에 자르면 L0 = 1..4 */
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   let max = 0;
   let plays = 0;
   let bad4 = false;
@@ -204,18 +207,18 @@ check(
 );
 
 interface ModeRun {
-  g: Mg1801Game;
+  g: Mg1801Harness;
   bgm: string[];
   se: Mg1801Event[];
   telop: string[];
   perfect: number[];
 }
 function runMode(opts: Mg1801Options, com = [true, true, true, true], press?: (g: Mg1801Game) => boolean): ModeRun {
-  const g = new Mg1801Game(setup(com), opts);
+  const g = new Mg1801Harness(setup(com), opts);
   const out: ModeRun = { g, bgm: [], se: [], telop: [], perfect: [] };
   for (let f = 0; f < 60 * 120 && !g.done; f++) {
     const p1: PadInput = emptyPad();
-    if (press?.(g)) p1.buttons |= NPAD.A;
+    if (press?.(g.g)) p1.buttons |= NPAD.A;
     g.step([p1, null, null, null]);
     for (const e of g.events) {
       if (e.k === 'bgm') out.bgm.push(e.label);
@@ -282,7 +285,7 @@ for (const [name, opts, chart, bpm, bgm] of table) {
 }
 {
   /* 시각: 페이드아웃 20 → (0,6) 결과 카메라 → 다음 프레임 결과 시작 → 페이드인 20 → 징글 → 0.5/PlayRate s 뒤 끝 */
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   const t: Record<string, number> = {};
   for (let f = 1; f < 6000 && !g.done; f++) {
     g.step([null, null, null, null]);
@@ -306,7 +309,7 @@ for (const [name, opts, chart, bpm, bgm] of table) {
 
 // ------------------------------------------------------------------ NPC·머리 추적 [판독: MapImpl::ReceiveState, UpdateHeadControl, GetHeadTarget]
 {
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   const seen: string[] = [];
   let headOn = 0;
   let headXOk = true;
@@ -328,7 +331,7 @@ for (const [name, opts, chart, bpm, bgm] of table) {
 
 // ------------------------------------------------------------------ 단계 0~3 [판독: OnGameMain 단계 0·1·2·3]
 {
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   const count: number[] = [];
   let startAfter = -1;
   let stage3 = -1;
@@ -356,7 +359,7 @@ for (const [name, opts, chart, bpm, bgm] of table) {
 }
 {
   /* 리듬 쿠킹 컨트롤 안내 와이프(길이 미판독)를 넣으면 4박 넘게 떠 있을 때 SQ_BGM_RC_CALIBRATION */
-  const g = new Mg1801Game(setup([true, true, true, true]), { mode: 0, course: { index: 0, count: 3 }, controlWipeFrames: 400 });
+  const g = new Mg1801Harness(setup([true, true, true, true]), { mode: 0, course: { index: 0, count: 3 }, controlWipeFrames: 400 });
   const cal: number[] = [];
   for (let f = 1; f < 900; f++) {
     g.step([null, null, null, null]);
@@ -420,8 +423,8 @@ class SoundSim {
   }
 }
 
-function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801Game; trace: string[]; rows: number[]; bgm: number; ending: number } {
-  const g = new Mg1801Game(setup([true, true, true, true]), opts);
+function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801Harness; trace: string[]; rows: number[]; bgm: number; ending: number } {
+  const g = new Mg1801Harness(setup([true, true, true, true]), opts);
   const sim = lag === null ? null : new SoundSim(g.cfg.bpm, lag);
   const trace: string[] = [];
   const rows: number[] = [];
@@ -469,7 +472,7 @@ function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801G
 }
 {
   /* 게임 BGM 접수는 G12 가 "요청 때 읽은 값"에서 바뀔 때다(FUN_7100426b8c) — 소리 쪽이 늦게 받아 한 마디 뒤에 접수하면 로직도 그 마디를 따른다 */
-  const g = new Mg1801Game(setup([true, true, true, true]));
+  const g = new Mg1801Harness(setup([true, true, true, true]));
   const sim = new SoundSim(120, 0);
   let req = -1;
   let acc = -1;
@@ -490,6 +493,72 @@ function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801G
     ['mt_water00', 'utility_parameter0', '0x04', -1, 300],
   ]);
   check('물 fmab Repeat 커브 2개가 구간 뒤에도 반복(원본 wrap — 변환기 Curves.cs, plaza_3d.md §6.14 #14c ③)', r.length === 0, r.join(' · '));
+}
+
+
+{
+  const h = new Mg1801Harness(setup([true, true, true, true]));
+  let startAfterFrame = -1;
+  for (let f = 1; f < 6000 && !h.run.ended; f++) {
+    h.step([null, null, null, null]);
+    if (startAfterFrame < 0 && h.state.flow === 8) startAfterFrame = h.state.frame;
+  }
+  const log = h.run.scene.stageLog.map(([f, st]) => `${f}:${st}`);
+  check('틀 단계 1~8: 3@0, 4@22, 6@23, 7@24, 8@25(첫 페이드 1+20+1, 오프닝·시작 전·시작 훅 inline 1, 텔롭 −1)', log.slice(0, 6).join() === '0:3,22:4,23:6,24:7,25:8,26:9', log.slice(0, 6).join());
+  check('OnGameStartAfter = 리듬 프레임 27(옛 PREROLL 61 → 틀 1~7)', startAfterFrame === 27, `${startAfterFrame}`);
+  check('틀 단계 뒤쪽: 10 → 11(2 프레임) → 12 → 13 → 14 → 16 → 17 → 19', log.slice(6).map((x) => x.split(':')[1]).join() === '10,11,12,13,14,16,17,19', log.slice(6).join());
+  const t = Object.fromEntries(h.run.scene.stageLog.map(([f, st]) => [st, f]));
+  check('단계 11 은 2 프레임(끝 텔롭 −1, 옛 finishFrames 와 같은 길이)', t[12] - t[11] === 2, `${t[12] - t[11]}`);
+  check('결과 갈래 B(리듬은 SetPlayer 없음), 결과 무대 사건 없음', h.run.scene.branch === 'B' && !h.run.scene.log.some(([, e]) => e.k === 'resultStage'));
+  check('나갈 때 틀 와이프 FadeOut(White) 끝 = 덮음', h.run.scene.wipe.core.closed && h.run.scene.wipe.core.lastType === WIPE_WHITE);
+  const e = h.run.resultEntry(1801);
+  check('기록 byte: GameRule 10(Rhythm)·judge 1 → [2,2,2,2](FUN_71001f271c)', e.judge === 1 && e.results.join() === '2,2,2,2', JSON.stringify(e));
+}
+{
+  const h = new Mg1801Harness(setup([true, true, true, true]), mg1801Options({ mode: '3' }));
+  for (let f = 1; f < 6000 && !h.run.ended; f++) h.step([null, null, null, null]);
+  const st = h.run.scene.stageLog.map(([, x]) => x);
+  check('리믹스 연속: OnGameEnd 의 RequestReturnScene → 단계 10 에서 바로 끝(0x13)', st.slice(-2).join() === '10,19' && h.done, st.join());
+}
+{
+  await mg1801Game.load?.();
+  const hard = new NodeMgRun(mg1801Game, { ...setup([true, true, true, true]), options: { mode: '0' } }, { play: { rhythm: 1, callInst: true, useGyro: true, comLevel: 2 } });
+  const norm = new NodeMgRun(mg1801Game, { ...setup([true, true, true, true]), options: { mode: '2' } }, { play: { rhythm: 0, callInst: true, useGyro: true, comLevel: 0 } });
+  const cfgOf = (r: NodeMgRun) => (r.run.logic as Mg1801Harness['logic']).game.cfg;
+  check('프리 플레이 리듬 설정 → 모드(SyncedSetupGame PlayMode 1: 1 → 2 하드, 0 → 0 노멀)', cfgOf(hard).mode === 2 && cfgOf(hard).chart === 'mg1801_rm_chart01' && cfgOf(norm).mode === 0, `${cfgOf(hard).mode} ${cfgOf(norm).mode}`);
+  check('설정 전달: callInst·useGyro·comLevel 이 틀 문맥까지(mg1801 은 소비 안 함), 설명 화면 P 는 거짓', hard.run.scene.ctx.play?.callInst === true && hard.run.scene.ctx.play?.useGyro === true && hard.run.scene.ctx.play?.comLevel === 2 && !hard.run.scene.ctx.isInst);
+}
+{
+  let down = false;
+  const h = new Mg1801Harness(setup([false, true, true, true]));
+  for (let f = 1; f < 6000 && !h.done; f++) {
+    const j = h.world.objectMan.judgeInput(0);
+    const want: boolean = j.type === 0 && j.diff < 2 && !down;
+    down = want;
+    const p1: PadInput = emptyPad();
+    if (want) p1.accX = h.world.params.acc + 1;
+    h.step([p1, null, null, null]);
+  }
+  const c = h.result!.counts[0];
+  check('게이트 패드의 가속도(acc)가 로직까지 간다: 1P 를 A 대신 흔들기로 전부 JUST', c.just === 26 && c.miss === 0, JSON.stringify(c));
+}
+{
+  const rec = () => {
+    let sim: SoundSim | null = null;
+    return {
+      pads: (f: number) => [0, 1, 2, 3].map((i) => (i < 2 ? { buttons: (f * (i + 3)) % 23 === 0 ? NPAD.A : 0, lx: 0, ly: 0, rx: 0, ry: 0, accX: (f + i * 7) % 41 === 0 ? 2.5 : 0, accY: 0, accZ: 0 } : null)),
+      sound: (f: number, r: unknown) => {
+        sim ??= new SoundSim((r as Mg1801Harness).cfg.bpm, 2);
+        return sim.snapshot(f);
+      },
+      after: (f: number, r: unknown) => sim?.onEvents(f, (r as Mg1801Harness).events),
+    };
+  };
+  const d = determinismCheck(() => new Mg1801Harness(setup([false, false, true, true]), { mode: 2 }), rec);
+  check('결정성: 같은 seed·입력 기록(패드·acc·사운드 관측 지연 2)으로 두 번 → 매 틱 상태 해시 같음(끝까지)', d.ok && d.ended, `${d.ticks} 틱 ${d.firstDiff}`);
+  const root = fileURLToPath(new URL('../script/', import.meta.url));
+  const st = staticLogicCheck(['games/mg1801/logic', 'games/mg1801/state.ts', 'games/rhythm', 'shell/mgscene', 'core'].map((x) => root + x));
+  check(`정적 검사: 로직 ${st.files} 파일에 Math.random·performance.now·Date·getGamepads·rAF·DOM 없음`, st.bad.length === 0 && st.files > 30, st.bad.join(' '));
 }
 
 process.exitCode = bad ? 1 : 0;

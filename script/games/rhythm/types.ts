@@ -47,6 +47,17 @@ export type RmEvent =
   /** PERFECT 텔롭(원본 FUN_710043af00) */
   | { k: 'perfect'; player: number };
 
+export interface RmPadInput {
+  buttons: number;
+  lx: number;
+  ly: number;
+  rx: number;
+  ry: number;
+  accX: number;
+  accY: number;
+  accZ: number;
+}
+
 /** 이번 프레임 사건을 받는 곳(게임 사건 배열을 그대로 넘긴다) */
 export interface RmEventSink {
   length: number;
@@ -55,7 +66,6 @@ export interface RmEventSink {
 
 /** 흰 페이드(bq::WipeModule) — lib/transition Transition 을 게임이 넘긴다 */
 export interface RmWipe {
-  step(): void;
   fadeOut(type: number, speed: number): void;
   fadeIn(type: number, speed: number): void;
   readonly playing: boolean;

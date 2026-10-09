@@ -31,6 +31,11 @@ import {
   type ResultStageHost,
   type ResultStageInput,
 } from '../script/shell/mgscene';
+import { freePlayJudgeType, minigameResultEntry, type MgGame, type MgSceneContext } from '../script/shell/mgscene';
+import { WIPE_WHITE } from '../script/lib/transition';
+import type { GameLogic, GameSetup } from '../script/game';
+import { determinismCheck, staticLogicCheck } from './mg_determinism';
+import { NodeMgRun } from './mg_node_host';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const A = path.join(WEB, 'assets');
@@ -375,7 +380,7 @@ let finishTicks = 0;
   const bad: string[] = [];
   for (const f of fs.readdirSync(dir)) {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');
-    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '../../lib/transition' && m[1] !== '../../lib/splitscreen') bad.push(`${f}: ${m[1]}`);
+    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '../../lib/transition' && m[1] !== '../../lib/splitscreen' && m[1] !== '../../lib/sound') bad.push(`${f}: ${m[1]}`);
   }
   ok(bad.length === 0, 'shell/mgscene import 0(같은 폴더 + import 0 공용 코어 lib/transition·lib/splitscreen, mgm_common §9.1 lib 예외)', bad.join(' '));
   const pre = mgscenePrefetch(ui);
@@ -384,6 +389,65 @@ let finishTicks = 0;
   const snd = JSON.parse(fs.readFileSync(path.join(A, 'mgscene/sound/sound.json'), 'utf8'));
   const sm = [...Object.values(snd.se), ...Object.values(snd.voice)].map((e) => (e as { file: string }).file).filter((f) => !fs.existsSync(path.join(A, 'mgscene', f)));
   ok(sm.length === 0, '소리 명세 파일 존재(SQ_SE_SYS_* = 공용 assets/common/sound)', sm.join(' '));
+}
+
+{
+  const seen: number[] = [];
+  let wipeStart = -1;
+  let wipeEnd = -1;
+  let mainCalls = 0;
+  let gctx: MgSceneContext | null = null;
+  const game: MgGame = {
+    setup(ctx) {
+      gctx = ctx;
+    },
+    onGameMain() {
+      const c = gctx!;
+      mainCalls++;
+      seen.push(c.pad(0).accX);
+      if (mainCalls === 1) {
+        c.wipe.fadeOut(WIPE_WHITE, 1);
+        wipeStart = c.frame;
+      } else if (wipeEnd < 0 && !c.wipe.playing) wipeEnd = c.frame;
+      if (wipeEnd >= 0) c.requestReturnScene();
+      return false;
+    },
+  };
+  const pads: (MgPadInput | null)[] = [{ buttons: 0, lx: 0, ly: 0, rx: 0, ry: 0, accX: 1.5, accY: 0, accZ: -0.5 }, null, null, null];
+  const scene = new MgScene({ mgId: 'mg1801', players: PLAYERS, seed: 5, rand: rng(5), tables, ui: uiData, resultHost: { gl: null, url: (p: string) => p } }, game, localGate(() => pads));
+  for (let i = 0; i < 400 && scene.stage !== STAGE_END; i++) scene.tick();
+  ok(seen[0] === 1.5 && gctx!.pad(0).accZ === -0.5, '게이트 패드의 가속도(accX/Y/Z)가 ctx.pad 까지(체감 입력 손실 해소)', `${seen[0]} ${gctx!.pad(0).accZ}`);
+  ok(wipeEnd - wipeStart === 20, '게임이 부른 WipeModule 직접 페이드(ctx.wipe): 20 프레임 뒤 처리기에서 playing 거짓(틀 UI 틱이 한 번만 진행)', `${wipeEnd - wipeStart}`);
+  const last = scene.stageLog.slice(-2).map(([, st]) => st).join();
+  ok(scene.stage === STAGE_END && last === '9,19', 'ctx.requestReturnScene → 그 프레임 끝에 단계 0x13(RequestReturnScene)', last);
+  ok(scene.log.some(([, e]) => e.k === 'exit'), 'RequestReturnScene 도 exit 사건');
+}
+{
+  ok(freePlayJudgeType(0) === 0 && freePlayJudgeType(7) === 0 && freePlayJudgeType(1) === 1 && freePlayJudgeType(10) === 1, 'judge = GameRule ∉ {0,7}(Mgm01SetupMinigamePlayInfo @0x71001f1c60)');
+  const ps = [
+    { pid: 0, rank: 0, winLose: 1 as const },
+    { pid: 1, rank: 2, winLose: 0 as const },
+    { pid: 2, rank: 1, winLose: 2 as const },
+    { pid: 3, rank: -1, winLose: -1 as const },
+  ];
+  ok(minigameResultEntry(5, 0, 0, ps).results.join() === '0,2,1,255', '기록 byte judge 0 → rank byte(−1 = 255)', minigameResultEntry(5, 0, 0, ps).results.join());
+  ok(minigameResultEntry(5, 1, 1, ps).results.join() === '1,0,2,255', '기록 byte judge ≠ 0 → WinLose byte(무승부 2 그대로)', minigameResultEntry(5, 1, 1, ps).results.join());
+  ok(minigameResultEntry(5, 1, 10, ps).results.join() === '2,2,2,2' && minigameResultEntry(5, 0, 8, ps).results.join() === '255,255,255,255', 'GameRule 8·10: judge ≠ 0 → 2×4, judge 0 → 255×4(FUN_71001f271c)');
+}
+{
+  const dummyDef = {
+    id: 'mg0101',
+    createLogic: () => Object.assign(createDummyGame({ mainFrames: 300, openingFrames: 30, useResultStage: false }), { sound: null, events: [], done: false, result: null }) as unknown as GameLogic,
+  };
+  const setup: GameSetup = { players: PLAYERS.map((p) => ({ char: p.chara, isCom: p.isCom, comLevel: 0 })), seed: 99, practice: false };
+  const d = determinismCheck(
+    () => new NodeMgRun(dummyDef, setup),
+    () => ({ pads: (f: number) => [{ buttons: f % 7 === 0 ? 1 : f % 50 === 0 ? 1 << 10 : 0, lx: 0, ly: 0, rx: 0, ry: 0 }, null, null, null] }),
+  );
+  ok(d.ok && d.ended, '결정성: 더미 게임 같은 seed·입력 기록 두 번 → 매 틱 상태 해시 같음(끝까지)', `${d.ticks} 틱 ${d.firstDiff}`);
+  const root = path.join(WEB, 'script');
+  const st = staticLogicCheck([path.join(root, 'shell/mgscene'), path.join(root, 'games/mgdummy/logic.ts'), path.join(root, 'lib/transition/index.ts'), path.join(root, 'lib/splitscreen'), path.join(root, 'lib/sound')]);
+  ok(st.bad.length === 0 && st.files >= 10, `정적 검사: 틀·더미 로직 ${st.files} 파일에 Math.random·벽시계·직접 입력·DOM 없음`, st.bad.join(' '));
 }
 
 console.log(`\n${count - fails}/${count} 통과`);

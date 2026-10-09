@@ -22,7 +22,7 @@ import { createResultStage } from '../script/shell/mgresult/stage';
 import { DEFAULT_RESULT_OPTIONS } from '../script/shell/mgscene/resultContract';
 import type { ResultStageHostExt, ResultStageInputExt } from '../script/shell/mgresult/types';
 import { CharacterActor, CharacterTemplate, type CharaInfo } from '../script/games/mg1801/view/character';
-import { Mg1801Game } from '../script/games/mg1801/logic/game';
+import { Mg1801Harness } from './mg_node_host';
 import { mg1801Options } from '../script/games/mg1801';
 import { emptyPad } from '../script/core/pad';
 import { characterDefaults, HEAD_RULES_WEB, RULES_WEB } from '../script/lib/character';
@@ -45,8 +45,8 @@ export const GOLDEN_SHA256_WEB: Record<string, string> = {
   mgresult_draw: 'd8ee8888cb8236fca917c9949d8e91cfc8a714d6d04cc92cb3f7cdd60b44703d',
   mgresult_win2_theme: '444b4b12a6bef46abc69cf023475c0bda6dc5c2c1fd0eb5722dd5c2f1a0d31bd',
   mgresult_dice: '68bcadfc3c43d73274c6721a5c11de4f2b1b78cd1d199b913e4e27240380fe67',
-  mg1801_normal: 'd1c024907f06c3a4d669844c90a9278223078bf6ecd9af9f9e0b730b14f5fb70',
-  mg1801_long180: 'c260ce240e9093a8f1cc9ecb505959432eb0681a7cb8d97376f58a41d819a72e',
+  mg1801_normal: 'ec256e91690bf3c1792032b85b5effd72069a7bee5659ca43960a40b987368a9',
+  mg1801_long180: 'eb7564fbd008cc7971014bd67995d1b12564ade66133c5665af978907b169ab4',
 };
 
 /* ---------- 노드 환경 ---------- */
@@ -395,7 +395,7 @@ async function mg1801(full: boolean, out: Out): Promise<void> {
     for (const t of tpls.values()) await t.loadResult(assets);
     const actors = chars.map((k) => new CharacterActor(tpls.get(k)!));
     const setup = { players: chars.map((c, i) => ({ char: c, isCom: i > 0, comLevel: 0 })), seed: 1, practice: false, options: {} };
-    const g = new Mg1801Game(setup as Any, opts);
+    const g = new Mg1801Harness(setup as Any, opts);
     let endingFrame = -1;
     for (let f = 1; f < 60 * 150 && !g.done; f++) {
       const p1 = emptyPad();
@@ -449,8 +449,8 @@ export const GOLDEN_SHA256: Record<string, string> = {
   mgresult_draw: 'e716c2fa56d07b7d9d6f9c2c72efb8558547acc9359e2ed06c2ea1d87326c201',
   mgresult_win2_theme: '284089db5a16f55353b4ef6ec8661c266f05365377f040ff1d1288e00106877b',
   mgresult_dice: '36fd8c1f960c875a0209abe7e3d0a85985133dc28f7f36f33f991746ee79e5cc',
-  mg1801_normal: 'd1c024907f06c3a4d669844c90a9278223078bf6ecd9af9f9e0b730b14f5fb70',
-  mg1801_long180: 'e595f09c40d648b4e8d86851316cc93a059dbddbcf5d7840c9761e99e06c1216',
+  mg1801_normal: 'ec256e91690bf3c1792032b85b5effd72069a7bee5659ca43960a40b987368a9',
+  mg1801_long180: '1e7dc177867cba7bc194d8c41185ee053203a83cff00475f10155eb68b61647e',
 };
 
 export const SCENARIOS: Record<string, (full: boolean, out: Out) => Promise<void>> = { charselect, plaza_player: plazaPlayer, plaza_npc: plazaNpc, mgresult, mg1801 };

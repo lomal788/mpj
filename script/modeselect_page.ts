@@ -4,7 +4,7 @@
  */
 import { ASSETS } from './env';
 import { appFlow } from './view/appFlow';
-import { logicWipe } from './view/appTransition';
+import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import { NPAD, STICK_MAX, type PadInput } from './core/pad';
 import { assetHooks } from './shell/charselect/assetHooks';
@@ -121,8 +121,11 @@ export async function runModeSelect(
     onFinished(decided) {
       done = true;
       appBgm().exit('modeselect', decided ? 'decided' : 'cancel');
-      run.stop();
-      cfg.onDone(decided ? result : null);
+      wipe.release();
+      void sceneOut().then(() => {
+        run.stop();
+        cfg.onDone(decided ? result : null);
+      });
     },
   });
   void appBgm().enter('modeselect', cfg.muted);

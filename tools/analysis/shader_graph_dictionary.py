@@ -18,7 +18,7 @@ def graph_id(options):
     return hashlib.sha256(raw).hexdigest()
 
 
-def load_definition(options, directory=None):
+def load_definition(options, directory=None, material=None):
     ident = graph_id(options)
     path = Path(directory or DIRECTORY) / f"{ident}.json"
     if not path.exists():
@@ -26,16 +26,36 @@ def load_definition(options, directory=None):
     record = json.loads(path.read_text(encoding="utf-8"))
     if record.get("version") != 1 or record.get("options") != graph_options(options):
         raise ValueError(f"그래프 사전 키/버전 불일치: {path}")
-    if record.get("status") == "pending":
+    branch_id = ""
+    if record.get("graphVariants"):
+        if material is None:
+            return None
+        textures = {}
+        for sampler in material.get("samplers", []):
+            textures[sampler["sampler"]] = sampler.get("texture")
+            for slot in sampler.get("slots", []):
+                textures[slot] = sampler.get("texture")
+        matches = [v for v in record["graphVariants"]
+                   if all(str(options.get(k)) == str(value) for k, value in v["selector"].items())
+                   and all(textures.get(k) is not None for k in v["requiresSamplers"])]
+        if not matches:
+            return None
+        if len(matches) != 1:
+            raise ValueError(f"그래프 사전 옵션 분기 중복: {path}")
+        chosen = matches[0]
+        branch_id = ":" + hashlib.sha256(json.dumps(chosen["selector"], sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:12]
+    else:
+        chosen = record
+    if chosen.get("status") == "pending":
         return None
-    if record.get("status") not in ("decoded", "approx") or not isinstance(record.get("graph"), dict):
+    if chosen.get("status") not in ("decoded", "approx") or not isinstance(chosen.get("graph"), dict):
         raise ValueError(f"그래프 사전 상태/정의 불일치: {path}")
-    graph = copy.deepcopy(record["graph"])
+    graph = copy.deepcopy(chosen["graph"])
     needed = set(re.findall(r'T\(\s*"([^"]+)"\s*,', json.dumps(graph).replace('\\"', '"')))
     missing = needed - set(graph.get("samplers", {}))
     if missing:
         raise ValueError(f"그래프 사전 샘플러 누락 {sorted(missing)}: {path}")
-    graph["program"] = f"graph:{ident}"
+    graph["program"] = f"graph:{ident}{branch_id}"
     return graph
 
 
@@ -46,7 +66,7 @@ def bind_definition(graph, material, model):
         for slot in s.get("slots", []):
             tex[slot] = s.get("texture")
     result = copy.deepcopy(graph)
-    missing = [k for k, v in graph["samplers"].items() if not k.startswith("@") and k not in tex and v is not None]
+    missing = [k for k, v in graph["samplers"].items() if not k.startswith("@") and tex.get(k) is None and v is not None]
     if missing:
         raise ValueError(f"그래프 대상 샘플러 누락 {missing}: {material.get('name')}/{model}")
     result["samplers"] = {k: (v if k.startswith("@") else tex.get(k)) for k, v in graph["samplers"].items()}

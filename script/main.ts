@@ -23,7 +23,7 @@ import { type GameDef, type GameLogic, type GameSetup, type GameView, type Playe
 import { GAMES } from './games';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
-import { installTransition, sceneIn } from './view/appTransition';
+import { installTransition, sceneIn, sceneOut } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
 import { AudioOut } from './view/audio';
 import { Hud } from './view/hud';
@@ -324,6 +324,7 @@ async function start(d: GameDef, setup: GameSetup): Promise<void> {
       setMsg(`시작 실패: ${(e as Error).message}`);
       hook.error = String((e as Error).stack ?? e);
       dispose();
+      sceneIn();
       finish('error');
     }
     return;
@@ -369,6 +370,7 @@ const endFlow = (text: string): void => {
 async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null> {
   const d = GAMES.find((g) => g.id === req.name);
   if (!d) return null;
+  await sceneOut();
   const others = [...stageBox.children].filter((c) => c !== glCanvas && c !== hudCanvas && c !== msg && !c.classList.contains('tr-wipe')) as HTMLElement[];
   for (const c of others) c.style.visibility = 'hidden';
   glCanvas.style.visibility = hudCanvas.style.visibility = '';
@@ -387,6 +389,7 @@ async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null
   });
   const r = hook.result;
   const rows = r && def ? def.describeResult(r as never, setup).rows : [];
+  await sceneOut();
   dispose();
   glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
   for (const c of others) c.style.visibility = '';
@@ -404,7 +407,7 @@ function flowMgm01(): void {
     pads: flowPlayers.pads,
     muted: muteIn.checked,
     play: playFromList,
-    onDone: () => queueMicrotask(flowMgmet),
+    onDone: () => void sceneOut().then(flowMgmet),
   }).then((r: Mgm01ListRun) => flowStep('mgm01', r));
 }
 
@@ -442,7 +445,7 @@ function flowPlaza(): void {
     params: q,
     onProgress: (n, total, what) => void (hook.flow === 'plaza-loading' && (hook.plazaLoad = `${n}/${total} ${what}`)),
     onExit: (e) =>
-      queueMicrotask(() => {
+      void sceneOut().then(() => {
         plazaPage = null;
         if (e.k === 'balloon' || e.k === 'session') flowModeSelect();
         else endFlow('광장 나감');
@@ -492,7 +495,7 @@ function plazaFlow(): void {
       flowPlayers.names = r.slots.map((sl) => sl.displayName);
       flowPlayers.pads = pads;
     },
-    onDone: () => queueMicrotask(() => (got ? flowPlaza() : endFlow('플레이어 설정 취소'))),
+    onDone: () => void sceneOut().then(() => (got ? flowPlaza() : endFlow('플레이어 설정 취소'))),
   }).then((r: SetPlayerRun) => flowStep('setplayer', r));
 }
 hook.plaza = () => plazaPage?.debug() ?? null;
@@ -532,6 +535,7 @@ startBtn.addEventListener('click', () => {
     },
   }).then((r) => {
     charRun = r;
+    sceneIn();
     (window as unknown as { __charselect?: CharSelectRun }).__charselect = r;
   });
 });

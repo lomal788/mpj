@@ -1,6 +1,6 @@
 # 14. 셰이더 그래프 판독·해시 사전
 
-2026-10-09. 담당: shader-graphs. [데이터] 최신 manifest 기준 107개 중 광장 재사용 1개, pending 106개. 옵션 전체 튜플의 고유 수 27개. 같은 해시라도 표준 조명·옵션·샘플러 배치로 SASS 전체가 달라지므로 프로그램 바이너리 일치를 그래프 식 일치로 혼동하지 않는다.
+2026-10-09. 담당: shader-graphs. [데이터] 최초 선정 manifest 기준 107개 중 광장 재사용1·pending106. 현재 사전 적용52·기존 광장1·pending54(§18). 옵션 전체 튜플의 고유 수 27개. 같은 해시라도 표준 조명·옵션·샘플러 배치로 SASS 전체가 달라지므로 프로그램 바이너리 일치를 그래프 식 일치로 혼동하지 않는다.
 
 ## 1. 범위·근거
 
@@ -39,7 +39,7 @@
 
 경로: analysis/mat/graphs/<sha256>.json. sha256 입력 = graph_key(options)를 키 정렬·공백 없는 JSON으로 직렬화한 UTF-8 바이트. 문서의 짧은 ID는 앞 12자리이며 파일명은 64자리다.
 
-레코드: {version:1, options:{fragment_shader_graph_*·vertex_shader_graph_*}, status:'decoded'|'approx'|'pending', graph:GraphDef|null, evidence:[], variants:[], stages?:{fs|vs:{hash,status,graph,evidence,requiredInputs}}}. GraphDef는 material·models를 대표값으로 저장하고 재사용 때 대상 재질·모델·샘플러로 바꾼다. 미판독 status는 자동 적용하지 않는다. sampler null은 실제 미할당과 구별해서 근거를 남긴다.
+레코드: {version:1, options:{fragment_shader_graph_*·vertex_shader_graph_*}, status:'decoded'|'approx'|'partial'|'pending', graph:GraphDef|null, evidence:[], variants:[], stages?:{fs|vs:{hash,status,graph,evidence,requiredInputs}}, graphVariants?:[{selector,requiresSamplers,status,graph}]}. GraphDef는 material·models를 대표값으로 저장하고 재사용 때 대상 재질·모델·샘플러로 바꾼다. 미판독 status는 자동 적용하지 않는다. sampler null은 실제 미할당과 구별해서 근거를 남긴다.
 
 ### 3.1 단계 판독 결과의 통합 조건
 
@@ -136,9 +136,9 @@
 |---|---:|---:|
 | mg0508 | 18 | 18 |
 | mg0106 | 5 | 3 |
-| mg0101 | 56 | 56 |
-| mg0122 | 8 | 8 |
-| mg0102 | 19 | 18 |
+| mg0101 | 56 | 15 |
+| mg0122 | 8 | 7 |
+| mg0102 | 19 | 11 |
 
 ## 9. 사용자 확인 필요
 
@@ -151,11 +151,11 @@
 |---|---|---|
 | G05 FS1147244367 | [판독] | Hologram p54 FS: n=normalize(v1), V=normalize(View[0x160]−v0), a=pow(clamp(n·V,0,1),P0.x)·Model[0x20c]; RGB=c0.rgb·(c0.rgb·material_base_color+material_emissive_color_scale·material_emissive_color)·P0.y. VS 마지막 v14.xyz=Color0.xyz; VS 그래프0. |
 | G08 FS1807808248·G12 FS2202427043 | [판독]·시간 [근사] | p122/p125 명령 전체 동일. A=T(sg_utility_texture2d0,uv0).rgb, B=T(sg_utility_texture2d1,uv1).rgb, q=B·(A+C0.rgb)·P0.x; RGB=mix(q,C1.rgb,P0.y)+(0.5+0.5·sin((World[0x4]%360)·f32(0x3c0efa35)))·mix(A.x,B.x,P0.x)·C0.rgb; α=Model[0x20c]. 실제 raw c11[0x130/0x140]=BFSHA sampler18/19=utility0/1, VS v10=a_Uv0.xy·v11=a_Uv0.zw. World[0x4] CPU 시간 단위는 기존 mpjMs 계약 [근사]. |
-| G14 FS2265242073 | 식 [판독]·적용 [미확정] | 화면 위치→Layer 화면범위 정규화→깊이 Layer[0x4f0] texelFetch→View[0x120..0x15c] 역투영→(Model[0x1c0..]−world)/Model[0x1e4] 거리→utility1(u=clamp(length/radius,0,1),v=0.5)×base_color, α=Model[0x20c]. GraphDef에 캡처 깊이·뷰 역행렬·모델 반경 입력이 없어 pending 유지. 모델 표면 worldPos로 치환하지 않는다. |
+| G14 FS2265242073 | 식 [판독]·적용 [미확정] | 화면 위치→Layer 화면범위 정규화→깊이 Layer[0x4f0] texelFetch→View[0x120..0x15c] 역투영→(Model[0x1c0..]−world)/Model[0x1e4] 거리→utility0(u=clamp(length/radius,0,1),v=0.5)×base_color, α=Model[0x20c]. GraphDef에 캡처 깊이·뷰 역행렬·모델 반경 입력이 없어 pending 유지. 모델 표면 worldPos로 치환하지 않는다. |
 
 G05/G08/G12는 static_opt_shading_type=0의 최종 RGB이므로 baseColor에 식을 넣고 emissive=0으로 기존 발광의 중복 가산을 막는다. G08/G12는 원본 state_type=2 더하기를 유지한다. G05는 원본 정점색과 재질값의 곱이며 임의 색 보정이 아니다. ModelOpacity=1은 기존 graph.ts 계약의 [근사]이다.
 
-사전은 27개 옵션 튜플 레코드 중 위 3개만 적용한다. 나머지는 pending 레코드로 SASS 경로·프로그램 변형·원본 옵션을 보존한다. `shader_graph_patterns.py`가 두 탐조등의 같은 식을 한 함수로 생성하며, `shader_graph_dictionary.py`가 키·옵션·상태·필수 sampler를 검증하고 대상 samplerAssign으로 재결합한다. 사전 조회 오류는 변환을 실패시켜 조용한 원본 오배정을 막는다.
+최초 직접 담당 단계에서는 27개 옵션 튜플 레코드 중 위3개만 적용했다. 현재 적용·대기는 §18이며 원본식 단계 레코드로 SASS 경로·프로그램 변형·원본 옵션을 보존한다. `shader_graph_patterns.py`가 두 탐조등의 같은 식을 한 함수로 생성하며, `shader_graph_dictionary.py`가 키·옵션·상태·필수 sampler를 검증하고 대상 samplerAssign으로 재결합한다. 사전 조회 오류는 변환을 실패시켜 조용한 원본 오배정을 막는다.
 
 ### 10.1 정점색 선언 결합
 
@@ -176,3 +176,98 @@ G05의 mul_vertex_base_color=1과 GraphDef.c0가 `_c0`를 각각 선언한다. �
 [데이터] transition 담당의 연결 수정 후 `test_mgmet` 218/218 재검증, `tsc --noEmit`·`npm run build` 통과. 전체 최초 실행의 실패1건은 이 재검증으로 해소했다. VS 담당의 중간 수치 파일은 6묶음×100표본+깊이 clip5표본이며, 최종 단계식이 도착하기 전에는 사전에 승격하지 않는다.
 
 [데이터] 실제 재변환 manifest의 식·해시 일치 18건을 추가하여 신규 노드 시험611/611. PBR 병렬 결과를 위해 GLSL 시험의 무조명 패치도 원본 shading_type=0인 경우에만 적용한다.
+
+## 12. 병렬 FS A·C 판독 보존·적용 차단
+
+[데이터] FS A: 5묶음13재질, 노드503개·원본 FS digest13개 대조 통과. 공용 런타임 입력을 확정하기 전 판독 완료와 자동 반영을 구별한다.
+
+| 묶음 | 판독식·근거 | 적용 차단 |
+|---|---|---|
+| G06 | 화면 두 정수 texel의 flag0x80 OR→utility1.r 곱 k; color=mix(albedo,C0,k), roughness=mix(rgh,P0.y,k), normal=mix(N1,N2,k) | Layer[0x500] 정수 스텐실·뷰포트·원본 비정규화 normal mix |
+| G13 | 기존 mg0508 §7.1 재사용. 깊이 역투영→칼 평면 mask=sat((0.025−abs(d))×40); C0·mask·sat(sin(tangent×40+phase))·abs(Ng.y)^3 최종 가산 | 깊이·View 역행렬·World[0x0] u32 위상·P3/P4/C0 갱신·VS 런타임 _C0 |
+| G16 | alpha=max(P0.x,min(T(_a0,uv0).a·mul_opacity,P0.y))·ModelOpacity; 표준 roughness texture 유지 | ModelOpacity CPU 바인딩. 칼 P0 런타임 투명도 §6.9 별도 |
+| G17 | F2I.U16.RN(P0.x)로 원본6층 배열 mask; color/roughness/normal 세 출력 mix | sampler2DArray·ties-even 층 변환·비정규화 normal mix |
+| G22 | A=sat(albedo·mul_base_color), B=sat(abs(c0)^f32(0x400ccccd)); A<0.5이면2AB, 그 밖1−2(1−A)(1−B) | ModelOpacity CPU 바인딩. 정점 pow2.2는 sRGB 변환과 별개 |
+
+[판독] normal XY 복원 `z=sqrt(clamp(1−x²−y²,0,1))`. G06/G17 utility normal에는 TBN 곱이 없고 mix 뒤 원본 normalize도 없다. 기존 GraphDef normal 출력은 항상 normalize하므로 입력 확장만으로 동등성이 생기지 않는다. G16/G22 후보는 식 판독이 완료됐지만 원본 모델 알파 입력이 없어 strict 자동 적용은 보류한다.
+
+[판독] FS C G07/G20/G27 공통: `h=fract(P.y)`, `j=fract(h+0.5)`, `w=abs(2h−1)`, `Ui=U·P.w+flow·{h,j}·P.z`, `pair=mix(sample(U0),sample(U1),w)`. flow=(2R−1,1−2G), color 마스크=step(1−area.r,pair.rgb), 물 roughness=material_roughness·(1−0.5·(1−sat(N·V))^4). FS에는 World 시간 reader가 없으며 원본 재질 애니 P.y를 사용한다. G07/G27 노멀은 **RGBA 네 채널** `normalize(2pair−1)` 후 XY를 사용한다. UNORM 입력에 SNORM 복원을 중복하지 않는다.
+
+[미확정] FS C 세 조합은 VS 결과와 결합 전 pending. 원본 IBL cube/LOD·ModelOpacity·G27 화면 color/depth 캡처·View 역투영·안개 입력을 보존한다. G07/G20 read_under_water=0인데 기존 patchWater가 water_enable만으로 muddy 합성을 붙여 원본 결과를 가리는 차이를 확인했다. 해당 조건 수정 여부는 원본 옵션과 공용 시험을 확인한 뒤 결정한다. C 담당 중간 numericValidation은 실행 예정이며 통과 수로 세지 않는다.
+
+[데이터] 사용자 우선순위: G09(24) → G11(14) → G01(10) → G02(7) → G10(5), 합60재질. 먼저 이 다섯 전체 조합의 FS/VS·공용 런타임 상태를 해소한다. 위 A·C 원본식과 후보는 사전 stages.fs에 보존하고 전체 pending은 유지한다.
+
+## 13. 우선 G11 옵션 분기·샘플러 조건 설계
+
+[판독] ndv=sat(N·V), noise=T(utility1,srt0(uv0)·P0.z).r, film=T(utility0,(fract(ndv+noise),0.5)).rgb, k=pow(1−ndv,P0.y)·P0.x. base=mix(B,film,k)이며 k를 임의 clamp하지 않는다. B는 원본 base_color_texture/mul_base_color 옵션에 따라 albedo·base_color·mul_base_color를 선택한다. thin-film은 발광 가산이 아니다. PBR·노멀·sRGB는 기존 경로를 재사용한다.
+
+[데이터] 14재질·FS5변형. utility0/1 둘 다 할당된 spco_05_up_mt·spco_05_under_mt·spco_01_mt·spco_00_under_mt·spco_00_up_mt 5개만 반영 후보. 나머지9개는 원본 미할당 sampler 기본 바인딩이 미확정. null을 검정 표본으로 치환하지 않는다. 담당 Node 검증은 최종 JSON의 passed 수치를 사용한다.
+
+사전 확장: 전체 해시 키는 그대로 유지하고 graphVariants에 순수 원본 옵션 selector·requiresSamplers·status·GraphDef를 저장한다. 조회에 대상 FRES를 넘겨 selector 완전 일치+필수 sampler 실제 비null인 분기만 선택한다. 불완전 분기는 None으로 남겨 기존 pending 경로로 간다. 복수 분기가 겹치면 오류다. 재질 이름으로 고르지 않으므로 다른 아카이브에도 재사용한다. program=graph:<tupleSHA>:<selectorSHA>로 분기별 GLSL 캐시 충돌을 막는다. record status=partial은 일부 재질 반영이며 전체14 완료를 뜻하지 않는다.
+
+[근사] 위5개도 기존 stage3d ModelOpacity=1·PBR/IBL 근사는 남는다. 새 틴트·시간·opacity 상수를 추가하지 않고 명시된 기존 계약에서 판독한 baseColor만 반영한다. G16/G22 엄격 후보는 뒤 우선순위에서 원본 모델 불투명도 바인딩을 별도 해결한다.
+
+[데이터] FS C 최종 보고: 노드 수치320표본 통과·의존성76검사 누락0. 원수치·전체식·캡처/IBL/ModelOpacity 차단은 사전 stages.fs와 shader_fs_c.json에 보존. 후보를 적용하기 전 VS·water 합성 조건을 검증한다.
+
+## 14. 우선 G09 화면 입력 설계
+
+[판독] U=(pixelXY−Layer470.xy)·Layer488.xy, screenUV=clamp(U,0,1−Layer458.xy); baseColor=T(_a0,uv0).rgb·(C1.rgb+(C0.rgb−C1.rgb)·T(utility0,screenUV).rgb). 마스크는 RGB 각 채널이며 P0.x는 이 식에 쓰지 않는다. 24재질·FS2명령변형의 그래프 의미가 같다. 표준 normal/roughness/metallic/ao는 덮지 않는다.
+
+GraphDef 조각식의 새 이름 screenUV는 필요한 그래프에서만 uniform을 선언한다. material.onBeforeRender가 현재 물리 viewport=(x,y,w,h)를 공급하고, 조각 위치를 `(gl_FragCoord.x−x,h−(gl_FragCoord.y−y))`로 좌상단 원점으로 바꾼다(03_graphics UV·PNG 첫 행·flipY=false 계약). viewport 역크기와 한 픽셀 edge로 `clamp(local/w,h,0,1−1/(w,h))`를 계산한다. viewport 변경 때 uniform 갱신을 보장한다. 원본 표준 재질·광장 그래프에는 screenUV가 없어 새 경로를 사용하지 않는다.
+
+[근사] 원본 Layer470/488/458 CPU 갱신 함수가 아직 확보되지 않아 현재 그리기 viewport·그 역크기를 웹 대응으로 사용한다. 한 픽셀 edge와 캡처/분할 viewport의 원본 범위는 사용자 확인 필요에 남긴다. 모델 UV·worldPos·상수 마스크로 바꾸지 않는다. 원본 screen 식 산술은 판독, 웹 입력 대응은 근사이며 runtime 완전 동등성으로 세지 않는다.
+
+[데이터] G11 FRES 재확인: 14개 모두 texture_srt0=1·pbr_uv=0, SRT scale1.5~25, P0.x=0.57~2로 활성 강도다. 미할당9개를 강도0으로 간주할 수 없다. slots 자체가 FRES samplers에 없으며 converter의 null 표본 기본값은 원본 fallback 근거가 아니다. sampler0/1 모두 실제 할당된5개만 분기 조건을 통과한다. 원본 null fallback을 정의한 CPU 코드가 추가 필요하다.
+
+## 15. 우선 G01·G02 원본식·입력 상태
+
+[판독] G01은 광장 grass_card와 같은 VS2522730817 단계식을 재사용. E=ENV0(Layer120, CPU 07_camera_lighting 정정 근거), U=u32 World4, D=f32(E.y·1000), phase=float(U%uint(D))/D. W.xz·0.1·E.x를 각(−E.z−45)°로 회전 후 frac(+phase), 잡음R·E.w=amp. deltaWorld=amp·(sin(E.z°),0,−cos(E.z°))·c0.y+amp·비정규화 nrmW·c0.x. 법선 자체는 변위로 다시 계산하지 않는다. 기존 광장 ENV1 연결은 변경하지 않는다.
+
+[데이터] env_sg_utility_texture2d0에서 manifest.windNoise로 이미 원본 이름을 보존한다. mg0508/mg0101/mg0122 ENV0=[15,2,0.5,0.012]/[5,2,25,0.35]/[1,0.8,1,0.07], noise=leafnoise00/windnoise00/grass00_noise. G01 10재질 중 mg0508_griddle의 grass00_mt만 attribAssign._c0가 없으며 기본 정점값 미확정. 잡음 handle Layer10·시간 CPU 추가 추적은 VS 담당 소유다. 원본 정점색을 임의0/1로 만들지 않는다.
+
+[판독] G02: c=c0.xyz·f32(0x3c23d70a), D=E.y·100, ph=float(U%uint(D))/D+(c.x+c.z)E.x. pivot=Model100..12c·vec4(c,1)+instance.translation. axis=normalize((sin((E.z−45)°),0,−cos((E.z−45)°))), theta=sin((2ph−1)π)·E.w·20°. deltaWorld=pivot+Rodrigues(axis,theta)(W−pivot)−W. c0.w 미사용·법선/탄젠트 회전 없음. 현재 mesh.modelMatrix를 원본 Model100으로 간주하면 Shape/뼈 변환이 두 번 적용될 수 있어 아직 대기7재질. 실제 모델 행렬 공급은 VS 담당 추가 추적 중이다.
+
+[데이터] VS605표본·순서회귀1·GraphSource6검사 통과. 원본식 판독과 입력 공급은 구별한다. G01/G02가 추가 추적 중인 동안 우선5 G10의 이미 완성된 FS 결합을 진행한다.
+
+## 16. 우선 G10 packed 표면·AO 설계
+
+[판독] packB.xy를2x−1→z복원→TBN으로 기본N, detail.xy·sat(P4.y)를 기본N과 tangent로 다시 TBN. roughness=sat(packB.b+detailRgh·sat(P4.z)), detailAO=sat(1+detailAOTexture−sat(P4.w)). detailUV는 기존 광장 tileRotate 원식(P3·f32(−π/180))을 재사용. P4.x는 미사용. 최종 원본 AO=(globalAO?min(packA.a,globalAO(uv1).r):packA.a)·detailAO.
+
+기존 GraphDef.ao는 three baseline에 곱한다. G10에서 원본 AO를 중복 곱하지 않도록 선택 필드 aoMode='replace'를 추가하고 해당 정의에서만 기본 aomap fragment를 대체한다. 기본 동작은 multiply다. global_ao_texture=0/1 분기는 원본 옵션 selector로 재사용하며 samplerAssign으로 packA/B·detail·globalAO를 연결한다. 기존 광장 그래프에는 aoMode가 없어 변하지 않는다. 원본 direct/specular AO 전체 엔진 차이는 기존 PBR 근사로 남긴다.
+
+## 17. 나머지 작은 결합과 대기 구분
+
+| 묶음 | 확보한 원본식 | 이번 결합 |
+|---|---|---|
+| G04 | noiseR·2−1→P0.xyz·P0.w→각 채널 maskRGB→월드 offset; noise=srt2(uv2), mask=srt1(uv1) | VS·UV0/1/2·두 sampler 모두 확보, 단일 그래프 |
+| G07 | VS raw uv0 flow·두 높이 blue 표본·triangular phase→`vec3((height·2−1)·P0.x·0.1)`; FS §12 flowPair·RGBA 노멀·색 마스크 | FS+VS 합집합, 기존 PBR/IBL·ModelOpacity 근사 |
+| G20 | VS `Y=mask.g·(height·P0.x·2−1)·0.1`, FS 같은 flowPair 색·기하 법선·roughness | FS+VS 합집합, 진폭 곱 순서·G 채널 보존 |
+| G15 | rim=sat(pow(max(1−Ng·V,0),P0.x)), h=sat(worldY·P0.w), q=sat((rim·h−P0.y)/(P0.z−P0.y)), emissive=C0.rgb·C0.a·q²(3−2q) | smoothstep 공통 원식, 기본 표면값 보존 |
+| G19 | albedo·(1+maskRGB−P0.x)·mix(C0.rgb,C1.rgb,gradientR); sat 없음 | 원본 srt0 켜기 분기·uv1·세 sampler 재결합 |
+| G25 | 스캔UV=회전/scale/offset 원식, RGB=sat(scan·P0.z)·sat(B)+sat(scan)·sat(fresnel·E); 마지막 합 sat 없음 | base/emissive texture·정점색 원본 옵션2분기, 기존 ModelOpacity 근사 |
+
+물 합성 충돌의 범위 제한: **이번 사전에서 반영된 graph: 프로그램**이고 read_under_water=0일 때만 legacy patchWater를 생략한다. 원본 FS에 없는 muddy 틴트가 그래프를 덮는 것을 막는다. 기존 광장·아카이브 그래프는 프로그램 식별자가 graph:가 아니므로 동작을 유지한다. setup 호출에 실제 선택된 GraphDef를 전달해 같은 이름의 다른 모델에도 오배정하지 않는다.
+
+G27 물속 color/depth 캡처·역투영·안개, G06 스텐실 캡처, G13/G14 깊이 복원, G17/G26 texture array, G18/G21/G23 추가 Layer 입력, G24 VS 깊이/varying은 대기다. 이들은 원본식을 사전에 보존하되 대규모 렌더패스나 미확정 바인딩을 상수로 대체하지 않는다.
+
+## 18. 현재 반영·검증 집계
+
+[데이터] 초기 pending106 중 사전 반영52·남음54. 기존 광장 재사용1을 포함한 static_graph107은 53반영·54대기. 사전 키27개, 단일 정의8개·조건부 정의4개(원본 옵션+sampler 실제할당); 전부 적용되는 묶음11개·부분적용 G11 1개·전체 대기15개. 판독한 식과 런타임 지원 여부를 별도로 저장한다.
+
+| 우선 | 전체 | 반영 | 남음 | 현재 전체 상태 |
+|---|---:|---:|---:|---|
+| G09 | 24 | 24 | 0 | 색 식 판독·screen 입력 근사; viewport 변경 노드 회귀 통과 |
+| G11 | 14 | 5 | 9 | 옵션 분기 완료·9개 원본 null fallback 추가 추적 중 |
+| G01 | 10 | 0 | 10 | ENV0 정정·식 보존; 잡음/시간 추가 추적·누락 _c0 1변형 |
+| G02 | 7 | 0 | 7 | 중심회전 식 보존; 원본 Model/Mode 공급 추가 추적 |
+| G10 | 5 | 5 | 0 | packed/detail·globalAO 분기·AO replace 완료 |
+
+[데이터] 판독 식을 직접 공급하는 단일·조건부 정의 전체는 G04/G05/G07/G08/G09/G10/G11/G12/G15/G19/G20/G25. 원본식 분류 판독5재질(G04 1·G05 1·G15 1·G19 2), 기존/새 입력 근사47재질. 이는 원본 전체 PBR·모델 알파까지 정확하다는 수치가 아니다.
+
+[데이터] 통합 노드1722/1722, RGB/alpha304·시간/SIN176·screen5 SASS 표본, 직접 판독 표본 maxAbsError1.1920928955078125e−7. 현재 적용52재질 각각 패치순서2를 GLSL compile/link104/104로 검증했다. sampler/raw/필요 uv1/uv2/uv3/c0 누락0. 사전 옵션 중복·잘못된 키·미할당 sampler·다른 아카이브 재결합·selector별 cache key를 코드 시험으로 검증한다.
+
+[데이터] 공용 회귀: test_mg_assets2007/2007(참조2301·없음0, GLB131·문제0), test_plaza_gl60/60(가짜 renderer, headless 없음), test_plaza_world438/438, tsc 통과. 기존 전체 최초27파일 실행의 mgmet 실패1건은 transition 수정 후218/218로 해소. shader_graph_compile.py는 실제 NVIDIA OpenGL compile/link만 호출하며 그리기·촬영은 없다.
+
+[데이터] 병렬 판독 수치: FS A503·digest13; FS B/F5034·SASS17; FS C320표본·maxAbsError4.172325134277344e−7·의존성76; FS D/E/G3968·GraphSource20, G11은640비교·max1.1920928955078125e−7; VS605·순서회귀1·GraphSource6. 표본·비교·의존성 단위를 섞어 한 성공 개수로 합산하지 않는다.
+
+사용자 외형 확인: mg0101은 화면 마스크의 영역/크기·packed 표면 세부노멀·roughness·AO·수면/폭포 흐름 및 RGB 노멀, mg0102는 thin-film5재질의 시선색·스캔2재질·홀로그램 알파, mg0106은 탐조등 두 식의 색/위상, mg0122는 나무줄기 높이·시선 림 발광. mg0508은 현재 새 반영 없이 기존 상태다. 원본 viewport edge/분할·시간 CPU 단위·ModelOpacity·PBR/IBL 차이는 사용자 확인 필요에 유지한다.

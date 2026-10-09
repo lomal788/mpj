@@ -109,10 +109,10 @@
   - 게임이 시작될 때
   - 목록으로 돌아올 때
   - 흐름이 끝날 때
-- `sceneOut()`: 단계 4다. 함수는 만들어 두었지만 흐름에는 아직 걸지 않았다. 페이지들이 onDone 전에 캔버스를 지우므로, 거는 순서를 먼저 정리해야 한다(이전 계획 §6).
+- `sceneOut()`: 단계 4(`FadeOut(White, 1.0)` 끝까지). 이미 닫혀 있거나 로직 소유자가 잡고 있으면 바로 끝난다(두 번 덮지 않음). 흐름에 거는 순서는 §6.1.
 - `logicWipe()` = `new LogicTransition(appTransition())`.
-- 웹 부팅 상태는 **열림**(Black)이다. 원본은 Black으로 덮인 채 시작한다. 웹은 부팅 장면이 없고 화면 상자 안의 안내 글자가 가려지면 안 되므로 열린 채 둔다 [웹].
-- `ui_main.ts`의 시험 페이지는 서로 독립이라 멈출 때 `clear()`한다.
+- 부팅 상태(2026-10-09 사용자 결정 = 원본대로): `installTransition` 이 `bootTransition()` = `cover(Black)` 로 **Black 으로 덮인 채** 시작한다. 첫 화면이 준비되면 `sceneIn` 이 `FadeIn(마지막 종류 = Black, 1.0)`. 첫 화면 준비가 늦어도 로딩 표시는 하지 않는다(덮인 화면 유지 = loader_manager.md §2.3 과 같은 방침). 화면 상자 안 안내 글자(`.jw-msg`)는 덮개 아래에 있어 덮인 동안 보이지 않는다 — 오류·흐름 끝은 `sceneIn` 으로 연다.
+- `ui.html` 개별 화면도 **같은 규칙**: 부팅 Black 덮음 → 화면 준비 뒤 `sceneIn`. 화면 바꾸기(시작 버튼) = `sceneOut` → 이전 화면 정리 → 새 화면 준비 → `sceneIn`. 화면이 스스로 끝나면 다음 시작까지 덮인 채(원본도 다음 장면까지 덮개 유지). '그만' 버튼 = `sceneOut` → 정리 → `sceneIn`(빈 무대와 안내 글자를 보이려는 시험 페이지 편의 [웹]). 판단: ui.html 은 시험 페이지지만 화면마다 원본 장면 하나를 그대로 띄우는 곳이라, 장면 들고 남을 앱 흐름과 같게 두어야 화면별 전환을 거기서 확인할 수 있다.
 
 ## 6. 이전 표(전 → 후)
 
@@ -127,9 +127,32 @@
 | 흐름(main.ts) | 새 화면 준비 때 sceneIn | 마지막 | 없음 → 20(닫혀 있을 때만) |
 
 - 셸 경계: 이 코어도 assetcore처럼 import 0인 공용 lib다. 그래서 `shell/mgscene`·`mgmet`가 import한다(mgm_common.md §9.1 lib 예외). `test_mgscene` 9절과 `check_mgmcommon`의 허용 목록에 한 줄씩 넣었다. `shell/modeselect`는 구조 타입 `wipe` 옵션만 받는다(import 없음).
+
+### 6.1 장면 들고 남 순서(2026-10-09, 원본 SceneBase::UpdateMain 단계 4 → 2)
+
+순서: 장면 끝 → **`await sceneOut()`**(White 20f, 이미 덮였으면 바로) → 이전 화면 정리(캔버스·렌더러 지움, 광장 렌더러는 앱 수명이라 화면 밖으로 떼기만 — loader_manager.md §14) → 다음 화면 준비(덮인 채, 로딩 표시 없음) → **`sceneIn()`**(마지막 종류로 20f). 정리는 sceneOut 이 끝나기 전에 부르지 않는다.
+
+| 전환 | 나가는 쪽 | 덮는 것 | 들어오는 쪽 sceneIn |
+|---|---|---|---|
+| 부팅 → 인원 설정·게임 | — | 부팅 Black 덮음 | `flowStep`·`start()` 준비 뒤 (Black) |
+| 인원 설정 → 캐릭터 선택(같은 장면 안 UI) | setplayer `onCharSelect` | `sceneOut` White(원본 `charsel_setting_player.c` FadeOut(1.0, 1)) | 캐릭터 선택 준비 뒤 |
+| 캐릭터 선택 → 인원 설정 | charselect `onFinished` | `sceneOut` 뒤 정리 | 인원 설정 화면 다시 보일 때 |
+| 인원 설정 → 광장 | main `onDone` | `sceneOut` | `flowStep('plaza')` |
+| 광장 → 모드 메뉴 | 광장 기구(자체 FadeOut White 0.5, `SetFadeEnable(false)` 판독 @0x7100047a6c) | 이미 덮임 → sceneOut 바로 | `flowStep('modeselect')` |
+| 모드 메뉴 결정 → 항구/광장 | 모드 선택(자체 White 1.0) | 이미 덮임 | 다음 화면 |
+| 모드 메뉴 취소 → 광장 | modeselect `onFinished` | `sceneOut` | 광장 |
+| 항구 → 프리 플레이 목록 / 모드 메뉴 | mgmet 끝(결과 + 20f) | `sceneOut` | 다음 화면 |
+| 목록 → 게임 | `playFromList` 시작 | `sceneOut` 뒤 목록 숨김 | `start()` 실행 |
+| 게임 → 목록 | `playFromList` 끝 | `sceneOut`(mg1801 자체 와이프로 덮였으면 바로) 뒤 `dispose()` | 목록 다시 보일 때 |
+| 목록 → 항구 | main `onDone` | `sceneOut` | 항구 |
+| `?charselect=1` 캐릭터 선택 → 게임 | charselect `onFinished` | `sceneOut` | `start()` |
+| ui.html 화면 바꾸기 | `start()` | `sceneOut` → `stop()` | 새 화면 준비 뒤 |
+
+- 자체 와이프 장면(광장 기구·모드 선택 결정·미니게임 틀·결과 무대·mg1801)은 끝에 이미 덮였거나 로직 소유자가 잡고 있어 sceneOut 이 새로 덮지 않는다(이중 덮기 0, test_transition 11절).
+- 전환당 프레임: 열린 장면 끝 → 20(out) + 준비 시간 + 20(in). 자체 와이프 장면 → 자체 길이 + 0 + 20.
+
 - 다음 단계:
-  - 각 페이지가 onDone 전에 `sceneOut()`을 부르게 정리한다(원본 SceneBase 단계 4).
-  - 캐릭터 선택·인원 설정의 `FadeOut(White)`·`SetVisibleForce`를 옮긴다(웹 화면에 아직 없음).
+  - 캐릭터 선택 쪽 `SetVisibleForce(true, White)`(즉시 덮기) 갈래는 원본 화면 흐름을 더 판독해야 한다.
   - 광장 가이드 설정의 1.0 페이드를 옮긴다(가이드 서비스 미구현).
   - CrossFade의 capture를 연결한다.
 
@@ -153,6 +176,6 @@
 1. **색이 바뀐다**: 미니게임·광장·항구·결과·모드 선택의 와이프가 검정에서 **흰색**으로 바뀐다. 원본 호출 인자 w1 = 1과 종류 표 @0x19df328 = White를 근거로 판독했다.
 2. **길이가 바뀐다**: 광장·항구·결과 단독·모드 선택이 "초"로 읽었던 1.0/0.5를 **속도**로 바꿨다. 1.0 s(60f)는 20f가 되고, 0.5 s(30f)는 40f가 된다. `test_plaza_actors`의 기대값 30을 40으로 고쳤다(근거: @0x7100047a74 `fmov s0,#0.5; mov w1,#1; bl FadeOut`).
 3. **판정 시점이 1프레임 다르다**: 틀 MgWipe는 21틱 뒤에 끝을 보고, mg1801·코어는 20틱 뒤에 본다. 엔진에서 애니 슬롯을 갱신하는 순서를 판독하지 못해서 둘 다 그대로 두었다.
-4. **부팅 상태**: 웹은 열린 채 시작한다. 원본은 Black으로 덮인 채 시작한다.
+4. ~~부팅 상태~~ → 원본대로 Black 덮음으로 정함(2026-10-09, §5).
 5. **Loading 글자**: `T_text_00` 문자열을 판독하지 못했다. CrossFade의 화면 담기는 아직 연결하지 않았다.
-6. **장면을 나갈 때의 페이드**: 원본 SceneBase 단계 4의 `FadeOut(White, 1.0)`을 흐름에 아직 걸지 않았다(§5).
+6. ~~장면을 나갈 때의 페이드~~ → 원본대로 흐름에 걸었다(2026-10-09, §6.1). 남은 확인: 인원 설정 ↔ 캐릭터 선택은 웹이 같은 장면 안 UI 로 띄우므로 원본처럼 White 페이드를 넣었다 — 원본 화면과 다르면 알려 주세요.

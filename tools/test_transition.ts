@@ -3,7 +3,7 @@
  *   npx tsx tools/test_transition.ts
  * 1) 상태 전이·시간(속도·초)  2) 원본 키·길이 = wipe.bflan  3) 마지막 종류  4) 중간 역전환  5) 완료 대기
  * 6) 화면 전환 중 이어짐(앱 인스턴스·LogicTransition·주입 시계)  7) 틀 MgWipe·mg1801 판정 규칙  8) DOM 어댑터 style
- * 9) 코어 import 0  10) 사용처 시간값 전/후 표
+ * 9) 코어 import 0  10) 사용처 시간값 전/후 표  11) 부팅 덮음·장면 들고 남 순서·이중 덮기 0·전환당 프레임
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -335,6 +335,71 @@ console.log('10) 사용처 시간값 — 원본 인자(속도) 그대로, 프레
     console.log(`   | ${name} | ${src} | ${arg} | ${before} | ${after} | ${how} |`);
     eq(after, Math.round(20 / arg), `${name}: 20 ÷ ${arg}`);
   }
+}
+
+console.log('11) 부팅 덮음·장면 들고 남(sceneOut → 정리 → sceneIn)·이중 덮기 0·전환당 프레임');
+{
+  const { bootTransition, sceneIn, sceneOut, logicWipe } = await import('../script/view/appTransition');
+  const app = appTransition();
+  bootTransition();
+  eq([app.phase, app.lastType], [CLOSED, WIPE_BLACK], '부팅 = Black 덮음(원본 생성자 FadeOut(Black)+SetFrame(끝))');
+  sceneIn();
+  eq([app.phase, app.type], [OPENING, WIPE_BLACK], '첫 화면 준비 → FadeIn(마지막 종류 Black)');
+  eq(stepsUntilIdle(app), 20, '첫 FadeIn 20 프레임');
+  const s0 = app.serial;
+  sceneIn();
+  eq(app.serial, s0, '열려 있으면 sceneIn 안 함');
+  const log: string[] = [];
+  let f = 0;
+  const done = sceneOut().then(() => log.push(`정리@${f}`));
+  eq(app.type, WIPE_WHITE, '장면 끝 = FadeOut(White, 1.0)');
+  while (app.playing) {
+    await Promise.resolve();
+    ok(log.length === 0, `정리는 sceneOut 끝 전에 안 불림(${f})`);
+    app.advance();
+    f++;
+  }
+  await done;
+  eq(log, ['정리@20'], 'sceneOut 20 프레임 뒤 정리');
+  sceneIn();
+  const inF = stepsUntilIdle(app);
+  eq([f + inF, app.type], [40, WIPE_WHITE], '열린 장면 전환 = out 20 + in 20 = 40 프레임(+ 준비 시간), in = 마지막 종류 White');
+  const own = logicWipe();
+  own.fadeOut(WIPE_WHITE, 0.5);
+  let k = 0;
+  while (own.playing) {
+    own.step();
+    app.advance();
+    k++;
+  }
+  const s1 = app.serial;
+  let immediate = false;
+  void sceneOut().then(() => (immediate = true));
+  await Promise.resolve();
+  ok(immediate && app.serial === s1, '로직 소유자가 잡은 채(자체 와이프) sceneOut = 바로, 새로 안 덮음');
+  own.release();
+  const s2 = app.serial;
+  immediate = false;
+  void sceneOut().then(() => (immediate = true));
+  await Promise.resolve();
+  ok(immediate && app.serial === s2 && app.closed, '자체 와이프로 이미 덮임 → sceneOut 바로(이중 덮기 0)');
+  sceneIn();
+  eq([k + stepsUntilIdle(app)], [60], '자체 와이프 장면(광장 기구 끝 0.5) = 40 + in 20 = 60 프레임');
+  const src = (p: string): string => fs.readFileSync(path.join(WEB, p), 'utf8').replace(/\r\n/g, '\n');
+  const pages: [string, RegExp][] = [
+    ['script/charselect_page.ts', /sceneOut\(\)\.then\(\(\) => \{\s*run\.stop\(\);/],
+    ['script/modeselect_page.ts', /wipe\.release\(\);\s*void sceneOut\(\)\.then\(\(\) => \{\s*run\.stop\(\);/],
+    ['script/mgmet_page.ts', /wipe\.release\(\);\s*void sceneOut\(\)\.then\(\(\) => \{\s*run\.stop\(\);/],
+    ['script/setplayer_page.ts', /onCharSelect: \(r\) => \{\s*void sceneOut\(\)\.then\(\(\) => runCharSelect/],
+    ['script/main.ts', /await sceneOut\(\);\s*dispose\(\);/],
+    ['script/main.ts', /await sceneOut\(\);\s*const others/],
+    ['script/main.ts', /onDone: \(\) => void sceneOut\(\)\.then\(flowMgmet\)/],
+    ['script/main.ts', /onDone: \(\) => void sceneOut\(\)\.then\(\(\) => \(got \? flowPlaza/],
+    ['script/main.ts', /onExit: \(e\) =>\s*void sceneOut\(\)\.then/],
+    ['script/main.ts', /flowRun\?\.stop\(\);\s*flowRun = r;\s*if \(r\) sceneIn\(\);/],
+    ['script/ui_main.ts', /await sceneOut\(\);\s*stop\(\);/],
+  ];
+  for (const [p, re] of pages) ok(re.test(src(p)), `${p}: 정리 전에 sceneOut / 준비 뒤 sceneIn`, String(re));
 }
 
 console.log(`${pass}/${pass + fail} 통과`);

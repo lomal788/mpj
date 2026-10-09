@@ -1184,6 +1184,16 @@
    "roughness": null,
    "metallic": null,
    "ao": null
+  },
+  {
+   "material": "trunk00_mt",
+   "models": [
+    "mg0122_bg00"
+   ],
+   "program": "graph:a5dd50093abf2c4af85f7f1d366b4ebf63fb4d4fd1125dd852622a3b8b0f90ec",
+   "samplers": {},
+   "fsPrelude": "float sgR=clamp(pow(max(1.0-dot(normalize(NgW),viewDir),0.0),P0.x),0.0,1.0);float sgH=clamp(worldPos.y*P0.w,0.0,1.0);float sgQ=clamp((sgR*sgH-P0.y)/(P0.z-P0.y),0.0,1.0);",
+   "emissive": "C0.rgb*C0.a*sgQ*sgQ*(3.0-2.0*sgQ)"
   }
  ],
  "asset": {
@@ -1413,15 +1423,6 @@
       "vertex_shader_graph_color": "2522730817"
      },
      "sass": "analysis/mat/conv/mg/mg0122/sass/mg0122__forward_plus__p169.fs.txt"
-    },
-    {
-     "material": "trunk00_mt",
-     "model": "mg0122_bg00",
-     "graph": {
-      "fragment_shader_graph_color": "2440083947",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0122/sass/mg0122__forward_plus__p30.fs.txt"
     },
     {
      "material": "leaf01_mt",

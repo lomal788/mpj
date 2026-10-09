@@ -1971,7 +1971,736 @@
    "vignetteAspect": 0.25
   }
  },
- "graphs": [],
+ "graphs": [
+  {
+   "material": "mg0101_fld12_mt",
+   "models": [
+    "mg0101_fld1"
+   ],
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:f787c271dd57",
+   "samplers": {
+    "pack_texture2d1": "mg0101_fld12_pack0_b",
+    "sg_utility_texture2d4": "mg0101_detail00_nml",
+    "sg_utility_texture2d5": "mg0101_detail00_rgh",
+    "sg_utility_texture2d6": "mg0101_detail00_ao",
+    "pack_texture2d0": "mg0101_fld12_pack0_a",
+    "global_ao_texture2d": "mg0101_fld12_ao"
+   },
+   "fsHelpers": [
+    "vec2 sgTileRot(vec2 u,vec4 p){float a=p.y*(-0.01745329238474369);float c=cos(a),s=sin(a);vec2 v=u-0.5;return vec2((c*v.x-s*v.y+0.5)*p.x-p.z,1.0+p.w-p.x*(0.5-s*v.x-c*v.y));}",
+    "vec3 sgNz(vec2 n){return vec3(n,sqrt(clamp(1.0-dot(n,n),0.0,1.0)));}",
+    "vec3 sgTbn(vec3 n,vec3 ts,vec3 tangent,float hand){vec3 t=normalize(tangent);return normalize(t*ts.x+cross(n,t)*hand*ts.y+n*ts.z);}"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0);vec2 sgQ=sgTileRot(sgU,P3);vec4 sgB=T(\"pack_texture2d1\",sgU);vec3 sgN=sgTbn(normalize(NgW),sgNz(2.0*sgB.xy-1.0),Tw,tw);vec2 sgD=T(\"sg_utility_texture2d4\",sgQ).xy*clamp(P4.y,0.0,1.0);",
+   "normal": "sgTbn(sgN,sgNz(sgD),Tw,tw)",
+   "roughness": "clamp(sgB.b+T(\"sg_utility_texture2d5\",sgQ).r*clamp(P4.z,0.0,1.0),0.0,1.0)",
+   "ao": "(min(T(\"pack_texture2d0\",sgU).a,T(\"global_ao_texture2d\",uv1).r)) * (clamp(1.0+T(\"sg_utility_texture2d6\",sgQ).r-clamp(P4.w,0.0,1.0),0.0,1.0))",
+   "approx": "[근사] 그래프 표면값·원본 AO min 조합은 판독. 표준 PBR·IBL·AO 반사 결합은 기존 stage3d 계약 유지; 임의 색 보정 없음.",
+   "aoMode": "replace"
+  },
+  {
+   "material": "mg0101_fld12_mt",
+   "models": [
+    "mg0101_fld2"
+   ],
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:f787c271dd57",
+   "samplers": {
+    "pack_texture2d1": "mg0101_fld12_pack0_b",
+    "sg_utility_texture2d4": "mg0101_detail00_nml",
+    "sg_utility_texture2d5": "mg0101_detail00_rgh",
+    "sg_utility_texture2d6": "mg0101_detail00_ao",
+    "pack_texture2d0": "mg0101_fld12_pack0_a",
+    "global_ao_texture2d": "mg0101_fld12_ao"
+   },
+   "fsHelpers": [
+    "vec2 sgTileRot(vec2 u,vec4 p){float a=p.y*(-0.01745329238474369);float c=cos(a),s=sin(a);vec2 v=u-0.5;return vec2((c*v.x-s*v.y+0.5)*p.x-p.z,1.0+p.w-p.x*(0.5-s*v.x-c*v.y));}",
+    "vec3 sgNz(vec2 n){return vec3(n,sqrt(clamp(1.0-dot(n,n),0.0,1.0)));}",
+    "vec3 sgTbn(vec3 n,vec3 ts,vec3 tangent,float hand){vec3 t=normalize(tangent);return normalize(t*ts.x+cross(n,t)*hand*ts.y+n*ts.z);}"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0);vec2 sgQ=sgTileRot(sgU,P3);vec4 sgB=T(\"pack_texture2d1\",sgU);vec3 sgN=sgTbn(normalize(NgW),sgNz(2.0*sgB.xy-1.0),Tw,tw);vec2 sgD=T(\"sg_utility_texture2d4\",sgQ).xy*clamp(P4.y,0.0,1.0);",
+   "normal": "sgTbn(sgN,sgNz(sgD),Tw,tw)",
+   "roughness": "clamp(sgB.b+T(\"sg_utility_texture2d5\",sgQ).r*clamp(P4.z,0.0,1.0),0.0,1.0)",
+   "ao": "(min(T(\"pack_texture2d0\",sgU).a,T(\"global_ao_texture2d\",uv1).r)) * (clamp(1.0+T(\"sg_utility_texture2d6\",sgQ).r-clamp(P4.w,0.0,1.0),0.0,1.0))",
+   "approx": "[근사] 그래프 표면값·원본 AO min 조합은 판독. 표준 PBR·IBL·AO 반사 결합은 기존 stage3d 계약 유지; 임의 색 보정 없음.",
+   "aoMode": "replace"
+  },
+  {
+   "material": "mg0101_fld34_mt",
+   "models": [
+    "mg0101_fld3"
+   ],
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:14fd42af11af",
+   "samplers": {
+    "pack_texture2d1": "mg0101_fld34_pack0_b",
+    "sg_utility_texture2d4": "mg0101_detail00_nml",
+    "sg_utility_texture2d5": "mg0101_detail00_rgh",
+    "sg_utility_texture2d6": "mg0101_detail00_ao",
+    "pack_texture2d0": "mg0101_fld34_pack0_a"
+   },
+   "fsHelpers": [
+    "vec2 sgTileRot(vec2 u,vec4 p){float a=p.y*(-0.01745329238474369);float c=cos(a),s=sin(a);vec2 v=u-0.5;return vec2((c*v.x-s*v.y+0.5)*p.x-p.z,1.0+p.w-p.x*(0.5-s*v.x-c*v.y));}",
+    "vec3 sgNz(vec2 n){return vec3(n,sqrt(clamp(1.0-dot(n,n),0.0,1.0)));}",
+    "vec3 sgTbn(vec3 n,vec3 ts,vec3 tangent,float hand){vec3 t=normalize(tangent);return normalize(t*ts.x+cross(n,t)*hand*ts.y+n*ts.z);}"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0);vec2 sgQ=sgTileRot(sgU,P3);vec4 sgB=T(\"pack_texture2d1\",sgU);vec3 sgN=sgTbn(normalize(NgW),sgNz(2.0*sgB.xy-1.0),Tw,tw);vec2 sgD=T(\"sg_utility_texture2d4\",sgQ).xy*clamp(P4.y,0.0,1.0);",
+   "normal": "sgTbn(sgN,sgNz(sgD),Tw,tw)",
+   "roughness": "clamp(sgB.b+T(\"sg_utility_texture2d5\",sgQ).r*clamp(P4.z,0.0,1.0),0.0,1.0)",
+   "ao": "(T(\"pack_texture2d0\",sgU).a) * (clamp(1.0+T(\"sg_utility_texture2d6\",sgQ).r-clamp(P4.w,0.0,1.0),0.0,1.0))",
+   "approx": "[근사] 그래프 표면값·원본 AO min 조합은 판독. 표준 PBR·IBL·AO 반사 결합은 기존 stage3d 계약 유지; 임의 색 보정 없음.",
+   "aoMode": "replace"
+  },
+  {
+   "material": "mg0101_fld34_mt",
+   "models": [
+    "mg0101_fld4"
+   ],
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:14fd42af11af",
+   "samplers": {
+    "pack_texture2d1": "mg0101_fld34_pack0_b",
+    "sg_utility_texture2d4": "mg0101_detail00_nml",
+    "sg_utility_texture2d5": "mg0101_detail00_rgh",
+    "sg_utility_texture2d6": "mg0101_detail00_ao",
+    "pack_texture2d0": "mg0101_fld34_pack0_a"
+   },
+   "fsHelpers": [
+    "vec2 sgTileRot(vec2 u,vec4 p){float a=p.y*(-0.01745329238474369);float c=cos(a),s=sin(a);vec2 v=u-0.5;return vec2((c*v.x-s*v.y+0.5)*p.x-p.z,1.0+p.w-p.x*(0.5-s*v.x-c*v.y));}",
+    "vec3 sgNz(vec2 n){return vec3(n,sqrt(clamp(1.0-dot(n,n),0.0,1.0)));}",
+    "vec3 sgTbn(vec3 n,vec3 ts,vec3 tangent,float hand){vec3 t=normalize(tangent);return normalize(t*ts.x+cross(n,t)*hand*ts.y+n*ts.z);}"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0);vec2 sgQ=sgTileRot(sgU,P3);vec4 sgB=T(\"pack_texture2d1\",sgU);vec3 sgN=sgTbn(normalize(NgW),sgNz(2.0*sgB.xy-1.0),Tw,tw);vec2 sgD=T(\"sg_utility_texture2d4\",sgQ).xy*clamp(P4.y,0.0,1.0);",
+   "normal": "sgTbn(sgN,sgNz(sgD),Tw,tw)",
+   "roughness": "clamp(sgB.b+T(\"sg_utility_texture2d5\",sgQ).r*clamp(P4.z,0.0,1.0),0.0,1.0)",
+   "ao": "(T(\"pack_texture2d0\",sgU).a) * (clamp(1.0+T(\"sg_utility_texture2d6\",sgQ).r-clamp(P4.w,0.0,1.0),0.0,1.0))",
+   "approx": "[근사] 그래프 표면값·원본 AO min 조합은 판독. 표준 PBR·IBL·AO 반사 결합은 기존 stage3d 계약 유지; 임의 색 보정 없음.",
+   "aoMode": "replace"
+  },
+  {
+   "material": "mg0101_fld5_mt",
+   "models": [
+    "mg0101_fld5"
+   ],
+   "program": "graph:3a65d35502c840635d31fc73944f307ca3dd545e73889cb19f1dc2177e337df9:f787c271dd57",
+   "samplers": {
+    "pack_texture2d1": "mg0101_fld5_pack0_b",
+    "sg_utility_texture2d4": "mg0101_detail00_nml",
+    "sg_utility_texture2d5": "mg0101_detail00_rgh",
+    "sg_utility_texture2d6": "mg0101_detail00_ao",
+    "pack_texture2d0": "mg0101_fld5_pack0_a",
+    "global_ao_texture2d": "mg0101_fld5_ao"
+   },
+   "fsHelpers": [
+    "vec2 sgTileRot(vec2 u,vec4 p){float a=p.y*(-0.01745329238474369);float c=cos(a),s=sin(a);vec2 v=u-0.5;return vec2((c*v.x-s*v.y+0.5)*p.x-p.z,1.0+p.w-p.x*(0.5-s*v.x-c*v.y));}",
+    "vec3 sgNz(vec2 n){return vec3(n,sqrt(clamp(1.0-dot(n,n),0.0,1.0)));}",
+    "vec3 sgTbn(vec3 n,vec3 ts,vec3 tangent,float hand){vec3 t=normalize(tangent);return normalize(t*ts.x+cross(n,t)*hand*ts.y+n*ts.z);}"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0);vec2 sgQ=sgTileRot(sgU,P3);vec4 sgB=T(\"pack_texture2d1\",sgU);vec3 sgN=sgTbn(normalize(NgW),sgNz(2.0*sgB.xy-1.0),Tw,tw);vec2 sgD=T(\"sg_utility_texture2d4\",sgQ).xy*clamp(P4.y,0.0,1.0);",
+   "normal": "sgTbn(sgN,sgNz(sgD),Tw,tw)",
+   "roughness": "clamp(sgB.b+T(\"sg_utility_texture2d5\",sgQ).r*clamp(P4.z,0.0,1.0),0.0,1.0)",
+   "ao": "(min(T(\"pack_texture2d0\",sgU).a,T(\"global_ao_texture2d\",uv1).r)) * (clamp(1.0+T(\"sg_utility_texture2d6\",sgQ).r-clamp(P4.w,0.0,1.0),0.0,1.0))",
+   "approx": "[근사] 그래프 표면값·원본 AO min 조합은 판독. 표준 PBR·IBL·AO 반사 결합은 기존 stage3d 계약 유지; 임의 색 보정 없음.",
+   "aoMode": "replace"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_a"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_a"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_b"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_b"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_c"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_c"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_d"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_d"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_e"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_e"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_f"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_f"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_g"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_g"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_p"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_p"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_q"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_q"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_r"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_r"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_s"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_s"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt",
+   "models": [
+    "mg0101_floor_t"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg904_floor00_mt_w",
+   "models": [
+    "mg0101_floor_t"
+   ],
+   "samplers": {
+    "_a0": "mg0101_floor00_alb",
+    "sg_utility_texture2d0": "mg0101_floor_mask"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb * (C1.rgb + (C0.rgb - C1.rgb) * T(\"sg_utility_texture2d0\",screenUV).rgb)",
+   "approx": "[근사] 원본 screen 식은 판독. Layer viewport/edge CPU 대응은 현재 웹 그리기 viewport·역크기·한 픽셀 edge로 연결; 14_shader_graphs §14. 표준 PBR·ModelOpacity 기존 계약 유지.",
+   "program": "graph:bbb6e9c8809817b0f11f3e4dbdf2a67625c6e973ca6a666e1680770a0b89a19b"
+  },
+  {
+   "material": "mg0101_palm_mt",
+   "models": [
+    "mg0101_palm00"
+   ],
+   "program": "graph:fee875dca3a0f28e300a5588389e79079d26905597135f1461f637e658be2da8",
+   "samplers": {
+    "sg_utility_texture2d0": "mg0101_palm_noise",
+    "sg_utility_texture2d1": "mg0101_palm_mask"
+   },
+   "uv": {
+    "vUv0": "uv0"
+   },
+   "vsPrelude": "float sgPalmN = T(\"sg_utility_texture2d0\", srt2(uv2)).r * 2.0 - 1.0; vec3 sgPalmMask = T(\"sg_utility_texture2d1\", srt1(uv1)).rgb;",
+   "positionOffset": "((sgPalmN * P0.xyz) * P0.w) * sgPalmMask",
+   "positionSpace": "world"
+  },
+  {
+   "material": "mg0101_river_stone00",
+   "models": [
+    "mg0101_river"
+   ],
+   "program": "graph:e8e6f3c1404aeac800700b693ec4ac08f832b57f27f2c64ec895b7ce49cadb45:b6382ad44ee7",
+   "samplers": {
+    "_a0": "mg0101_river_stone00_alb",
+    "sg_utility_texture2d0": "mg0101_underwater_mask",
+    "sg_utility_texture2d1": "mg0101_underwater_grd"
+   },
+   "baseColor": "T(\"_a0\",uv0).rgb*(vec3(1.0)+T(\"sg_utility_texture2d0\",uv1).rgb-vec3(P0.x))*(C0.rgb+(C1.rgb-C0.rgb)*T(\"sg_utility_texture2d1\",uv1).r)"
+  },
+  {
+   "material": "mg0101_underwater_mt",
+   "models": [
+    "mg0101_river"
+   ],
+   "program": "graph:e8e6f3c1404aeac800700b693ec4ac08f832b57f27f2c64ec895b7ce49cadb45:ee13e095c8bd",
+   "samplers": {
+    "_a0": "mg0101_underwater_alb",
+    "sg_utility_texture2d0": "mg0101_underwater_mask",
+    "sg_utility_texture2d1": "mg0101_underwater_grd"
+   },
+   "baseColor": "T(\"_a0\",srt0(uv0)).rgb*(vec3(1.0)+T(\"sg_utility_texture2d0\",uv1).rgb-vec3(P0.x))*(C0.rgb+(C1.rgb-C0.rgb)*T(\"sg_utility_texture2d1\",uv1).r)"
+  },
+  {
+   "material": "waterfall00_mt",
+   "models": [
+    "mg0101_water_fall00",
+    "mg0101_water_fall02"
+   ],
+   "program": "graph:946028a7e0b543a36c1982ca5836d1115b61f037e9fac1b8337af239c04b0c81",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow03",
+    "sg_utility_texture2d2": "mg0101_water00_color00",
+    "sg_utility_texture2d3": "mg0101_waterfall00_color00_area"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)",
+    "vUv1": "uv1"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0);",
+   "positionSpace": "world",
+   "positionOffset": "vec3(((sgHeight * 2.0 - 1.0) * P0.x) * 0.10000000149011612)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; if(which == 0) { x=T(\"sg_utility_texture2d0\",a); y=T(\"sg_utility_texture2d0\",b); } else { x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); } return mix(x,y,abs(2.0*h-1.0)); }",
+    "vec3 sgWaterNormal(vec3 n, vec3 t, float handedness, vec2 xy) { n=normalize(n); t=normalize(t); vec3 b=cross(n,t)*handedness; return normalize(t*xy.x+b*xy.y+n*sqrt(clamp(1.0-dot(xy,xy),0.0,1.0))); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",uv1).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec4 sgQ=normalize(2.0*sgFlowPair(sgU,sgF,P0,0)-1.0); vec3 sgN=sgWaterNormal(NgW,Tw,tw,sgQ.xy*P0.x*(1.0-sgM.r));",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": "sgN",
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_dp00_mt",
+   "models": [
+    "mg0101_water_fall00"
+   ],
+   "program": "graph:d6603c02ac54287967aa08e23e5acccd691b23dcb9aa15371527a73e77746b83",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow01",
+    "sg_utility_texture2d3": "mg0101_waterfall00_dp_color00_area",
+    "sg_utility_texture2d2": "mg0101_water00_color00"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0); float sgDepthMask = T(\"sg_utility_texture2d3\", uv0).g;",
+   "positionSpace": "world",
+   "positionOffset": "vec3(0.0, (sgDepthMask * ((sgHeight * P0.x) * 2.0 - 1.0)) * 0.10000000149011612, 0.0)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); return mix(x,y,abs(2.0*h-1.0)); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",sgU).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec3 sgN=normalize(NgW);",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": null,
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_dp01_mt",
+   "models": [
+    "mg0101_water_fall00"
+   ],
+   "program": "graph:d6603c02ac54287967aa08e23e5acccd691b23dcb9aa15371527a73e77746b83",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow02",
+    "sg_utility_texture2d3": "mg0101_waterfall00_dp01_color00_area",
+    "sg_utility_texture2d2": "mg0101_water00_color00"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0); float sgDepthMask = T(\"sg_utility_texture2d3\", uv0).g;",
+   "positionSpace": "world",
+   "positionOffset": "vec3(0.0, (sgDepthMask * ((sgHeight * P0.x) * 2.0 - 1.0)) * 0.10000000149011612, 0.0)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); return mix(x,y,abs(2.0*h-1.0)); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",sgU).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec3 sgN=normalize(NgW);",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": null,
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_mt",
+   "models": [
+    "mg0101_water_fall01"
+   ],
+   "program": "graph:946028a7e0b543a36c1982ca5836d1115b61f037e9fac1b8337af239c04b0c81",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow03",
+    "sg_utility_texture2d2": "mg0101_water00_color00",
+    "sg_utility_texture2d3": "mg0101_waterfall00_color00_area"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)",
+    "vUv1": "uv1"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0);",
+   "positionSpace": "world",
+   "positionOffset": "vec3(((sgHeight * 2.0 - 1.0) * P0.x) * 0.10000000149011612)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; if(which == 0) { x=T(\"sg_utility_texture2d0\",a); y=T(\"sg_utility_texture2d0\",b); } else { x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); } return mix(x,y,abs(2.0*h-1.0)); }",
+    "vec3 sgWaterNormal(vec3 n, vec3 t, float handedness, vec2 xy) { n=normalize(n); t=normalize(t); vec3 b=cross(n,t)*handedness; return normalize(t*xy.x+b*xy.y+n*sqrt(clamp(1.0-dot(xy,xy),0.0,1.0))); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",uv1).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec4 sgQ=normalize(2.0*sgFlowPair(sgU,sgF,P0,0)-1.0); vec3 sgN=sgWaterNormal(NgW,Tw,tw,sgQ.xy*P0.x*(1.0-sgM.r));",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": "sgN",
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_dp00_mt",
+   "models": [
+    "mg0101_water_fall01"
+   ],
+   "program": "graph:d6603c02ac54287967aa08e23e5acccd691b23dcb9aa15371527a73e77746b83",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow01",
+    "sg_utility_texture2d3": "mg0101_waterfall00_dp_color00_area",
+    "sg_utility_texture2d2": "mg0101_water00_color00"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0); float sgDepthMask = T(\"sg_utility_texture2d3\", uv0).g;",
+   "positionSpace": "world",
+   "positionOffset": "vec3(0.0, (sgDepthMask * ((sgHeight * P0.x) * 2.0 - 1.0)) * 0.10000000149011612, 0.0)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); return mix(x,y,abs(2.0*h-1.0)); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",sgU).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec3 sgN=normalize(NgW);",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": null,
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_dp01_mt",
+   "models": [
+    "mg0101_water_fall01"
+   ],
+   "program": "graph:d6603c02ac54287967aa08e23e5acccd691b23dcb9aa15371527a73e77746b83",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow02",
+    "sg_utility_texture2d3": "mg0101_waterfall00_dp01_color00_area",
+    "sg_utility_texture2d2": "mg0101_water00_color00"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0); float sgDepthMask = T(\"sg_utility_texture2d3\", uv0).g;",
+   "positionSpace": "world",
+   "positionOffset": "vec3(0.0, (sgDepthMask * ((sgHeight * P0.x) * 2.0 - 1.0)) * 0.10000000149011612, 0.0)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); return mix(x,y,abs(2.0*h-1.0)); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",sgU).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec3 sgN=normalize(NgW);",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": null,
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_dp00_mt",
+   "models": [
+    "mg0101_water_fall02"
+   ],
+   "program": "graph:d6603c02ac54287967aa08e23e5acccd691b23dcb9aa15371527a73e77746b83",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow01",
+    "sg_utility_texture2d3": "mg0101_waterfall00_dp_color00_area",
+    "sg_utility_texture2d2": "mg0101_water00_color00"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0); float sgDepthMask = T(\"sg_utility_texture2d3\", uv0).g;",
+   "positionSpace": "world",
+   "positionOffset": "vec3(0.0, (sgDepthMask * ((sgHeight * P0.x) * 2.0 - 1.0)) * 0.10000000149011612, 0.0)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); return mix(x,y,abs(2.0*h-1.0)); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",sgU).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec3 sgN=normalize(NgW);",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": null,
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  },
+  {
+   "material": "waterfall00_dp01_mt",
+   "models": [
+    "mg0101_water_fall02"
+   ],
+   "program": "graph:d6603c02ac54287967aa08e23e5acccd691b23dcb9aa15371527a73e77746b83",
+   "samplers": {
+    "sg_utility_texture2d0": "cmm_Water00_01",
+    "sg_utility_texture2d1": "mg0101_flow02",
+    "sg_utility_texture2d3": "mg0101_waterfall00_dp01_color00_area",
+    "sg_utility_texture2d2": "mg0101_water00_color00"
+   },
+   "uv": {
+    "vUv0": "srt0(uv0)"
+   },
+   "vsPrelude": "vec2 sgFlow = T(\"sg_utility_texture2d1\", uv0).rg * 2.0 - 1.0; sgFlow.y = -sgFlow.y; float sgPhase = fract(P0.y); float sgPhase2 = fract(sgPhase + 0.5); vec2 sgHeightUV0 = uv0 * P0.w + (sgFlow * sgPhase) * P0.z; vec2 sgHeightUV1 = uv0 * P0.w + (sgFlow * sgPhase2) * P0.z; float sgHeight0 = T(\"sg_utility_texture2d0\", sgHeightUV0).b; float sgHeight1 = T(\"sg_utility_texture2d0\", sgHeightUV1).b; float sgHeight = sgHeight0 + (sgHeight1 - sgHeight0) * abs(2.0 * sgPhase - 1.0); float sgDepthMask = T(\"sg_utility_texture2d3\", uv0).g;",
+   "positionSpace": "world",
+   "positionOffset": "vec3(0.0, (sgDepthMask * ((sgHeight * P0.x) * 2.0 - 1.0)) * 0.10000000149011612, 0.0)",
+   "fsHelpers": [
+    "vec4 sgFlowPair(vec2 u, vec2 f, vec4 p, int which) { float h = fract(p.y); float j = fract(h + 0.5); vec2 a = u*p.w + f*h*p.z; vec2 b = u*p.w + f*j*p.z; vec4 x; vec4 y; x=T(\"sg_utility_texture2d2\",a); y=T(\"sg_utility_texture2d2\",b); return mix(x,y,abs(2.0*h-1.0)); }"
+   ],
+   "fsPrelude": "vec2 sgU=srt0(uv0); vec2 sgF=T(\"sg_utility_texture2d1\",sgU).rg*vec2(2.0,-2.0)+vec2(-1.0,1.0); vec3 sgM=step(vec3(1.0-T(\"sg_utility_texture2d3\",sgU).r),sgFlowPair(sgU,sgF,P1,1).rgb); vec3 sgN=normalize(NgW);",
+   "baseColor": "material_base_color + sgM*P1.x",
+   "normal": null,
+   "roughness": "material_roughness*(1.0-0.5*pow(1.0-clamp(dot(sgN,viewDir),0.0,1.0),4.0))",
+   "metallic": "material_metallic",
+   "alpha": "modelOpacity",
+   "emissive": "vec3(0.0)",
+   "approx": "[근사] FS/VS graph 원식 결합. 원본 P.y 재질애니·RGBA normal/height B/area G 보존. PBR·IBL·ModelOpacity는 기존 stage3d 계약이며 read_under_water0 원본에는 없는 muddy 패치는 생략."
+  }
+ ],
  "asset": {
   "archive": "mg~mg0101.nx.bea",
   "category": "mg",
@@ -2978,24 +3707,6 @@
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p158.fs.txt"
     },
     {
-     "material": "mg0101_fld12_mt",
-     "model": "mg0101_fld1",
-     "graph": {
-      "fragment_shader_graph_color": "1992714971",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p98.fs.txt"
-    },
-    {
-     "material": "mg0101_fld12_mt",
-     "model": "mg0101_fld2",
-     "graph": {
-      "fragment_shader_graph_color": "1992714971",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p78.fs.txt"
-    },
-    {
      "material": "weed00_mt",
      "model": "mg0101_fld2",
      "graph": {
@@ -3012,24 +3723,6 @@
       "vertex_shader_graph_color": "2522730817"
      },
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p155.fs.txt"
-    },
-    {
-     "material": "mg0101_fld34_mt",
-     "model": "mg0101_fld3",
-     "graph": {
-      "fragment_shader_graph_color": "1992714971",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p93.fs.txt"
-    },
-    {
-     "material": "mg0101_fld34_mt",
-     "model": "mg0101_fld4",
-     "graph": {
-      "fragment_shader_graph_color": "1992714971",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p108.fs.txt"
     },
     {
      "material": "weed00_mt",
@@ -3050,15 +3743,6 @@
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p158.fs.txt"
     },
     {
-     "material": "mg0101_fld5_mt",
-     "model": "mg0101_fld5",
-     "graph": {
-      "fragment_shader_graph_color": "1992714971",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p88.fs.txt"
-    },
-    {
      "material": "weed00_mt",
      "model": "mg0101_fld5",
      "graph": {
@@ -3077,249 +3761,6 @@
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p155.fs.txt"
     },
     {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_a",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_a",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_b",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_b",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_c",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_c",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_d",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_d",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_e",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_e",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_f",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_f",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_g",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_g",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p33.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_p",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_p",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p25.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_q",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_q",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p25.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_r",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_r",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p25.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_s",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_s",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p25.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt",
-     "model": "mg0101_floor_t",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p38.fs.txt"
-    },
-    {
-     "material": "mg904_floor00_mt_w",
-     "model": "mg0101_floor_t",
-     "graph": {
-      "fragment_shader_graph_color": "1946182249",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p29.fs.txt"
-    },
-    {
-     "material": "mg0101_palm_mt",
-     "model": "mg0101_palm00",
-     "graph": {
-      "fragment_shader_graph_color": "0",
-      "vertex_shader_graph_color": "4174155460"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p151.fs.txt"
-    },
-    {
-     "material": "mg0101_river_stone00",
-     "model": "mg0101_river",
-     "graph": {
-      "fragment_shader_graph_color": "3267081006",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p13.fs.txt"
-    },
-    {
-     "material": "mg0101_underwater_mt",
-     "model": "mg0101_river",
-     "graph": {
-      "fragment_shader_graph_color": "3267081006",
-      "vertex_shader_graph_color": "0"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p121.fs.txt"
-    },
-    {
      "material": "water_mt",
      "model": "mg0101_river",
      "graph": {
@@ -3336,87 +3777,6 @@
       "vertex_shader_graph_color": "2739868962"
      },
      "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p70.fs.txt"
-    },
-    {
-     "material": "waterfall00_mt",
-     "model": "mg0101_water_fall00",
-     "graph": {
-      "fragment_shader_graph_color": "1261704893",
-      "vertex_shader_graph_color": "3482022062"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p67.fs.txt"
-    },
-    {
-     "material": "waterfall00_dp00_mt",
-     "model": "mg0101_water_fall00",
-     "graph": {
-      "fragment_shader_graph_color": "3337753583",
-      "vertex_shader_graph_color": "537144484"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p148.fs.txt"
-    },
-    {
-     "material": "waterfall00_dp01_mt",
-     "model": "mg0101_water_fall00",
-     "graph": {
-      "fragment_shader_graph_color": "3337753583",
-      "vertex_shader_graph_color": "537144484"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p148.fs.txt"
-    },
-    {
-     "material": "waterfall00_mt",
-     "model": "mg0101_water_fall01",
-     "graph": {
-      "fragment_shader_graph_color": "1261704893",
-      "vertex_shader_graph_color": "3482022062"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p67.fs.txt"
-    },
-    {
-     "material": "waterfall00_dp00_mt",
-     "model": "mg0101_water_fall01",
-     "graph": {
-      "fragment_shader_graph_color": "3337753583",
-      "vertex_shader_graph_color": "537144484"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p148.fs.txt"
-    },
-    {
-     "material": "waterfall00_dp01_mt",
-     "model": "mg0101_water_fall01",
-     "graph": {
-      "fragment_shader_graph_color": "3337753583",
-      "vertex_shader_graph_color": "537144484"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p148.fs.txt"
-    },
-    {
-     "material": "waterfall00_dp00_mt",
-     "model": "mg0101_water_fall02",
-     "graph": {
-      "fragment_shader_graph_color": "3337753583",
-      "vertex_shader_graph_color": "537144484"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p148.fs.txt"
-    },
-    {
-     "material": "waterfall00_dp01_mt",
-     "model": "mg0101_water_fall02",
-     "graph": {
-      "fragment_shader_graph_color": "3337753583",
-      "vertex_shader_graph_color": "537144484"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p148.fs.txt"
-    },
-    {
-     "material": "waterfall00_mt",
-     "model": "mg0101_water_fall02",
-     "graph": {
-      "fragment_shader_graph_color": "1261704893",
-      "vertex_shader_graph_color": "3482022062"
-     },
-     "sass": "analysis/mat/conv/mg/mg0101/sass/mg0101__forward_plus__p64.fs.txt"
     }
    ]
   },

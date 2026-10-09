@@ -10,6 +10,7 @@ import { assetHooks } from './shell/charselect/assetHooks';
 import { ASSETS } from './env';
 import { createSetPlayer, mapMenuArg, PA_MODE_ARG, padTypeOfGamepad, type Controller, type ControllerInput, type SetPlayerHandle, type SetPlayerResult } from './shell/setplayer';
 import { appFlow } from './view/appFlow';
+import { sceneIn, sceneOut } from './view/appTransition';
 import { GamepadPad, type KeyboardPad, type PadSource } from './view/input';
 
 const STICK_ON = 0.5 * STICK_MAX;
@@ -243,8 +244,7 @@ export async function runSetPlayer(
     },
     onApplet: showApplet,
     onCharSelect: (r) => {
-      canvas.style.visibility = 'hidden';
-      void runCharSelect(stage, {
+      void sceneOut().then(() => runCharSelect(stage, {
         com: r.slots.map((s) => s.type === 'com'),
         pads: r.slots.map((s) => (s.type === 'human' && s.controller ? controllers.source(s.controller) : null)),
         names: r.slots.map((s) => s.displayName),
@@ -253,11 +253,16 @@ export async function runSetPlayer(
         onDone: (chars) => {
           charRun = null;
           canvas.style.visibility = '';
+          sceneIn();
           chosen = chars;
           if (!chars) appFlow().enter('setplayer');
           handle.resolveCharSelect(chars !== null);
         },
-      }).then((cr) => (charRun = cr));
+      })).then((cr) => {
+        canvas.style.visibility = 'hidden';
+        charRun = cr;
+        sceneIn();
+      });
     },
     onDone: (r) => {
       finished = true;

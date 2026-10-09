@@ -35,6 +35,7 @@ export interface GraphDef {
   roughness?: string | null;
   metallic?: string | null;
   ao?: string | null;
+  aoMode?: 'multiply' | 'replace';
   approx?: string | null;
 }
 
@@ -124,11 +125,24 @@ export async function applyGraph(
     const v = mp.raw[r] ?? RAW_DEFAULT[r] ?? [0];
     raws[`mpjR_${r}`] = { value: v.length === 1 ? v[0] : new (v.length === 2 ? THREE.Vector2 : v.length === 3 ? THREE.Vector3 : THREE.Vector4)(...(v as [number, number, number, number])) };
   }
+  const viewport = { value: new THREE.Vector4() };
+  if (src.fsDecl.includes('uniform vec4 mpjGraphViewport;')) {
+    const beforeRender = m.onBeforeRender;
+    const currentViewport = new THREE.Vector4();
+    m.onBeforeRender = (renderer, scene, camera, geometry, object, group) => {
+      beforeRender.call(m, renderer, scene, camera, geometry, object, group);
+      renderer.getCurrentViewport(currentViewport);
+      if (!viewport.value.equals(currentViewport)) {
+        viewport.value.copy(currentViewport);
+        m.needsUpdate = true;
+      }
+    };
+  }
   const prev = m.onBeforeCompile;
   const prevKey = m.customProgramCacheKey;
   m.onBeforeCompile = (sh, r) => {
     prev.call(m, sh, r);
-    Object.assign(sh.uniforms, { mpjP: { value: mp.P }, mpjC: { value: mp.C }, mpjSrt: { value: mp.srt }, mpjEnvP: { value: g.env.P }, mpjMs: g.ms, mpjSunDir: g.sunDir }, raws);
+    Object.assign(sh.uniforms, { mpjP: { value: mp.P }, mpjC: { value: mp.C }, mpjSrt: { value: mp.srt }, mpjEnvP: { value: g.env.P }, mpjMs: g.ms, mpjSunDir: g.sunDir, mpjGraphViewport: viewport }, raws);
     texs.forEach((t, i) => (sh.uniforms[`mpjGT${i}`] = { value: t.tex }));
     const vsDecl = src.vsDecl.replace(/attribute \w+ \w+;/g, (decl) => sh.vertexShader.includes(decl) ? '' : decl);
     const head = HELPERS + src.rawDecl + texs.map((t, i) => `uniform sampler2D mpjGT${i};\nvec4 mpjT${i}(vec2 u) { vec4 v = texture2D(mpjGT${i}, u); return ${t.snorm ? 'v * 2.0 - 1.0' : 'v'}; }`).join('\n');
@@ -141,7 +155,7 @@ export async function applyGraph(
     if (def.ao)
       sh.fragmentShader = sh.fragmentShader.replace(
         '#include <aomap_fragment>',
-        `#include <aomap_fragment>\nreflectedLight.indirectDiffuse *= mpjAO;\nreflectedLight.indirectSpecular *= min(mpjAO, 1.0);`,
+        `${def.aoMode === 'replace' ? '' : '#include <aomap_fragment>'}\nreflectedLight.indirectDiffuse *= mpjAO;\nreflectedLight.indirectSpecular *= min(mpjAO, 1.0);`,
       );
   };
   m.customProgramCacheKey = () => `${prevKey.call(m)}|mpj-graph:${def.material}:${def.program ?? ''}`;
@@ -191,6 +205,7 @@ export function graphSource(def: GraphDef, rawLen: (name: string) => number = (n
     .filter((k) => ATTR[k].guard !== null)
     .map((k) => (ATTR[k].guard ? `#ifndef ${ATTR[k].guard}\nattribute ${ATTR[k].type} ${ATTR[k].attr};\n#endif` : `attribute ${ATTR[k].type} ${ATTR[k].attr};`))
     .join('\n');
+  const needScreen = has(fsText, 'screenUV');
   const needT = has(fsText, 'Tw') || has(fsText, 'tw');
   const vary = [
     ...uv.map(([k]) => `varying vec2 ${k};`),
@@ -220,7 +235,7 @@ mpjWorldPos = (modelMatrix * vec4(transformed, 1.0)).xyz;
 #undef nrm
 ${vClose}
 }`;
-  const fsDecl = `${vary}\nfloat mpjAO = 1.0;\n${fOpen}\n#define worldPos mpjWorldPos\n#define viewDir normalize(cameraPosition - mpjWorldPos)\n#define sunDir mpjSunDir\n#define Tw mpjTangentW.xyz\n#define tw mpjTangentW.w\n${fsHelpers}\n#undef worldPos\n#undef viewDir\n#undef sunDir\n#undef Tw\n#undef tw\n${fClose}`;
+  const fsDecl = `${vary}\n${needScreen ? 'uniform vec4 mpjGraphViewport;' : ''}\nfloat mpjAO = 1.0;\n${fOpen}\n#define worldPos mpjWorldPos\n#define viewDir normalize(cameraPosition - mpjWorldPos)\n#define sunDir mpjSunDir\n#define Tw mpjTangentW.xyz\n#define tw mpjTangentW.w\n${fsHelpers}\n#undef worldPos\n#undef viewDir\n#undef sunDir\n#undef Tw\n#undef tw\n${fClose}`;
   const fsBody = `{
 ${fOpen}
 #define worldPos mpjWorldPos
@@ -231,6 +246,7 @@ ${fOpen}
 vec3 Nw = inverseTransformDirection(normal, viewMatrix);
 vec3 NgW = inverseTransformDirection(nonPerturbedNormal, viewMatrix);
 vec3 base = diffuseColor.rgb;
+${needScreen ? 'vec2 screenUV = clamp(vec2(gl_FragCoord.x - mpjGraphViewport.x, mpjGraphViewport.w - (gl_FragCoord.y - mpjGraphViewport.y)) / mpjGraphViewport.zw, vec2(0.0), vec2(1.0) - 1.0 / mpjGraphViewport.zw);' : ''}
 ${fsPre}
 ${fx.baseColor ? `diffuseColor.rgb = ${fx.baseColor};` : ''}
 ${fx.alpha ? `diffuseColor.a = ${fx.alpha};` : ''}

@@ -372,20 +372,22 @@ export class MaterialSetup {
         this.prepared.add(m);
         const mp = initParams(m, f);
         if (opt(f, 'texture_srt0') === '1') patchSrt0(m as StdMat, mp);
+        let activeGraph: GraphDef | undefined;
         if (opt(f, 'shader_graph') === '1') {
           const cands = this.graphs[f.name ?? m.name] ?? [];
           const def = cands.find((d) => modelName !== undefined && d.models.includes(modelName)) ?? cands[0];
+          activeGraph = def;
           const list = def ? this.graphStats.applied : this.graphStats.missing;
           if (!list.includes(f.name ?? m.name)) list.push(f.name ?? m.name);
           if (def && this.globals) jobs.push(applyGraph(m as StdMat, def, f, mp, this.globals, (n) => this.graphTexture(n)));
         }
-        jobs.push(this.setup(m as StdMat, f));
+        jobs.push(this.setup(m as StdMat, f, activeGraph));
       }
     });
     await Promise.all(jobs);
   }
 
-  private async setup(m: StdMat, f: Fres): Promise<void> {
+  private async setup(m: StdMat, f: Fres, graph?: GraphDef): Promise<void> {
     const p = f.params ?? {};
     if (opt(f, 'mul_base_color') === '1') {
       const v = p.material_mul_base_color?.value as number[] | undefined;
@@ -431,7 +433,7 @@ export class MaterialSetup {
     if (opt(f, 'mul_vertex_base_color') === '1' && opt(f, 'shader_graph') !== '1') patchVertexColor(m, Number(opt(f, 'mul_vertex_base_color_index') ?? 0));
     m.fog = opt(f, 'fog') === '1';
     this.blend(m, opt(f, 'state_type'), f);
-    if (opt(f, 'water_enable') === '1' && opt(f, 'state_type') !== '2' && opt(f, 'refraction_enable') !== '1') {
+    if (opt(f, 'water_enable') === '1' && opt(f, 'state_type') !== '2' && opt(f, 'refraction_enable') !== '1' && !(graph?.program?.startsWith('graph:') && opt(f, 'read_under_water') === '0')) {
       const range = (p.material_water_muddy_range?.value as number | undefined) ?? 1;
       const muddy = opt(f, 'water_muddy_enable') === '1' ? ((p.material_water_muddy_color?.value as [number, number, number] | undefined) ?? [0, 0, 0]) : ([0, 0, 0] as [number, number, number]);
       const k = opt(f, 'water_muddy_enable') === '1' ? Math.min(1, range >= 10 ? 1 : 1 / Math.max(range, 1)) : 0;

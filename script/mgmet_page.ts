@@ -9,7 +9,7 @@ import { assetHooks } from './shell/charselect/assetHooks';
 import { createWork, MemorySave, MessageFlow, MessageWindow, MgmetGuides, MgmInput, MgmSound, MgmView, MODE_FLAG, type MgmPlayer } from './shell/mgmcommon';
 import { ACTIVITIES, applyMgmetExtra, CPU_LEVELS, EXPLAIN_LABELS, MGMET_EXTRA_PART, MgmetHub, type MgmetExtra, type MgmetResult } from './shell/mgmet';
 import { MgmetHowtoView } from './shell/mgmet/howto';
-import { logicWipe } from './view/appTransition';
+import { logicWipe, sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 
@@ -248,8 +248,11 @@ export async function runMgmet(
       if (result && ++endWait > 20) {
         done = true;
         const r = result;
-        run.stop();
-        cfg.onDone(describeMgmetResult(r));
+        wipe.release();
+        void sceneOut().then(() => {
+          run.stop();
+          cfg.onDone(describeMgmetResult(r));
+        });
         return;
       }
       acc -= 1000 / 60;

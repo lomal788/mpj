@@ -21,8 +21,7 @@ import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
 import { runMgStagePage, type MgStagePageRun } from './mgstage_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
-import { appTransition } from './lib/transition';
-import { installTransition } from './view/appTransition';
+import { installTransition, sceneIn, sceneOut } from './view/appTransition';
 import { FLOW_END_FADE } from './view/screenBgm';
 
 interface UiRun {
@@ -279,12 +278,12 @@ const stop = (): void => {
   token++;
   cur?.stop();
   cur = null;
-  if (!appTransition().following) appTransition().clear();
   appBgm().stop(FLOW_END_FADE);
   dbg.textContent = '';
 };
 
 async function start(): Promise<void> {
+  await sceneOut();
   stop();
   const my = token;
   const def = UIS.find((u) => u.id === sel.value) ?? UIS[0];
@@ -305,9 +304,11 @@ async function start(): Promise<void> {
       return;
     }
     cur = r;
+    sceneIn();
     setMsg('');
   } catch (e) {
     console.error(e);
+    sceneIn();
     setMsg(`시작 실패: ${(e as Error).message}`);
   }
 }
@@ -330,7 +331,10 @@ requestAnimationFrame(tick);
 
 startBtn.addEventListener('click', () => void start());
 stopBtn.addEventListener('click', () => {
-  stop();
-  setMsg('그만뒀다');
+  void sceneOut().then(() => {
+    stop();
+    sceneIn();
+    setMsg('그만뒀다');
+  });
 });
 if (q.get('auto') === '1') void start();

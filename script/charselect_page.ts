@@ -9,6 +9,7 @@ import { createCharSelect, type CharSelectHandle } from './shell/charselect';
 import { P1 } from './lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
 import { appFlow } from './view/appFlow';
+import { sceneOut } from './view/appTransition';
 import { appBgm } from './view/bgm';
 import type { PadSource } from './view/input';
 
@@ -158,8 +159,10 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
     },
     onFinished(decided) {
       done = true;
-      run.stop();
-      cfg.onDone(decided ? chosen : null);
+      void sceneOut().then(() => {
+        run.stop();
+        cfg.onDone(decided ? chosen : null);
+      });
     },
   });
   let chosen: string[] = [];

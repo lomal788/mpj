@@ -442,8 +442,8 @@ console.log('9) import 경계·정적 검사');
   eq([...new Set(imps(read('script/game/lib/sound-webaudio/index.ts')))], ['../sound'], 'lib/sound-webaudio = 코어만');
   const bad = ['Math.random', 'performance.now', 'Date.now', 'new Date', 'document.', 'window.', 'requestAnimationFrame', 'setTimeout', 'setInterval'].filter((w) => core.includes(w));
   eq(bad, [], '코어: Math.random·벽시계·DOM·타이머 없음');
-  ok(imps(read('script/app/scene/minigame/mgscene/sound.ts')).includes('@game/lib/sound'), '틀 로직 MgSound → 코어 표(fadeTimeSec)');
-  const rh = read('script/games/rhythm/view/sound.ts');
+  ok(imps(read('script/app/minigame/frame/scene/sound.ts')).includes('@game/lib/sound'), '틀 로직 MgSound → 코어 표(fadeTimeSec)');
+  const rh = read('script/app/minigame/kit/rhythm/view/sound.ts');
   ok(!/\bthis\.handles\b|\badmit\(|calc3d\(/.test(rh) && rh.includes('soundSystem('), '리듬 RmSoundMap: 자체 핸들·한도·3D 없음 → 코어(soundSystem)');
   const mg = code(read('script/view/mgsceneSound.ts'));
   ok(!mg.includes('BgmChannel') && mg.includes('soundSystem('), 'MgSceneSound: BgmChannel 대신 코어 핸들');
@@ -640,7 +640,7 @@ await (async () => {
   eq(t.define.bv_vib_sys_skip, ['bv_vib_sys_deci', 0.5, 1, 1, 96, 0], '정의: bv_vib_sys_skip = 설정 bv_vib_sys_deci·Gain_Master 0.5·priority 96(vibration.msgpack)');
   const vs = await import('../script/view/vibration');
   eq([vs.vibLabel(t, 'proceed', 'SQ_SE_SYS_PROCEED'), vs.vibLabel(t, 'error', 'SQ_SE_SYS_ERROR'), vs.vibLabel(t, 'rule', 'SQ_SE_SYS_CURSOR_S'), vs.vibLabel(t, 'VB_MGMET_SELECT_DECI', null)], ['bv_vib_sys_proceed', 'bv_vib_sys_error', 'bv_vib_sys_cursor_s', 'VB_MGMET_SELECT_DECI'], '자리 이름 → 같은 사건 SE 와 이름 짝(정의가 있을 때)');
-  /* 웹 규칙 = 이전 games/rhythm/view/ui.ts vibrate 식(50 ms 평균) — 같은 식을 여기 다시 써서 비교 */
+  /* 웹 규칙 = 이전 app/minigame/kit/rhythm/view/ui.ts vibrate 식(50 ms 평균) — 같은 식을 여기 다시 써서 비교 */
   const w = { rateHz: 200, ampLow: [0.1, 0.5, 0.9, 0.3, 0.2, 0.2, 0.1, 0.05, 0.4, 0.6, 0.7, 0.8, 0.0], ampHigh: [0, 0.2, 0.4, 0.6, 0.8, 1, 1, 1, 0.5, 0.25, 0.1, 0, 0] };
   const per = Math.max(1, Math.round((w.rateHz * 50) / 1000));
   const old: { ms: number; strong: number; weak: number }[] = [];

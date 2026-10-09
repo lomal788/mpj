@@ -4,7 +4,7 @@
 
 소스 대조 기준: 2026-10-09 01:58:14 UTC. 웹 등록 게임 `mg1801` 1개. 원본 공용 기능의 웹 정의·실제 소비·우회·차이 정적 대조.
 
-경로 약칭: `G = script/games/mg1801`, `S = script/app/common/render3d`, `M = script/app/scene/minigame/mgstage`, `P = script/app/scene/menu/charselect/preview3d.ts`. 주소: 모듈명 + 기본 베이스 `0x7100000000` 기준.
+경로 약칭: `G = script/app/minigame/mg1801`, `S = script/app/common/render3d`, `M = script/app/minigame/frame/stage`, `P = script/app/scene/menu/charselect/preview3d.ts`. 주소: 모듈명 + 기본 베이스 `0x7100000000` 기준.
 
 판정: 사용 / 일부 사용 / 공용 미사용 / 게임별 중복 / 미구현 / 검색 범위 내 미발견 / [미확정]. P1 현재 게임·결과 정합성, P2 공용 계약·후속 이식, P3 활성 조건·근거 보완.
 
@@ -31,12 +31,12 @@
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |
 |---|---|---|---|---|---|---|---|
-| 장면 등록·시작·종료 | [판독] main `BeginScene @0x71002df258`, `SetupScene @0x71002df440`, `SyncedSetupScene @0x71002e0270`, `CleanupScene @0x71002e0344`; [코어 §5](01_core.md), [한 판](../shell/minigame_scene.md) | `game.ts::GameDef/GameLogic/GameView`; `app/scene/minigame/mgscene::MgScene` 별도 계약 | `main.ts:309~316` → Assets → GameDef.load/createLogic/createView/load; `:552~572` step→onStep→describeResult. MgScene 생성은 `mgscene_page.ts:80` 시험 | GameDef 실행과 공용 0~18단계 씬의 별도 호스트. 원본 동기 준비·로더 완료·OnCleanupProcessing 조건 일부 생략 | 일부 사용·호스트 분리 | mg1801·후속 게임 | P2 — 공용 씬 연결 |
+| 장면 등록·시작·종료 | [판독] main `BeginScene @0x71002df258`, `SetupScene @0x71002df440`, `SyncedSetupScene @0x71002e0270`, `CleanupScene @0x71002e0344`; [코어 §5](01_core.md), [한 판](../shell/minigame_scene.md) | `game.ts::GameDef/GameLogic/GameView`; `app/minigame/frame/scene::MgScene` 별도 계약 | `main.ts:309~316` → Assets → GameDef.load/createLogic/createView/load; `:552~572` step→onStep→describeResult. MgScene 생성은 `mgscene_page.ts:80` 시험 | GameDef 실행과 공용 0~18단계 씬의 별도 호스트. 원본 동기 준비·로더 완료·OnCleanupProcessing 조건 일부 생략 | 일부 사용·호스트 분리 | mg1801·후속 게임 | P2 — 공용 씬 연결 |
 | 결과 byte·judge | [판독] main `SetMinigameResult @0x71001f0460`, score getter `@0x71001f2a80`: raw byte와 `(judge!=0)` 비교; [프리 플레이 §6.6](../shell/mgm01_freeplay.md) | `MgResultEntry {id,judge,results[4]}` / GameResult.ranks·ResultRow.rank 별도 | `main.ts:383~390`: 표시행 rank0→1, 나머지0, 불참255, judge1. `G/index.ts:98~105`, `G/logic/game.ts:803~820`: 모든 rank0 | mg1801 참가자 전원 byte1; rate·starJudge 미소비. raw2·judge별 결과 계약 손실. [미확정] 원본 mg1801 ring writer | 결과 어댑터 정보 손실 | 프리 플레이 mg1801 기록 | P1 — 표시 순위→승패 변환 |
 | 미등록·실패 결과 | [판독] 원본 결과 ring: 한 판 종료 측 ID/judge/byte 기록; [프리 플레이 §8.3](../shell/mgm01_freeplay.md) | `mgm01_page.ts::fakeResult` 시험 함수 | `main.ts:365~366` 미등록 null; `mgm01_page.ts:575~584` rejected/null→fakeResult; `:513~521` Math.random 승자·head+1 | 실제 `cfg.play` 경로에 시험 결과 fallback. `main.start` 내부 catch(:319~327)는 error 반환 후 `playFromList` 빈 rows→참가자0·judge1 | 시험용 결과의 실제 경로 유입 | 미등록 게임·호출 실패·로딩 실패 | P1 — 승패·플레이 횟수 오기록 |
-| 팀·참가·리듬·설명 설정 | [판독] main `FUN_71001f1e20`: Normalize·TeamID·IsGamePlay·rank/WinLose 초기화; RhythmWork::SetMode·endless·설명 분기; [프리 플레이 §8.3](../shell/mgm01_freeplay.md) | `app/scene/minigame/mgm01/types.ts:80~92::Mgm01PlayRequest`; `game.ts:26~34::GameSetup` | `main.ts:373`: readSetup + chars/isCom/req.cpu. req.team는 :389 기록 byte에만 반영 | rhythm·teamId·gamePlay·order·endless·callInst·useGyro의 게임 setup 연결 없음. mg1801 mode는 별도 패널 options | 공용 설정 전달 누락 | 프리 플레이 mg1801·후속 팀/체감 게임 | P1 — 설정 화면과 실행 조건 불일치 |
+| 팀·참가·리듬·설명 설정 | [판독] main `FUN_71001f1e20`: Normalize·TeamID·IsGamePlay·rank/WinLose 초기화; RhythmWork::SetMode·endless·설명 분기; [프리 플레이 §8.3](../shell/mgm01_freeplay.md) | `app/scene/mode/freeplay/types.ts:80~92::Mgm01PlayRequest`; `game.ts:26~34::GameSetup` | `main.ts:373`: readSetup + chars/isCom/req.cpu. req.team는 :389 기록 byte에만 반영 | rhythm·teamId·gamePlay·order·endless·callInst·useGyro의 게임 setup 연결 없음. mg1801 mode는 별도 패널 options | 공용 설정 전달 누락 | 프리 플레이 mg1801·후속 팀/체감 게임 | P1 — 설정 화면과 실행 조건 불일치 |
 | 최고기록 | [판독] mgm01 `ApplySettingMgSetting_HighScore @0x7100017ba8`, `GetRecordIdx` 인자 @0x7100017d2c; [프리 플레이 §6.5](../shell/mgm01_freeplay.md) | `Mgm01Scene` record provider·catalog.initialRecord | `mgm01_page.ts:602` → catalog.defaultRecord | 현재 기록 대신 InitialRecord 반환; 최고기록 축적·조회 연결 없음 | 공용 기록 provider 미연결 | 기록형 게임 목록 | P2 — 현재 레코드 누락 |
-| 결과 무대 | [판독] main `bq::MGResult`; 리듬 `ca::rm` 고유 종료; [결과](../shell/minigame_result.md), [리듬](02_rhythm.md) | `app/scene/minigame/mgresult::createResultStage`; `app/scene/minigame/mgscene` resultHost | `mgresult_page.ts:106`, `mgscene_page.ts:90` 시험 소비. `mgscene/flow.ts:652` setModel no-op, :716 coinShow no-op; winTelop place 미소비 | 모델·코인·텔롭 위치의 호스트 연결 누락. mg1801: 고유 리듬 엔딩 정책 | 부분 연결·리듬 정책 차이 | 일반 결과 무대 시험·후속 게임 | P2 — 구현된 무대 기능의 host 누락 |
+| 결과 무대 | [판독] main `bq::MGResult`; 리듬 `ca::rm` 고유 종료; [결과](../shell/minigame_result.md), [리듬](02_rhythm.md) | `app/minigame/frame/result::createResultStage`; `app/minigame/frame/scene` resultHost | `mgresult_page.ts:106`, `mgscene_page.ts:90` 시험 소비. `mgscene/flow.ts:652` setModel no-op, :716 coinShow no-op; winTelop place 미소비 | 모델·코인·텔롭 위치의 호스트 연결 누락. mg1801: 고유 리듬 엔딩 정책 | 부분 연결·리듬 정책 차이 | 일반 결과 무대 시험·후속 게임 | P2 — 구현된 무대 기능의 host 누락 |
 | 종료 저장·재시도·수명 | [판독] main `MinigameFlow @0x71002e0500`, stage16 `@0x71002e1c68`, stage18 `@0x71002e1e8c`; [한 판](../shell/minigame_scene.md), [코어 §5](01_core.md) | `mgscene/flow.ts::stage16/stage18`; `mgmcommon/contracts.ts::SceneStack` | stage16(:801~817): save 사건·fade 완료; stage18 cleanup/setup. main(:266~271): view.dispose 후 참조 null; SceneStack: 이름 스택·부모 재생성 | Save 완료·통계·RetryMenu 대기 및 원본 scene/entity shutdown 조건 생략 | 일부 사용·미구현 | 한 판 시험·프리 플레이 복귀 | P2 — 비동기 종료 계약 |
 | 모드 장면·상위 router | [판독] main SceneBase ctor `@0x71002c9bd4`, OnEntry `@0x71002c9f68`, MinigameModeScene ctor `@0x710035f69c`, BeginScene `@0x710035fab8`; [공용 UI](../shell/mgm_common.md), [코어](01_core.md) | `mgmcommon/contracts.ts:32::SceneStack`, `MgmetHub.router` | SceneStack 실제 생성 `mgm01_page.ts:627` 1곳. `mgmet_page.ts:210~227` router 미주입; main(:393~489) 페이지 콜백 | 목록↔게임 Call/Return만 공용 스택; 허브·광장·설정은 외부 전환. 공통 초기화·archive 정리·pause·shutdown 계약 분산 | 일부 사용·공용 미사용 | 현재 셸·후속 모드 | P1 — 상위 장면 연결 |
 | 모드 호출·활동 번호 | [판독] main CallMinigameModeScene `@0x710036027c`, 이름표 `@0x71015d840c`; mgmet call `@0x7100049f14`; [허브 §3·8](../shell/mgmet_flow.md) | `mgmet/tables.ts:19~25`, hub.ts:153~155 router.call | mgmet_page(:99~111) 문자열 결과→main(:413) 접두 검사→flowMgm01 | 구조화 nextMode·rule 전달 손실. 활동ID 0~5→mode 4/3/1/5/2/6 표 구현; mgm02~06 실행 없음 | 공용 미사용·미포팅 미구현 | 프리 플레이·5활동 모드 | P1 전달·P2 미포팅 모드 |
@@ -46,7 +46,7 @@
 | 모드 선택·보드 규칙 | [판독] menu01 MapMenuImpl `@0x710003df70`·next sequence; [모드 선택](../shell/modeselect.md), [보드 규칙](../shell/partyrule.md) | modeselect/types.ts key·next; app/scene/menu/partyrule·지역 config | main:423 key=mgm만 허브, 그 외 광장. partyrule_page:210~218→ui_main:149 시험 | next 미소비; bd/rc/mf/pp/kb/ca 진입 없음. 보드 화면·본편 Work 연결 분리 | 일부 사용·미포팅 미구현 | 6모드·보드 시험 | P2 — 모드 진입 |
 | 플레이어 설정 공유 | [판독] main ComUiSettingPlayer `@0x7100344a00~710034be24`; [플레이어 설정](../shell/setplayer.md) | `main.ts::flowPlayers` chars/com/names/pads | :477~489 설정 반환→허브 :409~410·목록 :397~398·게임 :373 | 현재 참가자·캐릭터·패드 공유 연결. [미확정] PlayerWork 전체 속성·모드 인원 제한 | 사용·일부 사용 | 현재 상위 흐름 | P2 — 속성 범위 |
 
-2026-10-09 [mg-connect] 갱신(위 표의 판정은 감사 시점 기준으로 두고 상태만 적는다): **장면 등록·시작·종료** — GameDef 실행 경로를 없애고 mg1801 이 공용 틀 0~18단계 위에서 돈다(`script/mgrun.ts`, 어댑터 `games/rhythm/mgGame.ts`). **결과 byte·judge(P1)** — `FUN_71001f271c` 규칙 + judge = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60(GameRule ∉ {0,7})로 raw byte 를 전달(mg1801 = judge 1·[2,2,2,2]). **미등록·실패 결과(P1)** — 실제 실행 경로에서 `fakeResult` 유입 차단, 실패는 null(기록·Round·플레이 횟수 그대로). **팀·참가·리듬·설명 설정(P1)** — teamId·gamePlay·comLevel·rhythm·endless·callInst·useGyro 가 틀 setup·문맥까지 가고 mg1801 은 rhythm 만 소비. §2 **체감 입력**의 게이트 acc 손실도 해소(`MgPadInput`·`MgPadState` acc). 근거·남은 확인은 [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12.
+2026-10-09 [mg-connect] 갱신(위 표의 판정은 감사 시점 기준으로 두고 상태만 적는다): **장면 등록·시작·종료** — GameDef 실행 경로를 없애고 mg1801 이 공용 틀 0~18단계 위에서 돈다(`script/mgrun.ts`, 어댑터 `app/minigame/kit/rhythm/mgGame.ts`). **결과 byte·judge(P1)** — `FUN_71001f271c` 규칙 + judge = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60(GameRule ∉ {0,7})로 raw byte 를 전달(mg1801 = judge 1·[2,2,2,2]). **미등록·실패 결과(P1)** — 실제 실행 경로에서 `fakeResult` 유입 차단, 실패는 null(기록·Round·플레이 횟수 그대로). **팀·참가·리듬·설명 설정(P1)** — teamId·gamePlay·comLevel·rhythm·endless·callInst·useGyro 가 틀 setup·문맥까지 가고 mg1801 은 rhythm 만 소비. §2 **체감 입력**의 게이트 acc 손실도 해소(`MgPadInput`·`MgPadState` acc). 근거·남은 확인은 [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12.
 
 ## 2. 시간·난수·입력·이동·물리
 
@@ -216,7 +216,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | 원본 main | `C:/dev/mpj/extracted/exefs/main`, 15,934,795 B; SHA-256 `F474D60DA145BA0BF2E4262D727BA76718EF2CDD101ECEA592260EB507159A50` |
 | main 함수 인덱스 | `C:/dev/mpj/analysis/functions/main.nso.tsv`, 63,952행; SHA-256 `6AE1F55DD9F6987152865D60C727C33ECEC77C8AE7D0711721DBCCEAF78CDB3D` |
 | 판독 인덱스 | `C:/dev/mpj/analysis/decomp/INDEX.tsv`; SHA-256 `B02BA59DC5B4916C5051A82E7DE8BEEE87096C6628F35F2456EDEFCE6193FE4D` |
-| 웹 게임 등록 | `script/games/index.ts::GAMES = [mg1801Game]`; SHA-256 `743FD783C019196C87F6A9FCB6FFC09BBA41DB0AAB6755AF40F57F5D36C74CE3` |
+| 웹 게임 등록 | `script/app/minigame/index.ts::GAMES = [mg1801Game]`; SHA-256 `743FD783C019196C87F6A9FCB6FFC09BBA41DB0AAB6755AF40F57F5D36C74CE3` |
 | 웹 진입·목록 | `script/main.ts` SHA-256 `FF315C7F58FC76944DF06F86053D35C9C92A0F3ABFD88C3D499B2D09CA867613`; `script/mgm01_page.ts` `1F28A57E204D58A784E945BD520E476DFDCD79137F6369CF4700EDC353DE1F69` |
 | 웹 허브 | `script/mgmet_page.ts` SHA-256 `A681929589EE2AD56438F89F7F06244712D9CA1465D4E537CDEB684112CDEDF1` |
 | 웹 후처리·공용 재질 | `G/view/post.ts` SHA-256 `CFD4426B15D9CD10239EC3D7D519C1EA46FA008FCB8C92514DE21E08661C83EE`; `S/material.ts` `82C1AC1C2DF52FA80156A316189A30779D387744A5091D331A0A70E8C31B0B47` |
@@ -236,9 +236,9 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | 원본 NRO | `analysis/functions/*.nro.tsv` 139개: `mg####` 112 + 기타 모드·흐름 27 | [데이터] 파일 목록 전수 집계 |
 | 원본 공용 계층 | `main.nso`: `bq`, `bex`, `ca`, `actor`, `nn::bezel`, `sb`, `wl` | [데이터] 이름·주소 인덱스 분류; [미확정] 게임별 호출 |
 | 원본 실행 환경 | `sdk`, `subsdk0`, `rtld`, `boot.nbinit`, BEA·메시지·게임 데이터 | 기존 명세 재사용; [미확정] 플랫폼·Lua·영상 계약 |
-| 웹 등록 게임 | `script/games/index.ts`의 `mg1801` 1개 | [판독] 등록 배열 |
-| 웹 게임 디렉터리 | `script/games/mg1801`, `script/games/mgdummy` 2개 | [판독] `mgdummy::createDummyGame`: 원본 대응 없는 `app/scene/minigame/mgscene` 시험용, GAMES 미등록 |
-| 웹 카탈로그 | `script/app/scene/minigame/mgm01/catalog.ts`, 112게임 | [판독] 목록·필터 데이터 |
+| 웹 등록 게임 | `script/app/minigame/index.ts`의 `mg1801` 1개 | [판독] 등록 배열 |
+| 웹 게임 디렉터리 | `script/app/minigame/mg1801`, `script/app/minigame/mgdummy` 2개 | [판독] `mgdummy::createDummyGame`: 원본 대응 없는 `app/minigame/frame/scene` 시험용, GAMES 미등록 |
+| 웹 카탈로그 | `script/app/scene/mode/freeplay/catalog.ts`, 112게임 | [판독] 목록·필터 데이터 |
 | 분석 문서 | 미니게임 22개 + `rc_stage01` 1개 | [데이터] 문서 목록 |
 | 웹 셸·기반 | `script/game/core` 6파일, `script/shell` 13디렉터리, `script/game/lib` 3디렉터리, `script/view`, `script/cache`, 페이지 진입점 | [데이터] `script` TypeScript 213파일; 소비자 연결: §1~§5 |
 | 서버·도구 | `server`, `tools/analysis`, 빌드·압축·검증 도구 | [판독] `server/games.ts`: `mpj-plaza` 1서비스 등록 |
@@ -285,8 +285,8 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 
 | 종류 | 등록·정의 | 실제 경로·확인 범위 |
 |---|---|---|
-| 게임 | `script/games/index.ts::GAMES` → `mg1801Game` | `script/main.ts`, `games/mg1801/{logic,view}` |
-| 더미 | `script/games/mgdummy/logic.ts::createDummyGame`, `view.ts` | `mgscene` 계약 시험 |
+| 게임 | `script/app/minigame/index.ts::GAMES` → `mg1801Game` | `script/main.ts`, `app/minigame/mg1801/{logic,view}` |
+| 더미 | `script/app/minigame/mgdummy/logic.ts::createDummyGame`, `view.ts` | `mgscene` 계약 시험 |
 | 페이지 | `tools/esbuild_config.ts::ENTRIES`: `main`, `ui`; `PAGES`: `index.html`, `dev/ui.html` | 게임 진입점·셸 시험 진입점 |
 | UI | `script/ui_main.ts::UIS` | 17개: `charselect`, `modeselect`, `mgmcommon`, `mgm01-history`, `mgm01-announce`, `mgmet-howto`, `mgm01-setting`, `mgm01-filter`, `mgmet`, `mgmet-rule`, `partyrule`, `setplayer`, `online`, `mgm01-list`, `mgresult`, `mgscene`, `mgstage` |
 | 광장 | `script/plaza_page.ts`, `script/app/scene/world/plaza` | main.ts:427~489 flowPlaza·flowPlayers 연결 |

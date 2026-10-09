@@ -30,7 +30,7 @@ import {
   type SlotWork,
   type SpEvent,
 } from '@app/scene/menu/setplayer';
-const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/minigame\/frame\/scene(?=\/|$)/, '../mgscene').replace(/^@app\/minigame\/frame\/result(?=\/|$)/, '../mgresult').replace(/^@app\/minigame\/frame\/stage(?=\/|$)/, '../mgstage').replace(/^@app\/scene\/mode\/freeplay(?=\/|$)/, '../mgm01').replace(/^@app\/scene\/(?:menu|world|mode)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

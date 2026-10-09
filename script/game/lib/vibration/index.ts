@@ -81,7 +81,7 @@ export function vibDef(t: VibTable, name: string): VibDef | null {
 }
 
 /**
- * 이전 웹 구간(games/rhythm/view/ui.ts vibrate 에서 옮김): 50 ms 마다 표본 평균 × Gain_Master × Gain_Low/High, 1 로 자름.
+ * 이전 웹 구간(app/minigame/kit/rhythm/view/ui.ts vibrate 에서 옮김): 50 ms 마다 표본 평균 × Gain_Master × Gain_Low/High, 1 로 자름.
  */
 export function envelopeWeb50(w: VibWave, gainMaster: number, gainLow: number, gainHigh: number, stepMs = VIB_STEP_MS): VibSegment[] {
   const per = Math.max(1, Math.round((w.rateHz * stepMs) / 1000));

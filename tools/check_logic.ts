@@ -5,7 +5,7 @@
  *   npm run check                      전 게임, 시드 1, 전원 CPU, 최대 36000 프레임
  *   npx tsx tools/check_logic.ts mg1801 --seed 7 --frames 5000
  */
-import { GAMES } from '../script/games';
+import { GAMES } from '@app/minigame';
 import type { GameSetup } from '../script/game';
 import { determinismCheck } from './mg_determinism';
 import { NodeMgRun } from './mg_node_host';
@@ -20,7 +20,7 @@ const seed = Number(argValue('--seed') ?? 1) >>> 0;
 const maxFrames = Number(argValue('--frames') ?? 36000);
 
 const games = only.length ? GAMES.filter((g) => only.includes(g.id)) : GAMES;
-if (games.length === 0) console.log(GAMES.length === 0 ? '등록된 게임이 없다(script/games/index.ts).' : `없는 게임: ${only.join(', ')}`);
+if (games.length === 0) console.log(GAMES.length === 0 ? '등록된 게임이 없다(script/app/minigame/index.ts).' : `없는 게임: ${only.join(', ')}`);
 let bad = 0;
 for (const def of games) {
   await def.load?.();

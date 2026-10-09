@@ -1,7 +1,7 @@
 /**
  * 사운드 런타임 mpj 연결 — docs/engine/04_sound.md §13.1·§13.5.
  * soundSystem(audio): AudioOut 하나에 코어(lib/sound)·WebAudio 어댑터(lib/sound-webaudio) 하나. 같은 페이지의 틀 소리(view/mgsceneSound.ts)와
- * 게임 소리(games/rhythm/view/sound.ts)가 핸들·그룹·플레이어 한도·엔진 난수를 같이 쓴다. 규칙 = 처음 만들 때의 soundDefaults.rules(기본 원본).
+ * 게임 소리(app/minigame/kit/rhythm/view/sound.ts)가 핸들·그룹·플레이어 한도·엔진 난수를 같이 쓴다. 규칙 = 처음 만들 때의 soundDefaults.rules(기본 원본).
  * 디코드 캐시: 받기 = 로더 관리자 bytes(전역 fetch shim 이 압축 모드 .wav → .ogg|.m4a|.flac·해시 이름), 풀기 = decodeAudioData(바이트 복사본),
  * 전역 하나(globalThis, 표본율마다) — 같은 파일을 소비자·판·AudioOut 마다 다시 받고 풀지 않는다.
  * 처리기: buffer(통파일·파형), bgmstream(§12 재생기 — view/bgm.ts 그대로). 시퀀서 처리기는 소비자가 꽂는다(리듬 = 전역 변수를 같이 쓰는 SeqEngine).

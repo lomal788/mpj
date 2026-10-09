@@ -295,7 +295,7 @@ MIME: html·js(`text/javascript`)·css·json·map·png·jpg·webp·svg·ktx2(`im
 
 #### 5.8.11 결과 [실측] (2026-10-08)
 
-**구현 파일**: `tools/build_assets.ts`(해시 이름·`names`·증분 사전 압축), `tools/precompress.ts`(새, `hashedName`·`.br/.gz`), `tools/build.ts`·`tools/esbuild_config.ts`(분할·해시·html 고쳐 쓰기·배포 index 의 `bundle`), `server/static.ts`(새), `server/main.ts --dist`·`tools/serve.ts --dist`(배포 미리보기), `script/cache/{urlShim.ts,swClient.ts,sw.js}`(새, import 0), `script/view/assetMode.ts`(shim·SW·TLA), `script/main.ts`(화면 `import()`), `script/game.ts`(`load?()`), `script/games/mg1801/{index.ts,body.ts}`, `tools/check_logic.ts`(`await load`), 시험 `tools/test_build_cache.ts`(새).
+**구현 파일**: `tools/build_assets.ts`(해시 이름·`names`·증분 사전 압축), `tools/precompress.ts`(새, `hashedName`·`.br/.gz`), `tools/build.ts`·`tools/esbuild_config.ts`(분할·해시·html 고쳐 쓰기·배포 index 의 `bundle`), `server/static.ts`(새), `server/main.ts --dist`·`tools/serve.ts --dist`(배포 미리보기), `script/cache/{urlShim.ts,swClient.ts,sw.js}`(새, import 0), `script/view/assetMode.ts`(shim·SW·TLA), `script/main.ts`(화면 `import()`), `script/game.ts`(`load?()`), `script/app/minigame/mg1801/{index.ts,body.ts}`, `tools/check_logic.ts`(`await load`), 시험 `tools/test_build_cache.ts`(새).
 
 | 항목 | 전 | 후 |
 |---|---|---|

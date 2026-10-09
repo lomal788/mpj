@@ -1,4 +1,4 @@
-"""미니게임 공용 틀(web/script/app/scene/minigame/mgscene, 그리기 web/script/view/mgsceneUi.ts) 에셋 → web/assets/mgscene/.
+"""미니게임 공용 틀(web/script/app/minigame/frame/scene, 그리기 web/script/view/mgsceneUi.ts) 에셋 → web/assets/mgscene/.
 
   c:/dev/mpj/.venv/Scripts/python web/tools/analysis/mgscene_web_assets.py [임시 폴더]
 

@@ -1,6 +1,6 @@
 # 미니게임 결과 연출 (bq::MGResult) — 원본 분석
 
-2026-10-08. 상태: **흐름·선택 규칙 및 결과 무대 수치 판독. 미확인 공통 보간·전이 연결은 §11.** 2026-10-09: 3D 결과 무대 웹 구현(§12, `web/script/app/scene/minigame/mgresult/`), 텔롭 번호 `FUN_71002f1870`·배치 슬롯 문자열 ARM64 판독(§6.3·§6.6 정정). 원본 실행 대조 없음.
+2026-10-08. 상태: **흐름·선택 규칙 및 결과 무대 수치 판독. 미확인 공통 보간·전이 연결은 §11.** 2026-10-09: 3D 결과 무대 웹 구현(§12, `web/script/app/minigame/frame/result/`), 텔롭 번호 `FUN_71002f1870`·배치 슬롯 문자열 ARM64 판독(§6.3·§6.6 정정). 원본 실행 대조 없음.
 형식은 `F:/dev/mps/web/docs/분석.txt` 11절 구성. 이 문서는 [minigame_scene.md](minigame_scene.md) §5.1 의 단계 13·14(결과 시작·대기) **안쪽**이다.
 장면 단계·엔딩 5단계·텔롭 종류·페이드 규칙은 그 문서를 따르고 다시 쓰지 않는다. 3D 결과 무대의 4함수(13,152 B), 모델 배치·카메라 키·모션 전환 수치는 §6.6~6.9·§7에 통합했다.
 
@@ -529,15 +529,15 @@ suffix는 `mg/mgResult/env/result_cam_<suffix>.fsnb`다. P는 위치, Aim은 조
 
 ## 12. 웹 구현 계약 — 3D 결과 무대 (2026-10-09, [mg-result3d])
 
-갈래 A(§3)의 결과 파이버 안쪽 3D 무대를 웹으로 옮겼다. 단계 13·14 연결·와이프·텔롭·코인 2D·엔딩 5단계(갈래 B)는 미니게임 공용 틀 [minigame_scene.md](minigame_scene.md) §12(`app/scene/minigame/mgscene`) 몫이다. 합의 기록은 `analysis/notes/SHARED.md` 의 `[mg-scene] ↔ [mg-result3d]` 줄이다.
+갈래 A(§3)의 결과 파이버 안쪽 3D 무대를 웹으로 옮겼다. 단계 13·14 연결·와이프·텔롭·코인 2D·엔딩 5단계(갈래 B)는 미니게임 공용 틀 [minigame_scene.md](minigame_scene.md) §12(`app/minigame/frame/scene`) 몫이다. 합의 기록은 `analysis/notes/SHARED.md` 의 `[mg-scene] ↔ [mg-result3d]` 줄이다.
 
 ### 12.1 모듈 위치와 import 경계
 
 | 파일 | 내용 |
 |---|---|
-| `web/script/app/scene/minigame/mgresult/logic.ts` | **import 0** 순수 계산: 패턴 고르기(§6.1), 규칙·모드 이름, 등록·폭 합(SetPlayer), 모델·카메라 후보(ef450·efcd4·f13c0), 텔롭 번호(f1870), 배치(e9270·f3800, PosType 0~8, 쿠파·팀 간격), 모션 분기(ee410·ea020), 시선 대상(e8c20), 머리 가중치, 주사위 Fisher–Yates·승자 이동(eb650), FSNB 곡선(Cubic·Clamp, f32) |
+| `web/script/app/minigame/frame/result/logic.ts` | **import 0** 순수 계산: 패턴 고르기(§6.1), 규칙·모드 이름, 등록·폭 합(SetPlayer), 모델·카메라 후보(ef450·efcd4·f13c0), 텔롭 번호(f1870), 배치(e9270·f3800, PosType 0~8, 쿠파·팀 간격), 모션 분기(ee410·ea020), 시선 대상(e8c20), 머리 가중치, 주사위 Fisher–Yates·승자 이동(eb650), FSNB 곡선(Cubic·Clamp, f32) |
 | `stage.ts` | 결과 파이버(제너레이터, `yield` 한 번 = Fiber Wait 한 번), 캐릭터(Preview3D)·머리 시선(Heading)·카메라 적용, `resultStagePrefetch` |
-| `types.ts` | 틀 계약 `app/scene/minigame/mgscene/resultContract.ts` 를 그대로 다시 내보내고 선택 확장(`ResultStageInputExt`·`ResultStageHostExt`·`ResultStageExt`)을 더한다 |
+| `types.ts` | 틀 계약 `app/minigame/frame/scene/resultContract.ts` 를 그대로 다시 내보내고 선택 확장(`ResultStageInputExt`·`ResultStageHostExt`·`ResultStageExt`)을 더한다 |
 | `index.ts` | 공개 진입점 |
 
 - import 는 같은 폴더·`three`·`../charselect/preview3d`·`../charselect/types`·`../plaza/heading`·`../mgscene/resultContract` 만(시험 8이 검사). `script/game/core·games·view` 금지(셸 경계).

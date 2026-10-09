@@ -967,7 +967,7 @@ graphics_bfres2gltf gltf primitives.bfres prim/primitives.glb --all
 | `view/effects/emitter.ts` | vfx2 Emitter | 방출 시계(6.1), LCG 0x41C64E6D/0x3039, 풀 크기(6.1 식 4) |
 | `view/effects/particles.ts` | CPU 갱신 + VS/CS | 입자 상태 배열, 프로그램별 운동식, 키 보간 |
 | `view/effects/render.ts` | BNSH | three.js `InstancedMesh`(평면 사각형 / glb 메시) + `ShaderMaterial` |
-| `games/mg1801/view` | MapImpl·Obj·Player 호출 | 로직 사건 `effect` → registry |
+| `app/minigame/mg1801/view` | MapImpl·Obj·Player 호출 | 로직 사건 `effect` → registry |
 
 **원본 이름과 웹 권장 이름**
 
@@ -1139,7 +1139,7 @@ for (const fx of effects) {
 | 코어 | `script/game/lib/effect/index.ts` | 0(three·DOM·프로젝트 파일 없음) | `EffectRegistry`(§3.3 해석·등록 순서), `EffectCore`(bex::Effect 목록: Create·Start·Stop(bool)·StopImmediately·SetPosition/Rotation/Scale·SetSelfDestroy·SetLayerVisibilityBit·SetAnimationSpeed·Attach, 핸들 = 칸 + 세대), `ParticlePool`(이미터 정의 하나의 입자 배열 — 모든 인스턴스가 공유하는 링 버퍼), `EmitterRt`(정의마다 미리 계산: 키 표·최대 입자 수 §6.1 식 4·raw 플래그), 난수(`Lcg`·`Xorshift128`·N/Q 표·`sinCpu`), 정렬 key(`packDepth`). 숫자·사건만 낸다 |
 | three 어댑터 | `script/game/lib/effect-three/index.ts` | three + 코어 | `EffectView`: effects.json·텍스처·프리미티브 읽기(`EffectLoader` 끼움점), 풀마다 InstancedBufferGeometry 하나에 코어 출력(월드 위치·크기·회전·색 2개·나이·수명·UV 난수·fade·기저)을 그리기 순서대로 올림. 셰이더는 billboard 0/3/4 변환·UV 애니·조각 합성·알파 시험만(입자 운동 없음). blend·depth·cull·FS 변형은 규칙에 따름 |
 | mpj 연결 | `script/view/effect.ts` | 코어·어댑터·셸 | `MpjEffects`/`createEffectSystem(parent, {loader})`, `assetsLoader(Assets)`(json·gltf = Assets 캐시, 텍스처 = stage3d `loadTexture`), `play(name, pos, {scale, selfDestroy, layer, rate, attach})`, `showCommonEffect(id, pos)`(CMN_EFFECT_ID), `objectSource(obj)`(Attach 행렬 원천), `routeCharacterFx(ch, fx)`(캐릭터 FTRG fx 사건 연결) |
-| 게임 | `script/games/mg1801/view/effects.ts` | mpj 연결 | `EffectSystem` 이름·생성자·공개 메서드(load·spawn·start·stop·update·dispose·activeCount) 유지, 내부만 공용 런타임 |
+| 게임 | `script/app/minigame/mg1801/view/effects.ts` | mpj 연결 | `EffectSystem` 이름·생성자·공개 메서드(load·spawn·start·stop·update·dispose·activeCount) 유지, 내부만 공용 런타임 |
 
 - 시간: 고정 스텝 1/60(`step()`), 재생 속도는 `SetAnimationSpeed` 배율(원본 규칙). `update(dt)`는 벽시계 → 스텝(최대 15 = 0.25 s, 이전 웹 clamp 와 같음).
 - 결정성: 코어에 `Math.random`·벽시계 없음. 원본 공유 seed 원천은 생성자에 주입(`seed: () => u32`, mpj 기본 = 고정 씨앗 xorshift128). web 규칙은 이전 웹 시스템 LCG `0x12345678`.
@@ -1186,7 +1186,7 @@ core.step(); core.view.set(cameraViewMatrix); core.sync();  // pools[k].order[0.
 
 | 소비자 | 이전 | 어떻게 | 골든 |
 |---|---|---|---|
-| `games/mg1801/view/effects.ts` `EffectSystem` | 이전 | 내부 = `MpjEffects`(코어 + 어댑터). 계산·셰이더·재질·풀 코드와 그 주석은 코어·어댑터로 옮김. `view/index.ts` 무수정 | `RULES_WEB` 9 시나리오 이전 전과 같음(14.6) |
+| `app/minigame/mg1801/view/effects.ts` `EffectSystem` | 이전 | 내부 = `MpjEffects`(코어 + 어댑터). 계산·셰이더·재질·풀 코드와 그 주석은 코어·어댑터로 옮김. `view/index.ts` 무수정 | `RULES_WEB` 9 시나리오 이전 전과 같음(14.6) |
 | 캐릭터 런타임 fx 사건(`view/character.ts` `routeCharacterEvents`가 받지 않던 것) | 연결 | `view/effect.ts` `routeCharacterFx(ch, fx)` — `ch.on`에 붙여 fx 사건만 받는다(`view/character.ts` 무수정) | 시험 없음(웹 자료에 bq 상주 `fx_*`·bd00 eset 없음 → 경고 후 무시) |
 | 리듬 공용 성공 이펙트 | 별칭 | `showCommonEffect(id)` + effects.json 별칭 `ca::rm::util::ShowCommonEffect#0/1` | common_success 시나리오 |
 | 다른 게임(mg18xx·mg0508 등) | 미룸 | 각 게임 `_Vfx` 덤프를 effects.json 형식으로 만들어 `load(files)`에 더하면 등록 순서대로 해석 | — |

@@ -921,14 +921,14 @@ export async function runSoundGolden(rules?: 'web' | 'original', only?: string):
   const THREE = await import('three');
   mods = {
     AudioOut: (await import('../script/view/audio')).AudioOut,
-    RmSoundMap: (await import('../script/games/rhythm/view/sound')).RmSoundMap,
+    RmSoundMap: (await import('@app/minigame/kit/rhythm/view/sound')).RmSoundMap,
     MgSceneSound: (await import('../script/view/mgsceneSound')).MgSceneSound,
-    rmTelopView: await import('../script/games/rhythm/view/events'),
+    rmTelopView: await import('@app/minigame/kit/rhythm/view/events'),
     rmPerfectView: null,
     Mg1801Harness: (await import('./mg_node_host')).Mg1801Harness,
     NodeMgRun: (await import('./mg_node_host')).NodeMgRun,
-    mg1801Options: (await import('../script/games/mg1801/index')).mg1801Options,
-    createDummyGame: (await import('../script/games/mgdummy/logic')).createDummyGame,
+    mg1801Options: (await import('@app/minigame/mg1801/index')).mg1801Options,
+    createDummyGame: (await import('@app/minigame/mgdummy/logic')).createDummyGame,
     ...(await shellMods()),
     THREE,
   };

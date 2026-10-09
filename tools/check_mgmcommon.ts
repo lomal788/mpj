@@ -15,7 +15,7 @@ import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
 import { MGM_BGM_KIND, mergeSpec, setPlace, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
-const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/minigame\/frame\/scene(?=\/|$)/, '../mgscene').replace(/^@app\/minigame\/frame\/result(?=\/|$)/, '../mgresult').replace(/^@app\/minigame\/frame\/stage(?=\/|$)/, '../mgstage').replace(/^@app\/scene\/mode\/freeplay(?=\/|$)/, '../mgm01').replace(/^@app\/scene\/(?:menu|world|mode)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');
@@ -335,7 +335,7 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
     }
     console.log(`   mgmet 파일 ${met.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);
   }
-  const m01Dir = join(WEB, 'script/app/scene/minigame/mgm01');
+  const m01Dir = join(WEB, 'script/app/scene/mode/freeplay');
   if (existsSync(m01Dir)) {
     const m01 = readdirSync(m01Dir).filter((f) => f.endsWith('.ts'));
     for (const f of m01) {

@@ -1,7 +1,7 @@
 # 02. 리듬 미니게임 공용 프레임워크 (`ca::rm`, mg1801~mg1810)
 
 2026-10-02. 상태: **분석 진행**(공용 흐름·박자·채보·점수 판독 완료, 원본 실행 확인 없음). 웹 코드는 고치지 않았다(11절은 명세다).
-2026-10-09: 웹 공용 모듈로 분리했다(`web/script/games/rhythm/`, 동작 불변) — 14절.
+2026-10-09: 웹 공용 모듈로 분리했다(`web/script/app/minigame/kit/rhythm/`, 동작 불변) — 14절.
 확정 수준: **[실행]** 원본 실행 확인, **[판독]** 원본 명령 판독, **[데이터]** 데이터 확인, **[추정]**, **[미확정]**. 이 문서에 [실행]은 없다. 판독한 식·데이터를 옮겨 돌린 결과는 **[재구현 계산]**으로 따로 적는다.
 
 주소는 SwitchLoader 기본 베이스(0x7100000000) 기준이고 **모듈 이름과 함께** 쓴다. 따로 적지 않은 주소는 main NSO 다.
@@ -639,15 +639,15 @@ mg1801 웹 코드 안에 함께 있던 리듬 공용 틀(`ca::rm`)을 공용 모
 
 | 폴더 | 내용 | import 규칙 |
 |---|---|---|
-| `web/script/games/rhythm/` | 로직(three·DOM 없음): 박자 시계, 채보, RmGameWork, RmSoundMan 로직, 별 판정, `RmMgSceneBase`(단계 0~10, 줄 배분, 결과 흐름), 웹 MinigameFlow 대리 | **import 0**(같은 폴더만). f32·60fps 상수도 폴더 안에 둔다(`data.ts`, 값은 core 와 같다). 화면 전환은 인터페이스(`RmWipe`)로 받는다 — `lib/transition` 의 `Transition` 을 게임이 넘긴다 |
-| `web/script/games/rhythm/view/` | 화면 어댑터: 리듬 BGM 핸드셰이크·효과음 시퀀서 소리(`RmSoundMap`), 공용 2D UI(`RmUi`: 타이밍 텔롭·START/FINISH·점수 게이지·PERFECT·흰 페이드 따라가기·컨트롤 안내 와이프·결과 점수판), 공용 사건 → UI·소리(`rmTelopView`·`rmPerfectView`) | `view/*`(audio·bgm·seq·lyt·assets·input), `lib/transition`, `app/scene/menu/charselect/fontSheet`, `app/common/render3d/assetLoader`, three. 이미 공용인 것(BGM 스트림 `lib/bgmstream`→`view/bgm`, 시퀀서 `view/seq`, 레이아웃 재생기 `view/lyt`, 화면 전환 `lib/transition`)은 다시 만들지 않고 부른다 |
-| `web/script/games/mg1801/` | mg1801 고유(`mg1801::Scene` = `Mg1801Game extends RmMgSceneBase`) | `games/rhythm` 을 import 한다 |
+| `web/script/app/minigame/kit/rhythm/` | 로직(three·DOM 없음): 박자 시계, 채보, RmGameWork, RmSoundMan 로직, 별 판정, `RmMgSceneBase`(단계 0~10, 줄 배분, 결과 흐름), 웹 MinigameFlow 대리 | **import 0**(같은 폴더만). f32·60fps 상수도 폴더 안에 둔다(`data.ts`, 값은 core 와 같다). 화면 전환은 인터페이스(`RmWipe`)로 받는다 — `lib/transition` 의 `Transition` 을 게임이 넘긴다 |
+| `web/script/app/minigame/kit/rhythm/view/` | 화면 어댑터: 리듬 BGM 핸드셰이크·효과음 시퀀서 소리(`RmSoundMap`), 공용 2D UI(`RmUi`: 타이밍 텔롭·START/FINISH·점수 게이지·PERFECT·흰 페이드 따라가기·컨트롤 안내 와이프·결과 점수판), 공용 사건 → UI·소리(`rmTelopView`·`rmPerfectView`) | `view/*`(audio·bgm·seq·lyt·assets·input), `lib/transition`, `app/scene/menu/charselect/fontSheet`, `app/common/render3d/assetLoader`, three. 이미 공용인 것(BGM 스트림 `lib/bgmstream`→`view/bgm`, 시퀀서 `view/seq`, 레이아웃 재생기 `view/lyt`, 화면 전환 `lib/transition`)은 다시 만들지 않고 부른다 |
+| `web/script/app/minigame/mg1801/` | mg1801 고유(`mg1801::Scene` = `Mg1801Game extends RmMgSceneBase`) | `app/minigame/kit/rhythm` 을 import 한다 |
 
 에셋 경로는 바꾸지 않았다. 공용 UI·소리 명세는 지금도 게임 폴더(`assets/mg1801/ui/ui.json`, `assets/mg1801/manifest.json`)에서 읽는다(14.9).
 
 ### 14.2 공용 / mg1801 고유 경계
 
-| 원본 단위 | 웹 공용(`games/rhythm/`) | 옮겨 온 곳(분리 전) | mg1801 에 남은 것 |
+| 원본 단위 | 웹 공용(`app/minigame/kit/rhythm/`) | 옮겨 온 곳(분리 전) | mg1801 에 남은 것 |
 |---|---|---|---|
 | `snd::*` + 마스터 시퀀스 | `clock.ts` `RhythmClock`(G14·G12·L0 관측/프레임 모델, `beatToSec`, `beatState`, `bgmStartBar`) | `mg1801/logic/rhythm.ts` 전체 | — |
 | static 표 | `data.ts` `BEAT_SCALE`·`BEATS_PER_BAR`·`BPM`(120)·`RC_SPEEDUP_BPM`·`PREROLL_FRAMES`·`WIPE_WHITE_FRAMES`·`RESULT_PANEL_DELAY_BEATS`·`RESULT_PANEL_FRAMES`·`RESULT_MOTIONS`·`CALIBRATION_FRAMES` | `mg1801/logic/data.ts`·`game.ts` 끝 | `MAIN_BEAT_TYPE`, 채소·의자·시선·칼 모션·NPC 표, `RESULT_CAMERA_POS`(mg1801_cam02 값 → 공용 결과 시작에 넘긴다) |
@@ -694,7 +694,7 @@ mg1802~1810·rc_stage01 문서(각 3·5·6절, mg1810 부록 A·B)를 확인했�
 ### 14.5 공용 API
 
 ```ts
-// games/rhythm/scene.ts — 원본 ca::rm::RmMgSceneBase
+// app/minigame/kit/rhythm/scene.ts — 원본 ca::rm::RmMgSceneBase
 abstract class RmMgSceneBase {
   constructor(opts: RmOptions, init: RmSceneInit);
   readonly cfg: RmConfig;  readonly clock: RhythmClock;  readonly gameWork: RmGameWork;  readonly soundMan: RmSoundMan;
@@ -751,9 +751,9 @@ interface RmBeatData { row: number; beat: number; item: RmChartRow }   // 원본
 
 ### 14.6 mgscene 연결 계획 (이번에는 하지 않음)
 
-2026-10-09 [mg-connect]: 아래 계획대로 연결했다 — [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12(어댑터 `games/rhythm/mgGame.ts` `RmMgGame`, 단계 대응, 새 시작 프레임: OnGameStartAfter 리듬 프레임 61 → 27, 원본 근거 §12.12.3). 웹 MinigameFlow 대리(`stepFrame` 흐름 switch·PREROLL·흐름 11 두 프레임)는 지웠고, `PREROLL_FRAMES`·`RmOptions.prerollFrames` 는 이제 읽는 곳이 없다.
+2026-10-09 [mg-connect]: 아래 계획대로 연결했다 — [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12(어댑터 `app/minigame/kit/rhythm/mgGame.ts` `RmMgGame`, 단계 대응, 새 시작 프레임: OnGameStartAfter 리듬 프레임 61 → 27, 원본 근거 §12.12.3). 웹 MinigameFlow 대리(`stepFrame` 흐름 switch·PREROLL·흐름 11 두 프레임)는 지웠고, `PREROLL_FRAMES`·`RmOptions.prerollFrames` 는 이제 읽는 곳이 없다.
 
-공용 리듬 모듈의 흐름 슬롯 이름·반환형은 `app/scene/minigame/mgscene` 의 `MgGame`([../shell/minigame_scene.md](../shell/minigame_scene.md) §12.3)과 같게 맞춰 두었다. 나중에 할 일:
+공용 리듬 모듈의 흐름 슬롯 이름·반환형은 `app/minigame/frame/scene` 의 `MgGame`([../shell/minigame_scene.md](../shell/minigame_scene.md) §12.3)과 같게 맞춰 두었다. 나중에 할 일:
 1. 어댑터 하나: `MgGame = { setup, update: () => scene.update(), onGameStartAfter: () => scene.onGameStartAfter(), onGameMain, onGameEnd, onGameFinish, onGameEndingBefore, onGameEnding }`. 틀의 `ctx.dt`·`ctx.rand`·`ctx.pad` 는 지금 게임이 직접 쓰는 `RM_DT`·`BexRandModule`·`Pads` 자리에 넣는다. `updateAnimation()` 은 틀의 흐름 처리기 뒤에 부른다(원본 엔티티 갱신 자리, 순서 [추정]).
 2. 웹 MinigameFlow 대리(`stepFrame` 의 흐름 0·8~13 switch, `PREROLL_FRAMES`, 흐름 11 두 프레임)를 지우고 틀의 단계 1~13 이 대신한다.
 3. 흰 페이드(`RmWipe`)는 틀의 `MgWipe`(같은 `lib/transition` 코어)로 넘긴다.

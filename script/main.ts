@@ -20,10 +20,10 @@ import './view/assetMode';
 import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from '@game/core/clock';
 import { DEV } from './env';
 import { type GameDef, type GameLogic, type GameSetup, type GameView, type PlayerSetup, readOptions } from './game';
-import { GAMES } from './games';
+import { GAMES } from '@app/minigame';
 import type { LogicTransition } from '@game/lib/transition';
 import { createMgRun, freePlaySetup, localSeed, type MgRun, type MgRunSave } from './mgrun';
-import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from '@app/scene/minigame/mgscene';
+import { localGate, mgUiData, type MgPlaySettings, type MgTables, type MgUiData } from '@app/minigame/frame/scene';
 import { Assets } from './view/assets';
 import { appFlow } from './view/appFlow';
 import { installTransition, logicWipe, sceneIn, sceneOut } from './view/appTransition';
@@ -40,7 +40,7 @@ import type { ModeSelectRun } from './modeselect_page';
 import type { PlazaPageRun } from './plaza_page';
 import type { SetPlayerRun } from './setplayer_page';
 import type { MgResultEntry } from '@app/common/ui';
-import type { Mgm01PlayRequest } from '@app/scene/minigame/mgm01';
+import type { Mgm01PlayRequest } from '@app/scene/mode/freeplay';
 import type { MgSceneSound } from './view/mgsceneSound';
 import type { MgSceneUi, MgSceneUiJson } from './view/mgsceneUi';
 
@@ -240,7 +240,7 @@ const setMsg = (s: string): void => {
   msg.textContent = s;
   msg.hidden = s === '';
 };
-setMsg(GAMES.length === 0 ? '등록된 게임이 없다. script/games/index.ts 에 GameDef 를 더한다.' : '');
+setMsg(GAMES.length === 0 ? '등록된 게임이 없다. script/app/minigame/index.ts 에 GameDef 를 더한다.' : '');
 
 // ---------------------------------------------------------------- 상태
 const hook: Hook = {

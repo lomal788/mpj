@@ -363,7 +363,7 @@ cos  = e.cos + frac * e.dcos;  sin = e.sin + frac * e.dsin
 | `result` | `mg1801_cam02.fsnb` (`mg1801_cam2`) | (0, 5.5, 20) | (0, 0, −1.5) | 0.34906656 | 20.00004 | 0.1 / 10000 | 1.78 | 22.192 | 14.35° |
 | `capture` | `mg1801_cam_capture00.fsnb` (`cam_capture00`) | (0, 14.531198, 23.946115) | (0, 0, 3.74) | 0.2617994 | **15** | 0.1 / 10000 | 1.777 | 24.889 | 35.72° |
 
-현재 [view/camera.ts](../../script/games/mg1801/view/camera.ts)에 이 세 라벨 값이 들어 있고 [view/stage.ts](../../script/games/mg1801/view/stage.ts)가 상태에 맞춰 `applyCamera`를 호출한다. `view/index.ts`의 Camera는 near=0.1/far=10000, aspect=16/9다. 옛 회색 박스의 (0,6,17)·35°는 현재 상태가 아니다.
+현재 [view/camera.ts](../../script/app/minigame/mg1801/view/camera.ts)에 이 세 라벨 값이 들어 있고 [view/stage.ts](../../script/app/minigame/mg1801/view/stage.ts)가 상태에 맞춰 `applyCamera`를 호출한다. `view/index.ts`의 Camera는 near=0.1/far=10000, aspect=16/9다. 옛 회색 박스의 (0,6,17)·35°는 현재 상태가 아니다.
 
 화면 위치 검산(16:9, three.js 투영, NDC y는 위가 +1) [재구현 계산 `web/tools/analysis/camera_verify.mjs`]:
 
@@ -544,7 +544,7 @@ elapsed≥duration이면 반복 비트 1을 검사해 elapsed만 0으로 되돌�
 
 | 현재 구현 | 확인 내용 | 원본과의 차이 |
 |---|---|---|
-| [mg1801/view/camera.ts](../../script/games/mg1801/view/camera.ts)·[stage.ts](../../script/games/mg1801/view/stage.ts) | loop/result/capture 정적 값, Aim lookAt, 상태별 전환 | mg1801 정적 데이터는 §7.1과 대응. 일반 FSNB 커브·대표 노드·흔들림 evaluator는 이 정적 경로에 없음 |
+| [mg1801/view/camera.ts](../../script/app/minigame/mg1801/view/camera.ts)·[stage.ts](../../script/app/minigame/mg1801/view/stage.ts) | loop/result/capture 정적 값, Aim lookAt, 상태별 전환 | mg1801 정적 데이터는 §7.1과 대응. 일반 FSNB 커브·대표 노드·흔들림 evaluator는 이 정적 경로에 없음 |
 | [stage3d/types.ts](../../script/app/common/render3d/types.ts)의 `CameraDriver` | 외부 카메라 driver 주입 계약(`apply(camera,df)`) | 공용 `clip.ts`는 스켈레탈용이며 일반 CameraAnim evaluator가 아님. 광장 추종·기구 애니는 해당 문서/driver 범위 |
 | WebGL PerspectiveCamera | 같은 full vertical fovy, +Y 위, 시선 −Z | 깊이는 원본 0..1, WebGL −1..1. 원본 P22/P23를 WebGL에 그대로 복사하면 안 됨 |
 
@@ -558,7 +558,7 @@ elapsed≥duration이면 반복 비트 1을 검사해 elapsed만 0으로 되돌�
 
 ### 9.3 포스트
 
-[mg1801/view/post.ts](../../script/games/mg1801/view/post.ts)는 **Render→DOF→UnrealBloom→Output(NeutralToneMapping)→FXAA**를 사용한다. 현재 코드가 “원본 곡선·순서 미확정”이라고 적었어도 §7.5의 기존/신규 판독이 우선한다. 코드 수정은 이 문서 작업 범위 밖이다.
+[mg1801/view/post.ts](../../script/app/minigame/mg1801/view/post.ts)는 **Render→DOF→UnrealBloom→Output(NeutralToneMapping)→FXAA**를 사용한다. 현재 코드가 “원본 곡선·순서 미확정”이라고 적었어도 §7.5의 기존/신규 판독이 우선한다. 코드 수정은 이 문서 작업 범위 밖이다.
 
 | 항목 | 원본 확정 | 현재 mg1801 웹 |
 |---|---|---|

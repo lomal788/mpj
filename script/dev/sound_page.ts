@@ -8,7 +8,7 @@
  */
 import * as THREE from 'three';
 import { RULES_ORIGINAL, RULES_WEB, soundDefaults, type SoundCmd } from '@game/lib/sound';
-import { RmSoundMap } from '../games/rhythm/view/sound';
+import { RmSoundMap } from '@app/minigame/kit/rhythm/view/sound';
 import { Assets } from '../view/assets';
 import { AudioOut } from '../view/audio';
 import { MgSceneSound } from '../view/mgsceneSound';

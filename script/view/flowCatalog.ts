@@ -16,7 +16,7 @@ import { defaultDecoState } from '@app/scene/world/plaza/deco';
 import type { PlazaLayoutEntry } from '@app/scene/world/plaza/types';
 import { plazaP0Paths, type PlazaFirstFile } from '@app/scene/world/plaza/world';
 import { ONLINE_FACES, ONLINE_PART } from '@app/scene/menu/online/screen';
-import { mgStageKey, mgStageP0Paths, type MgManifest } from '@app/scene/minigame/mgstage';
+import { mgStageKey, mgStageP0Paths, type MgManifest } from '@app/minigame/frame/stage';
 import type { FlowJson, FlowKeys } from './flow';
 import { BGM_SPEC_PATH } from './screenBgm';
 

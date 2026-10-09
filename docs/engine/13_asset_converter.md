@@ -7,7 +7,7 @@
 - 입력은 `extracted/bea/<분류>~<이름>.nx.bea` 아무거나다.
 - 형식별 처리기가 아카이브 안 파일을 웹 형식으로 바꾼다.
 - 분류별 어댑터가 장면 의미(배치·기본 애니·카메라 묶음·단계 로딩)를 더한다.
-- 첫 적용은 미니게임 어댑터다. `mg_assets.py <id>` 하나로 게임 장면 에셋이 나오고, 로더 `script/app/scene/minigame/mgstage`가 그것을 공용 3D 무대(`stage3d`)에 올린다.
+- 첫 적용은 미니게임 어댑터다. `mg_assets.py <id>` 하나로 게임 장면 에셋이 나오고, 로더 `script/app/minigame/frame/stage`가 그것을 공용 3D 무대(`stage3d`)에 올린다.
 
 확정 수준 표기는 다른 엔진 문서와 같다: **[판독]** 디컴파일, **[데이터]** 추출 파일, **[실행]** 이 작업에서 돌려 본 것, **[추정]**, **[근사]**(웹에서 원본과 다르게 한 것).
 
@@ -165,7 +165,7 @@ assets/<분류>/<이름>/
 | mg0101 | mg0101.md §6.6·§7 CreateBG·CreateFloorParts @0x7100012ba0 | fld0~5·river·cliff·palm·leaf·statue·sunbeams·water_fall·lever·plants_op / — / 코스 a0 `pos_(iv_)?<t>NN` → floor_<t>(iv 면 floor_invisible.fvbb) | cam_op0 → cam_game | env·dir_light·post, 충돌 fld0_col·cource_a0_col |
 | mg0122 | mg0122.md §5.6 map00.nbmap | nbmap Bg·Ground(기믹은 GimmickMgr 런타임) | cam_op00 → cam_game | env00·dir_light00·skybox, envAnim env00_game.fmab, 충돌 map00 |
 | mg0102 | mg0102.md §7 | bg_ground00(+fmab)·bg_distant_view00(+fskb) | cam_op → cam_00 | env·dir_light·post |
-| mg1801 | games/mg1801/view/stage.ts MapImpl 표 @0x7100037ff8 | bg00·floor00·water00·stool_npc00 | cam00 | env·dir_light·post (비교만, §9) |
+| mg1801 | app/minigame/mg1801/view/stage.ts MapImpl 표 @0x7100037ff8 | bg00·floor00·water00·stool_npc00 | cam00 | env·dir_light·post (비교만, §9) |
 
 ### 5.3 단계 로딩 계획 (`mg.first`)
 
@@ -200,7 +200,7 @@ assets/<분류>/<이름>/
 
 ---
 
-## 7. 장면 로더 `script/app/scene/minigame/mgstage/`
+## 7. 장면 로더 `script/app/minigame/frame/stage/`
 
 ### 7.1 경계
 
@@ -232,7 +232,7 @@ mgStagePlan(ext) / mgStageP0Paths(manifest, withTex) / mgStageKey(id, path)   //
 - 카메라 클립: 구운 fsnb json(광장 `FsnbCamera` 와 같은 자세 규칙: EulerZXY → three 'YXZ', Aim → lookAt + twist, fovy 전체 세로각)을 stage3d 카메라 슬롯 `anim` 에. near 는 광장과 같은 하한 0.3 [근사: 24비트 깊이]. `MgCameraHandle{ name, frame, frames, loop, speed, finished, stop() }`.
 - 늦게 나온 모델의 기본 클립은 무대 시작부터 돌았을 프레임으로 맞춘다(광장 world.ts 와 같음).
 
-### 7.3 공용 틀(`app/scene/minigame/mgscene`)과의 경계
+### 7.3 공용 틀(`app/minigame/frame/scene`)과의 경계
 
 minigame_scene.md §12.2 합성 순서 "게임 3D(후처리 포함) → 결과 무대 3D → 틀 2D" 의 **게임 3D** 가 `MgStage.render()` 다. 게임은 `MgGame` 훅 안에서 `MgStage` 를 갖고, 결과 갈래 A 에서는 `resultWorld()` 를 `ResultStageHost.world{scene, origin}`(resultContract.ts 확장 필드)로 넘긴다 — origin = `pos_result` 소켓(mg0122 `mg0122_pos_result` 처럼 게임 모델에 있을 때, 없으면 생략 = 원점).
 

@@ -8,7 +8,7 @@
   env_pick       게임 표(SCENES.env)의 환경 컨테이너(나머지는 asset.envVariants)
   sound_sources  게임 소리 뱅크 sound~subarc_<id> 전부 + 상주 프로젝트(AddonAudioProject.fspj)의 _<ID>_ 라벨 + mgsound_setting 게임 BGM
   texts          koKR 메시지 중 라벨에 <id> 가 든 것(im_mg·mg_inst·mg_common)
-  extend → manifest.mg = { layout[배치], camera{first, game}, first{P0·P1·경계}, scene(근거) } — 로더 web/script/app/scene/minigame/mgstage 가 읽는다
+  extend → manifest.mg = { layout[배치], camera{first, game}, first{P0·P1·경계}, scene(근거) } — 로더 web/script/app/minigame/frame/stage 가 읽는다
 원본 미니게임은 MapStructure.json 이 없고 장면 엔티티를 게임 코드(SyncedSetupGame·MapImpl·CreateBG)가 경로로 만든다(06_scene_data.md §1.7) →
 배치 = 게임 표 SCENES(판독, 근거 evidence) + nbmap 모델 엔티티 + 표 없는 게임은 이름 규칙 RULE_BASE [추정].
 """
@@ -84,7 +84,7 @@ SCENES = {
         "env": {"environment": "mg0102_env", "directional_light": "mg0102_dir_light", "posteffect": "mg0102_post"},
     },
     "mg1801": {
-        "evidence": "script/games/mg1801/view/stage.ts 머리 — MapImpl 표 @0x7100037ff8(bg00·floor00·water00) + stool_npc00(RhythmNpcEnable) [판독]",
+        "evidence": "script/app/minigame/mg1801/view/stage.ts 머리 — MapImpl 표 @0x7100037ff8(bg00·floor00·water00) + stool_npc00(RhythmNpcEnable) [판독]",
         "base": ["mg1801_bg00", "mg1801_floor00", "mg1801_water00", "mg1801_stool_npc00"],
         "cameras": {"first": "mg1801_cam00", "game": "mg1801_cam00"},
         "env": {"environment": "mg1801_env", "directional_light": "mg1801_dir_light", "posteffect": "mg1801_post"},

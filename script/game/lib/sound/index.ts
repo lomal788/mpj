@@ -848,7 +848,7 @@ export class SoundCore {
   }
 
   /**
-   * 같은 플레이어 한도 검사. 내도 되면 true(밀려난 소리는 멈춘다) — games/rhythm/view/sound.ts admit 에서 옮겼다.
+   * 같은 플레이어 한도 검사. 내도 되면 true(밀려난 소리는 멈춘다) — app/minigame/kit/rhythm/view/sound.ts admit 에서 옮겼다.
    * 한도 검사 — 조건(pred)에 드는 살아 있는 소리가 max 이상이면 우선순위가 가장 낮은(같으면 가장 먼저 낸) 소리와 비교:
    * 새 소리가 더 낮으면 거절, 아니면 그 소리를 멈춘다 [추정: nn::atk 공개 동작, 리듬 sound.ts 이전 규칙].
    */

@@ -11,7 +11,7 @@
   fonts          비트맵 글꼴 = 공용 assets/font/ 원본 시트 참조 {dir: '../../font/', chars}(font_web_assets.py, docs/engine/font_assets.md)
   font/bqfont_telop.otf  BFOTF 복호화 → 필요한 글자만 서브셋(fontTools). 글리프 윤곽은 원본 그대로
 
-출처와 판독 근거는 web/script/games/mg1801/view/ui.ts 머리 주석과 보고서(레이아웃 선택: main RmUiTelopMan·RmUiStatusMan·RmUiCntWipe).
+출처와 판독 근거는 web/script/app/minigame/mg1801/view/ui.ts 머리 주석과 보고서(레이아웃 선택: main RmUiTelopMan·RmUiStatusMan·RmUiCntWipe).
 로캘은 koKR 고정(font~font_kr, message~koKR).
 """
 import io

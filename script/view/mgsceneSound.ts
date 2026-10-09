@@ -4,7 +4,7 @@
  * BGM·결과 징글은 원본 MGSound 처럼 핸들이 따로다(공용 코어 핸들 두 칸, 재생은 bgmstream 처리기 — view/sound.ts). 리전 점프(REG_SEQ_MAIN)는 처음부터 재생 [근사, §12.7].
  * groupStop 은 원본 규칙(기본)에서 코어 그룹 소속으로 같은 코어의 모든 핸들을 멈추고, 웹 규칙에서는 틀 BGM·징글 채널만 멈춘다(04_sound.md §13.4).
  */
-import type { MgSceneEvent } from '@app/scene/minigame/mgscene';
+import type { MgSceneEvent } from '@app/minigame/frame/scene';
 import { SoundCatalog } from '@game/lib/sound';
 import type { BufferPayload } from '@game/lib/sound-webaudio';
 import type { Assets } from './assets';

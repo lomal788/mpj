@@ -1,20 +1,20 @@
 /**
- * UI 시험 항목 "미니게임 공용 틀" — 시험용 더미 게임(games/mgdummy)을 공용 틀(app/scene/minigame/mgscene)에 올려 한 판을 처음부터 결과까지 돌린다.
+ * UI 시험 항목 "미니게임 공용 틀" — 시험용 더미 게임(app/minigame/mgdummy)을 공용 틀(app/minigame/frame/scene)에 올려 한 판을 처음부터 결과까지 돌린다.
  * 루프: 고정 1/60 스텝(rAF 한 번에 최대 4스텝), 스텝은 프레임 게이트(로컬)가 열 때만 진행, 그리기(3D → 틀 2D)는 매 rAF.
  * URL(dev/ui?ui=mgscene&…): mg=mg0101(MGSetting·MgSound 표 행), inst=1(설명 화면 안 실행 반복), endtime=N(시험용: GameEndTime 덮어쓰기, 원본 아님),
- *   main=N(더미 본편 프레임, 0 = 끝없음 → 종료 타이머 만료로 끝), opening=N(더미 오프닝 프레임), result3d=1(SetPlayer → 결과 3D 무대 app/scene/minigame/mgresult), seed=N.
+ *   main=N(더미 본편 프레임, 0 = 끝없음 → 종료 타이머 만료로 끝), opening=N(더미 오프닝 프레임), result3d=1(SetPlayer → 결과 3D 무대 app/minigame/frame/result), seed=N.
  * 키: J = A(사람 점수), Enter = +(오프닝 건너뛰기). 설계: docs/shell/minigame_scene.md §12.
  */
 import { BexRandModule } from '@game/core/rng';
 import { FPS, STEP_MS } from '@game/core/clock';
 import { ASSETS } from '../env';
 import type { GameSetup, GameView } from '../game';
-import { GAMES } from '../games';
-import { createDummyGame } from '../games/mgdummy/logic';
+import { GAMES } from '@app/minigame';
+import { createDummyGame } from '@app/minigame/mgdummy/logic';
 import { createMgRun } from '../mgrun';
-import { DummyView } from '../games/mgdummy/view';
-import { localGate, MgScene, mgUiData, STAGE_END, STAGE_NAME, type MgPadInput, type MgSettingRow, type MgTables } from '@app/scene/minigame/mgscene';
-import { createResultStage } from '@app/scene/minigame/mgresult';
+import { DummyView } from '@app/minigame/mgdummy/view';
+import { localGate, MgScene, mgUiData, STAGE_END, STAGE_NAME, type MgPadInput, type MgSettingRow, type MgTables } from '@app/minigame/frame/scene';
+import { createResultStage } from '@app/minigame/frame/result';
 import { logicWipe } from '../view/appTransition';
 import { Assets } from '../view/assets';
 import { AudioOut } from '../view/audio';

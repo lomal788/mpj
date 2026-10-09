@@ -14,7 +14,7 @@ import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk, sheetFilesMissing } from './fontSpecNode';
 import type { ModeSpec } from '@app/scene/menu/modeselect/types';
-const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/scene\/(?:menu|world|minigame)\//, '../');
+const legacySpec = (s: string): string => s.replace(/^(\.\.\/)+shell\/(mgmcommon|stage3d)/, '../$2').replace(/^@app\/common\/ui(?=\/|$)/, '../mgmcommon').replace(/^@app\/common\/render3d(?=\/|$)/, '../stage3d').replace(/^@app\/minigame\/frame\/scene(?=\/|$)/, '../mgscene').replace(/^@app\/minigame\/frame\/result(?=\/|$)/, '../mgresult').replace(/^@app\/minigame\/frame\/stage(?=\/|$)/, '../mgstage').replace(/^@app\/scene\/mode\/freeplay(?=\/|$)/, '../mgm01').replace(/^@app\/scene\/(?:menu|world|mode)\//, '../');
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ROOT = resolve(WEB, '..');

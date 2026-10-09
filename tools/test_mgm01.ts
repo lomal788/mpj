@@ -1,5 +1,5 @@
 /**
- * 프리 플레이(mgm01) 개별 설정·필터 상태 시험 — script/app/scene/minigame/mgm01 의 순수 상태(catalog·listFilter·settingView)와
+ * 프리 플레이(mgm01) 개별 설정·필터 상태 시험 — script/app/scene/mode/freeplay 의 순수 상태(catalog·listFilter·settingView)와
  * 실제 명세(assets/mgmcommon + assets/mgm01/catalog.json)로 만든 설정 화면·필터 화면 흐름을 노드에서 돈다(WebGL 없음).
  * 기대값 근거: docs/shell/mgm01_freeplay.md 6.1·6.2·6.4·6.5·8.3·9절(판독한 규칙의 재구현 시험, 원본 실행 대조 아님).
  *
@@ -49,7 +49,7 @@ import {
   type Mgm01Player,
   type SettingDeps,
   type SettingOutcome,
-} from '@app/scene/minigame/mgm01';
+} from '@app/scene/mode/freeplay';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

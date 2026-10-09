@@ -11,10 +11,10 @@
  */
 import { NPAD, emptyPad, type PadInput } from '@game/core/pad';
 import type { GameSetup, SoundSnapshot } from '../script/game';
-import { mg1801Game, mg1801Options } from '../script/games/mg1801/index';
-import { type Mg1801Game, calcTotalPoint, endingBgmName, gameBgmName, interEndBgmName, type Mg1801Options } from '../script/games/mg1801/logic/game';
-import { chartRows } from '../script/games/mg1801/logic/chart';
-import type { Mg1801Event } from '../script/games/mg1801/state';
+import { mg1801Game, mg1801Options } from '@app/minigame/mg1801/index';
+import { type Mg1801Game, calcTotalPoint, endingBgmName, gameBgmName, interEndBgmName, type Mg1801Options } from '@app/minigame/mg1801/logic/game';
+import { chartRows } from '@app/minigame/mg1801/logic/chart';
+import type { Mg1801Event } from '@app/minigame/mg1801/state';
 import { fileURLToPath } from 'node:url';
 import { fmabRepeatBad } from './anim_repeat';
 import { Mg1801Harness, NodeMgRun } from './mg_node_host';
@@ -557,7 +557,7 @@ function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801H
   const d = determinismCheck(() => new Mg1801Harness(setup([false, false, true, true]), { mode: 2 }), rec);
   check('결정성: 같은 seed·입력 기록(패드·acc·사운드 관측 지연 2)으로 두 번 → 매 틱 상태 해시 같음(끝까지)', d.ok && d.ended, `${d.ticks} 틱 ${d.firstDiff}`);
   const root = fileURLToPath(new URL('../script/', import.meta.url));
-  const st = staticLogicCheck(['games/mg1801/logic', 'games/mg1801/state.ts', 'games/rhythm', 'app/scene/minigame/mgscene', 'game/core'].map((x) => root + x));
+  const st = staticLogicCheck(['app/minigame/mg1801/logic', 'app/minigame/mg1801/state.ts', 'app/minigame/kit/rhythm', 'app/minigame/frame/scene', 'game/core'].map((x) => root + x));
   check(`정적 검사: 로직 ${st.files} 파일에 Math.random·performance.now·Date·getGamepads·rAF·DOM 없음`, st.bad.length === 0 && st.files > 30, st.bad.join(' '));
 }
 

@@ -7,7 +7,7 @@
  * - 묶음 키 목록(flowCatalog.ts)은 처음 쓸 때 동적 import(진입 청크를 키우지 않게).
  */
 import { ASSET_MODE } from '../env';
-import { GAMES } from '../games';
+import { GAMES } from '@app/minigame';
 import { P0, P1 } from '@game/lib/assetcore';
 import { assetHooks, type UiImageLike } from '@app/scene/menu/charselect/assetHooks';
 import { KIND_BYTES, KIND_UI_IMAGE } from '@app/common/render3d/assetHandlers';

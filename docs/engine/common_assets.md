@@ -170,7 +170,7 @@ web/assets/common/
 
 | 곳 | 바꾸는 것 |
 |---|---|
-| `app/scene/menu/charselect/render2d.ts`(모든 2D 화면 공용)·`games/mg1801/view/ui.ts` | 없음 — 명세 경로를 `url()` 이 붙이고 `..` 는 URL 이 접는다 |
+| `app/scene/menu/charselect/render2d.ts`(모든 2D 화면 공용)·`app/minigame/mg1801/view/ui.ts` | 없음 — 명세 경로를 `url()` 이 붙이고 `..` 는 URL 이 접는다 |
 | `app/scene/menu/charselect/assetHooks.ts` | `loadBytes(url)` 끼움점 추가(기본 = fetch → ArrayBuffer) |
 | `view/appFlow.ts` broker | `loadBytes` 를 앱 로더 관리자 `bytes`(P1)로 — 받은 버퍼는 복사해 넘김(decodeAudioData 가 떼어 감). 관리자 밖(다른 종류로 쓰는 키 등)이면 직접 |
 | 효과음을 fetch 로 직접 받던 곳: `mgm01_page`·`mgmcommon_page`·`mgmet_page`·`mgmscreens_page`·`modeselect_page`·`online_page`·`partyrule_page`·`setplayer_page`·`app/scene/world/plaza/ui/part.ts` | `assetHooks.loadBytes(url)` 로 — 흐름 안에서는 같은 키 = 한 번 받기 |

@@ -3,7 +3,7 @@
   c:/dev/mpj/.venv/Scripts/python tools/mg1801_web_assets.py [--bpm 120 180] [--seq-only]
   --seq-only: BGM·스트림은 그대로 두고(이미 만든 manifest 의 항목 유지) 효과음 시퀀스만 다시 만든다
 
-manifest.json (web/script/games/mg1801/view/sound.ts 가 읽는다):
+manifest.json (web/script/app/minigame/mg1801/view/sound.ts 가 읽는다):
   sounds      라벨 → 재생 방식
     kind 'bgm'    시퀀스 BGM 을 BPM(G11)별로 미리 렌더한 wav(tools/sound_seq.py 근사 재구현). 사운드 volume 이 이미 곱해져 있다.
                   bpm → {file, durationSec, peak, loop, songEndSec, g8}. g8 = 그 렌더에서 전역 8(코드)을 쓴 [초, 값] (JUST_SOUND 가 읽는다)

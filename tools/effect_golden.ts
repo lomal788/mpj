@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { EffectSystem } from '../script/games/mg1801/view/effects';
+import { EffectSystem } from '@app/minigame/mg1801/view/effects';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;

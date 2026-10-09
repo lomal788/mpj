@@ -1,5 +1,5 @@
 /**
- * 미니게임 공용 틀(app/scene/minigame/mgscene) 시험 — 노드, 헤드리스 없음. 설계·근거: docs/shell/minigame_scene.md §12.
+ * 미니게임 공용 틀(app/minigame/frame/scene) 시험 — 노드, 헤드리스 없음. 설계·근거: docs/shell/minigame_scene.md §12.
  * 1) 표 열거 변환  2) 일반 흐름 단계 순서·프레임(와이프 20·텔롭 60·120 프레임)  3) 텔롭·SE·BGM 사건 프레임
  * 4) 오프닝 건너뛰기  5) 종료 타이머(30초 표시·5초 경고음·만료 → 10)  6) 설명 화면 반복(4프레임)·InstLoop Result
  * 7) 결과 갈래 A(가짜 무대 계약)·B(엔딩 5단계·승리 텔롭)  8) 프레임 게이트(멈춤 → 상태·타이머·난수 그대로, 다시 열면 이어서)
@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BexRandModule } from '@game/core/rng';
-import { createDummyGame } from '../script/games/mgdummy/logic';
+import { createDummyGame } from '@app/minigame/mgdummy/logic';
 import {
   localGate,
   MgScene,
@@ -30,8 +30,8 @@ import {
   type ResultStage,
   type ResultStageHost,
   type ResultStageInput,
-} from '@app/scene/minigame/mgscene';
-import { freePlayJudgeType, minigameResultEntry, type MgGame, type MgSceneContext } from '@app/scene/minigame/mgscene';
+} from '@app/minigame/frame/scene';
+import { freePlayJudgeType, minigameResultEntry, type MgGame, type MgSceneContext } from '@app/minigame/frame/scene';
 import { WIPE_WHITE } from '@game/lib/transition';
 import type { GameLogic, GameSetup } from '../script/game';
 import { determinismCheck, staticLogicCheck } from './mg_determinism';
@@ -376,13 +376,13 @@ let finishTicks = 0;
 
 // ---------------------------------------------------------------- 9) 경계·미리 받기
 {
-  const dir = path.join(WEB, 'script/app/scene/minigame/mgscene');
+  const dir = path.join(WEB, 'script/app/minigame/frame/scene');
   const bad: string[] = [];
   for (const f of fs.readdirSync(dir)) {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');
     for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '@game/lib/transition' && m[1] !== '@game/lib/splitscreen' && m[1] !== '@game/lib/sound') bad.push(`${f}: ${m[1]}`);
   }
-  ok(bad.length === 0, 'app/scene/minigame/mgscene import 0(같은 폴더 + import 0 공용 코어 lib/transition·lib/splitscreen, mgm_common §9.1 lib 예외)', bad.join(' '));
+  ok(bad.length === 0, 'app/minigame/frame/scene import 0(같은 폴더 + import 0 공용 코어 lib/transition·lib/splitscreen, mgm_common §9.1 lib 예외)', bad.join(' '));
   const pre = mgscenePrefetch(ui);
   const miss = pre.filter((p) => !fs.existsSync(path.join(A, p)));
   ok(miss.length === 0 && pre.length > 10, `미리 받기 ${pre.length}개 파일 존재`, miss.join(' '));
@@ -446,7 +446,7 @@ let finishTicks = 0;
   );
   ok(d.ok && d.ended, '결정성: 더미 게임 같은 seed·입력 기록 두 번 → 매 틱 상태 해시 같음(끝까지)', `${d.ticks} 틱 ${d.firstDiff}`);
   const root = path.join(WEB, 'script');
-  const st = staticLogicCheck([path.join(root, 'app/scene/minigame/mgscene'), path.join(root, 'games/mgdummy/logic.ts'), path.join(root, 'game/lib/transition/index.ts'), path.join(root, 'game/lib/splitscreen'), path.join(root, 'game/lib/sound')]);
+  const st = staticLogicCheck([path.join(root, 'app/minigame/frame/scene'), path.join(root, 'app/minigame/mgdummy/logic.ts'), path.join(root, 'game/lib/transition/index.ts'), path.join(root, 'game/lib/splitscreen'), path.join(root, 'game/lib/sound')]);
   ok(st.bad.length === 0 && st.files >= 10, `정적 검사: 틀·더미 로직 ${st.files} 파일에 Math.random·벽시계·직접 입력·DOM 없음`, st.bad.join(' '));
 }
 

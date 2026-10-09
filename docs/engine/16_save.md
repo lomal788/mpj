@@ -65,7 +65,7 @@ script/view/save.ts            (mpj 연결) mpj 섹션 정의·옛 키 마이그
 |---|---|---|
 | `lib/save` | 없음 | 모든 import(시험 `test_save.ts` 6절이 검사) |
 | `lib/save-localstorage` | `../save` | 그 밖 전부 |
-| `view/save.ts` | `lib/save`·`lib/save-localstorage`·`app/common/ui/contracts`·`app/common/ui/messageWindow`·`app/scene/minigame/mgm01/playResult`·`app/scene/world/plaza/types`(타입) | DOM 은 `appSave()` 안 어댑터 생성에서만 |
+| `view/save.ts` | `lib/save`·`lib/save-localstorage`·`app/common/ui/contracts`·`app/common/ui/messageWindow`·`app/scene/mode/freeplay/playResult`·`app/scene/world/plaza/types`(타입) | DOM 은 `appSave()` 안 어댑터 생성에서만 |
 | 셸(`shell/*`) | 저장을 **구조 인터페이스로만** 받는다: `MgmSaveBacking`(contracts.ts), `PlazaSave`(plaza/types.ts), `setMessageSpeedSource`(messageWindow) | `lib/save`·`view/save` import 금지(mgm_common 9.1 경계 그대로) |
 
 - 다른 게임(ddalkkakrider 포털 등)은 `lib/save` + `lib/save-localstorage` 를 그대로 쓰고 자기 섹션만 등록한다.

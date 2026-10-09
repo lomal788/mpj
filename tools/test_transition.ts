@@ -25,9 +25,9 @@ import {
   WIPE_NAMES,
   WIPE_WHITE,
 } from '@game/lib/transition';
-import { MgWipe } from '@app/scene/minigame/mgscene/ui';
+import { MgWipe } from '@app/minigame/frame/scene/ui';
 import { TAKEOFF } from '@app/scene/world/plaza/balloon';
-import { SEC as RESULT_SEC } from '@app/scene/minigame/mgresult/logic';
+import { SEC as RESULT_SEC } from '@app/minigame/frame/result/logic';
 
 const WEB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let pass = 0;

@@ -53,7 +53,7 @@ web/
     env.ts              DEV·BASE·ASSETS (vite import.meta.env 대신)
     game.ts             게임 계약: GameDef / GameLogic / GameView / GameSetup / GameResult
     style.css           페이지 스타일 (main.ts 가 import → bundle/main.css)
-    games/index.ts      등록된 게임 목록 GAMES
+    app/minigame/index.ts      등록된 게임 목록 GAMES
     games/<id>/         게임 하나 (logic/ state.ts view/ index.ts) — 아직 없음
     core/               로직 부품 (DOM·three.js 없음, 노드에서도 돈다)
       clock.ts          60fps, FRAME_DT, 루프 상수
@@ -86,7 +86,7 @@ web/
   test/                 골든·스크린샷 — test/README.md
 ```
 
-의존 방향: `core` ← `games/*/logic` ← `games/*/view` → `view`. `core`와 `logic`은 DOM·three.js를 import하지 않는다. `main.ts`는 `game.ts` 계약과 `games/index.ts`만 안다.
+의존 방향: `core` ← `games/*/logic` ← `games/*/view` → `view`. `core`와 `logic`은 DOM·three.js를 import하지 않는다. `main.ts`는 `game.ts` 계약과 `app/minigame/index.ts`만 안다.
 
 ## vite → esbuild 대응
 
@@ -96,7 +96,7 @@ web/
 | `publicDir` | `assets/`(소스)·`assets-dist/`(압축본)를 같은 이름으로 내준다(개발: servedir, 배포: dist/assets-dist 복사). 코드는 `${ASSETS}…`(모드에 따라 둘 중 하나) |
 | HTML 엔트리(`<script src="*.ts">`) | HTML은 `./bundle/<엔트리>.js`를 건다. 엔트리는 `tools/esbuild_config.ts`의 `ENTRIES` |
 | CSS import | 그대로 import, esbuild가 `bundle/<엔트리>.css`로 낸다. HTML에 `<link>` |
-| `import.meta.glob` | 쓰지 않는다. 게임은 `games/index.ts`에 손으로 등록한다 |
+| `import.meta.glob` | 쓰지 않는다. 게임은 `app/minigame/index.ts`에 손으로 등록한다 |
 | HMR | 없음. `/esbuild` 변경 알림으로 페이지 전체를 새로 고친다 |
 | `createServer`(시험 도구) | `tools/browser.ts`의 `startServer`(esbuild serve) |
 
@@ -104,6 +104,6 @@ web/
 
 1. 원본 분석 문서를 `docs/minigame/<id>.md`로 쓴다(형식은 `../분석.txt`).
 2. `script/games/<id>/`에 `state.ts`(로직 → 화면 계약), `logic/`(원본 클래스마다 하나), `view/`, `index.ts`(GameDef)를 둔다.
-3. `script/games/index.ts`의 `GAMES`에 더한다.
+3. `script/app/minigame/index.ts`의 `GAMES`에 더한다.
 4. 에셋 변환물을 `assets/<id>/manifest.json`과 함께 둔다.
 5. `npm run check`, `npm run smoke`로 확인하고, 원본 골든이 생기면 게임별 verify 도구로 대조한다.

@@ -1,5 +1,5 @@
 /**
- * 미니게임 3D 결과 무대(app/scene/minigame/mgresult) 노드 상태 시험 — WebGL 없음. 기대값은 docs/shell/minigame_result.md 의 표·식을 시험 안에서 따로(배정밀도) 계산한다.
+ * 미니게임 3D 결과 무대(app/minigame/frame/result) 노드 상태 시험 — WebGL 없음. 기대값은 docs/shell/minigame_result.md 의 표·식을 시험 안에서 따로(배정밀도) 계산한다.
  * 1 패턴 고르기 §6.1  2 배치 §6.6·§7.1(1~4명, 승자 0~4명, Coin, 쿠파, 팀 간격, Pos2·Chara·Boss)  3 카메라 Cubic 표본 §6.7·§7.2
  * 4 모션 분기 §6.8  5 주사위·승자 이동 §6.9  6 텔롭 번호 §6.3  7 에셋 존재(404 0)  8 import 경계
  *
@@ -9,10 +9,10 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MT19937 } from '@game/core/rng';
-import * as L from '@app/scene/minigame/mgresult/logic';
-import { charaFiles, stageFiles } from '@app/scene/minigame/mgresult/stage';
-import type { MgResultSpec, ResultStageInputExt } from '@app/scene/minigame/mgresult/types';
-import { DEFAULT_RESULT_OPTIONS } from '@app/scene/minigame/mgscene/resultContract';
+import * as L from '@app/minigame/frame/result/logic';
+import { charaFiles, stageFiles } from '@app/minigame/frame/result/stage';
+import type { MgResultSpec, ResultStageInputExt } from '@app/minigame/frame/result/types';
+import { DEFAULT_RESULT_OPTIONS } from '@app/minigame/frame/scene/resultContract';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const A = join(WEB, 'assets');
@@ -404,8 +404,8 @@ section('7 에셋 존재(404 0)');
 
 section('8 import 경계');
 {
-  const dir = join(WEB, 'script', 'app', 'scene', 'minigame', 'mgresult');
-  const allow = /^(three|\.\/[a-z]+|@app\/scene\/menu\/charselect\/(preview3d|types)|@app\/scene\/world\/plaza\/heading|@app\/scene\/minigame\/mgscene\/resultContract)$/;
+  const dir = join(WEB, 'script', 'app', 'minigame', 'frame', 'result');
+  const allow = /^(three|\.\/[a-z]+|@app\/scene\/menu\/charselect\/(preview3d|types)|@app\/scene\/world\/plaza\/heading|@app\/minigame\/frame\/scene\/resultContract)$/;
   for (const fn of readdirSync(dir)) {
     const src = readFileSync(join(dir, fn), 'utf8');
     for (const m of src.matchAll(/from '([^']+)'/g)) ok(allow.test(m[1]), `${fn}: import '${m[1]}'`);

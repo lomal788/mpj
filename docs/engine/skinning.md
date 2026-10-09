@@ -414,7 +414,7 @@ local RT/scale 수정
 | 가중치 | 같은 변환기: 사용 성분의 합으로 나눔; 합 0이면 첫 성분 1 | 원본 VS는 2…4영향의 가중치를 그대로 사용 |
 | 방향 벡터 | 같은 변환기: normal/tangent 정규화 및 zero tangent fallback | 원본 VS에는 정규화/fallback 없음; 확인한 pc01 FS에서 정규화 |
 | morph | 변환기는 `pK−p0` glTF delta target, 웹은 `morphTargetInfluences` 설정 | 원본 CPU kernel은 절대 key 값의 가중합; 기본 key 계수·0.001 임계값 대응은 별도 검증 필요 |
-| 캐릭터 복제/갱신 | [character.ts](../../script/games/mg1801/view/character.ts): `SkeletonUtils.clone`, SkinnedMesh frustum 설정, morph influence 쓰기, `root.updateMatrixWorld(true)` | 원본 local/world 캐시·palette slot과 같은 구현이라고 볼 수 없음 |
+| 캐릭터 복제/갱신 | [character.ts](../../script/app/minigame/mg1801/view/character.ts): `SkeletonUtils.clone`, SkinnedMesh frustum 설정, morph influence 쓰기, `root.updateMatrixWorld(true)` | 원본 local/world 캐시·palette slot과 같은 구현이라고 볼 수 없음 |
 
 **웹 코드 판독**: 설치된 Three.js `node_modules/three/src/objects/Skeleton.js`의 `update()`는 `bone.matrixWorld × boneInverse`를 16-float 항목으로 평탄화하고 bone texture가 있으면 `needsUpdate`를 설정한다. `computeBoneTexture()`는 RGBA float texture에 행렬당 네 pixel을 사용한다. 원본의 48바이트 uniform 팔레트와 업로드 경로가 다르다.
 

@@ -6,9 +6,9 @@ import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { FiberRunner, MgmInput, MgmSound, MgmView, PAD, type Flow, type MgmPlayer, type MgResultEntry } from '@app/common/ui';
-import { AnnounceScreen } from '@app/scene/minigame/mgm01/announceScreen';
-import { HistoryScreen } from '@app/scene/minigame/mgm01/historyScreen';
-import { historyFromRing, writeRing } from '@app/scene/minigame/mgm01/historyView';
+import { AnnounceScreen } from '@app/scene/mode/freeplay/announceScreen';
+import { HistoryScreen } from '@app/scene/mode/freeplay/historyScreen';
+import { historyFromRing, writeRing } from '@app/scene/mode/freeplay/historyView';
 import { MgmetHowtoView } from '@app/scene/world/mgmet/howto';
 import type { PadSource } from '../view/input';
 

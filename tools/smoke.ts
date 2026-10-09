@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
-import { GAMES } from '../script/games';
+import { GAMES } from '@app/minigame';
 import { WEB, findChromium, startServer } from './browser';
 
 const OUT = path.join(WEB, 'test', 'out', 'smoke');

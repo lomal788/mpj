@@ -1,0 +1,158 @@
+{
+ "source": "web/tools/analysis/mgscene_web_assets.py",
+ "se": {
+  "SQ_SE_TLP_START": {
+   "file": "sound/SQ_SE_TLP_START.wav",
+   "bus": "se",
+   "gain": 0.0,
+   "evidence": "[데이터] se_common_layout.ftrg sys_tlp_start_00 \"in\" f0 (volume 0), 볼륨 0 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_TLP_FINISH": {
+   "file": "sound/SQ_SE_TLP_FINISH.wav",
+   "bus": "se",
+   "gain": 0.315,
+   "evidence": "[데이터] se_common_layout.ftrg sys_tlp_finish_00 \"in\" f0, 볼륨 40 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_TLP_321GO_1": {
+   "file": "sound/SQ_SE_TLP_321GO_1.wav",
+   "bus": "se",
+   "gain": 0.0,
+   "evidence": "[데이터] se_common_layout.ftrg sys_tlp_321go_00 \"count\" f0 번호 1 (volume 0), 볼륨 0 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_TLP_321GO_2": {
+   "file": "sound/SQ_SE_TLP_321GO_2.wav",
+   "bus": "se",
+   "gain": 0.0,
+   "evidence": "[데이터] 같음 번호 2 (volume 0), 볼륨 0 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_TLP_321GO_3": {
+   "file": "sound/SQ_SE_TLP_321GO_3.wav",
+   "bus": "se",
+   "gain": 0.0,
+   "evidence": "[데이터] 같음 번호 3 (volume 0), 볼륨 0 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_TLP_321GO_GO": {
+   "file": "sound/SQ_SE_TLP_321GO_GO.wav",
+   "bus": "se",
+   "gain": 0.0,
+   "evidence": "[데이터] se_common_layout.ftrg sys_tlp_321go_00 \"go\" f0 (volume 0), 볼륨 0 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_MG_FINISH": {
+   "file": "sound/SQ_SE_MG_FINISH.wav",
+   "bus": "se",
+   "gain": 0.0,
+   "evidence": "[판독] ComUiMGTelop::Start 종류 2 (volume 0), 볼륨 0 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_SYS_WHISTLE": {
+   "file": "../common/sound/SQ_SE_SYS_WHISTLE.wav",
+   "bus": "se",
+   "gain": 0.2205,
+   "evidence": "[판독] MGSound::TryStartWhistle, 볼륨 28 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_SYS_MG_COUNT_TIMER": {
+   "file": "../common/sound/SQ_SE_SYS_MG_COUNT_TIMER.wav",
+   "bus": "se",
+   "gain": 0.2205,
+   "evidence": "[판독] ComUiTimer 표시 갱신 FUN_71002d5030(남은 ≤ 경고 초), 볼륨 28 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  },
+  "SQ_SE_SYS_SKIP": {
+   "file": "../common/sound/SQ_SE_SYS_SKIP.wav",
+   "bus": "se",
+   "gain": 0.4724,
+   "evidence": "[판독] FUN_71001e5778 오프닝 건너뛰기, 볼륨 60 [데이터 fsar], 렌더 근사(sound_seq.py)"
+  }
+ },
+ "voice": {
+  "WD_VOI_LOC_SYS_START": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_START_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.307087,
+   "target": "WD_VOI_LOC_SYS_START_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_FINISH": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_FINISH_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.307087,
+   "target": "WD_VOI_LOC_SYS_FINISH_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_WINNER": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_WINNER_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.330709,
+   "target": "WD_VOI_LOC_SYS_WINNER_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_WINNERS": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_WINNERS_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.330709,
+   "target": "WD_VOI_LOC_SYS_WINNERS_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_DRAW": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_DRAW_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.330709,
+   "target": "WD_VOI_LOC_SYS_DRAW_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_1": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_1_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.275591,
+   "target": "WD_VOI_LOC_SYS_1_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_2": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_2_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.275591,
+   "target": "WD_VOI_LOC_SYS_2_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_3": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_3_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.275591,
+   "target": "WD_VOI_LOC_SYS_3_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  },
+  "WD_VOI_LOC_SYS_GO": {
+   "file": "sound/voice/WD_VOI_LOC_SYS_GO_JAJP.wav",
+   "bus": "voice",
+   "gain": 0.307087,
+   "target": "WD_VOI_LOC_SYS_GO_JAJP",
+   "evidence": "[데이터] se_common_layout.ftrg·ComUiMGTelop::Start, 웨이브 사운드 PCM 그대로"
+  }
+ },
+ "bgm": {
+  "SM_JIN_MG_WIN": {
+   "file": "SM_JIN_MG_WIN.wav",
+   "gain": 0.2677,
+   "rate": 48000,
+   "frames": 208744,
+   "regions": {},
+   "evidence": "[판독] MGSound 결과 징글 FUN_71001e51e0, [데이터] fspj 볼륨 34·BFSTM SM_JIN_MG_WIN"
+  },
+  "SM_JIN_MG_DRAW": {
+   "file": "SM_JIN_MG_DRAW.wav",
+   "gain": 0.2598,
+   "rate": 48000,
+   "frames": 224962,
+   "regions": {},
+   "evidence": "[판독] 같음, [데이터] fspj 볼륨 33·BFSTM SM_JIN_MG_DRAW"
+  },
+  "SM_BGM_MGINST": {
+   "file": "SM_BGM_MGINST.wav",
+   "gain": 0.2677,
+   "rate": 48000,
+   "frames": 671417,
+   "loopStart": 3.8826666666666667,
+   "loopEnd": 13.987854166666667,
+   "regions": {},
+   "evidence": "[데이터] mgsound_setting inst_bgm_label(설명 화면 안 실행), [데이터] fspj 볼륨 34·BFSTM SM_BGM_MGINST"
+  }
+ }
+}

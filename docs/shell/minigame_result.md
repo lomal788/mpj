@@ -1,6 +1,6 @@
 # 미니게임 결과 연출 (bq::MGResult) — 원본 분석
 
-2026-10-08. 상태: **흐름·선택 규칙 및 결과 무대 수치 판독. 미확인 공통 보간·전이 연결은 §11. 웹 구현·원본 실행 대조 없음.**
+2026-10-08. 상태: **흐름·선택 규칙 및 결과 무대 수치 판독. 미확인 공통 보간·전이 연결은 §11.** 2026-10-09: 3D 결과 무대 웹 구현(§12, `web/script/shell/mgresult/`), 텔롭 번호 `FUN_71002f1870`·배치 슬롯 문자열 ARM64 판독(§6.3·§6.6 정정). 원본 실행 대조 없음.
 형식은 `F:/dev/mps/web/docs/분석.txt` 11절 구성. 이 문서는 [minigame_scene.md](minigame_scene.md) §5.1 의 단계 13·14(결과 시작·대기) **안쪽**이다.
 장면 단계·엔딩 5단계·텔롭 종류·페이드 규칙은 그 문서를 따르고 다시 쓰지 않는다. 3D 결과 무대의 4함수(13,152 B), 모델 배치·카메라 키·모션 전환 수치는 §6.6~6.9·§7에 통합했다.
 
@@ -73,7 +73,7 @@ MinigameScene 단계 14: MGResult+0xB8 파이버 완료까지 대기 → 단계 
 | +0x134 | s32 | 캐릭터 MotionSize에 따른 배치·카메라 후보 0/1 |
 | +0x13C | u8 | 결과 플레이어 등록됨(`SetPlayer`) |
 | +0x13D | u8 | 승리 텔롭 이미 시작함 [추정: §6.3 조기 반환 조건] |
-| +0x140 | s32 | 결과 텔롭·결과음 번호(`FUN_71002f1870`, −1 = 없음) [추정: 이름] |
+| +0x140 | s32 | 승리 텔롭 종류 UiMGTelopType(`FUN_71002f1870`, −1 = 없음): 5 WinCenterBottom·6 WinRightTop·7 WinRightBottom·8 Draw. 결과음 번호로도 쓴다(`TryStartResultSound`) [판독 §6.3] |
 | +0x144 | s32 | CameraType=0 Normal, 그 외 Overlook(생성 기본 0) |
 | +0x148/+0x14C | f32 | Near/Far override(생성 기본 −1) |
 | +0x150 / +0x154 | s32 | CameraPattern override(−1 기본, setter 0/1) / 테마 캐릭터 ID |
@@ -199,6 +199,8 @@ if pattern != -1:
     if +0x140 != -1: 승리 텔롭(+0x68) Out → Finished 까지 Wait
 ```
 
+**텔롭 번호** `FUN_71002f1870`(884 B, ARM64 판독 2026-10-09): place = list[pattern].Telop_1. 단 `GetMGEntryPlayerList` 가 4명이고 승자 수(`f0ba0`)가 2 또는 3이고 Telop_1·Telop_2 가 둘 다 `None` 이 아니면, 목록1(PlayerID 순)에서 GetOrder 가 가장 큰(같으면 뒤) 승자의 CharacterID 로 `FUN_71001d6ba8(id, 승자 수, 카메라 컴포넌트 +0x28, +0x144)` 를 부르고 0 이 아니면 Telop_2. 이 accessor 는 레코드 +0x918~+0x934 = `resultWinTelop_win{2,3}_cam{1,2}_{normal,overlook}` 8칸을 (승자 수 ≠ 2 → win3, +0x28 ≠ 0 → cam2, +0x144 ≠ 0 → overlook)으로 고른다. 카메라 컴포넌트 +0x28 은 카메라 후보 1/2 번호로 본다 [추정: 필드 뜻]. 문자열 → 번호: `WinCenterBottom` 5, `WinRightTop` 6, `WinRightBottom` 7, `Draw` 8, 그 외 −1. `eff60` 은 이 값이 −1 이 아니고 승자가 0명이면 `mgResultTelop` 엔티티에 `ComUiMGTelop(type)` 을 바로 붙이고, 승자가 있으면 목록1을 순회한다(그 뒤 처리는 미판독). 주사위 갈래의 승리 텔롭 type=6 은 WinRightTop 이다.
+
 **텔롭 시점** `FUN_71002ea810(t)`: `+0x13D` 가 서 있으면 반환. `t < list[pattern].TelopIn` 이면 반환. WinLoseType 이 `Normal` 이고 `+0x140 ≠ −1` 이면 승리 텔롭(`ComUiMGTelop`, +0x68) Start. `Coin` 이면 결과 플레이어별 `GetMinigameCoin` 으로 코인 표시 [판독]. TelopIn(90/140)의 단위는 ComActorMotion::GetFrame이 반환하는 카메라 프레임이다(§6.7).
 
 ### 6.4 갈래 A-주사위 (캐릭터 미니게임, JudgeType ≠ 0, 목록1 개수 ≠ 1)
@@ -222,7 +224,7 @@ FUN_71002eb650                                       # 주사위 연출(co_dice_
 
 대상 4함수는 `e8c20`(1,532 B: 카메라를 향한 시선), `e9270`(3,480 B: 배치·테마·쿠파 보정), `eabf0`(2,604 B: 테마 시선), `eb650`(5,536 B: 주사위·승자 이동), 합계 **13,152 B**다. 크기는 `analysis/functions/main.nso.tsv`의 함수 본문 기준이며 SIMD 식은 `main.decomp.bin` ARM64와 대조했다. 모션 슬롯·보간의 공통 계약은 [09_character.md §6.3~6.6](../engine/09_character.md), 카메라 적용은 [07_camera_lighting.md §6](../engine/07_camera_lighting.md)을 재사용한다.
 
-`SetPlayer`는 PlayerID를 키로 엔티티를 등록한다. Normal: 승패=1은 목록1(+0x80)·승 폭 합(+0x2C0), 나머지(0·2)는 목록2(+0x98)·비승 폭 합(+0x300). Coin: 전원 목록2, 폭은 코인>0이면 승 폭, 아니면 비승 폭이다. **`MotionW`는 폭이며 블렌드율이 아니다.** accessor `0x71001d6acc/6af8`는 CharacterData 레코드 stride 0x940의 +0x8FC/+0x900 f32를 읽는다.
+`SetPlayer`는 PlayerID를 키로 엔티티를 등록한다. Normal: 승패=1은 목록1(+0x80)·승 폭 합(+0x2C0), 나머지(0·2)는 목록2(+0x98)·비승 폭 합(+0x300). Coin: 전원 목록2, 폭은 코인≥1이면 승 폭, 아니면 비승 폭이고 **둘 다 +0x300 에 더한다**(2026-10-09 정정, `mgresult_main1.c` 6120~6136 `pMVar10 = this + 0x300`). **`MotionW`는 폭이며 블렌드율이 아니다.** accessor `0x71001d6acc/6af8`는 CharacterData 레코드 stride 0x940의 +0x8FC/+0x900 f32를 읽는다.
 
 `ef450`의 모델 선택: +0x144=0은 Normal, 그 외는 Overlook; 각 쌍의 1/2는 +0x134=0/1로 정한다. +0x134는 Normal에서 승자가 있으면 승자의 `resultWinMotionSize`, 없으면 비승자의 `resultDrawLoseMotionSize` 중 하나라도 1일 때 1; Coin은 코인>0/≤0에 해당하는 Size를 검사한다. 이 Size는 스케일 배수가 아니라 넓은 배치·카메라 후보 선택이다. 모델 경로는 `mg/mgResult/model/<Pos_…>.fmdb`. `SetModel` 핸들이 유효하면 `pos_result` bone socket에 ComAttachment를 연결(+0x68=1, +0xF8=1, +0x188=0)한다. 슬롯은 `ed800`의 skeleton world translation, 회전은 `f0f70`의 skeleton world quaternion을 사용하므로 §7.1의 로컬 수치를 곧바로 월드 좌표로 취급하지 않는다.
 
@@ -233,10 +235,12 @@ FUN_71002eb650                                       # 주사위 연출(co_dice_
 | 2 Pos4_Win1 → `e9644` | 승자=`pos_pc_win`; 비승자=lose_L/center/R 행 |
 | 3 Pos4_Win2 → `e9430` | 승자=win_L/center/R 행, 비승자=lose_L/center/R 행 |
 | 4 Pos4_Win3 → `e97ac` | 승자=win_L/center/R 행, 비승자=`pos_pc_lose` |
-| 5 Pos4_Win4 → `e9e7c` | 전원 `pos_pc_L/center/R` 행, 승 폭 합 사용; 팀전이면 총 폭에 0.8 추가 |
-| 6 Pos4_Draw → `e92e4` | 전원 `pos_pc_L/center/R` 행, 비승 폭 합 사용; 팀전이면 총 폭에 0.8 추가 |
+| 5 Pos4_Win4 → `e9e7c` | 전원 `pos_pc_win_l/center/r` 행(2026-10-09 정정: C 2325~2357 문자열), 승 폭 합 사용; 팀전이면 총 폭에 0.8 추가 |
+| 6 Pos4_Draw → `e92e4` | 전원 `pos_pc_l/center/r` 행(소문자, C 2503~2535), 비승 폭 합 사용; 팀전이면 총 폭에 0.8 추가 |
 | 7 Pos4_Chara → `f2c00` | GetOrder 오름차순 정렬 후 등록 대상의 연속 번호 j로 `pos_pc%02d` 선택(§7.1 dice의 00~03); 승패에 따라 등록 엔티티 조회 |
-| 8 Pos4_Boss → `f3000` | 목록1·2 각각 `pos_pc_L/center/R`의 방향·시작점 계산, PlayerID 순으로 승/비승 폭을 사용해 해당 행에 배치; 팀 간격 추가 없음 |
+| 8 Pos4_Boss → `f3000` | 목록1 = `pos_pc_win_l/win_center/win_r` 행(승 폭 합), 목록2 = `pos_pc_l/center/r` 행(비승 폭 합)의 방향·시작점 계산(2026-10-09 정정: ARM64 문자열 `0x71002f3044~318c`), PlayerID 순으로 승/비승 폭을 사용해 해당 행에 배치; 팀 간격 추가 없음. Boss 표 행의 win4 모델에는 l/center/r 이, draw 모델에는 win_* 가 없다 → 없는 슬롯 행은 웹에서 놓지 않음 [추정: `ed800` 실패 동작 미확인] |
+
+Pos1·Pos2 문자열은 `pos_pc_L`·`pos_pc_R`(대문자, ARM64 `0x71002f2264/2284`, `2b34/2b3c`), Pos4_Chara 는 `pos_pc%02d`(`0x71002f2efc`)다. Win1~Win4·Draw 는 행 시작점 계산 뒤 모두 `LAB_71002e98fc → FUN_71002f3800`(MGEntry 공통 순회)으로 간다. `f3800` 은 엔티티마다 `GetResultWinMotionW`·`ResultDrawLoseMotionW`·`GetMinigameWinLose`·WinLoseType 문자열 비교·`GetMinigameCoin` 을 불러 개인 폭을 고른다(Normal = 승패 1 이면 승 폭, Coin = 코인 > 0 이면 승 폭) [판독: BL 대상]. 웹은 Normal 승패 1 → 승 행, 그 외 → 비승 행으로 놓는다(Win1 승자·Win3 패자는 고정 슬롯).
 
 표의 `e…/f…`는 모두 `0x71002…` 주소이며 PosType 매핑은 `f1fbc`, switch jump table은 `0x71015d8216`(16-bit 값×4 + `0x71002e92c8`)이다. 슬롯 문자열은 대소문자를 보존한다.
 
@@ -482,7 +486,7 @@ suffix는 `mg/mgResult/env/result_cam_<suffix>.fsnb`다. P는 위치, Aim은 조
 - **MinigameScene**: 엔딩 5단계 등록 여부(§3), 결과 파이버 완료가 단계 14 → 16 의 조건.
 - **모드(mgm01 등)**: 결과 ring·Round 는 MGResult 가 쓰지 않는다(§6.5).
 
-## 9. 웹 포팅 구조 (제안, 코드 없음)
+## 9. 웹 포팅 구조 (제안, 코드 없음 — 2026-10-09 3D 무대는 §12 로 구현, 흐름·2D 는 minigame_scene.md §12)
 
 | 파일 [웹 이름] | 내용 |
 |---|---|
@@ -516,9 +520,143 @@ suffix는 `mg/mgResult/env/result_cam_<suffix>.fsnb`다. P는 위치, Aim은 조
 | FSNB runtime 보간·pass 순서 동일성 | 원본 계수·키·투영 및 파이버 순서는 판독 | 07_camera_lighting §11의 g3d 곡선 evaluator, animation pass→attachment/skeleton→Heading의 엔진 순서; f32 연산·wrap 경계 대조 |
 | 주사위 컴포넌트 내부 전환 | 후보 배정·state=6 대기·48프레임 jump·2초 승자 이동은 판독 | `f5660/f58a0` 및 이벤트/갱신 하위가 state 1→6으로 가는 시간·클립 trigger, 주사위 본체 FMDB/FTRG 이벤트 연결 |
 | 카메라 Y offset 소비자 | ResultData의 원본 수치는 §7.3 | `resultCameraPositionOffsetY/TargetOffsetY` accessor의 소비 지점; PC FSNB 값과 중복 적용 여부 |
-| `+0x140` 의 정확한 의미(`FUN_71002f1870`) | [추정: 텔롭·결과음 번호] | `FUN_71002f1870` 판독 |
+| ~~`+0x140` 의 정확한 의미(`FUN_71002f1870`)~~ | 2026-10-09 판독(§6.3 텔롭 번호). 남은 것: 카메라 컴포넌트 +0x28 의 뜻(후보 번호로 봄), `eff60` 승자 있을 때 목록1 순회 뒤 처리 | `efcd4` 카메라 컴포넌트 필드, `eff60` 뒷부분 |
 | 집계 대상 플레이어 목록의 출처 | [추정] | `FUN_71002f0ba0` 계열의 목록 생성 |
 | MGResult 생성 시점·소유 | 장면 `+0x298` 이 가리킴 | 장면 Setup 쪽 생성 위치 |
 | 모드 결과 ring writer(프리 플레이) | MGResult 아님 | mgm01 쪽 — mgm01_freeplay.md §11-1, `FUN_71002c4b50` |
 | `mgm00_base_mgresult_00` 레이아웃 사용처 | 미확인 | mgm 모드 NRO 문자열·참조 |
 | 원본 실행 대조 | 없음 | 패턴별 원본 캡처 |
+
+## 12. 웹 구현 계약 — 3D 결과 무대 (2026-10-09, [mg-result3d])
+
+갈래 A(§3)의 결과 파이버 안쪽 3D 무대를 웹으로 옮겼다. 단계 13·14 연결·와이프·텔롭·코인 2D·엔딩 5단계(갈래 B)는 미니게임 공용 틀 [minigame_scene.md](minigame_scene.md) §12(`shell/mgscene`) 몫이다. 합의 기록은 `analysis/notes/SHARED.md` 의 `[mg-scene] ↔ [mg-result3d]` 줄이다.
+
+### 12.1 모듈 위치와 import 경계
+
+| 파일 | 내용 |
+|---|---|
+| `web/script/shell/mgresult/logic.ts` | **import 0** 순수 계산: 패턴 고르기(§6.1), 규칙·모드 이름, 등록·폭 합(SetPlayer), 모델·카메라 후보(ef450·efcd4·f13c0), 텔롭 번호(f1870), 배치(e9270·f3800, PosType 0~8, 쿠파·팀 간격), 모션 분기(ee410·ea020), 시선 대상(e8c20), 머리 가중치, 주사위 Fisher–Yates·승자 이동(eb650), FSNB 곡선(Cubic·Clamp, f32) |
+| `stage.ts` | 결과 파이버(제너레이터, `yield` 한 번 = Fiber Wait 한 번), 캐릭터(Preview3D)·머리 시선(Heading)·카메라 적용, `resultStagePrefetch` |
+| `types.ts` | 틀 계약 `shell/mgscene/resultContract.ts` 를 그대로 다시 내보내고 선택 확장(`ResultStageInputExt`·`ResultStageHostExt`·`ResultStageExt`)을 더한다 |
+| `index.ts` | 공개 진입점 |
+
+- import 는 같은 폴더·`three`·`../charselect/preview3d`·`../charselect/types`·`../plaza/heading`·`../mgscene/resultContract` 만(시험 8이 검사). `script/core·games·view` 금지(셸 경계).
+- 페이지 `web/script/mgresult_page.ts`(시험 호스트), `ui_main.ts` 항목 `mgresult`.
+
+### 12.2 입력·출력 계약
+
+`createResultStage(input: ResultStageInputExt, host: ResultStageHostExt): Promise<ResultStageExt>`
+
+| 입력 | 뜻 |
+|---|---|
+| `gameRule`·`isCoin`·`isChara`·`judgeType`·`boardMode`·`playMode` | 규칙·모드 이름(§6.1) |
+| `players[]` = `{pid, chara 'pcNN', order(GetOrder), teamId, winLose 1/0/2, rank, coin}` | SetPlayer 로 등록한 플레이어(등록 순서 = 폭 합 누적 순서) |
+| `opts` = `{cameraType, cameraPattern, nearZ, farZ, pcPosOffset, themeChara, motions{idle,winA,winB,loseA,loseB}}` | Set 계열(§4.1) |
+| `rand()` | 동기 난수 u32(SyncRand). `SyncRandMod(n) = (u·n)>>32`, n < 2 는 소비 없음 |
+| 확장 `listId?` | MGList 숫자 id(PataPata 0x75~0x78, Battle 0x77, Taxi 0x78). 없으면 그 규칙에 안 걸림 |
+| 확장 `entryCount?` | MGEntry 인원(텔롭 Telop_2 조건). 없으면 등록 인원 |
+
+| 호스트 | 무대가 부르는 때 |
+|---|---|
+| `gl` | THREE.WebGLRenderer. 캐릭터 준비(`Preview3D.render`)와 `render()` |
+| `fade('out'\|'in', 1.0)`·`fading()` | §6.2 와이프. `fading()` 이 false 가 될 때까지 Wait |
+| `winTelop.start(no, place)`·`out()`·`finished()` | 일반: 카메라 프레임 ≥ TelopIn 에 start(no = +0x140, place = 고른 Telop 문자열), 카메라 끝나면 out → finished 까지 Wait. 주사위: start(6, 'WinRightTop') → 5.0초 → out |
+| `coinShow(pid, coin)` | Coin 갈래 TelopIn 때 목록2 전원 |
+| `se`·`bgm` | 주사위: `SQ_SE_TLP_MG_RES_WIN_DIC`, `SM_BGM_SSMG_DICE` → 판정 뒤 `bgm(null)`(Stop_Preset 3) |
+| `resultSound(no)` | 무대 준비에서 no ≠ −1 일 때(`TryStartResultSound(0, +0x140)`) |
+| `uiTimingOut(2)` | 무대 준비 |
+| `url(p)` | assets/ 기준 경로 → URL |
+| 확장 `genericTelop?` | 주사위 `mg_tl401_windice`(없으면 1.0초만 기다림) |
+| 확장 `dice?(pid, value)` | 주사위 눈 표시(3D 주사위 본체는 그리지 않음 — §12.6) |
+| 확장 `world?{scene, origin?}` | 게임 3D 장면에 캐릭터를 올리고 SetModel `pos_result` 변환(origin)을 배치·카메라에 곱한다. 없으면 무대 자기 장면 |
+| 확장 `onEvent?(e)` | 시험·디버그용 사건: pattern·fadeOut·setup·fadeIn·cameraStart·telopIn{frame,no,place,coin}·motion·dice·diceWinner·cameraEnd·telopOut·done |
+
+| 출력 | 뜻 |
+|---|---|
+| `step()` | 1/60 고정 한 프레임: 파이버 → 카메라 프레임 +1(재생 중) → `Preview3D.update`(모션 1/60) → 머리 시선 1단계 |
+| `done` | 파이버 완료(틀 단계 14 → 16) |
+| `render()` | `gl.render(scene, camera)` 3D 만 |
+| `writes` | 주사위 갈래가 후보에게 쓴 WinLose(틀이 done 뒤 PlayerWork 에 반영) |
+| `dispose()`·`debug()` | |
+
+`resultStagePrefetch(input, url): Promise<string[]>` = 명세·이번 카메라 json·등록 캐릭터(+테마, JudgeType ≠ 0 일 때만)의 모델·모션·motions·눈 텍스처 키(assets/ 기준). 흐름 예측 묶음은 `view/flowCatalog.ts` 의 `mgresult:<pc>`(명세 + 그 캐릭터 파일).
+
+### 12.3 에셋 [실행: 변환]
+
+변환기 `web/tools/analysis/mgresult_web_assets.py [all|data|chara] [pcNN…]`(원본·`extracted/bea` 읽기만, 중간 `extracted/converted/{mgresult,mgresult_chara}`).
+
+| 출력 | 내용 | 소스 → 압축본(brotli) |
+|---|---|---|
+| `web/assets/mgresult/spec.json` | `list`(mgResultList.json pattern·list 그대로) · `chara`(resultCharaParam ResultData 22행 + characterlist 번호·이름·head_*) · `pos`(배치 모델 31개 뼈: 이름·parent·T·R EulerXYZ, `graphics_bfres2gltf dump`) · `cams`(95 이름) · `env`(캐릭터 빛 = charselect spec env) · `clips` · `chars`(Preview3D 명세 22명, 경로 `../chara/…`) | 0.29 MB → 0.09 MB(0.05) |
+| `web/assets/mgresult/cam/result_cam_*.json` ×95 | `camera_probe cam` 의 base + 곡선 원본 계수(frames·k0..k3·scale·offset·type·pre/post wrap). 프레임 굽기 없음 — 런타임이 Cubic 식으로 평가 | (위에 포함) |
+| 공용 `web/assets/chara/pcNN/motion/{co_applause00,co_dice_idle00,co_jump_dice01}.glb` ×22 | 새 결과 모션(`charsel_chara.convert` → `chara_shared` 규칙, motions.json 항목 병합). co_idle00·co_win00a/b·co_lose00a/b·co_walk00 은 이미 있던 공용 파일 그대로 | 9.2 MB → 4.7 MB(1.2) |
+
+- 배치 모델 메시(뿌리 뼈 0.07 m 표식)·`result_dice00.fmdb`(주사위 본체)·`ftrg`·`result_cam_duel_1be.fmdb`(빈 뼈 1개)는 변환하지 않았다.
+- 공용 파일 보호: 이미 있는 공용 glb 를 이 변환기가 다른 내용으로 덮으면 되돌리고 알린다. 실제로 pc52 `fcl_blink00.glb` 가 클립 목록 차이로 빈 클립 1개만 다르게 나와(다른 세 변환기 결과 8,368 B vs 8,604 B) 원래 내용으로 되돌렸다. motions.json 기존 항목은 다른 변환기 결과와 모두 같음을 확인했다.
+- 압축 빌드: `npx tsx tools/build_assets.ts --only mgresult/`, `--only chara/` 로 넣음 — `index.json names` 에 `mgresult/` 96개·새 모션 66개, 소스 대비 빠진 것 0.
+
+### 12.4 구현한 원본 식
+
+| 항목 | 웹 |
+|---|---|
+| 파이버 | §6.2 FadeOut(1.0)→Wait→Sleep 0.1→무대 구성(idle·시선·배치·TimingOut(2)·주사위면 패자 LoseA→B·결과음)→Sleep 0.5→FadeIn(1.0) 동안 e8c20→e9270→Wait. 일반 §6.3: ea020 모션 → 카메라 재생 → 끝날 때까지 `GetFrame→telop→e8c20→eabf0→e9270→Wait` → 텔롭 Out → Finished. 주사위 §6.4: 아래 |
+| 배치 | §6.6 그대로 f32: `d = normalize(R−L)`(FRSQRTE 8비트 추정 + FRSQRTS 2회, 길이 0 → 0), `cursor = C + ((0−d)·W)·0.5`, 순회 `cursor += d·(w/2+g)`, `P = cursor + PcPosOffset`, `cursor += d·w/2`, 회전 = 행 center. W: Win 행 +0x2C0, 비승 행 +0x300, Win4/Draw 팀전 +0.8, g = 0.8(팀전 Win4/Draw 에서 TeamID 바뀔 때, 이전값 0부터). 순회 = GetOrder 오름차순(팀전 TeamID 다시 정렬). Win1 승자 `pos_pc_win`·Win3 패자 `pos_pc_lose` 고정. Pos2 = PlayerID 순 0번째 L·나머지 R, Chara = GetOrder 순 j → `pos_pc%02d`, Boss = PlayerID 순 승/비승 두 행. 쿠파(CharacterID 13): `P += normalize(d×(0,1,0))·KoopaOffsetZ`, d = Draw 면 비승 행, 그 외 승 행. 테마 = `pos_pc_fellow` + offset |
+| 모델·카메라 | 후보 = +0x134(Size 규칙), 카메라만 CameraPattern override, CamType PC 는 PlayerID 순 첫 승자 PCNumber. 카메라 = FSNB 곡선 원본 계수로 **매 프레임 Cubic 평가**(`v = (k0+(k1+(k2+k3·t)·t)·t)·scale+offset`, f32, Clamp/Clamp; 소수 프레임도 같은 식). Aim 모드 lookAt + twist, fovy 0.43633232 rad, aspect 1.78, near/far = SetCameraNearZ/FarZ 규칙(한쪽만 음수면 그대로). 프레임은 재생 중 step 마다 +1, 끝 = frame ≥ FrameCount(300) |
+| 모션 | 기본 5개 + SetMotion 커스텀. 준비 idle, 일반 시작 Normal 목록1 WinA→WinB·목록2 LoseA→LoseB / Coin 코인 > 0 승·아니면 패, 테마 co_applause00. A→B = `Preview3D.play(slot, A, B)`(A 가 끝나면 B, 블렌드 0.1 s — §6.8 기본 요청값) |
+| 시선 | e8c20: 시선 대상(Normal 목록1, 주사위 조건 목록1/없으면 목록2, Coin 코인 > 0)의 Heading target = 카메라 위치. 머리 가중치 ID 0/1/5 = 0, PC58 1, PC61 0.4, 그 외 0.5(Heading 은 광장 `plaza/heading.ts` — head_min/max·스프링은 characterlist 값). eabf0 테마 시선: 승자 1명이면 WinA 재생 중 head_aimcont, 아니면 위치 + (0, resultEyePosY, 0); 여러 명이면 후보 첫·끝 위치 중점 X/Z + head_aimcont.Y 평균 |
+| 텔롭 | 일반: 카메라 프레임 ≥ TelopIn 에 한 번(+0x13D). Normal 은 no ≠ −1 이면 winTelop.start(no, place), Coin 은 coinShow(목록2 전원) |
+| 주사위 | 카메라 재생·e8c20 → BGM·SE → genericTelop start·Sleep 1.0·out·Finished·Sleep 1.0 → 후보(목록1, 없으면 목록2, PlayerID 순)에 [1..10] Fisher–Yates(n = 10 → 2, `a[n−1] ↔ a[SyncRandMod(n)]`) → 후보마다 co_jump_dice01(48 프레임) 뒤 눈 표시 → bgm(null)·Sleep 1·Sleep 1 → 후보에게 WinLose(최댓값 1·나머지 0) 기록·비승 LoseA→B → 승자 `pos_pc%02d_fix`(GetOrder) 로 회전 한 번 + co_walk00, `P = P0 + (P1−P0)·(s·0.5)`, s += dt(f32) 동안 s ≤ 2.0 반복(끝점 강제 없음, dt = 1/60 이면 121 표본·마지막 s = 1.9999988) → 승자 WinA→B·테마 박수 → winTelop.start(6) → 5.0초 e8c20·eabf0 → out → Finished |
+
+### 12.5 시험 `web/tools/test_mgresult.ts` [실행]
+
+655/655 통과. 기대값은 이 문서 표(§7.1 슬롯·§7.2 끝값·§6.7 계수)로 시험 안에서 따로 배정밀도 계산한다.
+
+| 절 | 내용 |
+|---|---|
+| 1 패턴 | VS4 1~4승·무, 2VS2, 1VS3, 1VS1(2명), Coin 0~2승·팀, Chara·CharaRank, Boss Normal·Quest(1명·3명)·BossRush, VS4 1명 → −1, PataPata Battle |
+| 2 배치 | 31 모델 슬롯 world 좌표(=§7.1 표, y = −12+12 = 0) · Win1·Win2·Win3(GetOrder 순)·Win4·2VS2 Win4 팀 간격·Draw·Coin(+0x300 합)·쿠파(Size 1 → win2_2, −0.25 옆 방향)·Pos2·Chara(pos_pc00~03)·Boss 3명/1명·Overlook·CameraPattern·PcPosOffset, 허용 1e-5 |
+| 3 카메라 | win2_1 f0·f300 = §7.2(2e-6), f70·f93·f70.5 = §6.7 계수 Cubic, f93 이 끝값 선형 보간과 0.1 넘게 다름, Clamp 앞뒤, 주사위 정적, win4_1 f150, 95개 300프레임·Aim·Cubic/Clamp, near/far override |
+| 4 모션 | Normal·Coin 시작 모션, 시선 대상 4갈래, 주사위 조건(목록1 = 1·JudgeType 0 이면 일반), SetMotion 커스텀, 머리 가중치, 22명 × 9 클립 존재, co_jump_dice01 48 비루프 |
+| 5 주사위 | 순열·SyncRandMod 9회·식 대조, 후보·승자·쓰기, 이동 중점·121 표본·마지막 표본 식 |
+| 6 텔롭 | 7·5·8·−1, 요시 GetOrder 최대 → Telop_2(6), 마리오 → Telop_1, MGEntry ≠ 4 → Telop_1 |
+| 7 에셋 | 명세가 가리키는 파일 전부 존재(404 0), 결과 표가 가리키는 배치 모델·카메라(PC 접미 22명분) 전부 있음, 미리 받기 목록 |
+| 8 경계 | 위 §12.1 import 규칙, logic.ts import 0 |
+
+### 12.6 근사·추정·미구현
+
+| 항목 | 웹 | 근거 상태 |
+|---|---|---|
+| 빛·배경 | 게임 장면(`world`)이 없으면 캐릭터 선택 env(평행광 0.6038·(−30°,0,0) + 반구광) 아래 빈 배경 | [근사] 원본은 미니게임 무대 env·배경 |
+| 3D 주사위 본체·guide·ftrg | 그리지 않음. 눈은 `dice(pid, value)` 로 틀/페이지에 넘김 | 주사위 컴포넌트 state 1→6 시간·트리거 미판독(§11) |
+| 주사위 점프 시간 | 후보마다 co_jump_dice01 길이(48) 만큼 기다린 뒤 눈 표시, 다음 후보 | [추정] 원본은 컴포넌트 state = 6 순차 Wait |
+| LookImmediately | 하지 않음(Heading 스프링이 첫 프레임부터 따라감) | [근사] |
+| 없는 슬롯 행(Boss + win4/draw 모델) | 그 행 플레이어를 놓지 않음(보이지 않음) | [추정] `ed800` 실패 동작 미확인 |
+| MGEntry 순서(Pos2·PC 카메라) | PlayerID 오름차순 | [추정] |
+| 미등록 MGEntry 의 TeamID 갱신 | 입력이 등록 플레이어뿐이라 등록 항목만으로 | 계약 ⑤ |
+| 모델 배율 | 공용 Preview3D 규칙(IndividualScale) 유지. 결과의 `ComActor::SetScale(1,1,1)` 은 액터 배율 되돌림으로 봄 | [추정] |
+| f3800 개인 연산 순서 | `half = w·0.5`, `cursor += d·(half + g)`, `cursor += d·half` (f32) | [추정: f3800 SIMD 순서 미대조] |
+
+### 12.7 시험 페이지·화면 확인 체크 목록
+
+`ui.html?ui=mgresult&auto=1` + URL 옵션(`mgresult_page.ts` 머리): `mgr`=vs4|2vs2|1vs3|1vs1|coin|coin-team|chara|charank|boss|quest|bossrush, `wl`=플레이어별 승패 글자(1 승·0 패·2 무, 글자 수 = 인원), `coin`=5,0,2,0, `pcs`=pc01,pc02,…, `team`=0011, `order`=0123, `camtype`=0|1, `campat`=-1|0|1, `theme`=pc14(+ `judge`=1), `seed`=주사위 씨앗, `off`=x,y,z. 텔롭·코인·주사위 눈·BGM 은 오른쪽 아래 글자 칸, 와이프는 검은 막.
+
+사용자가 볼 것:
+1. `mgr=vs4&wl=1000` — 1P 가 앞 가운데, 나머지 셋이 뒤에 비스듬한 한 줄. 카메라가 멀리서 1P 쪽으로 다가와 멈춘다(약 5초). 90 프레임 무렵 "텔롭 7 WinRightBottom".
+2. `wl=1100`·`wl=1110`·`wl=1111`·`wl=2222` — 승자 줄과 패자 줄이 겹치지 않고 화면 안에 들어오는가, 4승은 140 프레임에 텔롭 5.
+3. `pcs=pc50,pc01,pc02,pc03&wl=1100` — 쿠파가 다른 승자보다 살짝 뒤로(−0.25), 넓은 배치(win2_2)로 바뀌는가.
+4. `mgr=coin&coin=5,0,2,0` — 넷이 한 줄, 코인 > 0 인 1P·3P 만 승리 모션·카메라 시선, 90 프레임에 코인 글자 4줄.
+5. `mgr=2vs2&wl=1111&team=0011` — 2명씩 0.8 간격으로 벌어지는가.
+6. `mgr=1vs1&wl=10` — 둘이 좌우, 승자 승리·패자 패배 모션.
+7. `mgr=chara&wl=1100&theme=pc14` — 주사위 갈래: 후보 둘이 차례로 점프 → 눈 표시 → 큰 쪽이 앞(fix 자리)으로 2초 걸어 나와 승리 모션, 테마 캐릭터가 박수·승자를 봄, 결과 칸에 "주사위 기록".
+8. `camtype=1` — 위에서 내려다보는(be) 카메라·배치로 바뀌는가.
+9. 승리 쪽 캐릭터 머리가 카메라를 따라 돌고(마리오·루이지·와루이지는 안 돎), 깜빡임·눈이 정상인가.
+
+### 12.8 사용자 확인 필요
+
+| 항목 | 지금 결정(원본 쪽) | 다른 선택 |
+|---|---|---|
+| 게임 장면이 없을 때 배경·빛 | 빈 배경 + 캐릭터 선택 빛 | 광장 env·하늘 빌리기, 미니게임별 무대 env 변환 |
+| 3D 주사위 | 안 그림(눈은 2D 로 넘김) | 주사위 컴포넌트 판독 뒤 `result_dice00.fmdb` 변환·연출 |
+| 주사위 점프 간격 | co_jump_dice01 길이(48) 순차 | 원본 캡처로 맞춤 |
+| Boss 표 행의 없는 슬롯 | 그 플레이어 숨김 | 원점에 둠 |
+| 텔롭 Telop_2 판정의 카메라 +0x28 | 카메라 후보 번호로 봄 | `efcd4` 판독 |

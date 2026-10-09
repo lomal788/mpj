@@ -1,0 +1,7098 @@
+{
+ "version": 1,
+ "source": "mgresult_web_assets.py",
+ "clips": [
+  "co_idle00",
+  "co_win00a",
+  "co_win00b",
+  "co_lose00a",
+  "co_lose00b",
+  "co_applause00",
+  "co_walk00",
+  "co_dice_idle00",
+  "co_jump_dice01"
+ ],
+ "env": {
+  "lightColor": [
+   0.60382736,
+   0.60382736,
+   0.60382736
+  ],
+  "lightRotDeg": [
+   -30,
+   0,
+   0
+  ],
+  "near": 0.1,
+  "far": 1000.0,
+  "rtScale": 1.0
+ },
+ "list": {
+  "pattern": [
+   {
+    "Comment": "VS4_1人勝ち",
+    "Pattern": 0,
+    "Rule": "VS4",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "VS4_2人勝ち",
+    "Pattern": 1,
+    "Rule": "VS4",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "VS4_3人勝ち",
+    "Pattern": 2,
+    "Rule": "VS4",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "VS4_4人勝ち",
+    "Pattern": 3,
+    "Rule": "VS4",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "VS4_引き分け",
+    "Pattern": 4,
+    "Rule": "VS4",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 4
+   },
+   {
+    "Comment": "2vs2_2人勝ち",
+    "Pattern": 5,
+    "Rule": "2VS2",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "2vs2_4人勝ち",
+    "Pattern": 6,
+    "Rule": "2VS2",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "2vs2_引き分け",
+    "Pattern": 7,
+    "Rule": "2VS2",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 4
+   },
+   {
+    "Comment": "1vs3_1人勝ち",
+    "Pattern": 8,
+    "Rule": "1VS3",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "1vs3_3人勝ち",
+    "Pattern": 9,
+    "Rule": "1VS3",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "1vs3_4人勝ち",
+    "Pattern": 10,
+    "Rule": "1VS3",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "1vs3_引き分け",
+    "Pattern": 11,
+    "Rule": "1VS3",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 4
+   },
+   {
+    "Comment": "1VS1_1人勝ち",
+    "Pattern": 12,
+    "Rule": "1VS1",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 1,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "1VS1_2人勝ち",
+    "Pattern": 13,
+    "Rule": "1VS1",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 2,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "1VS1_引き分け",
+    "Pattern": 14,
+    "Rule": "1VS1",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 2
+   },
+   {
+    "Comment": "コインMG_1人勝ち",
+    "Pattern": 15,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_2人勝ち",
+    "Pattern": 16,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_3人勝ち",
+    "Pattern": 17,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_4人勝ち",
+    "Pattern": 18,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_4人負け",
+    "Pattern": 19,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 4,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_1人勝ち_チーム",
+    "Pattern": 20,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_2人勝ち_チーム",
+    "Pattern": 21,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_3人勝ち_チーム",
+    "Pattern": 22,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_4人勝ち_チーム",
+    "Pattern": 23,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "コインMG_4人負け_チーム",
+    "Pattern": 24,
+    "Rule": "Coin",
+    "Mode": "None",
+    "Team": 1,
+    "Win": 0,
+    "Lose": 4,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_1人勝ち",
+    "Pattern": 25,
+    "Rule": "Chara",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_2人勝ち",
+    "Pattern": 26,
+    "Rule": "Chara",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_3人勝ち",
+    "Pattern": 27,
+    "Rule": "Chara",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_4人勝ち",
+    "Pattern": 28,
+    "Rule": "Chara",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_引き分け",
+    "Pattern": 29,
+    "Rule": "Chara",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 4
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_1人勝ち",
+    "Pattern": 30,
+    "Rule": "CharaRank",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_2人勝ち",
+    "Pattern": 31,
+    "Rule": "CharaRank",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_3人勝ち",
+    "Pattern": 32,
+    "Rule": "CharaRank",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_4人勝ち",
+    "Pattern": 33,
+    "Rule": "CharaRank",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_引き分け",
+    "Pattern": 34,
+    "Rule": "CharaRank",
+    "Mode": "None",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 4
+   },
+   {
+    "Comment": "ボスMG_通常_1人勝ち",
+    "Pattern": 35,
+    "Rule": "Boss",
+    "Mode": "Normal",
+    "Team": 0,
+    "Win": 1,
+    "Lose": 3,
+    "Draw": 0
+   },
+   {
+    "Comment": "ボスMG_通常_2人勝ち",
+    "Pattern": 36,
+    "Rule": "Boss",
+    "Mode": "Normal",
+    "Team": 0,
+    "Win": 2,
+    "Lose": 2,
+    "Draw": 0
+   },
+   {
+    "Comment": "ボスMG_通常_3人勝ち",
+    "Pattern": 37,
+    "Rule": "Boss",
+    "Mode": "Normal",
+    "Team": 0,
+    "Win": 3,
+    "Lose": 1,
+    "Draw": 0
+   },
+   {
+    "Comment": "ボスMG_通常_4人勝ち",
+    "Pattern": 38,
+    "Rule": "Boss",
+    "Mode": "Normal",
+    "Team": 0,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "ボスMG_通常_引き分け",
+    "Pattern": 39,
+    "Rule": "Boss",
+    "Mode": "Normal",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 0,
+    "Draw": 4
+   },
+   {
+    "Comment": "ボスMG_クエスト_1人勝ち",
+    "Pattern": 40,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": 1,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_2人勝ち",
+    "Pattern": 41,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": 2,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_3人勝ち",
+    "Pattern": 42,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": 3,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_4人勝ち",
+    "Pattern": 43,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": 4,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_1人負け",
+    "Pattern": 44,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": -1,
+    "Lose": 1,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_2人負け",
+    "Pattern": 45,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": -1,
+    "Lose": 2,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_3人負け",
+    "Pattern": 46,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": -1,
+    "Lose": 3,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_クエスト_4人負け",
+    "Pattern": 47,
+    "Rule": "Boss",
+    "Mode": "Quest",
+    "Team": 0,
+    "Win": -1,
+    "Lose": 4,
+    "Draw": -1
+   },
+   {
+    "Comment": "ボスMG_ボスラッシュ_4人勝ち",
+    "Pattern": 48,
+    "Rule": "Boss",
+    "Mode": "BossRush",
+    "Team": 0,
+    "Win": 4,
+    "Lose": 0,
+    "Draw": 0
+   },
+   {
+    "Comment": "ボスMG_ボスラッシュ_4人負け",
+    "Pattern": 49,
+    "Rule": "Boss",
+    "Mode": "BossRush",
+    "Team": 0,
+    "Win": 0,
+    "Lose": 4,
+    "Draw": 0
+   },
+   {
+    "Comment": "パタパタMG_バトル_1人勝ち",
+    "Pattern": 50,
+    "Rule": "PataPata",
+    "Mode": "Battle",
+    "Team": 0,
+    "Win": 1,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "パタパタMG_バトル_2人勝ち",
+    "Pattern": 51,
+    "Rule": "PataPata",
+    "Mode": "Battle",
+    "Team": 0,
+    "Win": 2,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "パタパタMG_バトル_ひきわけ",
+    "Pattern": 52,
+    "Rule": "PataPata",
+    "Mode": "Battle",
+    "Team": 0,
+    "Win": -1,
+    "Lose": -1,
+    "Draw": 2
+   },
+   {
+    "Comment": "パタパタMG_タクシー_2人勝ち",
+    "Pattern": 53,
+    "Rule": "PataPata",
+    "Mode": "Taxi",
+    "Team": 0,
+    "Win": 2,
+    "Lose": -1,
+    "Draw": -1
+   },
+   {
+    "Comment": "パタパタMG_タクシー_2人負け",
+    "Pattern": 54,
+    "Rule": "PataPata",
+    "Mode": "Taxi",
+    "Team": 0,
+    "Win": 0,
+    "Lose": -1,
+    "Draw": -1
+   }
+  ],
+  "list": [
+   {
+    "Comment": "VS4_1人勝ち",
+    "Pattern": 0,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win1",
+    "CamType": "PC",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_win1_1",
+    "Pos_Normal_2": "pos_pc_win1_1",
+    "Pos_Overlook_1": "pos_pc_win1_1be",
+    "Pos_Overlook_2": "pos_pc_win1_1be",
+    "Cam_Normal_1": "result_cam_win1_pc",
+    "Cam_Normal_2": "result_cam_win1_pc",
+    "Cam_Overlook_1": "result_cam_win1be_pc",
+    "Cam_Overlook_2": "result_cam_win1be_pc"
+   },
+   {
+    "Comment": "VS4_2人勝ち",
+    "Pattern": 1,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win2",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win2_1",
+    "Pos_Normal_2": "pos_pc_win2_2",
+    "Pos_Overlook_1": "pos_pc_win2_1be",
+    "Pos_Overlook_2": "pos_pc_win2_2be",
+    "Cam_Normal_1": "result_cam_win2_1",
+    "Cam_Normal_2": "result_cam_win2_2",
+    "Cam_Overlook_1": "result_cam_win2_1be",
+    "Cam_Overlook_2": "result_cam_win2_2be"
+   },
+   {
+    "Comment": "VS4_3人勝ち",
+    "Pattern": 2,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win3",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win3_1",
+    "Pos_Normal_2": "pos_pc_win3_2",
+    "Pos_Overlook_1": "pos_pc_win3_1be",
+    "Pos_Overlook_2": "pos_pc_win3_2be",
+    "Cam_Normal_1": "result_cam_win3_1",
+    "Cam_Normal_2": "result_cam_win3_2",
+    "Cam_Overlook_1": "result_cam_win3_1be",
+    "Cam_Overlook_2": "result_cam_win3_2be"
+   },
+   {
+    "Comment": "VS4_4人勝ち",
+    "Pattern": 3,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 140,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win4",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_win4_1",
+    "Cam_Normal_2": "result_cam_win4_2",
+    "Cam_Overlook_1": "result_cam_win4_1be",
+    "Cam_Overlook_2": "result_cam_win4_2be"
+   },
+   {
+    "Comment": "VS4_引き分け",
+    "Pattern": 4,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "2vs2_2人勝ち",
+    "Pattern": 5,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win2",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win2_1",
+    "Pos_Normal_2": "pos_pc_win2_2",
+    "Pos_Overlook_1": "pos_pc_win2_1be",
+    "Pos_Overlook_2": "pos_pc_win2_2be",
+    "Cam_Normal_1": "result_cam_win2_1",
+    "Cam_Normal_2": "result_cam_win2_2",
+    "Cam_Overlook_1": "result_cam_win2_1be",
+    "Cam_Overlook_2": "result_cam_win2_2be"
+   },
+   {
+    "Comment": "2vs2_4人勝ち",
+    "Pattern": 6,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 140,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win4",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_t_1",
+    "Pos_Normal_2": "pos_pc_win4_t_2",
+    "Pos_Overlook_1": "pos_pc_win4_t_1be",
+    "Pos_Overlook_2": "pos_pc_win4_t_2be",
+    "Cam_Normal_1": "result_cam_win4_t_1",
+    "Cam_Normal_2": "result_cam_win4_t_2",
+    "Cam_Overlook_1": "result_cam_win4_t_1be",
+    "Cam_Overlook_2": "result_cam_win4_t_2be"
+   },
+   {
+    "Comment": "2vs2_引き分け",
+    "Pattern": 7,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "1vs3_1人勝ち",
+    "Pattern": 8,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win1",
+    "CamType": "PC",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_win1_1",
+    "Pos_Normal_2": "pos_pc_win1_1",
+    "Pos_Overlook_1": "pos_pc_win1_1be",
+    "Pos_Overlook_2": "pos_pc_win1_1be",
+    "Cam_Normal_1": "result_cam_win1_pc",
+    "Cam_Normal_2": "result_cam_win1_pc",
+    "Cam_Overlook_1": "result_cam_win1be_pc",
+    "Cam_Overlook_2": "result_cam_win1be_pc"
+   },
+   {
+    "Comment": "1vs3_3人勝ち",
+    "Pattern": 9,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win3",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win3_1",
+    "Pos_Normal_2": "pos_pc_win3_2",
+    "Pos_Overlook_1": "pos_pc_win3_1be",
+    "Pos_Overlook_2": "pos_pc_win3_2be",
+    "Cam_Normal_1": "result_cam_win3_1",
+    "Cam_Normal_2": "result_cam_win3_2",
+    "Cam_Overlook_1": "result_cam_win3_1be",
+    "Cam_Overlook_2": "result_cam_win3_2be"
+   },
+   {
+    "Comment": "1vs3_4人勝ち",
+    "Pattern": 10,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 140,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win4",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_t_1",
+    "Pos_Normal_2": "pos_pc_win4_t_2",
+    "Pos_Overlook_1": "pos_pc_win4_t_1be",
+    "Pos_Overlook_2": "pos_pc_win4_t_2be",
+    "Cam_Normal_1": "result_cam_win4_t_1",
+    "Cam_Normal_2": "result_cam_win4_t_2",
+    "Cam_Overlook_1": "result_cam_win4_t_1be",
+    "Cam_Overlook_2": "result_cam_win4_t_2be"
+   },
+   {
+    "Comment": "1vs3_引き分け",
+    "Pattern": 11,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "1VS1_1人勝ち",
+    "Pattern": 12,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "1VS1_2人勝ち",
+    "Pattern": 13,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "1VS1_引き分け",
+    "Pattern": 14,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "コインMG_1人勝ち",
+    "Pattern": 15,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "コインMG_2人勝ち",
+    "Pattern": 16,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "コインMG_3人勝ち",
+    "Pattern": 17,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "コインMG_4人勝ち",
+    "Pattern": 18,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "コインMG_4人負け",
+    "Pattern": 19,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "コインMG_1人勝ち_チーム",
+    "Pattern": 20,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "コインMG_2人勝ち_チーム",
+    "Pattern": 21,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "コインMG_3人勝ち_チーム",
+    "Pattern": 22,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "コインMG_4人勝ち_チーム",
+    "Pattern": 23,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "コインMG_4人負け_チーム",
+    "Pattern": 24,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Coin",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_t_1",
+    "Pos_Normal_2": "pos_pc_draw_t_2",
+    "Pos_Overlook_1": "pos_pc_draw_t_1be",
+    "Pos_Overlook_2": "pos_pc_draw_t_2be",
+    "Cam_Normal_1": "result_cam_draw_t_1",
+    "Cam_Normal_2": "result_cam_draw_t_2",
+    "Cam_Overlook_1": "result_cam_draw_t_1be",
+    "Cam_Overlook_2": "result_cam_draw_t_2be"
+   },
+   {
+    "Comment": "キャラMG_1人勝ち",
+    "Pattern": 25,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win1",
+    "CamType": "PC",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_chara_1",
+    "Pos_Normal_2": "pos_pc_chara_2",
+    "Pos_Overlook_1": "pos_pc_chara_1",
+    "Pos_Overlook_2": "pos_pc_chara_2",
+    "Cam_Normal_1": "result_cam_chara_pc",
+    "Cam_Normal_2": "result_cam_chara_pc",
+    "Cam_Overlook_1": "result_cam_chara_pc",
+    "Cam_Overlook_2": "result_cam_chara_pc"
+   },
+   {
+    "Comment": "キャラMG_2人勝ち",
+    "Pattern": 26,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Chara",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_chara_dice",
+    "Pos_Normal_2": "pos_pc_chara_dice",
+    "Pos_Overlook_1": "pos_pc_chara_dice",
+    "Pos_Overlook_2": "pos_pc_chara_dice",
+    "Cam_Normal_1": "result_cam_chara_dice",
+    "Cam_Normal_2": "result_cam_chara_dice",
+    "Cam_Overlook_1": "result_cam_chara_dice",
+    "Cam_Overlook_2": "result_cam_chara_dice"
+   },
+   {
+    "Comment": "キャラMG_3人勝ち",
+    "Pattern": 27,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Chara",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_chara_dice",
+    "Pos_Normal_2": "pos_pc_chara_dice",
+    "Pos_Overlook_1": "pos_pc_chara_dice",
+    "Pos_Overlook_2": "pos_pc_chara_dice",
+    "Cam_Normal_1": "result_cam_chara_dice",
+    "Cam_Normal_2": "result_cam_chara_dice",
+    "Cam_Overlook_1": "result_cam_chara_dice",
+    "Cam_Overlook_2": "result_cam_chara_dice"
+   },
+   {
+    "Comment": "キャラMG_4人勝ち",
+    "Pattern": 28,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Chara",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_chara_dice",
+    "Pos_Normal_2": "pos_pc_chara_dice",
+    "Pos_Overlook_1": "pos_pc_chara_dice",
+    "Pos_Overlook_2": "pos_pc_chara_dice",
+    "Cam_Normal_1": "result_cam_chara_dice",
+    "Cam_Normal_2": "result_cam_chara_dice",
+    "Cam_Overlook_1": "result_cam_chara_dice",
+    "Cam_Overlook_2": "result_cam_chara_dice"
+   },
+   {
+    "Comment": "キャラMG_引き分け",
+    "Pattern": 29,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Chara",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_chara_dice",
+    "Pos_Normal_2": "pos_pc_chara_dice",
+    "Pos_Overlook_1": "pos_pc_chara_dice",
+    "Pos_Overlook_2": "pos_pc_chara_dice",
+    "Cam_Normal_1": "result_cam_chara_dice",
+    "Cam_Normal_2": "result_cam_chara_dice",
+    "Cam_Overlook_1": "result_cam_chara_dice",
+    "Cam_Overlook_2": "result_cam_chara_dice"
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_1人勝ち",
+    "Pattern": 30,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win1",
+    "CamType": "PC",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_win1_1",
+    "Pos_Normal_2": "pos_pc_win1_1",
+    "Pos_Overlook_1": "pos_pc_win1_1be",
+    "Pos_Overlook_2": "pos_pc_win1_1be",
+    "Cam_Normal_1": "result_cam_win1_pc",
+    "Cam_Normal_2": "result_cam_win1_pc",
+    "Cam_Overlook_1": "result_cam_win1be_pc",
+    "Cam_Overlook_2": "result_cam_win1be_pc"
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_2人勝ち",
+    "Pattern": 31,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win2",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win2_1",
+    "Pos_Normal_2": "pos_pc_win2_2",
+    "Pos_Overlook_1": "pos_pc_win2_1be",
+    "Pos_Overlook_2": "pos_pc_win2_2be",
+    "Cam_Normal_1": "result_cam_win2_1",
+    "Cam_Normal_2": "result_cam_win2_2",
+    "Cam_Overlook_1": "result_cam_win2_1be",
+    "Cam_Overlook_2": "result_cam_win2_2be"
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_3人勝ち",
+    "Pattern": 32,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win3",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win3_1",
+    "Pos_Normal_2": "pos_pc_win3_2",
+    "Pos_Overlook_1": "pos_pc_win3_1be",
+    "Pos_Overlook_2": "pos_pc_win3_2be",
+    "Cam_Normal_1": "result_cam_win3_1",
+    "Cam_Normal_2": "result_cam_win3_2",
+    "Cam_Overlook_1": "result_cam_win3_1be",
+    "Cam_Overlook_2": "result_cam_win3_2be"
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_4人勝ち",
+    "Pattern": 33,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 140,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win4",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_win4_1",
+    "Cam_Normal_2": "result_cam_win4_2",
+    "Cam_Overlook_1": "result_cam_win4_1be",
+    "Cam_Overlook_2": "result_cam_win4_2be"
+   },
+   {
+    "Comment": "キャラMG_順位決定ルール_引き分け",
+    "Pattern": 34,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_通常_1人勝ち",
+    "Pattern": 35,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win1",
+    "CamType": "PC",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_win1_1",
+    "Pos_Normal_2": "pos_pc_win1_1",
+    "Pos_Overlook_1": "pos_pc_win1_1be",
+    "Pos_Overlook_2": "pos_pc_win1_1be",
+    "Cam_Normal_1": "result_cam_win1_pc",
+    "Cam_Normal_2": "result_cam_win1_pc",
+    "Cam_Overlook_1": "result_cam_win1be_pc",
+    "Cam_Overlook_2": "result_cam_win1be_pc"
+   },
+   {
+    "Comment": "ボスMG_通常_2人勝ち",
+    "Pattern": 36,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win2",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win2_1",
+    "Pos_Normal_2": "pos_pc_win2_2",
+    "Pos_Overlook_1": "pos_pc_win2_1be",
+    "Pos_Overlook_2": "pos_pc_win2_2be",
+    "Cam_Normal_1": "result_cam_win2_1",
+    "Cam_Normal_2": "result_cam_win2_2",
+    "Cam_Overlook_1": "result_cam_win2_1be",
+    "Cam_Overlook_2": "result_cam_win2_2be"
+   },
+   {
+    "Comment": "ボスMG_通常_3人勝ち",
+    "Pattern": 37,
+    "Telop_1": "WinRightBottom",
+    "Telop_2": "WinRightTop",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win3",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win3_1",
+    "Pos_Normal_2": "pos_pc_win3_2",
+    "Pos_Overlook_1": "pos_pc_win3_1be",
+    "Pos_Overlook_2": "pos_pc_win3_2be",
+    "Cam_Normal_1": "result_cam_win3_1",
+    "Cam_Normal_2": "result_cam_win3_2",
+    "Cam_Overlook_1": "result_cam_win3_1be",
+    "Cam_Overlook_2": "result_cam_win3_2be"
+   },
+   {
+    "Comment": "ボスMG_通常_4人勝ち",
+    "Pattern": 38,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Win4",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_win4_1",
+    "Cam_Normal_2": "result_cam_win4_2",
+    "Cam_Overlook_1": "result_cam_win4_1be",
+    "Cam_Overlook_2": "result_cam_win4_2be"
+   },
+   {
+    "Comment": "ボスMG_通常_引き分け",
+    "Pattern": 39,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Draw",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_1人勝ち",
+    "Pattern": 40,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_2人勝ち",
+    "Pattern": 41,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_3人勝ち",
+    "Pattern": 42,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_4人勝ち",
+    "Pattern": 43,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_1人負け",
+    "Pattern": 44,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_2人負け",
+    "Pattern": 45,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_3人負け",
+    "Pattern": 46,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_クエスト_4人負け",
+    "Pattern": 47,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_ボスラッシュ_4人勝ち",
+    "Pattern": 48,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": -0.25,
+    "Pos_Normal_1": "pos_pc_win4_1",
+    "Pos_Normal_2": "pos_pc_win4_2",
+    "Pos_Overlook_1": "pos_pc_win4_1be",
+    "Pos_Overlook_2": "pos_pc_win4_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "ボスMG_ボスラッシュ_4人負け",
+    "Pattern": 49,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos4_Boss",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_draw_1",
+    "Pos_Normal_2": "pos_pc_draw_2",
+    "Pos_Overlook_1": "pos_pc_draw_1be",
+    "Pos_Overlook_2": "pos_pc_draw_2be",
+    "Cam_Normal_1": "result_cam_draw_1",
+    "Cam_Normal_2": "result_cam_draw_2",
+    "Cam_Overlook_1": "result_cam_draw_1be",
+    "Cam_Overlook_2": "result_cam_draw_2be"
+   },
+   {
+    "Comment": "パタパタMG_バトル_1人勝ち",
+    "Pattern": 50,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "パタパタMG_バトル_2人勝ち",
+    "Pattern": 51,
+    "Telop_1": "WinCenterBottom",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "パタパタMG_バトル_ひきわけ",
+    "Pattern": 52,
+    "Telop_1": "Draw",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "パタパタMG_タクシー_2人勝ち",
+    "Pattern": 53,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   },
+   {
+    "Comment": "パタパタMG_タクシー_2人負け",
+    "Pattern": 54,
+    "Telop_1": "None",
+    "Telop_2": "None",
+    "TelopIn": 90,
+    "WinLoseType": "Normal",
+    "PosType": "Pos2",
+    "CamType": "Common",
+    "KoopaOffsetZ": 0,
+    "Pos_Normal_1": "pos_pc_duel_1",
+    "Pos_Normal_2": "pos_pc_duel_1",
+    "Pos_Overlook_1": "pos_pc_duel_1be",
+    "Pos_Overlook_2": "pos_pc_duel_1be",
+    "Cam_Normal_1": "result_cam_duel_1",
+    "Cam_Normal_2": "result_cam_duel_1",
+    "Cam_Overlook_1": "result_cam_duel_1be",
+    "Cam_Overlook_2": "result_cam_duel_1be"
+   }
+  ]
+ },
+ "chara": [
+  {
+   "id": 0,
+   "pc": "pc01",
+   "number": 1,
+   "name": "MARIO",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.6,
+   "resultDrawLoseMotionWidth": 1.5,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0,
+   "resultCameraTargetOffsetY": 0,
+   "resultEyePosY": 1.15,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 1,
+   "pc": "pc02",
+   "number": 2,
+   "name": "LUIGI",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.6,
+   "resultDrawLoseMotionWidth": 1.4,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.15,
+   "resultCameraTargetOffsetY": 0.15,
+   "resultEyePosY": 1.34,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 2,
+   "pc": "pc03",
+   "number": 3,
+   "name": "PEACH",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -45,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 45,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.5,
+   "resultDrawLoseMotionWidth": 1.4,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.15,
+   "resultCameraTargetOffsetY": 0.15,
+   "resultEyePosY": 1.5,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 3,
+   "pc": "pc04",
+   "number": 4,
+   "name": "DAISY",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -45,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 45,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.5,
+   "resultDrawLoseMotionWidth": 1.3,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.15,
+   "resultCameraTargetOffsetY": 0.15,
+   "resultEyePosY": 1.42,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 4,
+   "pc": "pc05",
+   "number": 5,
+   "name": "WARIO",
+   "head": {
+    "head_min_x": -30,
+    "head_min_y": -35,
+    "head_min_z": -5,
+    "head_max_x": 8,
+    "head_max_y": 35,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 2.1,
+   "resultDrawLoseMotionWidth": 1.9,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 1,
+   "resultCameraPositionOffsetY": 0.2,
+   "resultCameraTargetOffsetY": 0.2,
+   "resultEyePosY": 1.23,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 5,
+   "pc": "pc06",
+   "number": 6,
+   "name": "WALUIGI",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.8
+   },
+   "resultWinMotionWidth": 2.1,
+   "resultDrawLoseMotionWidth": 1.65,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 1,
+   "resultCameraPositionOffsetY": 0.4,
+   "resultCameraTargetOffsetY": 0.4,
+   "resultEyePosY": 1.33,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 6,
+   "pc": "pc07",
+   "number": 7,
+   "name": "YOSHI",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.5,
+   "resultDrawLoseMotionWidth": 1.25,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.1,
+   "resultCameraTargetOffsetY": 0.1,
+   "resultEyePosY": 0.88,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 7,
+   "pc": "pc08",
+   "number": 8,
+   "name": "KINOPICO",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.35,
+   "resultDrawLoseMotionWidth": 0.95,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.2,
+   "resultCameraTargetOffsetY": -0.2,
+   "resultEyePosY": 0.64,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 8,
+   "pc": "pc09",
+   "number": 9,
+   "name": "KINOPIO",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.35,
+   "resultDrawLoseMotionWidth": 0.95,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.2,
+   "resultCameraTargetOffsetY": -0.2,
+   "resultEyePosY": 0.66,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 9,
+   "pc": "pc11",
+   "number": 11,
+   "name": "ROSETTA",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -45,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 45,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.7,
+   "resultDrawLoseMotionWidth": 1.2,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.5,
+   "resultCameraTargetOffsetY": 0.5,
+   "resultEyePosY": 1.8,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 10,
+   "pc": "pc12",
+   "number": 12,
+   "name": "DK",
+   "head": {
+    "head_min_x": -30,
+    "head_min_y": -50,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 50,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 2.2,
+   "resultDrawLoseMotionWidth": 1.9,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 1,
+   "resultCameraPositionOffsetY": 0.15,
+   "resultCameraTargetOffsetY": 0.15,
+   "resultEyePosY": 1.3,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 11,
+   "pc": "pc13",
+   "number": 13,
+   "name": "CATHERINE",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.9,
+   "resultDrawLoseMotionWidth": 1.25,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 1,
+   "resultCameraPositionOffsetY": 0.3,
+   "resultCameraTargetOffsetY": 0.3,
+   "resultEyePosY": 1.26,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 12,
+   "pc": "pc14",
+   "number": 14,
+   "name": "PAULINE",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -45,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 45,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.5,
+   "resultDrawLoseMotionWidth": 1.2,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.4,
+   "resultCameraTargetOffsetY": 0.4,
+   "resultEyePosY": 1.57,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 13,
+   "pc": "pc50",
+   "number": 50,
+   "name": "KOOPA",
+   "head": {
+    "head_min_x": -30,
+    "head_min_y": -50,
+    "head_min_z": -5,
+    "head_max_x": 10,
+    "head_max_y": 50,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 2.35,
+   "resultDrawLoseMotionWidth": 2.2,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 1,
+   "resultCameraPositionOffsetY": 0.5,
+   "resultCameraTargetOffsetY": 0.5,
+   "resultEyePosY": 1.52,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 0,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 14,
+   "pc": "pc51",
+   "number": 51,
+   "name": "KURIBO",
+   "head": {
+    "head_min_x": -35,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.6,
+   "resultDrawLoseMotionWidth": 1.25,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.5,
+   "resultCameraTargetOffsetY": -0.5,
+   "resultEyePosY": 0.77,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 15,
+   "pc": "pc52",
+   "number": 52,
+   "name": "HEYHO",
+   "head": {
+    "head_min_x": -15,
+    "head_min_y": -40,
+    "head_min_z": -5,
+    "head_max_x": 8,
+    "head_max_y": 40,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.7,
+   "resultDrawLoseMotionWidth": 1.3,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.4,
+   "resultCameraTargetOffsetY": -0.4,
+   "resultEyePosY": 0.88,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 16,
+   "pc": "pc53",
+   "number": 53,
+   "name": "NOKONOKO",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.5,
+   "resultDrawLoseMotionWidth": 1,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.2,
+   "resultCameraTargetOffsetY": -0.2,
+   "resultEyePosY": 1.2,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 17,
+   "pc": "pc54",
+   "number": 54,
+   "name": "CHOROPOO",
+   "head": {
+    "head_min_x": -20,
+    "head_min_y": -50,
+    "head_min_z": -5,
+    "head_max_x": 8,
+    "head_max_y": 50,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.8,
+   "resultDrawLoseMotionWidth": 1.55,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.4,
+   "resultCameraTargetOffsetY": -0.4,
+   "resultEyePosY": 0.95,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 18,
+   "pc": "pc56",
+   "number": 56,
+   "name": "KOOPA_JR",
+   "head": {
+    "head_min_x": -25,
+    "head_min_y": -50,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 50,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 2,
+   "resultDrawLoseMotionWidth": 1.3,
+   "resultWinMotionSize": 1,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.2,
+   "resultCameraTargetOffsetY": -0.2,
+   "resultEyePosY": 1.1,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 19,
+   "pc": "pc58",
+   "number": 58,
+   "name": "TERESA",
+   "head": {
+    "head_min_x": -40,
+    "head_min_y": -60,
+    "head_min_z": -5,
+    "head_max_x": 20,
+    "head_max_y": 60,
+    "head_max_z": 5,
+    "head_weight": 1
+   },
+   "resultWinMotionWidth": 1.6,
+   "resultDrawLoseMotionWidth": 1.1,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": 0.5,
+   "resultCameraTargetOffsetY": 0.5,
+   "resultEyePosY": 1.3,
+   "resultWinTelop_win2_cam1_normal": 0,
+   "resultWinTelop_win2_cam2_normal": 0,
+   "resultWinTelop_win3_cam1_normal": 0,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 0
+  },
+  {
+   "id": 20,
+   "pc": "pc61",
+   "number": 61,
+   "name": "GABON",
+   "head": {
+    "head_min_x": -10,
+    "head_min_y": -20,
+    "head_min_z": -5,
+    "head_max_x": 10,
+    "head_max_y": 20,
+    "head_max_z": 5,
+    "head_weight": 0.4
+   },
+   "resultWinMotionWidth": 1.6,
+   "resultDrawLoseMotionWidth": 1.2,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.3,
+   "resultCameraTargetOffsetY": -0.3,
+   "resultEyePosY": 0.9,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 1,
+   "resultWinTelop_win2_cam2_overlook": 1,
+   "resultWinTelop_win3_cam1_overlook": 1,
+   "resultWinTelop_win3_cam2_overlook": 1
+  },
+  {
+   "id": 21,
+   "pc": "pc62",
+   "number": 62,
+   "name": "HAKKUN",
+   "head": {
+    "head_min_x": -10,
+    "head_min_y": -50,
+    "head_min_z": -5,
+    "head_max_x": 10,
+    "head_max_y": 50,
+    "head_max_z": 5,
+    "head_weight": 0.5
+   },
+   "resultWinMotionWidth": 1.6,
+   "resultDrawLoseMotionWidth": 1.3,
+   "resultWinMotionSize": 0,
+   "resultDrawLoseMotionSize": 0,
+   "resultCameraPositionOffsetY": -0.2,
+   "resultCameraTargetOffsetY": -0.2,
+   "resultEyePosY": 0.96,
+   "resultWinTelop_win2_cam1_normal": 1,
+   "resultWinTelop_win2_cam2_normal": 1,
+   "resultWinTelop_win3_cam1_normal": 1,
+   "resultWinTelop_win3_cam2_normal": 1,
+   "resultWinTelop_win2_cam1_overlook": 0,
+   "resultWinTelop_win2_cam2_overlook": 0,
+   "resultWinTelop_win3_cam1_overlook": 0,
+   "resultWinTelop_win3_cam2_overlook": 1
+  }
+ ],
+ "pos": {
+  "pos_pc_chara_1": [
+   {
+    "name": "pos_pc_chara_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_fellow",
+    "parent": 0,
+    "T": [
+     -1.3,
+     12,
+     -1.5
+    ],
+    "R": [
+     0,
+     0.8726647,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     3.3864958,
+     12,
+     -4.8
+    ],
+    "R": [
+     0,
+     -0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0.43207252,
+     12,
+     -5.3209443
+    ],
+    "R": [
+     0,
+     0.104719765,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     6.340919,
+     12,
+     -4.2790556
+    ],
+    "R": [
+     0,
+     -0.40142578,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win",
+    "parent": 0,
+    "T": [
+     0.4,
+     12,
+     -0.3
+    ],
+    "R": [
+     0,
+     0.052359883,
+     0
+    ]
+   }
+  ],
+  "pos_pc_chara_2": [
+   {
+    "name": "pos_pc_chara_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_fellow",
+    "parent": 0,
+    "T": [
+     -1.6830223,
+     12,
+     -1.8213938
+    ],
+    "R": [
+     0,
+     0.8726647,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     3.3864958,
+     12,
+     -4.8
+    ],
+    "R": [
+     0,
+     -0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0.43207252,
+     12,
+     -5.3209443
+    ],
+    "R": [
+     0,
+     0.104719765,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     6.340919,
+     12,
+     -4.2790556
+    ],
+    "R": [
+     0,
+     -0.40142578,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win",
+    "parent": 0,
+    "T": [
+     0.4,
+     12,
+     -0.3
+    ],
+    "R": [
+     0,
+     0.052359883,
+     0
+    ]
+   }
+  ],
+  "pos_pc_chara_dice": [
+   {
+    "name": "pos_pc_chara_dice",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc00",
+    "parent": 0,
+    "T": [
+     -0.8442504,
+     12,
+     -4.4949045
+    ],
+    "R": [
+     0,
+     0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc00_fix",
+    "parent": 0,
+    "T": [
+     0.169098,
+     12,
+     -1.6273055
+    ],
+    "R": [
+     0,
+     0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc01",
+    "parent": 0,
+    "T": [
+     1.2643925,
+     12,
+     -4.6979437
+    ],
+    "R": [
+     0,
+     0.017453294,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc01_fix",
+    "parent": 0,
+    "T": [
+     1.3167497,
+     12,
+     -1.6984009
+    ],
+    "R": [
+     0,
+     0.017453294,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc02",
+    "parent": 0,
+    "T": [
+     3.3788369,
+     12,
+     -4.568619
+    ],
+    "R": [
+     0,
+     -0.13962635,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc02_fix",
+    "parent": 0,
+    "T": [
+     2.9613175,
+     12,
+     -1.5978147
+    ],
+    "R": [
+     0,
+     -0.13962635,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc03",
+    "parent": 0,
+    "T": [
+     5.447018,
+     12,
+     -4.110114
+    ],
+    "R": [
+     0,
+     -0.296706,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc03_fix",
+    "parent": 0,
+    "T": [
+     4.0917506,
+     12,
+     -1.3873858
+    ],
+    "R": [
+     0,
+     -0.296706,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_fellow",
+    "parent": 0,
+    "T": [
+     -2.25,
+     12,
+     -2.2
+    ],
+    "R": [
+     0,
+     1.0471977,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_1": [
+   {
+    "name": "pos_pc_draw_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -2.3,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     4.7,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_1be": [
+   {
+    "name": "pos_pc_draw_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -2.3,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     4.7,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_2": [
+   {
+    "name": "pos_pc_draw_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_2be": [
+   {
+    "name": "pos_pc_draw_2be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_t_1": [
+   {
+    "name": "pos_pc_draw_t_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.5
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -2.8,
+     12,
+     -4.5
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     5.2,
+     12,
+     -4.5
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_t_1be": [
+   {
+    "name": "pos_pc_draw_t_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -2.3,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     4.7,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_t_2": [
+   {
+    "name": "pos_pc_draw_t_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -5.05
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -5.05
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -5.05
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_draw_t_2be": [
+   {
+    "name": "pos_pc_draw_t_2be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_duel_1": [
+   {
+    "name": "pos_pc_duel_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_L",
+    "parent": 0,
+    "T": [
+     -1.3,
+     12,
+     -1
+    ],
+    "R": [
+     0,
+     0.20943953,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_R",
+    "parent": 0,
+    "T": [
+     1.3,
+     12,
+     -1
+    ],
+    "R": [
+     0,
+     -0.20943953,
+     0
+    ]
+   }
+  ],
+  "pos_pc_duel_1be": [
+   {
+    "name": "pos_pc_duel_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_L",
+    "parent": 0,
+    "T": [
+     -1.3,
+     12,
+     -1
+    ],
+    "R": [
+     0,
+     0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_R",
+    "parent": 0,
+    "T": [
+     1.3,
+     12,
+     -1
+    ],
+    "R": [
+     0,
+     -0.17453295,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win1_1": [
+   {
+    "name": "pos_pc_win1_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     2.5,
+     12,
+     -4.8
+    ],
+    "R": [
+     0,
+     -0.13962635,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0.010412518,
+     12,
+     -5.048906
+    ],
+    "R": [
+     0,
+     0.06981318,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     4.961753,
+     12,
+     -4.35304
+    ],
+    "R": [
+     0,
+     -0.3490659,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win",
+    "parent": 0,
+    "T": [
+     0,
+     12,
+     0
+    ],
+    "R": [
+     0,
+     0.03490659,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win1_1be": [
+   {
+    "name": "pos_pc_win1_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     2.35,
+     12,
+     -2.25
+    ],
+    "R": [
+     0,
+     -0.30543265,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0,
+     12,
+     -2.64
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     4.32,
+     12,
+     -1.2
+    ],
+    "R": [
+     0,
+     -0.593412,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win",
+    "parent": 0,
+    "T": [
+     0,
+     12,
+     0
+    ],
+    "R": [
+     0,
+     0.03490659,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win2_1": [
+   {
+    "name": "pos_pc_win2_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     3.3864958,
+     12,
+     -4.8
+    ],
+    "R": [
+     0,
+     -0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0.43207252,
+     12,
+     -5.3209443
+    ],
+    "R": [
+     0,
+     0.104719765,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     6.340919,
+     12,
+     -4.2790556
+    ],
+    "R": [
+     0,
+     -0.40142578,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.4235803,
+     12,
+     -0.2
+    ],
+    "R": [
+     0,
+     0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -1.5460352,
+     12,
+     0.14729635
+    ],
+    "R": [
+     0,
+     0.43633235,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.3931959,
+     12,
+     -0.54729635
+    ],
+    "R": [
+     0,
+     -0.087266475,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win2_1be": [
+   {
+    "name": "pos_pc_win2_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     2.35,
+     12,
+     -2.25
+    ],
+    "R": [
+     0,
+     -0.30543265,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0,
+     12,
+     -2.64
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     4.32,
+     12,
+     -1.2
+    ],
+    "R": [
+     0,
+     -0.593412,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.44751775,
+     12,
+     -0.2
+    ],
+    "R": [
+     0,
+     0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -1.5220977,
+     12,
+     0.14729635
+    ],
+    "R": [
+     0,
+     0.43633235,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.4171333,
+     12,
+     -0.54729635
+    ],
+    "R": [
+     0,
+     -0.087266475,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win2_2": [
+   {
+    "name": "pos_pc_win2_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     3.3864958,
+     12,
+     -4.8
+    ],
+    "R": [
+     0,
+     -0.17453295,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     0.43207252,
+     12,
+     -5.3209443
+    ],
+    "R": [
+     0,
+     0.104719765,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     6.340919,
+     12,
+     -4.2790556
+    ],
+    "R": [
+     0,
+     -0.40142578,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.3243633,
+     12,
+     -1.45
+    ],
+    "R": [
+     0,
+     0.13962635,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.1513069,
+     12,
+     -1.1020672
+    ],
+    "R": [
+     0,
+     0.41887906,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.8000333,
+     12,
+     -1.7979327
+    ],
+    "R": [
+     0,
+     -0.13962635,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win2_2be": [
+   {
+    "name": "pos_pc_win2_2be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_center",
+    "parent": 0,
+    "T": [
+     3.487471,
+     12,
+     -2.0250971
+    ],
+    "R": [
+     0,
+     -0.30543265,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_l",
+    "parent": 0,
+    "T": [
+     1.1374712,
+     12,
+     -2.4150972
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose_r",
+    "parent": 0,
+    "T": [
+     5.4574714,
+     12,
+     -0.97509724
+    ],
+    "R": [
+     0,
+     -0.593412,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.46338212,
+     12,
+     -0.36799607
+    ],
+    "R": [
+     0,
+     0.13962635,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.012288,
+     12,
+     -0.020063315
+    ],
+    "R": [
+     0,
+     0.41887906,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.9390523,
+     12,
+     -0.7159288
+    ],
+    "R": [
+     0,
+     -0.13962635,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win3_1": [
+   {
+    "name": "pos_pc_win3_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose",
+    "parent": 0,
+    "T": [
+     4.1,
+     12,
+     -4.25
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.55,
+     12,
+     -0.35
+    ],
+    "R": [
+     0,
+     0.087266475,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -1.4336739,
+     12,
+     -0.07606904
+    ],
+    "R": [
+     0,
+     0.40142578,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.551105,
+     12,
+     -0.424692
+    ],
+    "R": [
+     0,
+     -0.19198623,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win3_1be": [
+   {
+    "name": "pos_pc_win3_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose",
+    "parent": 0,
+    "T": [
+     3.45,
+     12,
+     -2.2
+    ],
+    "R": [
+     0,
+     -0.43633235,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.55,
+     12,
+     -0.35
+    ],
+    "R": [
+     0,
+     0.087266475,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -1.4336739,
+     12,
+     -0.07606904
+    ],
+    "R": [
+     0,
+     0.40142578,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.551105,
+     12,
+     -0.424692
+    ],
+    "R": [
+     0,
+     -0.19198623,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win3_2": [
+   {
+    "name": "pos_pc_win3_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose",
+    "parent": 0,
+    "T": [
+     4.1,
+     12,
+     -4.25
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.4,
+     12,
+     -2.45
+    ],
+    "R": [
+     0,
+     0.087266475,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.0817711,
+     12,
+     -2.132491
+    ],
+    "R": [
+     0,
+     0.3141593,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     2.8992023,
+     12,
+     -2.56827
+    ],
+    "R": [
+     0,
+     -0.22689283,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win3_2be": [
+   {
+    "name": "pos_pc_win3_2be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_lose",
+    "parent": 0,
+    "T": [
+     4.3,
+     12,
+     -1.82
+    ],
+    "R": [
+     0,
+     -0.43633235,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     0.55,
+     12,
+     -0.68
+    ],
+    "R": [
+     0,
+     0.087266475,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -1.9317712,
+     12,
+     -0.36249116
+    ],
+    "R": [
+     0,
+     0.3141593,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     3.0492022,
+     12,
+     -0.79826987
+    ],
+    "R": [
+     0,
+     -0.22689283,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_1": [
+   {
+    "name": "pos_pc_win4_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.3,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     4.7,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_1be": [
+   {
+    "name": "pos_pc_win4_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.3,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     4.7,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_2": [
+   {
+    "name": "pos_pc_win4_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_2be": [
+   {
+    "name": "pos_pc_win4_2be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_t_1": [
+   {
+    "name": "pos_pc_win4_t_1",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.5
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.8,
+     12,
+     -4.5
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     5.2,
+     12,
+     -4.5
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_t_1be": [
+   {
+    "name": "pos_pc_win4_t_1be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -2.3,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     4.7,
+     12,
+     -4
+    ],
+    "R": [
+     0,
+     -0.2792527,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_t_2": [
+   {
+    "name": "pos_pc_win4_t_2",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -5
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -5
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -5
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ],
+  "pos_pc_win4_t_2be": [
+   {
+    "name": "pos_pc_win4_t_2be",
+    "parent": -1,
+    "T": [
+     0,
+     -12,
+     0
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_center",
+    "parent": 0,
+    "T": [
+     1.2,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_l",
+    "parent": 0,
+    "T": [
+     -3.3,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     0.2792527,
+     0
+    ]
+   },
+   {
+    "name": "pos_pc_win_r",
+    "parent": 0,
+    "T": [
+     5.7,
+     12,
+     -4.75
+    ],
+    "R": [
+     0,
+     -0.26179942,
+     0
+    ]
+   }
+  ]
+ },
+ "cams": [
+  "result_cam_chara_1",
+  "result_cam_chara_2",
+  "result_cam_chara_dice",
+  "result_cam_chara_pc01",
+  "result_cam_chara_pc02",
+  "result_cam_chara_pc03",
+  "result_cam_chara_pc04",
+  "result_cam_chara_pc05",
+  "result_cam_chara_pc06",
+  "result_cam_chara_pc07",
+  "result_cam_chara_pc08",
+  "result_cam_chara_pc09",
+  "result_cam_chara_pc11",
+  "result_cam_chara_pc12",
+  "result_cam_chara_pc13",
+  "result_cam_chara_pc14",
+  "result_cam_chara_pc50",
+  "result_cam_chara_pc51",
+  "result_cam_chara_pc52",
+  "result_cam_chara_pc53",
+  "result_cam_chara_pc54",
+  "result_cam_chara_pc56",
+  "result_cam_chara_pc58",
+  "result_cam_chara_pc61",
+  "result_cam_chara_pc62",
+  "result_cam_draw_1",
+  "result_cam_draw_1be",
+  "result_cam_draw_2",
+  "result_cam_draw_2be",
+  "result_cam_draw_t_1",
+  "result_cam_draw_t_1be",
+  "result_cam_draw_t_2",
+  "result_cam_draw_t_2be",
+  "result_cam_duel_1",
+  "result_cam_duel_1be",
+  "result_cam_win1_pc01",
+  "result_cam_win1_pc02",
+  "result_cam_win1_pc03",
+  "result_cam_win1_pc04",
+  "result_cam_win1_pc05",
+  "result_cam_win1_pc06",
+  "result_cam_win1_pc07",
+  "result_cam_win1_pc08",
+  "result_cam_win1_pc09",
+  "result_cam_win1_pc11",
+  "result_cam_win1_pc12",
+  "result_cam_win1_pc13",
+  "result_cam_win1_pc14",
+  "result_cam_win1_pc50",
+  "result_cam_win1_pc51",
+  "result_cam_win1_pc52",
+  "result_cam_win1_pc53",
+  "result_cam_win1_pc54",
+  "result_cam_win1_pc56",
+  "result_cam_win1_pc58",
+  "result_cam_win1_pc61",
+  "result_cam_win1_pc62",
+  "result_cam_win1be_pc01",
+  "result_cam_win1be_pc02",
+  "result_cam_win1be_pc03",
+  "result_cam_win1be_pc04",
+  "result_cam_win1be_pc05",
+  "result_cam_win1be_pc06",
+  "result_cam_win1be_pc07",
+  "result_cam_win1be_pc08",
+  "result_cam_win1be_pc09",
+  "result_cam_win1be_pc11",
+  "result_cam_win1be_pc12",
+  "result_cam_win1be_pc13",
+  "result_cam_win1be_pc14",
+  "result_cam_win1be_pc50",
+  "result_cam_win1be_pc51",
+  "result_cam_win1be_pc52",
+  "result_cam_win1be_pc53",
+  "result_cam_win1be_pc54",
+  "result_cam_win1be_pc56",
+  "result_cam_win1be_pc58",
+  "result_cam_win1be_pc61",
+  "result_cam_win1be_pc62",
+  "result_cam_win2_1",
+  "result_cam_win2_1be",
+  "result_cam_win2_2",
+  "result_cam_win2_2be",
+  "result_cam_win3_1",
+  "result_cam_win3_1be",
+  "result_cam_win3_2",
+  "result_cam_win3_2be",
+  "result_cam_win4_1",
+  "result_cam_win4_1be",
+  "result_cam_win4_2",
+  "result_cam_win4_2be",
+  "result_cam_win4_t_1",
+  "result_cam_win4_t_1be",
+  "result_cam_win4_t_2",
+  "result_cam_win4_t_2be"
+ ],
+ "chars": [
+  {
+   "index": 0,
+   "btn": 0,
+   "pc": "pc01",
+   "label": "im_pc01_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc01/pc01_mario.glb",
+   "motions": "../chara/pc01/motions.json",
+   "anims": [
+    "../chara/pc01/motion/co_idle00.glb",
+    "../chara/pc01/motion/co_win00a.glb",
+    "../chara/pc01/motion/co_win00b.glb",
+    "../chara/pc01/motion/co_lose00a.glb",
+    "../chara/pc01/motion/co_lose00b.glb",
+    "../chara/pc01/motion/co_applause00.glb",
+    "../chara/pc01/motion/co_walk00.glb",
+    "../chara/pc01/motion/co_dice_idle00.glb",
+    "../chara/pc01/motion/co_jump_dice01.glb",
+    "../chara/pc01/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 159,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 129,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 84,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc01_eye_arr_alb_00_b864302bfe02.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 1,
+   "btn": 1,
+   "pc": "pc02",
+   "label": "im_pc02_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc02/pc02_luigi.glb",
+   "motions": "../chara/pc02/motions.json",
+   "anims": [
+    "../chara/pc02/motion/co_idle00.glb",
+    "../chara/pc02/motion/co_win00a.glb",
+    "../chara/pc02/motion/co_win00b.glb",
+    "../chara/pc02/motion/co_lose00a.glb",
+    "../chara/pc02/motion/co_lose00b.glb",
+    "../chara/pc02/motion/co_applause00.glb",
+    "../chara/pc02/motion/co_walk00.glb",
+    "../chara/pc02/motion/co_dice_idle00.glb",
+    "../chara/pc02/motion/co_jump_dice01.glb",
+    "../chara/pc02/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 147,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 125,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 66,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 370,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc02_eye_arr_alb_00_4c1f89ff42cd.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 2,
+   "btn": 2,
+   "pc": "pc03",
+   "label": "im_pc03_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc03/pc03_peach.glb",
+   "motions": "../chara/pc03/motions.json",
+   "anims": [
+    "../chara/pc03/motion/co_idle00.glb",
+    "../chara/pc03/motion/co_win00a.glb",
+    "../chara/pc03/motion/co_win00b.glb",
+    "../chara/pc03/motion/co_lose00a.glb",
+    "../chara/pc03/motion/co_lose00b.glb",
+    "../chara/pc03/motion/co_applause00.glb",
+    "../chara/pc03/motion/co_walk00.glb",
+    "../chara/pc03/motion/co_dice_idle00.glb",
+    "../chara/pc03/motion/co_jump_dice01.glb",
+    "../chara/pc03/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 225,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 89,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 192,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 376,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc03_eye_arr_alb_00_7b331e926551.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 3,
+   "btn": 3,
+   "pc": "pc04",
+   "label": "im_pc04_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc04/pc04_daisy.glb",
+   "motions": "../chara/pc04/motions.json",
+   "anims": [
+    "../chara/pc04/motion/co_idle00.glb",
+    "../chara/pc04/motion/co_win00a.glb",
+    "../chara/pc04/motion/co_win00b.glb",
+    "../chara/pc04/motion/co_lose00a.glb",
+    "../chara/pc04/motion/co_lose00b.glb",
+    "../chara/pc04/motion/co_applause00.glb",
+    "../chara/pc04/motion/co_walk00.glb",
+    "../chara/pc04/motion/co_dice_idle00.glb",
+    "../chara/pc04/motion/co_jump_dice01.glb",
+    "../chara/pc04/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 123,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 64,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 117,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 70,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 96,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc04_eye_arr_alb_00_a389b64a0e85.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 4,
+   "btn": 4,
+   "pc": "pc05",
+   "label": "im_pc05_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc05/pc05_wario.glb",
+   "motions": "../chara/pc05/motions.json",
+   "anims": [
+    "../chara/pc05/motion/co_idle00.glb",
+    "../chara/pc05/motion/co_win00a.glb",
+    "../chara/pc05/motion/co_win00b.glb",
+    "../chara/pc05/motion/co_lose00a.glb",
+    "../chara/pc05/motion/co_lose00b.glb",
+    "../chara/pc05/motion/co_applause00.glb",
+    "../chara/pc05/motion/co_walk00.glb",
+    "../chara/pc05/motion/co_dice_idle00.glb",
+    "../chara/pc05/motion/co_jump_dice01.glb",
+    "../chara/pc05/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 181,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 123,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 70,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 366,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc05_eye_arr_alb_00_b6d6d46e5e1d.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 5,
+   "btn": 5,
+   "pc": "pc06",
+   "label": "im_pc06_name",
+   "scale": 0.85,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc06/pc06_waluigi.glb",
+   "motions": "../chara/pc06/motions.json",
+   "anims": [
+    "../chara/pc06/motion/co_idle00.glb",
+    "../chara/pc06/motion/co_win00a.glb",
+    "../chara/pc06/motion/co_win00b.glb",
+    "../chara/pc06/motion/co_lose00a.glb",
+    "../chara/pc06/motion/co_lose00b.glb",
+    "../chara/pc06/motion/co_applause00.glb",
+    "../chara/pc06/motion/co_walk00.glb",
+    "../chara/pc06/motion/co_dice_idle00.glb",
+    "../chara/pc06/motion/co_jump_dice01.glb",
+    "../chara/pc06/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 155,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 86,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 149,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 386,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc06_eye_arr_alb_00_a25b48ce03b0.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 6,
+   "btn": 6,
+   "pc": "pc07",
+   "label": "im_pc07_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc07/pc07_yoshi.glb",
+   "motions": "../chara/pc07/motions.json",
+   "anims": [
+    "../chara/pc07/motion/co_idle00.glb",
+    "../chara/pc07/motion/co_win00a.glb",
+    "../chara/pc07/motion/co_win00b.glb",
+    "../chara/pc07/motion/co_lose00a.glb",
+    "../chara/pc07/motion/co_lose00b.glb",
+    "../chara/pc07/motion/co_applause00.glb",
+    "../chara/pc07/motion/co_walk00.glb",
+    "../chara/pc07/motion/co_dice_idle00.glb",
+    "../chara/pc07/motion/co_jump_dice01.glb",
+    "../chara/pc07/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 175,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 139,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 78,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 18,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc07_eye_arr_alb_00_809e25084d27.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 7,
+   "btn": 7,
+   "pc": "pc08",
+   "label": "im_pc08_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc08/pc08_kinopico.glb",
+   "motions": "../chara/pc08/motions.json",
+   "anims": [
+    "../chara/pc08/motion/co_idle00.glb",
+    "../chara/pc08/motion/co_win00a.glb",
+    "../chara/pc08/motion/co_win00b.glb",
+    "../chara/pc08/motion/co_lose00a.glb",
+    "../chara/pc08/motion/co_lose00b.glb",
+    "../chara/pc08/motion/co_applause00.glb",
+    "../chara/pc08/motion/co_walk00.glb",
+    "../chara/pc08/motion/co_dice_idle00.glb",
+    "../chara/pc08/motion/co_jump_dice01.glb",
+    "../chara/pc08/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 86,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 123,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 121,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 29,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 66,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c2.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 0.01
+      },
+      {
+       "axis": 1,
+       "color": "c2.x",
+       "param": "material_utility_parameter3",
+       "comp": "y",
+       "k": 0.01
+      }
+     ]
+    },
+    "tint": {
+     "mask": "max(c2.x, c2.z)",
+     "f": "clamp(P2.x, 0.0, 1.0) * c2.z + clamp(P3.x, 0.0, 1.0) * c2.x",
+     "color": [
+      0.025307,
+      0.019837,
+      0.015127
+     ]
+    }
+   }
+  },
+  {
+   "index": 8,
+   "btn": 8,
+   "pc": "pc09",
+   "label": "im_pc09_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc09/pc09_kinopio.glb",
+   "motions": "../chara/pc09/motions.json",
+   "anims": [
+    "../chara/pc09/motion/co_idle00.glb",
+    "../chara/pc09/motion/co_win00a.glb",
+    "../chara/pc09/motion/co_win00b.glb",
+    "../chara/pc09/motion/co_lose00a.glb",
+    "../chara/pc09/motion/co_lose00b.glb",
+    "../chara/pc09/motion/co_applause00.glb",
+    "../chara/pc09/motion/co_walk00.glb",
+    "../chara/pc09/motion/co_dice_idle00.glb",
+    "../chara/pc09/motion/co_jump_dice01.glb",
+    "../chara/pc09/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 131,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 74,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 129,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 29,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c2.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 0.01
+      },
+      {
+       "axis": 1,
+       "color": "c2.x",
+       "param": "material_utility_parameter3",
+       "comp": "y",
+       "k": 0.01
+      }
+     ]
+    },
+    "tint": {
+     "mask": "max(c2.x, c2.z)",
+     "f": "clamp(P2.x, 0.0, 1.0) * c2.z + clamp(P3.x, 0.0, 1.0) * c2.x",
+     "color": [
+      0.025307,
+      0.019837,
+      0.015127
+     ]
+    }
+   }
+  },
+  {
+   "index": 9,
+   "btn": 9,
+   "pc": "pc11",
+   "label": "im_pc11_name",
+   "scale": 0.8,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc11/pc11_rosetta.glb",
+   "motions": "../chara/pc11/motions.json",
+   "anims": [
+    "../chara/pc11/motion/co_idle00.glb",
+    "../chara/pc11/motion/co_win00a.glb",
+    "../chara/pc11/motion/co_win00b.glb",
+    "../chara/pc11/motion/co_lose00a.glb",
+    "../chara/pc11/motion/co_lose00b.glb",
+    "../chara/pc11/motion/co_applause00.glb",
+    "../chara/pc11/motion/co_walk00.glb",
+    "../chara/pc11/motion/co_dice_idle00.glb",
+    "../chara/pc11/motion/co_jump_dice01.glb",
+    "../chara/pc11/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 159,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 100,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 147,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 370,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc11_eye_arr_alb_00_19b126de0922.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 10,
+   "btn": 10,
+   "pc": "pc12",
+   "label": "im_pc12_name",
+   "scale": 0.85,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc12/pc12_dk.glb",
+   "motions": "../chara/pc12/motions.json",
+   "anims": [
+    "../chara/pc12/motion/co_idle00.glb",
+    "../chara/pc12/motion/co_win00a.glb",
+    "../chara/pc12/motion/co_win00b.glb",
+    "../chara/pc12/motion/co_lose00a.glb",
+    "../chara/pc12/motion/co_lose00b.glb",
+    "../chara/pc12/motion/co_applause00.glb",
+    "../chara/pc12/motion/co_walk00.glb",
+    "../chara/pc12/motion/co_dice_idle00.glb",
+    "../chara/pc12/motion/co_jump_dice01.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 192,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 163,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 155,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 192,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc12_eye_arr_alb_00_faedcd2971d7.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false,
+    "lid": {
+     "edge": 0.5078,
+     "x0": [
+      0.38,
+      0.38
+     ],
+     "y0": [
+      -0.33,
+      -0.33
+     ],
+     "xmin": [
+      -0.05,
+      -0.05
+     ],
+     "bottom": 0.8838,
+     "tex": "../chara/tex/pc12_eyelid_arr_alb_00_1c41ba1858c1.png"
+    }
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 11,
+   "btn": 11,
+   "pc": "pc13",
+   "label": "im_pc13_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc13/pc13_catherine.glb",
+   "motions": "../chara/pc13/motions.json",
+   "anims": [
+    "../chara/pc13/motion/co_idle00.glb",
+    "../chara/pc13/motion/co_win00a.glb",
+    "../chara/pc13/motion/co_win00b.glb",
+    "../chara/pc13/motion/co_lose00a.glb",
+    "../chara/pc13/motion/co_lose00b.glb",
+    "../chara/pc13/motion/co_applause00.glb",
+    "../chara/pc13/motion/co_walk00.glb",
+    "../chara/pc13/motion/co_dice_idle00.glb",
+    "../chara/pc13/motion/co_jump_dice01.glb",
+    "../chara/pc13/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 190,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 185,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 101,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 64,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 190,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 300,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc13_eye_alb_d72ac6b1f688.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1280
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.8
+     ],
+     "o": [
+      0.0,
+      0.2
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 12,
+   "btn": 12,
+   "pc": "pc14",
+   "label": "im_pc14_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc14/pc14_pauline.glb",
+   "motions": "../chara/pc14/motions.json",
+   "anims": [
+    "../chara/pc14/motion/co_idle00.glb",
+    "../chara/pc14/motion/co_win00a.glb",
+    "../chara/pc14/motion/co_win00b.glb",
+    "../chara/pc14/motion/co_lose00a.glb",
+    "../chara/pc14/motion/co_lose00b.glb",
+    "../chara/pc14/motion/co_applause00.glb",
+    "../chara/pc14/motion/co_walk00.glb",
+    "../chara/pc14/motion/co_dice_idle00.glb",
+    "../chara/pc14/motion/co_jump_dice01.glb",
+    "../chara/pc14/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 150,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 133,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 74,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 115,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 44,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 140,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc14_eye_alb_537e5ab39b59.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter4",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter4",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 13,
+   "btn": 13,
+   "pc": "pc50",
+   "label": "im_pc50_name",
+   "scale": 0.7,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc50/pc50_koopa.glb",
+   "motions": "../chara/pc50/motions.json",
+   "anims": [
+    "../chara/pc50/motion/co_idle00.glb",
+    "../chara/pc50/motion/co_win00a.glb",
+    "../chara/pc50/motion/co_win00b.glb",
+    "../chara/pc50/motion/co_lose00a.glb",
+    "../chara/pc50/motion/co_lose00b.glb",
+    "../chara/pc50/motion/co_applause00.glb",
+    "../chara/pc50/motion/co_walk00.glb",
+    "../chara/pc50/motion/co_dice_idle00.glb",
+    "../chara/pc50/motion/co_jump_dice01.glb",
+    "../chara/pc50/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 400,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 143,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 84,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 239,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 190,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 400,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc50_eye_alb_6e6a19f7a875.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    2048,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      0.5,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 14,
+   "btn": 14,
+   "pc": "pc51",
+   "label": "im_pc51_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc51/pc51_kuribo.glb",
+   "motions": "../chara/pc51/motions.json",
+   "anims": [
+    "../chara/pc51/motion/co_idle00.glb",
+    "../chara/pc51/motion/co_win00a.glb",
+    "../chara/pc51/motion/co_win00b.glb",
+    "../chara/pc51/motion/co_lose00a.glb",
+    "../chara/pc51/motion/co_lose00b.glb",
+    "../chara/pc51/motion/co_applause00.glb",
+    "../chara/pc51/motion/co_walk00.glb",
+    "../chara/pc51/motion/co_dice_idle00.glb",
+    "../chara/pc51/motion/co_jump_dice01.glb",
+    "../chara/pc51/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 189,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 70,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 99,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 70,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 100,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 32,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 96,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc51_eye_alb_3b5f22c1a1c4.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": true
+   },
+   "albedo": [
+    512,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "z",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter2",
+       "comp": "w",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter2",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 15,
+   "btn": 15,
+   "pc": "pc52",
+   "label": "im_pc52_name",
+   "scale": 0.9,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc52/pc52_heyho.glb",
+   "motions": "../chara/pc52/motions.json",
+   "anims": [
+    "../chara/pc52/motion/co_idle00.glb",
+    "../chara/pc52/motion/co_win00a.glb",
+    "../chara/pc52/motion/co_win00b.glb",
+    "../chara/pc52/motion/co_lose00a.glb",
+    "../chara/pc52/motion/co_lose00b.glb",
+    "../chara/pc52/motion/co_applause00.glb",
+    "../chara/pc52/motion/co_walk00.glb",
+    "../chara/pc52/motion/co_dice_idle00.glb",
+    "../chara/pc52/motion/co_jump_dice01.glb",
+    "../chara/pc52/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 195,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 132,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 119,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 30,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 140,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 16,
+   "btn": 16,
+   "pc": "pc53",
+   "label": "im_pc53_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc53/pc53_nokonoko.glb",
+   "motions": "../chara/pc53/motions.json",
+   "anims": [
+    "../chara/pc53/motion/co_idle00.glb",
+    "../chara/pc53/motion/co_win00a.glb",
+    "../chara/pc53/motion/co_win00b.glb",
+    "../chara/pc53/motion/co_lose00a.glb",
+    "../chara/pc53/motion/co_lose00b.glb",
+    "../chara/pc53/motion/co_applause00.glb",
+    "../chara/pc53/motion/co_walk00.glb",
+    "../chara/pc53/motion/co_dice_idle00.glb",
+    "../chara/pc53/motion/co_jump_dice01.glb",
+    "../chara/pc53/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 220,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 141,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 64,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 141,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 104,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 36,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 160,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 366,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc53_eye_alb_891e5d867764.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 17,
+   "btn": 17,
+   "pc": "pc54",
+   "label": "im_pc54_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc54/pc54_choropoo.glb",
+   "motions": "../chara/pc54/motions.json",
+   "anims": [
+    "../chara/pc54/motion/co_idle00.glb",
+    "../chara/pc54/motion/co_win00a.glb",
+    "../chara/pc54/motion/co_win00b.glb",
+    "../chara/pc54/motion/co_lose00a.glb",
+    "../chara/pc54/motion/co_lose00b.glb",
+    "../chara/pc54/motion/co_applause00.glb",
+    "../chara/pc54/motion/co_walk00.glb",
+    "../chara/pc54/motion/co_dice_idle00.glb",
+    "../chara/pc54/motion/co_jump_dice01.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 100,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 121,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 66,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 99,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 70,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 100,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    2048
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": -1.0
+      },
+      {
+       "axis": 0,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "x",
+       "k": -1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.x",
+       "param": "material_utility_parameter1",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 18,
+   "btn": 18,
+   "pc": "pc56",
+   "label": "im_pc56_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc56/pc56_koopa_jr.glb",
+   "motions": "../chara/pc56/motions.json",
+   "anims": [
+    "../chara/pc56/motion/co_idle00.glb",
+    "../chara/pc56/motion/co_win00a.glb",
+    "../chara/pc56/motion/co_win00b.glb",
+    "../chara/pc56/motion/co_lose00a.glb",
+    "../chara/pc56/motion/co_lose00b.glb",
+    "../chara/pc56/motion/co_applause00.glb",
+    "../chara/pc56/motion/co_walk00.glb",
+    "../chara/pc56/motion/co_dice_idle00.glb",
+    "../chara/pc56/motion/co_jump_dice01.glb",
+    "../chara/pc56/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 104,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 105,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 68,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 117,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 62,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": [
+      {
+       "axis": 1,
+       "color": "c2.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c2.x",
+       "param": "material_utility_parameter2",
+       "comp": "x",
+       "k": 1.0
+      }
+     ]
+    }
+   }
+  },
+  {
+   "index": 19,
+   "btn": 19,
+   "pc": "pc58",
+   "label": "im_pc58_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc58/pc58_teresa.glb",
+   "motions": "../chara/pc58/motions.json",
+   "anims": [
+    "../chara/pc58/motion/co_idle00.glb",
+    "../chara/pc58/motion/co_win00a.glb",
+    "../chara/pc58/motion/co_win00b.glb",
+    "../chara/pc58/motion/co_lose00a.glb",
+    "../chara/pc58/motion/co_lose00b.glb",
+    "../chara/pc58/motion/co_applause00.glb",
+    "../chara/pc58/motion/co_walk00.glb",
+    "../chara/pc58/motion/co_dice_idle00.glb",
+    "../chara/pc58/motion/co_jump_dice01.glb",
+    "../chara/pc58/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 131,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 127,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 104,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    512,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      0.5
+     ],
+     "o": [
+      0.0,
+      0.5
+     ],
+     "terms": [
+      {
+       "axis": 0,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "x",
+       "k": 1.0
+      },
+      {
+       "axis": 1,
+       "color": "c1.z",
+       "param": "material_utility_parameter0",
+       "comp": "y",
+       "k": 1.0
+      }
+     ]
+    },
+    "tint": {
+     "mask": "c2.z",
+     "f": "P2.y",
+     "color": [
+      0.004025,
+      0.004025,
+      0.004777
+     ]
+    }
+   }
+  },
+  {
+   "index": 20,
+   "btn": 20,
+   "pc": "pc61",
+   "label": "im_pc61_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc61/pc61_gabon.glb",
+   "motions": "../chara/pc61/motions.json",
+   "anims": [
+    "../chara/pc61/motion/co_idle00.glb",
+    "../chara/pc61/motion/co_win00a.glb",
+    "../chara/pc61/motion/co_win00b.glb",
+    "../chara/pc61/motion/co_lose00a.glb",
+    "../chara/pc61/motion/co_lose00b.glb",
+    "../chara/pc61/motion/co_applause00.glb",
+    "../chara/pc61/motion/co_walk00.glb",
+    "../chara/pc61/motion/co_dice_idle00.glb",
+    "../chara/pc61/motion/co_jump_dice01.glb",
+    "../chara/pc61/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 157,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 60,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 141,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 80,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 72,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 180,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    },
+    "fcl_blink00": {
+     "frames": 380,
+     "loop": true
+    }
+   },
+   "eye": {
+    "tex": "../chara/tex/pc61_eye_alb_4b11a0c3335e.png",
+    "material": "body_m",
+    "params": [
+     "material_utility_parameter1",
+     "material_utility_parameter0"
+    ],
+    "albedoMask": false,
+    "lid": {
+     "edge": 0.6484,
+     "x0": [
+      0.55,
+      0.55
+     ],
+     "y0": [
+      -0.3,
+      -0.3
+     ],
+     "xmin": [
+      -0.1,
+      -0.1
+     ],
+     "bottom": 0.9692,
+     "tex": "../chara/tex/pc61_eyelid_alb_64f2e2ef63c8.png"
+    }
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  },
+  {
+   "index": 21,
+   "btn": 21,
+   "pc": "pc62",
+   "label": "im_pc62_name",
+   "scale": 1,
+   "cam": [
+    0,
+    0,
+    0
+   ],
+   "fov": 30,
+   "idle": "co_idle00",
+   "lock": null,
+   "glb": "../chara/pc62/pc62_hakkun.glb",
+   "motions": "../chara/pc62/motions.json",
+   "anims": [
+    "../chara/pc62/motion/co_idle00.glb",
+    "../chara/pc62/motion/co_win00a.glb",
+    "../chara/pc62/motion/co_win00b.glb",
+    "../chara/pc62/motion/co_lose00a.glb",
+    "../chara/pc62/motion/co_lose00b.glb",
+    "../chara/pc62/motion/co_applause00.glb",
+    "../chara/pc62/motion/co_walk00.glb",
+    "../chara/pc62/motion/co_dice_idle00.glb",
+    "../chara/pc62/motion/co_jump_dice01.glb",
+    "../chara/pc62/motion/fcl_blink00.glb"
+   ],
+   "clips": {
+    "co_idle00": {
+     "frames": 120,
+     "loop": true
+    },
+    "co_win00a": {
+     "frames": 115,
+     "loop": false
+    },
+    "co_win00b": {
+     "frames": 66,
+     "loop": true
+    },
+    "co_lose00a": {
+     "frames": 105,
+     "loop": false
+    },
+    "co_lose00b": {
+     "frames": 104,
+     "loop": true
+    },
+    "co_applause00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_walk00": {
+     "frames": 40,
+     "loop": true
+    },
+    "co_dice_idle00": {
+     "frames": 90,
+     "loop": true
+    },
+    "co_jump_dice01": {
+     "frames": 48,
+     "loop": false
+    }
+   },
+   "eye": {
+    "tex": null,
+    "material": null,
+    "params": [
+     null,
+     null
+    ],
+    "albedoMask": false
+   },
+   "albedo": [
+    1024,
+    1024
+   ],
+   "body": {
+    "uv": {
+     "s": [
+      1.0,
+      1.0
+     ],
+     "o": [
+      0.0,
+      0.0
+     ],
+     "terms": []
+    }
+   }
+  }
+ ]
+}

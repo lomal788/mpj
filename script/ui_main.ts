@@ -16,6 +16,8 @@ import { mgmetTestValues, runMgmet, type MgmetRun } from './mgmet_page';
 import { partyRuleTestValues, runPartyRule, type PartyRuleRun } from './partyrule_page';
 import { runSetPlayer, type SetPlayerRun } from './setplayer_page';
 import { onlineTestValues, runOnline, type OnlineRun } from './online_page';
+import { runMgResult, type MgResultRun } from './mgresult_page';
+import { runMgScenePage, type MgScenePageRun } from './mgscene_page';
 import { KeyboardPad, padSourcesFor } from './view/input';
 import { appBgm } from './view/bgm';
 import { FLOW_END_FADE } from './view/screenBgm';
@@ -172,6 +174,24 @@ const UIS: UiDef[] = [
     async run(stage, cfg) {
       const r: Mgm01ListRun = await runMgm01List(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
       (window as unknown as { __mgm01list?: Mgm01ListRun }).__mgm01list = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'mgresult',
+    name: '미니게임 결과 무대(3D)',
+    async run(stage, cfg) {
+      const r: MgResultRun = await runMgResult(stage, { params: new URLSearchParams(location.search), onDone: cfg.onDone });
+      (window as unknown as { __mgresult?: MgResultRun }).__mgresult = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'mgscene',
+    name: '미니게임 공용 틀',
+    async run(stage, cfg) {
+      const r: MgScenePageRun = await runMgScenePage(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), muted: cfg.muted, onDone: cfg.onDone });
+      (window as unknown as { __mgscene?: MgScenePageRun }).__mgscene = r;
       return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },

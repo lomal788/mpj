@@ -1,6 +1,6 @@
 # 미니게임 한 판의 바깥 틀 (bq::MinigameScene) — 원본 분석
 
-2026-10-07. 상태: **분석 완료(판독·데이터). 웹 구현 없음, 원본·웹 실행 대조 없음.**
+2026-10-07. 상태: **분석 완료(판독·데이터). 2026-10-09 웹 구현 계약 §12(구현: shell/mgscene). 원본·웹 실행 대조 없음.**
 형식은 `F:/dev/mps/web/docs/분석.txt` 11절 구성. 장면 구현체 상태기계·`SceneBase` 훅 순서·파이버·`MinigameFlow` 한 걸음 구조는
 [../engine/01_core.md](../engine/01_core.md) §5.1~5.5 를 그대로 따르고 다시 쓰지 않는다. 이 문서는 01_core 가 **[미확정]** 으로 남긴
 "MinigameFlow 단계 0~0x12 의 의미"(01_core §5.3·§11)와 그 단계가 쓰는 텔롭·타이머·스킵·엔딩·연습 반복을 채운다.
@@ -392,3 +392,159 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 | SystemCallBack 번호 1·5·6 의 수신자 | [미확정] | `SystemCallBackModule` 등록자 |
 | PlayMode 1·9 와 `UiRetryMenu` | [미확정] | `WorkModule::GetPlayMode` 값 표 |
 | 원본 실행 대조 | 없음 | 원본 캡처(데모 건너뛰기·오프닝 건너뛰기·타이머 30초 표시·설명 화면 반복) |
+
+---
+
+## 12. 웹 구현 계약 (2026-10-09, [mg-scene])
+
+이 절은 §1~§11 판독을 웹 코드로 옮기는 **설계·계약**이다. 구현은 이 절을 따르고, 구현 중 원본과 다른 점이 생기면 이 절을 먼저 고친다.
+결과 3D 무대(minigame_result.md §6.6~6.9·§7)는 [mg-result3d] 담당이고, 여기서는 부르는 계약(§12.8)만 정한다.
+
+### 12.1 추가 판독 (구현에 필요해서 이번에 읽은 것)
+
+기존 C(`core_b5.c`·`ui1801_main.c`·`mgC_main_uitimer*.c`·`mgmcommon_main_vt.c`)를 먼저 읽고, 없던 20함수만 새로 뽑았다:
+`analysis/decomp/mgscene_web1.c`(16: 321go 카운트 `FUN_7100211bc0`, 텔롭 out 끝 `FUN_7100211a04`, MGSound `FUN_71001e4a54`·`FUN_71001e559c`·`TryStartResultSound`·`TryStartWhistle`·`FUN_71001e4f28`·`FUN_71001e5778`·`FUN_71001e4308`, `ComUiGuideSkip::ComUiGuideSkip`, `MgWipeModule::FadeOut/FadeIn`, `MGUiMgr::TimingOut/EntryUi/EntryUiTimer`, 상태 칸 구성 `FUN_710030ddc0`), `mgscene_web2.c`(4: MG BGM 재생 `FUN_71001e4c9c`·`FUN_71001e4af0`, 결과 징글 라벨 `FUN_71001e51e0`, 핸들 재생 `FUN_71001e39a0`).
+
+**정정: 페이드 "1.0초"는 속도다.** `WipeModule::FadeOut(type, f)` 는 `Wipe<종류>_out` 을 재생하고 `AnimationSlot::SetSpeed(f)` 한다 [판독 logic1801_main1.c @0x710029c940]. `wipe.bflyt` 의 `Wipe{Black,White,Loading,CrossFade}_{out,in}` 은 **20프레임** [데이터] → `FadeOut(1.0)` = **20프레임(1/3초)**. §5.1·§6·§7 의 "1.0초"는 모두 이 뜻으로 읽는다. 와이프 종류 = `GetLastUsedWipeType`(이어 쓰기); 이름 Black 0·White 1·CrossFade 2·Loading 3.
+
+| 항목 | 판독 결과 | 근거 |
+|---|---|---|
+| 열거 문자열 표 | `{이름 ptr, 값}` 16 B 쌍. **GameRule**: VS4 0, 2VS2 1, 1VS3 2, 1VS1 3, VS8 4, 1VS7 5, VS30 6, Chara 7, Item 8, Boss 9, Rhythm 10, Busters 11, Athlon 12, AthlonSP 13, Extra 14, None −1. **TimerPos(LytPlace)**: TL 0, TC 1, TR 2, CL 3, CC 4, CR 5, BL 6, BC 7, BR 8. **StatusFace**: Corner 0, Top 2, Bottom 3, Split00_Top 4, Split00_Bottom 5, Split01_Top 6, Split01_Top_Slim 7, Split01_Bottom 8, Split01_Corner 9, Left_Top 10, Right_Top 11, 2vs2_Top 12, 2vs2_Bottom 13, 2vs2_Left_Top 14, 2vs2_Split00_Top 15, 2vs2_Split00_Bottom 16, 2vs2_Split01_Left_Top 17, 2vs2_Split01_Right_Top 18, 2vs2_Split01_Left_Bottom 19, 2vs2_Split01_Right_Bottom 20, 1vs3_Top 21, 1vs3_Bottom 22, 1vs3_Left_Top 23, 1vs1_Top 24, 1vs1_Bottom 25. **In 시점**: Telop 0, AfterTelop 1, Ending 2. **Out 시점**: Telop 0, AfterTelop 1, FadeOut 2. **InstLoop**: Finish 0, Result 1. 문자열 None = −1 | `main.decomp.bin` 0x19d8390~0x19d8740 [실행: 변환] — §4.3·§11 의 "JSON 문자열 열거 ↔ 정수" 닫힘 |
+| MGUiMgr 시점 | `FUN_71002d6cd0(n)`: 등록 UI 중 In 시점 == n 인 것에 MsgMgUiIn. `TimingOut(n)`: Out 시점 == n 인 것에 MsgMgUiOut(n==2 면 즉시 끔 플래그). 신호 자리: In 0 = 단계 7 하위 0(시작 텔롭 직전), In 1 = 단계 7→8, In 2 = 엔딩 3 첫 프레임 / Out 0 = 단계 11 하위 0, Out 1 = 단계 11 텔롭 끝, Out 2 = 엔딩 0 페이드 뒤·결과 무대 준비. `FUN_71002d74e0` = 등록 타이머 전부 Out(종료 타이머 만료 때) | ui1801_main.c 2034~2150, mgscene_web1.c — §11 "MGUiMgr 시점 신호" 닫힘(상태 얼굴·게임 타이머의 In/Out = MGSetting 시점 값) |
+| 시작·종료 텔롭 `ComUiMGTelop` | 레이아웃·첫 애니: 0 `sys_tlp_start_00` "in", 1 `sys_tlp_321go_00` "count", 2 `sys_tlp_finish_00` "in", 3 `sys_tlp_round_00` "inout", 4 `sys_tlp_round_01` "inout", 5 `sys_tlp_win_center_00`, 6 `sys_tlp_win_top_00`(3명 이상 `_01`), 7 `sys_tlp_win_00`(3명 이상 `_01`), 8 `sys_tlp_draw_00`, 9 `sys_tlp_final_attack`(모두 "in"). 상태 `+0x3c`: 0 대기, 1 첫 애니, 2 normal, 3 out, 4 끝. 첫 애니 끝 → (oneshot·"inout" 이면 끝) / 종류 1 이면 카운트 / 아니면 "normal". normal 에서 oneshot 이면 dt 누적 ≥ oneshot 초 → 종류 0·2·8·9 는 "out", 그 밖은 바로 끝. out 끝 → 끝. `Out()` = oneshot 아니고 상태 2 일 때만 "out". `Finished` = 상태 0 또는 4. flag 0(설명 화면)이면 종류 0·1 은 Start 가 바로 상태 4 | ui1801_main.c `Start`·`FUN_7100211768`·`FUN_7100211acc`·`FUN_7100211a04`·`Finished` |
+| 텔롭 글자 | 0 `x_tlp_start`=mg_tl101, 2 `x_tlp_finish`=mg_tl301, 1 `x_text_00`=mg_tl102_count(Number0 3→2→1)·마지막 `x_text_01`=mg_tl102_go, 5~7 한 명: `x_text_name_00`=mg_tl302_name_max2(Text0=PC 이름 라벨)·`x_text_win`=mg_tl302_wins, 여러 명: `x_text_name_0i`=max2(2명)/max4·`x_text_win`=mg_tl302_win(4명 레이아웃이면 `x_text_name_03` 숨김), 8 `x_text_draw`=mg_tl303 | 같음, 문자열 main 0x15c4e26 등 [실행: 변환] |
+| 321go | 상태 1 에서 "count" 끝날 때마다 카운터(+0x5c) 0→1→2→3: 0·1 = 다시 "count"(Number0 2·1), 2 = "go", 3 = 끝(숨김). `IsEndCountdown` = 상태 1 이면 카운터 > 2 (= "go" 를 시작한 뒤 참) | mgscene_web1.c `FUN_7100211bc0`, ui1801 `IsEndCountdown` |
+| 텔롭 소리 | 레이아웃 FX 트리거(`common/ftrg/se_common_layout.ftrg`, 모두 애니 프레임 0): start "in" → SQ_SE_TLP_START + WD_VOI_LOC_SYS_START, finish "in" → SQ_SE_TLP_FINISH + WD_VOI_LOC_SYS_FINISH, draw "in" → WD_VOI_LOC_SYS_DRAW, 321go "count"(번호 n=3,2,1) → SQ_SE_TLP_321GO_n + WD_VOI_LOC_SYS_n, "go" → SQ_SE_TLP_321GO_GO + WD_VOI_LOC_SYS_GO. 코드: 종류 2 Start 가 SQ_SE_MG_FINISH(무음), 승리 Start 가 WD_VOI_LOC_SYS_WINNER(S) + `TryStartResultSound(1, 5)`, 무승부 `TryStartResultSound(1, 8)` | ui_ftrg.py dump [데이터], ui1801 `Start` |
+| 시작 텔롭 Start (`FUN_71002e2e90`) | 종류 0: SetOneshot(0.41667) Start + MGSound 위치 0. 종류 1: Start + MGSound 위치 1. 종류 2: SetOneshot(1.41667) Start. 단계 7 하위 1(텔롭 끝): 종류 1 이면 MGSound 위치 0, `TryStartWhistle(0)`, !P 면 일시정지 허용 | core_b5 + ui1801 `FUN_71002e16c0` |
+| MGSound | 표 `audio/data/mgsound_setting.json` `MgSoundData`(104행, 레코드 0x2B0): `mg_bgm_play_position` scene_start 2·telop_start 0·telop_3 1, `mg_bgm_label`·`mg_bgm_play_offset`(프레임, /60 초 뒤 재생), `mg_bgm_intro_skip`(오프닝 건너뛰면 즉시 재생 + `RegionSequenceJump`), `inst_bgm_label`, `finish_jingle_label/offset`, `result_jingle_play_position`(start 0·telop 1)·`offset`(38 프레임), `whistle_entry_type`(0/1/−1 → `TryStartWhistle(t)` 가 같을 때만 SQ_SE_SYS_WHISTLE). 위치 호출: 단계 3 `(2)`, 시작 텔롭 `(0|1)`. 결과 징글 라벨(`FUN_71001e51e0`): GameRule ∈ {0,1,2,3,7,9} 이고 (시점 0 또는 종류 −1) → 참가자 중 순위 0 이나 승패 1 이 있으면 SM_JIN_MG_WIN, 없으면 SM_JIN_MG_DRAW; 시점 1 이면 종류 5 → WIN, 8 → DRAW; GameRule 14 는 종류 8/첫 참가자 승패 2 → DRAW. 한 장면에 한 번(+0x164) | mgscene_web1·2.c [판독][데이터] |
+| 종료 타이머 `ComUiTimer` | `sys_timer_00`, 그리기 우선 0x8900, 처음 위치 TC(1). 남은 초 감소 = 틱마다 dt(상태 1), ≤0 → 0·상태 3. 표시 = trunc(남은 초) 정수, 자릿수별 `x_num_{n}_{i}` 하나만 보이고 재질 텍스처 SRT ty = 자릿수·0.1. 경고(+0x4c 켬, +0x48 = 5.0초): 정수가 바뀐 프레임에 남은 ≤ 5.0 이면 "countdown" + (보이는 중 상태 2) SQ_SE_SYS_MG_COUNT_TIMER, 0 이 되면 +0x4d. In(false) = "in" → 끝나면 "normal". Out(false) = 남은 > 5 ? "out" : "out_red" | mgC_main_uitimer*.c [판독], 애니 in 19·out 9·out_red 10·countdown 19 프레임 [데이터] |
+| LytPlace 배치 `ComUiBase::SetPlace` | 페인 `x_bd_00`(위치 t, 크기 s)로: 가로 0 왼 → x = −(1920−w)/2 − t.x, 2 오른 → (1920−w)/2 − t.x, 1 가운데 → 0; 세로 3 위 → y = (1080−h)/2 − t.y, 4 아래 → −(1080−h)/2 − t.y, 1 가운데 → 0. 표 `0x15d76a4` = (0,3)(1,3)(2,3)(0,1)(1,1)(2,1)(0,4)(1,4)(2,4) | mgmcommon_main_vt.c @0x710020c8d4 [판독] |
+| 상태 얼굴 `ComUiStatus(0x10, match, place)` | match = GameRule 0~3(그 밖 0). 레이아웃: match 0 → place 1~11 표 [pos4_10, pos4_01, pos4_02, pos4_08, pos4_09, pos4_06, pos4_11, pos4_07, pos4_05, pos4_03, pos4_04][place−1], 그 밖 pos4_00; match 1 → place 13~20 표 [pos22_01, 02, 07, 08, 03, 04, 05, 06][place−13], 그 밖 pos22_00; match 2 → 22 pos13_01, 23 pos13_02, 그 밖 pos13_00; match 3 → 25 pos11_01, 26 pos11_02, 그 밖 pos11_00. 칸 `x_parts_00~03` 을 모두 숨기고 참가자 순서대로 i번째 칸을 보이며 `UiControlStatus` 에 (PlayerID, 종류) 설정. In(false) "in" 상태 0 / Out(false) "out" 상태 2 | ui1801_main.c `FUN_710030d4b8`·`FUN_710030ddc0`·`In/Out`·`SetValue`(종류별 최댓값) [판독] |
+| 건너뛰기 안내 `ComUiGuideSkip` | `sys_guide_pos_00`, 그리기 우선 0x8a00, 칸 9(`x_parts_09`) 의 `x_text_right` = mg_ui501. 입력 = 사람 참가자 bex 트리거 0x3000(+/−) | mgscene_web1.c, core_b5 `FUN_71002e27a0` |
+
+### 12.2 위치와 경계
+
+| 폴더 | 내용 | import 규칙 |
+|---|---|---|
+| `web/script/shell/mgscene/` | **순수 로직**(three·DOM 없음): 장면 흐름·텔롭·타이머·상태 얼굴·와이프·스킵 안내·MGUiMgr·MGSound·엔딩·표·결과 무대 계약 | import 0(같은 폴더만). mgm_common §9.1 셸 경계를 지킨다(core·view·games 금지). 난수·패드는 인터페이스로 받는다 |
+| `web/script/view/mgsceneUi.ts` | 2D 그리기: 로직의 UI 상태 → `view/lyt.ts` LayoutInstance·LytRenderer(텔롭 OTF 글꼴·부품 지원, mg1801 과 같은 재생기) | view 쪽이라 `view/lyt.ts`·`shell/charselect/fontSheet` 사용 가능 |
+| `web/script/view/mgsceneSound.ts` | 소리 사건 → AudioOut(SE·보이스 wav) + `appBgm()`(공용 징글) + 게임 BGM 채널(`BgmChannel`) | |
+| `web/script/mgscene_page.ts` | ui.html 항목 "미니게임 공용 틀": 페이지 루프(FixedClock 1/60, rAF 당 최대 4스텝), 더미 게임 | |
+| `web/script/games/mgdummy/` | 시험용 더미 게임(틀만 확인하는 최소 3D) | |
+| `web/assets/mgscene/` | `ui.json`(레이아웃·애니·텍스트·글꼴 참조·텔롭 OTF), `tables.json`(MGSetting·MGList·MgSound 필요한 열), `sound/`(틀 소리 명세) ← `web/tools/analysis/mgscene_web_assets.py` | 공용 sys_* 그림은 `assets/common/tex`, SQ_SE_SYS_* 는 `assets/common/sound`(common_shared.py), 글꼴은 `assets/font` |
+
+2D 렌더러 선택: 원본 텔롭 글자(`bqfont_telop`)가 **스케일러블 OTF** 라 charselect `render2d`(FFNT 시트 전용)로는 그릴 수 없다. 그래서 mg1801 이 이미 같은 레이아웃(`sys_tlp_start_00`·`sys_tlp_finish_00`)을 그리는 `view/lyt.ts` 를 쓴다(새 렌더러를 만들지 않음). 합성 순서는 광장과 같다: **게임 3D(후처리 포함) → 결과 무대 3D(갈래 A 일 때 게임 3D 대신) → 틀 2D**. 지금 2D 는 lyt.ts 방식(공유 화면 밖 문맥 → HUD 캔버스)이고, 광장식 한 문맥 패스로 옮기는 것은 렌더러가 하나로 모일 때 한다.
+
+### 12.3 게임 쪽이 구현할 인터페이스 (`MgGame`)
+
+원본 훅(§4.2)을 이름 그대로 둔다. **구현하지 않은 bool 훅은 참(진행)** 이다(원본 기반 구현 = 1). 틀은 매 프레임 `update()`(게임 자체 파이버 = 원본 제품 파이버) 다음에 흐름 처리기 하나를 부른다(01_core §5.3).
+
+```ts
+interface MgGame {
+  setup(ctx: MgSceneContext): void;            // 원본 SetupGame/SyncedSetupGame 자리. 설명 화면 반복(단계 18)마다 다시 불린다
+  update?(): void;                             // 원본 제품 파이버: 흐름 처리기보다 먼저, 모든 단계에서 매 프레임
+  cleanup?(): void;                            // 원본 CleanupGame(단계 18)
+  onSetGameSequence?(stage: number): void;  onGameSequenceBefore?(): void;  onGameSequenceAfter?(): void;
+  onThreeMinTimerEnd?(): void;
+  onCharaGameDemoStart?(): boolean; onCharaGameDemo?(): boolean; onCharaGameDemoSkipStart?(): boolean;
+  onCharaGameDemoSkipEnd?(): boolean; onCharaGameDemoEnd?(): boolean;
+  onGameInit?(): boolean;  onGameInstInit?(): boolean;  onGameFirstFade?(): boolean;
+  onGameOpening?(): boolean;  onGameOpeningSkip?(): boolean;  onGameStartBefore?(): boolean;
+  onGameStartTelopBefore?(): boolean;  onGameStart?(): boolean;  onGameStartAfter?(): boolean;
+  onGameMain?(): boolean;  onGameEnd?(): boolean;  onGameFinish?(): boolean;  onGameFinishAfter?(): boolean;
+  onEndingInit?(result: MgResultApi): boolean;  // 여기까지 순위·승패·코인을 써야 결과가 맞다
+  onGameEndingFade?(): boolean;  onGameEndingChangeCut?(): boolean;  onGameEndingBefore?(): boolean;
+  onGameEnding?(): boolean;  onGameEndingAfter?(): boolean;  onGameEndingSkip?(): boolean;
+  onGameLastFade?(): boolean;  onGameExit?(): boolean;
+}
+```
+
+`MgSceneContext`(틀이 게임에 주는 것): `mgId`, `players: MgPlayer[]`(pid·chara 'pcNN'·isCom·teamId·order + 기록 rank·winLose·coin), `rand`(동기 난수 `u32()`·`mod(n)`), `pad(pid)`(이번 프레임 now/down, bex 비트가 아니라 NPAD 비트), `frame`, `dt`(f32 1/60), `isInst`(P), `setStartTelop(type, user?)`·`setFinishTelop(type, user?)`(−1..4, 3·4 는 `user: {start(), finished()}`), `setGameOpeningSkipEnable(b)`·`isOpeningSkip()`·`endOpeningSkipWait()`(+0x26A), `setRank/setWinLose/setCoin(pid, v)`, `createWinTelop(pids, place?)`·`createDrawTelop(place?)`·`winTelopFinished()`·`winTelopOut()`, `status`(상태 얼굴: `setValue(pid,v)`·`setRank(pid,r)`), `sound.se(label)`·`sound.whistle(type)`, `fading()`.
+
+`MgResultApi`(OnEndingInit 인자 = MGResult 핸들): `setPlayer(pid)`(갈래 A 확정), `setModel/setMotion/setCameraType/setCameraPattern/setCameraNearZ/setCameraFarZ/setPcPosOffset/setThemeChara`(minigame_result §4.1).
+
+**프레임 게이트(온라인 자리).** 틀의 고정 스텝은 `FrameGate { canStep(frame): boolean; inputsFor(frame): MgPadInput[] }` 로 감싼다(`shell/mgscene/gate.ts`). 기본 `localGate` = 항상 진행·로컬 패드 그대로(지금 동작). `canStep` 이 거짓이면 그 프레임은 **게임 update·흐름 단계·종료 타이머·텔롭/와이프/상태 상태기계(단계 진행을 정하므로 로직)·동기 난수 소비가 모두 멈추고**, 페이지의 그리기(3D·2D)만 계속 돈다. 게임은 패드를 `ctx.pad(pid)`(게이트가 준 입력)로만 받고, 시드는 틀이 받아 `ctx.seed`·`ctx.rand`(동기 난수)로 넘긴다 — 게임이 `Math.random`·URL·로컬 패드를 직접 읽지 않는다. **온라인 구현은 [../engine/12_online_sync.md](../engine/12_online_sync.md) §6.2 를 따른다.**
+
+**짧은 게임용 도우미** `simpleMgGame({ setup, step, isFinished, result, render? })`: `onGameMain` = step 후 isFinished, `onEndingInit` = `result()` 의 순위·승패·코인을 기록(+ `useResultStage` 면 setPlayer), `onGameEnding` = 승자 텔롭(CreateWinTelop/CreateDrawTelop)을 띄우고 끝날 때까지 기다린 뒤 Out. 결과 형식 `{ ranks: number[](0=1위), winLose: (−1|0|1|2)[], coins: number[] }` — 원본 PlayerWork 값 그대로.
+
+### 12.4 틀이 처리하는 것
+
+| 무엇 | 원본 | 웹 모듈 |
+|---|---|---|
+| 단계 0~0x13, 하위 상태, 바뀐 프레임 규칙, 강제 종료, 설명 화면 반복(4프레임) | §5·§6.1·§6.7 | `flow.ts` |
+| 오프닝 건너뛰기(안내 표시·+/− 입력·SQ_SE_SYS_SKIP·소리 그룹 0.3 s 정지·페이드아웃 후 훅 참 대기) | §6.3, 12.1 | `flow.ts` + `ui.ts`(안내) |
+| 시작/종료 텔롭 −1..4, 승리·무승부 텔롭 5~8 | §6.5, 12.1 | `telop.ts` |
+| 종료 타이머(180/300/600, 30초부터 표시, 5초 경고음, 만료 → 단계 10) | §6.4, 12.1 | `timer.ts` |
+| 상태 얼굴(MGSetting StatusFace, In/Out 시점) | 12.1 | `status.ts` + `ui.ts`(MGUiMgr) |
+| 페이드(와이프 20프레임·속도 1.0) | 12.1 정정 | `ui.ts`(Wipe) |
+| BGM·징글·SE 시점(MgSound 표) | 12.1 | `sound.ts`(사건만 낸다) |
+| 엔딩 5단계(갈래 B), 결과 무대 호출(갈래 A) | §6.6, minigame_result §3 | `flow.ts` |
+| 표(MGSetting·MGList·MgSound) | §4.3 | `tables.ts` |
+| 미리 받기 목록 | loader_manager.md | `index.ts` `mgscenePrefetch(ui)` → `mgscene/ui.json`·tables·sound.json·그림·텔롭 글꼴 경로(assets/ 기준) |
+
+같은 프레임 안 순서 [추정: 컴포넌트 틱과 장면 파이버의 순서 미판독, mg0912 §147 과 같은 미확정]: ① 패드 읽기 → ② `game.update()` → ③ MGSound 지연 재생 갱신(`FUN_71001e4308`) → ④ `OnGameSequenceBefore` → 흐름 처리기 1개 → `OnGameSequenceAfter` → ⑤ UI 틱(와이프·텔롭·타이머·상태·안내의 애니 1프레임 진행과 끝 판정) → ⑥ 그리기.
+
+### 12.5 단계 시간 (원본 값, 시험 기대값)
+
+애니 진행 규칙(웹, [추정 §12.11]): 매 UI 틱에 컴포넌트 판정(끝 검사·다음 애니 시작)을 먼저 하고 그 뒤 모든 애니를 1 진행한다 → 길이 N 의 애니는 시작 틱부터 N 틱 진행한 뒤의 틱에서 끝으로 본다. 단계가 바뀐 프레임에는 새 처리기를 부르지 않으므로(01_core §5.3) **애니 하나를 기다리는 단계의 길이 = 1(다음 프레임에 처리기 시작) + N + 1(끝을 본 다음 프레임에 처리기가 판단)**.
+
+| 무엇 | 원본 값 | 단계 길이(시험 `test_mgscene` 고정값) |
+|---|---|---|
+| 첫 페이드(단계 3) / 마지막 페이드(16) / 건너뛴 뒤 페이드인(6) | 와이프 in·out 20 프레임(속도 1.0) | 1 + 20 + 1 = 22 |
+| START 텔롭(단계 7) | in 20 + normal oneshot 0.41667 초 = **25 틱**(f32 1/60 누적) + out 15 | 1 + 60 + 1 = 62 |
+| FINISH 텔롭(단계 11) | in 20 + oneshot 1.41667 초 = **86 틱**(f32 누적이 85 틱에서 0x3FB55555 에 모자람) + out 15, EndSeqWaitTime 0 | 1 + 121 + 1 = 123 |
+| 321go | count 60 × 3 → "go" 시작 틱에 IsEndCountdown | 판정 181 틱째 |
+| 오프닝 건너뛰기 | + 누른 프레임에 SQ_SE_SYS_SKIP·페이드아웃 20 | 누른 프레임 → 단계 5 까지 21 |
+| 설명 화면 재시작(18) | 하위 0 한 프레임 + 1.0 누적 4 | 18 → 1 까지 5 프레임 |
+| 종료 타이머 | 남은 ≤ 30 초 In(in 19), 경고 ≤ 5.0 초 정수 바뀔 때 countdown 19 + SQ_SE_SYS_MG_COUNT_TIMER(4·3·2·1·0 = 5번, 60 프레임 간격), 만료 → OnThreeMinTimerEnd → 10, Out = out_red 10 | |
+| MG BGM | scene_start + `mg_bgm_play_offset`/60 초(dt 빼기) | mg0101 614 → 단계 3 첫 프레임 + 614 프레임. 오프닝이 짧으면 종료 텔롭의 정지가 대기 중 BGM 을 해제해 울리지 않는다(원본 FUN_71001e4f28 그대로) |
+| 결과 징글 | `result_jingle_play_offset` 38 프레임 | 갈래 A `resultSound` 뒤 38 프레임. 갈래 B·EndingChangeCut 0 이면 기반 클래스는 징글을 내지 않는다(엔딩 2 의 TryStartResultSound 는 컷 전환일 때만, 승리 텔롭의 시점 1 호출은 표 104행 모두 시점 0 이라 불발) |
+| 상태 얼굴 | in 9 / out 5 | 갈래 B·EndingChangeCut 0 이면 엔딩 0(TimingOut 2)을 건너뛰므로 Out FadeOut 상태 얼굴은 엔딩 동안 남는다 |
+
+### 12.6 사건(로직 → 화면·소리)
+
+로직은 프레임마다 `events` 를 낸다: `{k:'stage', from, to}`, `{k:'se', label}`, `{k:'voice', label}`, `{k:'bgm', label, region?}`(지연은 로직이 센다), `{k:'bgmStop', fadeSec}`, `{k:'jingle', label}`, `{k:'groupStop', groups, sec}`, `{k:'vib', label}`, `{k:'save'}`, `{k:'pauseEnable', on}`, `{k:'exit'}`, `{k:'resultStage', input}`. UI 는 사건이 아니라 **상태**(`ui.layouts: 레이아웃 인스턴스별 {layout, visible, anim, frame, texts, paneVisible, paneTexSrt, pos, order}`)로 넘긴다 — 화면은 그 상태를 그대로 그린다(mg1801 state.fade 와 같은 방식).
+
+### 12.7 원본과 다른 점 / 근사
+
+- 온라인 스킵 전파(네트 전송)는 없다(오프라인 틀). 진동(`bv_vib_sys_skip`)은 사건만 낸다.
+- `RegionSequenceJump`(오프닝을 건너뛰면 BGM 을 `REG_SEQ_MAIN` 리전 시퀀스로) — 리전 시퀀스 이름은 BFSTM 리전 표(REG_INTRO_00~02·REG_MAIN_00·01)에 없다(fspj 쪽 미판독). 웹은 사건에 리전 이름만 싣고 처음부터 재생한다 [근사]. MG BGM 반복 = REG_MAIN_01 구간 [추정].
+- 소리 재생: MG BGM·결과 징글은 원본처럼 핸들이 따로다(`view/mgsceneSound.ts` 의 BgmChannel 두 개). 틀에 들어올 때 앱 BGM(`appBgm()`, 메뉴 곡)은 0.2 초로 멈춘다.
+- 일시정지 메뉴(`UiPause`)·재시도 메뉴(`UiRetryMenu`)·세이브(플레이 횟수·통계)는 사건만 내고 화면은 없다(범위 밖).
+- `UiControlStatus`(상태 칸 안쪽 그리기 — 얼굴·순위·점수 칸 표시 규칙)는 판독하지 않았다. 얼굴 = `face_128_pcNN^u`(UiControlStatusFace 규칙, mg1801 과 같음), 점수 = `x_text_score`, 순위 = `x_text_rank_00` [근사].
+- 캐릭터 데모(단계 0)는 흐름만 있고 데모 연출은 게임 훅에 맡긴다.
+
+### 12.8 결과 3D 무대 호출 계약 ([mg-result3d] 와 합의, SHARED.md `>> [mg-scene]`)
+
+타입 = `shell/mgscene/resultContract.ts`(import 0). 무대 = `shell/mgresult/`(그쪽 소유) `createResultStage(input, host): Promise<ResultStage>`, `resultStagePrefetch(input): string[]`.
+- 입력 `ResultStageInput` = { mgId, gameRule, isCoin, isChara, judgeType, boardMode, playMode, players[{pid, chara, order, teamId, isCom, winLose, rank, coin}](SetPlayer 한 사람만), opts(Set 계열), rand() }.
+- 호스트 `ResultStageHost` = { gl(THREE.WebGLRenderer, unknown 으로 넘김), fade(dir, speed)·fading(), winTelop{start(no, place), out(), finished()}, coinShow(pid, coin), se, bgm, resultSound(no), uiTimingOut(n), url }.
+- 출력 `ResultStage` = { step()(1/60 = 파이버 Wait 1번), done, render()(3D만), dispose() }.
+- 틀: 단계 13 에서 `OnEndingInit` 참 + 등록 1명 이상 → 무대 생성(비동기: 준비될 때까지 단계 13 에 머문다), 매 프레임 step → done 이면 14 → 16. 무대 팩토리가 없거나 만들기 실패면 갈래 B(엔딩 5단계)로 넘어가고 `console.warn`.
+
+### 12.9 시험 (`tools/test_mgscene.ts`, 노드)
+
+단계 전이 순서·프레임 수(일반·건너뛰기·설명 화면 반복·타이머 만료·InstLoop Result), 텔롭·타이머·SE·BGM 사건 프레임, 결과 갈래 A(가짜 무대)·B, 더미 게임 처음부터 끝까지, 표 열거 변환, 경계(import 0) 검사.
+
+### 12.10 mg1801 연결 계획
+
+mg1801 로직(`games/mg1801/logic/game.ts`)은 이미 MinigameFlow 8~13 을 자기 안에 갖고, 1~7 은 PREROLL 대기로 대신한다. 틀 위로 올리는 순서:
+1. (위험 없음) 표·열거·텔롭 모델을 mg1801 view 가 import 해서 자기 START/FINISH 상태기계를 대신 — 시험 `test_mg1801` 의 텔롭 프레임 비교로 확인.
+2. mg1801 로직을 `MgGame` 훅으로 나눈다: 8 OnGameStartAfter, 9 OnGameMain, 10 OnGameEnd, 11 OnGameFinish, 12 OnGameEndingBefore, 13 OnGameEnding(리듬 기반 RmMgSceneBase 이름 그대로). PREROLL 을 틀의 1~7(첫 페이드 20·시작 텔롭)로 바꾸면 BGM·박자 시작 프레임이 바뀌므로 `test_mg1801` 의 기대 프레임을 원본 근거로 다시 정해야 한다.
+3. 리듬 장면은 시작 텔롭·결과 점수판을 RmMgSceneBase 가 직접 띄우므로 결과는 갈래 B 그대로 간다.
+→ 2 단계는 기존 시험의 기대값을 바꾸는 일이라 이번에는 하지 않는다.
+
+### 12.11 사용자 확인 필요 (이 절)
+
+| 항목 | 정한 것(원본 쪽) | 이유 |
+|---|---|---|
+| 와이프 종류 | Black(0) | `GetLastUsedWipeType` 이어 쓰기 — 프리 플레이 목록에서 들어올 때 마지막 종류 미판독 |
+| 컴포넌트 틱과 흐름 파이버 순서 | 흐름 처리기 → UI 틱 | 미판독(12.4) |
+| `UiControlStatus` 안쪽 | 얼굴·점수·순위 근사 | 미판독(12.7) |
+| 2D 렌더러 | lyt.ts(HUD 겹) | 텔롭 OTF 글꼴 때문(12.2). 광장식 한 문맥은 다음 단계 |
+| 스킵 안내 In/Out 애니 | `sys_guide_00` 의 in/out | `ComUiGuideBase::In` 미판독 |
+| 게이트가 닫힌 동안의 2D 애니 | 틀의 텔롭·와이프·타이머·상태 얼굴 애니도 멈춘다 | 이 애니들의 끝이 단계 진행(텔롭 끝 → 호루라기·본편)을 정하므로 로직으로 둠. "로컬 연출로 계속 돌릴 2D 애니"가 따로 필요하면 표시 전용 층을 더해야 한다 |
+| 설명 화면(P) 페이드·BGM | 와이프는 즉시 끝, 단계 3 첫 회에 `free_play_inst_bgm_label`(SM_BGM_MGINST) 재생 | 원본 P 는 MgWipeModule 이 SystemCallBack 으로 설명 화면에 넘기고 설명 BGM 도 그쪽 몫(범위 밖) |
+| 승리 텔롭 여러 명 정렬 | PlayerID 오름차순 | `FUN_7100215d00` 정렬 키 미판독 |
+| 상태 얼굴 In/Out 등록 | MGSetting StatusIn/Out 으로 MGUiMgr 에 등록 | ComUiStatus 생성자가 EntryUi 를 부르는 줄은 보지 못함(데이터 41행이 Telop/FadeOut 인 것과 맞음) |
+| 더미 게임 기본값 | mg0101 표 행, 오프닝 660 프레임(MG BGM 614 프레임 지연이 들리도록), 본편 480 프레임 | 원본 게임이 아닌 시험용 |

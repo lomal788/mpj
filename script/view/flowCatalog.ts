@@ -144,6 +144,11 @@ export async function flowKeys(bundle: string, json: FlowJson, o: FlowCatalogOpt
     const c = s.chars.find((x) => x.pc === pc) ?? s.chars[0];
     return [['plaza/player/spec.json', 'json'], ...charaFiles('plaza/player/', c)];
   }
+  if (bundle.startsWith('mgresult:')) {
+    const s = await json<{ chars: CharaSpec[] }>('mgresult/spec.json');
+    const c = s.chars.find((x) => x.pc === bundle.slice('mgresult:'.length));
+    return [['mgresult/spec.json', 'json'], ...(c ? charaFiles('mgresult/', c) : [])];
+  }
   if (bundle.startsWith('bgm:')) {
     const j = await json<{ bgm: Record<string, { file: string }> }>(BGM_SPEC_PATH);
     const e = j.bgm[bundle.slice(4)];

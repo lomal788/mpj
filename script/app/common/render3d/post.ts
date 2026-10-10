@@ -16,6 +16,7 @@
  */
 import * as THREE from 'three';
 import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
+import { DofApprox, NeutralBloomApprox } from './postApprox';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 
 export interface PostParams {
@@ -35,6 +36,16 @@ export interface PostParams {
   lut?: string | null;
   vignetteIntensity?: number;
   vignetteAspect?: number;
+  dof?: boolean;
+  dofFocalDistance?: number;
+  dofFocalRegion?: number;
+  dofNearTransition?: number;
+  dofFarTransition?: number;
+}
+
+export interface PostOptions {
+  mode?: 'stage' | 'neutralBloomApprox';
+  fxaaDigits?: number;
 }
 
 export interface PostRegion {
@@ -151,12 +162,12 @@ void main() {
   gl_FragColor = vec4(mix(lutSlice(g, b0), lutSlice(g, b1), bp - b0), 1.0);
 }`;
 
-function patchFxaa(src: string, p: PostParams): string {
+function patchFxaa(src: string, p: PostParams, digits = 5): string {
   if (!/float _ContrastThreshold = [0-9.]+;/.test(src)) throw new Error('three FXAAShader 형식이 바뀌었다(stage3d post.ts)');
   return src
-    .replace(/float _ContrastThreshold = [0-9.]+;/, `float _ContrastThreshold = ${p.fxaaEdgeThresholdMin.toFixed(5)};`)
-    .replace(/float _RelativeThreshold = [0-9.]+;/, `float _RelativeThreshold = ${p.fxaaEdgeThreshold.toFixed(5)};`)
-    .replace(/float _SubpixelBlending = [0-9.]+;/, `float _SubpixelBlending = ${p.fxaaSubPixel.toFixed(5)};`);
+    .replace(/float _ContrastThreshold = [0-9.]+;/, `float _ContrastThreshold = ${p.fxaaEdgeThresholdMin.toFixed(digits)};`)
+    .replace(/float _RelativeThreshold = [0-9.]+;/, `float _RelativeThreshold = ${p.fxaaEdgeThreshold.toFixed(digits)};`)
+    .replace(/float _SubpixelBlending = [0-9.]+;/, `float _SubpixelBlending = ${p.fxaaSubPixel.toFixed(digits)};`);
 }
 
 const mat = (fs: string, uniforms: Record<string, THREE.IUniform>, defines: Record<string, number> = {}): THREE.ShaderMaterial =>
@@ -173,6 +184,10 @@ export class PostChain {
   private readonly size = new THREE.Vector2(-1, -1);
   private readonly scene: THREE.WebGLRenderTarget;
   private readonly ldr: THREE.WebGLRenderTarget;
+  private readonly tmp: THREE.WebGLRenderTarget;
+  private readonly dof = new DofApprox();
+  private readonly approx: NeutralBloomApprox | null;
+  private readonly saved: { toneMapping: THREE.ToneMapping; exposure: number };
   private down: THREE.WebGLRenderTarget[] = [];
   private up: THREE.WebGLRenderTarget[] = [];
   private readonly quad = new FullScreenQuad();
@@ -191,10 +206,14 @@ export class PostChain {
 
   constructor(
     private readonly gl: THREE.WebGLRenderer,
-    private readonly p: PostParams,
+    private p: PostParams,
     lut: THREE.Texture | null,
+    private readonly options: PostOptions = {},
   ) {
-    this.scene = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, depthBuffer: true, samples: 0 });
+    this.saved = { toneMapping: gl.toneMapping, exposure: gl.toneMappingExposure };
+    this.approx = options.mode === 'neutralBloomApprox' ? new NeutralBloomApprox() : null;
+    this.scene = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, depthBuffer: true, samples: 0, ...(p.dof ? { depthTexture: new THREE.DepthTexture(1, 1) } : {}) });
+    this.tmp = hdr(1, 1);
     this.ldr = new THREE.WebGLRenderTarget(1, 1, { depthBuffer: false });
     this.first = mat(FIRST_FS, { src: { value: null }, exposure: { value: p.exposure }, threshold: { value: p.bloomThreshold }, invSpread5: { value: 1 / p.bloomSpread ** 5 }, clip: { value: p.bloomClip }, region: { value: new THREE.Vector4(0, 0, 1, 1) } });
     this.downMat = mat(DOWN_FS, { src: { value: null }, texel: { value: new THREE.Vector2() }, spread: { value: p.bloomSpread }, clip: { value: p.bloomClip } });
@@ -220,11 +239,47 @@ export class PostChain {
     this.fxaaMat = new THREE.ShaderMaterial({
       uniforms: THREE.UniformsUtils.clone(FXAAShader.uniforms),
       vertexShader: FXAAShader.vertexShader,
-      fragmentShader: patchFxaa(FXAAShader.fragmentShader, p),
+      fragmentShader: patchFxaa(FXAAShader.fragmentShader, p, options.fxaaDigits),
       depthTest: false,
       depthWrite: false,
     });
-    gl.toneMapping = THREE.NoToneMapping;
+    gl.toneMapping = this.approx ? THREE.NeutralToneMapping : THREE.NoToneMapping;
+    this.configure(p);
+  }
+
+  configure(p: PostParams): void {
+    this.p = p;
+    if (p.dof && !this.scene.depthTexture) {
+      this.scene.depthTexture = new THREE.DepthTexture(this.scene.width, this.scene.height);
+      this.scene.dispose();
+    }
+    this.dof.configure(p);
+    this.approx?.configure(this.gl, p);
+    const f = this.first.uniforms;
+    f.exposure.value = p.exposure;
+    f.threshold.value = p.bloomThreshold;
+    f.invSpread5.value = 1 / p.bloomSpread ** 5;
+    f.clip.value = p.bloomClip;
+    this.downMat.uniforms.spread.value = p.bloomSpread;
+    this.downMat.uniforms.clip.value = p.bloomClip;
+    const u = this.comp.uniforms;
+    u.useBloom.value = p.bloom ? 1 : 0;
+    u.intensity.value = p.bloomIntensity;
+    u.exposure.value = p.exposure;
+    u.exposureOffset.value = p.exposureOffset;
+    u.outputScale.value = p.outputScale;
+    u.vignette.value = p.vignetteIntensity ?? 0;
+    u.vignetteAspect.value = p.vignetteAspect ?? 1;
+    const tone = p.tonemapType ?? 3;
+    if (this.comp.defines.TONEMAP !== tone) {
+      this.comp.defines.TONEMAP = tone;
+      this.comp.needsUpdate = true;
+    }
+    const fs = patchFxaa(FXAAShader.fragmentShader, p, this.options.fxaaDigits);
+    if (fs !== this.fxaaMat.fragmentShader) {
+      this.fxaaMat.fragmentShader = fs;
+      this.fxaaMat.needsUpdate = true;
+    }
   }
 
   /** 시험 훅: 블룸·LUT 켜고 끄기(원본 값 대조용) */
@@ -239,10 +294,13 @@ export class PostChain {
     this.size.copy(s);
     this.scene.setSize(s.x, s.y);
     this.ldr.setSize(s.x, s.y);
+    this.tmp.setSize(s.x, s.y);
+    this.dof.resize(s.x, s.y);
+    this.approx?.resize(s.x, s.y);
     for (const t of [...this.down, ...this.up]) t.dispose();
     const w0 = Math.max(1, s.x >> 1);
     const h0 = Math.max(1, s.y >> 1);
-    const n = Math.min(Math.floor(Math.log2(Math.max(w0, h0))), 5) + 1;
+    const n = this.approx ? 0 : Math.min(Math.floor(Math.log2(Math.max(w0, h0))), 5) + 1;
     this.mips.n = n;
     this.down = Array.from({ length: n }, (_, i) => hdr(Math.max(1, w0 >> i), Math.max(1, h0 >> i)));
     this.up = Array.from({ length: n }, (_, i) => hdr(Math.max(1, w0 >> i), Math.max(1, h0 >> i)));
@@ -264,38 +322,49 @@ export class PostChain {
     this.resize();
     gl.setRenderTarget(this.scene);
     gl.render(scene, camera);
-    const n = this.mips.n;
-    if (this.p.bloom && n > 0) {
-      this.first.uniforms.src.value = this.scene.texture;
-      this.pass(this.first, this.down[0]);
-      for (let i = 1; i < n; i++) {
-        const src = this.down[i - 1];
-        this.downMat.uniforms.src.value = src.texture;
-        this.downMat.uniforms.texel.value.set(1 / src.width, 1 / src.height);
-        this.pass(this.downMat, this.down[i]);
-      }
-      let low = this.down[n - 1];
-      for (let k = n - 2; k >= 0; k--) {
-        const u = this.upMat.uniforms;
-        u.cur.value = this.down[k].texture;
-        u.low.value = low.texture;
-        u.lowTexel.value.set(1 / low.width, 1 / low.height);
-        u.a.value = k === 0 ? 7 / 9 : 2 / 3;
-        u.tent.value = k >= 2 ? 1 : 0;
-        this.pass(this.upMat, this.up[k]);
-        low = this.up[k];
-      }
-      this.comp.uniforms.bloom.value = n > 1 ? this.up[0].texture : this.down[0].texture;
+    let src = this.scene;
+    if (this.p.dof && (camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
+      this.dof.input(this.scene, camera as THREE.PerspectiveCamera);
+      this.pass(this.dof.material, this.tmp);
+      src = this.tmp;
     }
-    this.comp.uniforms.scene.value = this.scene.texture;
+    if (this.approx) {
+      this.approx.render(gl, src, this.p.fxaa ? this.ldr : this.out, this.comp.uniforms.useBloom.value > 0.5);
+    } else {
+      const n = this.mips.n;
+      if (this.p.bloom && n > 0) {
+        this.first.uniforms.src.value = src.texture;
+        this.pass(this.first, this.down[0]);
+        for (let i = 1; i < n; i++) {
+          const src = this.down[i - 1];
+          this.downMat.uniforms.src.value = src.texture;
+          this.downMat.uniforms.texel.value.set(1 / src.width, 1 / src.height);
+          this.pass(this.downMat, this.down[i]);
+        }
+        let low = this.down[n - 1];
+        for (let k = n - 2; k >= 0; k--) {
+          const u = this.upMat.uniforms;
+          u.cur.value = this.down[k].texture;
+          u.low.value = low.texture;
+          u.lowTexel.value.set(1 / low.width, 1 / low.height);
+          u.a.value = k === 0 ? 7 / 9 : 2 / 3;
+          u.tent.value = k >= 2 ? 1 : 0;
+          this.pass(this.upMat, this.up[k]);
+          low = this.up[k];
+        }
+        this.comp.uniforms.bloom.value = n > 1 ? this.up[0].texture : this.down[0].texture;
+      }
+      this.comp.uniforms.scene.value = src.texture;
+      this.pass(this.comp, this.p.fxaa ? this.ldr : this.out);
+    }
     if (this.p.fxaa) {
-      this.pass(this.comp, this.ldr);
       this.fxaaMat.uniforms.tDiffuse.value = this.ldr.texture;
       this.pass(this.fxaaMat, this.out);
-    } else this.pass(this.comp, this.out);
+    }
   }
 
   private renderRegion(scene: THREE.Scene, camera: THREE.Camera, r: PostRegion): void {
+    if (this.approx || this.p.dof) throw new Error('Approx post does not support region rendering');
     const gl = this.gl;
     const out = r.target;
     const sc = r.scissor;
@@ -370,14 +439,17 @@ export class PostChain {
       for (const m of ms) s.add(new THREE.Mesh(geo, m));
       return s;
     };
-    const mid: THREE.Material[] = [this.first, this.downMat, this.upMat];
-    if (this.p.fxaa) mid.push(this.comp);
+    const approx = this.approx?.compileMaterials(gl);
+    const output = approx?.output ?? this.comp;
+    const mid: THREE.Material[] = approx?.mid ?? [this.first, this.downMat, this.upMat];
+    if (this.p.dof) mid.push(this.dof.material);
+    if (this.p.fxaa) mid.push(output);
     const jobs: Promise<unknown>[] = [];
     try {
       gl.setRenderTarget(this.ldr);
       jobs.push(gl.compileAsync(group(mid), cam));
       gl.setRenderTarget(null);
-      jobs.push(gl.compileAsync(group([this.p.fxaa ? this.fxaaMat : this.comp]), cam));
+      jobs.push(gl.compileAsync(group([this.p.fxaa ? this.fxaaMat : output]), cam));
     } finally {
       gl.setRenderTarget(prev);
     }
@@ -385,7 +457,15 @@ export class PostChain {
   }
 
   dispose(): void {
+    if (this.approx) {
+      this.gl.toneMapping = this.saved.toneMapping;
+      this.gl.toneMappingExposure = this.saved.exposure;
+    }
+    this.scene.depthTexture?.dispose();
     this.scene.dispose();
+    this.tmp.dispose();
+    this.dof.dispose();
+    this.approx?.dispose();
     this.ldr.dispose();
     for (const t of [...this.down, ...this.up]) t.dispose();
     this.first.dispose();

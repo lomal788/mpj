@@ -1,5 +1,5 @@
 /**
- * 공용 무대 재질 조명 설정 — mg1801 view/material.ts 를 셸 경계(mgm_common.md §9.1)에 맞게 복사·이식한 것.
+ * 공용 무대·mg1801 재질 조명 설정 — 장면별 옵션·로더를 주입한다(render_common.md).
  * glb 재질 extras.fres(원본 forward_plus 재질의 옵션·renderInfo·파라미터·샘플러 원값, 03_graphics.md 7.3)를 읽어
  * 원본이 켜는 조명 기능만 three 재질에 옮긴다. 식은 three 표준 BRDF 근사다.
  *
@@ -39,8 +39,18 @@ export interface TexEntry {
 }
 
 export interface IblSet {
+  /** PMREM 으로 거른 반사 큐브 */
   rad: THREE.Texture;
+  /** 확산 큐브(원본 irr 그대로) */
   irr: THREE.CubeTexture | null;
+}
+
+export interface MaterialOptions {
+  surfaceMode?: 'full' | 'lightingOnlyApprox';
+  lightingKey?: string;
+  texture?: (path: string) => Promise<THREE.Texture>;
+  hdrTexture?: (path: string) => Promise<THREE.Texture>;
+  hdrCube?: (paths: string[]) => Promise<THREE.CubeTexture>;
 }
 
 export interface IblShare {
@@ -68,6 +78,7 @@ export function slotTexture(f: Fres, slot: string): string | null {
 
 const LIGHTS_MAPS_IBL = /#if defined\( USE_ENVMAP \) && defined\( STANDARD \) && defined\( ENVMAP_TYPE_CUBE_UV \)\s*iblIrradiance \+= getIBLIrradiance\( geometryNormal \);\s*#endif/;
 
+/** three lights_fragment_maps 의 PMREM 확산을 원본 irr 큐브(또는 없음)로 바꾼 것 */
 const LIGHTS_MAPS_IRR = (() => {
   const src = THREE.ShaderChunk.lights_fragment_maps;
   if (!LIGHTS_MAPS_IBL.test(src)) throw new Error('three lights_fragment_maps 형식이 바뀌었다(stage3d material.ts)');
@@ -84,6 +95,7 @@ const LIGHTS_MAPS_IRR = (() => {
 
 const DIR_HEAD = '#if ( NUM_DIR_LIGHTS > 0 ) && defined( RE_Direct )';
 
+/** three lights_fragment_begin 에서 평행광 블록만 뺀 것(NUM_DIR_LIGHTS 는 three 가 글자 그대로 숫자로 바꾸므로 #define 으로 덮을 수 없다) */
 const LIGHTS_BEGIN_NO_DIRECT = (() => {
   const src = THREE.ShaderChunk.lights_fragment_begin;
   if (!src.includes(DIR_HEAD)) throw new Error('three lights_fragment_begin 형식이 바뀌었다(stage3d material.ts)');
@@ -246,6 +258,7 @@ export class MaterialSetup {
   private readonly pmrem: THREE.PMREMGenerator;
   private readonly owned: THREE.Texture[] = [];
   private readonly managed = new WeakSet<THREE.Texture>();
+  /** PMREM 결과 렌더 타깃 — 텍스처만 풀면 프레임버퍼가 남는다 */
   private readonly targets: THREE.WebGLRenderTarget[] = [];
   common: IblSet | null = null;
   globals: StageGlobals | null = null;
@@ -260,17 +273,19 @@ export class MaterialSetup {
   constructor(
     private readonly assets: AssetSource,
     gl: THREE.WebGLRenderer,
-    private readonly index: Record<string, TexEntry>,
+    protected readonly index: Record<string, TexEntry>,
     private readonly share?: IblShare,
+    private readonly options: MaterialOptions = {},
   ) {
     this.pmrem = share?.pmrem ?? new THREE.PMREMGenerator(gl);
     this.cubes = share?.cubes ?? new Map();
+    this.fetchTexture = options.texture ?? null;
   }
 
   async loadIbl(common: [string, string], chara: [string, string] | null): Promise<void> {
     const [c, h] = await Promise.all([this.ibl(common[0], common[1]), chara ? this.ibl(chara[0], chara[1]) : Promise.resolve(null)]);
     this.common = c;
-    this.chara = h ?? c;
+    this.chara = this.options.surfaceMode === 'lightingOnlyApprox' ? h : h ?? c;
   }
 
   private cubeFiles(name: string): string[] | null {
@@ -285,15 +300,17 @@ export class MaterialSetup {
       p = (async () => {
         const radFiles = this.cubeFiles(rad);
         if (!radFiles) return null;
-        const loader = new HDRCubeTextureLoader();
-        const cube = await loader.loadAsync(radFiles.map((f) => this.assets.url(`tex/${f}`)));
+        const load = (files: string[]): Promise<THREE.CubeTexture> => this.options.hdrCube
+          ? this.options.hdrCube(files.map((f) => `tex/${f}`))
+          : new HDRCubeTextureLoader().loadAsync(files.map((f) => this.assets.url(`tex/${f}`)));
+        const cube = await load(radFiles);
         const target = this.pmrem.fromCubemap(cube);
         cube.dispose();
         if (!this.share) this.targets.push(target);
         let irrCube: THREE.CubeTexture | null = null;
         const irrFiles = irr ? this.cubeFiles(irr) : null;
         if (irrFiles) {
-          irrCube = await loader.loadAsync(irrFiles.map((f) => this.assets.url(`tex/${f}`)));
+          irrCube = await load(irrFiles);
           if (!this.share) this.owned.push(irrCube);
         }
         return { rad: target.texture, irr: irrCube };
@@ -306,6 +323,7 @@ export class MaterialSetup {
     return p;
   }
 
+  /** 2D 텍스처(라이트맵·셰이더 그래프 입력). glTF 와 같이 UV 원점 = 이미지 왼쪽 위(flipY false) */
   texture(name: string): Promise<THREE.Texture | null> {
     let p = this.textures.get(name);
     if (!p) {
@@ -313,7 +331,7 @@ export class MaterialSetup {
         const e = this.index[name];
         if (!e || e.cube || !e.files.length) return null;
         const url = this.assets.url(`tex/${e.files[0]}`);
-        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : this.fetchTexture ? await this.fetchTexture(`tex/${e.files[0]}`) : await loadTexture(url);
+        const t = e.files[0].endsWith('.hdr') ? await (this.options.hdrTexture ? this.options.hdrTexture(`tex/${e.files[0]}`) : new HDRLoader().loadAsync(url)) : this.fetchTexture ? await this.fetchTexture(`tex/${e.files[0]}`) : await loadTexture(url);
         if (this.fetchTexture && !e.files[0].endsWith('.hdr')) this.managed.add(t);
         t.flipY = false;
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
@@ -337,6 +355,7 @@ export class MaterialSetup {
     return tex ? { tex, snorm: /SNORM/.test(e?.format ?? '') } : null;
   }
 
+  /** 국소 반사 큐브(재질 슬롯 local_specular_texturecube) */
   localRad(name: string): Promise<THREE.Texture | null> {
     return this.ibl(name, null).then((s) => s?.rad ?? null);
   }
@@ -350,6 +369,7 @@ export class MaterialSetup {
     };
   }
 
+  /** root 아래 메시 재질을 원본 옵션대로 설정한다. 이미 한 재질은 건너뛰고, 메시 그림자 표시는 매번 맞춘다 */
   async prepare(root: THREE.Object3D, modelName?: string): Promise<void> {
     const jobs: Promise<void>[] = [];
     root.traverse((o) => {
@@ -360,16 +380,20 @@ export class MaterialSetup {
         let m = mats[mi];
         const f = fresOf(m);
         if (!f) continue;
-        if (opt(f, 'refraction_enable') === '1' && (m as StdMat).isMeshStandardMaterial && !(m as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial && !this.prepared.has(m)) {
+        if (this.options.surfaceMode !== 'lightingOnlyApprox' && opt(f, 'refraction_enable') === '1' && (m as StdMat).isMeshStandardMaterial && !(m as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial && !this.prepared.has(m)) {
           m = toPhysical(m as StdMat);
           if (Array.isArray(mesh.material)) mesh.material[mi] = m;
           else mesh.material = m;
         }
         mesh.castShadow = Number(f.renderInfo?.render_info_draw_shadowmap?.[0] ?? 0) >= 1;
         mesh.receiveShadow = opt(f, 'receive_shadow') === '1';
-        if (drawnBeforeCapture(f)) mesh.renderOrder = CAPTURE_ORDER;
+        if (this.options.surfaceMode !== 'lightingOnlyApprox' && drawnBeforeCapture(f)) mesh.renderOrder = CAPTURE_ORDER;
         if (this.prepared.has(m) || !(m as StdMat).isMeshStandardMaterial) continue;
         this.prepared.add(m);
+        if (this.options.surfaceMode === 'lightingOnlyApprox') {
+          jobs.push(this.setup(m as StdMat, f));
+          continue;
+        }
         const mp = initParams(m, f);
         if (opt(f, 'texture_srt0') === '1') patchSrt0(m as StdMat, mp);
         let activeGraph: GraphDef | undefined;
@@ -412,7 +436,7 @@ export class MaterialSetup {
     }
     let sdw: THREE.Texture | null = null;
     const sdwName = slotTexture(f, 'shadow_texture2d');
-    if (sdwName && !noDirect) {
+    if (this.options.surfaceMode !== 'lightingOnlyApprox' && sdwName && !noDirect) {
       sdw = await this.texture(sdwName);
       if (sdw) {
         sdw.colorSpace = THREE.NoColorSpace;
@@ -426,10 +450,14 @@ export class MaterialSetup {
       const t = name ? await this.localRad(name) : null;
       if (t) {
         m.envMap = t;
-        if (opt(f, 'specular_ibl_normalization_enable') === '1') m.envMapIntensity = (name && (this.index[name] as TexEntry & { specNorm?: number })?.specNorm) || 1;
+        if (this.options.surfaceMode !== 'lightingOnlyApprox' && opt(f, 'specular_ibl_normalization_enable') === '1') m.envMapIntensity = (name && (this.index[name] as TexEntry & { specNorm?: number })?.specNorm) || 1;
       }
     }
     this.patch(m, noDirect, irr, sdw, uv);
+    if (this.options.surfaceMode === 'lightingOnlyApprox') {
+      m.needsUpdate = true;
+      return;
+    }
     if (opt(f, 'mul_vertex_base_color') === '1' && opt(f, 'shader_graph') !== '1') patchVertexColor(m, Number(opt(f, 'mul_vertex_base_color_index') ?? 0));
     m.fog = opt(f, 'fog') === '1';
     this.blend(m, opt(f, 'state_type'), f);
@@ -481,10 +509,11 @@ export class MaterialSetup {
     }
   }
 
+  /** 셰이더 패치(평행광 끔·확산 IBL 교체). 다른 담당이 건 onBeforeCompile 은 먼저 부른 뒤 이어서 고친다 */
   private patch(m: StdMat, noDirect: boolean, irr: THREE.CubeTexture | null, sdw: THREE.Texture | null, uv: number): void {
     const prev = m.onBeforeCompile;
     const prevKey = m.customProgramCacheKey;
-    const key = `mpj-stage3d-light:${noDirect ? 1 : 0}:${irr ? 1 : 0}:${sdw ? uv + 1 : 0}`;
+    const key = `${this.options.lightingKey ?? 'mpj-stage3d-light'}:${noDirect ? 1 : 0}:${irr ? 1 : 0}${this.options.surfaceMode === 'lightingOnlyApprox' ? '' : `:${sdw ? uv + 1 : 0}`}`;
     const uvName = 'vMpjSdwUv';
     m.onBeforeCompile = (sh, r) => {
       prev.call(m, sh, r);

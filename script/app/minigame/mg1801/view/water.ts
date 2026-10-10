@@ -19,7 +19,7 @@
  */
 import * as THREE from 'three';
 import type { Assets } from '../../../../view/assets';
-import type { MaterialSetup } from './material';
+import type { MaterialSetup } from '@app/common/render3d/material';
 
 interface FmabJson {
   materialAnims: { frames: number; loop: boolean; materials: Record<string, { params: Record<string, Record<string, number | number[]>> }> }[];

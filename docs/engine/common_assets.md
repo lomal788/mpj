@@ -86,6 +86,7 @@
 
 ---
 
+[데이터][설계] 공용 그림을 쓰는 원본 UI 부품·템플릿 정리본: [ui_parts_catalog.md](ui_parts_catalog.md).
 ## 4. 공용 폴더 구조 [설계]
 
 ```

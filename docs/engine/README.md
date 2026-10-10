@@ -19,3 +19,8 @@
 | [common_assets.md](common_assets.md) | 시스템 효과음·공용 UI 그림 공용 폴더 `assets/common/{sound,tex}/`(SQ_SE_SYS_*·sys_* 전부 + 여러 화면이 같이 쓰던 것 한 벌, 화면 명세가 가리킴) | 구현 |
 | [16_save.md](16_save.md) | 공용 저장(Save): 원본 SaveDataMgr 칸·SaveData 배치·SaveRequest/IsProcessing 수명, 웹 코어 `lib/save`(import 0)·어댑터 `lib/save-localstorage`(키 `mpj.save` 하나)·mpj 연결 `view/save.ts`, 마이그레이션·메시지 속도 | 구현 |
 | [17_actor.md](17_actor.md) | ComActor·ActorParam·ComActorPad·JumpCalculator·CPU override·접지/벽/carry·충돌/캐릭터 연결, import 0 코어·어댑터 설계 | 판독 통합·일부 미확정 |
+| [19_motion_input.md](19_motion_input.md) | [설계] Converter·파형·입력원·FrameGate 결정성 계약 | 분석 정리본 |
+| [render_unify.md](render_unify.md) | 앱 수명 WebGL 렌더러 통합·화면별 패스·준비/복구 계약 | 분석·설계, 실행 미확인 |
+| [ui_parts_catalog.md](ui_parts_catalog.md) | /dev 원본 UI 부품·템플릿, 8 SARC·486 layout·화면 조합·칸·애니·준비도 | [데이터][설계] 정리 |
+| [18_scene_work.md](18_scene_work.md) | SceneBase 수명·Call/Return/Exchange·7행 모드표·Work 소유권·장면 계약/요청 API | 판독 통합·stack/offset 일부 미확정 |
+| [20_camera_runtime.md](20_camera_runtime.md) | 카메라 수학·FSNB·추종·흔들림 통합, import 0 코어·three 어댑터 설계 | 판독 재사용·미확정 12개 |

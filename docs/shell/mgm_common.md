@@ -453,6 +453,7 @@ WorkModule::GetOperationPlayerId(order, localOnly, includeOther):   @0x71002a01b
 - 기본 항목 애니 이름(cursor/normal/on/off/press/disable/normal_ng)은 mgm00 에 그대로 있는 레이아웃이 없다(lineup_thum_00 = cursor/normal/gray) → 항목 애니 세트는 화면마다 자기 lyt 의 태그에 맞춰 SetupAddAnimeMenu 로 준다 [데이터].
 - 창 패널 그리기(창 9조각·정점색 전체·그림자·흐림)는 modeselect.md 6.1·6.2, 색·부모 기준점·부품 덮어쓰기는 charselect.md 6.4·6.5 그대로.
 
+[데이터][설계] 공용 UI 부품·화면 조합 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ### 7.2 글자·폰트
 mgm00 글자 페인은 `x_text_NN` 과 `x_text_NN_shadow`(같은 자리, `_shadow` 폰트) 짝이다(tlp_course·mgselect·mgmstat) [데이터]. 짝을 함께 채우는지(GetText 가 둘을 묶는지)는 엔진 GuiLayoutText 범위 [미확정 — charselect 구현 방식 따름].
 
@@ -586,6 +587,7 @@ interface MessageWindowAdapter {          // ComUiMessageWindow 인터페이스 
 - 그리기 [설계]: 나눈 창 정점색·흐림 창 처리는 modeselect 화면 코드와 같은 규칙을 `view.ts` 에 둔다(9.1 경계상 modeselect import 불가). 여러 줄·색 태그 글자는 `RichTextPane`(글자마다 txt 노드)으로 원래 글자 페인 자리에 그리고, 그 레이아웃 노드보다 뒤에 그린다 [근사: 원본은 페인 순서대로]. `Render2D.draw(inst, base, alpha = 255)` 에 알파 인자를 더했다(기본값 = 기존 동작, 제약 항목의 페인 전역 알파용). 붙인 항목 레이아웃은 창 다음에, 커서 항목을 마지막에 그린다(같은 그리기 순위 엔티티 사이 순서 [미확정]).
 - 창 windowFlags bit4 = **내용 안 그림** [추정: nn::ui2d 창 플래그 이름; 데이터 정황 = mgm00·mgmet·mgm01·Parts 묶음의 bit4 창 61개가 전부 `flame`·`frame`·`shadow`·`cursor` 이고 내용 재질에 텍스처가 없어, 내용을 그리면 커서 테두리가 꽉 찬 노란 사각형이 된다(헤드리스 1회차에서 발견)]. 변환기가 나눈 창의 가운데 조각을 숨긴다. bit2·3(창 종류 7·11) 뜻은 [미확정] — 이 묶음에서는 mgm00_mgmstat_00 `win_balloon`(7), mgmet 결과·태그 결과 창(7·11)만 해당.
 
+[설계] 기존 SceneStack과 원본 인스턴스 수명 구별·Work 권한 정리 → [장면·Work](../engine/18_scene_work.md) §5·§9·§11.
 ## 10. 검증 코드·실행 결과·기대값
 
 실제로 한 것:

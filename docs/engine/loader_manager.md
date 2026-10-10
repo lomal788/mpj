@@ -862,3 +862,4 @@ mgr.stats                                               // 숫자 필드만(요�
 - 증상(사용자): 인원 설정·캐릭터 선택 2D 가 텍스처 없이 단색 사각형, 광장 로딩 안 됨.
 - 원인: `view/appAssets.ts assetKeyOf` 가 상대 URL(`assets/mgmcommon/…`)을 **에셋 루트 기준**으로 풀어 키가 `assets/mgmcommon/…` 가 되고, resolver(루트 + 키)가 `assets/assets/…` 를 요청 → 404. 노드 시험은 가짜 fetch 라 URL 해석 경로를 타지 않아 못 잡음.
 - 수정: 상대 URL 은 페이지 기준(`document.baseURI`)으로 푼다. 순수 함수 `view/assetKey.ts assetKeyFrom` 로 빼고 `test_prefetch` 7절(4건)에 회귀 시험. 실제 페이지 콘솔 확인 1회: 인원 설정·광장 404 0, 오류 0.
+[설계] 광장 유지 렌더러를 앱 전체로 확장하는 분석: [render_unify.md](render_unify.md).

@@ -89,6 +89,7 @@
 
 [판독][데이터] `GetModeIDFromMGMWorkStartPoint` — mgmet @0x710004c30c: 2~6을 `[4,1,0,3,5]`로 변환(표 mgmet @0x71000e36a4); 그 외는 2. `Initialize`는 시작 7을 mgm01 복귀, 8~12를 다른 모드 복귀로 구분한다. 시작 0/기타는 오프닝이다. `GetAndResetStartMode`는 flag 0x3d가 있으면 7~11에서 6을 빼고 12를 6으로 변환한 뒤 flag를 끈다. 보스 미개방이면 시작 6/12를 1로 바꾼다.
 
+[데이터] mgm02~06의 진행·결과·사용 범위 정리본은 [mgm_modes.md §1·3](mgm_modes.md#1-기능-개요)을 참조한다.
 ### 4.3 ActivityTitle·HowtoPlay
 
 | 소유체/오프셋 | 접근형·초기값 | 쓰는/읽는 함수 |
@@ -282,6 +283,7 @@ freePlay:
 
 → 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
 
+[데이터][설계] 항구 제목·안내·규칙 부품 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 8. 다른 기능과의 상호작용·저장되는 값
 
 | 값/영역 [판독] | 쓰는 지점·조건 | 읽는 지점/효과 |
@@ -305,6 +307,7 @@ freePlay:
 
 → 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §1·§4 (MinigameModeData와 MenuData 분리)
 
+[판독] 공용 장면 요청·복귀 인스턴스 미확정 정리 → [장면·Work](../engine/18_scene_work.md) §3.3·§5·§11.
 ## 9. 웹 포팅 구조 — 제안, 코드 없음
 
 [추정][웹 이름] `web/script/app/scene/world/mgmet/`에 허브 순수 상태와 뷰 어댑터를 둔다. import 경계/레이아웃·텍스트·메시지·SE·안내 재사용은 mgm_common §9.1~9.4를 따른다. 기존 엔진층을 끌어오거나 공용 기능을 이 모듈에 다시 구현하지 않는다.

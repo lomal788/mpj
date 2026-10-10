@@ -324,6 +324,7 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 
 [판독] `MgmetRuleSettingDataInit` — main @0x71001f0eac는 Work+0x761이1일 때만 +0x761과 valid+0x764를0으로 한다. Sync 버전 — main @0x710022eb94는 Sync+3이1일 때만 +3/valid+c를0으로 한다. index 슬롯 자체를 일괄0으로 덮지 않는다. Scene 재진입 때 항상 난이도가 초기화된다는 설명은 틀리다. [미확정] +0x761/+3을 세우는 모든 상위 writer와 전체 캐시 수명은 §11.
 
+[판독] 객체별 cache·Work reset의 범위 정리 → [장면·Work](../engine/18_scene_work.md) §4.3·§5·§11.
 ### 8.2 프리 플레이 commit와 mgm01 소비
 
 | 저장되는 값 [판독] | 조건/실제 쓰기 | 읽는 지점/한계 |
@@ -341,6 +342,7 @@ N >= 5: null_01.position = (-850, 0, 0)   # float32 비트 0xc4548000
 
 [판독] CPU 열이 숨겨져 있을 때 GetResult CPU는 현재 숨긴 CpuButton의 index다. SetupMgm에서 숨긴 열에 캐시 index를 전달하지 않으므로 새 객체에서는0, 재사용 객체에서는 이전 버튼값이 남을 수 있다. 그 값을 commit하는 경로도 그대로 존재한다. “CPU가 없으면 CPU 캐시 쓰기를 건너뛴다”는 조건은 없다.
 
+[판독] 다른 활동의 규칙 caller 정리본은 [mgm_modes.md §3.2](mgm_modes.md#32-빈-부분에서-새로-읽은-규칙-caller)을 참조한다.
 ## 9. 웹 포팅 구조 — 제안, 코드 없음
 
 [추정][웹 이름] `web/script/app/scene/world/mgmet/ruleConfig.ts`에 순수 상태/입력/결과를 둔다. 파일 경계와 허용 import는 mgm_common §9.1~9.4를 따른다. 같은 폴더·three·기존 charselect의 scene2d/render2d/RepeatGen/types 및 공용 mgmcommon 어댑터를 사용하고 core/games/view/game.ts/env.ts에 의존하지 않는다.

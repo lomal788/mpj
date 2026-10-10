@@ -724,6 +724,7 @@ position = position + sum                // 각 성분 f32, 추가 dt 곱 없음
 [판독] 후속 mg0118 확인: HurdleHit 설정은 Params+0x138을 중심Y에 사용한다. callback은 HurdleHit hash를 검사하고 HurdleState.SetFallen과 map callback을 호출한다. mg0118 `@0x7100014a40/@0x710000d060`; [mg0118_game_only.c](../../../analysis/decomp/mg0118_game_only.c), 기존 [mg0118 §6.7·11](../minigame/mg0118.md).
 [미확정] (.3,.1,.5) 벡터의 SetSourceBox half-size 해석과 quaternion·mask 전체 인자는 손상된 C 호출만으로 확정하지 않는다. 같은 함수·C; §11.3.
 
+[설계] → 정리본: [mg0203](../minigame/mg0203.md) · [mg0108](../minigame/mg0108.md) · [mg0110](../minigame/mg0110.md) · [mg0116](../minigame/mg0116.md) · [mg0113](../minigame/mg0113.md) §7~§9
 ### 8.5 센서와 동명이인의 actor
 
 [판독] ComActorSixAxisSensor는 이동 ComActor와 다른 컴포넌트다. main `@0x710003e4c4/@0x710003e3c8/@0x710003f020`; [mg0118 §6.2](../minigame/mg0118.md).
@@ -737,6 +738,7 @@ position = position + sum                // 각 성분 f32, 추가 dt 곱 없음
 [판독] mg1002/mg0119의 soundActor는 `bex::sound::ComActor`이며 이동 actor와 다른 namespace다. mg1002 `@0x7100003600/@0x7100003ad0`, mg0119 `@0x7100007e44/@0x7100008280`; [mg1002 §4.4·4.6](../minigame/mg1002.md), [mg0119 §4.5](../minigame/mg0119.md).
 [판독] mg0911의 spinner/panel/lamp sensor는 기하 센서다. SixAxisSensor를 이 경로에 연결하지 않는다. mg0911 `@0x7100007b10`; [mg0911 §3.2·4.3·6.4·8·9.2](../minigame/mg0911.md).
 
+[설계] → 정리본: [19_motion_input.md](19_motion_input.md) §5–6, 9
 ### 8.6 공용 데이터·엔티티 배치
 
 [판독] 원본 자산 경로는 아카이브와 별도인 전역 가상 경로다. ActorParam·캐릭터·모션 데이터 로딩은 연결부의 책임이다. main `@0x71002b9bc0`; [06 §1.3·2.6](06_scene_data.md).

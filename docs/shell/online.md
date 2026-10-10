@@ -207,6 +207,7 @@ UpdateProcess: 대기 + 두 버튼 애니 끝 + 단계 파이버 없음/끝 → 
 - 정정(2026-10-08, plaza-room 판독 — `SequenceMainMenu::MainImpl` @0x710005a170 세션 분기, `analysis/decomp/plaza_menu00_npc_seq.c` 6896~7420): 대기실 입력은 MainImpl 이 조작 플레이어(`GetOperationPlayerId(false,true)`) 트리거로 직접 본다(11 ② 해결). **방장**: bex 0x4 → 방 정보 파이버(UiNetSessionInfoFiber, SQ_SE_SYS_DECI_S + 진동), 0x8 이고 `IsEnableFriendInvitation` → `StartFriendInvitation`, **0x3000(+/−) → 카드 뷰어 람다 @0x7100060a40**(SQ_SE_SYS_DECI_S + 진동), B(0x2) → 해산 확인 람다(SQ_SE_SYS_CANCEL). **손님**: B → 나가기 확인 람다(SQ_SE_SYS_CANCEL), **0x3000 → 카드 뷰어 람다 @0x7100061360**. 입력이 없으면(또는 친구 초대 중이면) MainImpl 의 `ComUiGuide00` 을 1칸·**위치 0xc**·`mn01_friend_ctrl_lobby_card`("E00F/E00E 마리오 파티 카드")로 In(끝나 있을 때만), NPC `Idle(0.3)`, 장소 텔롭 Out. 람다를 시작하면 `PlayerManager::Stop`. 영역 판정·다가가기·기구 결정은 **오프라인이거나 방장일 때만**(손님은 하지 않음), 방장의 기구 결과 6 은 `IsReadyNetworkPlayerData` 일 때만.
 - 위치 동기 시점 [판독]: ① JoinSessionFiber 7단계 지도 데이터 받은 뒤 `SendRemotePlayerInfoAll`(참가자 → 모두) ② `NetworkManager::OnReceive` 사건 4(새 멤버의 플레이어 데이터, 내 상태 +0xb8 == 2·재요청 플래그 0) → 그 스테이션에 `SendToNetworkPlayerData` 답장 + `SendRemotePlayerInfoAll`(기존 멤버 → 모두) ③ 세션 중 광장 재진입(`SequenceMainMenu::Setup`) → `SendNetworkPlayerData(1)` + `SendRemotePlayerInfoAll_Setup`(위치 없이 회전·**첫 표시 플래그 1**) → 받는 쪽 `PlayerManager::OnReceive` 는 처음 보는 (스테이션, 슬롯)이고 플래그면 `GetAttachSocketPcDefault(4, 표 DAT_710019b490[원격 수 % 4])` 소켓에 놓는다. 그 밖에는 움직이는 동안 0.2 s 마다(plaza_3d.md §5.1 ⑥).
 
+→ 정리본: [12_online_sync.md](../engine/12_online_sync.md) §9
 ### 5.8 카드 뷰어 (bq::ComUiCardViewer, main) [판독 — `analysis/decomp/plaza_main_card.c`·`plaza_main_card2.c`·`plaza_main_cardviewer_upd.c`, menu00 람다 `plaza_menu00_lobby.c`]
 - **menu00 람다**(@0x7100060a40 방장 / @0x7100061360 손님): `ST_DUCKING_START_CARD` → `ClearCardData` → 세션 멤버마다 `GetNetworkPlayerCardData`(받은 플레이어 데이터의 카드, 데이터 상태 2 가 아니면 빈 카드 = id 0) → `AddCardData(카드, false)`(**id 0 이면 넣지 않음**, 같은 id 면 덮어씀) → `Start(0)` → `ComUiCard::IsFinished` 까지 대기(손님은 세션이 끊기면 `Out`) → `ST_DUCKING_FINISH_CARD`. 카드 뷰어는 menu00 `SequenceMainMenu` 생성 때 그리기 순위 0x8400 으로 만들고 **+0x70 = 1(안내 켬)**.
 - **ComUiCard**(@0x71003367e4): Parts `sys_card_base_00`(+0x3c = 순위), 상태 +0x38(−1 숨김·0 in·1 대기·2 out), 생성 때 `x_parts_status/x_text_time_00` = `mn03_card_ui_time_title`, `x_parts_cursor` 부품 애니 "normal". In = "in"(상태 0), Out = "out"(2), `IsFinished` = 상태 < 0.
@@ -218,6 +219,7 @@ UpdateProcess: 대기 + 두 버튼 애니 끝 + 단계 파이버 없음/끝 → 
 호출 = 광장에서 기구(`SequenceMainMenu::SelectedBalloonImpl`·`SequenceBalloon::CallSceneImpl`)로 갈 때. 방장: `SetSessionEntry(false)` 후 공개·입장 꺼질 때까지 대기(새 참가 막기). 접속/세션 없음 → B3(menu00). 스테이션 ≥ 2 인데 데이터 인원 < 2 이거나 멤버 < 데이터 인원 → B3. 정상: 플레이어 목록 정규화, 데이터 받은 원격 멤버는 그 캐릭터·사람(type 0), 나머지 칸은 COM(type 1), `PlaySession(2, gameMode)`, BGM 정지, `SQ_SE_MENU00_TRANSITION_WHO`, 0.5 s 페이드 아웃, WaitSync(1), Sleep 1, 메뉴 복귀 코드 1, menu01 호출. 스테이션 1(혼자)이면 아무것도 안 하고 끝(혼자 진행).
 - 정정(2026-10-08, plaza-room 판독 — `analysis/decomp/online_menu00.c` 의 `NetworkManager::PlaySession` @0x710002d270·`OnReceive` 사건 7 @0x710002dc30·`SelectedBalloonImpl` @0x710005ed30·`PlaySessionFiber::Update` @0x7100037a00): ① **세션 중 기구 선택**은 페이드·기구 출발 연출 없이 메뉴 카메라 Stop·`PlayerManager::Stop`·`LookAt(balloon_pos)` 뒤 **바로** `NetworkManager::PlaySession` + `StopSoundExitScene` + 장면 순서 −1 이다(오프라인만 1.0 s 페이드 → SequenceBalloon). ② `NetworkManager::PlaySession`(방장)은 `SetIsPublic(false)` 후 **자기 외 모든 스테이션에 메시지 7**(`NetTransfer::SendTo(…, 7)`)을 보내고 PlaySessionFiber 를 시작한다. ③ 손님은 메시지 7 을 받으면(방장 아님·PlaySessionFiber 안 도는 중·나가는 중 아님) `SequenceManager::FinishSequence`·메뉴 카메라 Stop·`PlayerManager::Stop` 후 **같은 PlaySessionFiber** 를 돈다. ④ Fiber 의 시간 순서 = (방장만) 입장 닫힘 대기 → 검사 → 목록 → `PlaySession(2)` → BGM 정지(6) → `SQ_SE_MENU00_TRANSITION_WHO` → `StopSoundExitScene` → 페이드 아웃 **0.5 s**(이미 페이드 중·끝이면 생략) → `WaitSync(1)`(모든 스테이션 맞춤) → `FriendMatchSyncFinishSession` → Sleep **1.0** → 메뉴 복귀 코드 1 → `RequestCallScene`(menu01) → Sleep 0.5.
 
+→ 정리본: [12_online_sync.md](../engine/12_online_sync.md) §9
 ### 5.7 전 세계 매칭 상세 [판독]
 - **ConnectNpln**(matching00·menu00 공통 꼴 @0x7100007cb0): 저장 플래그(+0x6c) 미설정이면 안내 대화상자 sys_network_check_dlg00(확인만) → dlg01 "접속한다/접속하지 않는다"(접속하지 않는다 → 끝). 로딩 텔롭(ComUiLoadingTelop = sys_tlp_loading_00, 문구 sys_network_load_tlp "인터넷에 접속하고 있습니다.") In → `ConnectNpln` 이 끝날 때까지 0.5 s 폴링 → Out. 처음 접속 성공이면 플래그 저장. 실패 → RequestError(0) = B3.
 - **MatchMake**: 타이머 In·시작값 MATCHING_TIME, StateTelop Start("normal_search" = 찾는 중 문구), 안내 1칸 위치 0x11 `mtch00_ctrl_cancel`, flag 0x1d On, 미니게임 화면 Start, MatchMakeFiber 시작. 매 프레임 UpdateAbortMatchingByUser: 대화상자 없고 (세션 없음 또는 방장)일 때 **0x3000 누름** → 안내 Out, 취소 확인 "찾는 것을 그만두고 돌아가겠습니까?" 돌아간다(SQ_SE_SYS_DECI_L)/돌아가지 않는다 → 상대에게도 열림 알림. 결과 0 → 중단, 1 → 닫고 안내 In. 끝나면 타이머·화면·안내 Out, 중단이면 `AbortNplnMatchmake` + CancelMatching(돌아가기), 아니면 Sleep 1 계속.
@@ -272,12 +274,14 @@ guide = host ? [info, invite(if members < max), dismiss] : [leave]
 
 → 화면별 원본 BGM(라벨·시작·전환 페이드)·웹 연결: [04_sound.md §12.14](../engine/04_sound.md) (2026-10-08).
 
+[데이터][설계] 방 목록·대기·매칭 UI 부품 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 8. 다른 기능과의 상호작용
 - 방에 있는 동안 메뉴 Work 의 로컬 플레이어가 원격 플레이어로 채워지고, 프리 플레이 항구 등은 "온라인 접속 중에는 플레이할 수 없습니다."(mgm01_ui_announce01) [데이터].
 - 재입장: 방 만들기·참가 때 `ReentryData::SetPassWard`, 매칭 시작 때 보드 Work 저장(재입장 허용 = 호스트 이어받기 가능) — 재입장 흐름(sys_reentry_*)은 범위 밖 [판독: 호출만].
 - 친구 초대 받기(FriendInvitedImpl) → JoinSessionFiber 경로 재사용 — 범위 밖(목록만).
 - 오류는 `bq::Net::RequestError(kind, 라벨, …)` 로 공용 오류 창에 넘기고 `SetErrorReturnSceneName` 장면으로 돌아간다 — 오류 창 자체는 bq(main) [미확정].
 
+→ 정리본: [12_online_sync.md](../engine/12_online_sync.md) §9
 ## 9. 웹 포팅 구조와 구현 순서
 
 ### 9.1 위치·의존

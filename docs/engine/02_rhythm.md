@@ -488,6 +488,7 @@ PlayExcellentSe(n, keepMax):          // mg1801 JUST: n = -1, keepMax = true
 - 게임 BGM 이름은 NRO 문자열 [데이터]. `SQ_BGM_RC_GENERIC` 은 1801·1802·1805·1807 에만 있다(Params `isGenericBgm`) [데이터].
 - mg1810 은 `SetResultSkip`을 부른다 [판독 문자열·호출].
 
+[설계] → 정리본: [19_motion_input.md](19_motion_input.md) §6.3, 9.3
 ## 11. 웹 포팅 구조
 
 ### 11.1 모듈 (`web/script/games/_rhythm/`) — 웹 권장 이름

@@ -137,6 +137,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 
 → 정리본: [17_actor.md](../engine/17_actor.md) §4.2, 7, 8.2, 9.4
 
+→ 정리본: [20_camera_runtime.md](../engine/20_camera_runtime.md) §6.4, §9
 ## 4. 막힘 요소 (기존 판독 결과 재사용)
 
 초기 조사 후보 ② 속도 출처·③ 지면 보정은 §3.5, ④ 영역 번호·⑤ 결과 값·⑥ NPC 짝은 §6.10, ⑧ 스탬프·UI 부품은 §5.1에서 해소됐다. 공용 충돌은 `MeshCollider`, 실제 방은 HTTP + socket.io로 구현돼 있다(§5.2·online.md 9.5~9.6). 남은 원본 수치·그래픽 연결부는 §7, 웹 근사·미구현은 §8에 적는다.
@@ -204,6 +205,7 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 - 시험: `tools/test_room_server.ts`(방 상태·바이너리 크기·HTTP·소켓·케이스·두 광장 UI), 헤드리스 `tools/shot_plaza_room.ts`(두 페이지가 같은 서버로 만나 출발까지, 마지막 1회).
 - 정정(2026-10-08, plaza-room2 — 사용자 지적 "파티에서 나가면 그 파티 플레이어들이 그대로 남음, socket.io 방 만들기·찾기 반영 안 됨"): 원인·원본 규칙·수정 표는 [online.md](online.md) 9.6. 요약: ① 광장 기본 어댑터가 가짜였음 → **기본 = 실제 서버**(`?online=fake` 만 가짜), `npm run dev` 가 방 서버를 같이 띄움. ② 위 4번 "세션이 끝나면 원격 표·3D 를 지움"은 세션 끝 한 순간만 지우고 그 뒤(같은 틱·가짜 0.5 s)에 온 위치로 다시 만들어져 남았다 → `PlazaUi` 가 **매 틱 원격 표를 방 멤버 스테이션에 맞춤**(비멤버 위치·스탬프 버림, 남은 비멤버 = 'net:remoteLeft' → follow.ts dispose). ③ 나가기·해산 뒤 친구 매치 메뉴가 아니라 원본처럼 **혼자 광장 메인**(흐름 옵션 `lobbyExit: 'end'`). ④ 열린 카드 뷰어에서 나간 사람 카드를 뺌 [설계]. ⑤ 로컬 2명 스테이션 준비 반영. ⑥ 서버 없음·HTTP 실패 = `sys_error_B3`(시간 초과 B4) 대화상자 → 광장 계속. 끊김 규칙(탭 닫기 즉시, 네트워크 끊김 ≈ 15 s 핑)도 online.md 9.6. 시험 `tools/test_room_server.ts` ⑤(실제 서버에 광장 UI 세 개: 만들기·찾기·참가·서로 보임·손님 나감·다시 참가·핑 끊김·탭 닫기·방장 해산, 목록 반영·참가 거절, 서버 없음, 가짜 어댑터 같은 정리), 헤드리스 `tools/shot_plaza_room.ts` 는 `npm run dev` 와 같은 `tools/serve.ts` 구성으로.
 
+→ 정리본: [12_online_sync.md](../engine/12_online_sync.md) §9
 ## 6. 구현 지시서
 
 ### 6.1 모듈 위치 [설계]

@@ -967,6 +967,7 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 - 모션 user data `headLookWeight`·`shift/shift_rec`: motions.json 에 없다. 코어 `MotionInfo` 필드는 있고 mg1801 표만 값이 있다.
 - 미룬 소비자: mg1801 포즈·재질(§14.4), 리듬 틀. 이동·충돌(ComActor)은 다음 작업.
 
+[설계] → 정리본: [mg0203](../minigame/mg0203.md) · [mg0108](../minigame/mg0108.md) · [mg0110](../minigame/mg0110.md) · [mg0116](../minigame/mg0116.md) · [mg0113](../minigame/mg0113.md) §7~§9
 ### 14.9 사용자 확인 필요
 
 - (해소) 2026-10-09 사용자 결정: 기본 = 원본 규칙(§14.7). 바뀐 것: 캐릭터 선택·광장·결과 무대의 전이가 "이전 포즈 고정 + 눈꺼풀 0.07 s"가 되고, mpat 일치 행이 있으면 블렌드 a/60·시작 프레임 0(α=β=0, 광장 걷기·달리기→대기 등), 리스너 블렌드 f32 0.1, 바로 뒤 대상의 머리 회전이 위 축을 유지하는 기저(qU), 스프링 속도 초기값 0.

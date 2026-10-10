@@ -395,6 +395,7 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 
 ---
 
+[설계] → 정리본: [mg0203](../minigame/mg0203.md) · [mg0108](../minigame/mg0108.md) · [mg0110](../minigame/mg0110.md) · [mg0116](../minigame/mg0116.md) · [mg0113](../minigame/mg0113.md) §7~§9
 ## 12. 웹 구현 계약 (2026-10-09, [mg-scene])
 
 이 절은 §1~§11 판독을 웹 코드로 옮기는 **설계·계약**이다. 구현은 이 절을 따르고, 구현 중 원본과 다른 점이 생기면 이 절을 먼저 고친다.
@@ -424,6 +425,7 @@ sub 1: 페이드 끝 && 세이브 처리 중 아님 → sub=99 → (hook 참이�
 | 상태 얼굴 `ComUiStatus(0x10, match, place)` | match = GameRule 0~3(그 밖 0). 레이아웃: match 0 → place 1~11 표 [pos4_10, pos4_01, pos4_02, pos4_08, pos4_09, pos4_06, pos4_11, pos4_07, pos4_05, pos4_03, pos4_04][place−1], 그 밖 pos4_00; match 1 → place 13~20 표 [pos22_01, 02, 07, 08, 03, 04, 05, 06][place−13], 그 밖 pos22_00; match 2 → 22 pos13_01, 23 pos13_02, 그 밖 pos13_00; match 3 → 25 pos11_01, 26 pos11_02, 그 밖 pos11_00. 칸 `x_parts_00~03` 을 모두 숨기고 참가자 순서대로 i번째 칸을 보이며 `UiControlStatus` 에 (PlayerID, 종류) 설정. In(false) "in" 상태 0 / Out(false) "out" 상태 2 | ui1801_main.c `FUN_710030d4b8`·`FUN_710030ddc0`·`In/Out`·`SetValue`(종류별 최댓값) [판독] |
 | 건너뛰기 안내 `ComUiGuideSkip` | `sys_guide_pos_00`, 그리기 우선 0x8a00, 칸 9(`x_parts_09`) 의 `x_text_right` = mg_ui501. 입력 = 사람 참가자 bex 트리거 0x3000(+/−) | mgscene_web1.c, core_b5 `FUN_71002e27a0` |
 
+[데이터] 최신 GameRule로 분류한 112종·모드 목록 대응 정리본은 [mgm_modes.md §8](mgm_modes.md#8-상호작용)을 참조한다.
 ### 12.2 위치와 경계
 
 | 폴더 | 내용 | import 규칙 |
@@ -668,6 +670,7 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
 
 검사: `tools/mg_determinism.ts` — `determinismCheck`(같은 seed·입력 기록으로 두 번 돌려 매 틱 로직 상태 해시 비교)와 `staticLogicCheck`(`Math.random`·`performance.now`·`Date.now`·`new Date`·`navigator.getGamepads`·`requestAnimationFrame`·`document.`·`window.` 검색). 새 게임은 이 도우미 하나를 시험에서 부른다.
 
+[설계] 공용 장면 수명·요청/Work commit과 FrameGate 경계 → [장면·Work](../engine/18_scene_work.md) §3.1·§9·§10.
 #### 12.12.7 시험·검증 기록
 
 **옛 코드 ↔ 새 코드 로직 기록.** 바꾸기 전 코드 사본(scratchpad)에 `prerollFrames: 26` 만 준 실행과 새 코드(틀 위, `tools/mg_node_host.ts`)를 같은 입력으로 돌려, 프레임마다 `[state, events, Mg1801Game 객체 전체]`(박자 시계·MT 상태·RmGameWork·채소 풀·플레이어·결과 기록 포함, `flow`·`nextFlow`·와이프·`fade`·옛 `preroll`·`finishFrames` 칸 제외)의 해시와 마지막 결과를 비교했다. 기록기는 시험 기대값과 무관한 scratchpad 스크립트다.

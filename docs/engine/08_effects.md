@@ -1241,6 +1241,7 @@ core.step(); core.view.set(cameraViewMatrix); core.sync();  // pools[k].order[0.
 [정정 2026-10-10] [판독] 첫 항목의 FRND 전역 분자 미판독은 위 writer로 해소됐다. 웹 FRND 미구현과 원본 seed/콜백 순서 공백은 별개이며, 이 정정으로 웹 규칙 적용이 완료됐다는 뜻은 아니다. (근거: [plaza_intro.md](../shell/plaza_intro.md) §10.4·§13.2·§16)
 → 광장 첫 진입 정리: [plaza_intro.md](../shell/plaza_intro.md) §10.4·§16
 
+[설계] → 정리본: [mg0203](../minigame/mg0203.md) · [mg0108](../minigame/mg0108.md) · [mg0110](../minigame/mg0110.md) · [mg0116](../minigame/mg0116.md) · [mg0113](../minigame/mg0113.md) §7~§9
 ### 14.8 사용자 확인 필요
 
 - **crown00(김 거품 위 왕관)의 시점**: 원본 식에서 자식 방출 S = parent.life·timing/100 은 bit17(D[D5C])일 때만이고, 자료의 D[D5C]=0 이다. bit17 없는 자식 경로(§6.1 허용식의 `!bit0 || bit17`, 073eb0c 소멸/자식 처리)는 판독되지 않아 이전 웹처럼 부모 수명 ⌊L·85/100⌋ 프레임에 방출한다 [근사]. 원본은 부모 소멸 때일 수 있다.

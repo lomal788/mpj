@@ -550,6 +550,7 @@ elapsed≥duration이면 반복 비트 1을 검사해 elapsed만 0으로 되돌�
 
 §6.2의 Aim·twist·Euler 및 §6.3의 `entity.world·inverse(animView)`를 재사용한다. 무대 transform을 CameraAnim position에 두 번 곱하지 않는다. 슬롯 재생 시간은 09, draw camera의 split 보정·레이어는 10, 결과 무대 키와 정지/시작 시점은 minigame_result가 근거다. 단순 `frame%=FrameCount`나 두 끝점 선형 보간을 일반 원본 구현으로 제시하지 않는다.
 
+→ 정리본: [20_camera_runtime.md](20_camera_runtime.md) §4~§6, §9
 ### 9.2 조명·IBL
 
 현재 mg1801 `stage.ts`는 L=(−0.0958,0.8963,0.4330), **linear color=(0.8,0.8,0.8)**, intensity=π, 단일 shadow map 2048을 사용한다. 색을 hex `0xCCCCCC`의 sRGB 변환값으로 대체하면 linear 0.8과 다르다. π 배율은 [plaza_3d §6.13](../shell/plaza_3d.md)의 원본 `albedo·lightColor·NdotL`, `irr·albedo`와 Three Lambert의 1/π 상쇄 근거를 재사용한다; 임의 세기를 눈으로 맞춰 확정하지 않는다.
@@ -570,6 +571,7 @@ elapsed≥duration이면 반복 비트 1을 검사해 elapsed만 0으로 되돌�
 
 공용 [stage3d/post.ts](../../script/app/common/render3d/post.ts)는 기존 SASS 톤맵 0~4·bloom 합성식을 사용하며 FXAA 마지막 배치는 근사다([plaza_3d §6.13](../shell/plaza_3d.md)).광장 LUT·색 보정 경로를 mg1801에 옮기지 않는다. 원본 DOF와 동등한 공용 구현 여부도 광장(원본 DOF off) 화면 검증만으로 결론내릴 수 없다.
 
+[설계] 공유 렌더러의 post·RT·UI 상태 소유권: [render_unify.md §3·7·9](render_unify.md).
 ### 9.4 기존 덤프·변환 산출물
 
 `extracted/converted/camera/{mg1801_cameras,mg1801_env,fsnb_scan,sincos_table}.json`과 기존 `camera_probe`, `camera_verify.mjs` 결과는 §2·§10에서 재사용한다. 카메라 evaluator는 §6.4의 실제 원본식이 기준이다. 에셋 포맷·IBL 변환·manifest 계약은 03·[stage3d.md](../shell/stage3d.md)를 참조한다.

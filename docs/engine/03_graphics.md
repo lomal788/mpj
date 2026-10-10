@@ -582,6 +582,7 @@ mixer.update(0);
 
 ---
 
+[설계] 앱 수명 렌더러·화면별 GPU 준비 정리: [render_unify.md §5·9](render_unify.md).
 ## 10. 검증 — 실제로 돌린 것
 
 모두 이 저장소의 도구로 실행했다. 원본(Switch) 실행·원본 화면 대조는 없다.

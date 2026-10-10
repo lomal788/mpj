@@ -366,6 +366,7 @@ bq 쪽 오버라이드가 부르는 하위 가상 함수 [판독 vtable `0x71019
 
 `MinigameFlow`는 단계를 다 돌면 `RequestReturnScene` 후 `Fiber::Sleep(-1)`(영원히)이다. 그래서 흐름 파이버는 스스로 끝나지 않는다. 전환 요청으로 단계 5 → OnMainEnd → OnCleanup에서 지워진다.
 
+[판독] 요청 전달·장면 스택의 미확정·Work 소유권 정리 → [18_scene_work.md](18_scene_work.md) §3~§5·§11.
 ### 5.3 MinigameFlow [판독 @0x71002e0500, 한 걸음 `FUN_71002e0844`]
 
 ```c

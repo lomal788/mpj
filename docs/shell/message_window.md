@@ -125,6 +125,7 @@ Out @0x7100316f38: 상태가 −1 이 아니고 < 4 이면 상태 3·하위 0, I
 
 애니 [데이터]: sys_meswin_00 `in` −5..0(5f, Null_all 정점색), `normal` 15..16(1f), `out` 25..30(5f). 선택지판 sys_meswin_choices_00 은 같은 본문 + `null_01/x_alignment_00/x_parts_00..03`(sys_meswin_arrowchoices_00: on 9f, cursor 119f 반복, off 1f, press 29f, disable·normal 0f), `in_choice` 30f.
 
+[데이터][설계] 메시지 창 부품·템플릿 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 5. 상태 전이와 전체 수명 [판독]
 
 ```

@@ -152,6 +152,7 @@ web/assets/font/
 
 ---
 
+[데이터][설계] 글꼴을 쓰는 원본 UI 부품·템플릿 정리본: [ui_parts_catalog.md](ui_parts_catalog.md).
 ## 7. 변환기
 
 | 변환기 | 바뀐 것 |

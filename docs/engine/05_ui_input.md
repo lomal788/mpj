@@ -178,6 +178,7 @@ parentAnchor = 부모 사각형에서 parentOrigin 이 가리키는 점(부모 �
 | `sys_mgstat_posrhythm_00` | 리듬 점수판: `prt1 x_parts_00` → 부품 `sys_mgstat_03`(cnt1 `MGStatus`) | `extracted/converted/ui/bq_Parts/render_mgstat_posrhythm_00.png` — 얼굴 칸은 런타임 동적 텍스처라 비어 있다 |
 | `sys_tlp_*` | 공용 텔롭(START/FINISH/321GO/WIN…): 대부분 txt1 1–2개 + bqfont_telop | 트리 `extracted/converted/ui/bq_Parts/*.tree.txt` |
 
+[데이터][설계] 레이아웃 부품·칸·애니·템플릿 정리본: [ui_parts_catalog.md](ui_parts_catalog.md).
 ### 3.9 공개 BFLYT 과의 관계
 
 공개 도구(Switch-Toolbox `Layout/CAFE`, flyte)의 v8 BFLYT 정의로 섹션·페인·재질·애니가 **그대로 읽힌다**(1,262개 섹션 크기 일치). 다른 점은 v9의 `ctl1` 섹션, 재질 flags bit19 블록, BFLAN 태그 `FLCT`·`FLIM`이다. 웹 재생기는 이 차이만 건너뛰면 된다.
@@ -323,6 +324,7 @@ MinPlayer 1, MaxPlayer 1, Style `GameControllerStyle_FullKey`, 컨트롤러 지�
 - 임계는 원본 값 그대로 두고, 감도 보정이 필요하면 입력 층에서 배율을 곱한다(로직 상수 불변).
 - 쿨다운(1박)이 있으므로 연속 키 입력·자동 반복은 같은 결과가 된다. 키 반복 이벤트는 무시한다.
 
+[설계] → 정리본: [19_motion_input.md](19_motion_input.md) §3, 6, 8–9
 ## 7. FX 트리거와 진동
 
 ### 7.1 FTRG 바이너리 [판독 `ui_ftrg_magic.c`, `ui_ftrg_res.c` + 데이터]

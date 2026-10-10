@@ -479,6 +479,7 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 [데이터][실행: 변환] 텍스처는 `extracted/bea/bq.nx.bea/Parts.lyt` 의 `timg/__Combined.bntx` 에 있다: 목록 112개 이름 그대로 `mgXXXX^o` 112장 + `mgboss^o` 1장, 모두 **640×360 BC1_SRGB** 한 크기(크기별 변형 `_N^o` 없음). 형식별 크기 차이는 텍스처가 아니라 항목 레이아웃의 그림 페인 크기다(§6.7 표: 342×200·216×128·162×108×0.75, 커서 확대판 400×228·288×166·200×114; 설정 큰 그림 640×360, 미리보기 134×82×0.84, 승패 표 `x_thumbnail`). 재질 칸0 은 모양(마스크) 텍스처 `mgm01_win_thum_0N^s`·`mgm01_base_mgthum_0N^s`·`mgm01_base_mgpreview_00^s`, 칸1 이 그림 자리(`mgm01_white_00^s` 등)이고 코드는 칸1 을 바꾼다. 변환 `web/tools/analysis/mgm01_thumb_assets.py` → `web/assets/mgm01/thumb/<이름>_o.png`(113장, 원본 그대로 디코드, 가공 없음) + 명세 조각 `web/assets/mgm01/thumbs.json`(텍스처 키 = 원본 이름 `mgXXXX^o`, sRGB 목록).
 
+[데이터][설계] 목록·설정·승패표 부품 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 8. 다른 기능과의 상호작용·저장되는 값
 
 ### 8.1 초기 네 슬롯과 타입·캐릭터
@@ -549,6 +550,7 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 [웹 2026-10-09, mg-connect] 호출 값 → 한 판 setup: `script/mgrun.ts` `freePlaySetup`(팀·참가·CPU·리듬·엔드리스·설명·자이로). 복귀 기록 = `app/minigame/frame/scene/resultEntry.ts`(`FUN_71001f271c` byte 규칙, judge = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60). 실패 = null → 기록 없음. 가짜 결과는 `cfg.play` 가 없는 단독 시험에서만 쓴다(`app/scene/mode/freeplay/playResult.ts`). 계약: [minigame_scene.md](minigame_scene.md) §12.12.4~12.12.5.
 
+[판독] 공용 request 전달·ring 원본 객체 소유권·웹 frame 권한 → [장면·Work](../engine/18_scene_work.md) §3~§5·§8·§9.
 ### 8.4 Work·Sync·세이브에 저장되는 값
 
 | 값 | writer [판독] | 저장 위치 | reader/저장 요청 |
@@ -711,3 +713,4 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 ### 9.x 구현 기록 — 승패 표·잠금 안내 단독 화면 (2026-10-07)
 
 [설계] `script/app/scene/mode/freeplay/historyScreen.ts`(HistoryState → `mgm01_history_title_00`·`mgm01_history_00` 공용 창, 열 `x_parts_NN/x_history_PP` 에 win_normal/normal, 얼굴 `x_face_0P/x_face_pc128` 칸 1 = `face_128_pcNN^u`, 승리 수 `num/x_text_0P` = `mgm01_ui_countWin` Number0, 기록 0 이면 `x_no_history` 표시)·`announceScreen.ts`(AnnounceState → `mgm01_mes_announce_00`). 얼굴 텍스처는 charselect 변환물을 가리키는 조각 `assets/mgm01/faces.json`(`web/tools/analysis/mgm01_faces_part.py`). 미니게임 썸네일(`x_thumbnail`)은 아직 변환하지 않아 원래 텍스처, 스크롤바 `x_scr_mgm` 은 노드가 비어 위치만 계산. 시험 `tools/test_mgmscreens.ts`, 확인 `dev/ui?ui=mgm01-history&rounds=N` · `ui=mgm01-announce`.
+[데이터] 모드별 모집단·형태·체감의 정리본은 [mgm_modes.md §8](mgm_modes.md#8-상호작용)을 참조한다.

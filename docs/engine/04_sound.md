@@ -943,6 +943,7 @@ mpj 연결(`view/sound.ts`): `soundSystem(audio) → MpjSound {audio, core, out,
 - 메시지 덕킹(0x0d·0x13)·`SetVolume`·리전 점프는 API 만(셸 이전 때 연결).
 - 도플러·필터(§6.7)는 계산하지 않는다.
 
+[설계] → 정리본: [mg0203](../minigame/mg0203.md) · [mg0108](../minigame/mg0108.md) · [mg0110](../minigame/mg0110.md) · [mg0116](../minigame/mg0116.md) · [mg0113](../minigame/mg0113.md) §7~§9
 ### 13.9 사용자 확인 필요
 
 | 항목 | 정한 것(원본 쪽) | 이유·선택지 |

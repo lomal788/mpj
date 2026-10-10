@@ -520,3 +520,4 @@ hit 버퍼(`px_hits_offset`, 256건 × 64 B): 슬롯 0–2 position, 3–5 norma
 - 씬 프루너 상태(simulate 시점) 차이를 원본에 맞출지(P2 에서 고정 스텝 simulate 를 돌리면 원본 흐름에 가까워진다), P0 처럼 질의만 할지.
 - .apx 를 사전 압축(br) 대상에 넣을지(지금 copy, 세 세트 합 548 KB).
 → 정리본: [17_actor.md](17_actor.md) §8.1, 9.2, 10, 11.1
+[설계] → 정리본: [mg0203](../minigame/mg0203.md) · [mg0108](../minigame/mg0108.md) · [mg0110](../minigame/mg0110.md) · [mg0116](../minigame/mg0116.md) · [mg0113](../minigame/mg0113.md) §7~§9

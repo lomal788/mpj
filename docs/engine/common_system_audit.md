@@ -48,6 +48,8 @@
 
 2026-10-09 [mg-connect] 갱신(위 표의 판정은 감사 시점 기준으로 두고 상태만 적는다): **장면 등록·시작·종료** — GameDef 실행 경로를 없애고 mg1801 이 공용 틀 0~18단계 위에서 돈다(`script/mgrun.ts`, 어댑터 `app/minigame/kit/rhythm/mgGame.ts`). **결과 byte·judge(P1)** — `FUN_71001f271c` 규칙 + judge = `Mgm01SetupMinigamePlayInfo` @0x71001f1c60(GameRule ∉ {0,7})로 raw byte 를 전달(mg1801 = judge 1·[2,2,2,2]). **미등록·실패 결과(P1)** — 실제 실행 경로에서 `fakeResult` 유입 차단, 실패는 null(기록·Round·플레이 횟수 그대로). **팀·참가·리듬·설명 설정(P1)** — teamId·gamePlay·comLevel·rhythm·endless·callInst·useGyro 가 틀 setup·문맥까지 가고 mg1801 은 rhythm 만 소비. §2 **체감 입력**의 게이트 acc 손실도 해소(`MgPadInput`·`MgPadState` acc). 근거·남은 확인은 [../shell/minigame_scene.md](../shell/minigame_scene.md) §12.12.
 
+[설계] 장면 계약·요청 API·Work 소유권의 후속 구현 근거 → [18_scene_work.md](18_scene_work.md) §9·§10·§13.
+[데이터] 활동0~5 대응과 mgm02~06·112종 사용 표 정리본은 [mgm_modes.md](../shell/mgm_modes.md)을 참조한다.
 ## 2. 시간·난수·입력·이동·물리
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |
@@ -76,6 +78,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 
 → 정리본: [17_actor.md](17_actor.md) §9.4, 11.1, 13
 
+[설계] → 정리본: [19_motion_input.md](19_motion_input.md) §8（현재 FrameGate·MgPadState는 acc를 보존）
 ## 3. 그래픽·카메라·후처리
 
 ### 3.1 렌더·자산·재질
@@ -93,6 +96,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | 외곽선·decal | [판독] main DecalShadowEnable `@0x710006ebd4`, geo_decal LOD0; [LOD §5.5](lod.md); [데이터] toon option | `G/view/vegetable.ts` outline 모델 | `_outline00` 실루엣 표시 | 화면공간 toon edge·decal shadow runtime 없음; [미확정] 전체 toon pass 식 | 일부 사용·미구현 | 채소·toon/decal 재질 | P2 runtime·P3 식 |
 | VAT·fluid·부가 렌더 | [데이터] VAT2/3·fluid·d_buffer·lens flare/billboard; [그래픽 §4.4](03_graphics.md), [변환기 §3·12](13_asset_converter.md) | VAT f16.bin 보존 | script VAT playback·fluid runtime 소비 미발견 | [미확정] fluid/d_buffer/lens flare 장면 caller·활성 조건 | 검색 범위 내 미발견 | 활성 장면 미확정 | P3 — runtime·caller |
 
+[설계] 렌더러 생성 전수 목록·패스 통합 판정: [render_unify.md](render_unify.md).
 ### 3.2 카메라·조명·포스트
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |
@@ -107,6 +111,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | DOF | [판독] dof2 중심±region/2·transition; [카메라 §7.5·9.3](07_camera_lighting.md) | 공용 PostParams: DOF 없음; 게임 custom pass | `G/view/post.ts:210`: focalEnd=distance+region, radius6px·32 disc sample | 원본 far29.5→36.5 / 결과35→50. 웹42→49 / 결과50→65 | 게임 근사·공용 미구현 | mg1801 | P1 — 초점 경계 |
 | capture·RT·복구 | [판독] main capture `@0x71000bc310`, Rm exit `@0x7100445ae8`, helper `@0x710042d1a0`, ResetAll `@0x71001db630`; [카메라 §3.4](07_camera_lighting.md), [분할 §3·5](10_split_screen.md) | capture camera 라벨·Preview3D 카드RT·postRT | 게임 dispose post/shadow 일부 복구 | 결과480×270 저장·레이어 capture request·전체 상태 복구 부족. mg1801 capture 기본0 | 일부 사용·미구현 | 사진·랭킹·분할 | P2 — capture 계약 |
 
+→ 정리본: [20_camera_runtime.md](20_camera_runtime.md) §9~§13
 ## 4. LOD·캐릭터·애니메이션·이펙트·분할
 
 ### 4.1 LOD·스키닝
@@ -196,6 +201,7 @@ NRO 고유 계산: mg0106 회전판 carry(`Player::UpdatePlayer @0x710001c8c0`, 
 | NPC 접근·가이드 서비스 | [판독] menu00 MainImpl `@0x710005a170`: 정지→선회→Talking→설정→Save→복귀; [가이드](../shell/plaza_guide.md), [광장](../shell/plaza_3d.md) | plaza/npc·interact·Player·Heading; setplayer·charselect 부품 | 접근/클립/시선·A/result5 사건. interact:200~211 다음프레임resume; parts에 가이드부품 없음, ui/ui decide result3만 | 가이드 메뉴·화자/카메라·멤버교체·취소복원·Save·페이드 수명 연결 없음 | 접근 일부 사용·서비스 미구현·공용UI 미사용 | 광장 가이드 | P1 — 선택후 서비스 |
 | 상점·자료관·음악·랭킹 | [판독] 광장 NPC 목적지·선택결과; [광장](../shell/plaza_3d.md) | interact 대상/결정 사건 | 대응 처리부품·서비스flow 없음 | 접근·선택 이후 목적지 미연결 | 일부 사용·미구현 | 광장 | P2 — 목적지 연결 |
 
+→ 정리본: [12_online_sync.md](12_online_sync.md) §9
 ### 5.4 자원 로딩·캐시·수명
 
 | 공용 기능 | 원본 소유 모듈·근거 | 웹 공용 정의 | 실제 호출·우회 | 원본 동작 차이 | 판정 | 영향 | 우선순위·근거 |

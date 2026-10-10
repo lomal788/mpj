@@ -220,6 +220,7 @@ FUN_71002eb650                                       # 주사위 연출(co_dice_
 - 모드의 결과 ring 쓰기 `MinigameModeWork::SetMinigameResult` @0x71001f0460 은 main 안에 호출자가 없는 외부 공개 함수이고, 이를 가져다 쓰는 NRO 는 **mg0704, mg1602, mg1604, mgm03, mgm06** 이다(함수 목록 tsv 검색). **mgm01 은 가져다 쓰지 않는다** [데이터]. `SetRound` @0x71001f0440 의 main 호출자는 `FUN_71002c4b50` 하나다 [판독: 참조 덤프]. → 프리 플레이 결과 ring writer 는 이 문서 범위(MGResult)가 아니다(§11, mgm01_freeplay.md §11-1).
 
 
+[설계] 한 판 결과와 모드 누적/시상을 구분한 정리본은 [mgm_modes.md §4·6·9](mgm_modes.md#4-구조체필드상수)을 참조한다.
 ### 6.6 무대 transform·배치 계산
 
 대상 4함수는 `e8c20`(1,532 B: 카메라를 향한 시선), `e9270`(3,480 B: 배치·테마·쿠파 보정), `eabf0`(2,604 B: 테마 시선), `eb650`(5,536 B: 주사위·승자 이동), 합계 **13,152 B**다. 크기는 `analysis/functions/main.nso.tsv`의 함수 본문 기준이며 SIMD 식은 `main.decomp.bin` ARM64와 대조했다. 모션 슬롯·보간의 공통 계약은 [09_character.md §6.3~6.6](../engine/09_character.md), 카메라 적용은 [07_camera_lighting.md §6](../engine/07_camera_lighting.md)을 재사용한다.
@@ -284,6 +285,7 @@ Pos1·Pos2 문자열은 `pos_pc_L`·`pos_pc_R`(대문자, ARM64 `0x71002f2264/22
 | 180 | -25039, 0, 0, 0 | -28079, 0, 0, 0 | -23863, 0, 0, 0 | -12840, 0, 0, 0 |
 | 300 | -25039, 0, 0, 0 | -28079, 0, 0, 0 | -23863, 0, 0, 0 | -12840, 0, 0, 0 |
 
+→ 정리본: [20_camera_runtime.md](../engine/20_camera_runtime.md) §5, §6.1~§6.3, §9
 ### 6.8 모션 선택·시선 블렌드·갱신 순서
 
 `ee410`은 기본 이름 5개(idle/winA/winB/loseA/loseB)를 넣고 이름별 커스텀 문자열이 비어 있지 않으면 우선한다. `SetMotion(type,name)`의 type=0~4는 +0x1E8 + type·0x30; 기본 문자열은 +0x1D0 + type·0x30이다. 애니메이션이 없을 때만 AddAnimation(1,0,0,0), 준비 중 idle을 Play한다. 등록 캐릭터는 Heading target=None→LookImmediately→HeadLookEnabled(1), ComActor scale=(1,1,1)로 되돌린다. 머리 가중치는 CharacterID 0/1/5에서 0(`uVar15<6` 및 mask 0x23), 나머지는 PCHeadControlWeight(`1d6820`)이다: PC58=1, PC61=0.4, 그 외=0.5. Waluigi의 원본 head_weight=0.8은 이 결과 준비 분기에서 0으로 덮인다(`0x71002eec70~ed5c`).
@@ -481,6 +483,7 @@ suffix는 `mg/mgResult/env/result_cam_<suffix>.fsnb`다. P는 위치, Aim은 조
 | pc61 | 180 | 157 / 60 | 141 / 80 | 40 | 72 | 180 |
 | pc62 | 120 | 115 / 66 | 105 / 104 | 40 | 90 | 90 |
 
+[데이터][설계] 결과 UI 부품·3D 자리 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 8. 다른 기능과의 상호작용
 
 - **미니게임 → MGResult**: `SetPlayer(PlayerID, 엔티티)`·`Set…`(카메라·모델·모션·위치 보정·테마 캐릭터)·`ResultSetupFunction`. `SetPlayer` 를 부르는 순간 공용 무대 갈래가 확정된다.

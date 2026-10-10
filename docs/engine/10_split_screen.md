@@ -78,6 +78,7 @@ type1(PerspectiveFrustum)·type3(Orthographic)은 원본 중심과 near/far를 �
 
 카메라·입력 인덱스는 게임별로 보존한다. mg0122는 Camera index p→layer p·mask1<<p, mg0102는 Camera00~03→layer0~3이며 입력은 `Players::GetPlayerID(index) @0x7100035040`→InputModule이다. mg0508 화면 t는 **TeamID t**이고 두 참가자 slot은 PlayerWork 순회에서 수집한 순서다. 화면0을 pad0, 화면1을 pad1로 고정하거나 CPU 자리를 제거하면 원본과 달라진다.
 
+→ 정리본: [20_camera_runtime.md](20_camera_runtime.md) §6.1, §8~§10
 ## 5. 레이어·렌더타깃·clear/depth·렌더 순서
 
 [판독] 일반 분할은 기존 GraphicsLayer와 카메라를 나눈다. SplitTo/Apply가 플레이어 수만큼 RT나 depth buffer를 만들지는 않는다. 씬 구성 `main FUN_71000b5bd0`은 layer index0에 씬 설정의 color/depth clear 값을, 추가 레이어에 clear=false·초기 disabled를 설정한다. 기본 visibility bit는 `1<<((baseID+layerIndex)&31)`이며 게임이 이를 변경할 수 있다. mg0508의 겹친 도마·칼·접시·스테이크를 같은 월드에 유지하고 team bit로 골라 그리는 근거는 기존 §3.2·§4에 있다.
@@ -224,6 +225,7 @@ class SplitRenderer {
 7. 그림자 맵은 프레임 첫 레이어에서만 다시 그린다(이후 레이어는 `autoUpdate=false·needsUpdate=false`) [근사: 원본은 레이어 패스마다 shadow 계열 등록. 웹 Stage3D 그림자 맞춤은 `stage.camera`(화면 0 카메라) 하나 기준].
 8. 복구: target·viewport·scissor·scissor test·autoClear·그림자 갱신값, 출력 RT 의 viewport/scissor/scissorTest 를 저장값으로. 렌더러·장면·원본 카메라는 dispose 하지 않는다. **Stage3D.update 는 부르지 않는다**(호출자가 프레임마다 한 번).
 
+[설계] 앱 수명 공유 렌더러의 레이어·상태 복구 연결: [render_unify.md §9.2](render_unify.md).
 ### 9.4 레이어 영역 후처리 (`PostChain.render(scene, camera, region)`)
 
 - 장면 패스: 후처리 HDR RT 의 viewport/scissor 를 레이어 값으로, 그 scissor 안만 color+depth clear(WebGL clear 는 scissor 를 따른다) → `autoClear=false` 로 그린다 → RT 필드를 전체·scissor 끔으로 되돌린다.

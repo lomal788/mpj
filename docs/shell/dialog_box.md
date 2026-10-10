@@ -187,6 +187,7 @@ ConfirmReturnSceneFlow @0x7100059fa0:
 
 항구 나가기 SE 순서: B 누름 즉시 `SQ_SE_SYS_CANCEL` → (메시지) → 예 `SQ_SE_SYS_DECI_L`(웹 에셋 `assets/mgmet/sound/SQ_SE_SYS_DECI_L.wav`) / 아니요 `SQ_SE_SYS_CANCEL` / B `SQ_SE_SYS_CANCEL`.
 
+[데이터][설계] 대화상자·메시지 선택 템플릿 정리본: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 8. 다른 기능과의 상호작용
 
 - 조작 플레이어: 대화상자 owner −1 이면 목록 → 조작자, 메시지 선택지는 owner(+0xb8) 하나. 항구 나가기는 조작자([mgm_common.md](mgm_common.md) 5.3·5.4).

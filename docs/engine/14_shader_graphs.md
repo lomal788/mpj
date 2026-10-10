@@ -672,6 +672,7 @@ if ((CoreSystem+30).bit0 == 0 && (0984814() & 1) == 0):
 
 근거 C: [capture core9함수](../../../analysis/decomp/shader_fs_c_capture_core.c), [setup2함수](../../../analysis/decomp/shader_fs_c_capture_setup.c), [직접 handle·좌표 writer005f750](../../../analysis/decomp/shader_graph_environment_supply.c), [기존 RT 참조 setter](../../../analysis/decomp/camera_gfx_components.c). 새 C의 INDEX 통합은 부모/A 담당이다.
 
+→ 정리본: [render_unify.md](render_unify.md) §4·§7.2·§11
 ## 32. VS CPU 생산자 후속 — Model·Mode·Opacity·누락 Color0
 
 [판독·데이터] 담당자 `shader_vs_batch.json.producerFollowup`·MD와 `shader_vs_producer_c_inventory.json`을 통합했다. 영구 계약 `analysis/mat/shader_graph_vs_producer_contract.json`, 새 C4개·고유40함수, Node **805/805**. World/env/capture·기존 shader 식·motion/bone C는 소유별 결과를 재사용하며 추가 판독하지 않았다.

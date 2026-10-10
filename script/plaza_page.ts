@@ -3,7 +3,7 @@
  * 흐름(setplayer → 광장 → 모드 메뉴 → 프리 플레이)은 app/flow 가 잇는다(/ 배포·/dev `?plaza=1`)(docs/shell/plaza_3d.md §6.9).
  * 에셋은 앱 로더 관리자(view/appAssets.ts)로 — 광장 무대 단계 로딩(P0 만 기다림), 소리 바이트는 P3 로 미리 받고 디코드는 이 페이지 문맥에서
  * (docs/engine/loader_manager.md §11.4). 나갈 때 release('plaza')(지우지 않음 — 다시 들어오면 캐시에서).
- * 캔버스·렌더러는 앱 수명 광장 렌더러(view/plazaGl.ts, §14) — 들어갈 때 붙이고(앞 화면에서 미리 만든 world 가 있으면 넘겨받음), 나갈 때 프로그램 고정 뒤
+ * 캔버스·렌더러는 앱 수명 공유 렌더러의 광장 대여(view/plazaGl.ts, render_unify.md §14) — 들어갈 때 붙이고(앞 화면에서 미리 만든 world 가 있으면 넘겨받음), 나갈 때 프로그램 고정 뒤
  * 부품·무대 dispose → 떼기. ?plazagl=0 이면 이전처럼 이 페이지가 캔버스를 만들고 무대가 렌더러를 만든다(UI 는 어느 쪽이든 무대 렌더러 하나).
  */
 import { STICK_MAX, type PadInput } from '@game/core/pad';
@@ -73,6 +73,7 @@ function toPad(p: PadInput | null): PlazaPad | null {
 export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<PlazaPageRun> {
   const params = cfg.params ?? new URLSearchParams();
   const gl = plazaGlEnabled(params) ? plazaGl() : null;
+  await gl?.reserve();
   const entry = gl?.enter(stage, params, cfg.onProgress) ?? null;
   const canvas = entry?.canvas ?? document.createElement('canvas');
   canvas.className = 'jw-gl';
@@ -124,8 +125,12 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       appBgm().exit('plaza', e.k);
       cfg.onExit(e);
     },
-  }).catch((e: unknown) => {
-    gl?.leave(null, () => undefined);
+  }).catch(async (e: unknown) => {
+    const world = await entry?.world.catch(() => null);
+    await world?.settle?.();
+    const cleanup = (): void => { assets.release(OWNER); };
+    if (gl) gl.leave(null, cleanup); else cleanup();
+    snd.close(0); overlay.remove();
     throw e;
   });
   gl?.entered();
@@ -191,16 +196,18 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
   };
   raf = requestAnimationFrame(loop);
 
-  return {
+  const page: PlazaPageRun = {
     run,
     stop() {
+      if (stopped) return;
       stopped = true;
+      offLost();
       cancelAnimationFrame(raf);
       ro.disconnect();
       offArea();
-      if (gl) gl.leave(run.world.stage.scene, () => run.stop());
-      else run.stop();
-      assets.release(OWNER);
+      const cleanup = (): void => { run.stop(); assets.release(OWNER); };
+      if (gl) gl.leave(run.world.stage.scene, cleanup, run.world.settle?.());
+      else cleanup();
       snd.close(0);
       canvas.remove();
       overlay.remove();
@@ -214,5 +221,10 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       x.frames = frames;
     },
   };
+  const offLost = gl?.onContextLost(() => page.stop()) ?? (() => undefined);
+  if (entry?.gpu.valid && !entry.gpu.valid()) {
+    page.stop(); throw new Error('Plaza render context lost during loading');
+  }
+  return page;
 }
 

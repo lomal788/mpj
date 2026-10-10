@@ -78,6 +78,7 @@ export interface PlazaWorld {
   readonly stage: Stage3D;
   readonly actorWorld?: PlazaActorWorld;
   disposeActors?(): void;
+  settle?(): Promise<void>;
   /** 원본 CollisionMain(PhysX 삼각 메시) — stage.collider 와 같다 */
   readonly collider: Collider;
   readonly cameraParam: PlazaCameraParam;

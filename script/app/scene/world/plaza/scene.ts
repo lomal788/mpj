@@ -110,6 +110,7 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
     for (const p of PLAZA_PARTS) parts.push(await p.create(ctx));
     if (o.params.get('nowarm') !== '1') warm = await stage.warmup();
   } catch (error) {
+    await world.settle?.();
     for (const p of parts) p.dispose?.();
     world.disposeActors?.();
     stage.dispose();

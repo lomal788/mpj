@@ -779,7 +779,7 @@ console.log('9. 코드 경계·문맥 수(정적)');
   const adapterImports = [...src('script/game/lib/assetcore-three/index.ts').matchAll(/from '([^']+)'/g)].map((m) => m[1]);
   ok(adapterImports.every((m) => m === 'three' || m === '../assetcore'), `어댑터 import ⊂ {three, 코어}: ${adapterImports.join(',')}`);
   const glStatic = [...src('script/view/plazaGl.ts').matchAll(/^import (?!type).* from '([^']+)'/gm)].map((m) => m[1]);
-  ok(glStatic.every((m) => ['three', '@game/lib/assetcore', '@game/lib/assetcore-three', '../env'].includes(m)), `plazaGl 정적 import = three·lib·env 만(광장 코드는 동적): ${glStatic.join(',')}`);
+  ok(glStatic.every((m) => ['three', '@app/common/render/service', '@game/lib/assetcore', '@game/lib/assetcore-three', '../env'].includes(m)), `plazaGl 정적 import = three·공용 render·lib·env 만(광장 코드는 동적): ${glStatic.join(',')}`);
 }
 
 console.log('10. 실제 광장 데이터 — P0 미리 준비 양(보고용)');

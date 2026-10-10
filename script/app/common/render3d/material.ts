@@ -56,6 +56,18 @@ export interface MaterialOptions {
 export interface IblShare {
   pmrem: THREE.PMREMGenerator;
   cubes: Map<string, Promise<IblSet | null>>;
+  resources?: Set<{ dispose(): void }>;
+  dispose?(): void;
+}
+
+export function createIblShare(gl: THREE.WebGLRenderer): IblShare {
+  const pmrem = new THREE.PMREMGenerator(gl);
+  const cubes = new Map<string, Promise<IblSet | null>>();
+  const resources = new Set<{ dispose(): void }>([pmrem]);
+  return { pmrem, cubes, resources, dispose() {
+    for (const resource of resources) resource.dispose();
+    resources.clear(); cubes.clear();
+  } };
 }
 
 type StdMat = THREE.MeshStandardMaterial;
@@ -307,11 +319,13 @@ export class MaterialSetup {
         const target = this.pmrem.fromCubemap(cube);
         cube.dispose();
         if (!this.share) this.targets.push(target);
+        else this.share.resources?.add(target);
         let irrCube: THREE.CubeTexture | null = null;
         const irrFiles = irr ? this.cubeFiles(irr) : null;
         if (irrFiles) {
           irrCube = await load(irrFiles);
           if (!this.share) this.owned.push(irrCube);
+          else this.share.resources?.add(irrCube);
         }
         return { rad: target.texture, irr: irrCube };
       })().catch((e) => {

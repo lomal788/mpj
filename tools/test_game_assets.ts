@@ -171,6 +171,13 @@ await test('GPU preparation cancellation settles, restores temporary parents and
   assert.equal(scene.children.length, 0); assert.equal(gl.draws, 0); assert.equal(f.manager.refs('mg1801/body.glb'), 0);
 });
 
+await test('expired render generation rejects GPU preparation instead of reporting ready', async () => {
+  const f = fixture(), a = f.assets(); await a.gltf('body.glb');
+  const scene = new THREE.Scene(), gl = new FakeGl();
+  await assert.rejects(a.prepare(scene, new THREE.Camera(), gl as unknown as THREE.WebGLRenderer, false, { offscreen: true, valid: () => false }), /expired/);
+  assert.equal(scene.children.length, 0); assert.equal(gl.draws, 0); a.dispose();
+});
+
 const actualReads = new Map<string, number>();
 const parser = new GLTFLoader();
 parser.register(() => ({ name: 'stub_textures', loadTexture: async () => new THREE.Texture() }) as never);

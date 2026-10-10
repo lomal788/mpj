@@ -20,6 +20,8 @@ import { AudioOut, appAudio } from '../../view/audio';
 import { Hud } from '../../view/hud';
 import { KeyboardPad, padSourcesFor, type PadSource } from '../../view/input';
 import { Renderer } from '../../view/renderer';
+import { appRenderService, type RenderLease } from '@app/common/render/service';
+import { plazaGl } from '../../view/plazaGl';
 import type { MgSceneSound } from '../../view/mgsceneSound';
 import type { MgSceneUi, MgSceneUiJson } from '../../view/mgsceneUi';
 
@@ -84,14 +86,15 @@ const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: 
 export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost {
   // ---------------------------------------------------------------- DOM
   const stageBox = el('div', 'jw-stage');
-  const glCanvas = el('canvas', 'jw-gl');
+  const renderService = appRenderService();
+  const glCanvas = renderService.canvas;
   const hudCanvas = el('canvas', 'jw-hud');
   const msg = el('div', 'jw-msg');
   stageBox.append(glCanvas, hudCanvas, msg);
   installTransition(stageBox);
   mount(stageBox);
 
-  const renderer = new Renderer(glCanvas);
+  const renderer = new Renderer(glCanvas, renderService);
   const hudCtx = hudCanvas.getContext('2d')!;
   const hud = new Hud(hudCtx);
   const keyboard = new KeyboardPad();
@@ -124,6 +127,8 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   let mgUi: MgSceneUi | null = null;
   let view: GameView | null = null;
   let gameAssets: Assets | null = null;
+  let gameLease: RenderLease | null = null;
+  let loadingView: Promise<void> | null = null;
   let pads: (PadSource | null)[] = [];
   let audio: AudioOut | null = null;
   let token = 0;
@@ -132,10 +137,16 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   let base = 0;
 
   const dispose = (): void => {
-    view?.dispose();
-    view = null;
-    gameAssets?.dispose();
-    gameAssets = null;
+    token++;
+    const oldView = view, oldLoading = loadingView, oldLease = gameLease;
+    view = null; loadingView = null; gameLease = null;
+    gameAssets?.dispose(); gameAssets = null;
+    const cleanup = (): void => {
+      try { oldView?.dispose(); }
+      finally { if (oldLease) renderer.release(oldLease); }
+    };
+    if (oldLoading) void oldLoading.catch(() => undefined).then(cleanup).catch(console.error);
+    else cleanup();
     logic = null;
     run = null;
     mgSound?.dispose();
@@ -165,8 +176,8 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
 
   async function start(d: GameDef, draft: SetupDraft, o: StartOptions = {}): Promise<void> {
     const { play, endless = false, save } = o;
-    const my = ++token;
     dispose();
+    const my = ++token;
     const setup: GameSetup = { ...draft, seed: localSeed(host.fixedSeed) };
     curSetup = setup;
     leaveWipe = !!o.leaveWipe;
@@ -197,12 +208,23 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
       if (my !== token) return;
       const host = await loadMgHost();
       if (my !== token) return;
+      await plazaGl().yieldPreparation();
+      if (my !== token) return;
+      const lease = await renderer.activate(stageBox);
+      if (my !== token) { renderer.release(lease); return; }
+      gameLease = lease;
+      lease?.onLost(() => {
+        stop(); setMsg('그래픽 연결이 끊겼습니다. 복구 후 게임을 다시 시작해 주세요.');
+      });
       view = d.createView({ renderer, hud: hudCtx, audio, setup, pads }, assets);
       emit({ type: 'view', view });
       setMsg('에셋 읽는 중…');
-      await view.load((n, total, what) => {
+      const pending = view.load((n, total, what) => {
         if (my === token && stage === 'loading') setMsg(`에셋 읽는 중 ${n}/${total}\n${what}`);
       });
+      loadingView = pending;
+      await pending;
+      if (loadingView === pending) loadingView = null;
       if (my !== token) return;
       const { MgSceneSound: Snd } = await import('../../view/mgsceneSound');
       const soundAssets = new Assets('mgscene/');
@@ -297,7 +319,7 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   }
 
   function drawFrame(): void {
-    if (!view || !logic) return;
+    if (!view || !logic || !renderer.active) return;
     view.render(logic.state);
     if (run) mgUi?.draw(hudCtx, run.scene.layers());
   }

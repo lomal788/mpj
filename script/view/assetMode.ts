@@ -4,6 +4,8 @@
  * 압축 모드: 해시 이름 shim(fetch·img.src → distUrl) → 소리 fetch shim → 해시 표(index.json)를 받을 때까지 top-level await(그 뒤 페이지 코드가 돈다).
  * 배포 빌드 + 압축 모드면 서비스 워커 등록, 아니면 해제(docs/engine/loader_manager.md §5.8.3·§5.8.6).
  */
+import { appRenderService } from '@app/common/render/service';
+import { setAssetSupportRenderer } from '@app/common/render3d/assetLoader';
 import { installUrlShim } from '../cache/urlShim';
 import { syncServiceWorker } from '../cache/swClient';
 import { ASSET_MODE, ASSETS_DIST, ASSETS_SRC, BASE, DEV } from '../env';
@@ -11,6 +13,7 @@ import { assetHooks } from '@app/common/render3d/assetHooks';
 import { assetStats, configureAssetLoader, createGltfLoader, distReady, distUrl, installFetchShim, loadTexture, loadUiImage, textureFromImage, type UiImage } from '@app/common/render3d/assetLoader';
 
 const q = typeof location !== 'undefined' ? new URLSearchParams(location.search) : null;
+setAssetSupportRenderer(() => appRenderService().renderer);
 configureAssetLoader({
   mode: ASSET_MODE,
   srcBase: ASSETS_SRC,

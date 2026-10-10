@@ -145,8 +145,12 @@ function neutral(t: THREE.Texture): THREE.Texture {
   return t;
 }
 
-/** 형식 지원을 잠깐 만든 WebGL 문맥에서 본다(렌더러 없이 어디서나 쓰게) — 같은 브라우저·GPU 라 렌더러 문맥과 같다 */
+/** 제품은 앱 공유 렌더러에서 형식 지원을 판단한다. 주입 없는 단독 도구만 임시 WebGL 문맥을 쓴다. */
+let supportRenderer: (() => THREE.WebGLRenderer) | null = null;
+export function setAssetSupportRenderer(get: () => THREE.WebGLRenderer): void { supportRenderer = get; }
+
 function detectSupport(l: KTX2Loader): void {
+  if (supportRenderer) { l.detectSupport(supportRenderer()); return; }
   const c = document.createElement('canvas');
   const gl = (c.getContext('webgl2') ?? c.getContext('webgl')) as WebGL2RenderingContext | null;
   const names = new Set(gl?.getSupportedExtensions() ?? []);

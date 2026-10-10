@@ -22,7 +22,7 @@ import { ScenePreparer, type PrepJob, type UploadRecord } from '@game/lib/assetc
 import { createGltfLoader } from './assetLoader';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from './assetHandlers';
 import { Clip } from './clip';
-import { fresOf, MaterialSetup, type IblShare } from './material';
+import { createIblShare, fresOf, MaterialSetup, type IblShare } from './material';
 import type { GraphDef } from './graph';
 import { emptyParams, FmabPlayer, type MatParams } from './params';
 import { PostChain, type PostParams } from './post';
@@ -67,6 +67,9 @@ export interface StageLoader {
 }
 
 export interface StageGpu {
+  valid?(): boolean;
+  resize?(w: number, h: number): void;
+  offscreen?: boolean;
   renderer: THREE.WebGLRenderer;
   uploads: UploadRecord;
   keep: Map<string, unknown>;
@@ -228,7 +231,7 @@ export class Stage3D {
     this.sun.shadow.mapSize.set(SHADOW_MAP, SHADOW_MAP);
     this.scene.add(this.sun, this.sun.target);
     this.scheduler = opts.loader?.manager.scheduler ?? new FrameScheduler({ now: () => performance.now(), tick: (fn) => void requestAnimationFrame(fn) }, PLAY_BUDGET_MS);
-    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: this.scheduler, linear: () => !!this.post, uploads: opts.gpu?.uploads });
+    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: this.scheduler, linear: () => !!this.post, uploads: opts.gpu?.uploads, valid: opts.gpu?.valid, offscreen: opts.gpu?.offscreen });
     this.floor = opts.floor ?? new PriorityFloor(P0);
     this.keep = opts.gpu?.keep ?? null;
     this.floor.onLower(() => {
@@ -260,30 +263,32 @@ export class Stage3D {
 
   static async create(opts: StageCreateOptions): Promise<Stage3D> {
     const s = new Stage3D(opts);
-    const t0 = performance.now();
-    const man = await s.json<StageManifest>(opts.manifest ?? 'manifest.json', P0);
-    if (!man) throw new Error('stage3d manifest 를 읽지 못했다');
-    s.manifest = man;
-    s.env = (s.manifest.env ?? {}) as StageEnv;
-    const keep = s.keep;
-    let ibl = keep?.get('ibl') as IblShare | undefined;
-    if (keep && !ibl) keep.set('ibl', (ibl = { pmrem: new THREE.PMREMGenerator(s.renderer), cubes: new Map() }));
-    s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {}, ibl);
-    const l = opts.loader;
-    if (l)
-      s.materials.fetchTexture = (p) => {
-        const k = l.key(p);
-        return l.manager.get<THREE.Texture>(k, KIND_TEXTURE, s.floor.key(k, P1), l.owner).then((t) => t.clone());
-      };
-    s.materials.globals = s.globals;
-    for (const d of (s.manifest as unknown as { graphs?: GraphDef[] }).graphs ?? []) (s.materials.graphs[d.material] ??= []).push(d);
-    s.applyEnv();
-    if (s.env.ibl) await s.materials.loadIbl(s.env.ibl.common, s.env.ibl.chara);
-    await s.setupExtras();
-    if (s.materials.common) s.scene.environment = s.materials.common.rad;
-    else s.scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    s.stats.loadMs += performance.now() - t0;
-    return s;
+    try {
+      const t0 = performance.now();
+      const man = await s.json<StageManifest>(opts.manifest ?? 'manifest.json', P0);
+      if (!man) throw new Error('stage3d manifest 를 읽지 못했다');
+      s.manifest = man;
+      s.env = (s.manifest.env ?? {}) as StageEnv;
+      const keep = s.keep;
+      let ibl = keep?.get('ibl') as IblShare | undefined;
+      if (keep && !ibl) keep.set('ibl', (ibl = createIblShare(s.renderer)));
+      s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {}, ibl);
+      const l = opts.loader;
+      if (l)
+        s.materials.fetchTexture = (p) => {
+          const k = l.key(p);
+          return l.manager.get<THREE.Texture>(k, KIND_TEXTURE, s.floor.key(k, P1), l.owner).then((t) => t.clone());
+        };
+      s.materials.globals = s.globals;
+      for (const d of (s.manifest as unknown as { graphs?: GraphDef[] }).graphs ?? []) (s.materials.graphs[d.material] ??= []).push(d);
+      s.applyEnv();
+      if (s.env.ibl) await s.materials.loadIbl(s.env.ibl.common, s.env.ibl.chara);
+      await s.setupExtras();
+      if (s.materials.common) s.scene.environment = s.materials.common.rad;
+      else s.scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      s.stats.loadMs += performance.now() - t0;
+      return s;
+    } catch (error) { s.dispose(); throw error; }
   }
 
   private applyEnv(): void {
@@ -361,7 +366,7 @@ export class Stage3D {
       mesh.frustumCulled = false;
       this.sky = mesh;
       this.scene.add(mesh);
-      this.keep?.set(skyKey, mesh);
+      this.keep?.set(skyKey, Object.assign(mesh, { dispose: () => { mesh.removeFromParent(); mesh.geometry.dispose(); m.dispose(); } }));
     }
   }
 
@@ -573,7 +578,8 @@ export class Stage3D {
   }
 
   resize(w: number, h: number): void {
-    this.renderer.setSize(w, h, false);
+    if (this.opts.gpu?.resize) this.opts.gpu.resize(w, h);
+    else this.renderer.setSize(w, h, false);
     this.camera.aspect = w / Math.max(1, h);
     this.camera.updateProjectionMatrix();
   }
@@ -691,6 +697,7 @@ export class Stage3D {
   }
 
   render(): void {
+    if (this.opts.gpu?.valid && !this.opts.gpu.valid()) return;
     if (this.post) this.post.render(this.scene, this.camera);
     else this.renderer.render(this.scene, this.camera);
   }

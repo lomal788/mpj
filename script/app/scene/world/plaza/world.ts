@@ -509,6 +509,13 @@ class World implements PlazaWorld {
   addUpdater(u: { update(df: number, frame: number): void }): () => void {
     return this.stage.addUpdater(u);
   }
+  async settle(): Promise<void> {
+    let count = -1;
+    while (count !== this.loading.size) {
+      count = this.loading.size;
+      await Promise.allSettled([...this.loading.values()]);
+    }
+  }
   disposeActors(): void { this.actorWorld?.dispose(); this.actorWorld = undefined; }
 }
 
@@ -529,12 +536,12 @@ export async function createPlazaWorld(opts: PlazaWorldOptions): Promise<PlazaWo
   const stage = await Stage3D.create({ canvas: opts.canvas, assets: opts.assets, loader: opts.loader, gpu: opts.gpu, floor: opts.floor });
   stage.budget(opts.budgetMs ?? LOAD_BUDGET_MS);
   const ext = (stage.manifest as unknown as { plaza: PlazaManifestExt }).plaza;
-  if (!ext) throw new Error('광장 manifest 에 plaza 절이 없다');
+  if (!ext) { stage.dispose(); throw new Error('광장 manifest 에 plaza 절이 없다'); }
   const deco = defaultDecoState();
   if (opts.deco?.display) deco.display = [...opts.deco.display];
   if (opts.deco?.unlockBd !== undefined) deco.unlockBd = opts.deco.unlockBd;
   const w = new World(stage, ext, deco, { loadMode: opts.loadMode, gltfTextures: opts.gltfTextures, pace: opts.pace });
   try { await w.load(opts.onProgress); }
-  catch (error) { w.disposeActors(); stage.dispose(); throw error; }
+  catch (error) { await w.settle(); w.disposeActors(); stage.dispose(); throw error; }
   return w;
 }

@@ -180,7 +180,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
     }
     onProgress(0, 1, '화면 준비');
     await Promise.all([this.stage.prepare(this.scene), ...this.assets.roots().map(root => this.stage.prepare(root))]);
-    await this.assets.prepare(this.scene, this.camera, this.ctx.renderer.gl, this.stage.loaded);
+    await this.assets.prepare(this.scene, this.camera, this.ctx.renderer.gl, this.stage.loaded, { uploads: this.ctx.renderer.uploads, offscreen: true, valid: () => this.ctx.renderer.active !== false });
     onProgress(1, 1, '완료');
   }
 

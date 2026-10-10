@@ -121,14 +121,17 @@ export class Assets {
 
   roots(): THREE.Object3D[] { return [...this.models, ...this.children.flatMap(child => child.roots())]; }
 
-  async prepare(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer, linear: boolean): Promise<void> {
+  async prepare(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer, linear: boolean, gpu: { uploads?: import('@game/lib/assetcore-three').UploadRecord; offscreen?: boolean; valid?(): boolean } = {}): Promise<void> {
     this.alive();
     const group = new THREE.Group(); group.visible = false;
     for (const root of this.roots()) if (!root.parent) group.add(root);
     scene.add(group);
-    const preparer = new ScenePreparer({ scene, camera: () => camera, renderer, scheduler: this.runtime.manager.scheduler, linear: () => linear });
+    const preparer = new ScenePreparer({ scene, camera: () => camera, renderer, scheduler: this.runtime.manager.scheduler, linear: () => linear, ...gpu });
     this.preparing.add(preparer);
-    try { await preparer.prepare(scene, P0).promise; this.alive(); }
+    try {
+      await preparer.prepare(scene, P0).promise; this.alive();
+      if (gpu.valid && !gpu.valid()) throw new Error('Render preparation expired');
+    }
     finally { preparer.dispose(); this.preparing.delete(preparer); group.removeFromParent(); group.clear(); }
   }
 

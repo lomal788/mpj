@@ -1,7 +1,7 @@
 /**
- * 앱 수명 광장 렌더러(로더 관리자 4단계 — 광장만, mpj 3층). 설계: docs/engine/loader_manager.md §14.
- * - 광장용 캔버스·WebGLRenderer 하나를 앱이 처음 필요할 때 한 번 만들어 들고 있는다(globalThis.__mpjPlazaGl). 광장에 들어가면 enter() 가 캔버스를 화면에
- *   붙이고, 나가면 leave() 가 뗀다. 광장 안 UI 도 이 렌더러로 그린다(§14.4). 다른 화면은 지금처럼 자기 렌더러.
+ * 앱 수명 공유 렌더러의 광장 대여·캐시(mpj 3층). 설계: docs/engine/render_unify.md §14.
+ * - 앱 RenderService의 캔버스·WebGLRenderer를 광장과 게임 호스트가 빌린다. 광장에 들어가면 enter() 가 캔버스를 화면에
+ *   붙이고, 나가면 leave() 가 뗀다. 광장 안 UI 도 이 렌더러로 그린다(§14.4). 게임 호스트와 공유하며 메뉴·Lyt는 아직 별도 렌더러.
  * - 재진입 때 남는 것(§14.3): leave() 가 부품·무대 dispose 전에 renderer.info.programs 전부를 한 번씩 고정(usedTimes + 1)하고, 무대는 gpu 모드
  *   (StageGpu = 렌더러 + 업로드 기록 + keep)로 관리자 캐시 몫 텍스처·기하를 남긴다. keep = 렌더러 수명 물건(후처리·하늘·IBL·광장 UI 그리기) — 렌더러마다 새로,
  *   drop 때 dispose.
@@ -9,13 +9,14 @@
  *   (화면 밖 캔버스)에 등급 바닥 P2·모델 조립 프레임마다 하나(FramePacer)·스케줄러 예산 PREWARM_BUDGET_MS 로 만들고 후처리 프로그램을 미리 컴파일한다.
  *   enter() 는 미리 만든 world 를 넘기며 promote(바닥 P0·속도 조절 풀기·예산 LOAD) 하고, 없으면 같은 규칙으로 새로 만든다(바닥 없음).
  *   hint('chara1P') 또는 ready('plaza:player:<pc>') 면 world 뒤에 그 캐릭터를 광장 장면에 숨겨 올려 GPU 준비(프로그램 컴파일)해 두고 entered() 때 버린다.
- * - 예산(§14.6): leave() 때 들고 있을 양(광장 장면 텍스처 source 별 + 기하 바이트)이 gpuBudget × KEEP_RATIO 를 넘으면 drop()(dispose + forceContextLoss).
- *   문맥을 잃었으면 다음 enter() 때 drop 뒤 새로.
+ * - 예산(§14.6): leave() 때 들고 있을 양(광장 장면 텍스처 source 별 + 기하 바이트)이 gpuBudget × KEEP_RATIO 를 넘으면 drop()(광장 keep 정리). 공유 renderer는 종료하지 않는다. 서비스 없는 단독 경로만 dispose + forceContextLoss.
+ *   문맥을 잃으면 대여를 무효화하고 준비·출력을 중단한다.
  * - 끄기: ?plazagl=0(페이지가 이 모듈을 안 씀 — 이전 방식 비교), ?loader=seq·?nowarm=1 이면 미리 준비 안 함.
  * - 노드 시험(tools/test_plaza_gl.ts)용으로 캔버스·렌더러·world 만들기·캐릭터 준비·예산을 주입(PlazaGlDeps). world 만들기 규칙은 worldStarter(env) 하나
  *   (env = 모듈·관리자·프레임 tick·에셋 루트) — 기본 env 는 DOM·관리자·광장 코드를 동적 import 한다(진입 청크를 키우지 않게, 노드에서 이 파일을 읽을 수 있게).
  */
 import * as THREE from 'three';
+import { appRenderService, type RenderLease, type RenderService } from '@app/common/render/service';
 import { P0, P2, type AssetManagerApi } from '@game/lib/assetcore';
 import { textureBytes, type UploadRecord } from '@game/lib/assetcore-three';
 import type { PlazaWorld } from '@app/scene/world/plaza/types';
@@ -46,6 +47,7 @@ export interface Disposable {
 }
 
 export interface PlazaGlDeps {
+  service?: RenderService;
   createCanvas(): HTMLCanvasElement;
   createRenderer(canvas: HTMLCanvasElement): THREE.WebGLRenderer;
   startWorld(o: WorldStart): PlazaWorldJob;
@@ -136,10 +138,13 @@ export class PlazaGl {
   private readonly pinned = new WeakSet<object>();
   private job: PlazaWorldJob | null = null;
   private inPlaza = false;
+  private lease: RenderLease | null = null;
+  private yielding: Promise<void> | null = null;
   private lost = false;
   private wantPc = '';
   private warmPc = '';
   private warm: Promise<Disposable | null> | null = null;
+  private warmCleanup: Promise<void> = Promise.resolve();
   private readonly onLost = (): void => {
     this.lost = true;
   };
@@ -158,7 +163,51 @@ export class PlazaGl {
     return !!this.job;
   }
 
+  async reserve(): Promise<void> {
+    if (this.yielding) await this.yielding;
+    if (this.deps.service && !this.lease?.valid) this.bindLease(await this.deps.service.acquire('plaza'));
+  }
+
+  private bindLease(lease: RenderLease): void {
+    this.lease = lease;
+    lease.onLost(() => { if (!this.inPlaza) void this.yieldPreparation().catch(console.error); });
+  }
+
+  onContextLost(fn: () => void): () => void { return this.lease?.onLost(fn) ?? (() => undefined); }
+
+  yieldPreparation(): Promise<void> {
+    if (this.inPlaza) return Promise.resolve();
+    if (this.yielding) return this.yielding;
+    const job = this.job;
+    this.job = null;
+    const lease = this.lease;
+    const warm = this.warm;
+    this.warm = null; this.warmPc = this.wantPc = '';
+    const task = (async () => {
+      try {
+        const world = await job?.world.catch(() => null);
+        (await warm?.catch(() => null))?.dispose();
+        await this.warmCleanup;
+        if (world) {
+          await world.settle?.();
+          this.pin(); world.disposeActors?.(); world.stage.dispose();
+        }
+      } finally {
+        if (this.lease === lease) this.lease = null;
+        lease?.release();
+      }
+    })();
+    this.yielding = task;
+    void task.finally(() => { if (this.yielding === task) this.yielding = null; }).catch(() => undefined);
+    return task;
+  }
+
   get renderer(): THREE.WebGLRenderer {
+    if (this.deps.service) {
+      this.renderer_ = this.deps.service.renderer; this.canvas_ = this.deps.service.canvas;
+      this.uploads = this.deps.service.uploads; this.keep = this.deps.service.keep('plaza');
+      return this.renderer_;
+    }
     if (!this.renderer_) {
       const c = (this.canvas_ ??= this.deps.createCanvas());
       c.addEventListener?.('webglcontextlost', this.onLost);
@@ -177,17 +226,24 @@ export class PlazaGl {
   }
 
   gpu(): StageGpu {
-    return { renderer: this.renderer, uploads: this.uploads, keep: this.keep };
+    const lease = this.lease;
+    return { renderer: this.renderer, uploads: this.uploads, keep: this.keep,
+      ...(this.deps.service ? { valid: () => !!lease?.valid, resize: (w: number, h: number) => { if (lease?.valid) lease.resize(w, h); }, offscreen: true } : {}) };
   }
 
   prewarm(params: URLSearchParams): boolean {
-    if (this.inPlaza || this.job || !prewarmEnabled(params)) return false;
+    if (this.inPlaza || this.job || this.yielding || !prewarmEnabled(params)) return false;
+    if (this.deps.service) {
+      const lease = this.deps.service.tryAcquire('plaza');
+      if (!lease) return false;
+      this.bindLease(lease);
+    }
     if (this.lost) this.drop();
     this.stats.prewarms++;
     const job = this.deps.startWorld({ gpu: this.gpu(), params, prewarm: true });
     this.job = job;
     job.world.catch(() => {
-      if (this.job === job) this.job = null;
+      if (this.job === job) { this.job = null; this.lease?.release(); this.lease = null; }
     });
     this.maybeWarm();
     return true;
@@ -202,7 +258,7 @@ export class PlazaGl {
   private maybeWarm(): void {
     const job = this.job;
     const warm = this.deps.warmChara;
-    if (!job || !warm || !this.wantPc || this.warmPc) return;
+    if (!job || !warm || !this.wantPc || this.warmPc || this.yielding) return;
     const pc = (this.warmPc = this.wantPc);
     this.stats.warmCharas++;
     this.warm = job.world.then((w) => warm(w, pc)).catch(() => null);
@@ -213,7 +269,11 @@ export class PlazaGl {
     this.inPlaza = true;
     this.stats.enters++;
     const canvas = this.canvas;
-    host.append(canvas);
+    if (this.deps.service) {
+      this.lease?.assert();
+      if (!this.lease) throw new Error('Reserve plaza renderer before enter');
+      this.lease.attach(host);
+    } else host.append(canvas);
     let job = this.job;
     this.job = null;
     const prewarmed = !!job;
@@ -231,7 +291,7 @@ export class PlazaGl {
     const w = this.warm;
     this.warm = null;
     this.warmPc = this.wantPc = '';
-    void w?.then((x) => x?.dispose());
+    this.warmCleanup = w?.then((x) => x?.dispose()).catch(console.error) ?? Promise.resolve();
   }
 
   pin(): number {
@@ -247,7 +307,18 @@ export class PlazaGl {
     return n;
   }
 
-  leave(scene: THREE.Object3D | null, stop: () => void): void {
+  leave(scene: THREE.Object3D | null, stop: () => void, settled?: Promise<void>): void {
+    if (this.deps.service && settled) {
+      this.inPlaza = false;
+      this.canvas_?.remove();
+      const pending = Promise.all([settled.catch(() => undefined), this.warmCleanup]).then(() => this.leave(scene, stop));
+      this.yielding = pending;
+      void pending.finally(() => {
+        if (this.yielding === pending) this.yielding = null;
+        if (this.stats.keptBytes > this.deps.gpuBudget() * KEEP_RATIO) this.drop();
+      }).catch(console.error);
+      return;
+    }
     this.pin();
     let kept = scene ? sceneGpuBytes(scene).bytes : 0;
     for (const v of this.keep.values()) {
@@ -260,11 +331,16 @@ export class PlazaGl {
       this.canvas_?.remove();
       this.inPlaza = false;
       this.stats.keptBytes = kept;
+      this.lease?.release(); this.lease = null;
       if (kept > this.deps.gpuBudget() * KEEP_RATIO) this.drop();
     }
   }
 
   drop(): void {
+    if (this.deps.service) {
+      if (this.inPlaza || this.job || this.yielding) return;
+      this.deps.service.trim('plaza'); this.stats.drops++; return;
+    }
     const r = this.renderer_;
     this.job = null;
     if (!r) return;
@@ -382,6 +458,7 @@ const G = globalThis as { __mpjPlazaGl?: PlazaGl; __mpjPlazaGlInstalled?: boolea
 
 export function plazaGl(): PlazaGl {
   return (G.__mpjPlazaGl ??= new PlazaGl({
+    service: appRenderService(),
     createCanvas: () => {
       const c = document.createElement('canvas');
       c.className = 'jw-gl';

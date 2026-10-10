@@ -103,6 +103,8 @@ export function managedTextureLoader(get: (url: string) => Promise<THREE.Texture
 // ---------------------------------------------------------------- GPU 준비
 
 export interface PreparerOptions {
+  offscreen?: boolean;
+  valid?(): boolean;
   renderer: THREE.WebGLRenderer;
   /** 무대 장면(빛·안개·환경맵이 셰이더 키에 들어감) */
   scene: THREE.Scene;
@@ -224,6 +226,7 @@ export class ScenePreparer {
   /** @internal 스케줄러가 부르는 한 단위. 예외면 그 작업을 끝냄(보이기는 부른 쪽이 그대로 — 그리는 순간 three 가 처리) */
   step(job: PrepJob): number {
     if (job.phase === PH_DONE) return RUN_DONE;
+    if (this.o.valid && !this.o.valid()) { this.live.delete(job); job.finish(); return RUN_DONE; }
     try {
       return this.stepInner(job);
     } catch (e) {
@@ -358,7 +361,7 @@ export class ScenePreparer {
     const sm = r.shadowMap;
     const auto = sm.autoUpdate;
     const need = sm.needsUpdate;
-    const linear = this.o.linear();
+    const linear = this.o.linear() || !!this.o.offscreen;
     const scTest = r.getScissorTest();
     const mask = cam.layers.mask;
     sm.autoUpdate = false;

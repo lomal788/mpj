@@ -2,6 +2,8 @@
 
 [설계] 2026-10-10 정적 조사본이다. 앱 수명 렌더러 통합의 근거와 이전 조건을 정리한다. 이번 변경은 이 문서뿐이며 구현 승인을 뜻하지 않는다. 폴더·의존 방향은 [DESIGN §10.1~10.7][design]을 따른다.
 
+[후속 기록] 위 조사 당시 범위와 이후 작업을 구분한다. 광장·게임 호스트의 웹 구현은 §14, 사용자 요청으로 확인한 원본의 광장·게임·메뉴·레이아웃 UI 공용 경로와 추가 C 추출5함수는 §15에 기록한다. 기존 “신규 추출 없음” 문장은 당시 조사/구현 범위의 기록으로 보존한다.
+
 [데이터] 원본·웹 실행, 헤드리스, 화면 촬영, 신규 추출, 시험 실행은 없다. 기존 판독 재사용·기존 C의 빈 판독 보충·웹 파일의 정적 읽기를 수행했다. 원본·extracted·코드·분석 파일은 수정하지 않았다. 주소는 모듈별이며 데이터에 주소를 만들지 않는다. 출처 대응은 부록 A에 둔다.
 
 ## 1. 기능 개요
@@ -586,3 +588,114 @@
 [mgm06func]: ../../../analysis/functions/mgm06.nro.tsv
 [modesdoc]: ../shell/mgm_modes.md
 [motiondoc]: 19_motion_input.md
+
+## 14. 웹 구현 기록 — 광장·mg1801 렌더러 대여 (2026-10-10)
+
+사용자 승인 범위: 광장과 mg1801/게임 호스트가 앱 수명 renderer/canvas 하나를 빌려 쓰는 §9.3 단계2 및 게임 연결을 구현한다. 기존 원본 판독만 재사용하며 새 추출·분석·후처리 식 변경은 하지 않는다. §1~13의 조사 당시 문장은 그대로 보존한다.
+
+### 14.1 파일·계약 (구현 전)
+
+- `app/common/render/service.ts`: 단일 renderer/canvas, 배타적 화면 lease, 대기열, generation, uploads 및 화면별 keep, 부착/resize/반납 소유권.
+- `app/common/render/state.ts`: 렌더 타깃·viewport/scissor·색/alpha·autoClear·shadow·톤맵·출력 색·DPR/크기를 대여 경계에서 저장/복원.
+- `view/renderer.ts`·`app/flow/host.ts`: 제품 호스트는 서비스 renderer를 주입받고 게임 시작~GPU 준비/정리 완료까지 lease를 유지한다. 중도취소 뒤 늦은 load 완료는 활성화하지 않고 정리를 마친 뒤 반납한다. 기존 dev 단독 Renderer 생성은 호환 경로로 남긴다.
+- `view/plazaGl.ts`·`plaza_page.ts`: 기존 광장 캐시는 서비스의 광장 keep으로 연결한다. 미리 준비와 게임은 배타적이다. 게임 진입 시 이미 진행 중인 광장 모델/캐릭터 준비를 drain하고 무대 인스턴스를 정리한 뒤 반납한다. 캐시·renderer는 유지한다. 광장 활성 중에는 다른 출력 대여를 허용하지 않는다.
+- `render3d/stage.ts`·`assetcore-three`: 서비스의 크기 변경과 준비 guard를 주입한다. 공유 준비 draw는 scratch RT에만 수행한다. `linear` 의미는 바꾸지 않고 화면 출력용 compile과 scratch 업로드 키의 완전 일치는 보장하지 않는다.
+- `assetLoader.ts`: 제품 경로의 KTX2 지원 판단에 서비스 renderer capability를 주입한다. 미이전 단독 화면 fallback probe는 별도로 남긴다.
+
+추가 변경 파일: `app/common/assets/index.ts`, `app/common/render3d/material.ts`, `app/minigame/mg1801/view/index.ts`, `app/scene/world/plaza/{scene,types,world}.ts`, `view/assetMode.ts`. 새 시험은 `tools/test_render_service.ts`, 기존 경계 갱신은 `tools/test_plaza_gl.ts`, 준비 세대 만료 시험 추가는 `tools/test_game_assets.ts`다. `Assets.prepare`는 generation이 만료되면 준비 성공으로 반환하지 않는다.
+
+### 14.2 범위·근사·보류
+
+- 이번 완료 조건은 **광장과 게임 호스트의 3D renderer 동일 객체**다. 메뉴·Lyt HUD의 별도 renderer 제거(§9.3 단계3/5 나머지)는 미이전이며 앱 전체 WebGL context 1개라고 보고하지 않는다.
+- 활성 게임과 광장 prewarm을 동시에 GL 실행하지 않는다. prewarm drain 대기는 원본 submit 판독이 아닌 웹 소유권 정책이다. 게임 중 새 광장 prewarm은 연기한다.
+- 정상 광장 budget drop은 광장 전용 keep 정리만 한다. 공유 renderer dispose/forceContextLoss는 화면 종료 경로에서 금지한다.
+- context loss에서 generation을 무효화하고 늦은 준비/출력을 막는다. 브라우저의 같은 renderer 복구 뒤 새 대여가 가능하며, 기존 게임의 자동 재개/완전한 GPU 복구는 이번 범위에서 보장하지 않는다.
+- DOM 와이프·2D HUD·로직 dt·RNG·B2/B7 수식은 보존한다. 브라우저/헤드리스·추출은 실행하지 않는다.
+
+광장 keep의 IBL PMREM·RT·큐브와 하늘 geometry/material에도 명시적 해제를 연결한다. context 복구가 먼저 오더라도 이전 lease의 drain이 끝난 뒤 keep을 비워 늦게 쓰인 옛 캐시가 다음 대여로 넘어가지 않게 한다. 프로그램 pin의 완전한 예산 회수는 별도 후속이며 전체 GPU 메모리 상한을 보장하지 않는다.
+
+### 14.3 상태·시험
+
+구현 완료(광장·게임 호스트 3D 공유 범위). 메뉴·Lyt 통합 및 선택 시 사전 로딩은 미완료다.
+
+| 검증 | 결과 |
+|---|---|
+| `npm run typecheck` | 통과 |
+| `test_render_service.ts` | 15/15 — 동일 renderer 재사용, 배타 대여·FIFO, 상태·RT 복원, 종료 소유권, context loss·generation, 광장 drain·재진입, scratch 준비, IBL 캐시 해제 |
+| `test_plaza_gl.ts` | 60/60 — 새 공용 서비스 import를 허용 목록에 추가. 기존 동작 기대값 변경 없음 |
+| `test_plaza_world.ts` | 471/471 (`PLAZA_SKIP_GLSL=1`) |
+| `test_game_assets.ts` | 17/17 |
+| `test_render_common.ts` | 129/129 — 기존 출력·재질·물 그래프 스냅샷 유지 |
+| `test_assetcore.ts` / `test_prefetch.ts` | 47/47, 133/133 |
+| `test_entry.ts` / `test_splitscreen.ts` | 414/414, 115/115 |
+| `test_mg1801.ts` | 종료 코드0, 통과 출력97개 |
+| `test_character.ts` | 127/135 — 기존 결과 카메라 골든8개 동일 실패. 이번 변경에서 카메라·골든 수정 없음 |
+| 메모리 esbuild | 출력165개, 디스크 번들 생성 없음 |
+
+작업 중 새 시험의 `loadIbl` 두 번째 인자 누락으로 타입 검사1회 실패(TS2554) → `null` 명시 후 통과. 광장 경계 검사1건은 공용 render 서비스 의존 추가를 허용 목록에 반영한 뒤 통과. 브라우저/헤드리스·픽셀 비교·실제 context 복구·로딩 시간 측정은 하지 않았다. 따라서 실기 화면 등가·로딩 지연0을 보장하지 않는다.
+
+기존 카메라 실패의 원인 분리 기록은 [20_camera_runtime §14.4](20_camera_runtime.md) 및 [render_common §4](render_common.md#4-검증-기록)에 있다. 이번 실행의 실패 원문:
+
+```text
+실패: 원본 규칙(기본) mgresult_win1 틱 477 기준과 같음 (7a0a7362897717c4e12174cb86832c8344f08a30fe70cdce82dc97563bf97132)
+실패: 원본 규칙(기본) mgresult_draw 틱 477 기준과 같음 (10d3d208a785b68df2f7b5ed9288c147557c75a11ab5060884c3492c77d3d501)
+실패: 원본 규칙(기본) mgresult_win2_theme 틱 477 기준과 같음 (3f1018388fe0ce6916ff1b02f75240d720a255b597a87da89748f529794cad75)
+실패: 원본 규칙(기본) mgresult_dice 틱 1001 기준과 같음 (1654eb8ea0f1926afc47d708a8ccee6189b6e1f9c7497b338b25ec1f58c4142e)
+실패: RULES_WEB mgresult_win1 = 이전 전 코드 기록 (1a129c5018e3c79c80e344505870f7644554163ffb5fd06f1c7108cc7d3ee856)
+실패: RULES_WEB mgresult_draw = 이전 전 코드 기록 (40bba936a815146ed55406312cd29aeb54d9d3c6d018b784ed5fe915386dfe46)
+실패: RULES_WEB mgresult_win2_theme = 이전 전 코드 기록 (487093d7b12516c4e33ed91c8ffba386f5e3a6e0cb87a446adf9a963e2a9fd21)
+실패: RULES_WEB mgresult_dice = 이전 전 코드 기록 (3a7dfc775ccc25f3fac752509e5697e5319c982bd75f397ab1293e0c46403870)
+```
+
+추가 수명 계약: 광장 GPU 포트는 생성 당시 lease를 캡처하여 재진입 뒤에도 옛 작업이 다시 유효해지지 않는다. context loss 중 광장 prewarm은 drain 후 반납하며, 활성 광장은 페이지 stop으로 정리한다. 정상 종료도 background load 및 캐릭터 준비를 drain한 뒤 반납한다. 게임 선택 시 사전 로딩의 예약·완성 장면 인계는 별도 미구현이다.
+
+
+### 14.4 후속 작업 순서·원본 대응
+
+사용자 질의에 대한 범위 정리: §9.3의 전체 순서는 경계 → 서비스 → 메뉴 → 광장 준비 → 게임/HUD → 분할·복귀·손실 → 소유권 고정이다. 이번 요청은 서비스·광장 준비·게임 연결부터 적용한 부분 이전이다. 다음에는 메뉴 MgmView/modeselect/charselect 및 Lyt 합성을 이전한 뒤 게임 선택 시 준비 예약·선택 변경 취소·프레임 예산 GPU 준비·완성 장면 인계를 연결하는 순서를 권한다. 게임 사전 로딩은 메뉴 통합의 필수 종속은 아니지만, 먼저 만들면 메뉴 통합 시 준비와 출력의 작업 배분·전환 검증을 다시 조정해야 한다.
+
+현재는 출력 소유권을 대여 수명 전체에서 배타적으로 잡는다. 메뉴도 같은 renderer로 옮긴 뒤 표시 중인 메뉴와 게임 prewarm을 함께 처리하려면 §6.2의 프레임/작업별 상태 scope 및 prepareQueue를 추가해야 한다. 현재 코드가 이 시간 분할 실행까지 완성한 것은 아니다. 다만 renderer/canvas·generation·uploads·scratch 준비 경계는 재사용할 수 있어 기반 전체를 다시 만들 필요는 없다. 이후 추가 화면을 독자 renderer로 계속 늘리면 후속 이전 비용도 커진다.
+
+원본에서 확인한 것은 §3.1의 공통 장면 구성·기본/overlay GraphicsLayer·GUI attachment·공통 ResetAll이다. 원본 내부 renderer 객체 수가 정확히1이라는 판독은 없다. 웹의 renderer1개와 lease는 이 공용 기반/장면별 구성 관계를 구현하는 웹 설계이며, GPU submit·모든 GUI pass 순서까지 복제했다는 뜻이 아니다.
+
+
+## 15. 원본 공용 렌더 경로 후속 확인 (2026-10-10)
+
+### 15.1 결론과 확인 범위
+
+[판독] 확인한 광장·mg1801·메뉴·레이아웃 UI 소비자는 원본의 공용 `RendererModule`/`GraphicsCoreModule`이 보유한 장면·그래픽 레이어를 사용한다. 게임·메뉴가 공용 모듈의 장면을 조회하고, 광장·mg1801 카메라는 공용 기본 레이어에 연결하며, 레이아웃 UI는 지정 레이어 또는 기본 오버레이 레이어에 붙는다. 아래 호출부와 새 getter 본문이 근거다.
+
+[미확정] 이 결과는 원본 내부 renderer 객체·GPU device·명령 큐의 총수가 정확히1이라는 판독이 아니다. `RendererModule`과 `GraphicsCoreModule`도 역할이 다른 모듈이며 하나의 객체로 합쳐 부르지 않는다. 레이어별 실제 pass 제출 순서·GPU clear·모든 GUI 합성 위치는 §11의 미확정을 유지한다.
+
+### 15.2 화면별 원본 연결 근거
+
+| 수준 | 소비자 | 확인한 공용 경로 | 모듈·주소·C 근거 |
+|---|---|---|---|
+| [판독] | 광장 3D | `CameraManager::Initialize`에서 `GraphicsCoreModule::GetDefaultGraphicsLayer()` → `GraphicsLayer::SetCamera` | menu00.nro `@0x7100004800`, [plaza_menu00_world.c](../../../analysis/decomp/plaza_menu00_world.c) L817·878~884 |
+| [판독] | mg1801 3D | `MapImpl::Initialize`에서 같은 기본 레이어 API → `GraphicsLayer::SetCamera`; 게임의 env/light/post는 별도 장면 구성요소로 생성 | mg1801.nro `@0x710000f9d0`, [mg1801.nro.c](../../../analysis/decomp/mg1801.nro.c) L14109·14171~14240 |
+| [판독] | mg1801이 사용하는 공통 게임 틀 | `RmMgSceneBase::SyncedSetupGame`에서 전역 `RendererModule::g_Module` → `GetScene(GetCurrentGfxSceneType())` → layer0 조회·enabled 변경 | main `@0x7100443340`, [main_ca_rm.c](../../../analysis/decomp/main_ca_rm.c) L7715~7723 |
+| [판독] | 캐릭터 선택 메뉴 | 공용 `RendererModule::GetScene(..., 0)` → `Scene::GetGraphicsLayer` → 레이어 enabled 제어. 카드 카메라는 기존 레이어1~4를 사용 | main `@0x710033fab0`·`@0x7100341090`, [charsel_select_pc.c](../../../analysis/decomp/charsel_select_pc.c) L5092~5099·6459~6463; 카드 구성은 [charselect §3.1](../shell/charselect.md#31-생성-판독) 기존 판독 재사용 |
+| [판독] | 광장·메뉴 레이아웃 UI | 광장 `ComUiLocationTelop`과 메뉴 `ComUiMinigameModeLayoutCommon::Setup` 모두 `ComUiBase::CreateLayoutImpl` 사용 | menu00.nro `@0x7100073740`, [plaza_menu00_ui.c](../../../analysis/decomp/plaza_menu00_ui.c) L203; main `@0x71003649cc`, [mgmcommon_main1.c](../../../analysis/decomp/mgmcommon_main1.c) L110~131 |
+| [판독] | 레이아웃 공용 생성·연결 | `ComUiBase::CreateLayoutImpl` → helper → `ComGuiLayout::Create`; 기존 생성 경로는 지정 레이어가 무효하면 공용 `GraphicsCoreModule`의 기본 overlay를 조회하고 `Attach` | main `@0x710020bf18` → `@0x710020b8a0`; [render_shared_module.c](../../../analysis/decomp/render_shared_module.c) L57~, [render_shared_ui.c](../../../analysis/decomp/render_shared_ui.c) L28~30; 기존 `@0x710079cfb0` 연결은 [mgmcommon_main_guilayout_all.c](../../../analysis/decomp/mgmcommon_main_guilayout_all.c) L813~825 및 §3.1 재사용 |
+
+[설계 대응] 웹의 `LytRenderer`는 원본 클래스 이름이나 별도 GPU 시스템의 대응물이 아니라 레이아웃을 그리기 위한 웹 구현이다. 원본 레이아웃 UI의 대응은 위 `ComGuiLayout`·그래픽 레이어 연결로 설명한다. 현재 웹 구현은 [common/ui/layout/render.ts](../../script/app/common/ui/layout/render.ts)의 정적 공유 WebGLRenderer를 별도로 생성하며 [view/lyt.ts](../../script/view/lyt.ts)는 이를 재수출한다. 광장·게임 호스트의 공유 완료를 메뉴·Lyt까지 완료한 것으로 읽지 않는다.
+
+### 15.3 추가 추출5함수와 본문 확인
+
+[추출] 이전 확인 요청에서 [디컴파일 가이드](../analysis/decompile_guide.md)에 따라 main.nso 기존 프로젝트를 `-noanalysis -readOnly`로 열어 아래 함수만 C로 추출했다. `INDEX.tsv`에 새 파일 행5개를 추가했고, C 머리줄5개·색인5행 일치, `no function at`/`decompile failed`0건을 확인했다. 이 문서 반영에서는 추가 추출이나 런타임 코드 변경을 하지 않는다.
+
+| 모듈·주소 | 함수·파일 | 본문에서 확인한 동작 |
+|---|---|---|
+| main `@0x710004f334` | `RendererModule::GetScene`, [render_shared_module.c](../../../analysis/decomp/render_shared_module.c) L1 | 모듈의 `+0x7a0 + SceneType×0x10`에서 기존 장면 핸들과 generation을 반환. renderer/장면 신규 생성 없음 |
+| main `@0x710084d8f4` | `GraphicsCoreModule::GetDefaultGraphicsLayer`, 같은 C L25 | `*(this+0x68)+0x18`의 기본 레이어 참조 위치 반환. 신규 생성 없음 |
+| main `@0x710084d908` | `GraphicsCoreModule::GetDefaultOverlayGraphicsLayer`, 같은 C L36 | `*(this+0x68)`의 `+0x30/+0x38/+0x40`에서 기존 overlay 핸들 복사. 신규 생성 없음 |
+| main `@0x710020bf18` | `ComUiBase::CreateLayoutImpl`, 같은 C L57 | 기본 `GuiLayoutCreateArg` 구성 후 `@0x710020b8a0` 등 공용 helper 호출 |
+| main `@0x710020b8a0` | `FUN_710020b8a0`, [render_shared_ui.c](../../../analysis/decomp/render_shared_ui.c) L1 | `ComGuiLayout::Create`로 UI 컴포넌트를 만들고 엔티티에 추가. 화면 전용 renderer 생성 경로가 아님 |
+
+### 15.4 통합 설계에 반영할 원칙
+
+[설계] 앱이 공용 WebGLRenderer/canvas를 소유하고 광장·게임·메뉴·레이아웃 UI가 장면별 camera·layer·post·전용 RT를 연결하는 방향을 유지한다. 이는 확인한 원본의 공용 그래픽 기반과 장면별 구성 관계에 대응하는 웹 설계다. 웹 lease API 자체를 원본 API로 판정하지 않는다.
+
+[설계] 메뉴·Lyt 이전에서도 고유 그래프·후처리 설정·UI 색공간·알파·합성 순서는 보존한다. 공용 renderer를 쓴다는 이유로 모든 UI를 같은 overlay/pass에 강제하지 않는다. 원본도 유효한 지정 레이어와 기본 overlay 경로를 구분한다. §7.1의 UI 전용 RT·기존 합성 계약과 §9.3의 후속 이전 순서를 유지한다.
+
+[미완료] §14의 광장·게임 호스트 연결 이후 메뉴·Lyt의 별도 renderer 제거와 선택 시 사전 로딩은 후속 작업이다. 이번 원본 확인은 그 방향의 근거를 보완하며 해당 구현·원본 픽셀 등가·내부 renderer 객체 수1을 완료 판정하는 근거로 쓰지 않는다.

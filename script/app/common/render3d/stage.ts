@@ -590,7 +590,8 @@ export class Stage3D {
     this.cameraDriven = false;
     for (const slot of ['anim', 'follow'] as const) {
       const d = this.cameraDrivers[slot];
-      if (d && d.apply(this.camera, df)) {
+      if (d && d.step(this.camera, df)) {
+        d.apply(this.camera);
         this.cameraDriven = true;
         break;
       }

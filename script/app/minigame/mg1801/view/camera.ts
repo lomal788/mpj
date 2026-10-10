@@ -8,9 +8,10 @@
  *   P00 = P11/aspect 를 쓴다(analysis/decomp/camera_core.c) [판독] → three fov(도) = fovy·180/π.
  * - 종횡비: 적용기 ApplyAspectEnabled 기본 0 이라 fsnb aspect(1.78·1.777)는 쓰지 않고 화면 비율(렌더러 16:9)을 유지한다.
  *   세로 화각 고정(가로가 비율에 따라 바뀜)도 위 투영식 그대로다 [판독]. ApplyNearAndFarEnabled 기본 1 → near/far 는 fsnb 값.
- * - 전환은 보간 없이 즉시(적용기에 가중치 없음) [판독].
+ * - 이 소비자는 고정 라벨을 직접 선택한다. 원본 공용 모션 트리는 가중치로 대표 자식을 선택하지만 자세를 가중 평균하지 않는다(20_camera_runtime §1).
  */
 import * as THREE from 'three';
+import { applyCameraSample } from '@app/common/render3d/camera';
 
 export type CameraLabel = 'loop' | 'result' | 'capture';
 
@@ -34,13 +35,8 @@ export const CAMERAS: Record<CameraLabel, CamClip> = {
 /** 원본 AnimationPassCamera 적용(Aim 모드, 수직 시선 없음 — 세 클립 모두 d.x = 0 이지만 d.z ≠ 0) */
 export function applyCamera(cam: THREE.PerspectiveCamera, label: CameraLabel): void {
   const c = CAMERAS[label];
-  cam.fov = (c.fovy * 180) / Math.PI;
-  cam.near = c.near;
-  cam.far = c.far;
-  cam.position.set(c.pos[0], c.pos[1], c.pos[2]);
-  cam.up.set(0, 1, 0);
-  cam.lookAt(c.aim[0], c.aim[1], c.aim[2]);
-  if (c.twist) cam.rotateZ(c.twist);
-  cam.updateProjectionMatrix();
-  cam.updateMatrixWorld(true);
+  applyCameraSample(cam, {
+    pos: c.pos, rotOrAim: c.aim, mode: 'Aim', twist: c.twist,
+    projection: { type: 'perspective', fovy: c.fovy, aspect: cam.aspect, near: c.near, far: c.far },
+  });
 }

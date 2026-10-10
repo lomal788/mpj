@@ -721,3 +721,70 @@
 [G1808]: ../minigame/mg1808.md
 [G1809]: ../minigame/mg1809.md
 [G1810]: ../minigame/mg1810.md
+
+## 14. 웹 구현 기록
+
+### 14.1 이번 구현 범위 (2026-10-10)
+
+[설계] 사용자가 승인한 공용 기반 계산·재생 분리를 적용한다. §9의 전체 런타임 완성을 의미하지 않는다. 기존 문장과 판독은 보존한다.
+
+| 파일 | 역할 | 상태 |
+|---|---|---|
+| `script/game/lib/camera/index.ts` | import0 pose/basis·pass·world snapshot, 명시적 bakedSamplesApprox·baked clock | 완료 |
+| `script/game/lib/camera-three/index.ts` | snapshot을 Perspective/Orthographic camera에 적용; 시간 진행 없음 | 완료 |
+| `script/app/common/render3d/camera.ts` | 기존 웹 수치 provider·FSNB JSON 정규화·near 근사 옵션 | 완료 |
+| 광장 balloon/camera·frame/stage/camera·mg1801/view/camera·frame/result/stage | 공용 계산 소비; 추종·선택·부분 override는 장면 유지 | 완료 |
+| Stage3D/CameraDriver·split 하네스 | step과 apply 분리, 반복 apply의 시간 진행 제거 | 완료 |
+| `tools/test_camera.ts` | 수학·pass·world·직교·재생·반복 적용·소비자·import 경계 노드 시험 | 완료 |
+
+### 14.2 근사·보류 및 사용자 확인 필요
+
+- C01: 기존 baked JSON은 raw 곡선·projection/aspect flags가 부족하다(U07). `sampleBakedApprox`는 기존 floor/clamp 샘플을 명시적으로 유지한다. fractional raw 평가 및 모션 대표 노드 선택은 이번 구현 범위 밖이다.
+- C02: 기존 Three/JS 수치 경로를 app의 `webCameraMathApprox` provider로 분리한다(U05). 공용 코어는 수치 provider를 필수 주입받으며 SDK 표/FMA 비트 동등성을 주장하지 않는다. pose 계산을 새로 임의 f32 순서로 바꾸지 않는다. baked 재생 frame/speed는 f32로 저장한다.
+- C03: 광장·MgCamera의 기존 near 0.3은 app의 `minNearApprox` 옵션으로만 유지한다. 공용 기본 pass에는 near 하한을 두지 않으며 mg1801 near0.1은 유지한다. 기본pass applyAspect=false/applyNearFar=true를 따른다.
+- C04: 기존 modulo loop는 `BakedCameraPlayerApprox`에만 둔다. 원본 motion slot clock/curve wrap의 공통 규칙으로 주장하지 않는다. 외부에서 전달한 프레임 수를 step만 소비하며 draw/apply는 진행하지 않는다.
+- C05: 광장 추종·기구 영역·라벨/전환 시점은 장면 소유다. 결과 raw curve evaluator는 기존 결과 logic에 남기고 최종 pose/world 적용만 이전한다. 해당 evaluator의 기존 scale0/Horner 한계는 이번 작업에서 원본 evaluator로 승격하지 않는다.
+- C06: 흔들림 U02~U04, raw evaluator/asset 확장 U07, split draw 보정, type2/4 U06 및 Stage3D 직교 shadow fitting은 후속 범위다. 어댑터의 직교 지원을 Stage3D 전체 직교 지원으로 주장하지 않는다.
+- 사용자 확인 필요: 이번 분리 자체에는 추가 선택 없음. 원본 정밀 수치·raw 에셋 이전은 위 잔여 항목으로 구분한다.
+- 새 Ghidra 추출 요청: 0개. 기존 판독을 재사용한다.
+
+### 14.3 검증 결과
+
+[검증] 노드에서 아래 시험을 실행했다. 기존 시험의 수치·연출 기대값은 변경하지 않았다. CameraDriver 호출부만 step→apply로 바꾸고 import 허용 목록에 새 경로를 추가했다.
+
+| 시험 | 결과 |
+|---|---|
+| `test_camera.ts` | 70/70 — 실제 FSNB 45클립 × 시작/소수/중간/끝 표본, Aim/Euler, vertical Aim, pass, world 1회 합성, 부모 카메라, WebGL 깊이, 직교, clock, apply 반복·resize 불변, pose hash, Stage3D 슬롯 우선순위, import0 |
+| `test_mg_assets.ts` | 2052/2052 |
+| `test_mgresult.ts` | 656/656 |
+| `test_plaza_move.ts` | 129/129 |
+| `test_plaza_actors.ts` | 248/248 |
+| `test_plaza_world.ts` | 464/464 (`PLAZA_SKIP_GLSL=1`) |
+| `test_mgscene.ts` | 79/79 |
+| `test_splitscreen.ts` | 115/115 |
+| `test_entry.ts` | 394/394 |
+| `test_plaza_actor.ts` | 17/17 |
+| `test_actor.ts` | 111/111 |
+| `test_mg1801.ts` | 종료 코드0, 실패 없음(시험 자체에 합계 출력 없음) |
+| `npm run typecheck` | 통과 |
+| esbuild `options(false)` + `write:false` | 169출력 메모리 번들 성공, 디스크 배포 없음 |
+| `git diff HEAD --check` | 통과 |
+
+[검증] 합계가 출력되는 11종은 4335/4335, mg1801도 별도 통과했다. 브라우저·헤드리스·원본 실행 대조는 하지 않았다. actor/plaza actor hash는 기존 `358843fd283aea97d5c67a2af7867f7ca08154d9532d379c9849acc0060d5024` / `a8f4e2f80b7d5a79092af12faf20cbc1281b65081662c465298a3a31fc87f30b`다.
+
+[검증] 작업 중 실패와 수정(현재 잔여 실패0):
+- `tools/test_plaza_actors.ts(410,16): error TS2339: Property 'step' does not exist on type '{ apply(c: PerspectiveCamera, df: number): boolean; }'.`
+- `tools/test_plaza_actors.ts(410,39): error TS2554: Expected 2 arguments, but got 1.` — 가짜 driver 타입을 새 step/apply 계약으로 수정 후 typecheck 통과.
+- `FAIL Stage3D steps only selected slot and resumes follow when animation stops TypeError: Cannot set properties of undefined (setting 'value')` — 새 시험의 가짜 Stage3D에 실제 globals/time/ms/worldFrame·clipsLive·overridden 필드를 맞춘 후 통과.
+
+### 14.4 적용 결과와 동작 차이
+
+[구현] `camera/index.ts`는 import0이고 `camera-three/index.ts`는 `../camera`·`three`만 import한다. `render3d/camera.ts`가 웹 수치 provider와 JSON 입력을 연결한다. Perspective/Orthographic 공용 snapshot과 Three 적용은 구현됐으나 Stage3D는 기존 Perspective 계약을 유지한다.
+
+[구현] 광장 balloon의 FsnbCamera·overview 소비, 광장 Follow의 최종 pose, MgCamera, mg1801 3라벨, 결과 무대 최종 pose가 공용 경로를 사용한다. CameraDriver와 Stage3D, dev/splitscreen_page, 두 기존 시험의 driver 호출을 step→apply로 이전했다. 추종 목표 갱신·기구 영역·컷 선택·결과 raw 평가·near/far override 정책은 소비자에 남는다.
+
+[동작] 광장 추종 궤적·기구 컷 260/500프레임·끝 사건·mg1801 세 시점은 기존 기대값을 유지했다. `apply`만 반복 호출하면 재생 시간이 흐르지 않는다. 외부 driver 소비자는 반드시 `step(camera, df)`이 true일 때 `apply(camera)`를 호출해야 한다. anim 슬롯이 활성인 동안 follow를 step하지 않는다. 광장 다중 tick에서는 이전 tick의 카메라 방향을 다음 추종 계산에 쓰기 위해 step 내부 중간 pose 적용을 유지한다.
+
+[동작] 원본 §6.2대로 수직 Aim은 명시적 기저를 쓰고 twist를 무시한다. 결과 world는 위치/주시점만 회전하고 world-up으로 재구성하던 경로를 §6.1 `entityWorld * inverse(animView)` 합성으로 바꿔 roll도 보존한다. 이 두 일반화된 경계는 전용 노드 시험으로 확인했다. actor의 cameraBasisApprox는 이번 이전으로 원본 비트 동등 경로가 된 것이 아니다.
+
+[범위] raw FSNB 정밀 evaluator·SDK 수치·모션 대표 노드·흔들림·split snapshot 계약까지 끝낸 상태는 아니다. C01~C06은 명시적 잔여 범위이며 기존 0.3 near/샘플 근사를 코어 기본 규칙으로 넣지 않았다. 생성/변경 파일은 §14.1과 본 절의 소비자·시험 목록이며 신규 npm 의존성과 Ghidra 추출은 없다.

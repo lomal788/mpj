@@ -5,6 +5,7 @@
  * 빛: host.world 가 없으면 캐릭터 선택과 같은 env(평행광·반구광) [근사: 원본은 미니게임 무대 env].
  */
 import * as THREE from 'three';
+import { applyCameraSample } from '@app/common/render3d/camera';
 import { mpatTables, Preview3D } from '@app/scene/menu/charselect/preview3d';
 import type { CharaSpec, Spec } from '@app/scene/menu/charselect/types';
 import { Heading } from '@app/scene/world/plaza/heading';
@@ -167,25 +168,15 @@ export async function createResultStage(input: ResultStageInputExt, host: Result
   let camFrame = 0;
   let camPlaying = false;
   const camFinished = (): boolean => !!clip && !clip.loop && camFrame >= clip.frames;
-  const camWorld = (v: L.Vec3): THREE.Vector3 => {
-    if (!origin) return new THREE.Vector3(v[0], v[1], v[2]);
-    const r = L.quatRotate(origin.quat, v);
-    return new THREE.Vector3(origin.pos[0] + r[0], origin.pos[1] + r[1], origin.pos[2] + r[2]);
-  };
   const applyCamera = (): void => {
     if (!clip) return;
     const pose = L.cameraPose(clip, camFrame);
     const [near, far] = L.nearFar(pose, input.opts.nearZ, input.opts.farZ);
-    camera.position.copy(camWorld(pose.pos));
-    camera.up.set(0, 1, 0);
-    camera.lookAt(camWorld(pose.aim));
-    if (pose.twist) camera.rotateZ(pose.twist);
-    camera.fov = THREE.MathUtils.radToDeg(pose.fovy);
-    camera.aspect = pose.aspect;
-    camera.near = near;
-    camera.far = far;
-    camera.updateProjectionMatrix();
-    camera.updateMatrixWorld();
+    const cameraWorld = origin ? new THREE.Matrix4().compose(new THREE.Vector3(...origin.pos), new THREE.Quaternion(...origin.quat), new THREE.Vector3(1, 1, 1)).toArray() : undefined;
+    applyCameraSample(camera, {
+      pos: pose.pos, rotOrAim: pose.aim, mode: 'Aim', twist: pose.twist,
+      projection: { type: 'perspective', fovy: pose.fovy, aspect: pose.aspect, near, far },
+    }, { applyAspect: true, entityWorld: cameraWorld });
   };
   applyCamera();
 

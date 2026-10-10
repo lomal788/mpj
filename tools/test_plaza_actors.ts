@@ -338,7 +338,7 @@ console.log('4. 결정 → 기구 출발 사건(§6.10 ④)');
   const listeners = new Map<string, ((v: unknown) => void)[]>();
   let exited: unknown = null;
   let buttons = 0;
-  const drv: { d: { apply(c: THREE.PerspectiveCamera, df: number): boolean } | null } = { d: null };
+  const drv: { d: { step(c: THREE.PerspectiveCamera, df: number): boolean; apply(c: THREE.PerspectiveCamera): void } | null } = { d: null };
   const takeoff = { name: 'pos_balloon_takeoff', frames: 500, loop: false, frame: 0, speed: 1, playing: true, isFinished: () => false, stop() {} };
   const camera = new THREE.PerspectiveCamera(40, 16 / 9, 1, 2000);
   camera.position.set(0, 5, 30);
@@ -407,7 +407,7 @@ console.log('4. 결정 → 기구 출발 사건(§6.10 ④)');
   let whoAt = -1;
   let exitAt = -1;
   for (let f = 1; f <= 600 && exitAt < 0; f++) {
-    drv.d?.apply(camera, 1);
+    if (drv.d?.step(camera, 1)) drv.d.apply(camera);
     bs.update(1);
     if (cut01At < 0 && bs.phase === 'cut01') cut01At = f;
     if (passAt < 0 && events.some(([n, v]) => n === 'se' && v === 'SM_JIN_MENU_TO_MAP')) passAt = f;

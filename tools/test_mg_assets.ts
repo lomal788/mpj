@@ -252,12 +252,12 @@ for (const [g, m] of mans) {
   const clip = parseFsnb(JSON.parse(readFileSync(join(A, 'mg', 'mg0508', m.asset.cameras!.mg0508_cam_start.file), 'utf8')))!;
   const c = new MgCamera('mg0508_cam_start', clip);
   const cam = new THREE.PerspectiveCamera();
-  for (let i = 0; i < 400; i++) c.apply(cam, 1);
+  for (let i = 0; i < 400; i++) { c.step(cam, 1); c.apply(cam); }
   ok(c.finished && c.frame === clip.frames, `비루프 카메라는 끝 프레임에서 멈춤 (${c.frame}/${clip.frames})`);
   const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
   ok(fwd.y < 0, `mg0508 시작 카메라가 아래(식탁)를 본다 (fwd.y ${fwd.y.toFixed(3)})`);
   const lp = new MgCamera('x', { ...clip, loop: true }, { loop: true });
-  for (let i = 0; i < clip.frames + 10; i++) lp.apply(cam, 1);
+  for (let i = 0; i < clip.frames + 10; i++) { lp.step(cam, 1); lp.apply(cam); }
   ok(Math.abs(lp.frame - 10) < 1e-9, `루프 카메라는 되돌아감 (${lp.frame})`);
 }
 
@@ -273,7 +273,7 @@ console.log('9. 압축 분류(converted.json)');
 console.log('10. import 경계');
 {
   const dir = join(WEB, 'script', 'app', 'minigame', 'frame', 'stage');
-  const allow = /^(three|\.\/[a-z]+|@app\/common\/render3d|@app\/common\/render3d\/assetHandlers|@app\/scene\/world\/plaza\/world|@game\/lib\/assetcore|@game\/lib\/assetcore-three|@game\/lib\/splitscreen|@game\/lib\/splitscreen-three)$/;
+  const allow = /^(three|\.\/[a-z]+|@app\/common\/render3d|@app\/common\/render3d\/(assetHandlers|camera)|@app\/scene\/world\/plaza\/world|@game\/lib\/camera|@game\/lib\/assetcore|@game\/lib\/assetcore-three|@game\/lib\/splitscreen|@game\/lib\/splitscreen-three)$/;
   for (const fn of readdirSync(dir)) {
     const src = readFileSync(join(dir, fn), 'utf8');
     for (const mm of src.matchAll(/from '([^']+)'/g)) ok(allow.test(mm[1]), `${fn}: import '${mm[1]}'`);

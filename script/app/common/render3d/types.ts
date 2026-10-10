@@ -15,9 +15,10 @@ export interface StageUpdater {
   update(df: number, frame: number): void;
 }
 
-/** 카메라 주입 지점(B: fsnb 카메라 재생기). apply 가 true 를 돌려주면 그 프레임 카메라를 자기가 정한 것 → 자유 시점이 손대지 않는다 */
+/** 카메라 주입 지점. step이 true인 슬롯을 적용한다. 시간은 step만 진행하고 apply는 현재 자세만 쓴다. */
 export interface CameraDriver {
-  apply(camera: THREE.PerspectiveCamera, df: number): boolean;
+  step(camera: THREE.PerspectiveCamera, df: number): boolean;
+  apply(camera: THREE.PerspectiveCamera): void;
 }
 
 /** glb 재질 extras.fres(03_graphics.md 7.3) */

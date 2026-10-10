@@ -185,7 +185,7 @@ export async function runSplitScreenPage(host: HTMLElement, cfg: SplitScreenPage
       const d = c.cams[i];
       d.aspect = c0.aspect;
       if (i === 1 && c.clip) {
-        c.clip.apply(d, df);
+        if (c.clip.step(d, df)) c.clip.apply(d);
         continue;
       }
       const a = i === 1 ? Math.PI : i === 2 ? Math.PI / 2 : (Math.PI * 3) / 2;

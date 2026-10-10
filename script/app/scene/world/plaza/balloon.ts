@@ -8,6 +8,8 @@
 import * as THREE from 'three';
 import { appTransition, LogicTransition, WIPE_WHITE } from '@game/lib/transition';
 import type { CameraDriver, ClipHandle } from '@app/common/render3d';
+import { BakedCameraPlayerApprox, type BakedCameraClip } from '@game/lib/camera';
+import { applyBakedCameraApprox, parseBakedCamera } from '@app/common/render3d/camera';
 import { followSystemOf } from './follow';
 import { RESULT } from './interact';
 import { BLEND_NPC, npcSystemOf, type Npc } from './npc';
@@ -41,63 +43,31 @@ export const TAKEOFF = {
   sessionSleepSec: 1,
 } as const;
 
-interface CamClip {
-  frames: number;
-  mode: string;
-  pos: number[][];
-  rotOrAim: number[][];
-  twist: number[];
-  fovyRad: number[];
-  near: number[];
-  far: number[];
-}
+type CamClip = BakedCameraClip;
 
 /** fsnb 카메라 재생기(프레임 1/원본 프레임) */
 export class FsnbCamera implements CameraDriver {
-  frame = 0;
-  playing = true;
+  private readonly player: BakedCameraPlayerApprox;
 
-  constructor(
-    readonly clip: CamClip,
-    start = 0,
-  ) {
-    this.frame = start;
+  constructor(readonly clip: CamClip, start = 0) {
+    this.player = new BakedCameraPlayerApprox(clip.frames, false, start);
   }
 
-  get finished(): boolean {
-    return this.frame >= this.clip.frames;
-  }
+  get frame(): number { return this.player.frame; }
+  set frame(value: number) { this.player.frame = value; }
+  get playing(): boolean { return this.player.playing; }
+  set playing(value: boolean) { this.player.playing = value; }
+  get finished(): boolean { return this.player.finished; }
 
-  static parse(json: unknown): CamClip | null {
-    const c = (json as { sceneAnims?: { cameras?: CamClip[] }[] }).sceneAnims?.[0]?.cameras?.[0];
-    return c ?? null;
-  }
+  static parse(json: unknown): CamClip | null { return parseBakedCamera(json); }
 
   sample(camera: THREE.PerspectiveCamera): void {
-    const c = this.clip;
-    const i = Math.max(0, Math.min(c.pos.length - 1, Math.floor(this.frame)));
-    const p = c.pos[i];
-    const r = c.rotOrAim[i];
-    camera.position.set(p[0], p[1], p[2]);
-    if (c.mode.startsWith('Euler')) {
-      camera.up.set(0, 1, 0);
-      camera.rotation.set(r[0], r[1], r[2], 'YXZ');
-    } else {
-      camera.up.set(0, 1, 0);
-      camera.lookAt(r[0], r[1], r[2]);
-      camera.rotateZ(c.twist[i] ?? 0);
-    }
-    camera.fov = THREE.MathUtils.radToDeg(c.fovyRad[i]);
-    camera.near = Math.max(c.near[i], TAKEOFF.minNear);
-    camera.far = c.far[i];
-    camera.updateProjectionMatrix();
+    applyBakedCameraApprox(camera, this.clip, this.frame, { minNearApprox: TAKEOFF.minNear });
   }
 
-  apply(camera: THREE.PerspectiveCamera, df: number): boolean {
-    if (this.playing) this.frame = Math.min(this.clip.frames, this.frame + df);
-    this.sample(camera);
-    return true;
-  }
+  step(_camera: THREE.PerspectiveCamera, df: number): boolean { return this.player.step(df); }
+
+  apply(camera: THREE.PerspectiveCamera): void { this.sample(camera); }
 }
 
 type Phase = 'idle' | 'selectFade' | 'setup' | 'fadeIn' | 'cut00' | 'cut01' | 'endFade' | 'session' | 'sessionFade' | 'sessionWait' | 'done';

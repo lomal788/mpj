@@ -405,7 +405,7 @@ section('7 에셋 존재(404 0)');
 section('8 import 경계');
 {
   const dir = join(WEB, 'script', 'app', 'minigame', 'frame', 'result');
-  const allow = /^(three|\.\/[a-z]+|@app\/scene\/menu\/charselect\/(preview3d|types)|@app\/scene\/world\/plaza\/heading|@app\/minigame\/frame\/scene\/resultContract)$/;
+  const allow = /^(three|\.\/[a-z]+|@app\/common\/render3d\/camera|@app\/scene\/menu\/charselect\/(preview3d|types)|@app\/scene\/world\/plaza\/heading|@app\/minigame\/frame\/scene\/resultContract)$/;
   for (const fn of readdirSync(dir)) {
     const src = readFileSync(join(dir, fn), 'utf8');
     for (const m of src.matchAll(/from '([^']+)'/g)) ok(allow.test(m[1]), `${fn}: import '${m[1]}'`);

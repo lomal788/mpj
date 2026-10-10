@@ -3,6 +3,7 @@
  * stage3d 카메라 슬롯 'follow' 에 붙는다(anim 슬롯 fsnb 컷이 잡으면 원본 PlayAnim 처럼 추종이 멈춘다).
  */
 import * as THREE from 'three';
+import { applyCameraSample } from '@app/common/render3d/camera';
 import type { PlazaCameraParam, PlazaContext, PlazaPart, PlazaPartFactory } from './types';
 
 /** GetPosNodeLocater 0·3·5 [판독+데이터 menu00_loc_attach00] — 소켓을 못 찾을 때만 쓴다 */
@@ -99,16 +100,10 @@ export class MenuCameraFollow {
 }
 
 export function applyPose(camera: THREE.PerspectiveCamera, pose: MenuCameraPose): void {
-  camera.position.copy(pose.eye);
-  camera.up.set(0, 1, 0);
-  camera.lookAt(pose.at);
-  if (camera.fov !== pose.fovy || camera.near !== PROJ_NEAR || camera.far !== PROJ_FAR) {
-    camera.fov = pose.fovy;
-    camera.near = PROJ_NEAR;
-    camera.far = PROJ_FAR;
-    camera.updateProjectionMatrix();
-  }
-  camera.updateMatrixWorld();
+  applyCameraSample(camera, {
+    pos: [pose.eye.x, pose.eye.y, pose.eye.z], rotOrAim: [pose.at.x, pose.at.y, pose.at.z], mode: 'Aim', twist: 0,
+    projection: { type: 'perspective', fovy: pose.fovy * Math.PI / 180, aspect: camera.aspect, near: PROJ_NEAR, far: PROJ_FAR },
+  });
 }
 
 export const createCamera: PlazaPartFactory = async (ctx: PlazaContext): Promise<PlazaPart> => {
@@ -121,7 +116,7 @@ export const createCamera: PlazaPartFactory = async (ctx: PlazaContext): Promise
   let enabled = true;
   const player = (): THREE.Vector3 | null => (ctx.actors.find((a) => a.kind === 'input') ?? null)?.pos ?? null;
   const driver = {
-    apply(camera: THREE.PerspectiveCamera, df: number): boolean {
+    step(camera: THREE.PerspectiveCamera, df: number): boolean {
       const p = player();
       if (!enabled || !p) return false;
       acc += df;
@@ -130,8 +125,10 @@ export const createCamera: PlazaPartFactory = async (ctx: PlazaContext): Promise
         acc -= 1;
         last = cam.step(p, camera);
       }
-      if (last) applyPose(camera, last);
       return true;
+    },
+    apply(camera: THREE.PerspectiveCamera): void {
+      if (last) applyPose(camera, last);
     },
   };
   stage.setCameraDriver(driver, 'follow');

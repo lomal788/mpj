@@ -24,3 +24,4 @@
 | [ui_parts_catalog.md](ui_parts_catalog.md) | /dev 원본 UI 부품·템플릿, 8 SARC·486 layout·화면 조합·칸·애니·준비도 | [데이터][설계] 정리 |
 | [18_scene_work.md](18_scene_work.md) | SceneBase 수명·Call/Return/Exchange·7행 모드표·Work 소유권·장면 계약/요청 API | 판독 통합·stack/offset 일부 미확정 |
 | [20_camera_runtime.md](20_camera_runtime.md) | 카메라 수학·FSNB·추종·흔들림 통합, import 0 코어·three 어댑터 설계 | 판독 재사용·미확정 12개 |
+| [mps_porting.md](mps_porting.md) | MPS 미니게임→MPJ 웹 포팅 지침, hsmg402 호환 경계·작업 순서·견적·기존 시험 결과 | 사전 검토·설계 제안, 포팅 미착수 |

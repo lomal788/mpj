@@ -92,7 +92,7 @@
 
 ### 2.5 미확정 후속의 판독 전 목록
 
-[데이터] 후속 후보를 먼저 문서·INDEX·모듈별 함수 목록과 대조했다. 기존 판독은 다음 표대로 재사용하고 빈 함수만 읽었다. 신규 19함수와 기존 부분 판독 보충2주소의 C 줄은 부록 B에 둔다. 원본 실행·추출·어셈블리 추가 판독은 없다. [INDEX][index]·[main.tsv][mainfunc]·[rc_stage01.tsv][rcfunc].
+[데이터] 후속 후보를 먼저 문서·INDEX·모듈별 함수 목록과 대조했다. 기존 판독은 다음 표대로 재사용하고 빈 함수만 읽었다. 신규 20함수와 기존 부분 판독 보충2주소의 C 줄은 부록 B에 둔다. 최신 재대조는 §2.6이다. 원본 실행·추출·어셈블리 추가 판독은 없다. [INDEX][index]·[main.tsv][mainfunc]·[rc_stage01.tsv][rcfunc].
 
 | 수준 | 범위·모듈·주소 | 기존/신규·남은 구현 장애 |
 |---|---|---|
@@ -104,6 +104,30 @@
 | [데이터] | main `@0x710079d330/0x710079f570/0x710079ff0c/0x71007a00dc` | 후보 C 있음; 신규 읽기 후 문자열·통지·가상 호출 준비로 분류. layout 필드와 vtable offset을 혼동하지 않고 pass 증거에서 제외. [부록 B](#new-readings) |
 | [데이터] | main `@0x710007a93c/0x7100063060/0x710079e238` | 최신 docs_gap_main.c·INDEX에 C 추가; 이전 Q1~Q3의 C 부재 해소. 기존 부분 판독과 새 gap 판독은 §3.3·부록 B/C로 구분. [gap C][gapc] |
 | [데이터] | main `@0x710087d660/0x71000bd2fc` | 새 gap의 호출에서 좁힌 후보; INDEX/main.tsv·[b18 C][b18c] 있음. 새 RT descriptor 전달·buffer bind 판독. `@0x71008627b0/0x71000b5044`의 viewport/profile 판독은 [shader §31.3][shaderdoc]·[이펙트 §6.7][effectsdoc] 재사용 |
+
+<a id="latest-c-inventory"></a>
+
+### 2.6 02:36 UTC 후속 — docs_gap 이후 추가 C 대조
+
+[데이터] 2026-10-10 후속 요청에서 허용 경로 `analysis/decomp/*.c`·`ghidra_work/*/out/*.c`의 C486개 목록·수정 시각·함수 헤더를 대조했다. 이전 `docs_gap_main.c` 수정02:19:45 UTC 뒤의 추가/변경11개를 아래에 둔다. 현재 INDEX 수정 시각은02:31:46 UTC다. 각 파일의 헤더 수와 INDEX 대응 행 수가 같고 해당 모듈 함수 TSV가 존재한다. 시각은 파일 metadata이며 원본 실행/추출 시각으로 해석하지 않는다. [INDEX][index]·[함수 TSV 폴더](../../../analysis/functions/).
+
+| 수준 | 모듈·기존 C | 수정 UTC | 헤더/INDEX 행 | 담당 연결 |
+|---|---|---|---|---|
+| [데이터] | mg0113.nro [mg0113.nro.c](../../../analysis/decomp/mg0113.nro.c) | 02:21:42 | 697/697 | 카메라/게임·RTTI GUI property; 이 갈래 신규 판독 제외 |
+| [데이터] | mg0116.nro [mg0116.nro.c](../../../analysis/decomp/mg0116.nro.c) | 02:22:31 | 894/894 | HUD lookup·게임; 전역 pass 소비 본체 미발견 |
+| [데이터] | mg0203.nro [mg0203.nro.c](../../../analysis/decomp/mg0203.nro.c) | 02:23:07 | 467/467 | 게임·RTTI GUI property; 이 갈래 신규 판독 제외 |
+| [데이터] | mg1704.nro [mg1704.nro.c](../../../analysis/decomp/mg1704.nro.c) | 02:31:39 | 1239/1239 | 카메라/게임; 카메라 수학·게임 로직 신규 판독 제외 |
+| [데이터] | mgm02.nro [mgm02.nro.c](../../../analysis/decomp/mgm02.nro.c) | 02:24:16 | 745/745 | guide/HUD lookup·모드; [모드 정리본][modesdoc] 소유 |
+| [데이터] | mgm03.nro [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c) | 02:25:24 | 415/415 | HUD lookup·모드; [모드 정리본][modesdoc] 소유 |
+| [데이터] | mgm04.nro [mgm04.nro.c](../../../analysis/decomp/mgm04.nro.c) | 02:27:20 | 709/709 | guide/HUD lookup·모드; [모드 정리본][modesdoc] 소유 |
+| [데이터] | mgm05.nro [mgm05.nro.c](../../../analysis/decomp/mgm05.nro.c) | 02:28:14 | 437/437 | guide/HUD lookup·모드; [모드 정리본][modesdoc] 소유 |
+| [데이터] | mgm06.nro [mgm06.nro.c][mgm06c] | 02:30:09 | 581/581 | `VersusFlow::Initialize @0x7100012cf0`의 RT 설정 구간만 신규 판독; 일반 getter `TryGetExtension @0x7100018298` 본문은 제외 |
+| [데이터] | bd01.nro [mgm_modes_bd01.c](../../../analysis/decomp/mgm_modes_bd01.c) | 02:28:56 | 16/16 | 보드 모드; [모드 정리본][modesdoc] 소유 |
+| [데이터] | mg0906.nro [motion_gap_mg0906.c](../../../analysis/decomp/motion_gap_mg0906.c) | 02:19:46 | 1/1 | motion 보충; [motion 정리본][motiondoc] 소유 |
+
+[데이터] 원본 API 이름·getter/셋터 주소의 caller 헤더를 허용 C 전체에서 교차 검색했다. 이번11개에는 main `@0x710005dfc8` capture getter의 소비나 `@0x710079e238` 명명된 setter caller가 추가되지 않았다. 같은 주소의 다른 NRO 함수를 main 함수로 합치지 않았다. 새 main dispatcher C가 생겼다고 판정할 근거도 미발견이다. [INDEX][index]·[main.tsv][mainfunc]·부록 C.
+
+[판독] 새 담당 후보는 mgm06.nro `VersusFlow::Initialize @0x7100012cf0`의 renderer 구간1함수다. 모듈·주소·크기8400은 [mgm06.tsv][mgm06func]와 INDEX에 있고 C는 [L15255~15325][mgm06c]다. 모드 흐름·SceneBase·카메라 수학은 읽지 않고 담당 문서를 재사용한다. [모드 정리본][modesdoc]·[18_scene_work][scenework]·[20_camera_runtime][camerawork].
 
 ## 3. 진입점·호출 흐름
 
@@ -158,6 +182,18 @@
 [판독] main `ComGuiLayout::SetRenderPassId @0x710079e238`은 인자 int를 layout+0x130에 저장한다. 따라서 생성 `@0x710079cfb0`의 +0x130 초기값−1 및 config+0x24 복사는 pass ID 필드의 생산 경로다. 이 후속에서 허용 C의 명명된 setter caller는 미발견이다. 값−1의 sentinel 의미와 특정 pre-post/post/TopMost ID 대응은 유보한다. [gap C L3003~3014][gapc]·[GUI C L748·825][guic].
 
 [미확정] `@0x7100063060` C는 `@0x710007a93c`의 `LAB_7100063060..3310` 내용과 겹치는 공유 구간을 담는다. 별도 dispatcher나 추가 GPU 제출1회로 세지 않으며 함수 경계를 확정하지 않는다. RT bind/viewport의 확인과 GPU full/rect clear·전체 pass/layer 제출·capture 완료는 구분한다. main; [gap C L3131~3313·3317~3532][gapc], [분할 §5][split].
+
+### 3.4 mgm06 별도 RT와 레이어 상태 교체
+
+[판독] mgm06.nro `VersusFlow::Initialize @0x7100012cf0` C는 `GraphicsCoreModule::CreateRenderTarget` 호출 직후 `local_90/local_88`을 flow+0x10/+0x18에 저장하고 기존 참조를 반납한다. 현재 GfxScene type→`RendererModule::GetScene`→`Scene::GetGraphicsLayer`를 구하고 weak node/generation을 검증한 뒤 extension에 접근한다. 화면별 attachment 설정 caller를 보강한다. [mgm06 C L15255~15315][mgm06c].
+
+[판독] 같은 구간은 저장한 두 필드의 pointer/node/generation 형태를 color/depth setter 직전에 각각 준비하고 `SetColorRenderTarget`·`SetDepthRenderTarget`·두 clear flag setter를 호출한다. API 이름에 대응하는 main 주소는 color `@0x7100060228`, depth `@0x71000602e4`, clear flags `@0x7100060648/0x7100060658`다. setter 내부는 새로 읽지 않았다. [mgm06 C L15308~15325][mgm06c]·[main.tsv][mainfunc], 기존 RT 참조/clear 분리는 [분할 §5][split] 재사용.
+
+[추정] 호출 순서·RT setter 직전의 핸들 배치로 flow+0x10/+0x18을 Versus 화면의 별도 RT 참조로 해석한다. 생략된 생성 out 인자의 직접 대응은 이 C만으로 확정하지 않는다. mgm06.nro `@0x7100012cf0`; [C L15255~15325][mgm06c].
+
+[미확정] 이 NRO C는 일부 메서드 인자를 생략한다. 특히 clear flag 호출이 pointer 하위 byte 표현으로 출력되어 실제 bool을 true/false로 판정하지 않는다. RT descriptor 구간의 packed low/high 값1920/1080은 보이나 CreateRenderTarget 인자 연결·구조체 해석이 불완전하므로 최종 RT 치수·format·MSAA·layer 번호도 확정하지 않는다. color/depth setter가 같은 객체를 받는 의도와 실제 attachment alias는 구분한다. mgm06.nro `@0x7100012cf0`; [C L15255~15325][mgm06c].
+
+[설계] 화면 lease는 scene/layer의 attachment·clear 상태를 자기 RT 소유권과 함께 교체/반납하도록 명세한다. 이 caller를 매 화면 새 renderer/context 생성 규칙으로 옮기지 않는다. 전역 clear 소비·RT 완료/해제·mode return의 실제 복원은 U2/U11과 기존 SceneBase 계약에 남긴다. [mgm06 C][mgm06c]·[18_scene_work §9.2·11][scenework]·[DESIGN §10.7][design].
 
 ## 4. 구조체·필드·상수
 
@@ -275,6 +311,7 @@
 
 [설계] 첫 이전은 위 세 계약을 별도 어댑터로 유지한다. Lyt의 offscreen gl을 제거할 때는 UI를 전용 RT에 그려 같은 최종 합성 위치를 재현한다. drawImage 대상이 공유 기본 canvas로 바뀌어 3D까지 HUD에 재복사되는 경로를 만들지 않는다. [lyt.ts L662~666][lyt], [로더 §14.4][loader].
 
+[설계] UI 부품·템플릿과 3D 자리의 경계: [ui_parts_catalog.md](ui_parts_catalog.md).
 ### 7.2 원본 GUI RT·캡처·전환 후속
 
 [판독] main `ComGuiLayout::SetRenderTarget @0x71007a4c30`은 기존 RT 참조를 반납하고 새 RT의 참조를 보유한 뒤 width/height를 조회해 UI 투영 저장값을 바꾼다. `@0x710079ed3c`은 RT 유무 등에 따라 그리기 컨텍스트의 투영/행렬을 임시 적용하고 layout 처리 뒤 바꾼 값을 복구한다. 카메라 수학 신규 판독은 하지 않는다. [GUI C L6805~6871·2204~2324][guic].
@@ -378,7 +415,7 @@
 
 [데이터] 이번 정적 검증은 파일 존재·함수 목록/헤더·생성 AST/템플릿 구분·문서 링크 및 LF만 확인한다. 기존 문서의 과거 시험 통과나 과거 렌더 관측을 이번 실행 결과로 옮기지 않는다. [감사 §9][audit], [로더 §14.9][loader].
 
-[데이터] 최종 검증: CommonMark 파서의 실제 링크 388개·참조 정의 48개 모두 대상 존재/내부 앵커 오류0, 표24개 열수 일치, 문장 태그 누락0, UTF-8 BOM 없음·LF. 괄호 안 설명·의사코드·인라인 코드의 후속 통합 문구는 실제 링크와 구분했다. git stage/commit은 하지 않았고 다른 갈래 변경을 보존했다.
+[데이터] 최종 검증: CommonMark 파서의 실제 링크 429개·참조 정의 52개 모두 대상 존재/내부 앵커 오류0, 표25개 열수 일치, 문장 태그 누락0, UTF-8 BOM 없음·LF. 괄호 안 설명·의사코드·인라인 코드의 후속 통합 문구는 실제 링크와 구분했다. git stage/commit은 하지 않았고 다른 갈래 변경을 보존했다.
 
 <a id="unknowns"></a>
 
@@ -389,7 +426,7 @@
 | 수준 | ID | 항목·현재 근거 | 다음 근거 |
 |---|---|---|---|
 | [미확정] | U1 | layer/pass 실제 중첩 제출 순서; main `@0x71000b5bd0`은 등록. [분할 §5][split] | 제출/clear dispatcher 식별·부록 C X1 |
-| [미확정] | U2 | 부분: main `@0x710005f750/0x710005a0d0/0x71000609bc`의 RT weak/generation·Layer binding은 확인. attachment 공유/축소 해상도·전체/사각 clear는 남음. [shader §31.1~31.3][shaderdoc]·[LOD §7.4][lod] | RT 선택/bind는 §3.3에서 보강; 실제 snapshot·clear 소비자 X1 |
+| [미확정] | U2 | 부분: main `@0x710005f750/0x710005a0d0/0x71000609bc`의 RT weak/generation·Layer binding은 확인. attachment 공유/축소 해상도·전체/사각 clear는 남음. [shader §31.1~31.3][shaderdoc]·[LOD §7.4][lod] | RT 선택/bind는 §3.3, mgm06.nro `@0x7100012cf0` attachment/clear 설정 caller는 §3.4에서 보강. [mgm06 C][mgm06c]. bool·실 snapshot·clear 소비자 X1 |
 | [미확정] | U3 | 부분: main `@0x710005dfa8/0x710005dfc8`의 flags/enable 저장과 rc_stage01.nro `@0x710000db1c/0x710003dd3c/0x710003d6b8/0x710003e2e0`의 Scene(0)/(1) 요청을 확인. type0/flags1·3 copy/post/종료는 남음. [shader §31.1·31.4][shaderdoc]·[RC C][rcc] | getter/final pass의 실제 소비자 X2; End를 OFF로 가정하지 않음 |
 | [미확정] | U4 | 부분: main `@0x71000521d8/0x710079cfb0/0x710079e0e4/0x710079e96c/0x71007a4c30`의 default/overlay·GUI 연결·RT 수명은 확인. 실제 pre-post/post/TopMost 배정은 남음; setter `@0x710079e238` +0x130 write 추가 확인. [장면 생성 C][callerc]·[GUI C][guic]·[gap C][gapc] | SetRenderPassId +0x130 write는 확인; 실제 설정 caller·pass 소비자 X3 |
 | [미확정] | U5 | reflection/underwater·shadow의 레이어별 실제 활성/효과 등가; main `@0x71000b5bd0`. [감사 §3.1][audit] | 활성 장면별 기존 효과 문서와 제출 근거 |
@@ -442,6 +479,7 @@
 | [설계] | `20_camera_runtime.md` §9.3 끝 | §9.2·11 U12 | `[설계] CameraState snapshot과 공유 렌더러/split draw 연결: [render_unify.md §9.2](render_unify.md).` |
 | [설계] | `14_shader_graphs.md` §31.4 끝 | §4·7.2·11 U2/U3 | `[설계] 확인된 Layer binding·capture 요청과 공유 렌더러의 잔여 submit/copy 경계: [render_unify.md §4·7.2·11](render_unify.md).` |
 | [설계] | `15_transition.md` §1.3 끝 | §7.2·9 | `[설계] overlay 와이프와 장면 capture를 보존하는 공유 렌더러 계약: [render_unify.md §7.2·9](render_unify.md).` |
+| [설계] | `web/docs/shell/mgm_modes.md` §7 끝 | §2.6·3.4·5·11 U2 | `[설계] mgm06 별도 RT·레이어 상태 교체와 공유 렌더러 계약: [render_unify.md §3.4·5·11](../engine/render_unify.md).` |
 
 [데이터] 위 출처 문서·README·DESIGN은 이번에 수정하지 않았다. 부모는 해당 절 끝에 한 줄만 추가하고 기존 줄바꿈을 보존한다. 병렬 문서의 기존 본문을 대체하지 않는다. [DESIGN §10.7][design].
 
@@ -449,7 +487,7 @@
 
 ## 부록 B. 새 판독 목록
 
-[데이터] 후속 신규 함수 판독19개는 직접 보강15개·증거 제외4개다. 기존 부분 판독의 RT 준비 보충은2주소이며 공유 구간 중복을 독립 함수로 집계하지 않는다. 함수 크기·모듈은 [main.tsv][mainfunc]·[rc_stage01.tsv][rcfunc], C 대응은 [INDEX][index]로 확인했다. 기존 완료 판독 본문 재읽기0이며 LOD 미확정 RT 구간만 C로 보충했다. 신규 어셈블리 판독/추출0이다. 카메라 식과 SceneBase 본문은 이 갈래에서 새로 읽지 않았다.
+[데이터] 후속 신규 함수 판독20개는 직접 보강16개·증거 제외4개다. 최신 추가분은 mgm06 renderer 구간1함수이며 전체 모드 함수의 판독을 뜻하지 않는다. 기존 부분 판독의 RT 준비 보충은2주소이며 공유 구간 중복을 독립 함수로 집계하지 않는다. 함수 크기·모듈은 [main.tsv][mainfunc]·[rc_stage01.tsv][rcfunc], C 대응은 [INDEX][index]로 확인했다. 기존 완료 판독 본문 재읽기0이며 LOD 미확정 RT 구간만 C로 보충했다. 신규 어셈블리 판독/추출0이다. 카메라 식과 SceneBase 본문은 이 갈래에서 새로 읽지 않았다.
 
 | 수준 | 모듈·신규 주소 | 기존 C·줄 | 신규 결론·범위 |
 |---|---|---|---|
@@ -464,6 +502,7 @@
 | [판독] | rc_stage01.nro `TypeLayout::End @0x710003d6b8` | [RC C L50597~50631][rcc] | Scene(1),layer0,type0,flags1; 이 본문에 flags0 없음 |
 | [판독] | rc_stage01.nro `TypeLayout::CaptureFunc @0x710003dd3c` | [RC C L50843~50874][rcc] | Scene(1),layer0,type0,flags1·UI texture 연결 |
 | [판독] | rc_stage01.nro `TypeLayout::PreCapture @0x710003e2e0` | [RC C L51090~51197][rcc] | 선행 처리·같은 요청·보조 필드 초기화 |
+| [판독] | mgm06.nro `VersusFlow::Initialize @0x7100012cf0` (renderer 구간만) | [mgm06 C L15255~15325][mgm06c]·[mgm06.tsv][mgm06func] | 최신 신규1함수; 별도 RT 보유·현재 GfxScene attachment/clear setter 호출. 인자 누락 때문에 bool/치수/layer 번호 확정 제외 |
 | [판독] | main `SetRenderPassId @0x710079e238` | [gap C L3003~3014][gapc] | 신규1함수; layout+0x130 write·config 복사 대응 |
 | [판독] | main `@0x710087d660/0x71000bd2fc` (2함수) | [b18 C L338~397·793~812][b18c] | 신규2함수; RT descriptor 전달·viewport 후속 buffer bind; clear 증거에서 제외 |
 | [판독] | main `@0x710007a93c/0x7100063060` (보충2주소) | [gap C L3146~3243·3317~3532][gapc] | 기존 LOD 준비 빈 곳만 RT 선택/bind 보충; created C·공유 구간의 함수 경계 유보 |
@@ -474,11 +513,12 @@
 | [데이터] | 기존 재사용 | shader §31 요청/Layer writer·전환 §1·mgm_common §6.7·기존 감사/분할/카메라/LOD/SceneBase 정리본. [§2.1·2.5](#sources-existing) |
 | [데이터] | 웹 정적 조사 | 제품 직접 gl 생성7·dev4·제품 Renderer 래퍼1·dev 래퍼2·제품 raw probe1; 별칭 미발견. [§2](#sources) |
 | [데이터] | 신규 중요 정적 발견 | prepare 기본 framebuffer1×1 draw, KTX2 임시 context, 준비 promise와 실제 성공 구분. [§2.3](#sources-probe)·[§5.2](#context-loss)·[§6.2](#prepare-output) |
+| [데이터] | 최신 C 재대조 | 허용 C486개·docs_gap 뒤 추가/변경11개·새 담당 renderer 구간1함수. main 최종 소비/제출 C 추가 미발견. [§2.6](#latest-c-inventory) |
 | [미확정] | 후속 집계 | 완전 해소0·부분3·나머지9; 미확정12개 유지. renderer submit/clear/copy/pass 배정의 직접 본체 C는 확보하지 못함. [§11](#unknowns) |
 
 ## 부록 C. 추출 요청 표
 
-[데이터] 최신 docs_gap_main.c/INDEX로 이전 요청 Q1~Q3의 C 부재3건은 해소됐다. 활성 추출 요청의 식별 주소는0개·미식별3건이다. C 존재 해소와 구현 장애 해소를 같은 숫자로 세지 않는다. 신규 추출은 하지 않았으며 최종 소비/제출 본체를 확보하지 못한 범위만 아래에 남긴다. [gap C][gapc]·[INDEX][index]·[main.tsv][mainfunc].
+[데이터] 최신 docs_gap_main.c/INDEX로 이전 요청 Q1~Q3의 C 부재3건은 해소됐다. 02:36 UTC 후속의 허용 C486개·추가/변경11개 대조에서도 main의 최종 소비/제출 본체 추가는 미발견이며 mgm06 RT 설정 caller만 보강했다. [§2.6](#latest-c-inventory)·[mgm06 C][mgm06c]. 활성 추출 요청의 식별 주소는0개·미식별3건이다. C 존재 해소와 구현 장애 해소를 같은 숫자로 세지 않는다. 신규 추출은 하지 않았으며 최종 소비/제출 본체를 확보하지 못한 범위만 아래에 남긴다. [gap C][gapc]·[INDEX][index]·[main.tsv][mainfunc].
 
 | 수준 | 이전 요청 | 현재 C·판독 결과 | 남은 범위 |
 |---|---|---|---|
@@ -542,3 +582,7 @@
 [gapc]: ../../../analysis/decomp/docs_gap_main.c
 [b18c]: ../../../analysis/decomp/effect_runtime_b18.c
 [effectsdoc]: 08_effects.md
+[mgm06c]: ../../../analysis/decomp/mgm06.nro.c
+[mgm06func]: ../../../analysis/functions/mgm06.nro.tsv
+[modesdoc]: ../shell/mgm_modes.md
+[motiondoc]: 19_motion_input.md

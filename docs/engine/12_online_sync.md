@@ -374,11 +374,11 @@ appNet(): NetSession                    // 앱 수명 하나
 
 ## 9. 원본 네트워크 세션 수명
 
-[데이터] 2026-10-10 추가. §1~§8은 그대로 보존했다. 조사 대상은 네트워크 소유자이며 공용 SceneBase/Work 수명 새 판독은 제외했다. 기존 [§2·4·6·8](12_online_sync.md), [온라인](../shell/online.md), [광장 §5](../shell/plaza_3d.md), [공용 감사 §5.3](common_system_audit.md)을 먼저 대조하고 빈 곳의 기존 C만 읽었다.
+[데이터] 2026-10-10 추가. §1~§8은 그대로 보존했다. 조사 대상은 네트워크 소유자이며 공용 SceneBase/Work 수명 새 판독은 제외했다. 후속 ClearSession의 네트워크 reset만 이 갈래에서 다룬다(§9.15.5). 기존 [§2·4·6·8](12_online_sync.md), [온라인](../shell/online.md), [광장 §5](../shell/plaza_3d.md), [공용 감사 §5.3](common_system_audit.md)을 먼저 대조하고 빈 곳의 기존 C만 읽었다.
 
 [판독] 장면 지역 `NetworkManager`와 main의 `bex::NetworkModule` 참조는 별개다. menu00·matching00 소멸자는 세션을 끊지 않고, 세션이 남으면 `bq::Net::SetAllListener()`를 호출한다. 근거: menu00.nro `@0x710002bf80/@0x710002c7a0`([C](../../../analysis/decomp/online_menu00.c)), matching00.nro `@0x7100003798/@0x7100003a64`([C](../../../analysis/decomp/online_matching00.c)).
 
-[미확정] §8.1의 “원본은 앱 수명 동안 유지”는 위 장면 경계보다 넓은 표현이다. 현재 근거는 장면 지역 객체의 해제와 세션 종료가 다르다는 데까지다. main 전역 모듈의 설치·최종 해제 호출자는 확보하지 못했으며, 웹의 앱 수명 `appNet()`은 §8의 [설계]로 유지한다. main `@0x7100150a80`의 기존 생성 판독은 [§3.3·4.1](12_online_sync.md), 본체 부재는 [main 목록](../../../analysis/functions/main.nso.tsv)·[INDEX](../../../analysis/decomp/INDEX.tsv), 후속 요청은 §9.12.3을 따른다.
+[미확정] §8.1의 “원본은 앱 수명 동안 유지”는 위 장면 경계보다 넓은 표현이다. 현재 근거는 장면 지역 객체의 해제와 세션 종료가 다르다는 데까지다. main 전역 모듈의 설치·최종 해제 호출자는 확보하지 못했으며 웹의 앱 수명 appNet()은 §8의 [설계]다. main @0x7100150a80 생성 본체는 이제 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)에 있으며 내부 자원 소유는 §9.15.2, 전체 수명 잔여는 §9.15.6을 따른다. 기존 필드는 [§3.3·4.1](12_online_sync.md) 재사용이다.
 
 ### 9.1 자료·기존 판독·공백 목록
 
@@ -392,7 +392,7 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] 오류·방장 해산·이탈 | menu00.nro NetError `@0x7100039600`, NetSession `@0x7100039830`, MainImpl `@0x710005a170`; [online §5.5](../shell/online.md), [광장 §5](../shell/plaza_3d.md). [데이터] C 있음: [online_menu00.c](../../../analysis/decomp/online_menu00.c)·[plaza_menu00_npc_seq.c](../../../analysis/decomp/plaza_menu00_npc_seq.c) | [미확정] 재접속·Switch 슬립·플레이 중 호스트 교체. 완료된 함수는 재판독하지 않음 |
 | [판독] 전 세계 매칭 | matching00.nro Matching_Bd `@0x7100010a00`, SetupSession `@0x7100012780`, CancelMatching `@0x7100013164`; [online §3.2·5.7·8](../shell/online.md). [데이터] C 있음: [online_matching00.c](../../../analysis/decomp/online_matching00.c) | [미확정] 매칭 지역 관리자와 공용 listener의 경계 |
 | [데이터] 웹 현재 상태 | `disconnect` 8곳은 [§8.4](12_online_sync.md), 실제 조건은 [part.ts](../../script/app/scene/world/plaza/ui/part.ts)·[ui.ts](../../script/app/scene/world/plaza/ui/ui.ts)·[flow.ts](../../script/app/scene/menu/online/flow.ts). [설계] 배치 근거는 [DESIGN §10](../../DESIGN.md) | [설계] 화면 해제/취소/오류를 나누고 669행 분류를 보완 |
-| [미확정] 추가 원본 자료 | main 전역 네트워크 수명·listener 본체·재입장 정책은 §9.12.3. [데이터] 원본/extracted는 읽기 전용이며 이번에는 실행·바이너리 추가 판독·추출·에셋 변경 없음 | [미확정] 연결 미확정/주소 미식별 3항목은 별도 요청 |
+| [미확정] 추가 원본 자료 | main 전역 네트워크 수명·listener·재입장은 §9.15.2~9.15.7. [데이터] 원본/extracted는 읽기 전용이며 실행·추출·에셋 변경 없음 | [미확정] 최신 주소 미식별/결합은 §9.15.6의9행, 빈 C 요청은 §9.15.7의15주소 |
 
 ### 9.2 모듈·수명 소유자와 장면 전환
 
@@ -404,7 +404,7 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] 실제 통신 종료 요청 | menu00 `@0x710002d3ec`, matching00 `@0x7100003db4`의 `NetworkManager::Disconnect`는 각각 `bex::NetworkModule::Disconnect()`와 `bq::WorkModule::ClearSession()`을 호출한다. 지역 객체 해제와 다른 명시적 경로다. [menu00 C](../../../analysis/decomp/online_menu00.c)·[matching00 C](../../../analysis/decomp/online_matching00.c) |
 | [판독] 장면 간 잔존 세션 사용 | menu00 Play `@0x7100037a00`은 `WaitSync(1)→FriendMatchSyncFinishSession→RequestCallScene(menu01)`로 이어지고, matching00 `@0x7100010a00`도 세션 setup 뒤 장면 교환을 요청한다. 기존 [online §5.6·3.2](../shell/online.md) 재사용 |
 | [추정] 네트워크 소유 경계 | 지역 관리자 소멸 후 공용 listener로 넘기며 다음 화면이 잔존 세션을 사용할 수 있는 구조로 해석한다. 근거: menu00 `@0x710002c7a0`·matching00 `@0x7100003a64`의 [C](../../../analysis/decomp/online_menu00.c)·[C](../../../analysis/decomp/online_matching00.c), 전환 `menu00 @0x7100037a00`([online §5.6](../shell/online.md)). 모든 모드·최종 앱 종료까지의 수명은 [미확정] |
-| [미확정] 공용 네트워크 listener | `Set/Cancel*Listener`의 C는 NetworkModule setter 호출을 보여 주지만 weak-handle 인자를 완전히 복원하지 못한다. null 해제·교체 규칙·동시 다중 구독 가능성은 main `@0x710013cadc/@0x710013cb64/@0x71001ea620` 본체가 필요하다. [main 목록](../../../analysis/functions/main.nso.tsv), 요청 §9.12.3 |
+| [판독] 공용 네트워크 listener | main @0x710013cadc/@0x710013cb64의 단일 weak-handle 슬롯 덮어쓰기, @0x71001ea620의 공용 handler 복귀, @0x71001ea710의 0 tuple 해제를 새 C로 확인했다. 지역 Cancel의 누락 인자·세 번째 setter/dispatch는 [미확정]이다. [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c), 최신 §9.15.2 |
 
 ### 9.3 생성·참가·유지·해산의 호출 흐름
 
@@ -417,7 +417,7 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] 조용한 나가기 | menu00 `@0x710002ee7c`은 같은 존재/진행 검사·UUID 목록 정리 뒤 공용 `LeaveSessionSilentlyFiber`를 만든다. 이 호출자의 성공 반환 `1`은 요청 객체 생성까지이며 SDK 종료 성공을 뜻하지 않는다. [C](../../../analysis/decomp/online_menu00.c) |
 | [판독] 해산 요청 | menu00 DissolveSession @0x710002ed78은 세션/진행 Fiber 검사 뒤 FiberLite를 만든다. PTR_LAB_71001c8b18 결합은 [미확정]이며 해산 본문 후보 @0x71000313f0을 후속에서 식별했다. 완료/실패는 §9.13.2·9.13.6을 따른다. [caller C](../../../analysis/decomp/online_menu00.c)·[후보 C](../../../ghidra_work/online/out/menu00.nro.c) |
 | [판독] 화면에서 해산·나가기 | menu00 MainImpl `@0x710005a170`의 입력/람다 연결과 NetSession `@0x7100039830`의 해산 사건2·station 이탈 사건1은 [online §5.5](../shell/online.md) 재사용. 확인 대화상자 끝에서 네트워크 종료를 요청하는 흐름과 단순 화면 cleanup을 구별한다 |
-| [미확정] Work 접점 | 위 `ClearSession/ClearFriendMatchPlayerUuIDList/FriendMatchSyncFinishSession`은 네트워크 호출 접점만 기록한다. Work 내부의 수명·필드 초기화는 18_scene_work 갈래 대상이다. menu00 `@0x710002d3ec/@0x710002e9e0/@0x7100037a00`([C](../../../analysis/decomp/online_menu00.c), [online §5.6](../shell/online.md)) |
+| [미확정] Work 접점 | ClearSession main @0x710029f6b0의 네트워크 reset은 §9.15.5에서 판독했다. ClearFriendMatchPlayerUuIDList/FriendMatchSyncFinishSession 등 공용 Work 수명은 18 갈래 담당이다. menu00 @0x710002d3ec/@0x710002e9e0/@0x7100037a00([C](../../../analysis/decomp/online_menu00.c), [online §5.6](../shell/online.md)), main reset [C](../../../analysis/decomp/docs_gap_main.c) |
 
 ### 9.4 구조체·필드·식별자와 시작/결과의 경계
 
@@ -466,7 +466,7 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] station 이탈 | menu00 같은 listener 사건1: 자기 이탈 B3, 다른 station은 LeftStation 정리. 예약 이탈이 아니고 플레이 중 `+0x31`이면 B3. [online §5.5](../shell/online.md) | [설계] 단순 손님 퇴장·해산·게임 중 오류를 구별. “host가 떠나도 계속”을 원본 공통 규칙으로 두지 않음 |
 | [판독] matching00 지역 이탈 감시 | `NetSessionListener @0x710000f7fc`은 사건 정보를 저장하고 메시지 `0x5f4e4502`·사건1에서 Work 쌍 `+0x3d08/+0x3d10` 또는 지역 쌍 `+0x68/+0x70`과 일치하면 `RequestError(2)`. 뒤 쌍의 생산자는 `StoreTeamStationId @0x71000040f0`. [C](../../../analysis/decomp/online_matching00.c) | [미확정] Work 쌍의 이름/수명은 18_scene_work 접점. 이 비교가 모든 모드의 호스트 교체 규칙을 뜻하지 않음 |
 | [판독] SDK 참가 목록 변경·seed host 변경 | main `@0x7101026330→@0x71010268e0`의 입력 ring 재시작, `@0x7100161eb4/@0x71001624ac`의 seed 재동기. [§4.1·4.2](12_online_sync.md) | [미확정] 네트워크 계정 재인증·같은 station 재접속·게임 snapshot/RNG 소비 index/점수 복원. 이 두 재동기로 게임 중간 재개를 주장하지 않음 |
-| [판독] 재입장 데이터·허용 호출 | menu00 Join `@0x7100035a90`, matching00 `@0x7100010a00`이 재입장 데이터와 host 이어받기 허용 조건을 다룬다. [online §3.2·8](../shell/online.md) | [미확정] 실제 재입장 상태기계와 main `AllowReentry @0x71001ea1b8` 본체. 자동 reconnect 횟수·초·호스트 승계 시점은 미판독 |
+| [판독] 재입장 데이터·허용 호출 | menu00 Join @0x7100035a90, matching00 @0x7100010a00의 기존 [online §3.2·8](../shell/online.md) 재사용. main AllowReentry @0x71001ea1b8 및 ReEntryFiber @0x710034c564/@0x710034c970은 새 [C](../../../analysis/decomp/docs_gap_main.c)로 판독(§9.15.4) | [미확정] 저장 방 검색/재참가는 확인됐지만 자동 reconnect·최종 모드·host 승계·게임 snapshot 전체는 §9.15.6 잔여 |
 | [데이터] 현 웹 끊김/재참가 | [socketio.ts](../../script/app/common/net/socketio.ts)의 disconnect 후 `closeSocket`, 기존 [online §9.6](../shell/online.md)의 새 station 재참가·재접속 없음 | [설계] 연결 재시도와 방/게임 재가입을 분리. 15 s 핑 감지는 기존 웹 설정이며 원본 timeout 값으로 사용하지 않음 |
 | [미확정] Switch 슬립·resume | [§8.5](12_online_sync.md)는 슬립을 미확정으로 기록한다. main 목록의 `nn::oe::SetResumeNotificationEnabled @0x710144d2e0`는 외부 심볼 존재만 확인된다. [main 목록](../../../analysis/functions/main.nso.tsv) | [미확정] 슬립 진입/복귀 소비자·세션 처리 코드 주소 미식별. 브라우저 탭 숨김을 Switch 슬립으로 자동 대응시키지 않음 |
 | [설계] 탭 숨김·오프라인 복귀 | [§6.1·8.5](12_online_sync.md)·[DESIGN §10](../../DESIGN.md)의 웹 정책 대상 | [설계] 숨김만으로 Disconnect하거나 온라인 frame을 로컬 backlog 폐기로 건너뛰지 않는 안을 추천한다(미승인). 숨김 제한시간·오프라인 전환 종료 시점은 §9.11 사용자 확인에 남김 |
@@ -512,15 +512,15 @@ appNet(): NetSession                    // 앱 수명 하나
 
 ### 9.11 미확정·사용자 확인
 
-[미확정] 아래 9항목은 구분된 공백이다. 원본 실행 대조는 없으며 종료/복구의 성공률·시간을 실측값으로 쓰지 않는다. 근거: 이번 범위 §9.1 및 기존 [§7·8.5](12_online_sync.md).
+[미확정] 아래9항목은 상위 공백 ID를 유지한 현재 목록이다. 최신 상태는 §9.15.6의0전체 해결·6부분해결·3남음이다. 원본 실행 대조는 없으며 성공률·시간을 실측값으로 쓰지 않는다. 근거: [§7·8.5·9.15.6](12_online_sync.md).
 
 | ID | 남은 항목·필요 근거 |
 |---|---|
-| [미확정] U1 | main 전역 네트워크 설치·파괴 및 앱 최종 종료의 호출자. 기존 `@0x7100150a80` 생성 판독만으로 전체 수명을 확정 못 함. [§3.3·4.1](12_online_sync.md), 요청 R1 |
-| [미확정] U2 | listener 해제 인자·교체·동시 구독 및 공용 handler 소유. main `@0x710013cadc/@0x710013cb64/@0x71001ea620/@0x71001ea710`. [main 목록](../../../analysis/functions/main.nso.tsv), 요청 R4~R7 |
-| [미확정] U3 | Disconnect와 LeaveSession 완료/실패 상태·예약 이탈 의미. main `@0x710013c04c/@0x710013c7f8/@0x71001eacb4`. [main 목록](../../../analysis/functions/main.nso.tsv), 요청 R2·R3·R9 |
+| [미확정] U1 | main 전역 설치·파괴/앱 최종 종료 caller. @0x7100150a80의 내부 자원 소유는 확인했지만 전체 수명은 미확정. [C](../../../analysis/decomp/docs_gap_main.c)·[§9.15.2·9.15.6](12_online_sync.md) |
+| [미확정] U2 | main @0x710013cadc/@0x710013cb64의 단일 슬롯 교체·@0x71001ea710의 0 해제는 확인. 지역 Cancel 누락 인자·세 번째 setter/dispatch·공용 owner는 N4/N5·M3 잔여. [C](../../../analysis/decomp/docs_gap_main.c)·[§9.15.2](12_online_sync.md) |
+| [미확정] U3 | main Disconnect @0x710013c04c/Leave @0x710013c7f8·예약 @0x71001eacb4·ClearSession @0x710029f6b0의 wrapper/직접 reset은 확인. SDK 완료/실패·예약 제거·간접 reset은 N1~N3/N6~N8·M7/M8. [C](../../../analysis/decomp/docs_gap_main.c)·[§9.15.3·9.15.5](12_online_sync.md) |
 | [미확정] U4 | menu00 DissolveSession @0x710002ed78의 PTR_LAB_71001c8b18 결합과 SDK 해산 완료. 후보 @0x71000313f0은 확보했으나 호출 연결은 미확정. §9.13.2·9.13.5·A1. [caller C](../../../analysis/decomp/online_menu00.c)·[후보 C](../../../ghidra_work/online/out/menu00.nro.c) |
-| [미확정] U5 | 재입장·host 승계·모드별 복귀 상태기계. main `AllowReentry @0x71001ea1b8`, matching00 `@0x7100010a00`의 기존 [online §3.2·8](../shell/online.md), 요청 R8 |
+| [미확정] U5 | main AllowReentry @0x71001ea1b8/ReEntryFiber @0x710034c564/@0x710034c970의 저장 재참가 흐름은 확인. 최종 callback/모드·host 승계·복구 범위는 N9~N15/M9·U7. [C](../../../analysis/decomp/docs_gap_main.c)·[§9.15.4](12_online_sync.md) |
 | [미확정] U6 | Switch 슬립/복귀의 실제 네트워크 소비자. 외부 심볼 `main @0x710144d2e0`의 존재만 [main 목록](../../../analysis/functions/main.nso.tsv)으로 확인. 코드 주소 미식별 A2 |
 | [미확정] U7 | 진행 중 끊김 후 게임 전체 상태·RNG 소비 위치·점수 복원/대체. main `@0x71010268e0/@0x71001624ac`의 기존 [§4.1·4.2](12_online_sync.md)는 입력/seed 재동기까지만. 복구 호출자 미식별 A3 |
 | [미확정] U8 | seed 조회 실패의 상위 보장과 실제 공통 step gate 연결. main `@0x71001c94cc/@0x710050f0d4`의 기존 [§2.2·3.3·7](12_online_sync.md). 이 갈래에서는 재판독/요청 범위를 늘리지 않음 |
@@ -540,7 +540,7 @@ appNet(): NetSession                    // 앱 수명 하나
 |---|---|
 | [설계] 바로 가능 | `appNet` 앱 소유·화면 구독 해제·단일 poll·현재 상태 전달·취소/오류 이유 분리 설계. main의 전체 앱 수명 동등성은 주장하지 않음. [§8](12_online_sync.md), [DESIGN §10](../../DESIGN.md), menu00 `@0x710002c7a0/@0x710002d3ec`([C](../../../analysis/decomp/online_menu00.c)) |
 | [설계] 근사 필요 | NPLN→웹 방 서버 대응, 오류 코드/핑 timeout·웹 epoch·탭 정책. 원본값/원본 슬립으로 표기하지 않음. [online §9.5·9.6](../shell/online.md), [§6.3·8.5](12_online_sync.md) |
-| [미확정] 판독 필요 | 전역 모듈 전체 수명·listener 본체·Leave/Disconnect 실패·재입장/host 승계·슬립·게임 복구·결과 합의. U1~U9 및 아래 요청 |
+| [미확정] 판독 필요 | 전역 전체 수명·listener dispatch·SDK 종료/실패·간접 reset·재입장 최종 callback/host 승계·슬립·게임 복구·결과 합의. 최신 U1~U9/N1~N15/M1~M9는 [§9.15.6·9.15.7](12_online_sync.md) |
 
 | 이 절의 내용 | 원본/웹 출처 대응 |
 |---|---|
@@ -577,23 +577,23 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] matching00.nro | `StoreTeamStationId @0x71000040f0` | [같은 C](../../../analysis/decomp/online_matching00.c) |
 | [판독] matching00.nro | `NetSessionListener::ReceiveMessageImpl @0x710000f7fc` | [같은 C](../../../analysis/decomp/online_matching00.c) |
 
-#### 9.12.3 Ghidra 요청 표
+#### 9.12.3 최초 Ghidra 요청 이력·현재 확보 상태
 
-[데이터] 최초 주소 요청은 main.nso 9개로 중복 제거했다. 후속6개를 합친 최종15개와 잔여 범위는 §9.13.6을 따른다. [main 함수 목록](../../../analysis/functions/main.nso.tsv)에는 있으나 [INDEX](../../../analysis/decomp/INDEX.tsv) 및 `analysis/decomp/*.c`·`ghidra_work/online/out/*.c`에서 해당 함수의 C 본체가 없었다. 이름만 보고 본문을 판독하지 않았고 새 추출은 하지 않았다.
+[데이터] 최초 요청9주소(R1~R9), 후속6주소(R10~R15), ClearSession(R16)은 당시 C가 없어 요청했다. 현재16개 모두 main.nso [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)·[main TSV](../../../analysis/functions/main.nso.tsv)에 있으며 새 판독은 §9.15.1이다. 아래 표는 최초 요청 이유를 보존한 이력이며 현재 추출 요청은 §9.15.7의 빈 하위 함수15주소다. 새 추출은 하지 않았다.
 
-| ID | 모듈·주소·함수 | 이유 |
+| ID | 모듈·주소·함수 | 최초 요청 이유(현재 확보·§9.15 판독) |
 |---|---|---|
-| [미확정] R1 | main.nso `@0x7100150a80 FUN_7100150a80` | 기존 [§3.3·4.1](12_online_sync.md)의 생성 필드는 재사용. 전체 네트워크 소유자 설치/최종 해제 호출자 연결용 C 요청 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R2 | main.nso `@0x710013c04c bex::NetworkModule::Disconnect` | 명시적 종료의 내부 위임·수명·완료 조건 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R3 | main.nso `@0x710013c7f8 bex::NetworkModule::LeaveSession` | 방 이탈과 통신 Disconnect의 내부 차이·실패 처리 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R4 | main.nso `@0x710013cadc bex::NetworkModule::SetErrorListener` | weak handle 설치/해제·공용 오류 owner ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R5 | main.nso `@0x710013cb64 bex::NetworkModule::SetSessionEventListener` | listener 교체/해제·동시 구독 가능성 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R6 | main.nso `@0x71001ea620 bq::Net::SetAllListener` | menu00/matching00 해제 뒤 공용 listener 복귀의 실제 대상 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R7 | main.nso `@0x71001ea710 bq::Net::CancelAllListener` | 매칭 진입에서 임시 listener로 넘어가는 공용 경계 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R8 | main.nso `@0x71001ea1b8 bq::Net::AllowReentry` | 재입장·host 이어받기 허용과 실제 복구의 관계 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
-| [미확정] R9 | main.nso `@0x71001eacb4 bq::Net::RequestReserveLeaveSession` | 예정 이탈 표시와 오류 억제·실제 종료의 순서 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R1 | main.nso `@0x7100150a80 FUN_7100150a80` | 기존 [§3.3·4.1](12_online_sync.md)의 생성 필드는 재사용. 전체 네트워크 소유자 설치/최종 해제 호출자 연결용 C 요청 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R2 | main.nso `@0x710013c04c bex::NetworkModule::Disconnect` | 명시적 종료의 내부 위임·수명·완료 조건 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R3 | main.nso `@0x710013c7f8 bex::NetworkModule::LeaveSession` | 방 이탈과 통신 Disconnect의 내부 차이·실패 처리 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R4 | main.nso `@0x710013cadc bex::NetworkModule::SetErrorListener` | weak handle 설치/해제·공용 오류 owner ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R5 | main.nso `@0x710013cb64 bex::NetworkModule::SetSessionEventListener` | listener 교체/해제·동시 구독 가능성 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R6 | main.nso `@0x71001ea620 bq::Net::SetAllListener` | menu00/matching00 해제 뒤 공용 listener 복귀의 실제 대상 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R7 | main.nso `@0x71001ea710 bq::Net::CancelAllListener` | 매칭 진입에서 임시 listener로 넘어가는 공용 경계 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R8 | main.nso `@0x71001ea1b8 bq::Net::AllowReentry` | 재입장·host 이어받기 허용과 실제 복구의 관계 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
+| [데이터] R9 | main.nso `@0x71001eacb4 bq::Net::RequestReserveLeaveSession` | 예정 이탈 표시와 오류 억제·실제 종료의 순서 ([main TSV](../../../analysis/functions/main.nso.tsv)) |
 
-[데이터] R1~R9의 각 주소·이름·크기는 [main TSV](../../../analysis/functions/main.nso.tsv)의 address/name/size가 근거다. 최초 미식별 묶음은 아래 3개이며 숫자 주소 수에 합치지 않는다. 후속 A1 후보 식별/잔여 상태는 §9.13.6을 따른다.
+[데이터] R1~R9의 주소·이름·크기는 [main TSV](../../../analysis/functions/main.nso.tsv), 현재 확보된 본체는 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)가 근거다. 최초 미식별 A묶음3개는 숫자 주소 수에 합치지 않는다. 최신9행의 미식별/결합 상태는 §9.15.6을 따른다.
 
 | ID | 모듈·주소 | 식별 요청·이유 |
 |---|---|---|
@@ -615,11 +615,11 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] 필드·명시적 종료 | menu01 관리자 +0x40 HandleSource, +0x48 세션 listener, +0x50 동기 수신기, +0x58 진행 객체, +0x60 RankingDataHolder. Disconnect @0x710002fcac은 공용 Disconnect와 Work ClearSession을 호출한다. SetSessionEventListener @0x710002f71c/CancelSessionEventListener @0x710002fa1c은 공용 setter 위임이며 해제 인자는 C에서 완전 복원되지 않는다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
 | [판독] 사건 저장·가입 | NetSessionListener::ReceiveMessageImpl @0x71000329e0은 listener +0x10 사건, +0x18/+0x20 ConstantID 쌍, +0x30 발생 flag를 저장한다. 메시지0x5f4e4502의 사건0은 Work JoinedStation으로 전달한다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
 | [판독] 사건2 | 같은 @0x71000329e0은 이전 Work host 쌍 +0x3d18/+0x3d20을 보관하고 사건 쌍을 SetHostConstantId로 설정한다. 이전/새 host PlayerID 조회 뒤 SetErrorReturnSceneName("menu01"), RequestError(3,"sys_error_B2",oldID,newID), Wipe pause 0xc를 요청한다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
-| [미확정] 사건2 공통 의미 | menu00 @0x7100039830의 해산 문구([online §5.5](../shell/online.md))와 위 host 갱신은 장면별 반응이다. SDK 사건2 enum 의미·host 승계 완료·플레이 계속은 확정하지 않는다. main listener R5~R7·재입장 R8/R14/R15가 필요하다. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] 사건2 공통 의미 | menu00 @0x7100039830의 해산 문구([online §5.5](../shell/online.md))와 위 host 갱신은 장면별 반응이다. SDK 사건2 enum·host 승계 완료·플레이 계속은 확정하지 않는다. main listener/재입장 @0x710013cb64/@0x71001ea620/@0x710034c970은 [C](../../../analysis/decomp/docs_gap_main.c)로 확보했지만 최신 잔여는 §9.15.6이다 |
 | [판독] 사건1·자기 이탈 | menu01 @0x71000329e0은 Work 로컬 쌍 +0x3d08/+0x3d10과 같으면 NetTransfer Clear·Work LeftStation을 호출한다. 사람 존재 helper/예약 이탈에 걸리지 않는 오류 갈래는 menu00·reason4·sys_error_B3 복귀를 요청한다. 예약 이탈은 CancelReserveLeaveSession으로 구별한다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
 | [판독] 사건1·다른 station | 같은 @0x71000329e0은 해당 NetTransfer Clear·Work RequestLeftStation 뒤 departed/로컬 예약 이탈·현재 host 일치·다른 remote human 존재 여부로 분기한다. 오류 갈래는 menu01의 B1/B3 또는 저장 ReentryData Clear·SaveRequest 뒤 menu00의 B9다. 모든 host 이탈 후 계속하는 규칙은 아니다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
 | [판독] 사람 존재 helper | FUN_71000331b0 @0x71000331b0은 GetPlayerList(...,4)에서 이탈자와 다른 PlayerType0이 있으면0, 없으면 진행 객체 정리·RequestError(4,"sys_error_B9",Invalid,Invalid) 뒤1이다. FUN_7100033490 @0x7100033490은 로컬과 이탈자 모두와 다른 PlayerType0이 있으면0, 없으면1이다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
-| [미확정] Work 접점 | 필터 인자4의 전체 정의, ConstantID 생성/교체 수명, LeftStation/RequestLeftStation의 실제 제거 시점은 여기서 판독하지 않았다. 공용 SceneBase/Work는 [18_scene_work §3~5·8](18_scene_work.md) 재사용이다. main ClearSession @0x710029f6b0 reset 범위는 그 문서 U06·부록 C 요청이며 중복 요청하지 않는다 |
+| [미확정] Work 접점 | 목록 필터4 전체 정의, ConstantID 생성/교체 수명, LeftStation/RequestLeftStation 제거 시점은 공용 Work 담당이다. [18_scene_work §3~5·8](18_scene_work.md) 재사용. main ClearSession @0x710029f6b0의 직접 reset은 이 갈래 §9.15.5 [C](../../../analysis/decomp/docs_gap_main.c)로 판독했고 간접 reset helper만 N7/N8에 남긴다 |
 
 [추정] menu00→menu01의 지역 관리자 교체 중 잔존 세션 이용 해석은 강화된다. menu00 Play @0x7100037a00([online §5.6](../shell/online.md))와 menu01 @0x710002f078/@0x710002f840([C](../../../ghidra_work/online/out/menu01.nro.c))가 근거다. 앱 전체 전역 수명·모든 전환 보존은 U1이다.
 
@@ -633,9 +633,9 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] 요청 caller | 기존 SetupSession @0x7100012780([online §5.7·8](../shell/online.md)) → RequestDissolveAndRecreateSession @0x7100004c00 → LeaveSession @0x7100004ab0/오류 요청. 메뉴값4·저장 station 쌍 조건의 NetTransfer 전송 확인 대기는 최대30,000,000,000 ns=30 s이며 실패도 오류 경로다. 이 본문에도 세션 생성 호출은 없다. [matching00 C](../../../analysis/decomp/online_matching00.c) |
 | [판독] menu00 해산 후보 | FUN_71000313f0 @0x71000313f0은 함수 객체 +8의 관리자를 사용해 세션/진행 요청을 검사한다. SetSessionEntry·GetResultSessionEntry 폴링, NetTransfer 전송, DissolveSessionSilentlyFiber(false) 설치·완료 대기 뒤 StopSoundRebootScene, 1.0 s FadeOut·대기, 진행 객체 정리, 친구 UUID 목록 정리, MenuReturnCode(1,0), RequestRebootScene으로 이어진다. [menu00 C](../../../ghidra_work/online/out/menu00.nro.c) |
 | [미확정] 후보 결합·상태값 | 위 후보와 DissolveSession @0x710002ed78의 PTR_LAB_71001c8b18 가상 호출 결합은 C에 없다. SetSessionEntry 인자·폴링 SSA도 완전 복원되지 않았다. 포인터를 코드 주소로 바꾸거나 입장 닫기/SDK 성공값을 확정하지 않는다. [caller C](../../../analysis/decomp/online_menu00.c)·[후보 C](../../../ghidra_work/online/out/menu00.nro.c) |
-| [판독] 장면 요청 접점 | 후보의 RequestRebootScene은 소리/페이드 뒤 요청한다. 요청 저장·OnMainEnd 전달은 main @0x71002caf7c/@0x71002ca9e0의 [18_scene_work §3~5](18_scene_work.md) 재사용이다. 부모 instance 보존·최종 네트워크 해제까지 확대하지 않는다 |
+| [판독] 장면 요청 접점 | 후보의 RequestRebootScene은 소리/페이드 뒤 요청한다. [데이터] 명칭 대응은 main RequestRebootScene @0x71002cafa0이며, 종전 @0x71002caf7c는 RequestReturnScene(name)이다. [18_scene_work 부록 B.2](18_scene_work.md)·[main TSV](../../../analysis/functions/main.nso.tsv)의 주소 대응을 재사용한다. [판독] OnMainEnd 전달 main @0x71002ca9e0은 [18_scene_work §3~5](18_scene_work.md) 재사용이다. 부모 instance 보존·최종 네트워크 해제까지 확대하지 않는다 |
 
-[미확정] IsCompleted는 caller 대기 종료 근거다. SDK Leave/Dissolve 성공·실패 복구·예약 이탈 제거 순서와 같다는 보장은 없다. main R2/R3/R9~R13 및 silent virtual Update 식별이 필요하다. [main TSV](../../../analysis/functions/main.nso.tsv), menu00 Leave @0x71000382f0은 [§9.3](12_online_sync.md) 재사용이다.
+[미확정] IsCompleted는 caller 대기 종료 근거이며 SDK 성공/실패·예약 제거 순서와 동일한 보장은 없다. main wrapper/결과/silent ctor @0x710013c04c/@0x710013c7f8/@0x710013c800/@0x710013c2f0/@0x71001f83e0/@0x71001f8564는 [C](../../../analysis/decomp/docs_gap_main.c)로 확보했다. 빈 하위 함수 N1~N3/N6, virtual Update M7/M8는 §9.15.3·9.15.7. menu00 Leave @0x71000382f0은 [§9.3](12_online_sync.md) 재사용이다.
 
 #### 9.13.3 재입장·모드 복귀·focus
 
@@ -644,7 +644,7 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] 저장 재개 UI | menu00 ReEntryImpl @0x71000553f0의 저장/flag 검사·재개 확인·계정/컨트롤러 복원·ReturnCode·네트워크 검사 뒤 ReEntryFiber, 폐기/실패의 ReentryData Clear·SaveRequest→설정은 [plaza_intro §3.3](../shell/plaza_intro.md) 재사용이다. 새 Join @0x7100035a90([online §5.4](../shell/online.md))와 구별한다 |
 | [판독] 공용 이탈 오류 복귀 | main FUN_71001ec490 @0x71001ec490의 자기/예약 이탈 배제·flag별 B1/B3/B6 및 mgmrs/mgmet/menu00 복귀는 [mgm01_freeplay §3.3](../shell/mgm01_freeplay.md) 재사용이다. RecreateSessionFiber ctor @0x71002d30c0·mgmrs SyncedSetupGame @0x7100003e5c도 같은 문서의 재구성 진입이며 게임 snapshot 증거는 아니다 |
 | [판독: 어셈블리] 재구성 sync | main RecreateSessionFiber::StartSync @0x71002d44fc/SessionFailedProcess @0x71002d453c는 [mgm01_freeplay §4.3·5.4](../shell/mgm01_freeplay.md)·[mgC_main_uitimer2.c](../../../analysis/decomp/mgC_main_uitimer2.c) 재사용이다. 새 C 수에 넣지 않는다 |
-| [미확정] 실제 재개 본문 | main ReEntryFiber ctor @0x710034c564/Update @0x710034c970은 [main TSV](../../../analysis/functions/main.nso.tsv)에 있으나 C/INDEX 본체가 없다. target mode·host 승계·성공/실패·복원 범위는 R14/R15다. UI 존재를 모든 끊김의 자동 재접속으로 일반화하지 않는다 |
+| [판독] 실제 저장 재입장 본문 | main ReEntryFiber ctor @0x710034c564/Update @0x710034c970은 현재 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)에 있다. 저장 방 검색·참가·phase/실패·국소 매핑은 §9.15.4. 최종 target/host 승계/snapshot은 [미확정]이며 모든 끊김의 자동 재접속으로 일반화하지 않는다 |
 | [판독] focus 소비자 | main FUN_7100195228 @0x7100195228은 GetCurrentFocusState()가1~3이면 RendererModule에 각각0/1/1 flag를 전달한다. 이 본문에는 NetworkModule·Leave·Disconnect·재입장 호출이 없다. [core_b1.c](../../../analysis/decomp/core_b1.c)·[main TSV](../../../analysis/functions/main.nso.tsv) |
 | [미확정] 슬립과 focus | 위 코드는 렌더러 전달만 확인한다. nn::oe::SetResumeNotificationEnabled @0x710144d2e0 소비자 또는 Switch 슬립의 네트워크 처리를 식별한 것은 아니다. 현 C에서 resume 설정/notification 소비자 연결을 확보하지 못해 A2 유지다. [main TSV](../../../analysis/functions/main.nso.tsv)·[core_b1.c](../../../analysis/decomp/core_b1.c) |
 
@@ -661,7 +661,7 @@ appNet(): NetSession                    // 앱 수명 하나
 
 #### 9.13.5 해결된 부분·잔여·구현 차단
 
-[미확정] U1~U9 모두 경계가 남는다. “부분 해결” 5행은 caller 범위를 좁힌 것이며 전체 해결은 아니다. 원본 실행 확인은 없다. 각 행 주소·절이 근거다.
+[미확정] 아래는 §9.13 조사 시점의 부분해결5/남음4 이력이다. R1~R16의 C는 이후 확보했고 최신0전체 해결·6부분해결·3남음 및 빈 하위 요청은 §9.15.6·9.15.7을 따른다. 원본 실행 확인은 없다. [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[§9.15.6](12_online_sync.md).
 
 | ID | 해결/한정 | 잔여·구현 차단 |
 |---|---|---|
@@ -677,28 +677,28 @@ appNet(): NetSession                    // 앱 수명 하나
 
 #### 9.13.6 최소 추가 C·미식별·준비도
 
-[데이터] R1~R9는 main TSV에 있지만 현 C471개(analysis/decomp/*.c·ghidra_work/*/out/*.c)에서 본체·주소 참조 모두 없음을 재확인했다. 추가 R10~R15도 TSV 존재·INDEX 미수록·C 본체 없음이다. 고유 요청 합계15주소·이번 추출0이다. [INDEX](../../../analysis/decomp/INDEX.tsv)·[main TSV](../../../analysis/functions/main.nso.tsv)의 address/name/size가 근거다.
+[데이터] §9.13 조사 시점에는 R1~R15 main.nso 15주소가 TSV만 있고 C471개/INDEX에 본체가 없어 요청했다. 이후 R16과 함께16개 모두 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)로 확보했다. 아래 R10~R15는 당시 요청 이유의 이력이다. 현재 요청15주소는 별개 하위 함수 N1~N15(§9.15.7)이며 이번 추출0이다. [main TSV](../../../analysis/functions/main.nso.tsv).
 
-| ID | 모듈·주소·함수 | 최소 정보 |
+| ID | 모듈·주소·함수 | 당시 요청 정보(현재 확보·§9.15 판독) |
 |---|---|---|
-| [미확정] R10 | main.nso @0x710013c800 bex::NetworkModule::GetResultLeaveSession | 결과1 Wait와 완료/성공/실패의 위임 대상. [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R11 | main.nso @0x710013c2f0 bex::NetworkModule::GetResultSessionEntry | 해산 후보 entry 결과 폴링·실패. [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R12 | main.nso @0x71001f83e0 bq::LeaveSessionSilentlyFiber::LeaveSessionSilentlyFiber | virtual Update 대상·silent 완료/오류 식별. 생성자만으로 성공 의미를 닫지 않음. [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R13 | main.nso @0x71001f8564 bq::DissolveSessionSilentlyFiber::DissolveSessionSilentlyFiber | virtual Update·bool 동작·완료/오류. Update 주소는 현 TSV에서 식별 못 해 만들지 않음. [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R14 | main.nso @0x710034c564 bq::ReEntryFiber::ReEntryFiber | 저장/네트워크/모드 인자 소유·초기 상태. [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R15 | main.nso @0x710034c970 bq::ReEntryFiber::Update | 실제 재입장·target scene·host/실패·복구 상태. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [데이터] R10 | main.nso @0x710013c800 bex::NetworkModule::GetResultLeaveSession | 결과1 Wait와 완료/성공/실패의 위임 대상. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [데이터] R11 | main.nso @0x710013c2f0 bex::NetworkModule::GetResultSessionEntry | 해산 후보 entry 결과 폴링·실패. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [데이터] R12 | main.nso @0x71001f83e0 bq::LeaveSessionSilentlyFiber::LeaveSessionSilentlyFiber | virtual Update 대상·silent 완료/오류 식별. 생성자만으로 성공 의미를 닫지 않음. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [데이터] R13 | main.nso @0x71001f8564 bq::DissolveSessionSilentlyFiber::DissolveSessionSilentlyFiber | virtual Update·bool 동작·완료/오류. Update 주소는 현 TSV에서 식별 못 해 만들지 않음. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [데이터] R14 | main.nso @0x710034c564 bq::ReEntryFiber::ReEntryFiber | 저장/네트워크/모드 인자 소유·초기 상태. [main TSV](../../../analysis/functions/main.nso.tsv) |
+| [데이터] R15 | main.nso @0x710034c970 bq::ReEntryFiber::Update | 실제 재입장·target scene·host/실패·복구 상태. [main TSV](../../../analysis/functions/main.nso.tsv) |
 
 | 우선 조사 | 요청·후속 식별 |
 |---|---|
-| [설계] 종료·listener | R2~R7/R9~R13. wrapper의 추가 callee만 후속 요청한다. silent Update는 R12/R13으로 식별 뒤 요청하며 인접 주소를 추정하지 않는다. [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [설계] 재개·host | R8/R14/R15로 복원 항목/모드를 좁힌다. SDK reentry 허용과 snapshot은 별도다. main @0x71001ea1b8/@0x710034c970, [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [설계] owner·남은 hook | R1/A3 전역 설치/파괴 caller 식별. U8/U9는 gate/결과 caller 주소 근거가 부족해 일괄 추출 주소를 지정하지 않는다. main @0x7100150a80/@0x71001c94cc/@0x71002e1b14의 [§2·3·5·7](12_online_sync.md) 재사용이며 C15개만으로 U1~U9 전체 해결을 보장하지 않는다 |
+| [설계] 종료·listener | 기존 R2~R7/R9~R13은 확보·판독했고 현재 N1~N8이 빈 하위 함수다. silent Update는 M7/M8이며 ctor만으로 실제 주소를 만들지 않는다. [§9.15.3·9.15.7](12_online_sync.md) |
+| [설계] 재개·host | R8/R14/R15 확보로 저장 재참가·국소 매핑은 확인했다. N9~N15 및 성공 callback M9가 잔여이며 snapshot은 별도다. main @0x71001ea1b8/@0x710034c970 [C](../../../analysis/decomp/docs_gap_main.c)·[§9.15.4](12_online_sync.md) |
+| [설계] owner·남은 hook | R1 내부 ctor는 확보됐지만 전역 설치/파괴·gate/결과 caller는 M3/M5/M6이다. 실제 주소가 없어 일괄 추출 주소를 지정하지 않는다. [§9.15.2·9.15.6](12_online_sync.md) |
 
 | 미식별 묶음 | 후속 결과 |
 |---|---|
 | [미확정] A1 결합 미확정 | menu00 후보 @0x71000313f0 확보, PTR_LAB_71001c8b18와의 vtable/함수 객체 결합 잔여. 후보 C는 있어 새 추출 요청이 아니다. [menu00 C](../../../ghidra_work/online/out/menu00.nro.c)·[caller C](../../../analysis/decomp/online_menu00.c) |
 | [미확정] A2 consumer 미식별 | main focus @0x7100195228은 sleep/resume 네트워크 consumer가 아니다. SetResumeNotificationEnabled @0x710144d2e0 연결 미확보. [core_b1.c](../../../analysis/decomp/core_b1.c)·[main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] A3 핵심 caller 미식별 | menu01 @0x71000329e0 오류 복귀는 확인했지만 전역 최종 해제·게임 snapshot 복구 본체는 미식별. Work offset·ClearSession은 [18 §8·11·부록 C](18_scene_work.md) 요청과 연결한다. [menu01 C](../../../ghidra_work/online/out/menu01.nro.c) |
+| [미확정] A3 핵심 caller 미식별 | menu01 @0x71000329e0의 오류 복귀는 확인했지만 전역 최종 해제·게임 snapshot 복구 본체는 미식별. ClearSession main @0x710029f6b0 직접 reset은 최신 [§9.15.5](12_online_sync.md) [C](../../../analysis/decomp/docs_gap_main.c)로 확인. 공용 Work 수명은 [18](18_scene_work.md) 재사용 |
 
 [데이터] 기존 미식별 묶음3개 중 A1은 후보 주소 확보·결합 미확정, A2/A3은 핵심 코드 주소 미식별이다. silent virtual Update·원본 전체 gate·결과 합의 caller 주소 부족도 해당 U/R행에 명시했으며 숫자15개에 가상 주소를 더하지 않았다. [§9.13.5](12_online_sync.md)·[main TSV](../../../analysis/functions/main.nso.tsv).
 
@@ -706,7 +706,7 @@ appNet(): NetSession                    // 앱 수명 하나
 |---|---|
 | [설계] 바로 가능 | 앱 세션/화면 구독 분리·단일 poll/fanout·종료 이유/단계·menu01 오류 분기·고정1/60·주입 RNG·f32·FrameGate. [DESIGN §10](../../DESIGN.md)·menu01 @0x710002f840/@0x71000329e0 [C](../../../ghidra_work/online/out/menu01.nro.c)·[19 §9.3](19_motion_input.md) |
 | [설계] 근사 필요 | transport·timeout·epoch·tab hidden/offline/reconnect UI는 플랫폼 선택이며 §9.11 미승인 추천 유지. [online §9.5·9.6](../shell/online.md)·[§6.3·8.5](12_online_sync.md) |
-| [미확정] 판독 필요 | U1~U9 종료/복구/합의·A1 결합·A2/A3 consumer. C15주소와 18 Work 요청 우선. [§9.13.5·9.13.6](12_online_sync.md)·[18 §11·부록 C](18_scene_work.md) |
+| [미확정] 판독 필요 | U1~U9의 종료/복구/합의 잔여와 미식별/결합. 기존 R1~R16은 본체 확보됐으며 현재 N1~N15·M1~M9는 [§9.15.6·9.15.7](12_online_sync.md) |
 
 #### 9.13.7 후속 새 판독·출처 대응·검증
 
@@ -733,14 +733,14 @@ appNet(): NetSession                    // 앱 수명 하나
 
 [설계] 검증 기대값은 menu01 사건2 host 갱신→B2/menu01, 예약 이탈 분기, 마지막 remote human 이탈 B9/ReentryData 정리, matching00 silent 완료→ClearSession→오류 순서다. menu01 @0x71000329e0/@0x71000331b0/@0x7100033490([C](../../../ghidra_work/online/out/menu01.nro.c)), matching00 @0x7100004ab0/@0x710000c500([C](../../../analysis/decomp/online_matching00.c))가 근거이며 SDK 성공/실측으로 표기하지 않는다.
 
-[데이터] §1~§8 원래56,343바이트 SHA-256은 4ac5c24f93009ed2b1f0e9ba47be8040bd10fbfeb2856d70245a88af50f017d9이며 보존한다. §9는 UTF-8·LF다. 정적 검증 결과: §9 CommonMark 링크318/318·새 경로 오류0, 새 판독35함수의 모듈 TSV/기존 C 헤더·고유 요청15주소 대조 통과, git diff --check 통과. 인라인/참조식 구문을 확인했고 §9 참조식 정의는0개다. 기존 §6.1의 ../../script/core/clock.ts는 현 경로에 없지만 §1~§8 보존으로 변경하지 않았다. 괄호 설명을 링크 오류로 세지 않는다. [§6.1](12_online_sync.md)·[INDEX](../../../analysis/decomp/INDEX.tsv).
+[데이터] §9.13 완료 시점 검증: §1~§8 원래56,343바이트 SHA-256 4ac5c24f93009ed2b1f0e9ba47be8040bd10fbfeb2856d70245a88af50f017d9 보존, §9 UTF-8·LF, CommonMark 링크318/318·새 경로 오류0, 당시 새 판독35함수/고유 요청15주소 대조, git diff --check 통과. 최신 검증은 §9.15.8이다. 기존 §6.1 ../../script/core/clock.ts는 현 경로에 없지만 §1~§8 보존으로 변경하지 않았다. 괄호 설명을 링크 오류로 세지 않는다. [§6.1](12_online_sync.md)·[INDEX](../../../analysis/decomp/INDEX.tsv).
 
 [설계] 부모 통합은 §9.12.3 출처 절 끝 한 줄만 유지한다. 후속은 §9만 쓰며 README·출처·C·INDEX·TSV·코드·에셋은 수정하지 않았다. [18_scene_work §8](18_scene_work.md) 온라인 접점은 §9.13.1·9.13.2에서 재사용했고 상호 링크 추가는 부모 통합 대상이다.
 
 
 ### 9.14 남은 구현 차단 경계 추가 조사
 
-[데이터] 직전35함수·U1~U9 중5부분해결(§9.12·9.13)을 재사용하고 아직 문서 판독이 없는 C6함수를 추가로 읽었다. 누계41함수다. 모든 기존 문서 바이트는 보존하고 이 하위 절만 추가했다. [INDEX](../../../analysis/decomp/INDEX.tsv)·모듈 TSV·C 헤더를 먼저 대조했으며 원본 실행/추출은 없다.
+[데이터] §9.14 조사 시점에는 직전35함수·5부분해결(§9.12·9.13)을 재사용하고 빈 C6함수를 추가로 읽어 누계41함수였다. 이 시점에는 기존 바이트를 보존하고 하위 절만 추가했다. 최신16개 추가·누계57·현재 요청은 §9.15다. [INDEX](../../../analysis/decomp/INDEX.tsv)·모듈 TSV·C 헤더를 먼저 대조했으며 원본 실행/추출은 없다.
 
 #### 9.14.1 후보 일괄 목록·새 판독 범위
 
@@ -753,7 +753,7 @@ appNet(): NetSession                    // 앱 수명 하나
 | [판독] matching00.nro PlaySessionFiber::Update @0x7100009280 | 이번 새1. [online_matching00.c](../../../analysis/decomp/online_matching00.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)·[matching00 TSV](../../../analysis/functions/matching00.nro.tsv) 모두 존재. 같은 주소의 mg1002 Ending은 다른 함수 |
 | [판독] menu01.nro Scene::SetupGame @0x7100039b90 | 이번 새1. [menu01.nro.c](../../../ghidra_work/online/out/menu01.nro.c) 헤더·[menu01 TSV](../../../analysis/functions/menu01.nro.tsv) 존재. INDEX의 같은 주소 mg0911 항목은 이 함수가 아님. 네트워크 조건/매핑 caller만 다루며 공용 SceneBase 본문은 읽지 않음 |
 | [판독] menu01.nro SequenceStartKbMode::ExitImpl @0x7100055d70 | 이번 새1. [menu01.nro.c](../../../ghidra_work/online/out/menu01.nro.c) 헤더·[menu01 TSV](../../../analysis/functions/menu01.nro.tsv) 존재, INDEX 미수록. 지역 Exit와 네트워크 종료 호출을 구별 |
-| [미확정] main.nso ClearSession @0x710029f6b0 및 R1~R15 | [main TSV](../../../analysis/functions/main.nso.tsv)에는 있으나 C 본체/INDEX 없음. 요청16개 재검증은 §9.14.4. 새 어셈블리 판독·추출 없이 요청으로 유지 |
+| [판독] main.nso ClearSession @0x710029f6b0 및 R1~R15 | 당시에는 TSV만 있었으나 현재16개 모두 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)에 있다. 새 판독 §9.15.1·네트워크 reset §9.15.5. 이전16주소는 본체 요청에서 닫았다 |
 
 [데이터] 관련 caller 재사용은 menu00 ReEntryImpl @0x71000553f0([plaza_intro §3.3](../shell/plaza_intro.md)), main 이탈 @0x71001ec490·RecreateSessionFiber ctor @0x71002d30c0·mgmrs GameFlow @0x7100003f80([mgm01_freeplay §3.3·4.3·5.4](../shell/mgm01_freeplay.md)), Scene/Work/결과 소유([18_scene_work §3~5·8](18_scene_work.md))다. 초대·UI 표시만 하는 후보는 구현 차단 우선 범위에서 제외하고 새 판독 수에 넣지 않았다.
 
@@ -778,28 +778,28 @@ appNet(): NetSession                    // 앱 수명 하나
 
 | ID | 이번에 좁힌 부분·잔여 |
 |---|---|
-| [미확정] U1·U2 | 지역 Exit/진입 추가 근거는 menu01 @0x7100039b90/@0x7100055d70 [C](../../../ghidra_work/online/out/menu01.nro.c). 전역 설치/최종 파괴·listener 교체/해제는 R1/R4~R7/A3가 여전히 차단 |
-| [미확정] U3 | 예약 이탈/알림 억제/지역 요청 완료가 menu00 @0x710002cc90/@0x7100037368/@0x71000377d0 [C](../../../analysis/decomp/online_menu00.c)로 좁혀졌다. SDK 성공/실패·ClearSession reset은 R2/R3/R9~R13/R16 필요 |
+| [미확정] U1·U2 | menu01 진입/Exit @0x7100039b90/@0x7100055d70 [C](../../../ghidra_work/online/out/menu01.nro.c) 재사용. main ctor/listener R1/R4~R7은 현재 [C](../../../analysis/decomp/docs_gap_main.c)로 확보됐고 단일 슬롯/0 해제는 확인. 전역 최종 소유와 dispatch 잔여는 §9.15.2·9.15.6 |
+| [미확정] U3 | 예약/알림 caller menu00 @0x710002cc90/@0x7100037368/@0x71000377d0 [C](../../../analysis/decomp/online_menu00.c) 재사용. SDK wrapper/결과/silent ctor/ClearSession은 확보돼 §9.15.3·9.15.5에 판독. SDK 성공/실패·간접 reset은 N1~N3/N6~N8·M7/M8 |
 | [미확정] U4·A1 | 후보 주소는 확보됐으나 결합·SDK 해산 성공은 미확정 유지. menu00 @0x710002ed78/@0x71000313f0의 [§9.13.2](12_online_sync.md), 이번 참조 수 대조는 위 문단 |
-| [미확정] U5 | menu01 진입/Exit의 재분류·복원 caller는 추가 확인했다. @0x7100039b90/@0x7100055d70 [C](../../../ghidra_work/online/out/menu01.nro.c). AllowReentry·ReEntryFiber R8/R14/R15 없이 실제 재입장 성공/host 승계를 확정 못 함 |
+| [미확정] U5 | menu01 진입/Exit @0x7100039b90/@0x7100055d70 [C](../../../ghidra_work/online/out/menu01.nro.c) 재사용. AllowReentry·ReEntryFiber main @0x71001ea1b8/@0x710034c564/@0x710034c970은 현재 [C](../../../analysis/decomp/docs_gap_main.c)로 판독. 실제 saved rejoin과 최종 승계/복원 미확정은 §9.15.4·9.15.6 |
 | [미확정] U6·A2 | 추가 sleep/resume 소비자 C는 확보 못 했다. focus @0x7100195228와 외부 @0x710144d2e0의 [§9.13.3](12_online_sync.md) 재사용. 브라우저 hidden을 Switch 슬립과 합치지 않음 |
 | [미확정] U7·A3 | menu01 @0x7100039b90의 CPU 재분류는 진입 시점으로 한정했다. [C](../../../ghidra_work/online/out/menu01.nro.c). 진행 중 game 객체/RNG 소비 위치/score 복구·즉시 대체 caller는 여전히 미식별이므로 U7을 새 부분해결로 올리지 않음 |
 | [미확정] U8·U9 | matching00 @0x7100009280의 출발 준비/결과 호출 경계를 좁혔다. [C](../../../analysis/decomp/online_matching00.c). 상위 seed 보장·씬 전체 gate·final authority/end-frame/불일치 처리는 여전히 주소 미식별. [기존 §2.2·3.3·5·7](12_online_sync.md) 재사용 |
 
-[데이터] 최신 집계는 새6·누계41함수, U 전체 해결0/부분해결5(U1/U3/U4/U5/U6)/남음4(U2/U7/U8/U9)이며 열린 상위 항목은9개다. 이번 caller 경계 보강을 전체 미확정 해결로 세지 않았다. 사용자 선택3개는 §9.11의 미승인 추천을 유지한다. A묶음3개는 후보 결합 미확정1·핵심 주소 미식별2이며 silent Update/전체 gate/결과 caller 주소 부족도 해당 R/U행에 별도로 남는다. [§9.13.5·9.14.2·9.14.3](12_online_sync.md).
+[데이터] §9.14 시점 집계는 새6·누계41, U 전체 해결0/부분해결5/남음4였다. 최신은 추가16·누계57, 전체 해결0/부분해결6/남음3(열린 U9개)이며 [§9.15.1·9.15.6](12_online_sync.md)을 따른다. 사용자 선택3개는 [§9.11](12_online_sync.md)의 미승인 추천을 유지한다. A묶음3개는 최신 M1~M9로 세분했으며 임의 주소는 만들지 않았다.
 
-#### 9.14.4 현시점 최소 요청 집합·차단 여부
+#### 9.14.4 당시16 요청의 확보·현재 하위 공백
 
-[데이터] 최신 요청은 main.nso 고유16주소다. R1~R15는 [§9.12.3·9.13.6](12_online_sync.md) 재사용, R16은 종전18 요청의 동일 주소를 네트워크 reset 담당으로 연결한 것이다. C471개·INDEX에서16개 모두 본체 없고 [main TSV](../../../analysis/functions/main.nso.tsv)의 address/name/size는 존재한다. 새 추출/어셈블리 대체 판독0이며 추출 승인을 요청하지 않는다.
+[데이터] §9.14의 main.nso 고유16요청(R1~R16)은 현재 모두 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)·[main TSV](../../../analysis/functions/main.nso.tsv)에 있다. 이16개를 새로 판독했으며 본체 요청에서 닫았다. 최신 C486개 재대조에도 빈 하위15주소 N1~N15는 본체가 없어 §9.15.7에 남긴다. 새 추출/어셈블리 판독0이다.
 
 | 요청·모듈·정확한 주소 | 필요 이유·구현 차단 |
 |---|---|
-| [미확정] R16 main.nso @0x710029f6b0 bq::WorkModule::ClearSession (340 B) | 네트워크 세션 종료 뒤 어떤 Work station/host/slot/flag를 초기화·보존하는지. **원본 reset 동등성 구현 차단**. 기존 caller menu00 @0x710002d3ec·matching00 @0x7100004ab0·menu01 @0x710002fcac은 [§9.2·9.13.1·9.13.2](12_online_sync.md) 재사용. [main TSV](../../../analysis/functions/main.nso.tsv)·[18 §8·11·부록 C](18_scene_work.md)와 같은 주소이며 부모 전체 요청에서 중복 제거 |
-| [미확정] R2/R3/R9~R13 main.nso @0x710013c04c/@0x710013c7f8/@0x71001eacb4/@0x710013c800/@0x710013c2f0/@0x71001f83e0/@0x71001f8564 | 종료/예약/entry 결과·silent Update 식별. **SDK 완료·실패 전이 구현 차단**. 요청 함수명·이유는 [§9.12.3·9.13.6](12_online_sync.md), [main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R1/R4~R7 main.nso @0x7100150a80/@0x710013cadc/@0x710013cb64/@0x71001ea620/@0x71001ea710 | 전역 owner·공용 listener 경계. **원본 전체 수명/listener 동일성 차단**. 웹 단일 drain/fanout 설계 자체는 가능. [§9.12.3](12_online_sync.md)·[main TSV](../../../analysis/functions/main.nso.tsv) |
-| [미확정] R8/R14/R15 main.nso @0x71001ea1b8/@0x710034c564/@0x710034c970 | 실제 reentry 허용·입력 인자·target mode·성공/실패/복원. **자동 재접속·게임 중간 재개 차단**. [§9.12.3·9.13.6](12_online_sync.md)·[main TSV](../../../analysis/functions/main.nso.tsv) |
+| [판독] R16 main.nso @0x710029f6b0 bq::WorkModule::ClearSession (340 B) | [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)로 확보. Work 로컬/host Invalid·조건부 local type0·목록 전체 state0/slot0xff·controller reset은 §9.15.5에서 확인. 간접 reset N7/N8은 [미확정]. 부모18에 공유할 네트워크 접점이며 원래 본체 요청은 닫음 |
+| [판독] R2/R3/R9~R13 main.nso @0x710013c04c/@0x710013c7f8/@0x71001eacb4/@0x710013c800/@0x710013c2f0/@0x71001f83e0/@0x71001f8564 | [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c) 본체 확보·판독. 위임/결과 index/예약 wrapper/ctor까지 확인. SDK 완료·실패는 N1~N3/N6·M7/M8. 최신 [§9.15.3·9.15.7](12_online_sync.md) |
+| [판독] R1/R4~R7 main.nso @0x7100150a80/@0x710013cadc/@0x710013cb64/@0x71001ea620/@0x71001ea710 | [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c) 본체 확보·판독. 내부 소유자·단일 슬롯·0 해제/공용 복귀 확인. 전역 전체 수명·세 번째 setter/dispatch는 N4/N5·M3. 최신 [§9.15.2·9.15.6](12_online_sync.md) |
+| [판독] R8/R14/R15 main.nso @0x71001ea1b8/@0x710034c564/@0x710034c970 | [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c) 본체 확보·판독. 저장 방 검색/참가·국소 Work 갱신 확인. N9~N15·M9/게임 snapshot·host 승계 잔여. 최신 [§9.15.4·9.15.6](12_online_sync.md) |
 
-[설계] 최소 조사 순서는 종료/결과 wrapper+R16→silent ctor로 실제 virtual Update 식별→listener→reentry다. 전역 최종 해제·슬립·전체 gate·결과 합의 caller는 주소 근거가 없으므로 인접 함수나 모든 main을 추출 요청에 넣지 않는다. 위16주소만으로 모든 U를 해결한다고 보장하지 않는다. 원본 SDK 성공값·고정 timeout·복구 수치를 추정으로 채우지 않는다. [§9.14.3](12_online_sync.md)·[main TSV](../../../analysis/functions/main.nso.tsv).
+[설계] 이전16개 본체는 재요청하지 않는다. 현재 조사 순서는 N1~N8 종료/결과/listener/reset→N9~N15 저장 재입장 연결이며 silent Update/callback은 실제 항목 식별 후 요청한다. 전역 owner·슬립·전체 gate·결과 합의는 주소 근거를 먼저 확보한다. SDK 성공값·복구 수치를 추정으로 채우지 않는다. [§9.15.6·9.15.7](12_online_sync.md).
 
 #### 9.14.5 준비도·기대값·검증
 
@@ -807,10 +807,173 @@ appNet(): NetSession                    // 앱 수명 하나
 |---|---|
 | [설계] 바로 가능 | 화면 cleanup/모드 Exit와 세션 종료 분리·단일 poll/구독·예약 이탈에 따른 UI 억제·menu01 진입의 mapping 갱신 경계 설계. menu00 @0x710002cc90/@0x7100037368 [C](../../../analysis/decomp/online_menu00.c), menu01 @0x7100039b90/@0x7100055d70 [C](../../../ghidra_work/online/out/menu01.nro.c), [DESIGN §10](../../DESIGN.md) |
 | [설계] 근사 필요 | 웹 transport/epoch/timeout·tab hidden/offline·재접속 안내는 §9.11 추천 그대로 미승인. [기존 §6.3·8.5·9.11](12_online_sync.md) |
-| [미확정] 판독 필요 | U1~U9의 나머지 성공/수명/복구/합의·ClearSession reset·A1 결합/A2/A3 소비자. R16 포함16주소와 주소 미식별을 구별한다. [§9.14.3·9.14.4](12_online_sync.md) |
+| [미확정] 판독 필요 | U1~U9의 잔여·간접 reset·SDK 완료·silent Update/callback·전역 owner/슬립/snapshot/gate/결과. 현재 N1~N15와 M1~M9를 구별한다. [§9.15.6·9.15.7](12_online_sync.md) |
 
 [설계] 기대값은 예약 이탈 시 참가 실패 알림0·silent 대기 유지, menu01 진입의 host/가입자/미할당자 구분, 모드 선택 Exit 뒤 세션 유지다. menu00 @0x7100037368/@0x71000377d0 [C](../../../analysis/decomp/online_menu00.c), menu01 @0x7100039b90/@0x7100055d70 [C](../../../ghidra_work/online/out/menu01.nro.c)가 근거다. PlayerID 재구성을 진행 중 게임의 slot/epoch 교체로 확대하지 않으며 SDK 성공·결과 commit 기대값은 미확정이다.
 
 [미확정] 18 갈래 공유 접점은 menu01 SetupGame @0x7100039b90의 Normalize/SetPlayerID/SetPlayerType/ControllerAssign, ExitImpl @0x7100055d70의 RestoreLocalPlayerData, matching00 @0x7100009280의 WorkModule::PlaySession이다. 공용 SceneBase/Work 본문은 재판독하지 않았다. ClearSession @0x710029f6b0의 네트워크 reset은 이 갈래 R16로 관리하고 다른 Work 수명은 [18_scene_work](18_scene_work.md)에 둔다.
 
-[데이터] 이 추가분은 UTF-8·LF이며 쓰기 직전 대상 전체를 다시 읽어 기존 바이트/다른 작업 링크를 보존한다. 정적 검증 통과: §9 CommonMark 링크386/386·새 경로 오류0·참조식 정의0, 누계41개 새 판독 주소/모듈/C 헤더,16개 고유 요청·C 부재, git diff --check. 괄호 설명을 링크 오류로 세지 않았다. 기존 §6.1 깨진 clock.ts 링크는 보존한다. [§9.13.7](12_online_sync.md)·[INDEX](../../../analysis/decomp/INDEX.tsv). README·출처 링크·코드·C·INDEX·SHARED·JSON·에셋 수정은 없다.
+[데이터] §9.14 완료 당시 검증은 §9 CommonMark 링크386/386·새 경로 오류0·참조식 정의0, 누계41개 새 판독 주소/모듈/C 헤더, 당시16개 고유 요청·C 부재, git diff --check였다. 이후 부모의 §9.9 링크와 신규 C16개를 반영한 현재 검증은 §9.15.8을 따른다. 기존 §6.1 clock.ts는 보존한다. [§9.13.7](12_online_sync.md)·[INDEX](../../../analysis/decomp/INDEX.tsv).
+
+### 9.15 제공된 네트워크 C 판독과 현재 잔여
+
+[데이터] §9.14 이후 제공된 main.nso 16주소(R1~R16)의 본체를 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)·[main TSV](../../../analysis/functions/main.nso.tsv)로 먼저 대조했다. 이전41함수는 §9.12.2·9.13.7·9.14.1의 판독을 재사용하고 다시 읽지 않았다. 이번 새 판독16·누계57함수이며 새 추출/어셈블리 판독은0이다. §1~§8과 부모가 추가한 §9.9의 18 링크는 보존했다.
+
+#### 9.15.1 확보 자료·새 판독 목록
+
+[데이터] 최신 재대조에서 허용된 C 파일은486개, INDEX 수정 시각은 2026-10-10 02:31:46 UTC였다. docs_gap 이름에 한정하지 않고 두 C 경로의 목록·수정 시각·관련 모듈/함수 헤더를 확인했다. 이후 추가된 다른 모듈 C는 담당 갈래에 두며 재판독하지 않았다. 현재 N1~N15의 본체 및 silent Update 이름의 추가 확보는0이다. [INDEX](../../../analysis/decomp/INDEX.tsv)·[main TSV](../../../analysis/functions/main.nso.tsv), 이번16개 출처는 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c).
+
+[데이터] 아래16행은 모두 main.nso이며 C 헤더·INDEX file/name/address·TSV address/name/size가 일치한다. 원래 R 요청은 본체 확보로 닫고, 여전히 빈 하위 함수만 §9.15.7에 새 요청으로 남긴다. 공용 SceneBase/Work 본문은 제외하고 ClearSession의 네트워크 reset만 판독했다. [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)·[INDEX](../../../analysis/decomp/INDEX.tsv)·[main TSV](../../../analysis/functions/main.nso.tsv).
+
+| 이전 ID·모듈·주소 | 이번 새 판독 함수·출처 |
+|---|---|
+| [판독] R1 main.nso @0x7100150a80 | FUN_7100150a80 생성 본체. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R2 main.nso @0x710013c04c | bex::NetworkModule::Disconnect. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R3 main.nso @0x710013c7f8 | bex::NetworkModule::LeaveSession. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R4 main.nso @0x710013cadc | bex::NetworkModule::SetErrorListener. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R5 main.nso @0x710013cb64 | bex::NetworkModule::SetSessionEventListener. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R6 main.nso @0x71001ea620 | bq::Net::SetAllListener. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R7 main.nso @0x71001ea710 | bq::Net::CancelAllListener. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R8 main.nso @0x71001ea1b8 | bq::Net::AllowReentry. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R9 main.nso @0x71001eacb4 | bq::Net::RequestReserveLeaveSession. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R10 main.nso @0x710013c800 | bex::NetworkModule::GetResultLeaveSession. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R11 main.nso @0x710013c2f0 | bex::NetworkModule::GetResultSessionEntry. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R12 main.nso @0x71001f83e0 | bq::LeaveSessionSilentlyFiber::LeaveSessionSilentlyFiber. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R13 main.nso @0x71001f8564 | bq::DissolveSessionSilentlyFiber::DissolveSessionSilentlyFiber. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R14 main.nso @0x710034c564 | bq::ReEntryFiber::ReEntryFiber. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R15 main.nso @0x710034c970 | bq::ReEntryFiber::Update. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] R16 main.nso @0x710029f6b0 | bq::WorkModule::ClearSession. [C](../../../analysis/decomp/docs_gap_main.c) |
+
+#### 9.15.2 네트워크 내부 소유자·listener의 실제 경계
+
+| 객체·계약 | 확인한 생성/필드/설치·잔여 |
+|---|---|
+| [판독] main @0x7100150a80 내부 객체 | ErrorListener +0xa8, SessionEventListener +0x148과 HandleSource +0x150, allocator 및 NetTransfer +0x12f8, owner를 받는 EntryCallback +0x1318을 초기화한다. 외부 오류/세션 weak-handle 슬롯은 각각 0으로 시작한다. 생성 설정값은 기존 §3.3·4.1을 재사용한다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] facade→내부 객체 | main Disconnect @0x710013c04c, LeaveSession @0x710013c7f8 및 setter @0x710013cadc/@0x710013cb64는 NetworkModule this+0x28의 포인터를 사용한다. 위 생성 본체를 facade 자체의 전역 설치 함수로 단정하지 않는다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 오류·세션 슬롯 교체 | main SetErrorListener @0x710013cadc는 weak-handle의 u64/u64/u32를 내부 +0x128/+0x130/+0x138에, SetSessionEventListener @0x710013cb64는 +0x180/+0x188/+0x190에 복사한다. 각 종류는 단일 슬롯 덮어쓰기이며 구독 배열에 추가하는 본문은 없다. 세션 setter 선행 검사 FUN_710013c16c의 본체는 N4 공백이다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 공용 handler 복귀 | main SetAllListener @0x71001ea620은 DAT_7101c142d8 owner가 있으면 +0xf8/+0x100/+0x108의 객체로 weak-handle을 만들어 오류·세션·세 번째 setter FUN_710013cba4에 넘긴다. 객체가 없으면 0 tuple이다. 세 번째 슬롯 종류/dispatch와 owner 생성·최종 파괴는 미확정이다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 공용 슬롯 해제 | main CancelAllListener @0x71001ea710은 0 weak-handle tuple을 같은 세 setter에 전달한다. Disconnect/Leave/ClearSession을 직접 호출하지 않는다. 앞 두 슬롯의 0 해제는 setter 복사와 함께 확인됐으며 세 번째 setter 본체는 N5 공백이다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [미확정] 지역 Cancel 인자·dispatch | 위 main 본체는 단일 슬롯·공용 0 해제를 닫지만, 기존 menu00/matching00/menu01 지역 Cancel C의 누락 인자까지 채우지는 않는다. 지역 판독은 §9.5·9.13.1 재사용이다. 모든 event/error dispatch의 유효성 검사·전역 최종 해제는 미확정이다. main @0x710013cb64/@0x71001ea620 [C](../../../analysis/decomp/docs_gap_main.c), 지역 주소/출처는 [§9.5·9.13.1](12_online_sync.md) |
+
+[설계] 원본 setter의 단일 슬롯과 웹 appNet의 다중 구독 fanout은 구별한다. 화면 전환 뒤 공용 handler 복귀는 원본 main @0x71001ea620([C](../../../analysis/decomp/docs_gap_main.c)) 근거지만, 웹의 상태 즉시 전달·구독자별 사건1회는 [§9.5·9.9](12_online_sync.md)·[DESIGN §10](../../DESIGN.md)의 계약이다. import 0 코어+어댑터, app/common 연결, app/scene/{menu,world,mode,system}, app/minigame/{frame,kit,mg####}, dev 분리와 app→dev 0을 유지한다.
+
+#### 9.15.3 Disconnect·Leave·예약·silent 완료
+
+| 경로·모듈·주소 | 본체로 닫힌 부분·남은 의미 |
+|---|---|
+| [판독] main Disconnect @0x710013c04c | FUN_71001415c8(내부 객체)에 위임한다. 이 wrapper 자체에는 완료 폴링·Work reset이 없다. 실제 요청/상태/실패는 N1. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] main LeaveSession @0x710013c7f8 | FUN_71001617b4(내부 객체)에 위임한다. Disconnect와 서로 다른 하위 함수다. N2 없이 방 이탈과 transport 종료의 전체 계약을 확정하지 않는다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] main 결과 getter @0x710013c800/@0x710013c2f0 | 같은 FUN_7100153690에 각각 index 0xd(Leave)/0xc(Entry)를 넘긴다. 메뉴 caller의 GetResultLeaveSession==1 대기는 §9.3 재사용이며 이 wrapper만으로 1의 성공 enum 의미를 확정하지 않는다. 결과 저장/갱신은 N3. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] main 예약 이탈 @0x71001eacb4 | ConstantID u64/u16을 복사하고 PTR_DAT_7101a873c0가 가리키는 객체의 FUN_71001ead00에 전달한다. 이 본문은 SDK Leave를 직접 호출하지 않는다. 예약의 저장/전파/제거 시점은 N6. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] main silent ctor @0x71001f83e0/@0x71001f8564 | 각각 phase +0x10=0, vtable PTR_DAT_7101a87450/PTR_DAT_7101a87458의 +0x10 연결, 공용 pause 값 전달을 확인했다. Dissolve는 bool을 +0x14에 저장한다. 두 생성자 자체에는 SDK 종료/완료 판정이 없다. virtual Update의 실제 코드 주소는 여전히 미식별이며 인접 주소를 만들지 않는다. [C](../../../analysis/decomp/docs_gap_main.c) |
+
+[미확정] main @0x710013c04c/@0x710013c7f8/@0x710013c800 및 silent ctor @0x71001f83e0/@0x71001f8564([C](../../../analysis/decomp/docs_gap_main.c))는 요청 wrapper·결과 index·초기 상태까지 닫았다. Fiber IsCompleted와 SDK 성공, 해산 완료와 입장 닫기 완료는 여전히 별개다. menu00 해산 후보 결합은 [§9.13.2·9.14.3](12_online_sync.md)의 A1을 재사용한다.
+
+#### 9.15.4 저장된 재입장: 허용·검색·참가·완료
+
+| 단계·주소(main.nso) | 원본 흐름·한계 |
+|---|---|
+| [판독] AllowReentry @0x71001ea1b8 | 세션 연결·IsHost·NetworkMode==2일 때만 처리한다. map의 gameMode/searchWord/uniqueId를 수정해 FUN_710013c9d8에 적용한다. 허용은 기존 uniqueId의 하위63비트+1(0이면1), 불허는 기존 값에 상위비트 설정이다. 실제 값은 기록하지 않는다. 반환1은 이 본문 처리까지이며 적용 완료/host 승계 성공을 폴링하지 않는다. map read/apply는 N12/N13. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] ReEntryFiber ctor @0x710034c564 | handler +0x10을 초기화하고 저장 ReentryData 0x240바이트를 +0x18에 복사한다. +0x258/+0x260 계정 쌍과 +0x268 초기 상태를 둔다. PlayerID==-1은 preselected 저장/계정 경로, 그 외는 해당 PlayerID 저장/PlayerWork 경로다. 필요한 저장/플레이어/계정이 없으면 abort하는 갈래와 preselected 저장 없음의 조기 return을 구별한다. 값은 기록하지 않는다. handler initializer는 N9. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] Update 시작 @0x710034c970 | +0x268 상태가1일 때까지 Wait하고 이미 세션이 있으면 abort한다. FUN_71001ea7b8 뒤 저장 자료 유효성 및 kind∈{1,2}를 검사한다. 유효하지 않으면 phase4/reason3이다. 이는 모든 transport 끊김을 감시하는 자동 reconnect loop의 증거가 아니다. N11. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 연결·세션 setup @0x710034c970 | NetworkMode가2가 아니면 기존 연결을 Disconnect→mode==-1까지 0.1 s 폴링→ConnectNpln→IsConnecting 동안 0.1 s 폴링한다. 연결되면 로컬 사람 PlayerInfo로 SetupNplnSession을 호출한다. 구성/인증 인자와 저장 비밀 값은 생략한다. setup 실패는 phase4/reason2 경로다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 저장 방 검색 @0x710034c970 | CanStartAnySessionProcess 대기와 검색 loop가 30,000,000,000 ns=30 s deadline을 공유한다. 저장 searchWord/uniqueId 조건으로 FUN_710013c458을 호출하고 phase2로 검색한다. 첫 비어 있지 않은 검색 결과에서 SearchStop→phase3→JoinSelectedNplnSession으로 간다. 결과의 room ID 및 저장 인자를 사용하며 값은 기록하지 않는다. N14/N15. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 참가 대기 @0x710034c970 | IsSessionConnected까지 0.1 s 폴링하며 GetResultJoinSelectedSession 값5~22의 갈래는 실패 처리한다. 이 참가 대기 본문에는 위30 s deadline 검사가 없다. 검색 timeout을 참가 완료 전체 timeout으로 확대하지 않는다. SDK result enum의 명칭은 미확정이다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 성공 경로 @0x710034c970 | SetNetworkGame(2), 내/host station의 Work ConstantID, SetNotSyncScene(true)를 설정한다. preselected 저장이 있으면 FUN_710023d910을 호출한다. GetPlayerList(...,0)의 사람(PlayerType0)은 로컬 쌍과 순차 slot으로 SetConstantID, 그 외 SessionState2는3으로 바꾼다. SetAllListener 뒤 virtual +0x30 callback을 호출하고 phase4/reason1을 쓴다. 저장 helper N10·callback target은 미확정이다. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 실패 경로 @0x710034c970 | 검색 timeout/저장 무효의 reason3, 연결·setup·참가 실패의 reason2가 보인다. 일부 검색 상태 분기도 Disconnect 후 phase4로 간다. reason 숫자를 SDK 성공 enum 또는 사용자 메시지 ID로 바꾸지 않는다. 성공·실패 phase는 Fiber +0x268의 국소 상태다. [C](../../../analysis/decomp/docs_gap_main.c) |
+
+[미확정] main ReEntryFiber @0x710034c564/@0x710034c970([C](../../../analysis/decomp/docs_gap_main.c))로 저장된 방 검색·명시적 재참가·로컬 매핑 갱신은 확인됐다. virtual +0x30 대상·kind별 최종 장면·host 승계의 전체 완료·GameWork/게임 객체/RNG 소비 위치/score 복원은 확정하지 않았다. 시작 barrier·seed·결과 합의는 [§9.4·9.13.4](12_online_sync.md)의 별도 경계를 유지한다.
+
+[설계] 웹 재접속은 transport 연결, 저장/선택된 방 재참가, 게임 상태 재개를 별도 상태로 둔다. 원본 @0x710034c970의 검색30 s·0.1 s 폴링([C](../../../analysis/decomp/docs_gap_main.c))을 브라우저 hidden 제한시간이나 자동 재시도 횟수로 옮기지 않는다. §9.11의 탭 숨김·재접속·오프라인 복귀3개 선택은 모두 미승인 추천이며 고정1/60·주입 난수·f32·FrameGate를 지킨다. [DESIGN §3·10](../../DESIGN.md).
+
+#### 9.15.5 ClearSession의 네트워크 reset 계약
+
+[판독] main bq::WorkModule::ClearSession @0x710029f6b0은 아래 순서로 직접 필드/PlayerWork를 정리한다. 네트워크 종료 caller는 [§9.2·9.13.1·9.13.2](12_online_sync.md)의 완료 판독을 재사용하며 SDK 종료 성공을 이 함수가 새로 증명하지 않는다. [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c).
+
+| 대상·필드 | 확인한 초기화·정리 |
+|---|---|
+| [판독] PlayerWorkHolder this+0x12d0 | 먼저 NormalizeLocal을 호출한다. 내부 NormalizeLocal 본문과 목록 필터 정의는 이 갈래에서 새로 읽지 않는다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] Work 수치/범위/flag | this+0x3d04의 s32=0, +0x3d38에 +0x3d30 값 복사, +0x3d28의 byte=0이다. 명칭 미식별 필드를 임의로 epoch/session member counter로 이름 붙이지 않는다. [추정] +0x3d30/+0x3d38은 begin/end 범위 비우기로 해석하지만 타입은 추가 확인 대상이다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] Work 로컬·host 쌍 | +0x3d08/+0x3d10과 +0x3d18/+0x3d20을 각각 ConstantID::Invalid로 설정한다. 이전 listener 비교 접점은 §9.7·9.13.1 재사용이다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] GetPlayerList(...,4)의 조건부 type | SessionState∈{2,3,4}이고 IsLocal이면 PlayerType0으로 바꾼다. 이 조건을 모든 플레이어의 type0 초기화로 확대하지 않는다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 같은 목록의 모든 플레이어 | SetSessionState(0), SetConstantID(Invalid,0xff)를 호출한다. 조건부 PlayerType 변경과 달리 이 두 호출은 나열된 모두에 적용된다. 0xff는 여기의 온라인 slot 초기값이며 새 station 생성이 아니다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [판독] 후행 정리 | ResetControllerAssign→FUN_71001e9c88→FUN_71001eaf78→AccountMgr::ReEntryPlayer 뒤 목록 임시 메모리를 해제한다. 두 helper는 N7/N8이다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [미확정] 간접 영향·보존 범위 | 이 본문에는 GameWork/RNG/결과 ring을 직접 지우는 이름 있는 호출이 없다. NormalizeLocal·두 helper·ReEntryPlayer의 간접 영향이 열려 있으므로 게임 상태·결과가 전부 보존된다고 단정하지 않는다. 결과 ring 소유는 [18 §4.3](18_scene_work.md) 재사용이다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+
+[설계] 18 갈래에는 main @0x710029f6b0의 직접 reset 필드·조건부 type·전원 state/slot·controller reset 및 두 helper 공백을 공유한다. [18_scene_work §8·11·부록 C](18_scene_work.md)의 “ClearSession C 부재”는 부모 통합에서 수정할 접점이며 이 작업은 그 문서를 쓰지 않는다. 공용 SceneBase/Work의 생성·소멸·request/cleanup 소유권은 18의 담당으로 유지한다. [C](../../../analysis/decomp/docs_gap_main.c).
+
+→ 정리본: [18_scene_work.md](18_scene_work.md) §4·§8·§11
+#### 9.15.6 미확정 현재 집계·주소 미식별
+
+| ID | 이번 해결/한정 | 남은 경계 |
+|---|---|---|
+| [미확정] U1 부분 해결 | main 내부 ctor @0x7100150a80의 자원 소유, facade +0x28 위임 확인. [C](../../../analysis/decomp/docs_gap_main.c) | facade/공용 owner 설치·최종 파괴·모든 모드의 앱 전체 수명 |
+| [미확정] U2 부분 해결 | 단일 오류/세션 weak-handle 교체, 공용 0 해제·3 handler 복귀 확인. main @0x710013cadc/@0x710013cb64/@0x71001ea620/@0x71001ea710 [C](../../../analysis/decomp/docs_gap_main.c) | N4/N5 유효성·세 번째 슬롯·dispatch 및 지역 Cancel의 누락 인자 |
+| [미확정] U3 부분 해결 | Disconnect/Leave 하위 위임, 결과 index, 예약 wrapper, ClearSession 직접 reset 확인. main @0x710013c04c/@0x710013c7f8/@0x710013c800/@0x710013c2f0/@0x71001eacb4/@0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) | N1~N3/N6~N8와 silent Update: SDK 완료/실패·예약 제거·간접 reset |
+| [미확정] U4 부분 해결 | 해산 후보/소리/페이드/reboot는 [§9.13.2](12_online_sync.md) 재사용. main Dissolve silent ctor @0x71001f8564 [C](../../../analysis/decomp/docs_gap_main.c) | A1 결합·실제 virtual Update 및 SDK 해산 성공 |
+| [미확정] U5 부분 해결 | 허용 조건·저장 재입장 ctor·검색/참가/phase·국소 Work 갱신 확인. main @0x71001ea1b8/@0x710034c564/@0x710034c970 [C](../../../analysis/decomp/docs_gap_main.c) | N9~N15·virtual 성공 callback·최종 모드/host 승계/복구 범위 |
+| [미확정] U6 부분 해결 | main focus @0x7100195228의 렌더러 전달만 확인한 [§9.13.3](12_online_sync.md) 재사용 | A2 Switch sleep/resume 네트워크 consumer 주소 |
+| [미확정] U7 남음 | saved rejoin의 매핑은 게임 snapshot 증거가 아님. main @0x710034c970 [C](../../../analysis/decomp/docs_gap_main.c) | 게임 객체/RNG 소비 위치/score·게임 중 CPU 대체·실제 복구 caller |
+| [미확정] U8 남음 | main @0x71001c94cc/@0x710050f0d4의 seed/barrier/gate는 기존 [§2.2·9.13.4](12_online_sync.md) 재사용 | 상위 seed 실패 보장·씬 전체 gate 연결 caller |
+| [미확정] U9 남음 | main @0x71001f0460/@0x71002e1818/@0x71002e1b14의 결과 ring/전송 확인은 기존 [§9.13.4](12_online_sync.md) 재사용 | final authority·end-frame ACK·불일치/commit caller |
+
+[데이터] 현재 U 전체 해결0·부분해결6(U1~U6)·남음3(U7~U9), 열린 상위 항목9개다. listener 슬롯·직접 reset·saved rejoin의 국소 계약이 닫힌 것과 U 전체 해결은 구별했다. 이번16함수·누계57 및 현재 요청15주소는 [§9.15.1·9.15.7](12_online_sync.md), 사용자 선택3개는 [§9.11](12_online_sync.md)에 남는다.
+
+| 주소 미식별/결합 항목 | 정확한 요청 범위·있는 근거 |
+|---|---|
+| [미확정] M1 결합 미확정(A1) | menu00 PTR_LAB_71001c8b18→후보 @0x71000313f0의 함수 객체/vtable 결합. 후보 C 있음, 새 추출 주소가 아님. [§9.13.2·9.14.3](12_online_sync.md) 재사용 |
+| [미확정] M2 코드 주소 미식별(A2) | Switch sleep/resume 네트워크 consumer. 외부 main @0x710144d2e0 및 focus @0x7100195228은 [§9.13.3](12_online_sync.md) 재사용 |
+| [미확정] M3 코드 주소 미식별(A3 소유) | 전역 facade/공용 handler owner 설치·최종 파괴 caller. main @0x7100150a80/@0x71001ea620 본체만 있음. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [미확정] M4 코드 주소 미식별(A3 복구) | 게임 snapshot/RNG 소비/score·중간 CPU 대체 caller. main ReEntry Update @0x710034c970의 매핑 갱신은 [§9.15.4](12_online_sync.md)에서 한정 |
+| [미확정] M5 코드 주소 미식별 | 상위 seed 보장·씬 전체 gate caller. 기존 main @0x71001c94cc/@0x710050f0d4의 [§2.2·3.3·9.13.4](12_online_sync.md) 재사용 |
+| [미확정] M6 코드 주소 미식별 | 결과 final authority/end-frame/불일치 caller. 기존 main @0x71002e1818/@0x71002e1b14의 [§5·7·9.13.4](12_online_sync.md) 재사용 |
+| [미확정] M7 코드 주소 미식별 | LeaveSessionSilentlyFiber virtual Update. ctor main @0x71001f83e0의 PTR_DAT_7101a87450+0x10 연결만 있음. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [미확정] M8 코드 주소 미식별 | DissolveSessionSilentlyFiber virtual Update. ctor main @0x71001f8564의 PTR_DAT_7101a87458+0x10 연결만 있음. [C](../../../analysis/decomp/docs_gap_main.c) |
+| [미확정] M9 코드 주소 미식별 | ReEntryFiber 성공 virtual +0x30 target. main Update @0x710034c970의 callback 호출만 있음. ctor vtable PTR_DAT_7101a875e8의 실제 항목 자료 없음. [C](../../../analysis/decomp/docs_gap_main.c) |
+
+[데이터] 위9행은 결합 미확정1·코드 주소 미식별8이며 옛 A묶음3개를 더 구체적으로 나눈 것이다. 이8개에 임의 숫자 주소를 만들거나 §9.15.7의15주소에 합산하지 않는다. [§9.13.6·9.15.6](12_online_sync.md).
+
+#### 9.15.7 현재 Ghidra 요청 표: 빈 하위 함수만
+
+[데이터] 현재 고유 요청은 main.nso 15주소다. [main TSV](../../../analysis/functions/main.nso.tsv)의 address/name/size는 모두 있지만 [INDEX](../../../analysis/decomp/INDEX.tsv) 및 허용 범위 C486개(analysis/decomp/*.c·ghidra_work/*/out/*.c)의 헤더에는 본체가 없다. C를 대신 읽거나 추출하지 않았다. R1~R16은 더 이상 본체 요청에 넣지 않는다. 아래 호출 근거는 모두 새 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)다.
+
+| ID·모듈·주소·크기 | 호출 근거·요청 이유 |
+|---|---|
+| [미확정] N1 main.nso @0x71001415c8 FUN_71001415c8 (584 B) | Disconnect @0x710013c04c의 내부 요청/상태·완료/실패. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N2 main.nso @0x71001617b4 FUN_71001617b4 (608 B) | LeaveSession @0x710013c7f8의 내부 이탈·transport 경계/완료/실패. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N3 main.nso @0x7100153690 FUN_7100153690 (12 B) | getter @0x710013c800/@0x710013c2f0의 index 0xd/0xc 저장 결과값 연결. 이 reader만으로 모든 result writer가 닫힌다고 보장하지 않음. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N4 main.nso @0x710013c16c FUN_710013c16c (156 B) | SetSessionEventListener @0x710013cb64의 선행 검사·허용 상태. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N5 main.nso @0x710013cba4 FUN_710013cba4 (24 B) | Set/CancelAllListener @0x71001ea620/@0x71001ea710의 세 번째 setter 종류/슬롯. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N6 main.nso @0x71001ead00 FUN_71001ead00 (408 B) | RequestReserveLeaveSession @0x71001eacb4의 예약 저장·전파/제거 순서. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N7 main.nso @0x71001e9c88 FUN_71001e9c88 (24 B) | ClearSession @0x710029f6b0의 후행 reset helper 영향. 네트워크 reset만 이 갈래 담당. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N8 main.nso @0x71001eaf78 FUN_71001eaf78 (24 B) | 같은 ClearSession @0x710029f6b0의 후행 reset helper 영향. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N9 main.nso @0x710034d250 FUN_710034d250 (360 B) | ReEntry ctor @0x710034c564의 handler 초기화·+0x268 상태1 전이 연결. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N10 main.nso @0x710023d910 FUN_710023d910 (260 B) | ReEntry Update @0x710034c970 성공의 preselected 저장 변경 범위. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N11 main.nso @0x71001ea7b8 FUN_71001ea7b8 (52 B) | 같은 Update @0x710034c970의 연결 전 공용 준비/handler 영향. 함수명 없이 추정 reset 이름을 부여하지 않음. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N12 main.nso @0x710013c9c4 FUN_710013c9c4 (20 B) | AllowReentry @0x71001ea1b8의 map read 소유/반환 연결. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N13 main.nso @0x710013c9d8 FUN_710013c9d8 (8 B) | 같은 AllowReentry @0x71001ea1b8의 map 변경 적용·내부 위임. 완료 성공 의미는 별도 확인. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N14 main.nso @0x710013c458 FUN_710013c458 (8 B) | ReEntry Update @0x710034c970의 저장 검색 조건 설정/시작 위임. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+| [미확정] N15 main.nso @0x710013c384 FUN_710013c384 (44 B) | 같은 Update @0x710034c970의 검색 상태 getter와 실패 분기 연결. [C](../../../analysis/decomp/docs_gap_main.c)·[TSV](../../../analysis/functions/main.nso.tsv) |
+
+[설계] 우선은 N1~N8의 종료/결과/listener/reset, 다음은 N9~N15의 저장 재입장 연결이다. tiny wrapper 확보는 하위 caller 식별에 필요한 단계이며 성공 enum·전체 복구의 보장을 뜻하지 않는다. silent Update와 성공 callback은 M7~M9에서 실제 항목 식별 후 요청하고 인접 함수를 대신 지정하지 않는다. 전역 owner·슬립·snapshot·gate·결과는 M2~M6의 주소 근거를 먼저 확보한다. [§9.15.3~9.15.7](12_online_sync.md).
+
+#### 9.15.8 준비도·검증 기대값·출처 대응
+
+| 준비도 | 현재 판정 |
+|---|---|
+| [설계] 바로 가능 | 화면/세션 종료 분리·단일 drain/fanout·원본 단일 listener 슬롯 대응·직접 Work reset 필드·저장 방 재입장 단계·취소/오류 이유 설계. main @0x710013cadc/@0x710013cb64/@0x710034c970/@0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c), [DESIGN §10](../../DESIGN.md) |
+| [설계] 근사 필요 | NPLN→웹 transport/epoch/timeout·tab hidden/offline/reconnect UI. 원본 검색30 s를 플랫폼 timeout으로 자동 채택하지 않음. main @0x710034c970 [C](../../../analysis/decomp/docs_gap_main.c), [§6.3·8.5·9.11](12_online_sync.md) 미승인 추천 |
+| [미확정] 판독 필요 | N1~N15와 M1~M9: SDK 종료/실패·간접 reset·dispatch·최종 owner 수명·silent 완료·재입장 callback/host 승계·슬립·snapshot·전체 gate·결과 합의. [§9.15.6·9.15.7](12_online_sync.md) |
+
+| 후속 검증 경우 | 기대값·근거 |
+|---|---|
+| [설계] 공용 listener 설치/해제 | 앞 두 슬롯은 마지막 weak-handle로 교체되고 CancelAllListener 뒤 0 tuple이다. 동시에 두 화면을 붙이는 웹 fanout은 appNet에서 구현한다. main @0x710013cadc/@0x710013cb64/@0x71001ea620/@0x71001ea710 [C](../../../analysis/decomp/docs_gap_main.c), [DESIGN §10](../../DESIGN.md) |
+| [설계] ClearSession 직접 효과 | Work 로컬/host Invalid, 목록의 state0/slot0xff, 해당 local state2~4의 type0, ControllerAssign reset. helper 영향과 게임 결과 보존은 아직 기대값으로 확정하지 않는다. main @0x710029f6b0 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [설계] saved rejoin 성공/실패 | phase2검색→phase3참가→callback→phase4/reason1; 저장 무효/검색 timeout은 reason3, 연결/setup/참가 실패는 reason2의 본문 분기. 참가 loop 전체에30 s cutoff를 추가하면 웹 선택으로 표시한다. main @0x710034c970 [C](../../../analysis/decomp/docs_gap_main.c) |
+| [설계] 탭 숨김·게임 중간 재개 | hidden 자체로 원본 슬립/이탈을 합성하지 않고, reconnect/seed 재배포만으로 게임 snapshot/score를 복구했다고 처리하지 않는다. 고정1/60·주입 난수·f32·FrameGate 유지. [§9.13.4·9.15.4·9.15.6](12_online_sync.md), [DESIGN §3·10](../../DESIGN.md) |
+
+[데이터] 새16함수의 원본 출처는 모두 main.nso [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)이며 필드/흐름은 §9.15.2~9.15.5, 잔여/요청은 §9.15.6·9.15.7에 대응한다. 기존41함수·어셈블리·웹 disconnect8곳은 §9.12~9.14·9.6 재사용이다. 현재 원본 실행 확인0, 원본/웹 실행·headless·화면 촬영0이다.
+
+[데이터] 최신 문서 정적 검증 통과: §9 CommonMark 링크543/543·새 상대 경로 오류0·참조식 정의0·표지 없는 문단0, 신규16함수 C 헤더/모듈/INDEX·현재15요청 TSV/C 부재·고유 주소 대조, web 저장소 git diff --check. §1~§8 원래56,343바이트 SHA-256 4ac5c24f93009ed2b1f0e9ba47be8040bd10fbfeb2856d70245a88af50f017d9 및 부모 §9.9 링크를 보존하고 §9는 UTF-8·LF로 작성했다. 이전41함수 판독은 재사용했으며 헤더/모듈 존재 대조도 누계57개로 확인했다. 기존 §6.1 clock.ts 링크는 보존 대상이며 괄호 설명을 오류로 세지 않는다. [§9.13.7](12_online_sync.md)·[INDEX](../../../analysis/decomp/INDEX.tsv).
+
+[설계] README 수정은 필요 없다. 부모 통합은 출처 절 끝 정리본 링크 한 줄과 18의 별도 담당 접점 갱신으로 제한하며, 이 작업은 대상 MD의 §9만 수정했다. 출처/README/C/INDEX/SHARED/JSON/코드/에셋은 쓰지 않았다. 출처 링크 제안은 [§9.12.3](12_online_sync.md), 18 접점은 [§9.15.5](12_online_sync.md)다.

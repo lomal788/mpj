@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark"><meta name="description" content="MPJ 원본 함수 분석, 웹 구현, 검증 근거를 추적하는 읽기 전용 대시보드">
+  <title>MPJ · Progress Atlas</title>
+  <link rel="stylesheet" href="/dist/app.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c1210'/%3E%3Cpath d='M6 6h12v12H6zM20 6h6v20h-6zM6 20h12v6H6z' fill='%23b6ed79'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="/" aria-label="MPJ 대시보드 전체 보기"><span class="brand-icon">▦</span><strong>MPJ<span class="brand-light"> / ATLAS</span></strong></a>
+    <span class="header-caption">SUPER MARIO PARTY JAMBOREE · REVERSE ENGINEERING</span>
+    <span id="connection" class="connection"><i></i> 연결 중</span>
+  </header>
+  <main>
+    <section class="title-row"><div><p class="eyebrow">PROJECT OBSERVATORY <span>01 / PROGRESS</span></p><h1>원본에서 웹까지<span class="title-dot">.</span></h1><p class="subtitle">함수와 기능, 문서와 검증. 확인된 근거로 읽는 포팅 진행 현황.</p></div><div class="scan-meta"><span id="scan-time">최초 스캔 불러오는 중</span><button id="refresh" class="quiet">↻ 데이터 새로고침</button></div></section>
+    <section id="stats" class="stats" aria-label="전체 통계"></section>
+    <section class="workspace">
+      <aside class="categories"><div class="section-label">기능 카테고리 <span id="category-count"></span></div><button class="category-row active" data-category=""><span>전체 함수</span><b id="total-functions">—</b></button><div id="category-list"></div><div class="sidebar-note"><span class="tiny-label">COUNTING RULE</span><p>대표 카테고리로 한 번만 집계합니다. 관련 분야는 보조 태그로 찾을 수 있습니다.</p><label class="check"><input type="checkbox" id="related-tags"> 관련 보조 태그 포함</label></div></aside>
+      <section class="explorer">
+        <div class="toolbar"><div class="tabs" role="tablist" aria-label="진행률 모드"><button class="active" role="tab" aria-selected="true" data-mode="analysis">분석 현황</button><button role="tab" aria-selected="false" data-mode="implementation">웹 구현 현황</button><button role="tab" aria-selected="false" data-mode="verification">검증 현황</button></div><select id="view" aria-label="보기 방식"><option value="category">기능별 보기</option><option value="module">모듈별 보기</option></select></div>
+        <div class="filters"><div class="search-box"><span>⌕</span><input id="search" type="search" autocomplete="off" placeholder="함수명 또는 주소 검색" aria-label="함수 검색"><kbd>/</kbd></div><select id="state" aria-label="상태 필터"></select><label class="check"><input id="only-unresolved" type="checkbox"> 미확정만</label><button id="reset" class="quiet">초기화</button></div>
+        <div id="search-results" class="search-results" hidden></div>
+        <div class="map-header"><nav id="breadcrumbs" aria-label="탐색 경로"></nav><span id="selection-total"></span><button id="home" class="quiet">전체 보기 ↗</button></div>
+        <div id="legend" class="legend"></div>
+        <div class="chart-shell"><div id="chart" role="img" aria-label="기능 및 원본 함수 진행률 트리맵"></div><div id="chart-message" class="chart-message" hidden></div><div id="loading" class="loading">데이터를 불러오고 있습니다…</div></div>
+        <div class="map-footer"><span id="map-description">그룹을 클릭해 확대하고, 함수 셀을 클릭해 근거를 확인하세요.</span><span id="render-info"></span></div>
+        <div id="denominator" class="denominator"></div>
+      </section>
+      <aside id="details" class="details"><div class="section-label">함수 상세 <span>READ ONLY</span></div><div class="empty-details"><div class="crosshair">⌖</div><h2>근거를 따라 탐색하세요</h2><p>트리맵의 함수 셀이나 검색 결과를 선택하면 연결된 문서, 원본 코드, 웹 구현과 미확정 사항을 확인할 수 있습니다.</p><div class="empty-rule">그룹 → 하위 시스템 → 함수</div></div></aside>
+    </section>
+    <section class="ledger"><div class="ledger-header"><div class="tabs" role="tablist" aria-label="근거 목록"><button class="active" data-ledger="unresolved">미확정 사항</button><button data-ledger="features">웹 기능 목록</button><button data-ledger="documents">분석 문서</button></div><span id="ledger-count"></span><input id="ledger-search" type="search" placeholder="근거 목록 검색" aria-label="근거 목록 검색"></div><div id="ledger-body"></div><div class="ledger-pagination"><button id="ledger-prev" class="quiet">← 이전</button><span id="ledger-page"></span><button id="ledger-next" class="quiet">다음 →</button></div></section>
+    <footer class="page-footer"><span>MPJ / PROGRESS ATLAS</span><span>TypeScript · esbuild · Apache ECharts · Python</span><span id="audit"></span></footer>
+  </main>
+  <dialog id="preview"><div class="preview-head"><div><span class="tiny-label">READ-ONLY SOURCE PREVIEW</span><h2 id="preview-title"></h2></div><button id="preview-copy" class="quiet">경로 복사</button><button id="preview-close" class="quiet" aria-label="미리보기 닫기">닫기 ×</button></div><pre id="preview-content"></pre></dialog>
+  <div id="toast" role="status" hidden></div>
+  <script type="module" src="/dist/app.js"></script>
+</body>
+</html>

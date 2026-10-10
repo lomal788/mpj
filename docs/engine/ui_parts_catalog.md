@@ -2,7 +2,7 @@
 
 [설계] 대상은 [common_roadmap.md §8](common_roadmap.md)의 원본 부품 조립 명세다. 원본 규칙을 기본으로 하고 사용자 선택은 §12의 미승인 추천으로 남긴다. 구현 파일·변환 파일은 만들지 않았다. 구조는 [DESIGN.md §10](../../DESIGN.md)을 따른다.
 
-[데이터] 2026-10-10, Super Mario Party Jamboree US v0 자료를 읽었다. 원본 실행·헤드리스·화면 촬영은 없다. 최초 카탈로그는 새 C 판독 0함수였고, 후속 공백 조사에서 46함수를 새로 판독했다(부록 B). 이미 판독된 입력 초기화 1함수의 중복 확인은 신규 수에서 제외했다. 원본·extracted·변환 명세는 읽기 전용이었다. 출처: [선행 판독 자료](05_ui_input.md) §2·§3, [함수 색인](../../../analysis/decomp/INDEX.tsv).
+[데이터] 2026-10-10, Super Mario Party Jamboree US v0 자료를 읽었다. 원본 실행·헤드리스·화면 촬영은 없다. 최초 카탈로그는 새 C 판독 0함수였고, 후속 공백 조사에서 50함수를 새로 판독했다(부록 B; main46·mgm03 2·mgm05 1·mgm06 1). 이미 판독된 입력 초기화 1함수의 중복 확인은 신규 수에서 제외했다. 원본·extracted·변환 명세는 읽기 전용이었다. 출처: [선행 판독 자료](05_ui_input.md) §2·§3, [함수 색인](../../../analysis/decomp/INDEX.tsv).
 
 ## 1. 기능 개요
 
@@ -70,7 +70,7 @@
 
 [데이터] 486행 정적 카탈로그는 다시 생성하지 않았다. 먼저 §2.1·§11과 기존 함수 목록을 대조한 뒤, 아래 caller·callee·필드만 조사했다. main 주소는 [main.nso.tsv](../../../analysis/functions/main.nso.tsv), C는 [INDEX.tsv](../../../analysis/decomp/INDEX.tsv)와 실제 본문 존재로 확인했다. ghidra_work/*/out/*.c도 읽기 검색만 했으며 추출·변환은 실행하지 않았다.
 
-[데이터] 최종 후속 지시에 따라 최신 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)의 85함수 헤더와 [INDEX.tsv](../../../analysis/decomp/INDEX.tsv)를 다시 대조했다. 담당 우선 요청12주소 및 후순위 요청 @0x71002547c0의 본체는 추가되지 않았다. 이 재대조의 신규 C 판독은0이며 부록 C 판정을 유지한다.
+[데이터] 1차 추가 C 확인 지시에 따라 [docs_gap_main.c](../../../analysis/decomp/docs_gap_main.c)의 85함수 헤더와 [INDEX.tsv](../../../analysis/decomp/INDEX.tsv)를 다시 대조했다. 담당 우선 요청12주소 및 후순위 요청 @0x71002547c0의 본체는 추가되지 않았다. 이 재대조의 신규 C 판독은0이며 부록 C 판정을 유지한다.
 
 | 구분 | 먼저 좁힌 주소·데이터 | 기존 근거/빈 부분·C 보유 |
 |---|---|---|
@@ -82,6 +82,25 @@
 | [판독] ManualClose | main @0x710031e8c4 → +0x510, @0x710031e8ac → +0x28, reset @0x7100318340 | [message_window §5](../shell/message_window.md)의 상태2 진입을 재사용; setter·조회·정리만 [msgwin_main_all.c](../../../analysis/decomp/msgwin_main_all.c)에서 보완 |
 | [판독][미확정] 숨김 조건 | main @0x71001968a4 → @0x71009850ac, DAT_7101c45478+0x1678 | [dialog_box §6.2](../shell/dialog_box.md)의 호출 조건 재사용. [core_b12.c](../../../analysis/decomp/core_b12.c)·[core_b5.c](../../../analysis/decomp/core_b5.c) 있음; 숫자 비교 의미만 보완 |
 | [판독][미확정] 공용 소유 | ring caller main @0x71001f271c, UI·3D 합성 main @0x710033eeb0/@0x7100340180 | [18_scene_work §6·§11 U08](18_scene_work.md), [render_unify §7.1·§11](render_unify.md) 재사용; 해당 공용 함수는 새로 읽지 않음 |
+
+### 2.4 전체 허용 C 경로 재대조·신규 UI caller
+
+[데이터] 02:36 UTC의 추가 분석 요청을 받고 analysis/decomp/*.c 479개와 ghidra_work/*/out/*.c 7개, 합계486개 파일의 목록·수정 시각·함수 헤더를 확인했다. 이름을 docs_gap으로 제한하지 않았다. 아래는 2026-10-10 02:20 UTC 이후 수정된10파일이다. main 요청13주소의 본체는 여전히 없고, 다른 NRO의 같은 주소/이름을 main C로 대체하지 않았다. 근거: 각 C의 헤더·파일 stat, [INDEX.tsv](../../../analysis/decomp/INDEX.tsv) 수정2026-10-10T02:31:46Z·모듈별 [함수 목록](../../../analysis/functions/).
+
+| 수준 | 추가/수정 C·UTC 시각 | 모듈 확인·이번 대응 |
+|---|---|---|
+| [데이터] | [mg1704.nro.c](../../../analysis/decomp/mg1704.nro.c) · 2026-10-10T02:31:39Z | mg1704 namespace·NRO 파일명·함수 TSV/INDEX 대응; 담당 UI 요청의 본체 없음; 이 문서에서 신규 판독하지 않음 |
+| [데이터] | [mgm06.nro.c](../../../analysis/decomp/mgm06.nro.c) · 2026-10-10T02:30:09Z | mgm06 namespace·NRO 파일명·함수 TSV/INDEX 대응; FinalResultTableUiBuilder::Build 1함수의 표시 조립 신규; Tally·Work·카메라 본체는 판독하지 않음 |
+| [데이터] | [mgm_modes_bd01.c](../../../analysis/decomp/mgm_modes_bd01.c) · 2026-10-10T02:28:56Z | bd01 namespace·NRO 파일명·함수 TSV/INDEX 대응; 담당 UI 요청의 본체 없음; 이 문서에서 신규 판독하지 않음 |
+| [데이터] | [mgm05.nro.c](../../../analysis/decomp/mgm05.nro.c) · 2026-10-10T02:28:14Z | mgm05 namespace·NRO 파일명·함수 TSV/INDEX 대응; UIResult::Setup 1함수 신규; §6.6 |
+| [데이터] | [mgm04.nro.c](../../../analysis/decomp/mgm04.nro.c) · 2026-10-10T02:27:20Z | mgm04 namespace·NRO 파일명·함수 TSV/INDEX 대응; UIResult·UITeamInfo caller 헤더 확인; 본체 신규 판독 없음 |
+| [데이터] | [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c) · 2026-10-10T02:25:24Z | mgm03 namespace·NRO 파일명·함수 TSV/INDEX 대응; UIResult::Setup·FindHud<UiControlStatusName> 2함수 신규; §6.6 |
+| [데이터] | [mgm02.nro.c](../../../analysis/decomp/mgm02.nro.c) · 2026-10-10T02:24:16Z | mgm02 namespace·NRO 파일명·함수 TSV/INDEX 대응; UIResult·UIPlayerInfo caller 헤더 확인; 본체 신규 판독 없음 |
+| [데이터] | [mg0203.nro.c](../../../analysis/decomp/mg0203.nro.c) · 2026-10-10T02:23:07Z | mg0203 namespace·NRO 파일명·함수 TSV/INDEX 대응; 담당 UI 요청의 본체 없음; 이 문서에서 신규 판독하지 않음 |
+| [데이터] | [mg0116.nro.c](../../../analysis/decomp/mg0116.nro.c) · 2026-10-10T02:22:31Z | mg0116 namespace·NRO 파일명·함수 TSV/INDEX 대응; 담당 UI 요청의 본체 없음; 이 문서에서 신규 판독하지 않음 |
+| [데이터] | [mg0113.nro.c](../../../analysis/decomp/mg0113.nro.c) · 2026-10-10T02:21:42Z | mg0113 namespace·NRO 파일명·함수 TSV/INDEX 대응; 담당 UI 요청의 본체 없음; 이 문서에서 신규 판독하지 않음 |
+
+[판독][데이터] 먼저 [mgm_modes §3.5·§4.1·§11](../shell/mgm_modes.md)의 결과 reader 판독을 확인했다. 아래4주소의 표시 조립/lookup 판독은 기존 문서에 없고 C·해당 TSV·INDEX가 모두 있다. mgm03 @0x7100019040은 INDEX의 mgm02 동주소 FUN과 구별했고, mgm05 @0x71000240a0·mgm06 @0x710001d5a0도 해당 모듈로만 기록한다. 출처: [mgm03 TSV](../../../analysis/functions/mgm03.nro.tsv)·[mgm05 TSV](../../../analysis/functions/mgm05.nro.tsv)·[mgm06 TSV](../../../analysis/functions/mgm06.nro.tsv), 아래 §6.6.
 
 ## 3. 진입점·호출 흐름
 
@@ -225,6 +244,22 @@
 
 [미확정] 위 L의 이름·writer·플레이어수 여부와 PlayMode7 의미는 확정하지 않는다. 숫자 비교가 밝혀진 것을 온라인/관전 enum 확인으로 쓰지 않는다. Talking·Model3D·Announce의 남은 배치·연출은 [message_window §11](../shell/message_window.md)와 [render_unify §7.1·§11](render_unify.md)의 공용 합성 담당에 남긴다. main @0x71003161d0/@0x710031af40/@0x710031ded0는 재판독하지 않았다.
 
+### 6.6 새 C의 결과표·StatusName 조립
+
+| 수준 | 새로 확보한 표시/탐색 부분 | 원본 모듈·주소/출처 |
+|---|---|---|
+| [판독] | FindHud<StatusName>: FindPane의 대상 pane와 HudWidgetBase::GetRootPane를 비교한다. layout+0xa8..+0xb0의2-pointer 항목을 순회해 타입이 맞으면 세대 포함 WeakHandle 반환, 없으면0. pane 이름만으로 임의 control을 반환하지 않음 | mgm03 @0x7100018eb0 — [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c), [TSV](../../../analysis/functions/mgm03.nro.tsv); main @0x7100283d20의 C 확보로 계산하지 않음 |
+| [판독] | mgm03 UIResult는 ComUiMinigameModeWindowCommon을 생성해 mgm00_base_mgresult_00.bflyt를 SetupStart→SetupFinish. x_tag·x_surv_duel 숨김, x_parts_00~03의 x_chal/x_surv/x_right 숨김. 4플레이어 표시 칸 반복 | mgm03 @0x7100019040 — [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c); C/blyt/mgm00_base_mgresult_00.bflyt는 §2.2·부록 D의 기존 데이터 |
+| [판독][미확정] | mgm03 칸: x_parts_0{i}/x_text_00, /x_result_00, /x_face_01. Text0에는 im_rank0 접두의 삽입 문자열을 연결. reader는 Round−1의0xc-byte record +8/+9/+0xa/+0xb를 읽고 +4==0 갈래도 사용. rank/스타 writer 의미와 빠진 label 인자는 확정하지 않음 | mgm03 @0x7100019040 — [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c); 공용 ring/commit는 [18_scene_work §6·§11 U08](18_scene_work.md), 모드 지급은 [mgm_modes §11](../shell/mgm_modes.md) 재사용 |
+| [판독] | mgm05 UIResult도 같은 공용 결과 프레임. x_tag, x_parts_00~03·08·09의 x_result_01/x_daily/x_chal/x_left 숨김. flag bit0=0이면4칸(00~03),1이면2칸(08~09) 반복; x_surv_duel visible=bit0 | mgm05 @0x71000240a0 — [mgm05.nro.c](../../../analysis/decomp/mgm05.nro.c), [TSV](../../../analysis/functions/mgm05.nro.tsv) |
+| [판독][미확정] | mgm05 입력값==1인 칸은 /x_text_surv_00에 mgm05_mgRes_status_win, /x_surv visible=true; 해당 /x_face_01의 StatusFace에 PlayerID를 virtual+0xb8로 전달. Setup의 결과값·flag 호출자와 SetAnimeWindow의 누락 인자는 보류 | mgm05 @0x71000240a0 — [mgm05.nro.c](../../../analysis/decomp/mgm05.nro.c); 원본 layout/애니 데이터는 C/blyt/mgm00_base_mgresult_00.bflyt·anim/*.bflan, 부록 D |
+| [판독] | mgm06 Build는 mgm/mgm00/layout.lyt와 mgm/mgm06/layout.lyt 2묶음으로 mgm06_base_result_00.flyt ComUi를 생성. rank0/비0에 따라 /x_result_face_00·01을 교대 표시. 해당 /x_face_00 계열 StatusFace에는 PID를 virtual+0xb8, /x_username_00 계열 StatusName에는 PID를 virtual+0xc0으로 전달 | mgm06 @0x710001d5a0 — [mgm06.nro.c](../../../analysis/decomp/mgm06.nro.c), [TSV](../../../analysis/functions/mgm06.nro.tsv); suffix 배열의 다른 이름은 미복원 |
+| [판독][미확정] | mgm06 /x_rank_00·/x_score_total_00 계열에 라벨·삽입 값 연결, x_history_00 계열의 이력 칸에 im_rank01 배열을 사용. BossRushCourseResult::Tally는 호출 경계만 확인; 정렬·동점·점수 writer 본체는 읽지 않음. C의 SetIntVariable 값 인자 타입도 불완전 | mgm06 @0x710001d5a0 — [mgm06.nro.c](../../../analysis/decomp/mgm06.nro.c); 결과 규칙은 [mgm_modes §11](../shell/mgm_modes.md)의 담당 공백 |
+
+[설계] result-table의 mgm03/mgm05 profile은 공용 frame의 숨김 집합·4칸/2칸 선택·라벨/얼굴 binding을 별도 명세로 등록할 수 있다. mgm06은 다른 profile이며 레이아웃 실제 pane/크기/애니 자료 확보가 더 필요하다. 원본 공용 MGResult 3D 무대와 이들 2D 결과표의 caller는 각각 유지한다. 근거: mgm03 @0x7100019040·mgm05 @0x71000240a0·mgm06 @0x710001d5a0 및 [minigame_result §2·§3](../shell/minigame_result.md).
+
+[미확정] 새 판독은 위4함수의 UI 조립·칸 binding·HUD lookup 범위다. SceneBase/Work, 코인·별·rank 산식, 카메라·pass는 다른 갈래 소유이므로 본체를 새로 읽지 않았다. mgm02~06 SARC 전체와 mgm06_base_result_00.flyt의 변환/부품 메타데이터는 새로 읽거나 쓰지 않았고 486행 조사 집합에도 추가하지 않았다. 근거: §2.2·§2.4, [mgm_modes §3.5·§11](../shell/mgm_modes.md), [18_scene_work §11](18_scene_work.md), [render_unify §7.1·§11](render_unify.md).
+
 ## 7. 애니·효과·소리·카메라·에셋
 
 [데이터] 부록 D의 애니는 pat1 태그와 end-start 프레임 수, loop를 전부 기록한다. in/out/select/decide는 편집기 역할 이름이며 실제 태그가 press·on·cursor·act·left_select 등인 경우 그대로 연결한다. 무명 태그 ""도 유지한다. 근거: 8개 SARC anim/*.bflan의 tag·frameSize·loop, [05_ui_input §3.7](05_ui_input.md).
@@ -271,6 +306,7 @@
 | [판독][판독: 어셈블리][데이터] | 항구 | H/mgmet_act_title_00 + C/mgm00_cursor_around_00 + 메시지, H/mgmet_act_img_00 + mgmet_base_playinfo_freeplay_00 + mgmet_base_rule_00. 제목 null_01=(0,472), 설명864×486 | x_text_act_00/_shadow에 mgmet_ui_activity_name Text0; x_img_00 texture slot1; nickname·플레이 count; x_rule_NN·x_play_00 | mgmet @0x71000658e0·@0x710005ddd0·@0x710005e090 — [mgmet_flow §7](../shell/mgmet_flow.md), 정렬 main @0x71014138ac — [ui2d_alignment §6.4](../shell/ui2d_alignment.md), [T5] |
 | [판독][데이터] | 온라인 방 목록·대기 | L/mn00_room_search_00 + mn00_btn_room_01×5; 대기=광장+mn00_base_lobby_00/x_parts_tlp. Q/matching00_base_member_00는 x_null_2/4/8/20 소켓, win_member는 별도 조립 | 방장 x_parts_username의 x_text_01, x_icon_pass, face00~07; Lobby Number0=N, 4/8인·방장 안내; 매칭 얼굴·닉네임·skill·rank | menu00 @0x710007bdd4·@0x7100075a08, matching00 @0x7100012c10 — [online §4.4~§4.6·§7·§9.3 정정](../shell/online.md), L·Q pane 트리, [T6] |
 | [판독][판독: 어셈블리][데이터] | 결과표 | F/mgm01_history_00의 x_parts_00~07 → history_01의 썸네일+history_02×4; C/mgm00_base_mgresult_00는 별도 모드 결과 조합 | ring row ID→x_thumbnail slot1, byte/ judge→win_normal/normal, Number0→승수; 표가 없으면 숨김 | mgm01 @0x7100016cc0·@0x7100016ef0, main @0x71001f2a24 — [mgm01_freeplay §6.6·§6.7](../shell/mgm01_freeplay.md), C의 사용처 — [mgm_common §7.1](../shell/mgm_common.md), [T4] |
+| [판독][미확정] | 모드2D 결과 | mgm03/mgm05=C/mgm00_base_mgresult_00; mgm05는4칸00~03/2칸08~09. mgm06=두 layout 묶음+mgm06_base_result_00.flyt | §6.6의 숨김 집합·Text0/승리 라벨·PID 얼굴/이름 binding. mgm06 pane 크기/애니는 미조사 | mgm03 @0x7100019040 [C](../../../analysis/decomp/mgm03.nro.c), mgm05 @0x71000240a0 [C](../../../analysis/decomp/mgm05.nro.c), mgm06 @0x710001d5a0 [C](../../../analysis/decomp/mgm06.nro.c) |
 | [판독][미확정] | 3D 결과 | MGResult 공용 무대+ComUiMGTelop. mgm00_base_mgresult_00의 직접 사용 연결은 MGResult에서 미확정 | mgResultList.pattern/list, Pos_*·Cam_*; 2D 승리 텔롭과 3D 소켓 분리 | main @0x71002ee230·@0x71002e7d90 — [minigame_result §2·§3·§6·§7](../shell/minigame_result.md), [mgResultList.json](../../../extracted/bea/mg~mgResult.nx.bea/mg/mgResult/data/mgResultList.json), [T9] |
 
 ### 9.2 템플릿과 실제 원본 조합
@@ -282,7 +318,7 @@
 | [설계][판독][데이터] | select-menu | 모드용 M/base_map+btn_map; 항구용 H/base_rule+rule_option+btn_play. 각 원본 조합을 profile로 고정 | visible/enabled, cursor policy, 원래 애니 세트·정렬. 버튼 단위만 떼어 만능 메뉴로 판정하지 않음 | menu01 @0x71000a5f70, main @0x7100365410·@0x71014138ac — [modeselect §5](../shell/modeselect.md), [mgm_common §6](../shell/mgm_common.md), [ui2d_alignment §6](../shell/ui2d_alignment.md) |
 | [설계][판독][데이터] | telop | P/sys_connect_tlp_00, C/mgm00_tlp_course_00/01·tlp_result_00, H/mgmet_act_title_00의 원본 조합 | title/text/insert, 좌우판은 in_left/right·normal_left/right·out_left/right, 항구는 act 계열도 보존 | main @0x7100344a00, mgm01 @0x71000079ac, mgmet @0x71000658e0 — [charselect §3](../shell/charselect.md), [mgm_common §7.1](../shell/mgm_common.md), [mgmet_flow §7.1](../shell/mgmet_flow.md) |
 | [설계][판독][데이터] | icon-popup | P/sys_notice_00 소켓 x_notice_00~02 + sys_notice_01(경계888×140, x_pict64×64, x_text_00/01). 관리 객체는 Notice entity9개를 보유; 소켓3개와 runtime slot9개를 구분. 보상만 원본 기본 아이콘 보임 | label/Text0·종류별 pane 표시, in/out; 참가 알림은 x_pict 숨김. §6.4의 등록 큐·재배치 확인; 최종 consume/노출 정책은 미확정 | main @0x7100252860·@0x710025366c·@0x71002537b0 — [online §9.3 정정](../shell/online.md), 신규 @0x7100252000·@0x7100253a3c — [Notice C](../../../analysis/decomp/online_main_notice.c), P pane 트리 |
-| [설계][판독][데이터] | result-table | F/history_00+history_01×8+history_02×4/열. 또는 C/base_mgresult_00 profile | row ID·승수·raw 결과, scroll, in/out. 두 표를 같은 스키마로 강제하지 않음 | mgm01 @0x7100008068·@0x7100016cc0 — [mgm01_freeplay §6.6](../shell/mgm01_freeplay.md), [mgm_common §7.1](../shell/mgm_common.md) |
+| [설계][판독][데이터][미확정] | result-table | F/history_00+history_01×8+history_02×4/열. C/base_mgresult_00은 §6.6의 mgm03/mgm05 실제 caller profile | row ID·승수·raw 결과, scroll, in/out; mgm05는4칸/2칸·승리 라벨 분리. mgm06 별도 조합은 데이터 확보 뒤 등록 | mgm01 @0x7100008068·@0x7100016cc0 — [mgm01_freeplay §6.6](../shell/mgm01_freeplay.md), [mgm_common §7.1](../shell/mgm_common.md); mgm03 @0x7100019040 [C](../../../analysis/decomp/mgm03.nro.c)·mgm05 @0x71000240a0 [C](../../../analysis/decomp/mgm05.nro.c), §6.6 |
 | [설계][판독][데이터] | card-grid | 캐릭터=P/base_charasel_01+btn_charasel_00×22+btn_charasel_01+cursor, 카드뷰=base_charasel_00+win_charamodel_00~03 | 캐릭터·잠금·점유·다인 커서; 카드 모델·이름·계정·컨트롤러. 프리 플레이는 §9.1의 별도 profile | main @0x7100339360·@0x710033a1e0·@0x710033eeb0 — [charselect §3·§5·§6](../shell/charselect.md) |
 | [설계][판독][데이터] | list | L/room_search_00+btn_room_01×5+room_tab_00, 외부 sys_scrollbar_00(16×500 track, 16×40 bar) | items→가시5행, first/cursor·tab, 닉네임·얼굴·잠금. 스크롤바 비율·크기는 장면 어댑터 | menu00 @0x710007bdd4 — [online §4.4·§5.3·§7](../shell/online.md), P/sys_scrollbar_00 root |
 
@@ -328,6 +364,7 @@
 | [판독][설계] | Guide | count1/4 허용·0/5는 원본 abort 경로; state0/4는 Finished,2는 Idle. Out(true) 즉시 숨김→다음 tick state0; alignment 변경은 In 때 반영 | main @0x7100277ba8/@0x710027821c/@0x7100277e80 — [Guide C](../../../analysis/decomp/charsel_guide00.c); §6.1의 정적 기대값, 실행 안 함 |
 | [판독][설계] | Notice | vector record0x30, child9개·generation 기준8, 재배치 lerp0.1초. 실제 최대 노출수·FIFO를 이 기대값에 포함하지 않음 | main @0x7100252000/@0x7100253a3c/@0x7100253140 — [Notice C](../../../analysis/decomp/online_main_notice.c); 실행 안 함 |
 | [판독][설계] | ManualClose·predicate | flag0이어도 state2면 IsManualCloseWait=true; reset은 flag0·state 유지. L=4이면 (5/6)=false/false, L=5이면 true/false, L=6이면 true/true | main @0x710031e8ac/@0x7100318340/@0x71009850ac — [message C](../../../analysis/decomp/msgwin_main_all.c)·[predicate C](../../../analysis/decomp/core_b5.c); 실행 안 함 |
+| [판독][설계] | 새 모드 결과표 | mgm05 flag0→4칸00~03,1→2칸08~09; 값1에만 승리 라벨/판. StatusName는 pane root·타입 둘 다 맞아야 lookup 성공 | mgm05 @0x71000240a0 [C](../../../analysis/decomp/mgm05.nro.c), mgm03 @0x7100018eb0 [C](../../../analysis/decomp/mgm03.nro.c); 실행 안 함 |
 | [설계] | 수치·경계 | 1/60 tick, FrameGate, RNG 주입, f32; app→dev import0, game/lib 코어 import0 | [DESIGN §3·§10](../../DESIGN.md); 문서 요구사항만 검토 |
 | [데이터] | 문서 | LF, 절1~13·부록, 링크 대상 존재·내부 anchor·참조 정의 확인 | 이 파일; 작성 뒤 결과는 부록 F |
 
@@ -335,7 +372,7 @@
 
 ## 11. 미확정
 
-[미확정] U01~U12 12묶음은 유지한다. 전체 해소0, 부분 해소7(U02/03/04/05/08/09/11), 조사 경계 유지5(U01/06/07/10/12)다. 부분 해소는 아래 남은 공백을 없앴다는 뜻이 아니다. Guide 상태·칸/색, null의 길이 전달, Notice 등록/재배치, ManualClose reset/조회, 숨김 숫자식은 §6의 새 판독으로 확정했다. 근거: §2.3·§6.1~§6.5·부록 B/C.
+[미확정] U01~U12 12묶음은 유지한다. 전체 해소0, 부분 해소8(U02/03/04/05/08/09/11/12), 조사 경계 유지4(U01/06/07/10)다. 부분 해소는 아래 남은 공백을 없앴다는 뜻이 아니다. Guide 상태·칸/색, null의 길이 전달, Notice 등록/재배치, ManualClose reset/조회, 숨김 숫자식은 §6의 새 판독으로 확정했다. 근거: §2.3·§6.1~§6.6·부록 B/C.
 
 | ID [미확정] | 후속 상태·남은 공백 | 원본 모듈·주소/데이터·근거 |
 |---|---|---|
@@ -343,14 +380,14 @@
 | U02 | 부분: 설정 초기값500/100·입력 tick 진입은 확인. repeat delay/interval 여부·단위·발생기·fresh/hold 소비는 남음;24/6f 근사 유지 | main @0x7100193ec8/@0x7100193f4c [core_b4.c](../../../analysis/decomp/core_b4.c), @0x7100190c70 [mg0122 §6.10](../minigame/mg0122.md), §6.3 |
 | U03 | 부분: null→길이0, 내부 invalid handle guard 확인. 이름 있는 wrapper 직접 연결·empty fallback·없는 normal_00 효과는 남음 | main @0x710020d7a0/@0x710020d81c [vt C](../../../analysis/decomp/mgmcommon_main_vt.c), @0x71007a19b8/@0x71007a2758/@0x71007aa190 C 없음; menu01 @0x71000a5d48 [modeselect §3](../shell/modeselect.md), §6.2 |
 | U04 | 부분: Guide 상태/칸/정렬 시점/그림자 표시/색은 확인. 라벨 overload의 복제·삽입 연결은 남음 | main @0x71002776a4~@0x7100278e8c [Guide C](../../../analysis/decomp/charsel_guide00.c); @0x7100278e94 C 없음, §6.1 |
-| U05 | 부분: Guide shadow visible·x_text 색 경로 확인. GuiLayoutText의 본문+그림자 문자열·username StatusName writer는 남음 | main @0x7100278648/@0x7100278980 [Guide C](../../../analysis/decomp/charsel_guide00.c); 문자열 후보 @0x710020eca0/@0x710020fc08/@0x710020fc30/@0x710020fd90·FindHud @0x7100283d20 C 없음. 실제 StatusName setter는 미식별; P/sys_username_00/01 txt1/cnt1 |
+| U05 | 부분: Guide shadow visible·x_text 색과 mgm03 StatusName lookup·mgm06 PID 전달 virtual+0xc0 확인. GuiLayoutText 본문+그림자 문자열·StatusName 실제 setter 본체는 남음 | main @0x7100278648/@0x7100278980 [Guide C](../../../analysis/decomp/charsel_guide00.c); 문자열 후보 @0x710020eca0/@0x710020fc08/@0x710020fc30/@0x710020fd90·FindHud @0x7100283d20 C 없음. mgm03 @0x7100018eb0 [C](../../../analysis/decomp/mgm03.nro.c)·mgm06 @0x710001d5a0 [C](../../../analysis/decomp/mgm06.nro.c), §6.6; 실제 StatusName setter는 미식별; P/sys_username_00/01 txt1/cnt1 |
 | U06 | 유지: Alignment RTTI·복합 Parts 측정·최종 갱신 순서 | main @0x7101413c10/@0x7101414770, PTR_DAT_7101a937a0/7101a85068 [ui2d_alignment §11](../shell/ui2d_alignment.md); 공용 판독 재사용 |
 | U07 | 유지: FLCT·FLIM·ctl1 runtime 의미·등록 함수 주소 | P/sys_meswin_model_00·sys_tlp_start_00 ctl1, BFLAN entries.tags; [05_ui_input §3.6·§3.7](05_ui_input.md). 애니 이름 lookup 판독을 트랙 합성 의미로 확대하지 않음 |
 | U08 | 부분: ManualClose +0x510 setter/reset와 state2 조회 확인. Talking 꼬리·Model3D·Announce 배치·연출은 남음 | main @0x710031e8c4/@0x710031e8ac/@0x7100318340 [message C](../../../analysis/decomp/msgwin_main_all.c), §6.5; @0x71003161d0/@0x710031af40/@0x710031ded0 [message_window §11](../shell/message_window.md)·[render_unify §7.1](render_unify.md) 재사용 |
 | U09 | 부분: FUN_71001968a4(5/6) 숫자식은 확인. L의 writer/이름과 PlayMode7 뜻은 남음 | main @0x71001968a4/@0x71009850ac [core_b12.c](../../../analysis/decomp/core_b12.c)·[core_b5.c](../../../analysis/decomp/core_b5.c), §6.5; [dialog_box §6.2·§11](../shell/dialog_box.md) |
 | U10 | 유지: 3D 카드 mask·최종 UI 합성은 담당 갈래 근거만 연결 | main @0x710033eeb0/@0x7100340180 [charselect §12.6](../shell/charselect.md), [render_unify §7.1·§11](render_unify.md); 새 카메라·pass 판독 없음 |
 | U11 | 부분: Notice9개·0x30 queue·등록 gate·0.1초 재배치 확인. FIFO·최대 노출/clear·매칭 규칙판·항구 Guide 라벨은 남음 | main @0x7100250e00/@0x7100252000/@0x7100253a3c/@0x7100253140 [Notice C](../../../analysis/decomp/online_main_notice.c), §6.4; matching00 @0x7100010a00·mgmet @0x71000706b4 [online §11](../shell/online.md)·[mgm_common §11](../shell/mgm_common.md) |
-| U12 | 유지: 한 판 ring commit caller·모드 결과표와 MGResult 직접 사용 연결 | main @0x71001f271c/@0x71002e7d90 [18_scene_work §11 U08](18_scene_work.md)·[mgm01_freeplay §11](../shell/mgm01_freeplay.md)·[minigame_result §2·§6.5](../shell/minigame_result.md); 공용 writer 재판독 없음 |
+| U12 | 부분: mgm03/mgm05의 공용2D 결과 frame caller·mgm06 별도 조합은 확인. 실제 ring commit caller·MGResult3D 사용 연결·모드별 지급/순위 writer는 남음 | mgm03 @0x7100019040·mgm05 @0x71000240a0·mgm06 @0x710001d5a0, §6.6; main @0x71001f271c/@0x71002e7d90 [18_scene_work §11 U08](18_scene_work.md)·[mgm_modes §11](../shell/mgm_modes.md)·[minigame_result §2·§6.5](../shell/minigame_result.md); 공용 writer 재판독 없음 |
 
 ## 12. 사용자 확인
 
@@ -371,6 +408,7 @@
 | 바로 가능 | 정적 부품 목록·칸·크기·원본 태그, 8개 템플릿의 원본 조합 등록 | 모든486 layout 자료; 변환200 layout은 기존 명세 링크 존재. 새 JSON 생성은 후속 작업 | §2.2·부록 D, [common_roadmap §8](common_roadmap.md) |
 | 바로 가능 | 대화상자·기본 메시지·모드 메뉴·프리 플레이 목록/표의 기존 규칙 연결 | 이미 판독한 입력·상태·크기·소리 재사용; Guide·ManualClose의 §6 보완 연결 | §3·§6·§8의 함수·출처 |
 | 바로 가능 | Guide 상태·칸·정렬 요청/그림자 표시·색, ManualClose 수명, Notice 등록/보유·재배치 | 원본 상태와 caller 책임을 분리. Guide 라벨·Notice consume은 다음 행의 공백 유지 | main @0x7100277ba8/@0x710031e8c4/@0x7100253140; §6.1·§6.4·§6.5 |
+| 바로 가능 | mgm03/mgm05 공용 결과표의 원본 조합·가시 칸 profile, StatusName lookup | 레이아웃은 기존 카탈로그; 결과값의 writer·누락된 호출 인자와 mgm06 실제 pane 자료는 다음 행의 공백 유지 | mgm03 @0x7100019040/@0x7100018eb0·mgm05 @0x71000240a0; §6.6 |
 | 근사 필요 | bex 반복 시간, 글꼴 대체·UI 흐림/재질·3D 카드 합성, 아이콘팝업 단일 활성 | 기존 웹 근사를 표시하고 profile에서 선택; Notice9 slot 보유·등록/재배치는 원본 판독으로 분리 | U02·U10·U11, [font_assets](font_assets.md), [modeselect §6.2](../shell/modeselect.md) |
 | 판독 필요 | raw286개 caller, Guide 라벨·shadow 문자열, null/미보유 애니 최종 효과, 고급 메시지·Notice 소비/노출·매칭 규칙판·ring caller | 기존 C 보유와 C 부재13주소(우선12·후순위1)·주소 미식별4묶음을 부록 C로 구분; Ghidra 실행 없음 | U01~U12·부록 C |
 | 판독 필요 | 원본 최종 프레임·실제 완료시간 | 데이터/문서 기대값까지만 있음 | [ui2d_alignment §11](../shell/ui2d_alignment.md), [charselect §11](../shell/charselect.md), §10 |
@@ -391,7 +429,7 @@
 
 ## 부록 B. 새 판독 목록
 
-[데이터] 새 함수 판독46개(중복 주소 제거, 모두 main), 기존 입력 등록1개(@0x71001905f8) 중복 확인은 신규 수에서 제외한다. 이후 해당 등록·timing은 [mg0122 §6.10](../minigame/mg0122.md)으로 재사용했다. C/INDEX/SHARED/JSON/에셋/분석 스크립트 생성·변경0, 원본·Ghidra 실행0이다. 아래 주소는 [INDEX.tsv](../../../analysis/decomp/INDEX.tsv)·[main.nso.tsv](../../../analysis/functions/main.nso.tsv) 및 실제 C 본문에 대응한다.
+[데이터] 새 함수 판독50개(모듈+주소 중복 제거; main46·mgm03 2·mgm05 1·mgm06 1), 이번 전체 C 재대조의 추가 판독은4함수다. 기존 입력 등록1개(@0x71001905f8) 중복 확인은 신규 수에서 제외한다. 이후 해당 등록·timing은 [mg0122 §6.10](../minigame/mg0122.md)으로 재사용했다. C/INDEX/SHARED/JSON/에셋/분석 스크립트 생성·변경0, 원본·Ghidra 실행0이다. 아래 주소는 [INDEX.tsv](../../../analysis/decomp/INDEX.tsv)·모듈별 [함수 TSV](../../../analysis/functions/) 및 실제 C의 판독 대상 부분에 대응한다.
 
 | 신규 함수 [판독] | 기존 C [데이터] | 보완한 절·판독 범위 |
 |---|---|---|
@@ -441,10 +479,14 @@
 | [판독] main @0x7100318340 | [msgwin_main_all.c](../../../analysis/decomp/msgwin_main_all.c) | ManualClose setter·조회·정리; §6.5 |
 | [판독] main @0x710031e8ac | [msgwin_main_all.c](../../../analysis/decomp/msgwin_main_all.c) | ManualClose setter·조회·정리; §6.5 |
 | [판독] main @0x710031e8c4 | [msgwin_main_all.c](../../../analysis/decomp/msgwin_main_all.c) | ManualClose setter·조회·정리; §6.5 |
+| [판독] mgm03 @0x7100018eb0 | [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c)·[TSV](../../../analysis/functions/mgm03.nro.tsv) | StatusName pane root/type lookup; §6.6 |
+| [판독] mgm03 @0x7100019040 | [mgm03.nro.c](../../../analysis/decomp/mgm03.nro.c)·[TSV](../../../analysis/functions/mgm03.nro.tsv) | 공용 결과 frame·가시 칸·라벨/얼굴 binding; §6.6 |
+| [판독] mgm05 @0x71000240a0 | [mgm05.nro.c](../../../analysis/decomp/mgm05.nro.c)·[TSV](../../../analysis/functions/mgm05.nro.tsv) | 공용 결과 frame의4칸/2칸·승리 표시 binding; §6.6 |
+| [판독] mgm06 @0x710001d5a0 | [mgm06.nro.c](../../../analysis/decomp/mgm06.nro.c)·[TSV](../../../analysis/functions/mgm06.nro.tsv) | 별도 결과 frame·얼굴/이름·rank/score/history 표시 조립만; §6.6 |
 
 ## 부록 C. 추출 요청 표
 
-[데이터] 중복 제거한 Ghidra 요청13주소(우선12·후순위1), 모두 main이다. 함수 TSV에는 있고 INDEX/analysis/decomp/*.c 및 ghidra_work/*/out/*.c에는 본문이 없는 것을 확인했다. 참고 caller만 존재하는 경우 C 보유로 세지 않았다. Ghidra 추출은 실행하지 않았고 승인을 요청하지 않았다. 주소 없는 데이터·writer에는 주소를 만들지 않았다. 근거: [main.nso.tsv](../../../analysis/functions/main.nso.tsv), [INDEX.tsv](../../../analysis/decomp/INDEX.tsv), §2.3·§6.
+[데이터] 중복 제거한 Ghidra 요청13주소(우선12·후순위1), 모두 main이다. 최신 전체479+7 C 파일·INDEX에서도 해당 main 본문이 없음을 확인했다. NRO mgm03의 FindHud 본체는 §6.6에 있지만 main 동함수 확보로 바꾸지 않았다. 참고 caller만 존재하는 경우 C 보유로 세지 않았다. Ghidra 추출은 실행하지 않았고 승인을 요청하지 않았다. 주소 없는 데이터·writer에는 주소를 만들지 않았다. 근거: [main.nso.tsv](../../../analysis/functions/main.nso.tsv), [INDEX.tsv](../../../analysis/decomp/INDEX.tsv), §2.3·§6.
 
 | 모듈·주소 [미확정] | 함수 [데이터] | 이유·관련 공백 [미확정] | 구현 차단 [설계] |
 |---|---|---|---|
@@ -1036,9 +1078,9 @@
 
 ## 부록 F. 검증·통합 인계
 
-[데이터] 정적 데이터 검증은 §10에 기록했다. 새 문서 UTF-8·LF·BOM 없음, 본문 13절·부록 6개, CommonMark + GFM table 파싱과 실제 상대 링크 대상 존재를 확인했다. 참조 정의 T1~T9는 모두 연결된다. 링크처럼 보이는 재질 배열 인덱스·중괄호·일반 괄호는 코드 구간 또는 평문이며 오류로 세지 않았다. 내부 anchor 링크는 사용하지 않았다. 후속46함수 표·요청13주소와 본문 데이터/설계 경계도 확인했다. 출처: 이 파일.
+[데이터] 정적 데이터 검증은 §10에 기록했다. 새 문서 UTF-8·LF·BOM 없음, 본문 13절·부록 6개, CommonMark + GFM table 파싱과 실제 상대 링크 대상 존재를 확인했다. 참조 정의 T1~T9는 모두 연결된다. 링크처럼 보이는 재질 배열 인덱스·중괄호·일반 괄호는 코드 구간 또는 평문이며 오류로 세지 않았다. 내부 anchor 링크는 사용하지 않았다. 후속50함수 표·요청13주소와 본문 데이터/설계 경계도 확인했다. 출처: 이 파일.
 
-[데이터] 후속 검증: 실제 링크682개·고유 대상77개·누락0, 표36개·열수 불일치0, 참조 정의9개. 신규46주소는 함수 TSV·INDEX·실제 C에 모두 대응하고 요청13주소는 중복0이다. 부록 D 블록 SHA-256은 후속 전후 같아 486행을 보존했다. 근거: 이 파일·부록 B/C·[INDEX.tsv](../../../analysis/decomp/INDEX.tsv)·[main.nso.tsv](../../../analysis/functions/main.nso.tsv).
+[데이터] 후속 검증: 실제 링크733개·고유 대상91개·누락0, 표38개·열수 불일치0, 참조 정의9개. 신규50개 모듈+주소는 함수 TSV·INDEX·실제 C에 모두 대응하고 요청13주소는 중복0이다. 부록 D 블록 SHA-256은 후속 전후 같아 486행을 보존했다. 근거: 이 파일·부록 B/C·[INDEX.tsv](../../../analysis/decomp/INDEX.tsv)·[main.nso.tsv](../../../analysis/functions/main.nso.tsv).
 
 [설계] 부모 통합 시 엔진 README 표 한 행과 출처 절 끝 정리본 링크 한 줄만 추가한다. 이 문서가 출처 내용을 수정하지 않는다. 기존 파일 줄바꿈을 보존한다. 근거: 작업 범위 및 [DESIGN](../../DESIGN.md).
 
@@ -1062,6 +1104,7 @@
 | [web/docs/engine/render_unify.md](render_unify.md) | §7.1 끝 | `[설계] UI 부품·템플릿과 3D 자리의 경계: [ui_parts_catalog.md](ui_parts_catalog.md).` |
 | [web/docs/engine/18_scene_work.md](18_scene_work.md) | §11 끝 | `[설계] 결과표·UI 부품에서 재사용하는 Work 공백: [ui_parts_catalog.md](ui_parts_catalog.md).` |
 | [web/docs/minigame/mg0122.md](../minigame/mg0122.md) | §6.10 끝 | `[판독][설계] 입력 tick 판독을 재사용한 UI 반복 공백 정리: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).` |
+| [web/docs/shell/mgm_modes.md](../shell/mgm_modes.md) | §7 끝 | `[판독][설계] 신규 모드 결과표의 원본 부품·칸 조합 정리: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).` |
 
 [설계] web/docs/engine/README.md 문서 표에 부모가 추가할 정확한 한 행:
 

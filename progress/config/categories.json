@@ -1,0 +1,134 @@
+{
+  "categories": [
+    {
+      "id": "minigames",
+      "name": "미니게임",
+      "pattern": "\\bmg\\d{4}::|\\brc_stage\\d+::|Minigame|MiniGame|RmGame|MGUi"
+    },
+    {
+      "id": "graphics",
+      "name": "그래픽 / 렌더링",
+      "pattern": "Render|Shader|Texture|Material|Mesh|Lighting|Shadow|PostProcess|Particle|bex::gfx|nn::g3d|nn::gfx|nn::bezel::gfx"
+    },
+    {
+      "id": "physics",
+      "name": "물리 / 충돌",
+      "pattern": "Collision|Collider|Physics|HitBox|Hitbox|RigidBody|Gravity|GroundChecker|JumpCalculator|physx"
+    },
+    {
+      "id": "animation",
+      "name": "애니메이션",
+      "pattern": "Animation|Animator|Skeleton|Skeletal|Bone|AnimBlend|MotionModule|InverseKinematic"
+    },
+    {
+      "id": "logic",
+      "name": "게임 로직",
+      "pattern": "GameMgr|GameManager|GameScene|SceneModule|GameRule|Score|Winner|RoundManager|TurnManager|RandModule"
+    },
+    {
+      "id": "network",
+      "name": "네트워크 / 멀티플레이",
+      "pattern": "Network|Lobby|Matching|Session|Packet|Socket|Rpc|Synced|nn::nifm|nn::pia|nn::ldn"
+    },
+    {
+      "id": "ui",
+      "name": "UI / HUD",
+      "pattern": "UiManager|UiModule|UiParts|ComUi|Layout|Hud|HUD|Menu|Dialog|MessageWindow|nn::ui2d"
+    },
+    {
+      "id": "audio",
+      "name": "사운드",
+      "pattern": "Audio|Sound|Bgm|BGM|Mixer|Voice|nn::atk"
+    },
+    {
+      "id": "character",
+      "name": "캐릭터 / 플레이어",
+      "pattern": "Player|Character|ComActor|Npc|NPC|ComAI|ActorModule"
+    },
+    {
+      "id": "camera",
+      "name": "카메라",
+      "pattern": "Camera|ViewProjection|ScreenShake"
+    },
+    {
+      "id": "assets",
+      "name": "데이터 / 리소스",
+      "pattern": "Resource|Asset|Archive|Serialize|Deserializer|Compression|FileSystem|FileReader|SaveData|nn::fs"
+    },
+    {
+      "id": "engine",
+      "name": "공통 엔진",
+      "pattern": "Allocator|Memory|Thread|Scheduler|Fiber|CoreSystem|DeltaTime|Timer|bex::Entity|nn::os|nn::mem"
+    },
+    {
+      "id": "unclassified",
+      "name": "미분류",
+      "pattern": "(?!)"
+    }
+  ],
+  "subsystems": [
+    {
+      "name": "물리 및 충돌",
+      "pattern": "Collision|Collider|Physics|Ground|Jump|RigidBody"
+    },
+    {
+      "name": "카메라",
+      "pattern": "Camera"
+    },
+    {
+      "name": "그래픽 및 연출",
+      "pattern": "Render|Shader|Texture|Material|Mesh|Effect|Particle"
+    },
+    {
+      "name": "애니메이션",
+      "pattern": "Anim|Skeleton|Bone|Motion"
+    },
+    {
+      "name": "사운드",
+      "pattern": "Sound|Audio|Bgm|Voice"
+    },
+    {
+      "name": "UI / HUD",
+      "pattern": "Ui|HUD|Hud|Layout|Menu|Dialog"
+    },
+    {
+      "name": "입력 처리",
+      "pattern": "Input|Pad|Controller|Button"
+    },
+    {
+      "name": "점수 및 승패",
+      "pattern": "Score|Win|Lose|Rank|Result|Goal"
+    },
+    {
+      "name": "AI / NPC",
+      "pattern": "ComAI|Npc|NPC|Cpu|CPU"
+    },
+    {
+      "name": "플레이어",
+      "pattern": "Player|Character|Actor"
+    },
+    {
+      "name": "게임 흐름 및 규칙",
+      "pattern": "GameMgr|Scene|GameRule|Round|Start|Finish"
+    },
+    {
+      "name": "로딩 및 데이터",
+      "pattern": "Load|Resource|Archive|Data|Param|File"
+    }
+  ],
+  "exclude_directories": [
+    "node_modules",
+    ".git",
+    ".venv",
+    "__pycache__",
+    "dist",
+    "build",
+    "out",
+    "tmp",
+    "lib",
+    "packages"
+  ],
+  "leaf_limit": 3000,
+  "poll_seconds": 3,
+  "classification_policy": "conservative-evidence-only"
+}

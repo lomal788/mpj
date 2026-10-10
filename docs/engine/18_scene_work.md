@@ -246,6 +246,7 @@ manager.step(gatedInput, ready):
 
 [판독] 지역 NetworkManager 소멸자 menu00 @0x710002c7a0·matching00 @0x7100003a64에는 Disconnect/LeaveSession/ClearSession 호출이 없고, 세션 잔존 시 공용 SetAllListener로 넘긴다. [12_online_sync §9.2][NETLIFE]. [판독] 명시적 Disconnect menu00 @0x710002d3ec·matching00 @0x7100003db4는 NetworkModule::Disconnect와 WorkModule::ClearSession을 호출한다. [같은 문서 §9.2·§9.3][NETLIFE]. [미확정] main ClearSession @0x710029f6b0 내부의 Work 필드 초기화·보존은 C가 없어 U06/부록 C에 남긴다. [main TSV][FN]·[INDEX][IX].
 
+→ 정리본: [12_online_sync.md](12_online_sync.md) §9.15.5
 ## 9. 웹 설계
 
 ### 9.1 현재 파일과 차이
@@ -340,6 +341,7 @@ manager.step(gatedInput, ready):
 | U11 | OnStartUpdate의 별도0x40 B 파이버: main ctor @0x71002d16fc의 실제 tick/종료 역할. [CORE §11][CORE] | 흐름 파이버 앞의 작업·pause 순서 |
 | U12 | 7행 모드표 밖 전체 scene factory 등록 및 ID0 직접 caller. main @0x71015d840c [NAMES][NAMES]·menu01 @0x7100059b70 [FREE §8.1][FREE] | 전체 registry를 원본 ID라고 주장할 수 없음 |
 
+[설계] 결과표·UI 부품에서 재사용하는 Work 공백: [ui_parts_catalog.md](ui_parts_catalog.md).
 ## 12. 사용자 확인
 
 [설계] 원본 규칙을 기본으로 한다. 아래는 구현 전 미승인 추천이며 이번 분석을 진행하기 위한 승인 요청은 아니다. [DESIGN §10.5][DESIGN].
@@ -671,3 +673,73 @@ manager.step(gatedInput, ready):
 
 [미확정] 기존 온라인 §9.13.2의 Reboot 접점 인용 주소 @0x71002caf7c는 main RequestReturnScene(name)다. main TSV의 RequestRebootScene 주소는 @0x71002cafa0이다. 이는 주소 대응 메모이며 두 함수를 새로 판독한 것은 아니다. [FN][FN]·초판 부록 B·[NETLIFE §9.13.2][NETLIFE]. 출처 원문은 변경하지 않았다.
 
+### C.1 현재 Ghidra 요청24주소
+
+[데이터] 초판38요청은 docs_gap에서 C가 확보되어 현재 요청에서 제외했다. 첫 후속9주소는 계속 C가 없고, 새 판독 wrapper의 lower helper13주소·Advantage2주소를 더해 현재 고유24주소다. 모두 main.nso의 address/name/size가 [FN][FN]에 있고 [INDEX][IX]와 최신 허용 C486파일의 본체 헤더가 없다. 아래는 요청표이며 새 추출/어셈블리 대체 판독/승인 요청을 하지 않는다. ClearSession @0x710029f6b0는 C가 있으므로 이24주소에 넣지 않고 온라인 결과를 재사용한다. [GAP][GAP]·[NETLIFE][NETLIFE].
+
+| 모듈·정확한 주소 [미확정] | 함수·필요 이유 | 구현 차단·우선 [설계] |
+|---|---|---|
+| main @0x71001a4808 | FUN — Call/Exchange에서 실행되는 queue/active/history 처리 | 우선1, 부모 instance 보존·Call 등가성 차단 |
+| main @0x71001a4968 | FUN — Return의 bool·빈 스택·복귀 항목 처리 | 우선1, pop/resume/recreate 등가성 차단 |
+| main @0x71001a4bcc | FUN — 모든 전환 wrapper의 (seq,2) 상태 변경 | 우선1, 원본 프레임/종료 상태 전이 차단 |
+| main @0x71001a4c10 | FUN — Exchange flag1 경로의 전처리 | 우선1, history 영향 차단 |
+| main @0x71001a4f30 | FUN — Exchange 및 named return 반복 처리 | 우선1, history 제거/범위 등가성 차단 |
+| main @0x71001a51d0 | FUN — named return의 callback 이름 열거 | 우선2, 열거 방향·현재 항목 포함 여부 차단 |
+| main @0x71001a5c04 | FUN — 이름 기반0x50 record builder | 우선2, params/instance 참조 여부·필드 배치 차단 |
+| main @0x71001a6128 | FUN — SceneParams 기반0x50 record builder | 우선2, 복귀 레코드 소유/보존 방식 차단 |
+| main @0x71001a5eb0 | FUN — history record copy | 우선2, 문자열/handle copy 수명 차단 |
+| main @0x71001a2900 | FUN — 이름으로 factory descriptor 조회 | 우선2, 전체 registry 구조·없는 대상 처리 차단 |
+| main @0x71001a29e0 | FUN — descriptor/params로 실제 scene pointer 생성 | 우선1, new/pool/reuse 정책 차단 |
+| main @0x71001a8ee0 | FUN — release count1의 이름/path helper | 우선2, descriptor/NRO unload 경계 차단 |
+| main @0x710019fd28 | FUN — Call/Exchange의 이름 유효성 helper | 우선2, 유효 이름 범위 차단; wrapper의 실패 Abort은 이미 확보 |
+| main @0x710019f324 | bex::SceneModule::GetSequence — sequence 번호→객체 조회 | 보조, sequence 소유권 대조 |
+| main @0x71001a4b44 | bex::SceneSequence::IsCurrentSceneShutdownComplete — matching 종료 조회 | 보조, 실제 cleanup 완료 조건 차단 |
+| main @0x71001a51b8 | bex::SceneSequence::EnumerateHistoryName — 공개 history 열거 | 보조, 내부 @0x71001a51d0와의 연결 대조 |
+| main @0x710029e4e8 | bq::WorkModule::GetPlayers — PlayerWorkHolder view 위치 | 물리 parent/holder 배치 차단; Player 개별 필드는 확보 |
+| main @0x710029e6f8 | bq::WorkModule::GetPlayMode — +0x12b8 writer의 reader 대조 | getter offset 연결 차단 |
+| main @0x710029e99c | bq::WorkModule::ExistsGameModeWork — generic buffer 존재 조건 | cold-boot/존재 조건 등가성 차단 |
+| main @0x710029e9ac | bq::WorkModule::ReserveGameModeWork — 0x728 요청의 실제 할당 | allocator·generic buffer offset/수명 차단 |
+| main @0x710029ea08 | bq::WorkModule::ResetGameModeWork — menu/중단의 실제 reset | 공유 buffer 해제/보존·전체 reset 등가성 차단 |
+| main @0x710029ea1c | bq::WorkModule::GetGameModeWorkSize — coldBoot 크기 조건 | size/존재 관계 대조 차단 |
+| main @0x710021da6c | bq::PlayerWork::SetMinigameAdvantage — 남은 결과 bool writer | Player Advantage 물리 offset 대조 차단 |
+| main @0x710021da74 | bq::PlayerWork::IsMinigameAdvantage — 결과 bool reader | 위 setter와의 일치 대조 차단 |
+
+[미확정] 주소 미식별3묶음은 숫자24에 더하지 않는다. (1) cache +0x761/+3 true writer는 reset @0x710022eaf4·기존 init @0x71001f0eac·0x710022eb94만으로 못 찾았다. [WORKC][WORKC]·[RULE §11][RULE]. (2) factory 등록 caller·descriptor 가상 생성/정리 target은 @0x71001a00d4·0x71001a026c의 소비 경로까지만 알며 등록표 전체는 미식별이다. [GAP][GAP]. (3) FiberWatchNetError virtual target은 기존 문서의 @0x71002d1b20 후보가 있으나 TSV 함수 시작/본체/결합을 확보하지 못했다. [MG0122 §3.5][MG0122]·[FN][FN].
+
+[설계] 후속 최소 순서는 Call/Return/state→record/factory→allocator/reset→남은 accessor다. 하위 C 없이 wrapper37개를 읽은 것을 부모 보존·전체 registry·Work 앱 수명 완료로 처리하지 않는다. [GAP][GAP]·§11.6. 출처/README의 새 통합 한 줄은 추가하지 않았으며 초판 부록 A의 통합 링크와 부모가 넣은 줄을 그대로 보존한다.
+
+[GAP]: ../../../analysis/decomp/docs_gap_main.c
+[MGM_MODES]: ../shell/mgm_modes.md
+[MOTION]: 19_motion_input.md
+
+### 11.7 온라인 결과 재사용: ClearSession·Save 경계
+
+[판독] main ClearSession @0x710029f6b0의 새 본문은 온라인 [NETLIFE §9.15.5][NETLIFE]에서 판독됐으며 이 갈래는 C를 다시 읽지 않았다. 초판 §8·U06·부록 C의 C 부재 표시는 당시 기록이고 현재 직접 reset 근거는 아래와 같다. 같은 함수와 온라인 누계57을 이 갈래55함수에 더하지 않는다.
+
+| 객체·필드 [판독] | 직접 영향·원본 owner |
+|---|---|
+| WorkModule+0x12d0 PlayerWorkHolder | NormalizeLocal 먼저 호출. GetPlayers getter의 물리 반환 배치까지 확정한 것은 아님. main @0x710029f6b0, [NETLIFE §9.15.5][NETLIFE] |
+| WorkModule session 직접 필드 | +0x3d04 s32=0, +0x3d38←+0x3d30, +0x3d28 byte=0. 두 포인터의 실제 범위 타입·flag 이름은 미확정. 같은 main 주소·[NETLIFE §9.15.5][NETLIFE] |
+| WorkModule local/host | +0x3d08/+0x3d10, +0x3d18/+0x3d20 각각 ConstantID::Invalid. 실제 station/식별 값은 기록하지 않는다. 같은 main 주소·[NETLIFE §9.15.5][NETLIFE] |
+| GetPlayerList(...,4)의 type | SessionState∈{2,3,4} && IsLocal일 때만 SetPlayerType(0). 모든 player의 type0 초기화가 아님. 같은 main 주소·[NETLIFE §9.15.5][NETLIFE]; type current/base 쓰기 규칙은 기존 main @0x710021d734 [FREE §8.1][FREE] |
+| 같은 목록의 state/slot | 목록 모두 SetSessionState(0)·SetConstantID(Invalid,0xff). 이전 scene/actor의 ID를 새 세션 ID로 재사용하는 동작이 아님. 같은 main 주소·[NETLIFE §9.15.5][NETLIFE] |
+| 후행 소유자 | ResetControllerAssign→FUN_71001e9c88→FUN_71001eaf78→AccountMgr::ReEntryPlayer. 두 helper는 온라인 현재 요청 N7/N8이며 이 갈래24주소에 중복하지 않음. 같은 main 주소·[NETLIFE §9.15.5·§9.15.7][NETLIFE] |
+
+[미확정] 직접 본문에 GameWork/RNG/result ring을 지우는 이름 있는 호출이 없다는 온라인 판독을 “모든 게임·SaveData 상태 보존”으로 확대하지 않는다. NormalizeLocal·두 helper·ReEntryPlayer 간접 영향은 잔여다. main @0x710029f6b0의 [NETLIFE §9.15.5][NETLIFE]. U06은 embedded view·직접 network reset이 부분 해결됐고 WorkModule 전체 수명·allocator·간접 reset이 열려 있으므로 §11.6의 부분 해결 판정은 유지한다.
+
+[설계] clearNetworkSession 쓰기 권한은 명시적 net 종료/reentry 어댑터에 둔다. scene cleanup·mode Exit가 자동으로 이를 호출하지 않는다. Player roster의 조건부 복구, input controller assign reset, 계정 reentry, SaveData mutator/request를 별도 접점으로 모델링하며 Work 전체 JSON 저장/전체 zero를 추가하지 않는다. main @0x710029f6b0 [NETLIFE §9.15.5][NETLIFE], 지역 scene 종료 menu01 @0x7100055d70 [NETLIFE §9.14.2][NETLIFE], SaveRequest main @0x710023ff64 [SAVE §2][SAVE]·[DESIGN §10.5][DESIGN].
+
+
+[데이터] 최종 정적 검증: CommonMark 링크515개·참조 정의44개, 대상 경로/절/미정의 참조 오류0, UTF-8(no BOM)·LF·후행 공백0, 새 판독55주소 중복0, docs_gap37함수 C 헤더 확인, 잔여24주소의 main TSV 존재·INDEX 본체 부재 확인. git diff --check 통과이며 원본 실행/헤드리스/화면 촬영은 없다.
+
+[데이터] 이번 작업 시작 시 문서와 부모 통합분의 처음55,104 B를 SHA-256 대조로 그대로 보존했다. 쓰기 직전 전체를 읽고 후속 내용만 추가했으며 자기 MD 외 파일·C·INDEX·SHARED·JSON·코드·에셋을 쓰지 않았다. git add/stage/commit/rm은 하지 않았고 현재 index 변경은 부모 통합분을 유지했다.
+
+### §8.1 온라인 상호작용 보강: ClearSession 재사용
+
+[판독] main WorkModule::ClearSession @0x710029f6b0의 온라인 정리는 기존 [12 §9.15.5](12_online_sync.md#9155-clearsession의-네트워크-reset-계약)를 재사용한다. PlayerWorkHolder(+0x12d0)의 NormalizeLocal 후 로컬/host ConstantID를 Invalid로 바꾸고, GetPlayerList(...,4)의 모든 항목은 SessionState0·slot0xff로 정리한다. PlayerType0은 state2~4이면서 IsLocal인 항목에만 적용한다. 이어 ResetControllerAssign과 후행 helper·AccountMgr::ReEntryPlayer가 호출된다.
+
+[미확정] 후행 main @0x71001e9c88/@0x71001eaf78의 본체 요청은 온라인 [12 §9.15.7 N7/N8](12_online_sync.md#9157-현재-ghidra-요청-표-빈-하위-함수만)에 맡긴다. NormalizeLocal·helper·ReEntryPlayer의 간접 영향이 열려 있어 GameWork/RNG/결과 ring/SaveData가 모두 보존된다고 판정하지 않는다. main @0x710029f6b0의 기존 판독만 인용하며 이번 새 판독55함수와 이 갈래 요청24주소에 중복 합산하지 않는다.
+
+[설계] 웹의 clearNetworkSession 쓰기 권한은 net 이탈/reentry 어댑터에 둔다. 일반 Call/Return/Exchange·장면 cleanup/mode Exit가 이를 자동 호출하도록 확장하지 않는다. SaveData는 별도 Save 어댑터와 mutator/request 경계를 유지한다. main @0x710029f6b0·menu01 @0x7100055d70 [12 §9.15.5·9.14.2][NETLIFE], main SaveRequest @0x710023ff64 [16 §2][SAVE], 장면·Work 분리 [DESIGN §10.5][DESIGN].
+
+[데이터] §8.1 추가 후 검증은 CommonMark 링크520개·참조 정의44개, 링크 대상/절/미정의 참조 오류0, UTF-8(no BOM)·LF·후행 공백0이다. 새 판독55·열린 U11·이 갈래 요청24·미식별3묶음은 그대로이며 원래55,104 B와 현재 부모 index의 접두부 보존을 다시 확인했다. git diff --check 통과, 원본 실행 확인은 없다.

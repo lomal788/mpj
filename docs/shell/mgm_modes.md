@@ -4,17 +4,17 @@
 
 ## 1. 기능 개요
 
-[설계] 광장 → 항구 → 보드 없이 N회 미니게임 → 누적 결과라는 목표에는 **mgm02 챌린지 미니게임 배틀**을 가장 가까운 원본으로 추천한다. 5·7·10라운드 선택과 코인 누적 경쟁이 근거다. 임의 N·모든 장르 추첨은 별도 웹 변형이며 사용자 미승인 추천이다. 근거: mgmet `Mgm02SetRuleForCpu` @0x7100054640 [C][callers], `RoundButton::SetBody` @0x710007efdc [규칙 §4.3](mgmet_ruleconfig.md#43-값-표와-버튼-전-함수군), [MSG-H] `mgmet_cmgb_mw_howToPlay00~02`.
+[설계] 광장 → 보드 없이 N회 미니게임 → 누적 결과에는 **mgm02 챌린지 미니게임 배틀**이 가장 가깝다. 원본 5·7·10회와 코인 경쟁을 기본으로 추천한다. 임의 N·장르 확장·부분집합 추첨은 사용자 미승인 웹 변형이다. mgmet @0x7100054640 [callers]·mgm02 @0x7100017728 [C02]·[MSG-H] `mgmet_cmgb_mw_howToPlay00~02`.
 
-| 모드·활동 ID | 진행·승리·결과 | 사용 범위·N회와의 차이 | 근거 |
+| 모드·활동 ID [데이터] | 진행·승리·결과 | 사용 범위·N회와의 차이 | 근거 |
 |---|---|---|---|
-| [데이터] mgm02 / 활동4 / mode2 / 챌린지 미니게임 배틀 | [데이터] 연속 챌린지·찬스 이벤트·최종 코인 수 경쟁. [판독: 어셈블리] 라운드 UI 5/7/10 | [추정] Chara 계열 중심 후보. [미확정] 추첨 집합·코인 배분·보너스/배틀 회차·동점 처리 | mgmet @0x7100054640 [C][callers], @0x710007efdc [규칙 §4.3](mgmet_ruleconfig.md#43-값-표와-버튼-전-함수군); [MSG-H] `cmgb` 안내·[MSG-02] `mgm02_ui_round01/02` |
-| [데이터] mgm03 / 활동1 / mode3 / 데일리 트라이얼 | [데이터] 3게임 팩·1위 스타·매일 바뀌는 게임. 팩 25개, 중복 제거 49게임 | [설계] 고정 3게임 세트에 가깝다. 임의 N 또는 전체 112 무작위와 다르다 | mgmet @0x7100057b00 [C][callers]; [PACK] `mgpack[].mg1~mg3`; [MSG-H] `mgmet_dt_mw_howToPlay00~02` |
-| [데이터] mgm04 / 활동0 / mode4 / 태그 매치 | [데이터] 2vs2·먼저 목표 승수를 얻는 팀이 승리. [판독: 어셈블리] 스타 UI 3/5/10. 랜덤 매칭은 연승·랭킹 | [설계] 목표 승수 방식은 총 경기 수 N과 다르다. [미확정] 모든 2VS2 12종의 사용 여부·무승부·패한 팀 선택권 | mgmet @0x71000638a0·@0x71000633c0 [C][callers], @0x710007f338 [규칙 §4.3](mgmet_ruleconfig.md#43-값-표와-버튼-전-함수군); [MSG-04] `mgm04_start_mw_guideCourse00`, [MSG-H] `tm/tmrm` 안내 |
-| [데이터] mgm05 / 활동3 / mode5 / 서바이벌 | [데이터] 세계 대전·승패로 실력 포인트 증감·S부터 랭킹. 명시 목록26종 | [설계] 로컬 N회 파티와 목적이 다르다. [미확정] 루프 종료·포인트 식·VS4→듀얼 이동 조건 | mgmet @0x710005f5e0 [C][callers]; [SURV] `mgList[].mg`; [MSG-H] `mgmet_sb_mw_howToPlay00~03`; mgm05 @0x710000c210 [함수 목록][fn05] |
-| [데이터] mgm06 / 활동5 / mode6 / 보스 러시 | [데이터] 협력 보스 연전·한 번 패하면 실패·마지막 MVP·결과 총점 표시 | [추정] Boss 5종이 후보. [미확정] 실제 순서·중복·기여점·MVP 동률 판정 | [MSG-H] `mgmet_bm_mw_howToPlay00~02`; [MSG-06] `mgm06_resWin_ui_totalScore`; mgm06 @0x710001140c·@0x710001e5e0 [함수 목록][fn06] |
+| mgm02 / 활동4 / mode2 / 챌린지 미니게임 배틀 | [판독] Round0 안내 → 게임 결정 → 한 판 → 코인 결과; Round==max에서 최종 복귀. 기본 코인10/3/2/0, 보너스×2, 배틀 징수10 | [판독] Chara 후보10종. Normal/Bonus/Battle도 N회 안에 포함. [미확정] 실제 asset override·배틀 1위 비율 표 | mgm02 @0x7100017728/@0x710000f0b0/@0x710001b33c [C02]; [ND] `GameRule=Chara` |
+| mgm03 / 활동1 / mode3 / 데일리 트라이얼 | [판독] 팩 선택 → mg1/mg2/mg3 순서 → 매 판 결과 → 마지막 항구 복귀. [데이터] 1위 스타 안내 | [데이터] 25팩·49게임. [판독] 선택된 팩 안에서 무작위 추첨 없음. [미확정] 스타 지급 Data·정확한 날짜 기준 | mgm03 @0x7100009780/@0x710000a440/@0x710000b3a0 [C03]; [PACK] `mgpack[].mg1~mg3`; [MSG-H] `mgmet_dt_mw_howToPlay00~02` |
+| mgm04 / 활동0 / mode4 / 태그 매치 | [판독] 2vs2; 어느 팀이든 승수>=목표이면 종료. 양팀 승리면 양팀+1, 양팀 패배면 승수 변화0. RM 별도 | [판독] 2VS2 후보12종에서 체감·이력 제외. 초반/RM 룰렛·그 뒤 선택창. 총 경기 수 N과 목표 승수3/5/10은 다름 | mgm04 @0x7100015f70/@0x710001ce70/@0x710001d260/@0x710000d860 [C04]; mgmet @0x710007f338 [규칙 §4.3](mgmet_ruleconfig.md#43-값-표와-버튼-전-함수군) |
+| mgm05 / 활동3 / mode5 / 서바이벌 | [판독] 매칭 → 투표/룰렛 → 한 판 → 승패·계속/재도전 → 매칭 또는 항구. [데이터] 실력 포인트·S부터 랭킹 | [판독] 명시26종 중 VS4 21·듀얼5를 분리. 4표 전원 일치만 확정; 그 밖 룰렛. [미확정] 실력 포인트 식·듀얼 전환의 정확한 누적 기준 | mgm05 @0x710000956c/@0x710000fb40/@0x7100018690/@0x710000c210 [C05]; [SURV] `mgList[].mg`; [MSG-H] `mgmet_sb_mw_howToPlay00~03` |
+| mgm06 / 활동5 / mode6 / 보스 러시 | [판독] 고정5슬롯 순서·전원 WinLose==1만 격파; 실패 오프닝 또는 완주 점수·MVP → 보상 → 항구 | [판독] Round0~4가 게임, Round5가 완주. 추첨 RNG 없음. MVP는 총점 rank0인 모든 플레이어 이름 수집. [미확정] 슬롯별 ID·점수 상수 | mgm06 @0x710001140c/@0x7100011610/@0x7100011ed0/@0x710001e5e0 [C06]; `kBossMinigameIds` 포인터 슬롯 @0x7100057d98 |
 
-[판독] [데이터] 활동0~5 → mode4/3/1/5/2/6이며 프리 플레이는 활동 2/mode 1이다. 이미 판독된 mgmet `SetNextMGMode` 표 @0x71000e3658, `GetModeNumberFromID` @0x7100050248과 main `CallMinigameModeScene` @0x710036027c를 재사용한다. [허브 §4.2](mgmet_flow.md#42-모드-번호는-표별로-구분), [공용 감사 §1.2](../engine/common_system_audit.md#12-게임-호스트프리-플레이-경계).
+[판독] [데이터] 활동0~5 → mode4/3/1/5/2/6이며 프리 플레이는 활동2/mode1이다. 이미 판독된 mgmet `SetNextMGMode` @0x71000e3658·`GetModeNumberFromID` @0x7100050248, main `CallMinigameModeScene` @0x710036027c를 재사용한다. [허브 §4.2](mgmet_flow.md#42-모드-번호는-표별로-구분)·[공용 감사 §1.2](../engine/common_system_audit.md#12-게임-호스트프리-플레이-경계).
 
 ## 2. 자료
 
@@ -37,8 +37,8 @@
 | 자료 | 확인 범위·경로 |
 |---|---|
 | [데이터] 함수·C 인덱스 | [INDEX][idx]·[mgm02][fn02]·[mgm03][fn03]·[mgm04][fn04]·[mgm05][fn05]·[mgm06][fn06]·[mgmet][fnH]·[bd01][fnBD]·[main][fnMain] |
-| [데이터] 기존 C | [callers]의 기존 규칙/복귀 8함수와 후속 caller/결과 reader 11함수, [DAILY-C]의 후속 4함수. 누적 23함수; §3.4·3.5·§6.2·6.3·부록B 참조 |
-| [미확정] 본체 C 부재 | INDEX 및 `analysis/decomp/*.c`, `ghidra_work/*/out/*.c` 헤더에서 mgm02~06 Scene/MgMgr·bd01 MgMgr/MgCall 본체를 찾지 못함. 주소는 부록C에 요청; 추출하지 않음 |
+| [데이터] 판독 C | 최초8+추가140=누적148함수. [callers]·[DAILY-C]·[GAP]·[MODE-H]·[BOARD-C]·[C02]~[C06]; 부록B |
+| [데이터] 추가 C 보유 | 허용 C486파일. mgm02/03/04/05/06 헤더745/415/709/437/581개와 [fn02]~[fn06]·[INDEX][idx] 대조. 자체 Ghidra 추출0 |
 | [데이터] 게임 이름 | [catalog][catalog] `code/name_ko/name_en/nro_size/bea` 112행. 인원 형태/모드 membership 열은 없음 |
 | [데이터] 미니게임 표 | [ND] `mgList`84행·[CA] `mgList`38행; `Name/GameRule/Available/Gyro/Coin/BD01Normal/BD01Serious` |
 | [데이터] 프리 플레이·팩·서바이벌 | [FP] `gamedata`112행·[PACK] `mgpack`25행·[SURV] `mgList`26행 |
@@ -48,36 +48,34 @@
 
 [데이터] 관련 상위·대상 경로의 `AGENTS.md`와 `.agents/skills`는 발견되지 않았다. 키 값은 출력·기록하지 않았고 로컬 Codex 기억은 사용하지 않았다. 기준 검색 범위는 `C:/dev/mpj`, `web`, `web/docs`, `web/docs/shell`; 전체 저장소의 AGENTS.md/.agents 목록도 확인했다.
 
-### 2.3 후속 공백·caller/callee 일괄 목록
+### 2.3 추가 C·미확정 일괄 목록
 
-[데이터] 후속 분석은 기존 §2.1·§3.2·§3.3의 8함수를 재사용하고 아래 공백만 기존 C로 읽었다. 본체 C가 없는 추첨·정산·종료는 심볼로 좁힌 뒤 부록 C에 남겼다. 모듈·주소를 함께 대조했으며 같은 주소의 다른 NRO 함수는 C 존재 근거로 쓰지 않았다. [INDEX][idx]·[fn02]·[fnH]·[fnMain].
+[데이터] 기존 §2.1·§3.2·§3.3의8함수는 재사용했다. 이후 확보된 C에서 표시 reader15함수·MGList/데일리/보드25함수·mgm02~06 고유 본체100함수를 추가 판독하여 누적148함수다. 대형 함수는 계산·상태·선택 구간만 읽었고 GUI 문자열 조립·일반 렌더·공용 소유권은 제외했다. 부록B·[INDEX][idx]·[fn02]~[fn06]·[fnMain].
 
-| 공백 [데이터] | 새로 필요한 caller/reader | 기존 C / 남은 callee |
+| 공백 [데이터] | 확보·판독한 C | 남은 범위 |
 |---|---|---|
-| 데일리 팩·조합·시간 | main LoadDailyTrialData @0x7100361e00, GetMgPackDailyTrialData @0x7100362860, GetRemainingTimeFromBaseDateTimeDailyTrialData @0x7100362a10, GetComboIndexFromNowDateTimeDailyTrialData @0x7100362bcc | [DAILY-C] 있음. JSON 파서 @0x7100362300/@0x71003624e0와 날짜 helper @0x71003628bc는 없음. 실제 선택 caller mgmet @0x7100056e10/@0x7100056f40도 없음 |
-| 설정 진입·진행 | mgmet ChallengeMgBattleSettingUiFlow @0x71000535f0, Dailytrial_SettingUiFlow @0x7100055cb0, SurvivalMainFlow @0x710005e4a0, BossrushStartFlow_SettingUIFlow @0x7100050e10 | [callers] 있음. MGMSelectOpponentUiFlow @0x710005a1a0는 없음. 기존 규칙 7함수는 §3.2 재사용 |
-| 챌린지 결과 표시 | mgmet ChallengeMgBattleResultUI::Setup @0x7100066610, ChallengeMgBattleResultMessage::StartAnnounceTop @0x7100003b70 | [callers] 있음. main rank/결과 getter·setter, mgmet 정렬 helper @0x7100068d90·발표 helper @0x7100004040는 없음 |
-| 데일리 결과 표시 | mgmet DailytrialResultUI::Setup @0x710006c4e0 | [callers] 있음. DailytrialResultData::Setup/SetupRandomMatch/IsGetStar/IsWinLose/GetRank/IsGotStarBefore는 부록 C의 6주소; C 없음 |
-| 태그 결과·복귀 | mgmet TagmatchResult::Impl::Setup @0x7100078e70, TagmatchResultForRM::Impl::Setup @0x71000786d4, Mgm04ReturnUiFlow @0x7100085900, Mgm04ReturnFlow @0x71000818e0 | [callers] 있음. main Mgm04GetMGResult/Count/TeamData와 mgmet 보상 카운터 @0x71000864a0/@0x71000866fc는 없음 |
-| 원본 코인 산식·유형 표 | mgm02 CoinMgr 8함수·SceneParamsGame/유형 getter 7함수 | [fn02]의 정확한 심볼·주소를 부록 C에 추가. 허용 C 없음; 계산이나 데이터 값을 추측하지 않음 |
+| 데일리 팩·조합·시간 | main @0x7100361e00/@0x7100362860/@0x7100362a10/@0x7100362bcc [DAILY-C]; mgmet @0x7100056e10/@0x7100056f40/@0x71000597a0 [MODE-H]; mgm03 @0x710000a440 [C03] | [미확정] 날짜 helper @0x71003628bc·파서2함수·DailytrialResultData의 스타 판정 |
+| MGList·모드/보드 추첨 | main @0x71001e14b0/@0x71001e15d4/@0x71001e1600/@0x71001e1630/@0x71001e1690 [GAP]; bd01 16함수 [BOARD-C]; mgm02/04/05/06 선택 [C02]·[C04]·[C05]·[C06] | [미확정] 런타임152행 초기화·JsonMgTeam 확률·C에서 빠진 RNG 상한 |
+| 누적·종료·보상 | mgm02 CoinMgr·RankMgr·Scene·기본 Params, mgm04 TeamMgr·Flow, mgm05 투표/룰렛·결과, mgm06 점수 합·MVP [C02]~[C06] | [미확정] 정적 테이블3개·보스 ID 배열·보상 callee·서바이벌 실력 포인트 식 |
+| 공용 Work·온라인·렌더 | [18_scene_work §11.4~11.6](../engine/18_scene_work.md#11-미확정)·[12_online_sync](../engine/12_online_sync.md)·[render_unify §3.4](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체) 재사용 | [미확정] 모드 고유 Work9함수는 C가 있으며18 담당이다. C.4에 판독 공유 요청만 남긴다. |
 
-[데이터] extracted의 mgm02/03/04/06 archive에는 규칙 JSON이 없고, 기존 extracted JSON에서 mg_type_table_five_round/seven_round/ten_round·rank_coin_count·bonus_mg_coin_count_coef·battle_mg_levied_coin_count 필드명을 찾지 못했다. 이는 실제 데이터가 없다는 증명이 아니다. 모드별 실제 경로는 §7의 archive 링크이며 데이터 소비 후보는 mgm02 SceneParamsGame::getPropertyList @0x710001b0a8와 MgType @0x710001b580 [fn02]다.
+[데이터] mgm02 Params의 `mg_type_table_five_round/seven_round/ten_round`·`rank_coin_count`·`bonus_mg_coin_count_coef`·`battle_mg_levied_coin_count` 기본 생성값은 C에서 확보했다. 기존 extracted JSON에서 해당 override 필드를 찾지 못했다. 실제 override 부재는 증명하지 않았다. mgm02 @0x710001b0a8/@0x710001b33c [C02]·§4.2.
 
 ## 3. 진입점·호출 흐름
 
 ### 3.1 기존 허브와 본체 진입점
 
-[판독: 어셈블리] 허브 → 모드 요청은 mgmet @0x7100049f14와 main `CallMinigameModeScene` @0x710036027c·이름 표 @0x71015d840c를 재사용한다. [허브 §3](mgmet_flow.md#3-진입점과-호출-흐름). 여기서 각 모드 내부 호출 순서는 확인되지 않는다.
+[판독: 어셈블리] 허브 → 모드 요청은 mgmet @0x7100049f14, main `CallMinigameModeScene` @0x710036027c·이름 표 @0x71015d840c의 기존 판독을 재사용한다. [허브 §3](mgmet_flow.md#3-진입점과-호출-흐름).
 
-| 모듈 | TSV의 실제 본체 심볼·주소 | 화면 흐름 해석과 제한 |
+| 모듈 [판독] | 본체 연결 | 종료·제한 |
 |---|---|---|
-| [데이터] mgm02 | `MinigameModeFlow` @0x7100017728·`FirstRoundFlow` @0x71000178f0·`DecideMgFlow` @0x7100017b20·`StepToMinigameScene` @0x7100018030·`ResultFlow` @0x7100018300·`ReturnToEntranceScene` @0x7100018740 [fn02] | [추정] 첫 라운드 → 게임 결정 → 한 판 → 코인 결과 → 다음/최종 → 항구. [미확정] 실제 분기·라운드 증가 시점 |
-| [데이터] mgm03 | `MinigameModeFlow` @0x7100009780·`StartFlow` @0x7100009bc0·`DicideMinigameFlow` @0x710000a440·`ResultMinigameFlow` @0x710000b3a0 [fn03] | [추정] 팩 선택/규칙 → 팩 내3게임 → 스타 결과 → 항구. [미확정] 팩 순서·팀 회전·마지막 시상 |
-| [데이터] mgm04 | `MinigameModeFlow` @0x7100015f70·`FirstRoundFlow` @0x7100016190·`ResultFlow_Cut01/02` @0x7100016330/@0x7100016390·`SelectNextMgFlow` @0x7100016580 [fn04] | [추정] 팀/목표 승수 → 2vs2 → 양팀 결과 → 다음 선택/최종. RM은 `RM_MinigameModeFlow` @0x710001aa90의 별도 본체 |
-| [데이터] mgm05 | `MinigameModeFlow` @0x710000956c·`MinigameModeFlow_AfterMaching` @0x710000aeb0·`MinigameModeFlow_AfterGame` @0x710000c210·`DicideMinigameFlow` @0x7100010d90 [fn05] | [추정] 규칙 → 매칭 → 투표/룰렛 → 한 판 → 승패/포인트 → 다음/재도전. [미확정] 전환 조건 |
-| [데이터] mgm06 | `MinigameModeFlow` @0x710001140c·`OpeningFlow` @0x71000115a0·`CallMinigameScene` @0x7100011610·`RewardFlow` @0x7100011750·`VictoryFlow::MainFlow` @0x710001e5e0 [fn06] | [추정] 보스 연전 → 패배 종료/완주 → MVP·총점 → 항구. [미확정] 보스 수·순서·호출 연결 |
+| mgm02 | SyncedSetupGame @0x7100016008 → MinigameModeFlow @0x7100017728 → Round0 FirstRoundFlow @0x71000178f0 / 그 뒤 ResultFlow @0x7100018300 → DecideMgFlow @0x7100017b20 → StepToMinigameScene @0x7100018030 [C02] | Round==max이면 ResultFlow→ReturnToEntranceScene @0x7100018740. Round>max는 Sleep(-1). SetRound 호출 인자가 C에서 빠짐 |
+| mgm03 | SyncedSetupGame @0x7100008960 → MinigameModeFlow @0x7100009780 → StartFlow @0x7100009bc0 / ResultMinigameFlow @0x710000b3a0 → DicideMinigameFlow @0x710000a440 [C03] | Round>=MaxRound의 결과 분기에서 flag0x1a·Entrance9·RequestReturn. MaxRound/SetRound 값 인자는 빠짐 |
+| mgm04 | SyncedSetupGame @0x71000150c8 → UpdateMgmWork @0x7100015c88 → MinigameModeFlow @0x7100015f70 → FirstRoundFlow @0x7100016190 / ResultFlow_Cut01/02 @0x7100016330/@0x7100016390 → SelectNextMgFlow @0x7100016580 [C04] | 양팀 승수<목표일 때만 계속. RM_MinigameModeFlow @0x710001aa90는 매칭/연승·Entrance10의 별도 경로 |
+| mgm05 | MinigameModeFlow @0x710000956c의 Scene+0x258 상태0/1/2 → 도입/AfterMaching @0x710000aeb0/AfterGame @0x710000c210; DicideMinigameFlow @0x7100010d90 [C05] | 승패 결과 메뉴·CheckMoveMatching @0x710000f9cc 반환으로 재매칭 또는 Entrance11·RequestReturn. 온라인 계산은 공용 문서 참조 |
+| mgm06 | SyncedSetupGame @0x7100010e54 → SetMinigameResultToMinigameModeWork @0x71000111c0 → MinigameModeFlow @0x710001140c → OpeningFlow @0x71000115a0 또는 CallMinigameScene @0x7100011610 [C06] | Round5는 VictoryFlow::MainFlow @0x710001e5e0 → RewardFlow @0x7100011750·Entrance12·RequestReturn. 실패는 OpeningType2 경로 |
 
-[데이터] `Dicide`·`AfterMaching`·`FirstRount`·`TeamVitory` 등 원본 식별자의 철자는 TSV 그대로 유지한다. 심볼 존재는 실행 경로나 연산의 판독이 아니다. [fn03]·[fn04]·[fn05]·[fnMain].
+[데이터] `Dicide`·`AfterMaching`·`FirstRount`·`TeamVitory` 등 원본 식별자의 철자는 TSV 그대로 유지한다. [fn03]·[fn04]·[fn05]·[fnMain].
 
 ### 3.2 빈 부분에서 새로 읽은 규칙 caller
 
@@ -110,13 +108,23 @@
 
 ### 3.5 후속 판독: 결과 reader·시상 경계
 
-[판독] 챌린지 결과 UI는 Order와 Mgm02GetResultRank를 네 번 읽어 PlayerOrderAndRank 4항목을 만든 뒤 FUN_7100068d90으로 정렬하고 순위+1·TotalCoinCount·개별 게임 결과를 표시한다. 우승 발표 reader는 rank==0 조건으로 Order0~3을 수집한다. [미확정] getter의 Order 인자와 정렬/발표 helper C가 빠져 동점의 안정 순서·메시지 선택을 확정하지 않았다. 코인 배분과 rank를 만드는 writer도 없다. mgmet @0x7100066610/@0x7100003b70 [callers]; main @0x71001f33a0/@0x71001f33d0 [fnMain].
+[판독] 챌린지 결과 UI는 Order와 Mgm02GetResultRank를 네 번 읽어 PlayerOrderAndRank 4항목을 만든 뒤 FUN_7100068d90을 호출한 뒤 순위+1·TotalCoinCount·개별 게임 결과를 표시한다. 우승 발표 reader는 rank==0 조건으로 Order0~3을 수집한다. [미확정] getter의 Order 인자와 정렬/발표 helper C가 빠져 동점의 안정 순서·메시지 선택을 확정하지 않았다. 코인 지급·rank 계산은 §6.4에서 확인했고, 최종 Work setter 본체는 남는다. mgmet @0x7100066610/@0x7100003b70 [callers]; main @0x71001f33a0/@0x71001f33d0 [fnMain].
 
 [판독] 데일리 결과 UI는 DailytrialResultData의 IsGotStarBefore·IsWinLose·IsGetStar·GetRank를 읽어 이전 스타·이번 스타·순위를 표시한다. 이 함수는 스타 지급 산식의 writer가 아니다. [미확정] 승패형 게임과 rank형 게임의 별 지급·동점 처리·중복 지급 방지는 해당 Data의 Setup/SetupRandomMatch C가 필요하다. mgmet @0x710006c4e0 [callers], @0x71000083e0/@0x7100008ba4 [fnH].
 
-[판독] 태그 결과 UI는 ID<152인 결과를 읽고 record+4의 bit0·record+5의 bit0을 두 팀 승수로 각각 센다. 어느 팀이 목표 승수 이상이 되거나 결과 수를 소진하면 표시 집계를 멈춘다. 결과 개수가 10을 넘으면 스크롤 UI를 준비하고, 복귀 UI는 한 줄씩 이동하며 최대 시작 위치는 count−10이다. mgmet @0x7100078e70/@0x7100085900 [callers]. [미확정] C에서 result getter의 index 인자가 빠졌으므로 기록 순회·원본의 실제 경기 종료는 main @0x71001f3b8c 및 mgm04 @0x7100015f70/@0x7100015c88 [fnMain]·[fn04]가 필요하다.
+[판독] 태그 결과 UI는 ID<152인 결과의 record+4/+5 bit0을 집계하고 어느 팀이 목표 이상 또는 결과 소진이면 멈춘다. 10개 초과 결과는 스크롤하며 최대 시작 위치는count−10이다. mgmet @0x7100078e70/@0x7100085900 [callers]. 실제 종료도 >=target임은 mgm04 @0x7100015f70 [C04]에서 확인했다. [미확정] getter index 인자·Work record 물리 배치는18 추가 판독 참조다.
 
 [판독] 태그 복귀 연출은 각 팀 승수==목표를 승리 모션/이름 선택에 사용한다. 로컬에서 승리 팀의 상대 승수가0이면 업적 ID0x45를 두 팀원에게 요청한다. 결과 UI 후 로컬 분기에서 WinContinuousCount·WinCount 보상 카운터를 호출하고 MGMRewardUiFlow → BGM 정지 → FadeOutWait 순서로 진행한다. mgmet @0x71000818e0 [callers]. [미확정] 카운터·보상량은 @0x71000864a0/@0x71000866fc [fnH] C가 없어 보류한다. UI의 >= 집계와 복귀 연출의 == 비교를 실제 모드 종료 비교로 합치지 않는다.
+
+### 3.6 추가 C 판독: 한 판 결과에서 다음 모드 상태로
+
+| 모드 [판독] | 결과 소비·다음 선택 | 한계·출처 |
+|---|---|---|
+| mgm02 | SyncedSetupGame은 직전 회차 유형으로 CoinMgr 지급→누적→RankMgr→SetMgResult→다음 LotteryNextMg 순서. Round0은 결과 추가0; 최종 전원 rank3이면 전원0으로 보정 | mgm02 @0x7100016008/@0x710001704c/@0x7100017408 [C02]. Work setter 값 인자 누락·공용 저장은18 |
+| mgm03 | Rule0은 GameRank를 읽되 unsigned>2이면3. 그 밖 승자 WinLose==1이면0·비승자는 승자 수, 승자0명이면 모두3. 팩 ID 슬롯+0x5c+Round×4를 선택 | mgm03 @0x7100008960/@0x710000a440 [C03]. 팀/스타 지급의 최종 Data writer는 미확정 |
+| mgm04 | TeamMgr는 팀원 중 누구라도 WinLose1이면 해당 팀 승리. 결과 code1=A만·2=B만·3=양팀·4=양팀 아님. code3은 양팀 승수+1 | mgm04 @0x710001d260/@0x710001ce70/@0x7100015c88 [C04]. 팀별 Work 기록 형식은18 |
+| mgm05 | local operation player 승리 여부로 ResultWin/ResultLose. 성공·재도전 분기에서 다음 듀얼 flag를 옮기며 Round%3==2 조건을 사용 | mgm05 @0x7100003ff0/@0x7100012bf0/@0x71000141f0 [C05]. [미확정] Round가 어떤 성공 누적을 뜻하는지는 빠진 getter/setter 인자로 보류 |
+| mgm06 | Round0은 결과 추가0. 직전 보스 전원 승리와 네 rank<4를 확인한 뒤 보스ID·judge0·네 rank를 mode 결과에 전달 | mgm06 @0x71000111c0/@0x7100011ed0 [C06]. ring 소유·수명·공용 writer는 [18 §4.3·5](../engine/18_scene_work.md#43-gameworkminigamemodeworksyncminigamework) 재사용 |
 
 ## 4. 구조체·필드·상수
 
@@ -129,7 +137,7 @@
 | [판독] MinigameModeWork 결과 ring | Round+0·결과+0xc·100칸×0xc·ID/judge/raw byte4; SetMinigameResult 자체는 Round를 증가시키지 않음 | main @0x71001f0460/@0x71001f0440/@0x71001f2a80 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring)·[공용 소유권 §4.3](../engine/18_scene_work.md#43-gameworkminigamemodeworksyncminigamework) |
 | [데이터] GameRule 최신 대응 | VS4=0·2VS2=1·1VS3=2·1VS1=3·Chara=7·Item=8·Boss=9·Rhythm=10·Busters=11·Athlon=12·AthlonSP=13 | main의 `main.decomp.bin`에 기재된 offset 0x19d8390~0x19d8740 [한 판 §12.1](minigame_scene.md#121-추가-판독-구현에-필요해서-이번에-읽은-것); 구 문서의 Chara8/Athlon13 추정을 대입하지 않음 |
 | [데이터] MGList JSON 필드 | `Name/GameRule/Available/Coin/Gyro/BD01Normal/BD01Serious` | [ND]·[CA] `mgList[]`; 파일 행의 데이터이며 런타임 숫자 ID는 부여하지 않음 |
-| [미확정] 모드 고유 Work | mgm02 TotalCoinCount/MgResult/LeviedCoinCount/PlayedMgIds·mgm04 TeamVitoryCount/TargetVictoryCount/MGIDHistory | main @0x71001f3120/@0x71001f3370/@0x71001f3470/@0x71001f35d0/@0x71001f396c/@0x71001f3974 [fnMain]; 해당 C가 없어 필드 오프셋·연산은 보류 |
+| [미확정] 모드 고유 Work | mgm02 결과/코인/이력·mgm04 승수/이력 API9함수의 C는 [GAP]에 있음 | main @0x71001f3120/@0x71001f3370/@0x71001f3470/@0x71001f35d0/@0x71001f396c/@0x71001f3974/@0x71001f39e0/@0x71001f3be0/@0x71001f3d50;18담당 판독 공유는C.4. 이번 재판독0 |
 
 [판독] 승·패·무는 1/0/2다. 프리 플레이의 history 승점은 raw byte와 `(judge!=0)` 비교이며 코인 수·게임 rank·MVP 점수의 대체물이 아니다. main @0x71002f0ba0/@0x71002f4840/@0x71002f4a30 [결과 §6.1](minigame_result.md#61-패턴-고르기-fun_71002ee230), @0x71001f2a80 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring).
 
@@ -143,37 +151,56 @@
 | 챌린지 결과 reader | Mgm02GetMgResult 반환 record[0]은 thumbnail ID로 사용. record[5+Order]의 s32를 표시용으로 읽음 | mgmet @0x7100066610 [callers]; main getter @0x71001f32cc [fnMain] C 없음. 전체 record 구조·코인 writer 의미는 미확정 |
 | 태그 결과 reader | ID s32 @+0, 두 팀 집계용 bit0 @+4/+5. TeamData reader는 팀당 stride0xc, 팀원 Order는 +4/+8 | mgmet @0x7100078e70/@0x71000818e0 [callers]. getter 반환 영역의 관찰이며 Work 물리 offset을 부여하지 않음 |
 
+### 4.2 추가 C 판독: 고유 필드·기본 상수
+
+| 객체·필드 [판독] | 확인값 | 출처·제한 |
+|---|---|---|
+| SceneParamsGame 기본 | +0x08/+0x0c/+0x10/+0x14 순위 코인10/3/2/0, +0x18 Bonus 계수2, +0x1c Battle징수10 | mgm02 create @0x710001b33c, getter @0x710001b534/@0x710001b710/@0x710001b718 [C02]. asset override는 미확정 |
+| 회차 유형 기본 | 5회 [1,2,1,3,2]; 7회 [1,1,2,1,3,1,2]; 10회 [1,1,2,1,2,1,3,1,1,2] | mgm02 create @0x710001a954/@0x710001ac20/@0x710001af80·MgType @0x710001b580 [C02]. 1=Normal·2=Bonus·3=Battle은 DecideMgFlow @0x7100017b20 |
+| ParamMgr | SyncedSetupGame이 Scene Params 참조를 받음 | mgm02 @0x7100011f48 [C02]. 실제 asset override loader 경로는 미식별 |
+| CoinMgr | 4인 직전 rank·이번 지급·징수·누적 입력; +0x30은 전원 징수 요구량을 냈는지 | mgm02 @0x7100003e60/@0x710000484c [C02]. 공용 Work offset으로 전용 객체 offset을 옮기지 않음 |
+| MgMgr 후보 | vector 시작/끝의 ID 배열; Rule7·Available·체감·이력을 확인 | mgm02 @0x710000f0b0 [C02]. 최대회차 표 DAT @0x710005036c의 내용은 C에 없음 |
+| MGList 런타임 | 152행×0x20; 규칙 +0x10, 이름 hash +0x14, flags +0x18. Available bit0·Coin bit2·BD mode1 bit0x20/그 밖 bit0x10 | main @0x71001e14b0/@0x71001e15d4/@0x71001e1600/@0x71001e1630/@0x71001e1690 [GAP]. 배열 초기화·JSON 순서 대응은 미확정 |
+| 데일리 팩 진행 | 선택 Scene+0x360 index0~2, 조합+0x368/0x370, 팩3개+0x380/0x390/0x3a0; SyncData+0 팩ID·+4 조합index·+8 zero | mgmet @0x7100056e10/@0x7100056f40 [MODE-H]. Work setter 값 누락은 보류 |
+| 서바이벌 | Scene+0x230 체감flag, +0x231 현 듀얼flag, +0x232 다음 듀얼flag, +0x258 flow상태. 투표UI +0x234/238/23c 후보3·+0x240..24c 4표·+0x250 최종ID | mgm05 @0x7100003ff0/@0x7100017bf0/@0x7100018690 [C05]. 모드 객체에서 관찰한 필드 |
+| 보스 course 결과 | 네 점수 +0x50..5c·네 rank +0x60..6c·정렬 playerID +0x70..7c. ScoreTable DAT @0x7100049a30 | mgm06 @0x710002329c [C06]. 점수 테이블 값·정렬 동률 표시 순서는 미확정 |
+
+[판독] Name→ID는 FNV-1a32 hash를 계산해 152행의 +0x14와 비교하고 첫 일치 index를 반환한다. 문자열 재검증은 이 getter에 없으며 미일치는0xffffffff다. JSON122행 순서로 ID를 만들지 않는다. main @0x71001e14b0 [GAP].
+
 ## 5. 상태·수명
 
-| 흐름 | 판독 가능한 경계 | 본체에서 미확정인 경계 |
+| 경계 [판독] | 확인한 상태 변화 | 제한·출처 |
 |---|---|---|
-| [판독] 규칙 시작/취소 | Rule In→Update 루프→Out/GetResult→cache write. §3.2의 mgmet 7주소 [callers] | [미확정] 최종 Work 값 인자·각 모드 SyncedSetup 소비 |
-| [판독] 설명 다시 보기 | Rule Out→`HowToPlayFlow(mode,0,1,1)`→Rule In; 버튼 값 재생성 없음. mgmet @0x7100057b00/@0x71000638a0 [callers] | [미확정] 활동 UI/3D 완료시간 |
-| [판독] 체감 확인 | 시작 결과1에서 index0이면 Confirm; 돌아오기2면 UI 복원. mgmet @0x7100054640/@0x71000633c0/@0x710005f5e0 [callers] | [미확정] 모드 시작 이후 체감 후보 제거 순서 |
-| [데이터] mgm02 계속/최종 | `GetMaxRound` @0x7100017008·`ResultFlow` @0x7100018300 [fn02] 존재 | [미확정] Round의 전/후 증가·최종 결과가 포함하는 보너스 회차 |
-| [데이터] mgm04 계속/최종 | `UpdateMgmWork` @0x7100015c88·`ResultFlow_Cut02` @0x7100016390 [fn04] 존재 | [미확정] 목표 승수 비교·무승부에서 진행/종료 |
-| [데이터] mgm06 실패/완주 | `IsBossMinigameDefeated` @0x7100011ed0·`RewardFlow` @0x7100011750 [fn06] 존재 | [미확정] 실패 시 저장·완주 판정·MVP 평가 |
+| 규칙 UI | Rule In→Update→Out/GetResult→cache write; 설명 보기 뒤 Rule 재진입 | mgmet §3.2의7주소 [callers]. 빠진 값 인자는 보류 |
+| 챌린지 한 판 | 결과 소비 → 누적·rank → 다음 후보 Lottery; Round==max는 Lottery를 생략하고 최종 결과/복귀 | mgm02 @0x7100016008/@0x7100017408/@0x7100017728 [C02]. SetRound의 실제 전달값은 빠짐 |
+| 챌린지 이력 | 후보 소진 시 Clear→SetTarget→선택→AddPlayed. 회차 유형은 다음 Round의 Params를 읽음 | mgm02 @0x7100017408/@0x710000ee3c [C02]. Clear 뒤 직전게임 제외는 이 흐름에 없음 |
+| 데일리 날짜 경계 | 팩 화면 남은 시간00:00:00이면 교체 안내→reset/reload; timer는 f32 dt 감소. A선택 검사가 시간 경계보다 먼저 | mgmet @0x7100056f40 [MODE-H]. 같은 틱의 A는 옛 팩을 선택할 수 있음 |
+| 태그 계속/종료 | 양팀 승수<target이면 다음 게임, 어느 팀>=target이면 최종. 양팀 무승리도 계속 | mgm04 @0x7100015f70/@0x7100016390 [C04]. RM의 서버 값·이력 Work 내부는 담당 문서 |
+| 서바이벌 계속/종료 | 결과 menu·CheckMoveMatching으로 매칭 재진입 또는 Entrance11 복귀; Lose RetryMenu 반환1은 재도전 | mgm05 @0x710000c210/@0x710000f9cc/@0x71000141f0 [C05]. 실력 포인트·서버 처리 완료는 미확정 |
+| 보스 실패/완주 | Round0 첫 오프닝·승리 오프닝1·실패 오프닝2; 5게임 완료 시 Victory→Reward→Entrance12 | mgm06 @0x710001140c/@0x71000115a0/@0x7100011750 [C06]. 보상 callee·슬롯ID는 남음 |
+| 공용 결과·Work | mode 결과 ring 소유·GameWork 참조 facade·장면 전환 수명은 기존 계약 재사용 | main @0x71001f0460·[18_scene_work §4.3·5·9](../engine/18_scene_work.md#43-gameworkminigamemodeworksyncminigamework); 이번 공용 수명 새 판독0 |
 
-[설계] 원본 Fiber의 Wait 위치를 보존하는 상태기계를 사용한다. 한 틱마다 In/메시지 시작을 반복하지 않는다. 한 판 결과의 commit 성공 뒤 모드 누적 상태를 갱신하고 실패/null은 누적하지 않는 계약은 [한 판 §12.12.4](minigame_scene.md#12124-결과-갈래와-기록-계약)과 [DESIGN §10.5][design]를 따른다. main ring writer 경계 @0x71001f0460이며 실제 종료 caller 미확정은 그대로 유지한다.
+[설계] Fiber의 Wait를 상태 전환으로 옮기고 한 틱마다 In/메시지 시작을 반복하지 않는다. commit 뒤 누적하며 실패/null은 누적하지 않는 웹 계약은 [한 판 §12.12.4](minigame_scene.md#12124-결과-갈래와-기록-계약)·[DESIGN §10.5][design]를 따른다. 이는 원본 C에서 빠진 SetRound 인자를 채웠다는 뜻이 아니다. mgm02 @0x7100018030 [C02].
 
 ## 6. 계산식·의사코드
 
-### 6.1 확인된 추첨·난수와 확인되지 않은 부분
+### 6.1 확인된 추첨·난수와 추천 근사
 
 | 대상 | 후보·가중치·중복·형태 | 난수 소비·근거 |
 |---|---|---|
-| [판독: 어셈블리] mgm01 수동 랜덤 | 현재 필터의 unlocked 후보. 0개이면−1·균등 index 선택. 이 두 함수에 중복 방지 필터는 없음 | `SyncRandRange(0,N)`; mgm01 @0x71000165bc/@0x710001b480 [프리 플레이 §6.3](mgm01_freeplay.md#63-끝-행과-래핑랜덤) |
-| [판독] mgm01 연속 후보 구성 | unlocked MgAll/현재 필터·flag6 off면 UseGyro 제거·사람>1 그리고 filter0이면 TeamOrderData+4==3 제거·현재 ID 제거 | mgm01 @0x710001c2a0/@0x7100020b10/@0x7100020b74/@0x710001c8b0 [프리 플레이 §8.3](mgm01_freeplay.md#83-미니게임-호출복귀-계약). 선택 RNG 순서와 구분 |
-| [미확정] mgm02 | Scene `LotteryNextMg` @0x7100017408·MgMgr 동명 @0x710000f030·`GetMgType` @0x710000efe0·5/7/10회차 타입 표가 존재 | [fn02] 심볼만. 가중치·PlayedMgIds 초기화/회피·형태 선택·RNG 호출 종류/횟수 모두 C 요청 |
-| [미확정] mgm03 | [PACK] 명시 49게임·25×3 슬롯. 실제 날짜→팩/조합 선택은 별도 | mgmet `Dailytrial_UpdateDailyData` @0x7100056e10·`Mgm03GamePackFlow` @0x7100056f40 [fnH]; mgm03 @0x710000a440 [fn03] C 요청 |
-| [미확정] mgm04 | 2vs2는 안내로 확인·MGIDHistory API 존재. 12종 모두 사용·후행 팀 선택·중복 해제는 보류 | mgm04 @0x7100018060 [fn04]·main @0x71001f3be0/@0x71001f3d50 [fnMain] C 요청 |
-| [미확정] mgm05 | [SURV] 26종＝VS4 21＋1VS1 5. 투표·룰렛 심볼 존재 | mgm05 @0x710000fb40/@0x71000154f0/@0x7100017bf0/@0x7100018690 [fn05]; 가중치/동표·중복·듀얼 조건 C 요청 |
-| [미확정] mgm06 | [ND] Boss 5종 후보. 실제 순서/무작위 여부는 미확정 | mgm06 @0x7100011610 [fn06] C 요청. 연전이 곧 무작위라는 가정 금지 |
-| [미확정] 보드 | [ND] BD01Normal/Serious 허용은 데이터. 인원 형태·배틀/듀얼·이력 정책은 별도 | bd01 `MgMgr::GetList` @0x71000afb90·`GetPlayID_` @0x71000b09f0·`SetHistoryID` @0x71000b1228·`MgCall::GetMinigameList` @0x710028cb00 [fnBD] C 요청 |
+| [판독: 어셈블리] mgm01 수동 랜덤 | 현재 필터 unlocked 후보, 0개→−1. 이 두 함수에 이력 제외 없음 | SyncRandRange(0,N), mgm01 @0x71000165bc/@0x710001b480 [프리 플레이 §6.3](mgm01_freeplay.md#63-끝-행과-래핑랜덤) 재사용 |
+| [판독] mgm01 연속 후보 | unlocked·flag6·인원/필터·현재ID 제외 | mgm01 @0x710001c2a0 [프리 플레이 §8.3](mgm01_freeplay.md#83-미니게임-호출복귀-계약) 재사용 |
+| [판독] mgm02 | Available·Rule7 Chara·체감·미사용; 소진 시 이력 Clear. 게임별 weight 읽기 없음 | 선택마다 SyncRandRange 하한0, 상한 인자는 빠짐. mgm02 @0x710000f0b0/@0x710000f030/@0x7100017408 [C02]·§6.4 |
+| [판독] mgm03 | 날짜 조합→팩선택→팩의 mg1/mg2/mg3 고정순서 | DicideMinigameFlow 내 SyncRand 호출0. mgm03 @0x710000a440 [C03]·mgmet @0x7100056f40 [MODE-H] |
+| [판독] mgm04 | Available·Rule1 2VS2·체감·history 제외 후 shuffle; 후보不足이면 history초기화 | 후보 M>=2이면 SyncRandMod M−1호출; 룰렛은 이어 RangeF/Range 각1호출. 상한 인자 빠짐. mgm04 @0x710000d860/@0x710001fc64/@0x7100022c74 [C04]·§6.6 |
+| [판독] mgm05 | 명시목록26→VS4/듀얼·Available·체감. 전체 이력 필터 없음. 전원일치 또는4표 룰렛 | 투표 후보3개의 SyncRandRange·CPU 지연 RandRangeF·듀얼 후보 shuffle·룰렛 RandRangeF/Range. mgm05 @0x7100014fb0/@0x71000165b0/@0x71000154f0 [C05]·§6.6 |
+| [판독] mgm06 | kBossMinigameIds[Round]·Round0~4, 고정순서. 배열 내용은 미확정 | Call/Flow 선택 구간 SyncRand0. mgm06 @0x7100011610/@0x710001140c [C06] |
+| [판독] 보드 | 직전 동일rule ID·체감·피로 제외 → 최소 playcount 우선 → shuffle; 인원형태 확률은 JsonMgTeam | bd01 @0x71000b09f0/@0x710028b7f0/@0x710028cb00 [BOARD-C]·§6.5. JsonMgTeam @0x71000690e0 C 없음 |
+
 
 [판독: 어셈블리] 난수 엔진은 MT19937. sync 정수 분포는 n<2이면 소비0·그 외 `floor(u32*n/2^32)`로 출력1개를 소비한다. async 정수 분포는 기각 재추첨 때문에 소비 수가 달라진다. 원본 장면마다 seed 설정은 main @0x71001c94cc→@0x7100189438. 기존 [코어 §6.6·6.7](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행)을 인용하며 이번에 알고리즘 C를 다시 읽지 않았다.
 
-[설계] 아래 식은 이식 부분집합의 추천 추첨 근사다. 원본 mgm02/보드 판독으로 확정된 식이 아니다. 근거가 된 원본 경계는 mgm02 @0x7100017408 [fn02]·mgm01 @0x71000165bc [프리 플레이 §6.3](mgm01_freeplay.md#63-끝-행과-래핑랜덤)·난수 분포는 main @0x7100189438 [코어 §6.6](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행).
+[설계] 아래 식은 이식 부분집합의 추천 추첨 근사다. 원본보다 작은 집합과 경계 중복 회피를 위한 추천 변형이다. 근거가 된 원본 경계는 mgm02 @0x7100017408 [fn02]·mgm01 @0x71000165bc [프리 플레이 §6.3](mgm01_freeplay.md#63-끝-행과-래핑랜덤)·난수 분포는 main @0x7100189438 [코어 §6.6](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행).
 
 ```text
 pool = 원본 허용 집합 ∩ 등록 게임 ∩ 완성된 입력/팀/결과 지원 ∩ 현재 규칙
@@ -186,9 +213,9 @@ index = injectedSyncRandRange(0, len(ordered))
 선택 = ordered[index]       # len=1이면 RNG 소비 0; 그 외1
 ```
 
-[설계] 이 추천 근사는 작은 집합을 모두 소진하면 새 순환을 시작하고, 가능한 때 경계의 연속 중복도 피한다. 타입별로 먼저 뽑으면 빈 타입 재추첨과 가중치 재분배가 생기므로 원본 타입 표가 없는 상태에서는 게임 단위 균등을 명시한다. seed가 같아도 후보 집합·순서·호출 수가 달라 원본 추첨열과 같다고 주장하지 않는다. 원본 미확정 대상은 §6.1·부록C; 기준 난수는 [코어 §6.6](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행), main @0x7100189438.
+[설계] 이 추천 근사는 작은 집합을 소진하면 새 순환을 시작하고 가능한 경우 경계 연속 중복도 피한다. 원본 mgm02의 Clear 뒤 직전ID 제외는 확인되지 않았으므로 이 부분은 웹 변형이다. seed가 같아도 후보 수·순서·표시용 호출 수가 달라 원본 게임열과 같다고 주장하지 않는다. mgm02 @0x7100017408 [C02]·bd01 @0x710028c570 [BOARD-C]·main @0x7100189438 [코어 §6.6](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행).
 
-[미확정] 원본 누적식 `totalCoin[p] += ?`·징수/배틀 분배·스타 동점 승리·실력 포인트 증감·MVP 기여점은 본체 C가 없어 기입하지 않았다. mgm02 `SetMgResult` @0x710001704c·mgm03 `ResultMinigameFlow` @0x710000b3a0·mgm04 `UpdateMgmWork` @0x7100015c88·mgm05 `MinigameModeFlow_AfterGame` @0x710000c210·mgm06 `VictoryFlow::MainFlow` @0x710001e5e0 [fn02]·[fn03]·[fn04]·[fn05]·[fn06]가 요청 대상이다.
+[판독] 원본 코인·순위·목표 종료·보스 점수 합은 §6.4~6.6에서 판독했다. [미확정] 배틀 rank0비율·보스 ScoreTable 값·스타 지급·실력 포인트·메타 보상량은 부록C에 남는다. mgm02 @0x71000049c0 [C02]·mgm06 @0x710002329c [C06]·mgmet @0x71000083e0 [fnH].
 
 ### 6.2 후속 판독: 데일리 조합·시간
 
@@ -196,13 +223,13 @@ index = injectedSyncRandRange(0, len(ordered))
 
 [판독] GetMgPackDailyTrialData(id)는 목록이 비어 있으면 Abort, 1<=id<=count이면 id−1 항목, 그 밖은 첫 항목을 반환한다. GetComboIndexFromNowDateTimeDailyTrialData는 FUN_71003628bc가 반환한 정수를 조합 수로 정규화한다. 이 호출에서 관찰되는 식은 n>0이면 ((day % n)+n)%n, n==0이면0이다. main @0x7100362860/@0x7100362bcc [DAILY-C]. [미확정] day의 기준·증가·clock 선택은 helper @0x71003628bc [fnMain] C가 없어 확정하지 않았다.
 
-[판독] 남은 시간 reader는 UserSystemClock을 읽고 bool==true이면 NetworkSystemClock으로 다시 읽는다. CalendarTime 상수 {0x07b2,0x00060101,0}을 ToPosixTimeFromUtc에 전달하고 0x15180=86400초 주기로 시·분·초를 계산한다. 일반 범위에서 기준과 시각의 차이를 δ라 하면 r=positiveModulo(δ,86400), s=86400−r이며, hour=(s//3600)%24·minute=(s//60)%60·second=s%60이다. r==0일 때 반환은00:00:00이다. main @0x7100362a10 [DAILY-C]. [미확정] 매우 큰 시각 차이의 보정 분기·CalendarTime 필드 배치·실제 날짜 변경 caller는 부록 C에 남는다.
+[판독] 남은 시간 reader는 UserSystemClock을 읽고 bool==true이면 NetworkSystemClock으로 다시 읽는다. CalendarTime 상수 {0x07b2,0x00060101,0}을 ToPosixTimeFromUtc에 전달하고 0x15180=86400초 주기로 시·분·초를 계산한다. 일반 범위에서 기준과 시각의 차이를 δ라 하면 r=positiveModulo(δ,86400), s=86400−r이며, hour=(s//3600)%24·minute=(s//60)%60·second=s%60이다. r==0일 때 반환은00:00:00이다. main @0x7100362a10 [DAILY-C]. [미확정] 매우 큰 시각 차이의 보정 분기·CalendarTime 필드 배치는 미확정이며, 실제 팩 교체 caller는 §6.6에서 확인했다.
 
 [추정] CalendarTime의 일반적인 field 순서를 적용하면 위 상수는 1970-01-01 06:00 UTC에 대응한다. 현재 C에는 field별 명칭이 없으므로 정확한 교체 시각의 구현 기본값으로 승인하지 않는다. main @0x7100362a10 [DAILY-C], 날짜 계산 callee @0x71003628bc [fnMain].
 
 ### 6.3 후속 판독: 결과 집계의 범위
 
-[판독] 태그 결과 표시의 승수는 각 결과 byte의 bit0 누적이다. 원본 WinLose1/0/2 규칙을 이 전용 레코드의 전체 형식으로 단정하지 않는다. 결과 생성 함수의 C가 없기 때문이다. 아래는 reader에서 확인한 비교만 재현하는 의사코드다. mgmet @0x7100078e70 [callers]; main Mgm04AddMGResult @0x71001f39e0 [fnMain].
+[판독] 태그 결과 표시의 승수는 각 결과 byte의 bit0 누적이다. 원본 WinLose1/0/2 규칙을 이 전용 레코드의 전체 형식으로 단정하지 않는다. 공용 Work 필드 판독은18에 맡겼기 때문이다. 아래는 reader에서 확인한 비교만 재현하는 의사코드다. mgmet @0x7100078e70 [callers]; main Mgm04AddMGResult @0x71001f39e0 [fnMain].
 
 ```text
 [판독] 승수 = [0, 0]; 표시개수 = 0
@@ -215,7 +242,77 @@ index = injectedSyncRandRange(0, len(ordered))
 [판독] 표시개수 >= 결과개수이면 표시 집계 종료
 ```
 
-[미확정] mgm02 CoinMgr의 GetRankCoinCount·AdjustBattleMgCoinCount·LevyCoin·GetBonusMgGotCoinCount·GetDistributedCoinCountRatio는 실제 원본 산식 후보다. SceneParamsGame의 RankCoinCount·BonusMgCoinCountCoef·BattleMgLeviedCoinCount가 상수 소비 후보지만 C가 없어 수치/반올림/부족 코인/승자 없음/동점 배분을 복원하지 않는다. 정확한 mgm02 주소와 이유는 부록 C의 추가 15행 [fn02]에 있다. 결과 UI의 TotalCoinCount reader를 지급 산식으로 대신하지 않는다.
+[판독] mgm02 CoinMgr의 지급·징수·보정·기본 상수는 추가 C에서 판독했다. 값과 남은 배틀 rank0 테이블은 §6.4·부록C를 참조한다. mgm02 @0x7100003f50/@0x71000042d0/@0x710001b33c [C02].
+
+### 6.4 추가 C 판독: mgm02 회차·추첨·코인
+
+[판독] 후보는152 ID를 순서대로 검사해 Available·GameRule7·flag6 또는 !UseGyro·!Mgm02IsPlayedMgId를 모두 만족한 ID다. 유형1/2/3은 같은 Chara 후보 집합에서 Normal/Bonus/Battle 연출·코인 계산을 바꾸며 GameRule을 바꾸지 않는다. mgm02 @0x710000f0b0/@0x710000efe0/@0x7100017b20 [C02]. [데이터] 이를 [ND] `GameRule=Chara`에 대응하면10종이며 Gyro!=-1은1종이다.
+
+[판독] MgMgr의 후보가 비었으면 추첨 결과−1; Scene은 이력 Clear→재구성→재추첨하고 여전히−1이면 Abort한다. Round==GetMaxRound는 다음 추첨을 생략한다. 선택마다 SyncRandRange를 호출하지만 상한 인자가 C에서 빠졌다. 별도 weight는 관찰되지 않는다. mgm02 @0x710000f030/@0x710000ef94/@0x7100017408 [C02]. [추정] 정상 인덱스 선택을 위한 후보 수 상한의 균등 추첨으로 해석하되 정확한 난수 상한은 승인하지 않는다.
+
+[판독] 기본 회차 유형은 §4.2의5/7/10 길이 표다. Flow가 Round0→첫 선택, 0<Round<max→결과 후 다음 선택, Round==max→결과 후 복귀로 분기하므로 Bonus/Battle은 추가 게임 회수가 아니다. mgm02 @0x7100017728/@0x710001b580 [C02]. [판독: 어셈블리] UI5/7/10은 mgmet @0x710007efdc [규칙 §4.3](mgmet_ruleconfig.md#43-값-표와-버튼-전-함수군) 재사용. [미확정] GetMaxRound의 DAT @0x710005036c 내용과 SetRound 인자는 별도다.
+
+| 계산 [판독] | 식·분기 | 출처 |
+|---|---|---|
+| 일반 | rank−1이면0, rank0..3이면 Params.RankCoinCount(rank), 기본10/3/2/0 | mgm02 @0x7100003f50/@0x710001b534/@0x710001b33c [C02] |
+| 보너스 | rank 지급은 기본 rank 코인×coef; BonusMgGotCoinCount는 raw MGGotCoinCount×coef, 기본coef2 | mgm02 @0x7100003f50/@0x7100004980/@0x710001b710 [C02]. 두 입력 경로를 같은 raw 값으로 합치지 않음 |
+| 배틀 징수 | 각 p: levied[p]=min(total[p],levy), total[p]=max(total[p]−levy,0), L=sum(levied), 기본levy10 | mgm02 @0x710000484c/@0x7100004948/@0x710001b718 [C02] |
+| 배틀 지급 | rank0이 한 명이라도 있으면 trunc(L×ratio(rank,동순위 수)/100); rank0이 없으면 본인 levied 반환 | mgm02 @0x7100003f50/@0x71000049c0 [C02] |
+| 확인된 배분율 | rank2 인원1→10%,2→5%,그 밖0; rank1 인원1/2/3→20/15/10%; rank0은 DAT 표 | mgm02 @0x71000049c0 [C02]; DAT @0x710004e3c0 내용 미확정 |
+| 남은 배틀 코인 | R=L−sum(지급)>0이면 rank0부터 동순위 인원k에게1씩 지급. f32(R)/k<1이면 중단하여 잔여가 남을 수 있음 | mgm02 @0x71000042d0 [C02]. rank3 뒤는3 반복; RNG 없음 |
+| 총코인 rank | coin 내림차순, 값이 감소할 때 rank+1인 dense rank. 같은 값은 같은rank. 전원0인 초기 RankMgr는3; 최종 SetMgResult에서 전원0으로 보정 | mgm02 @0x7100013200/@0x71000139a0/@0x71000146c0/@0x710001704c [C02]. 안정 표시 순서는 확정하지 않음 |
+| 기록·최종 보상 | 각 결과 record+0x14/+0x18/+0x1c/+0x20==0의 최장 연속 길이→CharaMgBattleMgStreak; count/rank→CharaMgBattleRank | mgmet @0x7100055370 [MODE-H]. 실제 지급 수량은 main @0x7100231788/@0x71002318b8 C 없음 |
+| 하이스코어 | 로컬 operation player 저장 +4/+8/+0xc를 tableKind0/1/2로 고르고 현재 최장 연속이 더 클 때 SaveRequest; RM 별도 | mgm02 @0x7100018cc0 [C02]. 저장 완료는 실행 확인 없음 |
+
+[판독] CoinMgr::ExistsGotCoinPlayer는 네 지급 중 양수 존재를 검사한다. 지급자가 없으면 ResultFlow가5초 기다리는 경로를 탄다. mgm02 @0x7100004960/@0x7100018300 [C02]. [미확정] 누적 total을 Work에 쓰는 실제 setter 전달값과 전용 record 배치는18의 추가 판독 대상으로 남긴다.
+
+### 6.5 추가 C 판독: 보드 후보·인원 형태·난수
+
+[판독] GetList는 rule별152행을 검사하고 bypass가 false일 때 Available·IsBD01을 요구한다. VS 전용 목록은 Rule0·Coin제외·체감을 거르고 보드 종류별 고정 ID를 추가한다. GetPlayID는 Turn1 또는 BoardFlag7에서 Coin을 제외한다. bd01 @0x71000afb90/@0x71000aff40/@0x71000b0940 [BOARD-C]. [미확정] C의 고정 숫자 ID를 JSON Name으로 매핑하지 않는다.
+
+[판독] GetPlayID_는 같은 rule의 직전 ID·Coin조건·flag6 off 체감·피로를 제거하고 ushort playcount가 최소인 후보만 남긴다. M>=2면 뒤에서 앞으로 SyncRandMod를 M−1회 호출하며, M1이면0회다. M0은 rule별 [0,22,34,70,0,0,0,54,64,74] fallback을 사용한다. modulus 인자는 C에서 빠졌으므로 호출 수와 인덱스 범위 복원을 구분한다. SetHistoryID는 마지막ID 쓰기와 AddPlayCount를 호출한다. bd01 @0x71000b09f0/@0x71000b1228 [BOARD-C].
+
+[판독] Chara 경로는 character0x12→ID0x36,0x10→0x39,1→0x37,그 밖−1을 사용하고 후보에 없으면0x36으로 되돌린다. 이 함수에 추첨 RNG는 없다. bd01 @0x71000b1130 [BOARD-C]. [미확정] 숫자 ID의 게임 이름은 런타임 초기화가 없어 붙이지 않는다.
+
+| 인원형태 [판독] | 입력·분기 | 결과·제한 |
+|---|---|---|
+| 매스색 분류 | MapColor0/1 고정색2개·그 밖 미정 u명·색0 r명 | bd01 @0x710028b7f0 [BOARD-C]. BoardMode2 특수 roster 경로는 별도 |
+| 팀데이터 index | u0/4는 type0 경로; u1이면 r1~3→9−r,그 밖9; u2 r2→3/r1→4/그 밖5; u3 r1→1/그 밖2 | 같은 SetPlayerWork. JsonMgTeam::GetDataV(index,VS4Count<3)로 미정색 채움 |
+| 최종 분류 | 모두 한색→Rule0,1대3→Rule2·solo Team0,2대2→Rule1·색0 Team1/색1 Team0 | 같은 SetPlayerWork. JsonMgTeam @0x71000690e0 [fnBD] C 없음으로 가중치·그 내부 RNG 미확정 |
+
+[판독] GetMinigameList는 last/gyro 제외 후보의 최소 playcount를 우선한다. 3개 미만이면 그 최소 후보 count를 올리고 전체 후보로 돌아가 최소+1 이하·직전Choice 제외를 시도하며, 그래도3개 미만이면 전체 후보로 되돌린다. 최종 shuffle 후 처음3개를 AddCount·SetChoice한다. bd01 @0x710028cb00 [BOARD-C]. [미확정] 빈 집합/3개 미만을 안전하게 처리한다는 근거는 없으므로 작은 웹 부분집합에 그대로 적용하지 않는다.
+
+[판독] RunRoulette는 이미 정해진 당첨ID를 받는다. 이를 decoy에서 제거·체감 필터→decoy shuffle D−1 SyncRandMod→당첨ID를 첫 슬롯과 최대5 decoy로 구성하며 Coin게임을 최대1개 표시한다. SetHit(0) 뒤 Wait한다. 이는 실제 승자 선택 뒤 추가 난수를 소비하는 표시 경로다. bd01 @0x710028c570 [BOARD-C].
+
+[판독] Update는 SetPlayerWork→조건부 RunSelect 또는 GetPlayID→RunRoulette→ArchiveMg 준비→Coin flag/VS4 연속 횟수 갱신→RunCallMiniGame 순서다. bd01 @0x710028d270 [BOARD-C]. [미확정] RunSelect @0x710028ca18·RunCallMiniGame @0x710028a260 C가 없으므로 실제 history commit 시점은 이 Update에서 확정하지 않는다.
+
+### 6.6 추가 C 판독: 데일리·태그·서바이벌·보스
+
+[판독] 데일리는 GetComboIndex의 true 경로를 선택해 현재 조합을 저장하고, 세 packid를 getter로 읽어 선택 index0~2에 대응한다. A는 선택 팩을 SyncData+0와 PassMgPack에 넣는다. 날짜 교체 reset helper는 C가 없다. mgmet @0x7100056e10/@0x7100056f40/@0x7100056c50 [MODE-H]·[fnH]. 게임 선택은 팩+0x5c+Round×4로 고정되어 추첨 RNG가 없다. mgm03 @0x710000a440 [C03].
+
+[판독] DailytrialReturnFlow는 저장 +0x14..0x90의32개 word에서 (word>>4)&0xffff를 합산하고 합>=10이면 업적0x44 요청을 한다. IsCompleteNow와 두 SaveID가 동시에0이 아닌 조건에서 DailyTrialDailyBonus를 호출한다. mgmet @0x71000597a0 [MODE-H]. [미확정] 실제 스타/중복 방지·보너스량은 Data/Reward callee가 남는다.
+
+| 태그 [판독] | 규칙 | 출처·제한 |
+|---|---|---|
+| 선택권 | 뒤처진 팀; 동률이면 직전 단독 승리 팀의 반대 팀, 그 밖 Round>1의 이전 선택팀·초반 기본0. 선택팀 내 playerindex는0/1 교대 | mgm04 @0x710001ce70/@0x7100015c88 [C04]. GetMGResult code는 §3.6 |
+| 후보 | Available·Rule1·체감·이력 제외→shuffle→최대 요청수+1을 남김. 선택창 요청3→최대4, 표시3 | mgm04 @0x710000d860/@0x710001ffa0 [C04]. shuffle 호출M−1 |
+| 이력 해제 | Roulette 후보<5 / Selector 후보<4이면 NeedClear; 선택ID AddHistory 뒤 필요할 때 InitHistory | mgm04 @0x710001fc64/@0x7100022c74/@0x7100018060 [C04]. 해제 뒤 직전ID 유지 보장은 없음 |
+| UI 경로 | Round<2 또는RM→룰렛, 그 밖 선택창. 룰렛 Setup은 후보요청4→최대5(예비1), Update는4슬롯 표시·선택 | mgm04 @0x7100016580/@0x710001e870/@0x710001ed50 [C04]. 최종 RNG 상한 인자는 빠짐 |
+| RM | 결과/재매칭→현재 flow flag에 따라 continue 또는 Fade·RM HighScoreUpload·Entrance10 | mgm04 @0x710001aa90 [C04]. ClearSession·동기/온라인 소유권은 [12_online_sync](../engine/12_online_sync.md) 재사용 |
+
+[판독] 태그 룰렛 Update는 후보 shuffle 뒤 SyncRandRangeF(1.0,1.33)와 SyncRandRange 하한0을 각각1회 호출한다. 선택 index는 회전 전 정하고, f32 dt를 누적해 대기0.07씩 늘리며 표시를 돌린 뒤 후보[index]를 최종ID로 쓴다. mgm04 @0x710001ed50 [C04]. [미확정] 정수 상한 인자는 누락되어 정확한 범위·MT 출력 소비 총수는 확정하지 않는다. In/Decide 함수에는 추가 추첨 호출이 없다. mgm04 @0x710001ed04/@0x710001f4b0 [C04].
+
+[판독] 서바이벌 GetMinigameIdList는 JSON 로드 record의 ID+8을 Rule0/3·Available·체감으로 필터하고 PlayedHistory를 검사하지 않는다. VS4 투표는 서로 다른3후보를 SyncRandRange로 만들고15초 동안 네 표를 받는다. CPU는 선택·0.5~1.0 지연 난수를 별도로 소비한다. mgm05 @0x710000fb40/@0x71000165b0/@0x7100017bf0 [C05].
+
+[판독] DicideVoteMgSelectFlow는 네 표가 전부 같은 때만 최종ID를 기록한다. 3:1·2:2도 룰렛으로 간다. AdvanceVoteToRoulette는 네 표를 중복 포함 네 슬롯으로 전달한다. 듀얼은5후보를 shuffle한 첫4개를 슬롯에 넣는다. 룰렛은 속도/시간용 SyncRandRangeF(1,1.33)와 당첨 index용 SyncRandRange를 호출한다. mgm05 @0x7100018690/@0x7100018c50/@0x7100014fb0/@0x71000154f0 [C05]. [추정] 슬롯 균등 상한4라면 VS4의 game 확률은 표수/4지만 상한 인자가 빠져 확정 비율로 쓰지 않는다.
+
+[판독] GetWinPattern은 승자 수!=1을 bit0, 승자 전원이 character0x12/0x0d 중 하나인 조건을 bit1로 반환하는 연출 선택이다. 실력 포인트 식이 아니다. mgm05 @0x710001a7d0 [C05]. [미확정] Rating·SkillPoint에 대응하는 고유 계산 함수는 이 판독 구간에서 식별되지 않았다.
+
+[판독] 보스 격파는 플레이어가 비어 있지 않고 전원 WinLose==1일 때만 true다. Round<1 또는 한 명이라도0/2/−1이면 false다. CallMinigameScene은 kBossMinigameIds[Round]를 사용하고 team/rank/win 상태를 초기화·judge0으로 호출한다. mgm06 @0x7100011ed0/@0x7100011610 [C06]. 배열의 실제 ID는 pointer slot @0x7100057d98만 확인되어 요청표에 남는다.
+
+[판독] 완주 결과는 정확히5개 기록의 네 rank로 각 ScoreTable[rank]를 합한다. rank는 자신보다 높은 총점의 인원 수인 competition rank다. 총점[9,9,5,2]이면[0,0,2,3]이며 전원동점은 전원0이다. MainFlow는 rank0 모두의 캐릭터 이름을 MVP 목록에 넣는다. mgm06 @0x710002329c/@0x7100011ba0/@0x710001e5e0 [C06]. [미확정] 점수 테이블 DAT @0x7100049a30 내용·동률 표시 정렬 순서는 미확정이다.
+
+[판독] 보스 Reward는 결과 record byte+8..b==0의 최장 연속 길이→BossRushStreak를 호출하고 완주점수·rank에 따른 BossRushRank 경로를 잇는다. mgm06 @0x7100011750/@0x710001e5e0 [C06]. 지급 수량은 main @0x7100231c28/@0x7100231d3c [fnMain] C가 없어 보류한다.
 
 ## 7. 애니·효과·소리·카메라·에셋
 
@@ -232,6 +329,17 @@ index = injectedSyncRandRange(0, len(ordered))
 [설계] 웹은 `animationDone/cameraDone/resultDone`을 공용 서비스로 주입한다. 현재 미확정 애니 길이를 임의로 원본 값처럼 기록하지 않는다. 게임·결과 무대는 main `MinigameFlow` @0x71002e0500·`MGResult` @0x71002ee230 [한 판 §12.3](minigame_scene.md#123-게임-쪽이-구현할-인터페이스-mggame)·[결과 §12](minigame_result.md#12-웹-구현-계약--3d-결과-무대-2026-10-09-mg-result3d)를 재사용한다.
 
 [판독] 태그 RM 복귀 UI는 최고점 갱신 flag를 읽어 PlayCount00만 진행하는 경로와 PlayCount00→01→조건부02 경로를 고른다. HostRanking−1<999999이면 순위 표시 연출이 추가된다. 갱신 경로에 WaitTimeFlow(0.75)와 SQ_SE_TLP_MGMET_HIGHSCORE가 있으며 애니 완료를 기다린다. mgmet @0x7100085900 [callers]. [미확정] 잘못된 HostRanking·각 클립 길이·온라인 랭킹/연승 값 산출은 확정하지 않았다.
+
+### 7.1 추가 판독·병렬 판독 재사용
+
+| 대상 [판독] | 확인한 연출 연결 | 출처·미확정 |
+|---|---|---|
+| 챌린지 | 첫 안내 업적0x41, Bonus 결정의1.2 대기, Battle 징수/가진 코인 감소 표시, Result의 coin chest·move 대기 | mgm02 @0x71000178f0/@0x7100018800/@0x7100018920/@0x7100018300 [C02]. 모션 클립 길이·카메라 수학은 미판독 |
+| 데일리·태그 | 팩 이름·안내·바람 단계 소리, 태그 목표 안내·업적0x3f, 결과4패턴 | mgm03 @0x7100009bc0 [C03]·mgm04 @0x7100016190/@0x7100016390 [C04]. 소리 문자열 전체 목록은 기록하지 않음 |
+| 보스 완주 | 점수 표시 소리 SQ_SE_MGM06_ED_PNT_APP·MVP rank0 이름 수집·보상 안내 완료 Wait | mgm06 @0x710001e5e0/@0x7100011750 [C06]. 점수 상수·클립 시간은 미확정 |
+| 결과 UI profile 재사용 | mgm03 공용4칸, mgm05 flag0→4칸/flag1→2칸·승리 라벨, mgm06 별도 rank/score/history 조립 | mgm03 @0x7100019040/@0x7100018eb0·mgm05 @0x71000240a0·mgm06 @0x710001d5a0 [UI 부품 §6.6](../engine/ui_parts_catalog.md#66-새-c의-결과표statusname-조립). 이4함수 새 판독0 |
+| 보스 Versus RT 재사용 | RT 참조 flow+0x10/+0x18 저장·color/depth attachment·clear setter 호출 | mgm06 @0x7100012cf0 [render_unify §3.4·5·11](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체). bool·치수·layer 번호 인자 누락; 재판독0 |
+| 카메라·공용 UI | 공용 결과 무대·렌더·Work 계약을 담당 문서에서 재사용 | main @0x71002ee230 [minigame_result §12](minigame_result.md#12-웹-구현-계약--3d-결과-무대-2026-10-09-mg-result3d)·[18_scene_work §5](../engine/18_scene_work.md#5-상태수명)·[render_unify §5](../engine/render_unify.md#5-상태수명) |
 
 ## 8. 상호작용
 
@@ -261,21 +369,21 @@ index = injectedSyncRandRange(0, len(ordered))
 
 ### 8.2 모드별 사용 근거
 
-| 사용 표 | 확정 집합/후보 | 런타임 범위의 제한 |
+| 사용 표 | 데이터 집합·실제 C 필터 | 제한·출처 |
 |---|---|---|
-| [데이터] 프리 플레이 F | [FP] `gamedata[].MgName`112종·[catalog]과 동집합 | [판독] 잠금·솔로·오프라인 조건은 mgm01 @0x7100008e70 [프리 플레이 §6.4](mgm01_freeplay.md#64-잠금new-조건-표) |
-| [데이터] 데일리 팩 D | [PACK] `mgpack[].mg1~mg3`75슬롯·unique49종＝VS4 28＋1VS3 9＋2VS2 12 | [미확정] 매일 선택되는 팩·교체 시각·각 슬롯 팀 방식: mgmet @0x7100056e10/@0x7100056f40 [fnH] |
-| [데이터] 서바이벌 S | [SURV] `mgList[].mg`26종＝VS4 21＋1VS1 5 | [미확정] 인원/체감별 서브셋·VS4→듀얼 트리거: mgm05 @0x710000fb40/@0x710000c210 [fn05] |
-| [데이터] 보드 N/H | [ND]·[CA] `BD01Normal=1`78·`BD01Serious=1`75 | [미확정] 유형/매스별 실제 추첨. 보드 일반만 허용 3종＝mg0110/mg0121/mg0303; bd01 @0x71000afb90 [fnBD] |
-| [추정] mgm02 C? | [ND] `GameRule=Chara`10종을 후보로 표시 | [미확정] 보너스/배틀을 포함한 전체 후보·회차별 배분. mgm02 @0x710000f030/@0x7100017408 [fn02] |
-| [추정] mgm04 T? | [ND] `GameRule=2VS2`12종을 후보로 표시. 2vs2 동작은 [MSG-H] `mgmet_tm_mw_howToPlay00` | [미확정] 12종 모두 사용·체감 제외·중복. mgm04 @0x7100018060 [fn04] |
-| [추정] mgm06 B? | [ND] `GameRule=Boss`5종을 후보로 표시. [MSG-H] `mgmet_bm_mw_howToPlay00` | [미확정] 실제 5연전·순서. mgm06 @0x7100011610 [fn06] |
+| [데이터] 프리 플레이 F | [FP] gamedata112종·catalog동집합 | [판독] 잠금·솔로·오프라인은 mgm01 @0x7100008e70 [프리 플레이 §6.4](mgm01_freeplay.md#64-잠금new-조건-표) 재사용 |
+| [판독][데이터] 데일리 D | 25팩75슬롯49종=VS4 28+1VS3 9+2VS2 12. 선택된 팩의 mg1/mg2/mg3 순서 | [PACK] `mgpack`; mgm03 @0x710000a440 [C03]. 날짜 helper·스타 Data는 미확정 |
+| [판독][데이터] 서바이벌 S | 명시26종=VS4 21+듀얼5; rule/Available/gyro로 분리. 듀얼 룰렛은5중4를 표시 | [SURV] `mgList[].mg`; mgm05 @0x710000fb40/@0x7100014fb0 [C05]. exact 전환/포인트는 미확정 |
+| [판독][데이터] 보드 N/H | BD01Normal78·Serious75; GetList는 Available·BDflag를 검사. 일반만3종=mg0110/mg0121/mg0303 | [ND]·[CA] `BD01*`; bd01 @0x71000afb90 [BOARD-C]. 인원형태 확률은 JsonMgTeam C 없음 |
+| [판독][데이터] mgm02 C | Chara10종을 기본 모집단으로 사용. 체감off이면 Gyro!=-1 1종 제외→9; 사용이력 제외 | mgm02 @0x710000f0b0 [C02]; [ND] `GameRule/Gyro`. 타입1/2/3 모두 같은 rule7 후보 |
+| [판독][데이터] mgm04 T | 2VS2 12종. 체감off이면3종 제외→9; 사용이력 제외·후보부족시 해제 | mgm04 @0x710000d860/@0x7100018060 [C04]; [ND] `GameRule/Gyro` |
+| [추정][데이터] mgm06 B? | Boss 데이터5종, C는 고정5슬롯 | [ND] `GameRule=Boss`·mgm06 @0x7100011610 [C06]. 슬롯ID가 없으므로 이5종과 정확한 일치·순서는 미확정 |
 
 ### 8.3 catalog 112종 대응 표
 
-[데이터] 아래 모든 이름은 [catalog] `code/name_ko`·규칙·체감·코인은 출처열의 [ND]/[CA] `mgList[Name=code].GameRule/Gyro/Coin`이다. F/D/S/N/H는 §8.2의 **정적 데이터 소속**이며 실제 추첨 허용과 다르다. `—`는 해당 정적 표/flag에 없음. [추정] C?/T?/B?는 §8.2의 미확정 후보 표시이며 사용 확정이 아니다.
+[데이터] 아래 모든 이름은 [catalog] `code/name_ko`·규칙·체감·코인은 출처열의 [ND]/[CA] `mgList[Name=code].GameRule/Gyro/Coin`이다. F/D/S/N/H는 §8.2의 **정적 데이터 소속**이며 실제 추첨 허용과 다르다. `—`는 해당 정적 표/flag에 없음. [추정] B?는 Boss5종의 슬롯 일치 미확정 표시다. [판독] C/T는 mgm02 Chara·mgm04 2VS2 기본 후보이며 체감/이력으로 추가 필터한다. mgm02 @0x710000f0b0 [C02]·mgm04 @0x710000d860 [C04].
 
-| 코드·한국어 이름 [데이터] | GameRule | Gyro | Coin | 정적 사용 F/D/S/N/H | 미확정 후보 [추정] | 필드 출처 |
+| 코드·한국어 이름 [데이터] | GameRule | Gyro | Coin | 정적 사용 F/D/S/N/H | 원본 후보 C/T·추정 B? [판독] [추정] | 필드 출처 |
 |---|---|---|---:|---|---|---|
 | [`mg0101` · 데인저러스 브리지][catalog] | `VS4` | — | 0 | F·D·N·H | — | [ND] `Name=mg0101` |
 | [`mg0102` · 우주 깃발 레이스][catalog] | `VS4` | — | 0 | F·D·S·N·H | — | [ND] `Name=mg0102` |
@@ -312,34 +420,34 @@ index = injectedSyncRandRange(0, len(ordered))
 | [`mg0309` · 잘 노려라! 활 사격][catalog] | `1VS3` | 2 | 0 | F·D·N·H | — | [ND] `Name=mg0309` |
 | [`mg0401` · 캡슐 공장][catalog] | `1VS3` | — | 0 | F·D·N·H | — | [ND] `Name=mg0401` |
 | [`mg0402` · 대결! 눈싸움][catalog] | `1VS3` | — | 0 | F·D·N·H | — | [ND] `Name=mg0402` |
-| [`mg0501` · 과일 컨베이어][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0501` |
-| [`mg0502` · 가로세로 머신 레이스][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0502` |
-| [`mg0503` · 휘적휘적 팔씨름][catalog] | `2VS2` | 0 | 0 | F·D·N·H | T? | [ND] `Name=mg0503` |
-| [`mg0504` · 위험한 스윙 레이스][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0504` |
-| [`mg0505` · 둘이서 카드 맞추기][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0505` |
-| [`mg0508` · 거대 스테이크 자르기][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0508` |
-| [`mg0509` · 돗시 보트 레이스][catalog] | `2VS2` | 2 | 0 | F·D·N·H | T? | [ND] `Name=mg0509` |
-| [`mg0510` · 그림자 그림 겹치기][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0510` |
-| [`mg0601` · 폭탄병 도화선][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0601` |
-| [`mg0602` · 서둘러라! 킬러 건너기][catalog] | `2VS2` | — | 0 | F·D·N·H | T? | [ND] `Name=mg0602` |
-| [`mg0701` · 코인 유적의 눈치 싸움][catalog] | `2VS2` | — | 1 | F·D·N·H | T? | [ND] `Name=mg0701` |
+| [`mg0501` · 과일 컨베이어][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0501` |
+| [`mg0502` · 가로세로 머신 레이스][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0502` |
+| [`mg0503` · 휘적휘적 팔씨름][catalog] | `2VS2` | 0 | 0 | F·D·N·H | T | [ND] `Name=mg0503` |
+| [`mg0504` · 위험한 스윙 레이스][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0504` |
+| [`mg0505` · 둘이서 카드 맞추기][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0505` |
+| [`mg0508` · 거대 스테이크 자르기][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0508` |
+| [`mg0509` · 돗시 보트 레이스][catalog] | `2VS2` | 2 | 0 | F·D·N·H | T | [ND] `Name=mg0509` |
+| [`mg0510` · 그림자 그림 겹치기][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0510` |
+| [`mg0601` · 폭탄병 도화선][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0601` |
+| [`mg0602` · 서둘러라! 킬러 건너기][catalog] | `2VS2` | — | 0 | F·D·N·H | T | [ND] `Name=mg0602` |
+| [`mg0701` · 코인 유적의 눈치 싸움][catalog] | `2VS2` | — | 1 | F·D·N·H | T | [ND] `Name=mg0701` |
 | [`mg0702` · 숲의 코인 시소][catalog] | `VS4` | — | 1 | F·D·N·H | — | [ND] `Name=mg0702` |
 | [`mg0703` · 플레시의 코인 강][catalog] | `1VS3` | 2 | 1 | F·N·H | — | [ND] `Name=mg0703` |
 | [`mg0704` · 스케이트 코인 모으기][catalog] | `VS4` | — | 1 | F·D·N·H | — | [ND] `Name=mg0704` |
-| [`mg0705` · 밧줄로 코인 얻기][catalog] | `2VS2` | 0 | 1 | F·D·N·H | T? | [ND] `Name=mg0705` |
+| [`mg0705` · 밧줄로 코인 얻기][catalog] | `2VS2` | 0 | 1 | F·D·N·H | T | [ND] `Name=mg0705` |
 | [`mg0706` · 뿅망치로 코인 빼앗기][catalog] | `1VS3` | — | 1 | F·N·H | — | [ND] `Name=mg0706` |
 | [`mg0801` · 맨몸 잠수 마리오][catalog] | `VS4` | — | 1 | F·D·N·H | — | [ND] `Name=mg0801` |
 | [`mg0802` · 플레이트 건너기][catalog] | `VS4` | — | 1 | F·D·N·H | — | [ND] `Name=mg0802` |
-| [`mg0903` · 쿠파주니어의 연속 챌린지][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0903` |
-| [`mg0905` · 루이지와 수수께끼의 저택][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0905` |
-| [`mg0906` · 로젤리나의 스노보드 레이스][catalog] | `Chara` | 0 | 0 | F·N·H | C? | [ND] `Name=mg0906` |
-| [`mg0907` · DK의 그루브 콩가][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0907` |
-| [`mg0908` · 데이지 애슬레틱][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0908` |
-| [`mg0909` · 피치의 휴일][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0909` |
-| [`mg0910` · 마리오의 미니게임 메들리][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0910` |
-| [`mg0911` · 와루이지 핀볼][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0911` |
-| [`mg0912` · 요시의 산길 레이스][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0912` |
-| [`mg0913` · 와리오의 퀴즈 쇼][catalog] | `Chara` | — | 0 | F·N·H | C? | [ND] `Name=mg0913` |
+| [`mg0903` · 쿠파주니어의 연속 챌린지][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0903` |
+| [`mg0905` · 루이지와 수수께끼의 저택][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0905` |
+| [`mg0906` · 로젤리나의 스노보드 레이스][catalog] | `Chara` | 0 | 0 | F·N·H | C | [ND] `Name=mg0906` |
+| [`mg0907` · DK의 그루브 콩가][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0907` |
+| [`mg0908` · 데이지 애슬레틱][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0908` |
+| [`mg0909` · 피치의 휴일][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0909` |
+| [`mg0910` · 마리오의 미니게임 메들리][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0910` |
+| [`mg0911` · 와루이지 핀볼][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0911` |
+| [`mg0912` · 요시의 산길 레이스][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0912` |
+| [`mg0913` · 와리오의 퀴즈 쇼][catalog] | `Chara` | — | 0 | F·N·H | C | [ND] `Name=mg0913` |
 | [`mg1001` · 아이템 컬링][catalog] | `Item` | — | 0 | F·N·H | — | [ND] `Name=mg1001` |
 | [`mg1002` · 아이템 구슬 굴리기][catalog] | `Item` | 2 | 0 | F·N·H | — | [ND] `Name=mg1002` |
 | [`mg1003` · 아이템 메달 떨어뜨리기][catalog] | `Item` | — | 0 | F·N·H | — | [ND] `Name=mg1003` |
@@ -396,14 +504,15 @@ index = injectedSyncRandRange(0, len(ordered))
 
 ### 9.1 원본 기본과 N회 변형
 
-| 설계 선택 | 이유·차이·승인 상태 |
+| 선택 [설계] | 이유·차이·승인 상태 |
 |---|---|
-| [설계] 가장 가까운 기본 = mgm02 | [MSG-H] `mgmet_cmgb_mw_howToPlay00~02`의 코인 경쟁과 mgmet @0x7100054640 [C][callers]의 Round 열이 근거다. 5/7/10 규칙을 우선한다. 추첨·정산 C 확보 전에는 원본 재현 완료로 판정하지 않는다. |
-| [설계] N턴 = 미니게임 N회 | 보드 이동·매스·아이템·스타 구매를 제외한 웹 변형이다. 원본 라운드와 보너스 회차의 관계는 mgm02 @0x7100017008/@0x7100018800/@0x7100018920 [fn02]에서 판독해야 한다. 사용자 미승인 추천. |
-| [설계] 장르 확장 | Chara 후보를 전체 112종으로 넓히면 원본과 다른 파티다. mgm03의 49종 팩 및 mgm04의 2vs2 선취와도 구분한다. §8.2의 데이터와 mgm02 @0x710000f030 [fn02]이 비교 기준이다. 미승인 추천. |
-| [설계] 이식 부분집합 추첨 | 원본 후보 ∩ 등록 ∩ 입력/팀/결과 지원 게임을 쓴다. §6.1의 균등 선택·순환 이력은 가중치 미확정에 대한 근사다. 미승인 추천. |
-| [설계] 현재 등록 한계 | [registry] `GAMES=[mg1801Game]`은 Rhythm 1종이며 Chara 후보와 겹치는 게임은 0종이다. Chara를 기준으로 한 추천 부분집합은 비었다. 실제 원본 mgm02 전체 후보는 미확정이다. 리듬만의 N회 파티는 별도 변형이다. |
-| [설계] 승패·코인·점수 분리 | raw byte/rank/coin/모드 누적값을 각각 보존한다. 판독 전 임의 rank 포인트를 원본 코인으로 부르지 않는다. main @0x71001f2a80 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring). |
+| 가장 가까운 원본=mgm02 | 고정5/7/10회·코인누적·Chance가 회수 안에 포함되고 보드가 필요 없다. mgm02 @0x7100017728/@0x7100017b20 [C02]·mgmet @0x7100054640 [callers]. 기본 생성값은 알려졌으나 정적 테이블·override·누락 인자는 남음 |
+| N턴=미니게임 N회 | 원본의 선택값5/7/10 외 N을 허용하려면 유형표를 별도 정의해야 한다. N=5/7/10은 원본 기본표를 우선한다. mgm02 @0x710001b580/@0x710001b33c [C02]. 사용자 미승인 추천 |
+| 장르 확장 | Chara10종을 전체112종으로 넓히면 게임규칙·팀구성과 지급 코인을 새로 설계해야 한다. 데일리49종·태그2vs2선취와도 별도다. §8.2·mgm02 @0x710000f0b0 [C02]. 미승인 추천 |
+| 이식 부분집합 | 원본 후보∩등록∩입력/팀/결과 지원을 사용한다. 균등·소진 후Clear는 원본과 구조가 가깝지만 후보 축소·직전중복 회피·기본값 적용은 근사다. mgm02 @0x7100017408 [C02]·§6.1. 미승인 추천 |
+| 현재 등록 | [registry] GAMES=[mg1801Game]은 Rhythm1종이며 원본 Chara 후보와 교집합0. 현재 원본 mgm02 시작은 불가. Rhythm만의 N회 파티는 별도 변형이며 이 문서에서 승인하지 않음. [CA] `Name=mg1801/GameRule`·mgm02 @0x710000f0b0 [C02] |
+| 추첨 결과와 RNG | 원본은 게임 선택·표시용 shuffle·CPU 지연도 난수를 소비한다. 웹 부분집합 trace는 같은 seed라도 원본 추첨열과 동등하지 않다. bd01 @0x710028c570 [BOARD-C]·mgm05 @0x7100017bf0 [C05] |
+| 결과 분리 | raw WinLose·game rank·coin·모드 누적·MVP 점수를 각각 보존한다. 코인 dense rank와 보스 competition rank는 서로 다르다. mgm02 @0x7100013200 [C02]·mgm06 @0x7100011ba0 [C06] |
 
 ### 9.2 폴더·경계·결정성
 
@@ -428,7 +537,7 @@ index = injectedSyncRandRange(0, len(ordered))
 | [판독] 규칙 구성 | CPU가 없으면 mgm02는 라운드/설명/체감/Play, mgm03은 설명/Play, mgm04는 VS/스타/설명/체감/Play | mgmet @0x7100054640/@0x7100057b00/@0x71000638a0 [callers]; 열 순서는 [규칙 §6.1](mgmet_ruleconfig.md#61-입력반복반환값) |
 | [판독: 어셈블리] 랜덤 소비 | sync 후보 0/1 → 소비 0, 2 이상 → 소비 1. async 기각 재추첨은 별도 | main @0x7100189438 [코어 §6.6](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행) |
 | [설계] 부분집합 경계 | 빈 집합은 시작 차단. 1종은 같은 ID 반복·RNG 0. 2종 이상은 소진 전 중복 0. 같은 seed/후보 순서/입력이면 선택·소비 기록 일치 | §6.1 추천 의사코드이며 원본 기대값과 구분 |
-| [설계] 라운드·실패 | N회 변형은 commit한 결과 N개에서 종료. null/실패/중단은 Round/점수 변경 없음. 원본 mgm02의 보너스 회수 포함은 미확정 | main @0x71001f0460 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring), [한 판 §12.12.4](minigame_scene.md#12124-결과-갈래와-기록-계약) |
+| [설계] 라운드·실패 | N회 변형은 commit한 결과 N개에서 종료. null/실패/중단은 Round/점수 변경 없음. 원본 mgm02의 보너스/배틀은5/7/10회 안에 포함(§6.4) | main @0x71001f0460 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring), [한 판 §12.12.4](minigame_scene.md#12124-결과-갈래와-기록-계약) |
 | [설계] 문서 품질 | 13절+부록, 실제 상대 경로, CommonMark 링크, 모듈/주소 대조, LF·BOM 없음, 대상 MD만 변경 | 부록D 검증 기록 |
 
 [데이터] 이번 검증은 메모리에서 catalog/지정 JSON을 집계하고 링크·주소·문서 형식을 검사한 것이다. 분석 스크립트·C·INDEX·SHARED·JSON·에셋은 만들거나 수정하지 않았다. 원본/웹 실행·영상 대조는 없다. 확인 결과는 부록D에 기입한다.
@@ -441,36 +550,55 @@ index = injectedSyncRandRange(0, len(ordered))
 | 팩 getter | id1→첫 팩, id25→마지막, id0/26→첫 팩, 빈 목록→Abort | main @0x7100362860 [DAILY-C] |
 | 조합 정규화 | helper 결과를 주입했을 때 −1→39, 0→0, 39→39, 40→0, 41→1 | main @0x7100362bcc [DAILY-C]; helper 실제 날짜 값은 미확정 |
 | 시간 reader | 일반 범위 δ=−1→00:00:01, δ=0→00:00:00, δ=1→23:59:59 | main @0x7100362a10 [DAILY-C]; 기준의 field 해석·clock 호출 결과는 별도 |
-| 태그 표시 집계 | target3, byte쌍 (1,0),(0,1),(1,0),(1,0),(0,1)이면 승수3/1·표시4개에서 종료 | mgmet @0x7100078e70 [callers]; 실제 경기 종료 동일성은 미확정 |
+| 태그 표시 집계 | target3, byte쌍 (1,0),(0,1),(1,0),(1,0),(0,1)이면 승수3/1·표시4개에서 종료 | mgmet @0x7100078e70 [callers]; 실제 경기 종료의 >=target 비교도 mgm04 @0x7100015f70 [C04]에서 확인 |
 | 결과 UI 경계 | UI Setup/발표/스크롤만 호출해 코인·스타·rank writer를 대신하지 않음 | mgmet @0x7100066610/@0x710006c4e0/@0x7100085900 [callers] |
+
+[설계] 추가 C에서 유도한 기대값이며 원본 실행 결과는 아니다. 아래 표의 원본 module/address와 source를 기준으로 향후 fixture를 만들 수 있다.
+
+| 항목 [설계] | 입력→기대값 | 근거 |
+|---|---|---|
+| mgm02 기본유형 | 5회→N/B/N/Battle/B; 표 길이5·7·10이며 보너스 추가회수0 | mgm02 @0x710001b33c/@0x7100017728 [C02]; §4.2 |
+| 징수 | total[4,10,13,0],levy10→levied[4,10,10,0],잔액[0,0,3,0],L24 | mgm02 @0x710000484c/@0x7100004948 [C02] |
+| 무승자 배틀 | rank0 인원0→각자 levied 반환 | mgm02 @0x7100003f50 [C02] |
+| 잔여 보정 | R1·현재rank 동점2명→1/2<1이므로 둘다+0·R1 남음 | mgm02 @0x71000042d0 [C02] |
+| 총코인 rank | [100,100,90,80]→[0,0,1,2]; 전원0 최종→전원0 | mgm02 @0x7100013200/@0x71000146c0/@0x710001704c [C02] |
+| 추첨 공백 | 원본Rule7∩현등록=0→웹 시작차단·추첨/round/commit0 | [registry]·mgm02 @0x710000f0b0 [C02]. 차단은 웹설계 |
+| 보드 최소횟수 | 필터후 playcount[3,1,1]→뒤 두 후보 중 선택; M2→SyncRandMod1회 호출 | bd01 @0x71000b09f0 [BOARD-C]. modulus인자는 미확정 |
+| 태그 무승부 | code3→양팀+1; code4→둘다+0; target3,승수[3,3]→종료 | mgm04 @0x710001ce70/@0x7100015f70 [C04] |
+| 태그 이력 | Selector후보3→NeedClear true,4→false; Roulette4→true,5→false | mgm04 @0x7100022c74/@0x710001fc64 [C04] |
+| 투표 | [A,A,A,A]→A즉시; [A,A,A,B]/[A,A,B,B]→네표룰렛 | mgm05 @0x7100018690/@0x7100018c50 [C05] |
+| 듀얼 룰렛 | 유효후보5→shuffle 후4슬롯; 중복0; 전체pool이력제외 없음 | mgm05 @0x7100014fb0/@0x710000fb40 [C05] |
+| 보스 격파 | WinLose[1,1,1,1]→true; [1,1,1,2]→false | mgm06 @0x7100011ed0 [C06] |
+| 보스 rank/MVP | 총점[9,9,5,2]→rank[0,0,2,3]·MVP2명; 전원동점→4명 | mgm06 @0x7100011ba0/@0x710001e5e0 [C06]. 점수표를 주입한 기대 |
+| 데일리 경계 | 남은시간00:00:00에서 A도눌림→A선택검사가 우선 | mgmet @0x7100056f40 [MODE-H] |
 
 ## 11. 미확정
 
-| 번호 [미확정] | 남은 쟁점 | 필요한 자료 | 후속 판정 [설계] | 확인 범위·남은 차단 |
-|---|---|---|---|---|
-| U01 | mgm02 최대 Round와 보너스 회차 포함 | mgm02 @0x7100017008/@0x7100017728 [fn02]  남음 | 최대 Round·보너스 포함의 본체 C 없음. |
-| U02 | mgm02 게임 집합·유형 표·가중치·중복 초기화·난수 순서 | mgm02 @0x710000ee3c/@0x710000f030/@0x7100017408/@0x710001b580 [fn02]  남음 | 유형 getter/property까지 주소를 좁힘; 가중치·중복·RNG 본체 C 없음. |
-| U03 | mgm02 코인 배분·징수·배틀·동점 순위·최종 시상 | mgm02 @0x710001704c/@0x7100018300/@0x7100018920, main @0x71001f3120 [fn02]·[fnMain]  부분 해결 | §3.5·§4.1에서 결과 표시/발표 reader 확인. CoinMgr 8함수·상수 getter 주소 식별; 원본 지급·rank writer는 남음. |
-| U04 | mgm03 날짜 변경·팩 조합/순서·팀/스타 동률·저장 보상 | mgmet @0x7100056e10/@0x7100056f40, mgm03 @0x710000a440/@0x710000b3a0 [fnH]·[fn03]  부분 해결 | §6.2에서 40조합·팩 fallback·시간 reader 확인. day helper·날짜 갱신/실제 선택·스타 Data writer는 남음. |
-| U05 | mgm04 후보·선택권·이력·목표 승수 비교·무승부·RM | mgm04 @0x7100015c88/@0x7100018060/@0x710001aa90, main @0x71001f3be0 [fn04]·[fnMain]  부분 해결 | §3.5·§6.3에서 표시 승수·목표·스크롤·복귀 승리/보상 호출 확인. 실제 경기 종료·이력·RM 연승·보상량은 남음. |
-| U06 | mgm05 인원/체감별 26종 소비·듀얼 이동·동표·룰렛·포인트 식 | mgm05 @0x710000fb40/@0x710000c210/@0x7100018690 [fn05]  부분 해결 | §3.4에서 항구 인원 설정/연결/설정/After 순서 확인. 런타임 추첨·인원 허용 수·포인트/듀얼은 남음. |
-| U07 | mgm06 보스 수/순서·실패/완주·기여점·MVP 동률·보상 | mgm06 @0x7100011610/@0x7100011750/@0x710001e5e0 [fn06]  부분 해결 | §3.4에서 보스 설정 열·시작1/취소0·cache writer 확인. 실제 보스 수/순서·MVP·보상은 남음. |
-| U08 | bd01 인원 형태 선택·가중치·이력·체감/고수 분기·RNG | bd01 @0x71000afb90/@0x71000b09f0/@0x71000b1228/@0x710028cb00 [fnBD]  남음 | 보드 MgMgr/MgCall 본체 C 없음. 최소 비교 요청은 부록 C.3. |
-| U09 | caller C에서 빠진 setter 값·팀 표 값·Scene+0x3b0 writer | mgmet @0x71000638a0/@0x71000633c0/@0x71000628f0 [callers]. 호출 존재 이상으로 값을 확정하지 않음  부분 해결 | §3.4의 상위 caller로 byte0의 CPU 규칙 경로·그 밖 RM 경로를 확인. writer @0x710005a1a0와 빠진 setter 값·팀 표 값은 남음. |
-| U10 | Name→숫자 ID 순서·Gyro 0/1/2의 장치/축 의미 | main @0x71001e14b0/@0x71001e15d4 [fnMain], @0x71001e1778 [입력 §6.4](../engine/05_ui_input.md#64-미니게임별-조작-데이터-데이터--판독)  남음 | Name→ID getter C 없음; Gyro 물리 의미는 공용 [19_motion_input](../engine/19_motion_input.md#11-미확정) 재사용. |
-| U11 | 모드별 동시 참가수·체감 지원/길이·시상 연출 | 모드 SyncedSetup/본체 C, §7 layout, main @0x71002e0500 [한 판 §12.3](minigame_scene.md#123-게임-쪽이-구현할-인터페이스-mggame)  부분 해결 | §3.5·§7에서 태그 10행 결과/스크롤·RM 연출 경계 확인. 실제 동시 참가수·체감 지원·클립 길이는 남음. |
-| U12 | 원본 실행·온라인 랭킹/저장 완료·실제 한 판 commit caller | 실행은 이번 범위 밖. main @0x71001f271c [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring). 공용 수명·실제 ring caller는 [18_scene_work §11 U08](../engine/18_scene_work.md#11-미확정) 재사용  남음 | 실행/온라인 외부 결과 확인은 수행하지 않음. 실제 commit caller·공용 수명은 18 갈래 참조 유지. |
+| 번호 [미확정] | 남은 쟁점 | 판정 [설계] | 해결한 범위·남은 근거 |
+|---|---|---|---|
+| U01 | 최대 Round 실제 표·SetRound 값 | 부분 해결 | Bonus/Battle이N회 안에 포함됨·종료 비교 확인. mgm02 @0x7100017728/@0x7100017008 [C02]; DAT @0x710005036c 내용·SetRound 누락 |
+| U02 | 추첨 상한·Params override·전체 소비열 | 부분 해결 | Rule7·체감·이력소진Clear·type기본표 확인. mgm02 @0x710000f0b0/@0x710000f030/@0x710001b33c [C02]. RNG 상한 인자·override 미식별 |
+| U03 | 배틀 rank0비율·Work writer 값·실제 보상량 | 부분 해결 | 기본10/3/2/0·×2·징수10·잔액보정·dense rank·최장연속 확인. mgm02 @0x71000049c0/@0x71000042d0/@0x7100013200 [C02]; DAT @0x710004e3c0·main 보상2callee 남음 |
+| U04 | 날짜 기준·reset·스타/동률·중복/저장 보상 | 부분 해결 | 40조합·팩fallback·시간경계·팩내고정순서·업적합계 확인. main @0x7100362bcc [DAILY-C]·mgmet @0x7100056f40/@0x71000597a0 [MODE-H]. 날짜 helper·DailytrialResultData·Reward C 없음 |
+| U05 | 태그 Work 이력 형식·RM 연승·보상량·룰렛RNG 상한 | 부분 해결 | Rule1후보·뒤처진팀선택·양팀승리+1·>=target종료·이력해제 확인. mgm04 @0x710000d860/@0x710001ce70/@0x7100015f70 [C04]. Work9주소는18담당, 카운터2callee C 없음 |
+| U06 | 서바이벌 동시 인원·듀얼 기준·실력포인트식 | 부분 해결 | VS4/duel후보·전원일치/네표룰렛·5중4·재매칭경계 확인. mgm05 @0x710000fb40/@0x7100018690/@0x710000c210 [C05]. setup의 누락 Round값·포인트 callee 미식별 |
+| U07 | 보스 슬롯별ID·ScoreTable·동률표시순서·보상량 | 부분 해결 | 고정5슬롯·전원WinLose1·competition rank·rank0전체MVP 확인. mgm06 @0x7100011610/@0x7100011ed0/@0x7100011ba0/@0x710001e5e0 [C06]; DAT @0x7100049a30·pointer @0x7100057d98 |
+| U08 | 보드 JsonMgTeam 가중치·그 RNG·history commit | 부분 해결 | 최소playcount·last/gyro/tired·후보완화·표시추가RNG·색별팀분기 확인. bd01 @0x71000b09f0/@0x710028b7f0/@0x710028cb00 [BOARD-C]; @0x71000690e0/@0x710028a260 C 없음 |
+| U09 | 빠진 setter 값·팀표·Scene+0x3b0 writer | 부분 해결 | CPU/RM caller 분기 확인. mgmet @0x71000535f0/@0x71000628f0 [callers]; writer @0x710005a1a0 C 없음. 인자가 빠진 호출에 값을 보충하지 않음 |
+| U10 | runtime ID 초기화·Gyro 장치/축 | 부분 해결 | MGList FNV1a 조회·152행/flag 확인. main @0x71001e14b0 [GAP]. 초기화 함수 미식별·Gyro의 물리 의미는 [19_motion_input §11](../engine/19_motion_input.md#11-미확정) 재사용 |
+| U11 | 게임별 동시 참가수·체감 지원·클립/시상시간 | 부분 해결 | 4인/2인 결과 profile·RT attachment는 병렬 판독 재사용. mgm05 @0x71000240a0 [UI §6.6](../engine/ui_parts_catalog.md#66-새-c의-결과표statusname-조립)·mgm06 @0x7100012cf0 [render §3.4](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체). 참가형태 이름으로 동시수 고정하지 않음 |
+| U12 | 실행·온라인/저장 완료·공용 한 판 commit caller | 남음 | 원본 실행은 이번 범위 밖. main @0x71001f271c·[18_scene_work §11 U08](../engine/18_scene_work.md#11-미확정)·[12_online_sync](../engine/12_online_sync.md) 재사용. 모드 caller 확인을 공용 commit 완료 증거로 대신하지 않음 |
 
-[설계] 기존 U01~U12를 같은 범위로 추적했다. 해결0·부분 해결7·남음5이며, 부분 해결은 원본 모드 전체 구현 준비를 뜻하지 않는다. 표시 reader의 확인과 정산/종료 writer의 미확정을 구분한다. [§3.4·3.5](mgm_modes.md#34-후속-판독-설정-caller의-연결)·[§6.2·6.3](mgm_modes.md#62-후속-판독-데일리-조합시간).
+[설계] 미확정12묶음은 해결0·부분 해결11·남음1이다. C 확보 뒤 판독된 범위는 §3~8에 기록했고, 남은 함수33주소·정적 데이터4주소는 부록C에 분리했다. 부분 해결은 원본 모드 전체 이식 완료를 뜻하지 않는다.
 
 ## 12. 사용자 확인
 
 | 추천 [설계] | 기본 제안 | 미승인 선택의 의미 |
 |---|---|---|
-| 원본 모드 | mgm02의 5/7/10·코인 규칙 우선 | 본체 판독 뒤 구현. §1·§3.2, mgmet @0x7100054640 [callers] |
-| 임의 N | 완료한 미니게임 수로 정의 | 원본 보드 턴/보너스 회차와 다른 웹 규칙. mgm02 @0x7100017008 [fn02] |
+| 원본 모드 | mgm02의 5/7/10·코인 규칙 우선 | 기본값/잔여공백 확인 뒤 구현. §1·§3.2·§6.4, mgmet @0x7100054640 [callers] |
+| 임의 N | 완료한 미니게임 수로 정의 | 보너스/배틀 포함N회. 임의N 유형표는 별도 웹 규칙. mgm02 @0x7100017728/@0x710001b580 [C02] |
 | 게임 범위 | 원본 후보 ∩ 완성 게임 | 장르 확장은 별도 변형. §8.2, [ND]·[CA]·[registry] |
-| 반복 | 소진 후 순환·가능하면 연속 중복 회피 | 원본 중복 정책은 미확정. §6.1, mgm02 @0x7100017408 [fn02] |
+| 반복 | 소진 후 순환·가능하면 연속 중복 회피 | 원본은소진후Clear, 경계연속중복회피는웹변형. §6.1·6.4, mgm02 @0x7100017408 [C02] |
 | 체감 | 원본 설정 우선, 입력 미완성 게임은 후보 제외 | 키보드 대체/체감 전종 제외는 별도 선택. mgmet @0x7100054640 [callers], [ND]·[CA] `Gyro` |
 
 [설계] 다음 구현에서 검토할 선택 목록이다. 이번 문서 작성에서는 승인을 요구하거나 구현을 시작하지 않는다. 원본 규칙 기본·사용자 선택 미승인이라는 작업 지시와 [DESIGN §10][design]를 따른다.
@@ -479,10 +607,10 @@ index = injectedSyncRandRange(0, len(ordered))
 
 | 판정 [설계] | 바로 쓸 수 있는 것 / 남은 조건 | 근거 |
 |---|---|---|
-| 바로 가능 | 112종 정적 분류, 체감 25/필터 15 구분, 팩 49·서바이벌 26·보드 78/75 대응, 규칙 caller 표·설정 상위 흐름·40조합 정적 검증·팩 fallback·시간/태그 결과 reader | §3.2~3.5·§6.2·6.3·§8, mgmet 7주소 [callers], [catalog]·[ND]·[CA]·[PACK]·[SURV] |
-| 근사 필요 | 부분집합 균등 추첨·순환 이력, 임의 N, 연출 완료 신호 | §6·§9·§12. 사용자 미승인, 원본 추첨과 동등하지 않음 |
-| 판독 필요 | mgm02~06의 게임 선택/정산/종료/시상, bd01 추첨, 누락 commit 값 | §11 U01~U11·부록C. 후속 reader는 부분 해결이며 계산/종료 본체 C 없음. 원본 mgm02는 최소 1차21주소가 선행 |
-| 현재 실행 목록 제한 | mg1801 1종. Chara 기준 추천 후보 ∩ 등록은 빈 집합. 실제 mgm02 후보·정산은 판독 필요 | [registry] `GAMES`, [ND] `GameRule=Chara`, §9.1 |
+| 바로 가능 | 112종 대응·인원형태·체감·모드 모집단; 원본모드 진행/종료 비교; mgm02 기본코인/유형표·이력·dense rank; 보드 최소횟수선택; 투표일치/룰렛; 보스5슬롯·competition rank | §3~8·§10, mgm02 @0x710001b33c [C02]·bd01 @0x71000b09f0 [BOARD-C]·mgm05 @0x7100018690 [C05]·mgm06 @0x7100011ba0 [C06] |
+| 근사 필요 | 부분집합 축소·원본기본값 적용·임의N 유형표·연속 중복 회피·애니완료 신호 | §6.1·§9·§12. 사용자 미승인 추천; 원본 RNG 소비/게임열과 동등하지 않음 |
+| 판독 필요 | 배틀rank0비율·최대회차 표·보스ID/점수표·누락setter/RNG 상한·runtime초기화·Daily스타·보드팀가중치·실력포인트·보상량 | §11·부록C. 이미 확보한 mode본체를 다시 추출 요청하지 않음 |
+| 현재 등록 제한 | mg1801 Rhythm1종. 원본 mgm02 Chara 교집합0으로 시작 차단. 최소1종 Chara의 입력/팀/결과 이식이선행 | [registry] GAMES·[ND]/[CA] `GameRule`·mgm02 @0x710000f0b0 [C02]·§9.1 |
 
 ## 부록 A. 출처 대응
 
@@ -495,6 +623,8 @@ index = injectedSyncRandRange(0, len(ordered))
 | 새 규칙 판독 | mgmet 8주소·[callers]. analysis/decomp 판본을 사용 |
 | 공용 재사용 | §2.1의 문서/주소. SceneBase/Work 수명재판독 0 |
 | 웹 판정 | [DESIGN §10][design]·[한 판 §12.12](minigame_scene.md#1212-웹-게임-연결-계약-2026-10-09-mg-connect) |
+
+[데이터] 추가 C·병렬 재사용 출처는 [GAP]·[MODE-H]·[BOARD-C]·[C02]~[C06], [18_scene_work §11](../engine/18_scene_work.md#11-미확정), [UI §6.6](../engine/ui_parts_catalog.md#66-새-c의-결과표statusname-조립), [render §3.4](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체)다. 재사용 함수는 부록B 신규 수에 포함하지 않는다.
 
 ## 부록 B. 새 판독 목록
 
@@ -524,117 +654,145 @@ index = injectedSyncRandRange(0, len(ordered))
 | mgmet | 0x7100085900 | `mgmet::Scene::Mgm04ReturnUiFlow` | [callers]; 스크롤 입력·RM 결과 연출 분기 |
 | mgmet | 0x71000818e0 | `mgmet::Scene::Mgm04ReturnFlow` | [callers]; 승리 모션 비교·업적·보상 호출 경계; 애니 세부 제외 |
 
-[판독] 최초 판독은 8개(규칙 7·복귀 연출 1)이며 기존 C만 사용했다. `Mgm04SetRuleTopFlow`의 네트워크 영역은 분기 경계만 확인했다. 값이 빠진 부분은 U09로 보류한다. 후속 새 판독은 15개이며 누적 23개다. GUI/애니 생성 boilerplate는 계산·reader 범위에 포함하지 않았다. 기존 판독 재판독 0·공용 SceneBase/Work 수명 새 판독 0·어셈블리 대체 판독 0·새 C/추출 0. 출처는 부록B의 모듈/주소와 [callers]·[DAILY-C].
+[판독] 최초8함수·추가140함수(기존후속15+MGList/보드/데일리25+mode본체100)로 누적148개다. 아래125행은 기존23행 뒤 추가 목록이다. 주소는 module별TSV·C를 대조했고 GUI boilerplate·일반 렌더·공용수명·UI/렌더의 병렬5함수는 새로 읽지 않았다. 원본실행·Ghidra추출·새C·분석스크립트0. [fn02]~[fn06]·[fnMain]·[INDEX][idx].
+
+| 모듈 [판독] | 주소 | 함수 | 출처·판독 구간 |
+|---|---|---|---|
+| main | 0x71001e14b0 | `bq::MGList::GetMinigameID` | [GAP]; MGList ID·rule·flag reader |
+| main | 0x71001e15d4 | `bq::MGList::GetGameRule` | [GAP]; MGList ID·rule·flag reader |
+| main | 0x71001e1600 | `bq::MGList::IsAvailable` | [GAP]; MGList ID·rule·flag reader |
+| main | 0x71001e1630 | `bq::MGList::IsCoin` | [GAP]; MGList ID·rule·flag reader |
+| main | 0x71001e1690 | `bq::MGList::IsBD01` | [GAP]; MGList ID·rule·flag reader |
+| mgmet | 0x7100055370 | `mgmet::Scene::Mgm02RewardUiFlow` | [MODE-H]; 최종 보상·데일리 선택/갱신 |
+| mgmet | 0x7100056e10 | `mgmet::Scene::Dailytrial_UpdateDailyData` | [MODE-H]; 최종 보상·데일리 선택/갱신 |
+| mgmet | 0x7100056f40 | `mgmet::Scene::Mgm03GamePackFlow` | [MODE-H]; 최종 보상·데일리 선택/갱신 |
+| mgmet | 0x71000597a0 | `mgmet::Scene::DailytrialReturnFlow_CheckRewardAndDailyBonus` | [MODE-H]; 최종 보상·데일리 선택/갱신 |
+| bd01 | 0x71000afb90 | `bd01::MgMgr::GetList` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000afd70 | `bd01::MgMgr::GetList_Item` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000aff40 | `bd01::MgMgr::GetList_VS` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b05a0 | `bd01::MgMgr::GetList_Duel` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b0770 | `bd01::MgMgr::GetList_Chara` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b0940 | `bd01::MgMgr::GetPlayID` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b09f0 | `bd01::MgMgr::GetPlayID_` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b0fd8 | `bd01::MgMgr::GetPlayID_Item` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b1048 | `bd01::MgMgr::GetPlayID_VS` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b10b8 | `bd01::MgMgr::GetPlayID_Duel` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b1130 | `bd01::MgMgr::GetPlayID_Chara` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x71000b1228 | `bd01::MgMgr::SetHistoryID` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x710028b7f0 | `bd01::event::MgCall::SetPlayerWork` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x710028c570 | `bd01::event::MgCall::RunRoulette` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x710028cb00 | `bd01::event::MgCall::GetMinigameList` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| bd01 | 0x710028d270 | `bd01::event::MgCall::Update` | [BOARD-C]; 후보·추첨·인원 형태·이력/룰렛·Update의 논리 구간 |
+| mgm02 | 0x7100003e60 | `mgm02::CoinMgr::SyncedSetupGame` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100003f50 | `mgm02::CoinMgr::GetRankCoinCount` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000042d0 | `mgm02::CoinMgr::AdjustBattleMgCoinCount` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710000484c | `mgm02::CoinMgr::LevyCoin` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100004948 | `mgm02::CoinMgr::GetTotalLeviedCoinCount` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100004960 | `mgm02::CoinMgr::ExistsGotCoinPlayer` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100004980 | `mgm02::CoinMgr::GetBonusMgGotCoinCount` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000049c0 | `mgm02::CoinMgr::GetDistributedCoinCountRatio` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710000ee3c | `mgm02::MgMgr::SyncedSetupGame` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710000ef94 | `mgm02::MgMgr::SetTargetMgIds` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710000efe0 | `mgm02::MgMgr::GetMgType` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710000f030 | `mgm02::MgMgr::LotteryNextMg` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100016008 | `mgm02::Scene::SyncedSetupGame` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100017008 | `mgm02::Scene::GetMaxRound` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001704c | `mgm02::Scene::SetMgResult` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100017408 | `mgm02::Scene::LotteryNextMg` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100017728 | `mgm02::Scene::MinigameModeFlow` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000178f0 | `mgm02::Scene::FirstRoundFlow` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100017b20 | `mgm02::Scene::DecideMgFlow` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100018030 | `mgm02::Scene::StepToMinigameScene` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100018300 | `mgm02::Scene::ResultFlow` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100018740 | `mgm02::Scene::ReturnToEntranceScene` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100018800 | `mgm02::Scene::DecideMgFlow_BonusMg` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100018920 | `mgm02::Scene::DecideMgFlow_BattleMg` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001a7fc | `mgm02::SceneParamsGameMgTypeTableFiveRound::getPropertyList` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001aa70 | `mgm02::SceneParamsGameMgTypeTableSevenRound::getPropertyList` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001ad44 | `mgm02::SceneParamsGameMgTypeTableTenRound::getPropertyList` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b0a8 | `mgm02::SceneParamsGame::getPropertyList` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b3e4 | `mgm02::SceneParamsGameMgTypeTableFiveRound::MgType` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b438 | `mgm02::SceneParamsGameMgTypeTableSevenRound::MgType` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b4a4 | `mgm02::SceneParamsGameMgTypeTableTenRound::MgType` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b534 | `mgm02::SceneParamsGame::RankCoinCount` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b580 | `mgm02::SceneParamsGame::MgType` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b710 | `mgm02::SceneParamsGame::BonusMgCoinCountCoef` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b718 | `mgm02::SceneParamsGame::BattleMgLeviedCoinCount` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710000f0b0 | `mgm02::MgMgr::GetTargetMgIds` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100011f48 | `mgm02::ParamMgr::SyncedSetupGame` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100013200 | `mgm02::RankMgr::SyncedSetupGame` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x7100018cc0 | `mgm02::Scene::UpdateHighScore` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001a954 | `mgm02::SceneParamsGameMgTypeTableFiveRound::createInstance` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001ac20 | `mgm02::SceneParamsGameMgTypeTableSevenRound::createInstance` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001af80 | `mgm02::SceneParamsGameMgTypeTableTenRound::createInstance` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x710001b33c | `mgm02::SceneParamsGame::createInstance` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000148d0 | `FUN_71000148d0` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000139a0 | `FUN_71000139a0` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000155f0 | `FUN_71000155f0` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm02 | 0x71000146c0 | `FUN_71000146c0` | [C02]; 회차·후보·코인·기본 Params·rank; 대형 flow/정렬은 관련 논리 구간 |
+| mgm03 | 0x7100008960 | `mgm03::Scene::SyncedSetupGame` | [C03]; 팩 순서·결과 rank·진행/최종 복귀 |
+| mgm03 | 0x7100009780 | `mgm03::Scene::MinigameModeFlow` | [C03]; 팩 순서·결과 rank·진행/최종 복귀 |
+| mgm03 | 0x7100009bc0 | `mgm03::Scene::StartFlow` | [C03]; 팩 순서·결과 rank·진행/최종 복귀 |
+| mgm03 | 0x710000a440 | `mgm03::Scene::DicideMinigameFlow` | [C03]; 팩 순서·결과 rank·진행/최종 복귀 |
+| mgm03 | 0x710000b3a0 | `mgm03::Scene::ResultMinigameFlow` | [C03]; 팩 순서·결과 rank·진행/최종 복귀 |
+| mgm04 | 0x71000150c8 | `mgm04::Scene::SyncedSetupGame` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100015c88 | `mgm04::Scene::UpdateMgmWork` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100015f70 | `mgm04::Scene::MinigameModeFlow` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100016190 | `mgm04::Scene::FirstRoundFlow` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100016330 | `mgm04::Scene::ResultFlow_Cut01` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100016390 | `mgm04::Scene::ResultFlow_Cut02` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100016580 | `mgm04::Scene::SelectNextMgFlow` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x71000166f0 | `mgm04::Scene::ResetWork` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100018060 | `mgm04::Scene::SelectNextMgFlow_SelectAndDecideMg` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001aa90 | `mgm04::Scene::RM_MinigameModeFlow` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001ce70 | `mgm04::TeamParamMgr::SyncedSetupGame` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001d260 | `mgm04::TeamParamMgr::GetMgResult` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001e870 | `mgm04::UIMgRoulette::SyncedSetupGame` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001ffa0 | `mgm04::UIMgSelector::SyncedSetupGame` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001fc64 | `mgm04::UIMgRoulette::NeedsClearMgHistory` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x7100022c74 | `mgm04::UIMgSelector::NeedsClearMgHistory` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710000d860 | `mgm04::GetRandTargetMinigameIds` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001ed04 | `mgm04::UIMgRoulette::In` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm04 | 0x710001f4b0 | `mgm04::UIMgRoulette::Decide` | [C04]; 팀 승수/선택권·후보·종료·RM 경계·룰렛 창 표시 |
+| mgm05 | 0x7100003ff0 | `mgm05::Scene::SyncedSetupGame` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x710000956c | `mgm05::Scene::MinigameModeFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x710000aeb0 | `mgm05::Scene::MinigameModeFlow_AfterMaching` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x710000c210 | `mgm05::Scene::MinigameModeFlow_AfterGame` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x710000fb40 | `mgm05::Scene::GetMinigameIdList` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100010d90 | `mgm05::Scene::DicideMinigameFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x71000154f0 | `mgm05::Scene::MgSelectRouletteFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100017bf0 | `mgm05::Scene::MgSelectVoteFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100018690 | `mgm05::Scene::DicideVoteMgSelectFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x710001a7d0 | `mgm05::Scene::GetWinPattern` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100009690 | `mgm05::Scene::MinigameModeFlow_FlowInit` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x710000f9cc | `mgm05::Scene::CheckMoveMatchingScene` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100011ff0 | `mgm05::Scene::ResultMinigameFlowCommon` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100012bf0 | `mgm05::Scene::ResultMinigameFlowWin` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x71000141f0 | `mgm05::Scene::ResultMinigameFlowLose` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100014fb0 | `mgm05::Scene::OpenRouletteMgSelectFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x71000165b0 | `mgm05::Scene::OpenVoteMgSelectFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm05 | 0x7100018c50 | `mgm05::Scene::AdvanceVoteToRouletteMgSelectFlow` | [C05]; 일치 투표/룰렛·후보·승패/재매칭 논리; 점수식은 미확정 |
+| mgm06 | 0x7100010e54 | `mgm06::Scene::SyncedSetupGame` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x71000111c0 | `mgm06::Scene::SetMinigameResultToMinigameModeWork` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x710001140c | `mgm06::Scene::MinigameModeFlow` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x71000115a0 | `mgm06::Scene::OpeningFlow` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x7100011610 | `mgm06::Scene::CallMinigameScene` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x7100011750 | `mgm06::Scene::RewardFlow` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x7100011ed0 | `mgm06::Scene::IsBossMinigameDefeated` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x710001e5e0 | `mgm06::Scene::VictoryFlow::MainFlow` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x7100011ba0 | `mgm06::CalculatePlayersGameRank` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+| mgm06 | 0x710002329c | `mgm06::BossRushCourseResult::Tally` | [C06]; 고정5슬롯·전원승리·결과·점수/rank/MVP 논리; 렌더 재판독 제외 |
+
+| mgm04 | 0x710001ed50 | `mgm04::UIMgRoulette::Update` | [C04]; 후보 표시·사전 난수2호출·f32 대기 논리; 문자열 마스킹 판독 |
 
 ## 부록 C. Ghidra 요청 표
 
-[미확정] 다음은 모듈·주소별 중복 제거 요청이다. 각 심볼은 링크한 함수 TSV에서 확인했고 현재 허용 C 검색 범위에서 본체가 없다. **요청 기록만 남겼으며 Ghidra·원본 실행·추출은 하지 않았다.** [미확정] 기존 C의 불완전 인자 문제 U09는 새 주소를 만들지 않고 별도 보류한다. [INDEX][idx]와 §2.2 참조.
+[미확정] 새 C 확보 뒤 본체가 있는102개 요청은 제거했다. 남은 함수33개는 module별 TSV 심볼·허용 C 헤더를 대조했다. 정적 데이터4주소·미식별3갈래·18담당 C존재9함수는 별도다. 요청 기록만 남겼으며 Ghidra·추출·원본실행0이다. [INDEX][idx]·[fnMain]·[fnH]·[fnBD].
 
-| 모듈 [미확정] | 주소 | TSV 심볼 | C 부재·요청 이유 | 구현 차단 [설계] |
+### C.1 본체 C 없는 함수33개
+
+| 모듈 [미확정] | 주소 | TSV 심볼 | 요청 이유 | 필요한 범위 [설계] |
 |---|---|---|---|---|
-| mgm02 | 0x710000ee3c | `mgm02::MgMgr::SyncedSetupGame` [fn02] | 본체 C 없음; 후보 목록 초기화·규칙/체감 필터  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710000ef94 | `mgm02::MgMgr::SetTargetMgIds` [fn02] | 본체 C 없음; 원본 후보 ID 집합 설정  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710000efe0 | `mgm02::MgMgr::GetMgType` [fn02] | 본체 C 없음; 라운드별 인원 형태/게임 유형  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710000f030 | `mgm02::MgMgr::LotteryNextMg` [fn02] | 본체 C 없음; 실제 게임 추첨·가중치·RNG  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100016008 | `mgm02::Scene::SyncedSetupGame` [fn02] | 본체 C 없음; 모드 고유 필드·Work 소비  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100017008 | `mgm02::Scene::GetMaxRound` [fn02] | 본체 C 없음; 5/7/10 최대 라운드 산출  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710001704c | `mgm02::Scene::SetMgResult` [fn02] | 본체 C 없음; 한 판 코인 합산·동점·순위  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100017408 | `mgm02::Scene::LotteryNextMg` [fn02] | 본체 C 없음; 이력 회피·추첨·난수 순서  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100017728 | `mgm02::Scene::MinigameModeFlow` [fn02] | 본체 C 없음; 반복/최종 종료·Round 증가  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x71000178f0 | `mgm02::Scene::FirstRoundFlow` [fn02] | 본체 C 없음; 첫 라운드 초기값  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100017b20 | `mgm02::Scene::DecideMgFlow` [fn02] | 본체 C 없음; 게임 유형·찬스 선택 흐름  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100018030 | `mgm02::Scene::StepToMinigameScene` [fn02] | 본체 C 없음; 팀/참가자·게임 setup 기록  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100018300 | `mgm02::Scene::ResultFlow` [fn02] | 본체 C 없음; 최종 코인 결과·시상  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100018740 | `mgm02::Scene::ReturnToEntranceScene` [fn02] | 본체 C 없음; 항구 복귀 값·보상 전달  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100018800 | `mgm02::Scene::DecideMgFlow_BonusMg` [fn02] | 본체 C 없음; 보너스 게임 집합·회차  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x7100018920 | `mgm02::Scene::DecideMgFlow_BattleMg` [fn02] | 본체 C 없음; 배틀 게임·징수/배분  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710001a7fc | `mgm02::SceneParamsGameMgTypeTableFiveRound::getPropertyList` [fn02] | 본체 C 없음; 5라운드 유형 표 필드/상수  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710001aa70 | `mgm02::SceneParamsGameMgTypeTableSevenRound::getPropertyList` [fn02] | 본체 C 없음; 7라운드 유형 표 필드/상수  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710001ad44 | `mgm02::SceneParamsGameMgTypeTableTenRound::getPropertyList` [fn02] | 본체 C 없음; 10라운드 유형 표 필드/상수  예: 원본 모드 규칙·진행/결과 |
-| mgm02 | 0x710001b580 | `mgm02::SceneParamsGame::MgType` [fn02] | 본체 C 없음; 회차→유형 표 선택  예: 원본 모드 규칙·진행/결과 |
-| mgm03 | 0x7100008960 | `mgm03::Scene::SyncedSetupGame` [fn03] | 본체 C 없음; 모드 Work·팩 초기화  예: 원본 모드 규칙·진행/결과 |
-| mgm03 | 0x7100009780 | `mgm03::Scene::MinigameModeFlow` [fn03] | 본체 C 없음; 3게임 반복·종료·Round  예: 원본 모드 규칙·진행/결과 |
-| mgm03 | 0x7100009bc0 | `mgm03::Scene::StartFlow` [fn03] | 본체 C 없음; 시작 안내·팩 진행 초기화  예: 원본 모드 규칙·진행/결과 |
-| mgm03 | 0x710000a440 | `mgm03::Scene::DicideMinigameFlow` [fn03] | 본체 C 없음; 팩 슬롯 순서·팀/형태 결정  예: 원본 모드 규칙·진행/결과 |
-| mgm03 | 0x710000b3a0 | `mgm03::Scene::ResultMinigameFlow` [fn03] | 본체 C 없음; 승리 스타·동점·최종 결과  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x71000150c8 | `mgm04::Scene::SyncedSetupGame` [fn04] | 본체 C 없음; 모드 Work·팀/승수 초기화  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100015c88 | `mgm04::Scene::UpdateMgmWork` [fn04] | 본체 C 없음; 팀 승수·뒤처진 팀 갱신  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100015f70 | `mgm04::Scene::MinigameModeFlow` [fn04] | 본체 C 없음; 목표 승수 종료·계속  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100016190 | `mgm04::Scene::FirstRoundFlow` [fn04] | 본체 C 없음; 첫 경기 시작·팀/승수 준비  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100016330 | `mgm04::Scene::ResultFlow_Cut01` [fn04] | 본체 C 없음; 한 판 복귀 결과 준비  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100016390 | `mgm04::Scene::ResultFlow_Cut02` [fn04] | 본체 C 없음; 승패/무승부 결과·시상  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100016580 | `mgm04::Scene::SelectNextMgFlow` [fn04] | 본체 C 없음; 다음 게임 선택 흐름  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x71000166f0 | `mgm04::Scene::ResetWork` [fn04] | 본체 C 없음; 고유 상태 리셋 범위  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x7100018060 | `mgm04::Scene::SelectNextMgFlow_SelectAndDecideMg` [fn04] | 본체 C 없음; 후보·팀 선택권·중복·RNG  예: 원본 모드 규칙·진행/결과 |
-| mgm04 | 0x710001aa90 | `mgm04::Scene::RM_MinigameModeFlow` [fn04] | 본체 C 없음; RM 연승 루프/종료  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x7100003ff0 | `mgm05::Scene::SyncedSetupGame` [fn05] | 본체 C 없음; 규칙/인원·Work 초기화  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x710000956c | `mgm05::Scene::MinigameModeFlow` [fn05] | 본체 C 없음; 매칭/게임/결과 전체 반복  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x710000aeb0 | `mgm05::Scene::MinigameModeFlow_AfterMaching` [fn05] | 본체 C 없음; 매칭 뒤 인원 형태·게임 전환  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x710000c210 | `mgm05::Scene::MinigameModeFlow_AfterGame` [fn05] | 본체 C 없음; 승패/포인트·듀얼 이동  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x710000fb40 | `mgm05::Scene::GetMinigameIdList` [fn05] | 본체 C 없음; 26종의 필터·가중치  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x7100010d90 | `mgm05::Scene::DicideMinigameFlow` [fn05] | 본체 C 없음; 게임 선택·참가 형태  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x71000154f0 | `mgm05::Scene::MgSelectRouletteFlow` [fn05] | 본체 C 없음; 룰렛 추첨·난수 소비  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x7100017bf0 | `mgm05::Scene::MgSelectVoteFlow` [fn05] | 본체 C 없음; 투표 입력/확정  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x7100018690 | `mgm05::Scene::DicideVoteMgSelectFlow` [fn05] | 본체 C 없음; 동표 처리·최종 추첨  예: 원본 모드 규칙·진행/결과 |
-| mgm05 | 0x710001a7d0 | `mgm05::Scene::GetWinPattern` [fn05] | 본체 C 없음; 승리 패턴/포인트 연결  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x7100010e54 | `mgm06::Scene::SyncedSetupGame` [fn06] | 본체 C 없음; 보스 목록/고유 필드 초기화  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x71000111c0 | `mgm06::Scene::SetMinigameResultToMinigameModeWork` [fn06] | 본체 C 없음; 모드 결과 ring writer  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x710001140c | `mgm06::Scene::MinigameModeFlow` [fn06] | 본체 C 없음; 연전/패배/완주 종료  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x71000115a0 | `mgm06::Scene::OpeningFlow` [fn06] | 본체 C 없음; 보스 연전 오프닝 연결  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x7100011610 | `mgm06::Scene::CallMinigameScene` [fn06] | 본체 C 없음; 보스 ID 순서/추첨·setup  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x7100011750 | `mgm06::Scene::RewardFlow` [fn06] | 본체 C 없음; 보상·MVP 연결  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x7100011ed0 | `mgm06::Scene::IsBossMinigameDefeated` [fn06] | 본체 C 없음; 보스 격파 판정·완주 조건  예: 원본 모드 규칙·진행/결과 |
-| mgm06 | 0x710001e5e0 | `mgm06::Scene::VictoryFlow::MainFlow` [fn06] | 본체 C 없음; 완주 점수·MVP 동률/시상  예: 원본 모드 규칙·진행/결과 |
-| bd01 | 0x71000afb90 | `bd01::MgMgr::GetList` [fnBD] | 본체 C 없음; 일반/고수·체감 후보 목록  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000afd70 | `bd01::MgMgr::GetList_Item` [fnBD] | 본체 C 없음; 아이템 게임 후보  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000aff40 | `bd01::MgMgr::GetList_VS` [fnBD] | 본체 C 없음; 배틀/VS 후보와 형태  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b05a0 | `bd01::MgMgr::GetList_Duel` [fnBD] | 본체 C 없음; 듀얼 후보  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b0770 | `bd01::MgMgr::GetList_Chara` [fnBD] | 본체 C 없음; 캐릭터 챌린지 후보  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b0940 | `bd01::MgMgr::GetPlayID` [fnBD] | 본체 C 없음; 일반 게임 선택 경계  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b09f0 | `bd01::MgMgr::GetPlayID_` [fnBD] | 본체 C 없음; 가중치·이력·RNG 핵심  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b0fd8 | `bd01::MgMgr::GetPlayID_Item` [fnBD] | 본체 C 없음; 아이템 추첨 경로  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b1048 | `bd01::MgMgr::GetPlayID_VS` [fnBD] | 본체 C 없음; VS 추첨 경로  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b10b8 | `bd01::MgMgr::GetPlayID_Duel` [fnBD] | 본체 C 없음; 듀얼 추첨 경로  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b1130 | `bd01::MgMgr::GetPlayID_Chara` [fnBD] | 본체 C 없음; 캐릭터 추첨 경로  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x71000b1228 | `bd01::MgMgr::SetHistoryID` [fnBD] | 본체 C 없음; 이력 길이/리셋/중복 방지  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x710028b7f0 | `bd01::event::MgCall::SetPlayerWork` [fnBD] | 본체 C 없음; 형태 선택과 참가 팀 구성  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x710028c570 | `bd01::event::MgCall::RunRoulette` [fnBD] | 본체 C 없음; 룰렛 연출과 확정 순서  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x710028cb00 | `bd01::event::MgCall::GetMinigameList` [fnBD] | 본체 C 없음; 유형/게임 후보 조립  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| bd01 | 0x710028d270 | `bd01::event::MgCall::Update` [fnBD] | 본체 C 없음; 한 턴 끝 게임 실행 흐름  예: 보드 추첨 동등성; mgm02 기본 구현과 별도 |
-| main | 0x71001e14b0 | `bq::MGList::GetMinigameID` [fnMain] | 본체 C 없음; Name→ID 조회/목록 순서  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001e15d4 | `bq::MGList::GetGameRule` [fnMain] | 본체 C 없음; MGList 규칙 getter  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001e1600 | `bq::MGList::IsAvailable` [fnMain] | 본체 C 없음; Available 판정  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001e1630 | `bq::MGList::IsCoin` [fnMain] | 본체 C 없음; Coin flag 판정  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001e1690 | `bq::MGList::IsBD01` [fnMain] | 본체 C 없음; 보드 일반/고수 flag 소비  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f3120 | `bq::MinigameModeWork::Mgm02AddMgResult` [fnMain] | 본체 C 없음; mgm02 고유 결과 레코드/합산  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f3370 | `bq::MinigameModeWork::Mgm02GetTotalCoinCount` [fnMain] | 본체 C 없음; mgm02 누적 코인 getter·필드  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f3470 | `bq::MinigameModeWork::Mgm02GetTotalLeviedCoinCount` [fnMain] | 본체 C 없음; mgm02 누적 징수 코인 getter  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f35d0 | `bq::MinigameModeWork::Mgm02IsPlayedMgId` [fnMain] | 본체 C 없음; mgm02 이력 검색 범위  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f396c | `bq::MinigameModeWork::Mgm04GetTargetVictoryCount` [fnMain] | 본체 C 없음; mgm04 목표 승수 getter·필드  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f3974 | `bq::MinigameModeWork::Mgm04GetTeamVitoryCount` [fnMain] | 본체 C 없음; mgm04 팀 승수 getter·필드  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f39e0 | `bq::MinigameModeWork::Mgm04AddMGResult` [fnMain] | 본체 C 없음; mgm04 결과/팀 승수 레코드  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f3be0 | `bq::MinigameModeWork::Mgm04AddMGIDHistory` [fnMain] | 본체 C 없음; mgm04 이력 기록·길이  예: 원본 모드 규칙·진행/결과 |
-| main | 0x71001f3d50 | `bq::MinigameModeWork::Mgm04IsPlayMGID` [fnMain] | 본체 C 없음; mgm04 중복 판정  예: 원본 모드 규칙·진행/결과 |
-| mgmet | 0x7100055370 | `mgmet::Scene::Mgm02RewardUiFlow` [fnH] | 본체 C 없음; mgm02 항구 최종 보상 UI  예: 원본 모드 규칙·진행/결과 |
-| mgmet | 0x7100056e10 | `mgmet::Scene::Dailytrial_UpdateDailyData` [fnH] | 본체 C 없음; 데일리 날짜→팩 선택/교체  예: 원본 모드 규칙·진행/결과 |
-| mgmet | 0x7100056f40 | `mgmet::Scene::Mgm03GamePackFlow` [fnH] | 본체 C 없음; 팩/조합 선택 흐름  예: 원본 모드 규칙·진행/결과 |
-| mgmet | 0x71000597a0 | `mgmet::Scene::DailytrialReturnFlow_CheckRewardAndDailyBonus` [fnH] | 본체 C 없음; 데일리 보상/보너스  예: 원본 모드 규칙·진행/결과 |
-
-| mgm02 | 0x7100003e60 | `mgm02::CoinMgr::SyncedSetupGame` [fn02] | 본체 C 없음; CoinMgr 초기화·기준 값 소비 | 예: 코인 규칙 |
-| mgm02 | 0x7100003f50 | `mgm02::CoinMgr::GetRankCoinCount` [fn02] | 본체 C 없음; 순위별 지급 코인 산식 | 예: 코인 규칙 |
-| mgm02 | 0x71000042d0 | `mgm02::CoinMgr::AdjustBattleMgCoinCount` [fn02] | 본체 C 없음; 배틀 코인 보정·부족 코인·정수 처리 | 예: 코인 규칙 |
-| mgm02 | 0x710000484c | `mgm02::CoinMgr::LevyCoin` [fn02] | 본체 C 없음; 플레이어 징수·상한/하한 | 예: 코인 규칙 |
-| mgm02 | 0x7100004948 | `mgm02::CoinMgr::GetTotalLeviedCoinCount` [fn02] | 본체 C 없음; 징수 코인 합계 | 예: 코인 규칙 |
-| mgm02 | 0x7100004960 | `mgm02::CoinMgr::ExistsGotCoinPlayer` [fn02] | 본체 C 없음; 획득자가 없는 경우의 분기 | 예: 코인 규칙 |
-| mgm02 | 0x7100004980 | `mgm02::CoinMgr::GetBonusMgGotCoinCount` [fn02] | 본체 C 없음; 보너스 획득 코인·계수 적용 | 예: 코인 규칙 |
-| mgm02 | 0x71000049c0 | `mgm02::CoinMgr::GetDistributedCoinCountRatio` [fn02] | 본체 C 없음; 승자/동점의 배분 비율 | 예: 코인 규칙 |
-| mgm02 | 0x710001b0a8 | `mgm02::SceneParamsGame::getPropertyList` [fn02] | 본체 C 없음; 코인·유형 규칙 property 및 실제 값 출처 | 예: 원본 상수 |
-| mgm02 | 0x710001b3e4 | `mgm02::SceneParamsGameMgTypeTableFiveRound::MgType` [fn02] | 본체 C 없음; 5라운드별 유형 getter | 예: 유형/회차 |
-| mgm02 | 0x710001b438 | `mgm02::SceneParamsGameMgTypeTableSevenRound::MgType` [fn02] | 본체 C 없음; 7라운드별 유형 getter | 예: 유형/회차 |
-| mgm02 | 0x710001b4a4 | `mgm02::SceneParamsGameMgTypeTableTenRound::MgType` [fn02] | 본체 C 없음; 10라운드별 유형 getter | 예: 유형/회차 |
-| mgm02 | 0x710001b534 | `mgm02::SceneParamsGame::RankCoinCount` [fn02] | 본체 C 없음; 순위별 기본 코인 상수 소비 | 예: 원본 상수 |
-| mgm02 | 0x710001b710 | `mgm02::SceneParamsGame::BonusMgCoinCountCoef` [fn02] | 본체 C 없음; 보너스 코인 계수 | 예: 원본 상수 |
-| mgm02 | 0x710001b718 | `mgm02::SceneParamsGame::BattleMgLeviedCoinCount` [fn02] | 본체 C 없음; 배틀 징수 코인 상수 | 예: 원본 상수 |
 | main | 0x71001f32cc | `bq::MinigameModeWork::Mgm02GetMgResult` [fnMain] | 본체 C 없음; Mgm02 결과 레코드 반환·전체 형식 | 예: 결과 조회 |
 | main | 0x71001f3320 | `bq::MinigameModeWork::Mgm02GetMgResultCount` [fnMain] | 본체 C 없음; Mgm02 결과 수·라운드와의 관계 | 예: 결과 조회 |
 | main | 0x71001f33a0 | `bq::MinigameModeWork::Mgm02SetResultRank` [fnMain] | 본체 C 없음; Mgm02 최종 rank writer·동점 원본 | 예: 순위 계산 |
@@ -654,35 +812,69 @@ index = injectedSyncRandRange(0, len(ordered))
 | mgmet | 0x710005a1a0 | `mgmet::Scene::MGMSelectOpponentUiFlow` [fnH] | 본체 C 없음; Scene+0x3b0의 상대 선택 상태 writer | 예: 설정 상태의 원본 등가성 |
 | mgmet | 0x71000864a0 | `mgmet::Scene::Mgm04SetRewardPlayerWinContinuousCount` [fnH] | 본체 C 없음; 태그 로컬 연승 보상 카운터 계산 | 예: 메타 보상 |
 | mgmet | 0x71000866fc | `mgmet::Scene::Mgm04SetRewardPlayerWinCount` [fnH] | 본체 C 없음; 태그 로컬 승리 보상 카운터 계산 | 예: 메타 보상 |
-| mgmet | 0x7100068d90 | `FUN_7100068d90` [fnH] | 본체 C 없음; Order/rank 정렬·동점의 안정 순서 | 예: 시상 표시 |
+| mgmet | 0x7100068d90 | `FUN_7100068d90` [fnH] | 본체 C 없음; Order/rank 정렬 helper 호출·동점의 안정 순서 | 예: 시상 표시 |
 | mgmet | 0x7100004040 | `FUN_7100004040` [fnH] | 본체 C 없음; rank0 수집 후 우승 이름·메시지 설정 | 예: 시상 표시 |
+| main | 0x7100231588 | `bq::reward::RewardModule::DailyTrialTakeStar` [fnMain] | 본체 C 없음; 데일리 스타 실제 보상량·저장 계약 | 메타 보상 |
+| main | 0x71002316a8 | `bq::reward::RewardModule::DailyTrialDailyBonus` [fnMain] | 본체 C 없음; 데일리 완료 보너스 실제 보상량 | 메타 보상 |
+| main | 0x7100231788 | `bq::reward::RewardModule::CharaMgBattleMgStreak` [fnMain] | 본체 C 없음; 챌린지 최장 연속 보상량 | 메타 보상 |
+| main | 0x71002318b8 | `bq::reward::RewardModule::CharaMgBattleRank` [fnMain] | 본체 C 없음; 챌린지 최종 rank 보상량 | 메타 보상 |
+| main | 0x7100231c28 | `bq::reward::RewardModule::BossRushStreak` [fnMain] | 본체 C 없음; 보스 연속 기록 보상량 | 메타 보상 |
+| main | 0x7100231d3c | `bq::reward::RewardModule::BossRushRank` [fnMain] | 본체 C 없음; 보스 최종 rank 보상량 | 메타 보상 |
+| mgmet | 0x7100056c50 | `mgmet::Scene::Dailytrial_CheckResetDailyPlayData` [fnH] | 본체 C 없음; 날짜 변경 저장 reset·이전 팩 처리 | 데일리 갱신 |
+| mgmet | 0x7100009508 | `mgmet::DailytrialResultData::IsCompleteNow` [fnH] | 본체 C 없음; 데일리 팩 완료 판정·보너스 조건 | 데일리 완료 |
+| bd01 | 0x710006900c | `bd01::JsonMgTeam::JsonMgTeam` [fnBD] | 본체 C 없음; JsonMgTeam 실제 asset 경로·확률 데이터 로드 | 보드 인원 형태 |
+| bd01 | 0x71000690e0 | `bd01::JsonMgTeam::GetDataV` [fnBD] | 본체 C 없음; 인원 형태 가중치·선택 RNG 소비 | 보드 인원 형태 |
+| bd01 | 0x710028a260 | `bd01::event::MgCallBase::RunCallMiniGame` [fnBD] | 본체 C 없음; 게임 호출 뒤 history commit 시점 | 보드 호출/이력 |
+| bd01 | 0x710028ca18 | `bd01::event::MgCall::RunSelect` [fnBD] | 본체 C 없음; 수동 후보 선택 확정과 history 호출 | 보드 수동 선택 |
 
-[미확정] 미식별 별도 요청 1갈래는 유지한다: 원본 규칙 값의 실제 asset override/데이터 주소. mgm02는 getPropertyList @0x710001b0a8 → 유형 getter @0x710001b3e4/@0x710001b438/@0x710001b4a4와 RankCoinCount/BonusMgCoinCountCoef/BattleMgLeviedCoinCount @0x710001b534/@0x710001b710/@0x710001b718까지 좁혔다. 보드는 GetList/GetPlayID_/SetHistoryID @0x71000afb90/@0x71000b09f0/@0x71000b1228의 C가 선행이다. 기존 JSON에서 대응 필드명을 찾지 못했으므로 asset 경로나 주소를 만들지 않았다. [fn02]·[fnBD], §2.3.
+[설계] 공용 Work 결과 getter/setter7주소는18에 공유하여 부모가 중복 요청을 합친다. 이 문서에서는 계산·UI reader가 요구하는 인터페이스 주소만 남긴다. main @0x71001f32cc/@0x71001f3320/@0x71001f33a0/@0x71001f33d0/@0x71001f395c/@0x71001f3b78/@0x71001f3b8c [fnMain]; 공용 소유권 재판독0.
 
+### C.2 정적 데이터4주소·미식별3갈래
 
-### C.2 요청 범위·주소 충돌
+| 모듈 [미확정] | C가 참조한 실제 주소 | 요청할 내용·주소의 의미 | 근거 |
+|---|---|---|---|
+| mgm02 | 0x710005036c | GetMaxRound의 tableKind0/1/2 최대회차 표 내용 | mgm02 @0x7100017008 [C02] |
+| mgm02 | 0x710004e3c0 | GetDistributedCoinCountRatio의 rank0 동순위 인원별 비율 표 | mgm02 @0x71000049c0 [C02] |
+| mgm06 | 0x7100049a30 | BossRush ScoreTable의 rank0..3 점수 값 | mgm06 @0x710002329c/@0x7100011ba0 [C06] |
+| mgm06 | 0x7100057d98 | kBossMinigameIds의 포인터 슬롯; 따라간 배열5ID·Name 대응. 실제 배열 target주소는 아직 없음 | mgm06 @0x7100011610 [C06]. 포인터 슬롯을 배열 본체주소로 기록하지 않음 |
 
-[데이터] 요청은 총123개의 모듈·주소 쌍이며 이번에36주소를 추가했다. 기존 C·INDEX·함수 TSV를 대조한 기록이며 추출 승인을 요구하지 않는다. mgmet FUN_7100004040와 같은 숫자 주소의 matching00 C는 다른 모듈이므로 사용하지 않았다. [fnH]·[INDEX][idx]·[matching00 기존 C](../../../ghidra_work/online/out/matching00.nro.c).
-
-### C.3 최소 1차 요청 집합
-
-[설계] 가장 가까운 mgm02의 원본 규칙을 구현하려는 첫 요청은 아래21주소다. 추첨→코인→라운드/최종 결과 경계를 잇는 본체를 우선하며, C 확보 후 실제 callee가 확인되면 추가 범위를 결정한다. 전체123주소를 한꺼번에 요구하는 뜻이 아니다. 부록 C의 동일 심볼·주소 [fn02]·[fnMain].
-
-| 모듈·범위 [미확정] | 정확한 주소 | 차단 이유 |
+| 미식별 [미확정] | 찾을 대상 | 현재 근거·한계 |
 |---|---|---|
-| mgm02 MgMgr 4 | 0x710000ee3c·0x710000ef94·0x710000efe0·0x710000f030 | 모집단·유형·추첨 |
-| mgm02 Scene 7 | 0x7100017008·0x710001704c·0x7100017408·0x7100017728·0x7100018300·0x7100018800·0x7100018920 | 회수·이력·정산·보너스/배틀·최종 |
-| mgm02 CoinMgr 6 | 0x7100003e60·0x7100003f50·0x71000042d0·0x710000484c·0x7100004980·0x71000049c0 | 순위 지급·배틀/징수·보너스/동점 |
-| mgm02 SceneParamsGame 2 | 0x710001b0a8·0x710001b580 | 실제 규칙 값·회차별 유형 |
-| main Mgm02 결과 writer 2 | 0x71001f3120·0x71001f33a0 | 결과 기록·최종 rank |
+| 1 | SceneParamsGame 실제 asset override loader/path | mgm02 @0x7100011f48/@0x710001b33c [C02]; 기본 생성값만 확보. 주소를 만들지 않음 |
+| 2 | MGList runtime152행 초기화·Name→ID 순서 | main @0x71001e14b0 [GAP]; getter만 확보. JSON122행 순서를 대응시키지 않음 |
+| 3 | 서바이벌 실력 포인트 계산·서버 응답의 값 경로 | mgm05 @0x710000c210/@0x710001a7d0 [C05]·[MSG-H] `mgmet_sb_mw_howToPlay00~03`. 진행/연출은 확보했으나 수식 callee 주소를 만들지 않음 |
 
-[설계] 다른 모드의 최소 진행 확인은 mgm03 @0x7100009780/@0x710000a440/@0x710000b3a0 + main 날짜 helper @0x71003628bc, mgm04 @0x7100015f70/@0x7100015c88/@0x7100018060, mgm05 @0x710000956c/@0x710000c210/@0x710000fb40/@0x7100018690, mgm06 @0x710001140c/@0x7100011610/@0x710001e5e0이다. 보드 비교는 bd01 @0x71000afb90/@0x71000b09f0/@0x71000b1228/@0x710028b7f0를 우선한다. 모두 기존 C 없음; [fn03]·[fn04]·[fn05]·[fn06]·[fnMain]·[fnBD].
+[데이터] 함수33+정적데이터4=중복제거37개의 모듈·주소 쌍이다. 미식별3갈래는주소수에 포함하지 않는다. mgmet @0x7100004040·bd01 @0x71000690e0와 같은 숫자 주소의 다른 NRO C는 해당 본체로 쓰지 않았다. [fnH]·[fnBD]·[INDEX][idx]. 37개 모두 한 번에 추출하라는 요청이 아니다.
+
+### C.3 우선 확인할 남은 공백
+
+[설계] 가장 가까운 mgm02의 Scene/MgMgr/CoinMgr/기본 Params 본체는 확보·판독 완료다. 첫 구현 전 우선 확인은 최대회차 DAT @0x710005036c·배틀 rank0비율 DAT @0x710004e3c0·실제 override 및 빠진 RNG/SetRound 인자다. 공용 기록/rank7함수는18의 공유 판독을 기다린다. mgm02 @0x7100017008/@0x71000049c0/@0x7100017408 [C02]·C.1~C.2.
+
+[설계] 다른 모드의 우선 공백은 데일리 day helper main @0x71003628bc·Data Setup mgmet @0x71000083e0, 보드 JsonMgTeam bd01 @0x71000690e0, 보스 ID/ScoreTable 위2주소다. 태그·서바이벌의 기본 진행/투표 판독은 이미 가능하며 실력포인트·온라인 결과는별도다. [fnMain]·[fnH]·[fnBD]·[C05]·[C06].
+
+### C.4 C가 있는 공용 Work9함수 —18 공유 요청
+
+| 모듈 [데이터] | 주소 | 심볼 | 담당·근거 |
+|---|---|---|---|
+| main | 0x71001f3120 | `bq::MinigameModeWork::Mgm02AddMgResult` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f3370 | `bq::MinigameModeWork::Mgm02GetTotalCoinCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f3470 | `bq::MinigameModeWork::Mgm02GetTotalLeviedCoinCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f35d0 | `bq::MinigameModeWork::Mgm02IsPlayedMgId` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f396c | `bq::MinigameModeWork::Mgm04GetTargetVictoryCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f3974 | `bq::MinigameModeWork::Mgm04GetTeamVitoryCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f39e0 | `bq::MinigameModeWork::Mgm04AddMGResult` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f3be0 | `bq::MinigameModeWork::Mgm04AddMGIDHistory` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f3d50 | `bq::MinigameModeWork::Mgm04IsPlayMGID` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+
+[설계] 모드 고유 필드 의미는 이 문서의 caller에 필요하지만 공용 소유권·물리 배치는18의 같은 출처를 인용한다. 부모가18의 해당 절을 공유하면 그 링크로 정리할 수 있다. 이번에는 새 필드offset을 추측하지 않았다. [18_scene_work §11](../engine/18_scene_work.md#11-미확정)·[GAP].
 
 ## 부록 D. 검증·부모 통합
 
-[데이터] 후속 정적 검증: §1~13·부록 A~D, 후속 새 판독15함수·누적23함수, 해결0·부분 해결7·남음5, 요청123주소·미식별1갈래. 주소와 C 부재는 [fn02]·[fnH]·[fnMain]·[idx]·부록 B/C에서 대조했다. 새 C·추출0개.
+[데이터] 최종 정적 검증 범위: §1~13·부록A~D, 새 판독148함수(최초8+추가140), 미확정12묶음=부분11/남음1, 중복제거요청37주소=함수33+데이터4·미식별3갈래. C가 있는공용9함수는18 공유 목록으로 분리. 새 C·추출·분석스크립트0. [INDEX][idx]·부록B/C.
 
-[데이터] <!-- FOLLOWUP_LINK_VALIDATION -->
+[데이터] 최종 링크 검증: 인라인·참조식 링크875회, 실제 로컬 대상52개, 고유 fragment35개, 출처 통합6줄. 없는 파일·없는 anchor·의도된 참조 미정의·표 열 수 오류0. 인접 확실성 태그6쌍과 코드/괄호 설명은 링크 오류 오검출에서 제외했다. UTF-8·BOM 없음·LF·줄 끝 공백0. [이 문서](mgm_modes.md).
+
+[데이터] 새 판독148개는 각각 모듈 TSV·지정 C 헤더와 일치하고 중복0이다. catalog 대응112행·체감25·팩49·서바이벌26·함수요청33·데이터요청4·미식별3을 메모리에서 검증했다. 기존 보유 C 요청102개 제거·공용 C존재9함수 공유 분리. [catalog]·[idx]·부록B/C.
 
 [미확정] 원본 실행·헤드리스·화면 촬영 검증은 없다. 검증 명령은 메모리 내에서만 실행했으며 분석 스크립트 파일·코드·데이터·출처 문서·README·git index를 변경하지 않았다. [이번 범위](mgm_modes.md#2-자료).
 
@@ -723,3 +915,19 @@ index = injectedSyncRandRange(0, len(ordered))
 [registry]: ../../script/app/minigame/index.ts
 
 [DAILY-C]: ../../../analysis/decomp/bgm_main_mgmscene.c
+
+[GAP]: ../../../analysis/decomp/docs_gap_main.c
+
+[MODE-H]: ../../../analysis/decomp/mgm_modes_mgmet.c
+
+[BOARD-C]: ../../../analysis/decomp/mgm_modes_bd01.c
+
+[C02]: ../../../analysis/decomp/mgm02.nro.c
+
+[C03]: ../../../analysis/decomp/mgm03.nro.c
+
+[C04]: ../../../analysis/decomp/mgm04.nro.c
+
+[C05]: ../../../analysis/decomp/mgm05.nro.c
+
+[C06]: ../../../analysis/decomp/mgm06.nro.c

@@ -313,7 +313,7 @@ const scan = (dir: string, allowed: string[]): void => {
     }
   }
 };
-scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(COMMON, 'render3d'), join(COMMON, 'ui'), join(SCENE, 'menu', 'online'), join(SCENE, 'menu', 'charselect')]);
+scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(COMMON, 'render3d'), join(COMMON, 'ui'), join(SCENE, 'menu', 'online'), join(COMMON, 'net'), join(SCENE, 'menu', 'charselect')]);
 scan(join(COMMON, 'render3d'), [join(COMMON, 'render3d')]);
 
 console.log('9. 단계 로딩 계획(loader_manager.md §11.4·§11.5 — plaza_first.json)');

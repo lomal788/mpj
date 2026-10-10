@@ -14,7 +14,9 @@ import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
-import { applyOnlineExtra, BTN, FakeOnline, type OnlineExtra } from '@app/scene/menu/online';
+import { applyOnlineExtra, type OnlineExtra } from '@app/scene/menu/online';
+import { BTN } from '@app/common/net/protocol/types';
+import { FakeOnline } from '@dev/net/fake';
 import {
   applyPlazaUiExtra,
   listStamps,

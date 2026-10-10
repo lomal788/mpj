@@ -14,20 +14,9 @@ import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { mergeSpec, type MgmDrawHost, type MgmPadSource, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
-import {
-  applyOnlineExtra,
-  BTN,
-  FakeOnline,
-  KOOPA,
-  LAYOUT,
-  OnlineScreen,
-  SessionListView,
-  type FakeError,
-  type OEv,
-  type OIO,
-  type OnlineEntry,
-  type OnlineExtra,
-} from '@app/scene/menu/online';
+import { applyOnlineExtra, LAYOUT, OnlineScreen, SessionListView, type OEv, type OIO, type OnlineEntry, type OnlineExtra } from '@app/scene/menu/online';
+import { BTN, KOOPA } from '@app/common/net/protocol/types';
+import { FakeOnline, type FakeError } from '@dev/net/fake';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let fails = 0;

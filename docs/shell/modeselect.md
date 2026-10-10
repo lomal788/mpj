@@ -57,6 +57,8 @@ SequenceModeSelect::MapMenuImpl                         (맵 메뉴 파이버)
 
 Out(immediate) @0x71000a688c: 상태 −1·2 면 무시. 즉시면 상태 −1·숨김, 아니면 상태 2·"out"(5f). IsFinished = 상태 < 0. IsIdle = 상태 1.
 
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §1·§3.1·§4
+
 ## 4. 상태·데이터 표
 
 기준 객체 `menu01::ComUiMap`(this). [판독]

@@ -115,6 +115,8 @@ if (CS+0x1670 != CS+0x1674) FUN_7100984de8(...);   // 일시정지 단계 변경
 
 0x0E에는 이 밖에도 등록 함수 `0x71001cc798`, `0x71006bc21c`, `0x710078ca54`, `0x71004f703c`, `0x7100004df0`, `0x71002c85c0`, `0x710080653c`, `0x7100226e1c`, `0x71008a273c`의 처리기가 있다. 이들의 모듈 이름과 장면·파이버와의 상대 순서는 확인하지 않았다 [미확정]. 0x0F(FixUpdate)는 `0x7100613f5c`, `0x71008a273c`가 등록한다(물리·컴포넌트 고정 갱신으로 보임 [추정]). **게임 코드(장면 흐름·제품 파이버)는 0x0F가 아니라 0x0E에서 프레임당 한 번 돈다** [판독].
 
+→ 정리본: [17_actor.md](17_actor.md) §3.2
+
 ### 3.4 한 프레임 안의 게임 코드 순서 (미니게임) [판독]
 
 ```
@@ -145,6 +147,8 @@ mg1801의 실제 순서(같은 시퀀스, 우선순위 모두 0):
 - 제품 세 개와 흐름 파이버는 모두 `bex::Fiber::Fiber(prio=0, false)`로 만들어진다(mg1801 `CreateStage/CreateObject/CreatePlayer`, main `bq::SceneBase::UpdateMain`의 `FiberLite::Create(…,0,0)`).
 - 그래서 정렬 뒤에도 등록 순서가 남는다. 결론은 **Stage → Object → Player → … → 장면 흐름** 이다.
 - 장면 흐름이 맨 뒤라서, 이번 프레임에 `Entry`된 채소는 이번 프레임에 `Obj::Update`를 받지 않는다. 다음 프레임부터 Update → 판정 순서로 돈다.
+
+→ 정리본: [17_actor.md](17_actor.md) §3.2
 
 ## 4. 구조체·필드·상수
 
@@ -398,6 +402,8 @@ StartUpdate → InitializeFiber → 실행 목록 끝에 붙임 → 우선순위
 - 같은 프레임의 FiberModule 처리 **전에** 만든 파이버는 그 프레임에 바로 돈다. SceneModule의 장면 갱신·Setup이 여기에 해당한다.
 - 파이버 실행 **중에** 만든 파이버는 다음 프레임부터 돈다.
 
+→ 정리본: [17_actor.md](17_actor.md) §3.2
+
 ### 5.5 일시정지 단계 [판독]
 
 - `MainModule::SetPause(L)`가 비트 L을 켠다. vt+0x68이 매 프레임 이 비트를 CoreSystem에 옮긴다.
@@ -471,6 +477,8 @@ if (CoreSystem.pauseLevel < 16) {
 - timeScale 변경은 **다음** 프레임 스텝 계산부터 delta에 들어간다.
 - `GetDeltaRate` = delta / (1/목표fps) 이다(고정 60에서 1.0).
 
+→ 정리본: [17_actor.md](17_actor.md) §3.2
+
 ### 6.4 파이버 한 프레임 (시퀀스마다 `FUN_710018f400`) [판독]
 
 ```c
@@ -492,6 +500,8 @@ RunSequence(s):
 ```
 
 `Resume`가 돌리는 동안 새로 만든 파이버는 `s.pending`에 들어간다. 그 파이버는 다음 프레임에 처리된다.
+
+→ 정리본: [17_actor.md](17_actor.md) §3.2
 
 ### 6.5 대기 함수 [판독 `FUN_710018ddb0`, `FUN_710018de1c`, `FUN_710018dbb0`, `FUN_710018df14`, `FUN_710018e070`]
 
@@ -769,6 +779,8 @@ step(pads) {
 }
 ```
 
+→ 정리본: [17_actor.md](17_actor.md) §9.4
+
 ### 9.6 웹 환경 때문에 바꾸는 부분과 동등성
 
 | 원본 | 웹 | 동등성 |
@@ -803,6 +815,8 @@ step(pads) {
 | ComActorMotion.Play/SetFrame/SetSpeed | state의 `motion {name, frame, speed}` 요청. view가 재생 | 모션 프레임을 로직이 정하면 골든 대조가 된다 |
 | ComMatter.SetBoneVisible 등 | state의 뼈 표시 목록 | |
 | ComHeading | state의 `headTarget` | |
+
+→ 정리본: [17_actor.md](17_actor.md) §3.1, 9.1
 
 ### 9.8 원본 이름 ↔ 웹 권장 이름
 

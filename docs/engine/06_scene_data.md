@@ -82,6 +82,8 @@ ASST 항목의 `unk`/`unk2` 필드(+0x10, +0x12)는 에셋 분류와 일대일�
 - 역슬래시는 `/`로 정규화한다.
 - 중복 경로는 처음 것 하나만 쓴다.
 
+→ 정리본: [17_actor.md](17_actor.md) §2, 8.6
+
 ### 1.4 `bq::ArchiveModule` 범주(로더) [판독]
 
 `bq::ArchiveModule` 생성 함수(main `FUN_71001d4714`)가 엔진 로더 9개를 이름으로 만든다. 범주 번호는 `this+0x28 + 범주×8`의 순서다.
@@ -393,6 +395,8 @@ ASST 항목의 `unk`/`unk2` 필드(+0x10, +0x12)는 에셋 분류와 일대일�
 
 ---
 
+→ 정리본: [17_actor.md](17_actor.md) §4.2, 8.6
+
 ## 3. 엔티티 배치 `.nbmap` (`BEEGENTY`, BEA 타입 `_ENTITY`)
 
 ### 3.1 로딩 [판독]
@@ -404,6 +408,8 @@ ASST 항목의 `unk`/`unk2` 필드(+0x10, +0x12)는 에셋 분류와 일대일�
   - `LoadNbmap("mg/mg0101/map/mg0101_fld0_col.nbmap")`
   - `sprintf("mg/mg0101/map/mg0101_parts_%c_col.nbmap")` → `LoadNbmap(…, true)` (mg0101.nro.c:17844)
 - 250개가 65개 아카이브에 있다. **mg1801에는 없다.**
+
+→ 정리본: [17_actor.md](17_actor.md) §8.6
 
 ### 3.2 바이너리 구조 [실행: 파서 250개 전부 성공]
 
@@ -755,3 +761,4 @@ git sparse-checkout set physx/source/physxextensions/src/serialization physx/sou
 | `mgListND`/`mgListCA`의 ND·CA 뜻 | 없음 | 이름 근거만 있음(CA = 쿠파 애슬론 계열 모드 추정) |
 
 참고: 작업 지침 문서 `분석.txt`는 프로젝트 루트(`c:/dev/mpj/분석.txt`)와 상위 폴더 어디에도 없다. 이 문서의 형식은 `web/docs/minigame/mg1801.md`를 따랐다.
+→ 정리본: [17_actor.md](17_actor.md) §11.1, 11.3

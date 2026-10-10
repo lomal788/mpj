@@ -3,8 +3,8 @@
  * 클라이언트 라이브러리는 ddalkkakrider 처럼 서버의 `/socket.io/socket.io.js` 를 script 로 읽고 `io('/<게임 id>', {reconnection, transports})`.
  * 연결 수명·배치·오류 자리: docs/shell/online.md 9.5·9.6(HTTP 실패 B3·시간 초과 B4). 혼자·로컬만이면 아무 통신도 하지 않는다(connect() 는 논리 접속).
  */
-import type { CardData, JoinFailReason, OnlineAdapter, OnlineEvent, OnlineSelf, RoomMember, RoomSize, RoomState } from './types';
-import { JOIN_TIMEOUT_S } from './types';
+import type { CardData, JoinFailReason, OnlineAdapter, OnlineEvent, OnlineSelf, RoomMember, RoomSize, RoomState } from './protocol/types';
+import { JOIN_TIMEOUT_S } from './protocol/types';
 import {
   API_BASE,
   decInfo,
@@ -33,7 +33,7 @@ import {
   yawOfQuat,
   type WireRoom,
   type WireStation,
-} from './wire';
+} from './protocol/wire';
 
 /** socket.io-client Socket 의 쓰는 부분 */
 export interface SioSocket {

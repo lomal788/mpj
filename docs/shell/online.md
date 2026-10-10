@@ -364,7 +364,7 @@ interface OnlineAdapter {
 
 사용자 지시(2026-10-08): ① 서버는 ddalkkakrider(`E:/programming/python/ddalkkakrider_work/web`, 읽기만) 와 같은 구조 — http 서버 하나에 express `createApp(fallback)`(`scripts/server/api/index.mjs`, `/api/v1/…` 라우터 + 정적 파일 fallback) 과 socket.io `Server` 하나(`scripts/server/socket.ts` 의 `createSocket(http, {games, report, ...engine})`: 게임마다 `io.of('/'+id)` 네임스페이스·`guard` 미들웨어·`register(namespace, {every})`·`status(id)`·`close()`, 엔진 `maxHttpBufferSize 8192·pingInterval 5000·pingTimeout 10000`), 버전 socket.io·socket.io-client **4.0.1**, express **5.2.1**. ② 방 찾기·만들기·참가 요청은 **HTTP**, **실제 방에 입장하는 순간부터 socket**, 나가거나 해산되면 소켓을 끊는다. ③ 혼자·로컬만이면 HTTP·소켓 모두 호출 없음. ④ 통신은 **JSON 금지·바이너리**, 위치는 원본처럼 움직일 때만 0.2 s.
 
-**파일**: `web/server/socket.ts`(ddalkkakrider `createSocket`·`guard`·`Game`/`GameContext` 계약 그대로) · `web/server/games.ts`(게임 목록) · `web/server/games/mpj-plaza/index.ts`(Game `id = 'mpj-plaza'`, `register(namespace, {every})` + HTTP 라우터) · `rooms.ts`(순수 방 상태 `PlazaRooms`, 전송과 분리) · `web/server/api/index.ts`(`createApp(fallback, routers)` — ddalkkakrider createApp 과 같은 꼴, 로그인 라우터 대신 게임 라우터) · `web/server/main.ts`(http 서버: API + socket.io + 정적 파일 web/ + esbuild 번들 — ddalkkakrider `server.mjs` 처럼 **페이지와 같은 http 에** 붙여 클라이언트가 `/socket.io/socket.io.js` 를 같은 출처에서 읽는다). 클라이언트 `script/app/scene/menu/online/wire.ts`(바이너리 배치, 서버·클라이언트 공용) · `socketio.ts`(`SocketIoOnline implements OnlineAdapter`). 나중에 ddalkkakrider `games.ts` 목록에 `mpj-plaza` 의 Game 을 그대로 넣고 라우터를 createApp 에 더하면 같은 서버에 얹힌다.
+**파일**: `web/server/socket.ts`(ddalkkakrider `createSocket`·`guard`·`Game`/`GameContext` 계약 그대로) · `web/server/games.ts`(게임 목록) · `web/server/games/mpj-plaza/index.ts`(Game `id = 'mpj-plaza'`, `register(namespace, {every})` + HTTP 라우터) · `rooms.ts`(순수 방 상태 `PlazaRooms`, 전송과 분리) · `web/server/api/index.ts`(`createApp(fallback, routers)` — ddalkkakrider createApp 과 같은 꼴, 로그인 라우터 대신 게임 라우터) · `web/server/main.ts`(http 서버: API + socket.io + 정적 파일 web/ + esbuild 번들 — ddalkkakrider `server.mjs` 처럼 **페이지와 같은 http 에** 붙여 클라이언트가 `/socket.io/socket.io.js` 를 같은 출처에서 읽는다). 클라이언트 `script/app/common/net/protocol/wire.ts`(바이너리 배치, 서버·클라이언트 공용) · `socketio.ts`(`SocketIoOnline implements OnlineAdapter`). 나중에 ddalkkakrider `games.ts` 목록에 `mpj-plaza` 의 Game 을 그대로 넣고 라우터를 createApp 에 더하면 같은 서버에 얹힌다.
 
 **연결 수명**
 
@@ -470,6 +470,8 @@ interface OnlineAdapter {
 
 ### 9.4 파일과 구현 순서
 `types.ts`(9.2 계약·상수) → `fake.ts`(FakeOnline) → `flow.ts`(3.1·5.1~5.7 상태기계, 순수: 사건 `OEvent` 를 낸다) → `view.ts`(레이아웃 적용) → `widgets.ts`(대화상자·알림·키보드·텔롭) → `screen.ts`(틱 순서: 입력 → 어댑터 poll → 흐름 → 레이아웃 갱신 → 그리기) → `index.ts`. 시험 `web/tools/test_online.ts`(흐름 + 쓰는 라벨 존재).
+
+→ 연결 소유(2026-10-10 설계): 방 서비스 연결은 화면이 아니라 앱 수명 `appNet()` 이 갖고, 화면은 구독만 한다 — [12_online_sync.md](../engine/12_online_sync.md) §8
 
 ## 10. 검증 코드·실행 결과·기대값
 - 판독 근거 [판독: 어셈블리] 목록(C 가 문자열 인자를 잃은 곳만, `online_strrefs.py` adrp+add 순서): ComUiNetLobbySessionStatus::SetGuide @0x7100076440(안내 라벨 4개), ctor @0x7100075a08, ComUiNetSessionInfo ctor @0x710007aee4, ComUiOnlineGuide ctor @0x710007f910, UiNetSessionInfoFiber::Update @0x710007a9d0, ComUiNetMenu::UpdateSelect @0x71000771d0(sys_ctrl_back), matching00 ComUiStateTelop::ChangeMessage @0x710001d8e0, menu01 ComUiSelectMatchMode ctor·Start @0x710009f2c4·@0x71000a050c. 덤프 `analysis/online_*_strrefs.txt`.

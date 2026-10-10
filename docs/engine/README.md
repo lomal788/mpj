@@ -18,3 +18,4 @@
 | [common_roadmap.md](common_roadmap.md) | 공통(엔진) 작업 현황·남은 작업·미루면 비용이 커지는 것·권장 순서 | 정리 |
 | [common_assets.md](common_assets.md) | 시스템 효과음·공용 UI 그림 공용 폴더 `assets/common/{sound,tex}/`(SQ_SE_SYS_*·sys_* 전부 + 여러 화면이 같이 쓰던 것 한 벌, 화면 명세가 가리킴) | 구현 |
 | [16_save.md](16_save.md) | 공용 저장(Save): 원본 SaveDataMgr 칸·SaveData 배치·SaveRequest/IsProcessing 수명, 웹 코어 `lib/save`(import 0)·어댑터 `lib/save-localstorage`(키 `mpj.save` 하나)·mpj 연결 `view/save.ts`, 마이그레이션·메시지 속도 | 구현 |
+| [17_actor.md](17_actor.md) | ComActor·ActorParam·ComActorPad·JumpCalculator·CPU override·접지/벽/carry·충돌/캐릭터 연결, import 0 코어·어댑터 설계 | 판독 통합·일부 미확정 |

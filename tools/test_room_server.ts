@@ -14,33 +14,11 @@ import type { Render2D } from '@app/scene/menu/charselect/render2d';
 import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { mergeSpec, type MgmDrawHost, type MgmSpec, type MgmSpecPart } from '@app/common/ui';
-import {
-  applyOnlineExtra,
-  BTN,
-  decInfo,
-  decRoom,
-  decRooms,
-  decTicket,
-  defaultCard,
-  encCreate,
-  encEnter,
-  encInfo,
-  encJoin,
-  encSearch,
-  encSearchId,
-  encSimple,
-  encStamp,
-  FakeOnline,
-  MSG,
-  relay,
-  SocketIoOnline,
-  TICKET,
-  wirePlayer,
-  type OnlineEvent,
-  type OnlineExtra,
-  type OnlineSelf,
-  type SioConnect,
-} from '@app/scene/menu/online';
+import { applyOnlineExtra, type OnlineExtra } from '@app/scene/menu/online';
+import { BTN, defaultCard, type OnlineEvent, type OnlineSelf } from '@app/common/net/protocol/types';
+import { decInfo, decRoom, decRooms, decTicket, encCreate, encEnter, encInfo, encJoin, encSearch, encSearchId, encSimple, encStamp, MSG, relay, TICKET, wirePlayer } from '@app/common/net/protocol/wire';
+import { SocketIoOnline, type SioConnect } from '@app/common/net/socketio';
+import { FakeOnline } from '@dev/net/fake';
 import { applyPlazaUiExtra, PlazaUi, type PlazaUiExtra, type PlazaUiPlayer } from '@app/scene/world/plaza/ui';
 import * as THREE from 'three';
 import { leverToward, RemoteMotion } from '@app/scene/world/plaza/follow';

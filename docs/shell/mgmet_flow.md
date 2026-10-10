@@ -187,6 +187,8 @@
 
 [판독: 어셈블리] mgmet @0x7100072658~0x710007267c: C의 bool 인자가 메시지 객체 주소로 잘못 보이므로 확인했다. `DisablePadInput(false,false)`, `SetFlagForceAllDraw(true)`, `DisableNextKeyWait(false)`이다. 앞 안내의 설정과 다르다. 페이지를 넘기는 파이버는 매번 A/B를 직접 읽으며, 공용 창의 키 처리/close 상태는 [message_window.md](message_window.md) §5~6에 위임한다.
 
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §1·§4 (항구 첫 소개와 op/MenuData 경계)
+
 ### 6.3 흐름 의사코드
 
 [판독] 아래 의미 변수는 모두 `[웹 이름]`; 원본의 실행 위치와 분기를 축약한 명세이며 실행 코드가 아니다.
@@ -300,6 +302,8 @@ freePlay:
 [판독] `SetupMinigameModeSyncBefore` — mgmet @0x710005b024는 owner 기준 opSkip/firstHowto/boss 정보와 플레이 count를 준비한다. `SetupMinigameModeSyncAfter` — mgmet @0x710005b324는 보스 flag를 Scene에 옮긴다. 오프라인에서도 Sync 객체를 거치며, 이번 문서는 네트워크 메시지 처리 내부를 확장하지 않는다.
 
 [판독] mgm01 `SyncedSetupGame` — mgm01 @0x7100004e50은 오프라인 cache+4를 CPU로 읽고 valid byte 검사를 하지 않는다. Work 규칙 캐시는 세이브 비트와 별개인 세션 작업 데이터다. 캐시 수명·모든 getter/setter·취소 commit은 ruleconfig §8 참조. [미확정] `ReturnScene`의 엔진 스택/허브 재구성 수명은 `InitFromMgm01` 진입 계약까지만 확인했고 동일 Scene 인스턴스 유지라고 단정하지 않는다.
+
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §1·§4 (MinigameModeData와 MenuData 분리)
 
 ## 9. 웹 포팅 구조 — 제안, 코드 없음
 

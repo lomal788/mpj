@@ -240,6 +240,8 @@ PlayerCharacterID는 `characterlist.json`의 `PlayerCharacterData` 배열 인덱
 | +0x3A | 1 | 속도 적용 |
 | +0x4C | 1 | |
 
+→ 정리본: [17_actor.md](17_actor.md) §7
+
 ### 4.4 actor::ActorAnimationSlot (0x170 B) [판독]
 
 | +오프셋 | 웹 권장 이름 | writer | reader |
@@ -253,6 +255,8 @@ PlayerCharacterID는 `characterlist.json`의 `PlayerCharacterData` 배열 인덱
 | 0x148~ | `pendingArgs` (해시 → MotionArg) | FUN_7100022a80 | 리스너(쓰고 나서 지운다) |
 
 `ComActorMotion`(0xD8 B): +0x28 ComAnimator 핸들, +0x40 주 슬롯, +0x58 슬롯 맵(이름 해시 → 슬롯), +0x80 접두 문자열(`SetPrefix`), +0x98 idle 난수 맵(해시 → bool), +0xC0 AnimatinType 벡터 [판독].
+
+→ 정리본: [17_actor.md](17_actor.md) §7
 
 ### 4.5 nn::bezel::AnimationSlot 재생 상태 [판독 main @0x71008135f4]
 
@@ -406,6 +410,8 @@ D6 type **0x105=261**은 `@0x7101362b80` 등록으로 확정이다. `@0x71013753
 캐릭터별 모델·애니 문제와 ComActor 공통 이동 규칙을 분리한다. `MatterType=2`의 `main @0x71002b2e00` actorparam 소비는 [mg0101 §6.5](../minigame/mg0101.md)와 [plaza_3d §3.5](../shell/plaza_3d.md)에서 완료됐다. 행 `i`는 싱글턴 `+0x30+0x10·i`: 행0/1의 6/2 → Actor +0x2D0/+0x2CC, 행2의 40 → +0x2FC, 행3~5의 360/1100/85° → +0x2D4/+0x2D8/+0x2DC, 행6~8의 180/720/85° → +0x2E0/+0x2E4/+0x2E8, 행32의 0.8 → +0x2EC다. mg0106의 전용 크기·반경을 다른 장면에 일반화하지 않는다. 이동·접지·레이블과 형상 소비는 [mg0912 §6](../minigame/mg0912.md), [11_moving_collision](11_moving_collision.md)를 따른다. 캡슐 높이·비균일 스케일의 미완료 소비는 여기서 재확정하지 않는다.
 
 결과 무대의 폭 누적 배치·KOOPA 보정과 A 재생/B 큐는 [minigame_result §6.6·§6.8](../shell/minigame_result.md)에서 해소한다. 광장 `Sub` 슬롯의 `co_look02/co_nod00`도 [plaza_3d §3.5](../shell/plaza_3d.md)에 판독돼 있다. 이 사례가 `face_param.json` 7개 표정의 슬롯을 증명하지는 않는다.
+
+→ 정리본: [17_actor.md](17_actor.md) §4.2, 8.4
 
 ## 5. 상태 전이와 전체 수명
 
@@ -972,3 +978,4 @@ core.play(name, opts); core.step(dt); core.trigger('VB_MG1801_JUST');  // 로직
 - 클립에 트랙 없는 뼈를 처음 만난 값(쉬는 자세)으로 두는 것과 스프링 속도 초기값 0 은 [추정]이다(§14.7 표).
 - 같은 모션 다시 재생 무시(`playForce` 끔)로, 캐릭터 선택에서 대기 중 취소처럼 같은 모션을 다시 부르는 경로는 처음부터 다시 시작하지 않는다. 원본 `Play(name)` 규칙이지만 원본 화면이 그 경로에서 forceRestart 를 켜는지는 판독하지 않았다.
 - FTRG 조건 행·이벤트 플래그 바이트 1·2·구간 길이는 근사다(§14.8).
+→ 정리본: [17_actor.md](17_actor.md) §7, 9.1

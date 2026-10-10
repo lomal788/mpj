@@ -10,7 +10,7 @@ import { STICK_MAX, type PadInput } from '@game/core/pad';
 import { ASSET_MODE, ASSETS } from './env';
 import { P3 } from '@game/lib/assetcore';
 import { appAssets, assetKeyOf } from './view/appAssets';
-import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaPlayerSetup, type PlazaRun } from '@app/scene/world/plaza';
+import { FixedClock, startPlaza, type PlazaExit, type PlazaPad, type PlazaOnlineFactory, type PlazaPlayerSetup, type PlazaRun } from '@app/scene/world/plaza';
 import { parseDecoParam } from '@app/scene/world/plaza/deco';
 import { AREA } from '@app/scene/world/plaza/interact';
 import { appFlow } from './view/appFlow';
@@ -36,6 +36,7 @@ export interface PlazaPageCfg {
   pads: (PadSource | null)[];
   muted: boolean;
   params?: URLSearchParams;
+  online?: PlazaOnlineFactory;
   onExit(e: PlazaExit): void;
   onProgress?(n: number, total: number, what: string): void;
 }
@@ -113,6 +114,7 @@ export async function runPlaza(stage: HTMLElement, cfg: PlazaPageCfg): Promise<P
       },
     },
     save: appSave().plaza,
+    online: cfg.online,
     params,
     deco,
     onProgress: cfg.onProgress,

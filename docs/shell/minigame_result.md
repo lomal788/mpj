@@ -294,6 +294,8 @@ Pos1·Pos2 문자열은 `pos_pc_L`·`pos_pc_R`(대문자, ARM64 `0x71002f2264/22
 
 파이버 순서: 페이드인은 `e8c20→e9270→Wait`; 일반 카메라 재생 루프는 `GetFrame→telop→e8c20→eabf0→e9270→Wait`; 주사위 승자 이동은 위치 설정→`eabf0→GetDeltaTime→Wait→시간 누적`; 마지막 5초 텔롭 대기는 `e8c20→eabf0`다. 따라서 파이버의 시선 target 설정과 배치 재설정 순서를 뒤집지 않는다. Heading의 실제 회전 완화 및 animation pass/스켈레톤 평가는 공통 엔진 업데이트 계약이다.
 
+→ 정리본: [17_actor.md](../engine/17_actor.md) §7, 3.2
+
 ### 6.9 주사위 후보·승자 이동 수치
 
 `eb650`의 후보는 목록1이 비어 있지 않으면 목록1, 없으면 목록2를 PlayerID map으로 복사한 것이다. 배열 [1,…,10]을 SyncRandMod의 Fisher–Yates(남은 길이 10→2)로 섞어 후보에 차례로 배정하며 최댓값의 PlayerID를 저장한다. **중복 눈은 없어 동점 재굴림이 없다.** 후보별 주사위 구성 `ecc80→ece60`, guide PlaceType=3, 각 주사위 컴포넌트 state(+0x34)=6까지 순차 Wait. BGM Stop_Preset(3)→guide Out(0)→Sleep(1)→각 주사위 `ed340`→Sleep(1) 후 후보에게만 WinLose=(PlayerID==최댓값ID)?1:0을 기록한다(`0x71002ec088` 부근); 후보 밖 결과는 이 루프가 쓰지 않는다. 후보 비승자에게 LoseA→LoseB.

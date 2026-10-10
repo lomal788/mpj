@@ -21,7 +21,7 @@ import {
   type RoomSize,
   type RoomState,
   type RoomSummary,
-} from './types';
+} from '@app/common/net/protocol/types';
 import { DialogBox, Keypad, LoadingTelop, MemberList, TimerView, type DialogSpec } from './widgets';
 
 export type OnlineEntry = 'friend' | 'world' | 'lobbyHost' | 'lobbyClient';

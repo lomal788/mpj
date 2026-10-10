@@ -154,6 +154,8 @@
 
 **결론**: 맵 로딩·보이는 애니·NPC 배치·플레이어 이동을 아예 막는 요소는 없다. 플레이어는 직접 조작하지 않고 소켓 사이를 자동 보간으로 움직이며, 충돌·물리 데이터가 필요 없다. 신호 타이밍도 클립 길이와 판독한 규칙으로 대부분 정해진다. 남은 짧은 판독 5건(이동 속도 20분, 카메라 이름 15분, `ComNpc+0x58` 15분, 배경 NPC ID 20분, 갈매기 소켓 15분)은 **합 약 1.5시간**이다. 갈매기 15분을 뺀 4건은 §5.2 시간에 넣었다. 판독 전에도 [추정] 값으로 구현을 진행할 수 있다.
 
+→ 정리본: [17_actor.md](../engine/17_actor.md) §8.2, 11.1
+
 ## 10. B 갈래 결과 — 카메라 클립 재생 규칙·바다 셰이더 판독 (2026-10-08, 사용자 결정으로 구현 중단)
 
 상태: **판독·문서만. 웹 코드·에셋 변경 없음**(`stage3d/cameraAnim.ts`·`ocean.ts`·변환기·시험은 만들지 않았다). 아래는 다음 광장(menu00) 3D 등에서 재사용할 규칙이다. 임시 산출물(fsnb 커브 덤프·SASS)은 scratchpad 에만 있다 — 다시 만드는 명령은 10.4.
@@ -176,6 +178,8 @@
 | `mgm06_introduce`·`mgm06_release_01/02`·`mgm06_htp` | | 120·330·30·1 | 32° | mgm06 |
 
 `op00`(180f)은 표에 없다 → 이 장면에서 안 쓴다 [판독]. `PlayAnimReverse(name, s, f)` = 속도 −s, 시작 프레임 frameMax − 1 − f. `SetStartFrame(name)` = 프레임 0·속도 0. `IsFinished` = 모션 끝, `IsOverAnimFrameMax` = frame ≥ frameMax.
+
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §1·§3.1 (항구 카메라 소개와 op Cut18 경계)
 
 ### 10.2 선택 카메라 구간 이동 — `ComMgmetCamera` [판독]
 
@@ -215,6 +219,8 @@ fmab `mgmet_sea00`(2700f 루프): P0.x = 0 → 1 선형(흐름 위상 = 45 s 주
 
 정정(2026-10-08, C 갈래): "항구에서 플레이어가 자유 이동한다"는 지적을 확인한 결과, **항구(mgmet)는 플레이어 입력을 끈다. 자유 이동(사람·CPU 가 걸어 다니고 기구로 가서 시작)은 광장(menu00)의 동작이다.** 근거 3개: ① mgmet `ComPlayer::ComPlayer` @0x71000424d0 의 끝이 `mov w1,wzr; b actor::ComActor::SetInputControlEnabled`(입력 끔) [판독+어셈블리, analysis/decomp/mgmet_3d_dis.c] ② mgmet NRO 심볼·임포트에 Stick·Lever·Raycast·Controller·Plaza·Navi 가 0건이고, 입력은 `mgmet::Input::GetInputVec`(선택 흐름의 좌우 입력)뿐이다 [데이터: nro.py] ③ online.md §1 "방장의 '시작'은 광장(menu00)에서 기구(모드 메뉴)로 가는 것" [판독]. 사용자 결정: 자유 이동·충돌·CPU 이동·상호작용은 광장 3D 갈래에서 한다. 위 ① 행의 "안 막힘" 결론은 항구에 한해 그대로 유효하다.
 
+→ 정리본: [17_actor.md](../engine/17_actor.md) §8.2, 11.1
+
 ## 9. C 갈래(인물·신호) 판독 결과 — 구현 중단 시점 기록 (2026-10-08)
 
 상태: 사용자 결정으로 **항구 3D 구현을 중단했다.** C 갈래는 판독만 마쳤다. 웹 코드·hub.ts·에셋 변환은 손대지 않았다.
@@ -231,6 +237,8 @@ fmab `mgmet_sea00`(2700f 루프): P0.x = 0 → 1 선형(흐름 위상 = 45 s 주
 | 5 | 갈매기 소켓 `pos_seagull0N` | **판독 안 함**(중단). §7 ⑤ 그대로 [미확정] | — |
 
 배경 NPC 이동 속도: `Npc::ResetTranslationSpeed` = 장면 파라미터(+0x20 int) × 6.0 × 0.01 [판독, 파라미터 값 미확정].
+
+→ 정리본: [17_actor.md](../engine/17_actor.md) §8.2
 
 ### 9.2 신호 8개 대응 (구현 안 함, 다음 구현용)
 

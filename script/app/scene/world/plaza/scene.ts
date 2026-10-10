@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { PLAY_BUDGET_MS, type AssetSource, type StageGpu, type StageLoader } from '@app/common/render3d';
 import { PLAZA_PARTS } from './parts';
-import type { PlazaActor, PlazaContext, PlazaExit, PlazaPad, PlazaPart, PlazaPlayerSetup, PlazaSave, PlazaSound, PlazaWorld } from './types';
+import type { PlazaActor, PlazaContext, PlazaExit, PlazaPad, PlazaPart, PlazaPlayerSetup, PlazaOnlineFactory, PlazaSave, PlazaSound, PlazaWorld } from './types';
 import { createPlazaWorld } from './world';
 import type { PlazaDecoState } from './types';
 
@@ -38,6 +38,7 @@ export interface PlazaRunOptions {
   pad(slot: number): PlazaPad | null;
   sound: PlazaSound;
   save?: PlazaSave;
+  online?: PlazaOnlineFactory;
   params: URLSearchParams;
   deco?: Partial<PlazaDecoState>;
   onExit(e: PlazaExit): void;
@@ -84,6 +85,7 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
     pad: o.pad,
     sound: o.sound,
     save: o.save,
+    online: o.online,
     overlay: o.overlay,
     assetUrl: o.assetUrl,
     params: o.params,

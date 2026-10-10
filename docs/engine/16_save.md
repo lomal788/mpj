@@ -30,6 +30,9 @@
 | MinigameData[152] | +0x118 + id×6 | `GetMinigameData` @0x710023eb44, 초기화 루프 152칸 | **+0 u16 플레이 횟수(head), +4 u8 비트(NEW 1·즐겨찾기 4)** |
 | MinigameModeData | +0x8a40 | `GetMinigameModeData` @0x710023eb94 | **선두 u32 비트(opSkip 1·프리 플레이 준비 4·첫 안내 8)**(mgmet_flow §8) |
 
+[정정 2026-10-10] [판독] MenuData bit0은 menu01.nro 섬 소개 완료 @0x710003c4a0→0x71000b80f0(OR1), bit1은 menu00.nro 시설 소개 완료 @0x7100052dd0(OR2)에서 기록·저장 완료를 기다린다. bit0의 기구 skip reader와 writer를 구별한다. (근거: [plaza_intro.md](../shell/plaza_intro.md) §4)
+→ 광장 첫 진입 정리: [plaza_intro.md](../shell/plaza_intro.md) §4
+
 ### 1.3 쓰는 곳 [판독, 기존 문서]
 
 | 값 | 쓰는 함수 | 저장 요청 |

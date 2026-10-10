@@ -9,7 +9,8 @@ import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { MgmSound, MgmView } from '@app/common/ui';
-import { applyOnlineExtra, FakeOnline, ONLINE_FACES, ONLINE_PART, OnlineScreen, type FakeError, type OnlineEntry, type OnlineExtra } from '@app/scene/menu/online';
+import { applyOnlineExtra, ONLINE_FACES, ONLINE_PART, OnlineScreen, type OnlineEntry, type OnlineExtra } from '@app/scene/menu/online';
+import { FakeOnline, type FakeError } from '@dev/net/fake';
 import type { PadSource } from '../view/input';
 import { appBgm } from '../view/bgm';
 

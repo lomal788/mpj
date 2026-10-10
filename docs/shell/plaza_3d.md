@@ -62,11 +62,15 @@
 - **기구 → 다음 장면**: 기구 선택 → `SequenceBalloon::TakeOffImpl` @0x71000470d0(안내 `ComUiGuide00`, 페이드) → `MapManager::PlayBalloonTakeOff`(`pos_balloon_takeoff` 500f + 카메라 `ev_balloon_start_cut00/01`, 이때 `CollisionMain` 을 끈다) → `CallSceneImpl` @0x7100047628: 오프라인이면 `RequestCallScene(GetScene())`(모드 선택 = menu01), 방이 있으면 `NetworkManager::PlaySession`(online.md 5.6) [판독].
 - **카메라**: `ComMenuCamera::FollowPlayerImpl` @0x7100003de0 은 CameraParam 의 MainMenu 값(목표 높이 +2.5, 거리 10, 각도 15°, fov 40, 추종 속도 0.01)과 MainBalloon 값(+8, 18, 0°, 65)을 섞는다. `GetArea(T)==0`일 때 카메라 목표 T의 z로 t = clamp((T.z − 9)/−9 + 1, 0, 1)을 구한다. 눈 = 목표 + (수평 단위 방향, y=sin(각))×거리(cos 곱 없음), 세로 fov를 보간하며 near=1·far=2000이다(§3.5) [판독].
 
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §1·§3~6
+
 ## 3. 자유 이동·충돌 근거
 
 ### 3.1 이동 규칙 — `actor::ComActor`·ActorParam [판독: mg0912.md §4.6·§6, §3.5]
 main `ComMatter`가 `common/data/actorparam.json` 값을 액터에 적용하고, menu00은 이를 다시 덮지 않는다(`Set*Speed`·`SetTurning*` 호출 0). **걷기 2 / 달리기 6 m/s**, 레버 깊이 0.8 이상이면 달리기, 0 초과 0.8 미만이면 걷기, 0 이면 Idle(main LAB_7100012454). **땅 선회 360°/s, 각도 차가 85° 이상이면 빠른 선회 1100°/s**. 중력 9.8·배율 1, 낙하 최대 49. 접지 한계 `SetGroundedLimit(−2.5)` [판독: 0xc0200000]. `ComPlayerUtil` 은 접지되어 있으면 중력 배율 0, 공중이면 1 로 둔다 [판독].
 캐릭터 13번(KOOPA)만 몸통 구 2개를 더 붙인다(반지름 1.0, 오프셋 y 1.2, 0.1). 발 IK 충돌 마스크도 있지만 웹은 생략한다.
+
+→ 정리본: [17_actor.md](../engine/17_actor.md) §4.2, 6.2
 
 ### 3.2 충돌·지면 — **원본 데이터 있음**
 - MapStructure `CollisionMain` = `menu00_central_plaza_col.nbmap` → `72cbf…apx`. **PhysX 삼각 메시(BVH33) 정점 2,666·삼각형 4,440**, 범위 x −28.7~28.8, y −3.6~13.4, z −11.5~62.0. 월드 변환은 항등이다 [데이터]. 이미 `scene_apx.py` 로 obj 까지 바꿔 두었다: `extracted/converted/scene/apx/menu~menu00__menu__menu00__map__72cbf6799dc022826ea52ed8ed6d9c3f.obj`.
@@ -76,6 +80,8 @@ main `ComMatter`가 `common/data/actorparam.json` 값을 액터에 적용하고,
 
 ### 3.3 따라가기(로컬 2~4P) — `ComFollowPlayer::ReceiveMessageImpl` @0x710003fec0 [판독]
 대상(앞 사람) 위치를 원형 버퍼에 쌓는다(직전 점과 0.6 넘게 떨어지면 새 점). 거리가 **2.6 을 넘으면** 쌓인 점들을 따라 `ComActorAutoInterpolation::Start`(점마다 `CastRay` 로 머리 +1.0 높이에서 가시성 확인), **2.0 미만이면 Stop**. 대상 = 바로 앞 슬롯(줄 서기, 확정). 세부(버퍼 5칸·광선 1.3 m·속도 6)는 §6.10 ②.
+
+→ 정리본: [17_actor.md](../engine/17_actor.md) §8.2
 
 ### 3.4 CameraParam.json [데이터]
 `MainMenuTargetOffsetY 2.5, CameraLength 10, CameraAngle 15, Fovy 40, TargetPlayRange 3, FollowSpeed 0.01`, `MainBalloonTargetOffsetY 8, CameraLength 18, CameraAngle 0, Fovy 65`.
@@ -128,6 +134,8 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
   - 추종 속도는 **프레임 단위**다: 이 함수는 파이버 루프(`Fiber::Wait` 한 번 = 1 프레임) 안에서 dt 를 읽지 않고 `T += d·k·0.01` 을 한다. 메뉴는 Variable60(01_core §4.3) 이라 60 fps 기준 = 웹 1/60 s 틱 1회. 웹 camera.ts 는 df 를 정수 틱으로 누적해 틱마다 1회 — 초 단위 섞임 없음.
   - **−/+ 는 카메라 줌이 아니다** [판독]: menu00 에 줌·카메라 파라미터 쓰기 코드가 없다(`zoom`·`SetCameraParam` 0, `GetCameraParam` 은 매 프레임 json 값을 이름으로 읽기만). `0x3000`(PLUS|MINUS) 입력은 `SequenceMainMenu::MainImpl` 에서 **세션 중일 때만** 파이버(@0x7100060a40 호스트 / @0x7100061360 손님) = `ComUiCardViewer::ClearCardData` → 멤버마다 `GetNetworkPlayerCardData`·`AddCardData` → `Start` = **멤버 카드(방 정보) 보기**다. 그 밖 0x3000 은 기구 출발 건너뛰기(TakeOffImpl)뿐. 캡처 10·11 오른쪽 위 "−/+" 는 이 안내(D 갈래 UI)다. 원본에서 확대·축소처럼 보이는 것은 **기구 앞 섞기**(목표 z 18 → 9 에서 fov 40 → 65, 길이 10 → 18, 높이 +2.5 → +8, 각 15° → 0°)이고, 오른쪽 스틱 등 사용자 카메라 조작은 없다. 높은 전경은 X "광장 보기"(OverView, overview.ts §6.14 ⑧).
   - 캡처 대조: **11.png**(기구 앞, 수평 시선) = t = 1: 내려보는 각 0 → 수평선이 화면 가운데(캡처 410/778 ≈ 0.53) ✓, 눈 (0, T.y+8, 27)·주시 (0, T.y+8, 9)·세로 fov 65 → 기구 바구니(지름 약 5 m, 거리 약 27 m) 화면 폭의 약 11% ✓. **10.png** = 1번(와리오)이 계단 앞 z ≈ 14.4 인 섞임 t ≈ 0.4: 각 9° → 내려보는 각 8.9°·fov 51 → 수평선 높이 화면 위에서 약 0.33(캡처 먼 언덕 ≈ 0.29) ✓ — 평소값(14.5°·fov 40)이면 0.145 로 맞지 않는다. 눈은 별 분수 중심 `camera00_pos`(분수 반지름 약 7.5, 충돌 원형 벽 z 25.49) 쪽 10~14 m 라 분수 별 조각상 뒤에서 기구 쪽을 본다 ✓. **6.png**(계단 앞 근경)도 같은 섞임 구간. 캡처는 가로가 잘리거나 크기가 바뀐 영상이라 화소 단위 대조는 [측정: 비율만].
+
+→ 정리본: [17_actor.md](../engine/17_actor.md) §4.2, 7, 8.2, 9.4
 
 ## 4. 막힘 요소 (기존 판독 결과 재사용)
 
@@ -349,6 +357,11 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | `interact.ts` | SequenceMainMenu::MainImpl·GetArea | ① 그대로. 사건 'interact:telop'·'interact:pop'·'interact:decide'·'ui:mainLayout'·'player:input'·'player:look' |
 | `balloon.ts` | SelectedBalloon·SequenceBalloon | ④ 그대로. 카메라 = fsnb 베이크 json 을 stage 'anim' 슬롯에(07 §6.2 EulerZXY → three 'YXZ', fovy 전체 세로각). 끝나면 `ctx.exit({k:'balloon'})`(방 있으면 `{k:'session'}`) |
 
+→ 정리본: [17_actor.md](../engine/17_actor.md) §8.2
+
+[정정 2026-10-10] [판독] ④의 MenuData bit0 writer는 첫 출발이 아니라 menu01.nro InitialGuidance 완료 @0x710003c4a0→SetSaveFlagOn @0x71000b80f0(OR1)이다. Fade 인자1.0/0.5는 초가 아닌 speed이며 White20/40f, Sleep은 별도 초 단위다. (근거: [plaza_intro.md](plaza_intro.md) §4·§7.1)
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §4·§7.1·§11
+
 ### 6.12 A 갈래 결과·실측 (2026-10-08)
 - 처음 로드(장식 기본·보드 잠김): MapStructure 항목 33개(모델 32종 — 늘 보임 26 = 비장식 모델 30 − 잠긴 보드 짝 3 − 갈매기 로케이터(장식 0x3e) 1, + 장식 기본 7), glb 13.1 MB + 텍스처 244장 78.5 MB, 정점 156k [측정: test_plaza_world 1절]. 브라우저 짧은 확인(swiftshader)에서 무대 33 모델 로드 1.8 s(로컬). 전체 에셋(장식 111항목 전부 + 하늘·env) = 모델 95·텍스처 색인 365·anim 44, 약 160 MB.
 - LUT 축 [데이터]: 256×16 띠의 (x = 조각·16 + r, y = g) 칸이 (r, g, b) 항등에 가깝다(조각 0 의 (15,0) = (255,0,0), 조각 15 의 (0,0) = (0,0,255)).
@@ -436,6 +449,8 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | NPC 자동 부착·재질 번호 변경 | NPC용 `ComMatter` 자동 부착 조건과 해당 액터의 `material_utility_integer_parameter0` 쓰기 경로. 광장 코드의 명시적 부착은 §6.10 ③ 확정; 자동 부착 없음은 아직 [추정] |
 | 물기둥 패스·파라미터 | §6.14 #14c의 Layer[0x4a4/0x4d0] 공급값·capture 패스 순서·스텐실 상태. **사용자 결정으로 물기둥 아랫부분 추가 판독·근사는 중단**; 현재 식을 유지 |
 
+→ 정리본: [17_actor.md](../engine/17_actor.md) §11.3
+
 ## 8. 사용자 확인 필요 (진행은 원본 쪽으로 이미 정함 — 갈래들이 여기에 덧붙인다)
 
 | 항목 | 정한 것 | 이유·근거 |
@@ -519,3 +534,6 @@ SetProjectionPerspectiveFovy(fovy°, 1.0, 2000.0); SetViewLookAt(at = A, up = (0
 | (room2) 끊김 감지 | 탭 닫기 = 즉시, 네트워크 끊김 = socket.io 핑 최대 ≈ 15 s(5 s 간격 + 10 s 시간 초과), 재접속 없음 | 원본 NEX 시간 초과 값 미판독 [설계] |
 
 보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md)): (C) 의 저장은 앱 공용 저장 `mpj.save` 의 `menu.bits` 비트 0 으로 옮겼다(`ctx.save` = `PlazaSave`, 첫 출발 때 비트 + 저장 요청). 옛 키 `mpj.plaza.menuData0` 는 처음 한 번 옮기고 지우지 않는다.
+
+→ 광장 첫 진입 정리: [plaza_intro.md](plaza_intro.md) §15·§16
+

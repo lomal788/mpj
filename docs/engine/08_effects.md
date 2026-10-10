@@ -537,6 +537,9 @@ payload +0 enable, +1 loop, +2 interpolation, +4 keyCount, +C 첫 xyz, +18 첫 t
 
 회전 fluctuation이 없는 기본 누적은 `θ_j=σ_j·θ₀,j+randInit_j·(U_j−0.5)+G(age)·σ_j·ω_j`, `G=t`(regist=1), 그 밖 `(1−powResult)/(1−regist)`다. regist≠0이면 `powResult=regist^t`, 0이면 원본이 1로 두므로 G=0이다. `ω=rotateAdd+randAdd⊙((U_x+U_y),(U_y+U_z),(U_x+U_z))/2`; rotRevRand X/Y/Z가 켜지고 각각 U_z/U_x/U_y≥0.5이면 해당 σ=−1, 아니면 +1이다. 회전 fluctuation 채널·파형은 위 07571ec 계약을 사용한다. 색 키 보간 모드 전체는 남은 항목이다.
 
+[정정 2026-10-10] [판독: 어셈블리] FRND DAT_7101c405f8의 분자 writer는 main.nso @0x71007588c0~0x71007588d8의 FloatPi+FloatPi=6.2831854820251465다. CS0의 kappa=6.283184051513672와 구별한다. 전역 분자 공백은 해소됐고 원본 공유 seed 초기 상태·생성/계산 콜백 선후는 별도 미확정이다. (근거: [plaza_intro.md](../shell/plaza_intro.md) §10.4·§13.2)
+→ 광장 첫 진입 정리: [plaza_intro.md](../shell/plaza_intro.md) §10.4·§13.2
+
 ### 6.3 입자 프로그램별 운동·시간·키 [판독]
 
 기존 광장 분석의 [sass_dis.py](../../tools/analysis/sass_dis.py)·[bnsh_sass.py](../../tools/analysis/bnsh_sass.py)를 재사용했다([plaza_3d.md](../shell/plaza_3d.md) 6.8·6.13, [charselect.md](../shell/charselect.md) 12.11). BNSH 변형 번호는 0부터이며 VS/FS/CS 단계는 1/5/6이다. 이 절의 주소·슬롯 오프셋은 16진수다. 아래 주소는 해당 BNSH 파일 시작 기준 코드 헤더 주소 `pa`; VS/FS 명령은 `pa+0x80`, 이 CS는 `pa+0x100`부터다. `c[n][offset]`·`a[offset]`은 실제 SASS 슬롯이며 BFSHA 재질용 도구의 의미 이름을 이펙트에 적용하지 않았다.
@@ -1234,6 +1237,9 @@ core.step(); core.view.set(cameraViewMatrix); core.sync();  // pools[k].order[0.
 - 저해상도 패스(drawPath 8/16 profile)·layer 마스크·장면 pass 배열: 그리지 않음(§6.7, 장면 값 필요). `layerBits`는 저장만.
 - intervalRandom 으로 간격이 1 미만이 되면 1(무한 반복 방지) [근사].
 - §6.1 표의 success twinkle "1회 수 10"은 rate 이고, CircleDiv 는 rate × 분할(twinkle00 6 → 60, twinkle02 8 → 80)이다(bubble00 정정과 같은 규칙, 이전 웹·원본 규칙 모두 60/80).
+
+[정정 2026-10-10] [판독] 첫 항목의 FRND 전역 분자 미판독은 위 writer로 해소됐다. 웹 FRND 미구현과 원본 seed/콜백 순서 공백은 별개이며, 이 정정으로 웹 규칙 적용이 완료됐다는 뜻은 아니다. (근거: [plaza_intro.md](../shell/plaza_intro.md) §10.4·§13.2·§16)
+→ 광장 첫 진입 정리: [plaza_intro.md](../shell/plaza_intro.md) §10.4·§16
 
 ### 14.8 사용자 확인 필요
 

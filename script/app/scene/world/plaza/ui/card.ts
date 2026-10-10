@@ -5,7 +5,7 @@
  */
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import { MgmGuide, plainText, type MgmDrawHost } from '@app/common/ui';
-import type { CardData } from '@app/scene/menu/online';
+import type { CardData } from '@app/common/net/protocol/types';
 
 export const PLAZA_CARD_PART = '../plaza/ui/plaza_card.json';
 

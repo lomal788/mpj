@@ -2,8 +2,8 @@
  * 메모리 가짜 어댑터 FakeOnline [설계, online.md 9.3] — 실제 네트워크 없이 방 목록·입장·퇴장·오류를 시간차로 흉내 낸다.
  * 시간은 tick(dt) 로만 흐른다(시험 재현). 난수는 시드 고정 xorshift.
  */
-import type { ErrorCode, JoinFailReason, OnlineAdapter, OnlineEvent, OnlineSelf, RoomMember, RoomSize, RoomState, RoomSummary } from './types';
-import { defaultCard, KOOPA } from './types';
+import type { ErrorCode, JoinFailReason, OnlineAdapter, OnlineEvent, OnlineSelf, RoomMember, RoomSize, RoomState, RoomSummary } from '@app/common/net/protocol/types';
+import { defaultCard, KOOPA } from '@app/common/net/protocol/types';
 
 export type FakeError = 'none' | 'connect' | 'join' | 'password' | 'full' | 'dissolve' | 'disconnect' | 'match' | 'timeout';
 

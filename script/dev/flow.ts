@@ -10,7 +10,32 @@
 import { createGameFlow, createGameHost, flowScreens, type FlowRun, type FlowScreens, type GameFlow, type GameHost, type Stage } from '@app/flow';
 import type { MgResultEntry } from '@app/common/ui';
 import type { PlazaPageRun } from '../plaza_page';
+import type { PlazaOnlineFactory } from '@app/scene/world/plaza';
+import { FakeOnline } from './net/fake';
 import { appFlow } from '../view/appFlow';
+
+const plazaFakeOnline = (q: URLSearchParams): PlazaOnlineFactory | undefined => {
+  const mode = q.get('online');
+  if (mode !== 'fake' && mode !== 'off') return undefined;
+  const off = mode === 'off';
+  const num = (k: string, d: number): number => {
+    const v = Number(q.get(k));
+    return q.has(k) && Number.isFinite(v) ? v : d;
+  };
+  return ({ self, walk }) =>
+    new FakeOnline({
+      rooms: off ? 0 : num('rooms', 7),
+      joinInterval: num('join', 3),
+      leaveAfter: num('leave', 0),
+      error: 'none',
+      seed: 20261008,
+      matchSec: 4,
+      self,
+      remoteMove: !off,
+      walk,
+      stampEvery: off ? 0 : num('stamp', 6),
+    });
+};
 
 export interface Hook {
   stage: Stage;
@@ -63,7 +88,7 @@ export function createDevGame(o: DevGameOptions): DevGame {
   const avlat = o.avlat;
   const screens: FlowScreens = {
     ...flowScreens,
-    plaza: (stage, cfg) => flowScreens.plaza(stage, { ...cfg, params: q }),
+    plaza: (stage, cfg) => flowScreens.plaza(stage, { ...cfg, params: q, online: plazaFakeOnline(q) }),
     mgmet: async (entry, stage, cfg) => {
       const { runMgmet, mgmetTestValues } = await import('../mgmet_page');
       return runMgmet(entry, stage, { ...cfg, test: mgmetTestValues() });

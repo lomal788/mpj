@@ -2,7 +2,7 @@
  * 온라인 화면 UI 부품(순수 상태) — ComUiNet* 와 matching00 ComUi* 의 수명·입력. 그리기는 사건(OEv)으로만 낸다(view.ts 가 적용).
  * 근거: docs/shell/online.md 4·5. 원본 이름은 각 클래스 주석, 웹이 정한 것은 [설계].
  */
-import { BTN, CHARA_PC, LIST_ROWS, type RoomSummary } from './types';
+import { BTN, CHARA_PC, LIST_ROWS, type RoomSummary } from '@app/common/net/protocol/types';
 
 export type Lay =
   | 'bg'

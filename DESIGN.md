@@ -85,6 +85,7 @@ script/
     flow/        게임 흐름 — host.ts(한 판 호스트: 화면·렌더러·오디오 시계·start/step/draw)·index.ts(createGameFlow: 플레이어 설정~프리 플레이 흐름 함수). 게임만, 개발 코드 없음.
                  [나중] 흐름 표·등록표(화면 ID → 모듈, 다음 화면, 미니게임 ID → 게임)
     common/      앱 공용 서비스(원본 bq 계열: 렌더·소리·입력·에셋·저장·공용 UI)   [나중]
+      net/         통신(2026-10-10): protocol/(wire·types — 클라이언트·서버 공용 규약, 서버는 여기만 import) + socketio.ts(방 서비스 클라이언트). 공용 통신 코어 game/lib/net 은 두 번째 사용처(온라인 미니게임 동기)가 생길 때 뽑는다
     scene/       원본 NRO 중 화면·모드 — 같은 높이, 2단(분류/단위) 고정
       menu/        setplayer · charselect · modeselect · partyrule · online      (menu01 등)
       world/       plaza(menu00) · mgmet(항구)
@@ -95,6 +96,7 @@ script/
       kit/         계열 공통: rhythm · [athlon · kb · patapata …]                (원본 main ca::rm·ca::coin_athlon·ca::kb·sb)
       mg####/      게임 하나 = 폴더 하나, 평평하게. mps 게임은 mps_ 접두어
   dev/         개발 하네스(main.ts·flow.ts, 주소 /dev)·시험 페이지(ui_main.ts + dev/ui.html, 주소 /dev/ui), dev/game = 시험용 가짜 게임(mgdummy, 등록표에 없음). 별칭 `@dev`, app 은 dev 를 부르지 않는다
+               dev/net/fake.ts = 가짜 방 서비스(FakeOnline). 광장은 ctx.online 으로 주입받고(app 은 dev 를 모름), dev/flow.ts 가 ?online=fake|off 일 때 넣는다
   main.ts      배포용 진입점(index.html) — 게임만
 ```
 `[ ]` = 아직 없는 자리. 규칙상 위치가 정해져 있다.

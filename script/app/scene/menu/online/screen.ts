@@ -9,7 +9,7 @@ import type { MgmPadSource, MgmSpec } from '@app/common/ui/types';
 import type { MgmDrawHost } from '@app/common/ui/window';
 import { OnlineFlow, type OnlineEntry } from './flow';
 import type { OEv, OIO } from './panels';
-import type { OnlineAdapter, OnlineSelf, RoomMember } from './types';
+import type { OnlineAdapter, OnlineSelf, RoomMember } from '@app/common/net/protocol/types';
 import { OnlineView } from './view';
 
 export const ONLINE_PART = '../online/online.json';

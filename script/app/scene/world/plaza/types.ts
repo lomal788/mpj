@@ -5,6 +5,7 @@
  * 시간 단위: 원본 프레임(60fps). update(df, frame) 의 df = 이번 갱신 프레임 수.
  */
 import type * as THREE from 'three';
+import type { OnlineAdapter, OnlineSelf } from '@app/common/net/protocol/types';
 import type { ClipHandle, ClipOptions, Collider, SocketPose, Stage3D, StageModel } from '@app/common/render3d';
 
 /** 버튼 비트(script/game/core/pad.ts NPAD 와 같은 값) */
@@ -147,6 +148,9 @@ export interface PlazaSave {
 /** 장면 나가기(페이지가 다음 화면으로) */
 export type PlazaExit = { k: 'balloon' } | { k: 'session' } | { k: 'cancel' };
 
+/** 광장 방 서비스 어댑터 만들기 — self = 이 기기 정보, walk = 원격 이동을 광장 충돌로 걷기(가짜 어댑터용) */
+export type PlazaOnlineFactory = (o: { self: OnlineSelf; walk(pos: [number, number, number], move: [number, number]): [number, number, number] }) => OnlineAdapter;
+
 export interface PlazaContext {
   readonly world: PlazaWorld;
   readonly players: readonly PlazaPlayerSetup[];
@@ -154,6 +158,8 @@ export interface PlazaContext {
   pad(slot: number): PlazaPad | null;
   readonly sound: PlazaSound;
   readonly save?: PlazaSave;
+  /** 방 서비스 어댑터 만들기(없으면 실제 방 서버). 개발 하네스가 가짜를 넣는다 */
+  readonly online?: PlazaOnlineFactory;
   /** 2D UI 겹(캔버스 위 HTML 상자, 크기 = 캔버스) */
   readonly overlay: HTMLElement;
   /** web/assets/ 기준 URL(예 'plaza/ui/x.png') */

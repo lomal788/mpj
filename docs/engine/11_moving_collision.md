@@ -129,6 +129,8 @@ mg0106의 A/E 직접 생성 `(r,h)=(0.7,3.5)/(1.3,2.0)`은 축 선분 길이7/4,
 
 따라서 공통 기본 형상과 PC 시각 scale의 분리는 구현할 수 있다. **mg0106의 최종 캐릭터 형상**을 확정하려면 ActorParam 파일의 실제 로드·consumer 또는 후속 SetSourceCapsule 호출을 추가로 확보해야 한다. 다른 게임의 ColRadius를 대입하지 않는다.
 
+→ 정리본: [17_actor.md](17_actor.md) §4.5
+
 ## 4. Actor 접촉·접지와 플랫폼 carry [판독]
 
 ### 4.1 Map과 Actor 접촉의 공통점·차이
@@ -147,6 +149,8 @@ Map capsule의 Overlap 후보 형상은 source 종류7에서 transformed radius�
 
 AA·Map 모두 공통 contact/owner/packed 구조를 사용하지만 **필터·geometry·응답 callback·최종 projection은 다르다**. [mgB_main_actorcoord.c](../../../analysis/decomp/mgB_main_actorcoord.c)의 완료 판독을 재사용하며 전용 callback과 simple-adjust 모드도 원본 선택에 따라 보존한다. SDK 접촉 동점 순서를 새로 확정한 것은 아니다.
 
+→ 정리본: [17_actor.md](17_actor.md) §8.1
+
 ### 4.2 접지 법선·groundedLimit·최종 위치
 
 근거: [runtime_A_collision_finish.c](../../../analysis/decomp/runtime_A_collision_finish.c)의 `FUN_7100006670`, [runtime_A_collision_filters.c](../../../analysis/decomp/runtime_A_collision_filters.c)의 layer 검사, [runtime_A_collision_limit.c](../../../analysis/decomp/runtime_A_collision_limit.c)의 `FUN_710002c96c`; 기본 접지 callback은 `ActorWorld.Reset @0x7100005770`가 등록한다.
@@ -161,6 +165,8 @@ Sweep hit.distance>d+.02이면 `SetPosition(current+g·(distance−d))`; 성공 
 
 Map 평균의 `FUN_710001b320`, AA finalizer, 접지·Y 제한은 모두 **ComActor.SetPosition @0x7100011d64**으로 연결된다. SetPosition은 MoveConstraint가 있으면 요청 이동량을 제약하고 최종 위치 callback을 거쳐 Entity.Translate, 없으면 최종 callback→Entity.SetTranslation이다. 기본 callback **@0x7100014564는 입력 Vector를 그대로 반환**한다. 이전 `FUN_710001454c` C의 함수 경계가 잘못 합쳐져 해당 32byte만 ARM64로 확인했다. 게임별 custom finalizer를 생략하지 않는다.
 
+→ 정리본: [17_actor.md](17_actor.md) §6.7, 8.1
+
 ### 4.3 기본 작업 순서와 carry
 
 `ActorWorld.DefaultCollision @0x7100006ef8`의 기본 순서는 **Attack→Map packed 보정→Limit→ActorBody(AA)→Event→Map packed 보정→Limit**이다. Map 작업은 기본+0x1C0 callback `FUN_710002ae40`, ActorBody는+0x190 callback `FUN_710002abd0` 또는 simple-adjust `FUN_710002acb4`다. 접지 `FUN_7100006670`은 별도 ActorJob callback(+0x160)이다. Map·접지·Actor push를 하나의 solver 함수로 합치지 않으며, custom CollisionFunction/ActorJob을 사용하는 게임은 별도 선택을 따라야 한다. **이 공통 함수 내부 순서가 mg0106의 Entity·소켓·dirty commit 전체 시점을 확정하지는 않는다.**
@@ -168,6 +174,8 @@ Map 평균의 `FUN_710001b320`, AA finalizer, 접지·Y 제한은 모두 **ComAc
 일반 ComActor와 별도 CCT 경로는 구분한다. mg0912의 선택적 CCT는 기본 비활성 캐릭터 충돌 설정과 `CreateCapsule(.4,.25)`·TickFix→MoveTo 경로가 있지만, 이것을 모든 플레이어의 기본 이동기로 확대하지 않는다.
 
 **플랫폼 carry:** 판독한 강체 포즈 동기화·Map 침투 평균·접지 질의에는 접지 body의 이전/현재 변환 차이를 플레이어에게 자동 적용하는 경로가 확인되지 않았다. 이는 모든 게임·SDK에 carry가 없다는 결론은 아니다. mg0106의 carry는 `mg0106 Player::UpdatePlayer @0x710001c8c0`의 **게임 고유 코드**다. y≤0에서 회전량 `−ω·dt`로 플레이어 위치와 heading을 회전시키고, y>0에서는 적용하지 않는다. 이 항목과 B/C/D 충돌 동기화를 별도로 구현해야 중복 carry가 생기지 않는다.
+
+→ 정리본: [17_actor.md](17_actor.md) §3.4, 8.2
 
 ## 5. mg0106 적용 사례 [판독·데이터]
 
@@ -261,6 +269,8 @@ pause는 논리 시간·포즈 commit·물리 step을 정지시키고 pending di
 | CCD·Dynamic solver·All 정렬 | 내부 의미/정렬 일부 미확정 | 해당 기능의 원본 일치에만 차단; mg0106 기본 단일 query에는 비차단 |
 
 이번 검증 범위는 **기존 완료 문서 재사용, 원본 함수·ARM64/디컴파일의 누락 연결 정적 판독, 현재 웹 소스 대조, 문서 링크/형식 확인**이다. 공통 Entity·Collision·Physics 주소는 위 절에 기록했으며 추가 판독은 원본을 변경하지 않은 임시 Ghidra 프로젝트의 `-noanalysis -readOnly`로 수행했다. 게임 구현·원본 실행·스테이징은 하지 않았다.
+
+→ 정리본: [17_actor.md](17_actor.md) §11.3, 13
 
 ## 8. PhysX 4.1 공개 소스 기준 (2026-10-09)
 
@@ -509,3 +519,4 @@ hit 버퍼(`px_hits_offset`, 256건 × 64 B): 슬롯 0–2 position, 3–5 norma
 - nbmap 속성 → 레이어 `attr[1] − 2` 는 mg0912 의 [추정]을 따랐다. 게임별 래퍼(ComCollision 생성)에서 확인하기 전까지 [추정]이다.
 - 씬 프루너 상태(simulate 시점) 차이를 원본에 맞출지(P2 에서 고정 스텝 simulate 를 돌리면 원본 흐름에 가까워진다), P0 처럼 질의만 할지.
 - .apx 를 사전 압축(br) 대상에 넣을지(지금 copy, 세 세트 합 548 KB).
+→ 정리본: [17_actor.md](17_actor.md) §8.1, 9.2, 10, 11.1

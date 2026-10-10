@@ -4,7 +4,7 @@
  * 원본 엔진 동작(ComUiDialogBox·UiNoticeModule·ComUiLoadingTelop·ComUiTimer)은 미분석 → 레이아웃·문구만 원본, 동작은 단순.
  */
 import { DialogBoxState, type DialogEvent } from '@app/common/ui/dialogBox';
-import { BTN, type RoomMember } from './types';
+import { BTN, type RoomMember } from '@app/common/net/protocol/types';
 import { Life, type Ins, type OIO, type Sink } from './panels';
 
 export interface DialogSpec {

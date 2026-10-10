@@ -5,7 +5,8 @@
  */
 import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import { IDENTITY, MgmGuide, operationPlayerId, type Mat3, type MgmDrawHost, type MgmPadSource, type MgmPlayer, type MgmSound } from '@app/common/ui';
-import { OnlineScreen, type OnlineAdapter, type OnlineEvent, type OnlineSelf, type RoomState } from '@app/scene/menu/online';
+import { OnlineScreen } from '@app/scene/menu/online';
+import { type OnlineAdapter, type OnlineEvent, type OnlineSelf, type RoomState } from '@app/common/net/protocol/types';
 import { CARD_BTN, CardViewer, type CardEvent, type PlazaCardExtra } from './card';
 import { listStamps, stampSe, type PlazaUiExtra } from './data';
 import { RemoteSender, RemoteTable, SEND_SLOTS, type Quat, type Vec3 } from './net';

@@ -5,14 +5,16 @@
  *   내기 'ui:friendMenu' boolean · 'ui:stampList' {slot, open} · 'net:remote' {station, slot, chara 'pcNN', pos, quat}(받은 패킷마다) · 'net:remoteLeft' {station} · 'net:session' boolean(방 접속 여부가 바뀔 때)
  *   대기실(docs/shell/plaza_3d.md §5.2): 내기 'net:lobby' {host, ready} · 'net:started'(PlaySession — 모두 모드 메뉴로), 듣기 'net:playSession'(방장 기구 결정)
  * 온라인(docs/shell/online.md 9.5·9.6): 기본 = 실제 방 서버(SocketIoOnline, HTTP + socket.io 바이너리, 페이지와 같은 출처 — npm run dev·server/main.ts), server=http://호스트:포트 로 바꿈.
- * 시험값(URL): online=fake = 가짜 온라인(시험·데모: join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7)), online=off = 가짜·방 없음, first=1.
+ * 시험값(URL): online=fake = 가짜 온라인(시험·데모: join=입장 간격 s(기본 3), stamp=원격 스탬프 간격 s(기본 6), rooms=가짜 방 수(기본 7)), online=off = 가짜·방 없음 — 가짜는 개발 하네스(script/dev/flow.ts)가 ctx.online 으로 넣는다. first=1.
  * 그리기: 무대 렌더러 하나로 3D(후처리 포함) 다음 패스(afterRender)에 그린다 — UI 전용 캔버스·문맥 없음(docs/engine/loader_manager.md §14.4).
  *   앱 수명 렌더러(stage.keep)면 그리기 객체(PlazaUiView — 명세·그림·텍스처·셰이더)를 렌더러에 두고 다시 들어오면 그대로 쓴다(덧붙이기 extra 는 없는 키만 넣어 여러 번 불러도 같음).
  */
 import * as THREE from 'three';
 import { assetHooks } from '@app/scene/menu/charselect/assetHooks';
 import { MgmSound } from '@app/common/ui';
-import { applyOnlineExtra, CHARA_PC, defaultCard, FakeOnline, ONLINE_FACES, ONLINE_PART, SocketIoOnline, type OnlineAdapter, type OnlineExtra } from '@app/scene/menu/online';
+import { applyOnlineExtra, ONLINE_FACES, ONLINE_PART, type OnlineExtra } from '@app/scene/menu/online';
+import { CHARA_PC, defaultCard, type OnlineAdapter } from '@app/common/net/protocol/types';
+import { SocketIoOnline } from '@app/common/net/socketio';
 import { PLAZA_BTN, type PlazaActor, type PlazaContext, type PlazaPad, type PlazaPart, type PlazaPartFactory } from '../types';
 import { PLAZA_CARD_PART, type PlazaCardExtra } from './card';
 import { applyPlazaUiExtra, PLAZA_UI_PART, type PlazaUiExtra } from './data';
@@ -109,32 +111,17 @@ export const createPlazaUi: PlazaPartFactory = async (ctx: PlazaContext): Promis
   const sound = new MgmSound(view.spec.sounds, view.url, { play: (l, u, gain) => play(l, u, gain) });
 
   const locals = (): PlazaUiPlayer[] => ctx.players.filter((p) => p.local).map((p) => ({ slot: p.slot, chara: charaIndex(p.chara), isCom: p.isCom, name: p.name }));
-  const num = (k: string, d: number): number => {
-    const v = Number(q.get(k));
-    return q.has(k) && Number.isFinite(v) ? v : d;
-  };
   const self = locals()[0];
   const selfInfo = { name: self?.name ?? 'Player', chara: self?.chara ?? 0, humans: Math.max(1, locals().filter((p) => !p.isCom).length) };
   const selfCard = defaultCard(`${selfInfo.name}-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e9).toString(36)}`, selfInfo.name);
-  const fake = q.get('online') === 'fake' || q.get('online') === 'off';
-  const net: OnlineAdapter = !fake ? new SocketIoOnline({ base: (q.get('server') ?? '').replace(/\/$/, ''), self: { ...selfInfo, card: selfCard } }) : new FakeOnline({
-    rooms: q.get('online') === 'off' ? 0 : num('rooms', 7),
-    joinInterval: num('join', 3),
-    leaveAfter: num('leave', 0),
-    error: 'none',
-    seed: 20261008,
-    matchSec: 4,
-    self: { ...selfInfo, card: selfCard },
-    remoteMove: q.get('online') !== 'off',
-    walk: (p, m) => {
-      const col = ctx.world.collider;
-      const pos = new THREE.Vector3(p[0], p[1], p[2]);
-      const mv = col.collide(pos, new THREE.Vector3(m[0], 0, m[1]), FAKE_RADIUS, FAKE_HEIGHT);
-      const g = col.groundHeight(p[0] + mv.x, p[2] + mv.z, p[1]);
-      return g && g.y > p[1] - 1.5 ? [p[0] + mv.x, g.y, p[2] + mv.z] : p;
-    },
-    stampEvery: q.get('online') === 'off' ? 0 : num('stamp', 6),
-  });
+  const walk = (p: [number, number, number], m: [number, number]): [number, number, number] => {
+    const col = ctx.world.collider;
+    const pos = new THREE.Vector3(p[0], p[1], p[2]);
+    const mv = col.collide(pos, new THREE.Vector3(m[0], 0, m[1]), FAKE_RADIUS, FAKE_HEIGHT);
+    const g = col.groundHeight(p[0] + mv.x, p[2] + mv.z, p[1]);
+    return g && g.y > p[1] - 1.5 ? [p[0] + mv.x, g.y, p[2] + mv.z] : p;
+  };
+  const net: OnlineAdapter = ctx.online?.({ self: { ...selfInfo, card: selfCard }, walk }) ?? new SocketIoOnline({ base: (q.get('server') ?? '').replace(/\/$/, ''), self: { ...selfInfo, card: selfCard } });
 
   const prevHold = new Map<number, number>();
   const ui = new PlazaUi({ host: view, extra, net, players: locals, pads: { poll: () => ({ hold: 0, trig: 0 }) }, sound, firstOnline: q.get('first') === '1', card: cardExtra, selfCard });

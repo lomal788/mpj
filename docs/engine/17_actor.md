@@ -1387,3 +1387,329 @@ interface ActorPorts {
 | mg0119 Sum abs(y) `@0x7100040cc0/@0x71000415e4` | [mg0118 §6.2](../minigame/mg0118.md), [mg0119 §6.2](../minigame/mg0119.md) | [판독] 기존 공용 센서 판독 재사용. §8.5·11.1 |
 
 [미확정] 추가 디컴파일·원본 실행 근거가 필요한 목록은 §11.3에 있다. 제공 C의 타입 손실을 정상 코드처럼 복원하거나 미확정 항목을 0으로 채우지 않았다.
+
+## 14. 웹 구현 기록 (2026-10-10, actor-runtime)
+
+[설계] 사용자 확정 범위: §12의 B/A/A/A를 적용한다. 이번 작업은 단계 1~7(공용 런타임·어댑터·character 연결·노드 시험)이다. 단계 8 광장 이전은 후속 작업이다. 기존 본문의 문서 전용 작업 기록은 당시 이력으로 보존한다. 새 디컴파일·Ghidra 추출·브라우저 실행·git stage/commit은 하지 않는다.
+
+### 14.1 파일과 계층
+
+| 파일 | import·책임 |
+|---|---|
+| `script/game/lib/actor/index.ts` | import 0. §9.1 타입, Params, Pad, JumpCalculator, ActionRegistry, ConditionSet, FrameDisplacementSlots, ActorCore, 접지 policy와 registry |
+| `script/game/lib/actor-collision/index.ts` | `../actor`, `../collision`만. P0 질의·Map adjusted 평균·registry 형상/소유 body 수명 |
+| `script/app/common/actor/index.ts` | 패드 raw 변환·명시적 카메라 basis 근사·주 슬롯 MotionSlot 연결. 센서·게임 CPU·carry 없음 |
+| `tools/test_actor.ts` | 노드 수치·순서·수명·결정성·실제 PhysX WASM·character 연결·import 경계 시험 |
+| `tools/test_plaza_world.ts` | 공용 actor 경로의 import 허용 목록만 추가. 광장 기대값은 유지 |
+
+### 14.2 API와 구현 전 보완 계약
+
+[설계] §9.1의 포트 타입은 그대로 공개한다. ActorCore의 `preFrame(frameId)`, `tick()`, `collisionJobs(stamp, job)`는 호출자가 배치한다. tick은 고정 f32(1/60)이며 수평 적분 helper는 문서의 일반 substep 식도 독립 검증한다. Entity/Physics의 전역 순서를 만들어내지 않는다. actor pose와 물리 pose의 동기화는 binding의 명시적 `syncPose`/`teleport` 경계다.
+
+[설계] ctor→공용 확정 10행(0~8,32)→게임 setter 순서다. 원본 raw 33행과 f32 로딩(/60 포함) 결과를 각각 보존한다. 미확정 필드를 새로 이름 붙여 적용하지 않는다. 생성 시 필요한 velocity reference·Pad MoveKey/overlay/양자화 설정은 호출자가 명시한다.
+
+[설계] 원본 미확정 Trigger/Release overlay mask/자동 clear는 기본 규칙으로 발명하지 않는다(R03/R04). setter는 저장만 하고 getter는 명시한 edge policy가 필요한 경로에서 policy 없으면 미지원 오류를 낸다. 앱에서 제공하는 packet edge policy는 이름에 Approx를 붙여 선택한다. 일반 Trigger style remap은 확보한 규칙을 사용한다. ActorPad에는 acc/gyro/posture를 넣지 않는다(19 §9).
+
+[근사] 원본 quaternion/삼각함수 비트 미확정 때문에 몸 선회는 명시적 `yaw-approx` 선택과 수평 quaternion으로 제공한다(R15/R16/R35/R36). 카메라 right/front 변환은 앱의 `cameraBasisApprox`에서만 수행한다. 레버 각의 JS atan2/sin/cos와 원본 map 순서를 대신하는 등록 순서도 근사로 기록한다. 원본 action hash/모션 표는 소비자가 주입하며 전체 초기 registry를 발명하지 않는다(R08/R10).
+
+[설계] condition은 snapshot→generation 재검사→반환1만 해제, 슬롯은 callback 반환을 프레임당 한 번 직접 변위로 더한다. callback 재진입·교체·자기 해제 뒤에는 기존 generation을 다시 확인한다. 클래스별 피격 효과·AA 응답·중력 volume은 기본 비활성이다.
+
+[설계] sweep 포트의 start는 actor translation이며 shape local center는 adapter가 한 번만 합성한다(§6.7의 최종 shapeWorldCenter−g*d와 대응). ray는 §6.7의 actor position에서 시작한다. Map raw와 adjusted를 분리하고 `resolveMapContacts`에는 adjusted를 vector로 명시적으로 옮긴다. 정지 actor도 query한다. 복수 hit 선택/ground 키는 장면 정책을 필수 주입한다. Ray/limit에는 미확정 original-call event를 만들지 않는다.
+
+[설계] AA는 적격 쌍의 penetration 자료와 비활성 응답 경계만 제공한다. capsule 반사/밀림·공격/이벤트 job은 미지원이며 조용히 다른 응답으로 바꾸지 않는다. binding은 자신이 생성한 body만 해제하고 빌린 world/body/character는 해제하지 않는다.
+
+[설계] character 연결은 `CharacterCore.main.play/enqueue`와 `conditionSpeed`를 사용해 speedValid를 보존한다. pose→명시된 ground/fallback→character step 순서다. name/hash는 주입된 등록표로 확인한다. 기존 character 코어·광장·follow는 변경하지 않는다.
+
+### 14.3 단계별 상태
+
+| 단계 | 착수 시 상태(이력) | 최종 결과 |
+|---|---|---|
+| 1 수치·Param·registry·호출 골격 | 구현 예정 | 완료. f32·3단계 설정·원본 hash 주입·명시적 pre/tick/jobs |
+| 2 Pad | 구현 예정 | 완료. R03/R04 edge는 명시 policy, raw 센서 제외 |
+| 3 중력·이동·공중·낙하·선회 | 구현 예정(선회 근사 명시) | 완료. 기본 중력·수평/수직 적분·terminal·낙하량. yaw-approx는 근사 |
+| 4 JumpCalculator | 구현 예정 | 완료. 구간식·Start frame hold·reset. R35 골든 미확정 유지 |
+| 5 condition·slot | 구현 예정 | 완료. snapshot/generation·교체/재진입·해제·직접 변위. 클래스별 효과 보류 |
+| 6 충돌·접지·해제 | 구현 예정(P0 기본 경로) | 완료. 실제 PhysX query·Map 평균·ground fallback·수명. AA 응답 비활성 |
+| 7 character 연결 | 구현 예정(주 슬롯) | 완료. 주 슬롯 play/enqueue·speedValid·conditionSpeed·pose/ground/step |
+| 8 광장 이전 | 사용자 지시로 후속 작업 | 진행하지 않음. player/follow/remote 코드와 기존 기대값 보존 |
+
+### 14.4 시험과 제한
+
+[설계] `tools/test_actor.ts`, 기존 collision·character·광장·경계 시험, `npm run typecheck`를 노드에서 실행한다. §10 점프 숫자와 18f 선회는 원본 golden이 아니므로 가정·실측 차이를 보존한다. 실행 결과는 구현 후 추가한다.
+
+### 14.5 사용자 확인 필요·남은 R 항목
+
+[설계] 이번 1~7은 승인된 기본 범위로 진행한다. R01/R02/R32 전역 gate/phase, R03/R04 edge 수명, R05/R15/R16 레버·카메라, R06/R07/R09/R24 원본 전체 수명, R08/R10 action 등록, R11~R14 조건 효과·중력, R17 미확정 행, R18/R19/R23 AA·CCT/Dynamic, R20/R21 접지 선택/event, R22 형상 scale, R34~R36 주변 기능·실행 정확도는 후속 범위다. 주 슬롯 R33은 이번 연결 시험으로 지원 범위만 확인한다. 즉시 사용자 응답을 요구하지 않는다.
+
+### 14.6 Ghidra 추출 요청 표
+
+[미확정] §11.4의 기존 요청을 재사용한다. 이번 단계에서 실제로 차단한 함수의 모듈·주소·이유와 중복 제거 개수는 구현 결과와 함께 아래에 추가한다. 추출은 수행하지 않는다.
+
+[설계 보완: 구현 전] 앱 NPAD 변환은 문서화된 face/L/R/ZL/ZR/Dpad 비트만 고정 변환한다. raw의 위=+Y를 ActorPad의 각0=−Y로 바꾼다. 나머지 버튼과 스틱 방향 버튼 비트는 호출자 `extraButtons`가 명시하며 자동 추정하지 않는다. `packetEdgesApprox`는 이 변환 packet의 edge를 읽는 선택적 웹 정책이다. JumpCalculator의 counter는 웹 frameId마다 한 번 진행하며 Start frame/hold 조건을 그대로 노출한다(R35: 원본 실행 골든은 없음). yaw 선회·입력 삼각함수는 JS 수학을 사용한다.
+
+[설계 보완: 구현 전] 기본 액션의 미확정 bit6 소비는 `groundLever` 포트로 분리한다. null이면 해당 경계만 비활성이고, 확정된 Walk/Run 전환과 속도 적용은 같은 action 호출 안에서 수행한다. character 연결부는 주 슬롯 이름/hash 등록표와 pose 반영 callback을 받으며 `publish`에서 pose→ground→고정 step을 한 번만 실행한다. binding 해제 callback은 actor 등록을 무효화한 뒤 소유 body 제거 전에 실행한다. 외부 body와 character 소유권은 가져오지 않는다.
+
+[검증 보완: 구현 전] §10의 점프 재구현 수치는 Start frame의 가속 1회 생략을 포함하면 재현된다. apex frame은 0-based index, 착지는 처리한 frame 수로 구분해 시험한다. hold 없이 시작한 궤적은 별도 대조값으로 둔다. f32 40 m/s²의 9회 가속은 5.999999523162842이고 10회째 clamp되어 6이다. actor-collision은 registry뿐 아니라 source의 실제 staged/enabled/소유 body·shape도 검사하며, 해제된 query 형상으로 질의하지 않는다.
+
+[설계 보완: 구현 전] binding의 개별 `removeShape`는 등록을 먼저 무효화하고 해당 binding 소유 body만 제거한다. 빌린 shape는 등록만 제거한다. 전체 dispose는 cleanup callback에서 예외가 나도 모든 소유 body를 finally로 해제한다. 질의 및 응답 callback 뒤의 generation 검사를 유지한다.
+
+
+### 14.7 구현 완료·검증 결과
+
+[구현] 14.3 표의 완료는 이번에 승인한 기본 경로와 웹 수명 계약의 완료를 뜻한다. R11~R14 조건 효과/가변 중력, R18/R19 AA 반사·밀림, 전체 action 등록표, 전역 job scheduler, 비주 슬롯은 구현하지 않았다. `actor-body` job은 명시 consumer가 없으면 미지원 오류를 낸다. ctor Pad startup·velocity reference·주 슬롯 motion 표·복수 ground 선택을 추정 기본값으로 채우지 않는다.
+
+[구현] actor-collision은 static query body를 소유하며 physics simulation으로 이동을 적분하지 않는다. `syncPose`는 caller가 명시적으로 호출한다. removeShape/dispose는 먼저 ref generation을 무효화하고 소유 body만 해제한다. borrowed body/world/CharacterCore는 해제하지 않는다. `onDispose`에 ActorCore/character binding 해제를 등록할 수 있다. attack/event jobs와 Dynamic/CCT 응답은 구현 범위 밖이다(R02/R23).
+
+[검증] 전부 Node 실행. 브라우저·헤드리스·Ghidra·새 C 판독·새 npm 의존성 없음. 기존 광장 시험 기대값 변경 없음.
+
+| 명령 | 결과 |
+|---|---|
+| `npx tsx tools/test_actor.ts` | 106/106 통과 |
+| `npx tsx tools/test_collision.ts` | 78/78 통과 |
+| `npx tsx tools/test_character.ts` | 135/135 통과 |
+| `npx tsx tools/test_plaza_world.ts` | 447/447 통과. 기존 optional moderngl GLSL 컴파일은 환경에 모듈이 없어 생략 |
+| `npx tsx tools/test_plaza_actors.ts` | 248/248 통과 |
+| `npx tsx tools/test_plaza_move.ts` | 112/112 통과 |
+| `npx tsx tools/test_plaza_ui.ts` | 126/126 통과 |
+| `npx tsx tools/test_entry.ts` | 388/388 통과 |
+| `npm run typecheck` | 종료 코드 0 |
+
+[검증] 총 1,640/1,640 통과, 최종 실패 0. 새 actor 시험에는 실제 PhysX 캡슐 sweep/Map 평균/접지, 정지 contact, 형상 remove·stage·teleport, dead generation, callback 중 dispose, 입력 우선순위, condition/slot 교체, 주 슬롯 motion/ground, import 경계를 포함한다. 같은 360프레임 입력을 새 actor 인스턴스들에 넣은 float32 pose 해시: `309baf8bea550ccc0f0c35caa784f7f8c4f367b57cbea611745fd3cd2a4d0974`.
+
+[검증] §10 점프: speed23 → apex2.086530923843384/index14/착지35프레임, speed42 → 6.3918280601501465/index22/57프레임, speed13.5 → .9036437273025513/index11/26프레임. 전제는 frame0 Start 및 hold 최대7, Start frame 가속 생략, 이후 1/60. 표의 반올림 기대값과 일치한다. yaw-approx의 180° 회전은 85° 경계를 지나 18프레임에 수렴하지만 원본 quaternion/SIMD golden으로 승격하지 않는다(R35/R36).
+
+[검증 이력] 첫 새 actor 시험에서 기대값 작성 오류 2건을 정정했다. 원문: `air accel 40 caps at 6 by frame9: actual 5.999999523162842 / expected 6`, `main MotionArg play preserves speedValid=false: 1 !== 2`. 전자는 f32의 9프레임 잔여와 10프레임 clamp를 각각 검증하도록 고쳤고, 후자는 기존 Character의 PLAYING=1로 고쳤다. 기존 광장 시험 기대값은 손대지 않았다. 새 시험의 미사용 import·MotionArg transitionType 타입 오류도 수정한 뒤 typecheck를 통과했다.
+
+[광장] 이번 작업으로 광장의 사용자 동작은 바뀌지 않는다. `script/app/scene/world/plaza/player.ts`, follow와 원격 AutoInterpolation은 미변경이다. 정지 contact 수집·STEP_UP=.5 제거·광장 첫 소비자 연결은 §9.4 단계 8에서 진행한다. 공용 actor의 정지 contact 자체는 이번 시험에서 검증했다.
+
+[사용자 확인 필요] 즉시 추가 승인이 필요한 항목은 없다. 후속 8단계에서 장면 ground 선택/키 resolver·camera right/front 주입·query pose 동기화 위치를 연결해야 한다. R03/R04의 edge 수명, R08/R10의 전체 액션 등록, R20/R21의 원본 복수 접지/event, R35/R36 실행 정확도는 미확정 경계를 유지한다. R33은 주 슬롯만 연결/시험했으며 다른 슬롯은 보류다.
+
+### 14.8 Ghidra 요청 상세(14.6의 결과)
+
+[미확정] 아래는 §11.4의 기존 요청 중 이번 공용 런타임 경계와 관련된 주소를 재인용한 것이다. 신규 함수 주소를 추정하거나 추출하지 않았다. 미식별 R04/R08/R09/R10/R12/R14/R16/R19~R24/R32 등은 §11.4의 식별 요청을 유지하며, 아래 주소 수에 포함하지 않는다. R35/R36과 웹 API R33은 Ghidra 주소 요청이 아니다.
+
+| R | 모듈 | 주소 | 남긴 이유 |
+|---|---|---|---|
+| R01 | `main` | `0x710000e35c` | 전역 프레임 gate는 호출자 포트로 보류 |
+| R02 | `main` | `0x7100004df0`, `0x7100004e58`, `0x7100004ea8`, `0x710000650c`, `0x71000074d4` | 전역 collision job 배치와 event payload는 미확정 |
+| R03 | `main` | `0x710001e74c`, `0x710001e7d0`, `0x710001e0b4` | Trigger/Release·Pad 생성 초기값 대신 명시 설정/edge policy |
+| R05 | `main` | `0x710001dc68` | PadLeverData 원본 필드 반환 대신 MoveLever 포트 |
+| R06 | `main` | `0x7100039fd0`, `0x7100009d00` | condition/slot 전체 자식 수명은 웹 generation 계약으로 제한 |
+| R07 | `main` | `0x7100039e3c`, `0x710003a850` | Velocity/slot 원본 초기값 대신 명시 reference와 callback |
+| R11 | `main` | `0x710000abc0`, `0x710000b004`, `0x710000b8a4` | 클래스별 조건 효과 factory·Damage·Pressed 비활성 |
+| R13 | `main` | `0x7100007be0`, `0x710002d214` | 손상 타입의 중력 volume/provider 경로 비활성(재추출) |
+| R15 | `main` | `0x7100015d84` | 손상 타입의 카메라 basis 수학을 cameraBasisApprox로 대체(재추출) |
+| R17 | `main` | `0x71002b9db8`, `0x71002b9dc0`, `0x71002b9dc8`, `0x71002b9dd0`, `0x71002b9dd8`, `0x71002b9de0`, `0x71002b9de8`, `0x71002b9df0`, `0x71002b9df8`, `0x71002b9e00`, `0x71002b9e08` | 미확정 ActorParam getter 11개; raw 보존, 이름·단위 미부여 |
+| R18 | `main` | `0x710002a054`, `0x710002a4c0`, `0x710002a650` | 손상 SIMD 타입의 AA 응답 비활성(재추출) |
+
+[집계] 중복 제거 요청 주소 34개(전부 기존 §11.4 요청 재인용). 신규 요청 주소 0개, 추출 실행 0회.
+
+### 14.9 광장 이전 착수(8단계, 2026-10-10)
+
+[설계: 구현 전] 사용자 후속 요청으로 §9.4의 1~9를 진행한다. 이전의 8단계 미착수 기록은 당시 결과로 보존한다. PlazaMover는 ActorCore의 숫자 상태를 읽고 쓰는 장면 facade로 바꾸며, 기존 THREE 객체는 표시/외부 목표 전달용으로 유지한다. 입력은 raw NPAD 비트→ActorPad→장면 cameraBasisApprox를 거친다. 기존 normalized PlazaPad는 스틱 축만 정수 raw 단위로 복원하여 같은 변환을 쓴다. follow/remote의 목표 레버는 입력 override 포트 하나로 주입하고, 추가 변위 슬롯을 겹쳐 쓰지 않는다.
+
+[설계: 구현 전] 광장 전용 actor-world.ts가 CollisionWorld/ActorContactRegistry와 Main/First APX 몸체를 소유한다. 원본 actorparam.json 33행을 assets/plaza/player/actorparam.json에 보존한다. Scene은 Main만 기본 활성, CollisionFirst는 기존 enable 요청에 따라 staged를 바꾼다. pre→tick(integrate→rotate)→sync→Map→sync→ground→sync→character publish를 장면이 명시한다. 이는 웹 장면 순서이며 전역 원본 phase 복원의 완료를 뜻하지 않는다(R01/R02/R32). 정지 상태도 Map/ground를 실행한다. STEP_UP=.5와 MeshCollider.collide/groundHeight를 actor 이동 경로에서 제거한다. 기존 MeshCollider는 맵 카메라·기존 표시 소비자용으로만 남긴다.
+
+[설계: 구현 전] primary motion은 기존 Preview3D의 CharacterCore를 ActorCharacterBinding에 연결하고 Preview3D.update는 publish에서만 한 번 실행한다. forced player:play는 장면 정책으로 유지한다. AA 반사/밀림·carry는 추가하지 않는다. ground key는 별도 mapping이 없는 광장에서는 명시 null fallback을 쓴다(물리 friction→발소리 키 추정 금지). 복수 접지는 장면 정책 firstAcceptedApprox로 명명한다. capsule은 비본 source capsule의 기본 Adjust 규칙(height의 .25/.75 endpoint와 bubble radius)을 사용하며 시각 height를 임의 step offset으로 바꾸지 않는다.
+
+[검증 계획] 기존 광장 시험의 기대값은 바꾸지 않는다. Node fixture만 실제 PhysX 포트로 연결한다(평면 fixture는 유한 box top, 실제 광장은 원본 APX). 이전 근사에 대한 .01→Walk·대각 clamp1·STEP_UP·JS double 1e-9 기대값은 새 원본 경로와 불일치할 수 있으므로 원문 실패와 근거를 기록한다. 신규 통합 시험은 새 계약·Main/First enable·정지 contact·Pad·보간 중복 방지·해제·결정성을 확인한다. 브라우저/헤드리스 실행·git stage/commit/rm·새 C 판독은 하지 않는다.
+
+[정정: 형상 연결 전] 14.9 착수 문장의 height .25/.75·bubble radius 연결은 적용하지 않는다. §4.5와 11 §3.4의 확정 값은 Adjust 끝점 (0,.5,0)/(0,1,0), 반지름 .5, classMask 0x2022다. PCHeight/PCBubbleRadius는 이 기본 비본 충돌 크기의 근거가 아니므로 시각 정보로 보존하며 query에는 대입하지 않는다. 옛 radius .9 원통/STEP_UP 시험과 실제 capsule의 차이를 원본 근거와 함께 보고한다.
+
+[보완: 구현 전] 광장 소비자에는 plaza_3d §3.5의 ComPlayerUtil 규칙(접지 시 gravityScale=0, 공중 시1)과 SetGroundedLimit(-2.5)를 연결한다. 공용 ActorCore의 기본값을 광장 전용으로 바꾸지 않는다. 17 §9.1/11 §4.3에 기록된 DefaultCollision의 Map/Limit 두 pass를 각각 pass0/1로 호출하고 pose 동기화를 끼운다. source7 overlap 후보는 길이×2 halfHeight(실제 capsule halfHeight의4배)를 쓰며 침투 형상은 원래 capsule을 유지한다(11 §4.1). 이 누락을 먼저 고친 뒤 계단 trace를 재확인한다.
+
+[판정: 광장 trace] gravityScale·두 Map pass·확장 후보까지 적용해도 중앙 계단 z≈13.27에서 ray 접지와 capsule 침투 보정이 반복된다. ground→Map 및 MTD 비교로도 원본 동등한 통과를 확인하지 못했다. 채택 경로는 문서의 기본 query/MTD 없는 sweep·Map 평균을 유지한다. STEP_UP를 복원하거나 임의 Y push를 더하지 않는다. 기존 계단 통과 시험은 회귀로 남겨 원문과 좌표를 기록하며, R35/R36의 원본 query/pose trace 확인 대상으로 분리한다. 이 결과를 숫자 오차만으로 설명하지 않는다.
+
+[설계: 구현 전] character의 idle/random frame 난수는 장면이 주입한다. 원본 RNG seed는 미확정이므로 `plazaCharacterRandApprox(slot+1)`라는 결정적 장면 정책을 명시한다. 준비 중 떠난 원격/장면은 모델 로드가 끝나도 actor를 등록하지 않고 해제한다. 주 슬롯 연결 시험은 기존 character golden harness에서도 실제 connect/publish 경로를 사용하되 golden 기대값은 변경하지 않는다.
+
+- [설계: 수명·최종 pose] 장면 준비 실패도 생성된 part→actor 물리→stage 순으로 해제한다. 렌더 root는 actor 최종 quaternion을 그대로 복사하며 yaw로 재계산하지 않는다. 노드 회귀 시험에서는 `PLAZA_SKIP_GLSL=1`로 선택적 standalone GL 검사도 끈다(기대값 변경 없음).
+
+- [설계: 캐릭터 WEB 호환] `RULES_WEB`에서 주 슬롯을 직접 play한 뒤 Preview3D.update에서 전이를 발견하면 이전 소비자보다 mixer 전이 동기화가 한 단계 늦다. 기본 원본 모드는 ActorCharacterBinding을 유지하고, 기존 WEB 호환 선택만 Preview3D.playMotion의 공개 연결을 사용한다(같은 슬롯, step은 publish 1회). 골든 해시는 바꾸지 않는다.
+
+### 14.10 광장 이전 결과·검증(8단계, 2026-10-10)
+
+[결과] 8단계의 광장 런타임 연결을 적용했다. **기존 광장 이동/따라가기 시험 18건이 실패하므로 검증 완료 상태는 아니다.** 중앙 계단 통과 실패는 플레이 진행 회귀이며 아래 R35/R36 후속 확인이 필요하다. 1~7단계 기본 런타임 완료 기록은 유지한다.
+
+| 연결 항목 | 결과 |
+|---|---|
+| Param·수치·Pad·고정 스텝 | 완료. common 33행 보존/확정 10행 적용, 1/60·f32, raw NPAD→ActorPad |
+| 광장 위치·회전·지상 이동 | ActorCore로 교체. cameraBasisApprox/yaw-approx 유지(R05/R15/R16/R35/R36) |
+| 충돌·접지 | 원본 APX→PhysX query, Adjust capsule, Map/Limit 두 pass, 정지 contact 수집, STEP_UP 제거 |
+| 따라가기·원격 | AutoInterpolation 결과를 한 번만 적분. arrival 직접 위치 변경은 tick 전 core에 반영, 추가 변위 슬롯 없음 |
+| 캐릭터 주 슬롯 | 최종 pose/ground publish 1회, 강제 모션 정책 유지, 기존 원본/WEB golden 일치 |
+| 수명 | 개별 mover→query body/registry, 장면→Map body/mesh 해제. 준비 실패·원격 취소도 해제 |
+| 미확정 | 첫 accepted hit 선택·ground key null(R20/R21), 전역 job 순서(R01/R02/R32), 실제 계단 query trace(R35/R36) |
+
+[파일 구성: 이번 8단계]
+- 신규: `assets/plaza/player/actorparam.json`, `script/app/common/actor/physx.ts`, `script/app/scene/world/plaza/actor-world.ts`, `tools/plaza_actor_fixture.ts`, `tools/test_plaza_actor.ts`.
+- 수정: `script/app/scene/world/plaza/player.ts`, `follow.ts`, `scene.ts`, `types.ts`, `world.ts`; `tools/character_golden.ts`, `test_plaza_move.ts`, `test_plaza_actors.ts`, `test_plaza_world.ts`, `test_room_server.ts`; 이 문서.
+- 이번 단계에서 공용 `actor/index.ts`·`actor-collision/index.ts`·`app/common/actor/index.ts`의 1~7단계 구현은 변경하지 않았다.
+
+[검증] 모든 실행은 Node 또는 정적 번들/타입 검사다. 브라우저·헤드리스 GL은 실행하지 않았다. `test_plaza_world`는 `PLAZA_SKIP_GLSL=1`로 선택적 standalone GL 검사를 제외했다. 기존 시험의 기대값·골든 해시는 변경하지 않았으며 fixture 생성/연결·해제만 새 포트로 옮겼다.
+
+| 명령 (`npx tsx tools/...`) | 최종 결과 |
+|---|---|
+| `test_actor.ts` | 106/106 |
+| `test_collision.ts` | 78/78 |
+| `test_character.ts` | 135/135 |
+| `test_plaza_actor.ts` (신규) | 13/13, 계단 진단 출력은 통과 수에 포함하지 않음 |
+| `test_plaza_move.ts` | **98/113, 실패 15** |
+| `test_plaza_actors.ts` | **245/248, 실패 3** |
+| `test_plaza_world.ts` | 458/458 |
+| `test_plaza_ui.ts` | 126/126 |
+| `test_entry.ts` | 392/392 |
+| `test_room_server.ts` | 256/256 |
+| 합계 | **1907/1925, 실패 18** |
+| `npm run typecheck` | 통과 |
+| esbuild 공용 배포 설정·`write:false` | 통과, WASM 파일/상대 청크 URL 확인, 파일 출력 없음 |
+| `git diff --check HEAD` | 통과 |
+
+[실패 분류·동작 차이]
+1. `.01→Walk`와 대각 깊이 clamp1은 기존 웹 근사 기대값이다. 새 입력은 §6.1/§10의 radial .1 문턱·clamp 없는 길이를 따른다(2건).
+2. 위치/낙하 속도와 yaw/선회 수렴 비교는 f32 및 명시 yaw-approx 경로로 달라졌다. 엄격한 기존 double 기대값을 고치지 않았다(이동 7건·원격 3건). 원본 SIMD 비트 동등성은 R35/R36으로 남는다.
+3. 착지 위치는 §6.7의 d≥.01·snap 허용 구간 때문에 정확한 y=0과 다를 수 있다(1건). 0.3 턱 자동 오르기와 .9 반지름 벽 거리는 STEP_UP 제거 및 §4.5/11 §3.4의 기본 Adjust 반지름 .5 적용으로 달라졌다(각 1건).
+4. **중앙 계단 3경로 실패는 허용된 근사 차이로 통과 처리하지 않는다.** y≈−1.82025/z≈13.26979에서 정체한다. 두 Map/Limit pass, gravityScale, 후보 확장 반영 후에도 재현되며 기존 기구 접근 동작이 막힌다. 문서만으로 동일 실행을 확정할 수 없어 R35/R36 원본 query/pose trace 확인으로 보류한다.
+
+[결정성] 실제 Main/First APX를 새 world로 각각 구성한 같은 입력 300틱의 pose/contact SHA256은 `a8f4e2f80b7d5a79092af12faf20cbc1281b65081662c465298a3a31fc87f30b`로 일치했다. 이것은 웹 반복 실행 일치이며 원본 골든 일치 증거가 아니다. 캐릭터 난수는 `plazaCharacterRandApprox`로 주입한다. 기존 모델 로딩 timeout의 wall clock은 시뮬레이션 계산에 사용하지 않는다.
+
+[수정 후 해소된 중간 실패] 신규 시험 fixture의 불완전 타입 assertion 1건을 수정했다. 캐릭터 WEB 골든 4건은 공개 Preview3D 전이 연결 수정 후 기존 기대값으로 통과했다. 병렬 검증 최초 실행의 할당 측정 59/60(빈 구간 기준3000 B, 초과888 B)은 캐릭터 시험 단독 재실행에서 60/60으로 통과했다. 실패를 숨기기 위한 기대값 수정은 없었다.
+
+[최종 실패 원문]
+```
+  실패: 대각 깊이 1 로 자름: 1.4142135381698608 != 1 (±1e-9)
+  실패: 깊이 0.01 → Walk
+  실패: 달리기 60f 이동 x: 5.999996662139893 != 6 (±0.000001)
+  실패: 아래 = 카메라 쪽(+Z) 0°: -0.000005008956122765085 != 0 (±0.000001)
+  실패: 90° 차 → 첫 프레임 1100/60: -18.33333396911621 != -18.333333333333332 (±1e-9)
+  실패: 차 71.7° (<85) → 둘째 프레임 360/60: -24.33333396911621 != -24.333333333333332 (±1e-9)
+  실패: 낙하 1 프레임 속도 = −9.8·5/60: -0.8166667222976685 != -0.8166666666666667 (±1e-9)
+  실패: 착지 y 0 (7 f)
+  실패: 0.3 턱 오름: 0.010000016540288925 != 0.3 (±0.000001)
+  실패: +Z 로 달리면 중앙 원형 벽(z 25.49)에 반지름 0.9 앞에서 막힘 z=25.064
+  실패: 계단 오르기 x=0: 시작 → 기구 앞(z < 9, y ≥ 0) 실패 (-0.00,-1.82,13.27)
+  실패: 계단 오르기 x=-1: 시작 → 기구 앞(z < 9, y ≥ 0) 실패 (-1.00,-1.82,13.27)
+  실패: 계단 오르기 x=1: 시작 → 기구 앞(z < 9, y ≥ 0) 실패 (1.00,-1.82,13.27)
+  실패: 180° = 1100°/s 6f + 360°/s 12f = 18f: 19
+  실패: LookAt 중 이동 없음: 22.31599998474121 != 22.316 (±1e-9)
+  실패: 회전만: 위치 그대로·몸 선회 도착: 6 45.000003814697266
+  실패: 보간 5틱 = 0.5 m: 9.000001907348633
+  실패: 달리기 오차 ≤ 13틱 송신 간격 × 6 m/s + 한 틱: 1.400
+```
+
+[사용자 확인 필요] 지금 응답/추가 승인이 필요한 항목은 없다. 후속 확인은 (1) 실제 광장 계단의 원본 frame별 capsule pose·Map penetration·sweep/ray hit/distance/normal·job 순서(R35/R36), (2) Sound Space 기반 ground 키 연결과 복수 hit 선택(R20/R21), (3) 카메라/선회 원본 quaternion 연결(R05/R15/R16)이다. 계단 회귀가 해결되기 전에는 광장 이전을 회귀 검증 완료로 취급하지 않는다.
+
+[추출 요청] 이번 8단계 신규 Ghidra 추출 요청 주소 **0개**, 추출 **0회**. §14.8의 기존 중복 제거 주소 **34개**를 유지한다. 계단 실행 trace 요청은 C 함수 추출 주소를 추정해 추가하지 않는다.
+
+
+### 14.11 1~8단계 후속 수정·재검증 착수
+
+[설계: 구현 전] 이전 18건 실패를 그대로 완료 처리하지 않는다. 계단 query를 계측한 결과 Map이 y를 약 .06465 올린 뒤, 법선Y≈.54293인 모서리 Sweep을 거부하고 아래 단 Ray(distance≈.07465)가 이를 되돌렸다. 공용 접지식은 §6.7과 일치하며, 이 동작을 임의로 원본 오류라고 정정하지 않는다. Map 상승 보존을 기존 finalPosition 포트에 적용하는 광장 전용 Approx 실험에서는 x=0/±1, walk/run 6경로가 통과했다. 사용자의 원본 기본 제약과 충돌하므로 해당 옵션 채택은 사용자 선택을 기다린다.
+
+[설계: 수치 수정 전] yaw-approx의 도착 프레임에 target quaternion을 다시 angle→quaternion으로 변환하면 오차가 누적되어 LookAt이 19프레임을 요구할 수 있다. 남은 각≤이번 step이면 target quaternion을 그대로 복사한다. cameraBasisApprox와 yawQuaternionApprox의 정확한 0/±90/180°는 기준축을 사용하여 반대 방향의 삼각함수 잔차를 제거한다. 원본 SIMD 수학 복원 주장은 하지 않는다.
+
+[시험 정정 근거: 수정 전] 사용자 요청의 ‘원본과 달라서 고쳐야 하면 근거를 붙여 보고’ 예외에 따라 잘못된 이전 웹 기대값을 고친다. §9.4가 직접 대비한 .01→Walk/대각 clamp1을 radial .1/길이 그대로로, JS double 적분 기대를 §6.1 f32 누산으로, yaw를 f32 quaternion 왕복 오차 범위로 바꾼다. 공중 속도는 f32 결과를 비교하고, 접지는 §6.7의 .02 snap 허용 구간을 검사한다. 벽의 반지름은 §4.5 Adjust의 .5를 사용한다. 계단 통과 조건·도달 제한과 실제 속도·원격 중복 이동 제한을 약화하지 않는다. 원격 오차 상한의 수치 허용분은 13틱 송신 구간에서 좌표 최대20의 f32 누산 오차(14×2^-19)로 명시한다.
+
+
+[사용자 결정] 광장 Map 상승 보존 Approx는 **채택하지 않는다**. 원본 경로를 유지하고 미확정 호출 순서를 추가 조사한다. 이 옵션이나 STEP_UP는 코드에 추가하지 않았다.
+
+[추가 조사: 미확정 범위] 기존 C의 `runtime_A_collision_order.c` main `@0x71000075c0`은 `@0x7100006cb0`으로 대상 목록을 모으고 callback을 실행한 다음 목록을 정리한다. `runtime_A_collision_core.c`의 `@0x7100006cb0`은 enabled·generation을 검사해 목록을 수집한다. 여기에는 pre/tick/ground 전역 호출 순서를 확정할 호출자가 없다. `mgB_main_actor.c`의 `SetGroundedAdjustFunc @0x710000dab0`은 callback을 actor+0x550에 저장한다. 이를 임의 finalPosition 보정으로 대체하지 않는다. 기존 main `@0x7100004df0`은 경계 손상 상태, 나머지 아래 4개는 INDEX와 전체 C 검색에서 main 본체가 없다. 같은 주소의 다른 NRO 함수·디스어셈블리 텍스트를 대용하지 않았다.
+
+[착지 시험 보완] Fall 중 ray 승인 프레임은 `d=max(dot(vVert*dt,g),.01)`가 .01보다 크므로 허용 높이도 d+.01이다(관측 .109999925, d≈.108888894). 착지 즉시 y=0 또는 고정 .02 기대는 §6.7과 다르다. 첫 승인 프레임의 d+.01 범위를 검사하고, 다음 grounded tick(vVert reset)에서 sweep으로 평면에 정착하는 것까지 검사한다. 접지 로직 자체는 변경하지 않는다.
+
+#### Ghidra 추출 요청 표 — 호출 순서 조사에 필요한 기존 R02 재요청
+
+| 모듈 | 주소 | 이유 |
+|---|---|---|
+| main | `0x7100004df0` | 정상 104 B 함수 경계로 재추출 필요. 기존 C는 경계 손상 |
+| main | `0x7100004e58` | 80 B wrapper C 미확보. job/Entity 호출 대상 확인 |
+| main | `0x7100004ea8` | 60 B wrapper C 미확보. 전후 단계 호출 확인 |
+| main | `0x710000650c` | 176 B SetActorJob C 미확보. callback 등록/교체 연결 확인 |
+| main | `0x71000074d4` | 232 B CollisionJobEvent C 미확보. event 후속 pose/job 연결 확인 |
+
+[요청 범위] 5개 모두 기존 §14.8의 34개 안에 있다. 신규 주소0, 추출 실행0. caller/xref를 함께 확보해야 전역 순서의 결론을 낼 수 있다. 이 C가 없다는 사실만으로 해당 순서가 계단 문제의 유일한 원인이라고 확정하지 않는다.
+
+
+[후속 C 확보·구현 전 보완] 사용자 후속 지시로 디컴파일을 허용했다. `docs/analysis/decompile_guide.md`에 따라 main.nso를 readOnly/noanalysis로 열고 C와 INDEX만 추가한다. `actor_plaza_phases.c @7100005ed0` 및 `actor_plaza_phase_callbacks.c`에서 pre→tick→DefaultCollision→조건 scale/motion speed 후처리→fall 누적→Ground 순서를 확인했다. `actor_plaza_job_callers.c @7100027ba0/27d10`은 ListShapes마다 `@710001cf80`으로 shape pose를 갱신한다. 최신 pose와 마지막 Map 수집 pose를 구별한 진단만으로 계단 회귀가 해결되지는 않았다.
+
+[기존 설명의 누락 정정: 구현 전] `runtime_A_collision_finish.c @7100006670`의 query 인자 대조에서 Ray origin은 actor position 그대로가 아니라 **position−g·d**임을 확인했다(`lStack_200`·`puStack_1f8`). §6.7·11 §4.2의 ‘Actor 위치에서 Ray’는 이 오프셋을 생략했다. 같은 함수는 Sweep 인자 +0xE1=1/+0xE2=0(`uStack_11f=1`)로 **0x603, MTD 활성**을 지정한다. 기본 CastShape 플래그0x403과 actor Ground 호출값을 혼동하지 않는다. 이 확정 누락을 공용 Ray 시작점과 광장 Sweep 옵션에 반영하고 별도 시험을 추가한다. 이 두 수정만으로 계단 해결을 주장하지 않는다.
+
+[할당 시험 안정화: 수정 전] character 시험은 tick만 예열하고 async chunk의 work=true 측정 루프는 예열하지 않아 첫 측정에서 JIT/OSR 할당이 섞일 수 있었다. 빈 구간 기준 및 측정 전에 같은 chunk 함수의 실제 work 경로를 예열한다. 할당0 판정·최소40개 유효 표본·골든 기대값은 유지한다.
+
+
+### 14.12 계단 시험 기준 확정·추출 후속 정리
+
+[사용자 결정: 시험 수정 전] 실제 계단 3경로와 0.3 턱은 **현재 판독·적용된 경로**에 시험을 맞춘다. 기존 STEP_UP=.5 근사의 ‘항상 오른다’ 기대를 원본 보장으로 유지하지 않는다. Map 상승 보존 Approx 및 STEP_UP 복원은 하지 않는다. 아래 좌표는 **원본 C 규칙을 적용한 웹 PhysX 관측값**이며 Switch 실기 골든이 아니다. §14.9~14.11의 실패·승인 대기 기록은 당시 이력으로 보존하며 이번 사용자 결정이 최신 시험 기준이다.
+
+| 시험 | 기존 기대 | 현재 적용 경로의 회귀 기준 |
+|---|---|---|
+| 높이 .3 합성 턱, x=0에서 +X walk 30f | y=.3으로 오름 | 발 y≈0, x≈.04905에서 막히고 ray 접지. 합성 fixture는 수평 quad를 두께1 box로 만든 것으로 원본 맵 자산이 아니다 |
+| 실제 Main APX, x=0/−1/+1, (y,z)=(−2.365,22.316)에서 −Z run 360f | z<9·y≥−.01까지 도달 | 각 x 유지, y≈−1.8301867·z≈13.2789669, ray 접지. 추가60f에도 정체함을 검사한다 |
+| 실제 계단 원인 검사 | 도착 성공만 검사 | Map +Y 변위→Sweep 법선Y<.707 거부→Ray 법선Y≥.707 승인·아래 단으로 snap하는 경로를 검사한다 |
+
+[판독·측정] `runtime_A_collision_finish.c @7100006670`의 world normalY≥.707, sweep d+.02 / ray d+.01 snap 기준을 유지한다. 최신 x=0 trace는 Map depth=.11653209, normalY=.51342839, 상승=.05983088이며, Sweep normalY=.51342702/거리=.01000074로 거부된다. Ray normalY=.999973/거리=.06983085를 승인해 같은 아래 단으로 돌아온다. 세 x 경로에서 동일한 분기다. 기존 ‘원본에서도 계단을 오른다’나 반대로 ‘Switch에서도 반드시 막힌다’를 이 웹 측정만으로 확정하지 않는다(R35/R36).
+
+[추가 확보 C] `actor_plaza_matter_setup.c`의 main `@71002ba490/@71002bb6b0/@71002bc8d0`은 기본 모션·액션 및 공격 설정이며, `actor_plaza_motion_shape.c @7100013ad0/@7100013d00`은 Attack 이름의 형상을 바꾼다. 기본 보행 Adjust를 STEP 형상으로 바꾸는 근거는 확인하지 못했다. `actor_plaza_penetration.c @7100605378`→`actor_plaza_penetration_callbacks.c @71006070e4`→`actor_plaza_penetration_geometry.c @71006072c8`→`actor_plaza_sdk_penetration.c @71012712a8`은 형상 변환 후 SDK penetration dispatch 경로다. 여러 geometry 결과의 최소 depth를 선택하며, 현재 Main APX는 단일 mesh다. 이 경로에 임의 계단 높이 보정은 없다. SDK 내부의 모든 contact 수치 및 실기 프레임 동등성까지 검증한 것은 아니다.
+
+[원본 순서 보완: 구현 전] 확보한 `ActorWorld @7100005ed0` 및 `@7100008c8c`→`@7100011984`에 맞춰 fallAccumulator를 tick 내부에서 **명시적 postCollision()**으로 옮긴다. 장면은 두 Map/Limit pass 뒤, Ground 앞에서 한 번 호출한다. GroundedTest(+0x2a2) enabled이고 (!groundedFlag || jumpStatus==1)일 때만 검사하며 dot(g,vVert)≤0이면0, 양수이면 충돌 후 위치의 양의 하강량만 누적한다. 접지 상태에서는 기존 누적값을 임의 reset하지 않는다. 이 변경은 계단 통과 보정이 아니다.
+
+[미확정 유지] cameraBasisApprox·yaw-approx(R05/R15/R16), 조건/가변중력/AA 비활성 경계(R11~R14/R18/R19), ground 선택/키·event(R20/R21), 다른 모듈까지 포함한 전역 scheduler(R02/R32), SIMD·실기 query/pose 동등성(R35/R36)은 계속 보류한다. R01 suspend gate 본체와 R02 ActorWorld 내부 순서 확보를 모든 미확정 해소로 확대하지 않는다.
+
+
+[추출 집계] 후속 조사에서 `analysis/decomp/actor_plaza_*.c` **16파일**을 저장하고 INDEX에 **45개 고유 주소/45행**을 append했다(함수 C가 있는15파일 + SDK pointer-table1파일). `(created)` 표제는7개다. 이 중 `@7100004df0`은 기존 잘못 잡힌 catch/terminate 경계를 보여 주는 진단용 출력이며 정상 등록 함수의 근거는 별도로 생성한 `@7100004e00`이다. 정상 구현 근거용 본체44개와 진단용1개를 구분한다. `SetActorJob @710000650c`은 world+0x190의 AA callback을 교체하며, 기존 +0x160 표기는 Ground callback과 혼동한 것이다. R01 및 기존 R02 요청5개의 본체/정상 등록 경계를 확보했다. §14.8의 과거34주소 가운데 이6개 요청을 해소 대상으로 처리하여 **다른 경계의 요청28주소는 유지**, 이번 작업에서 추가로 사용자에게 요청할 추출 주소는 **0개**다. 전체 Actor/Physics/Entity 전역 순서와 이벤트 동등성까지 완료된 것은 아니다.
+
+[후속 변경 파일] 아래는 이번 실패 수정·추가 조사 범위이며, 1~8단계 전체 파일 구성은 §14.1 및 §14.9~14.10을 함께 본다.
+
+| 파일 | 결과 |
+|---|---|
+| `script/game/lib/actor/index.ts` | 정확한 cardinal yaw·도착 quaternion, Ray 시작점, 명시 postCollision 낙하 누적 |
+| `script/app/common/actor/index.ts` | cameraBasisApprox cardinal 축 잔차 제거 |
+| `script/app/scene/world/plaza/actor-world.ts` | 원본 접지 Sweep MTD 옵션 |
+| `script/app/scene/world/plaza/player.ts` | Map/Limit→postCollision→Ground 호출 |
+| `tools/test_actor.ts` | Ray origin·충돌 후 fall 누적·수명/결정성 검증 |
+| `tools/test_plaza_actor.ts` | MTD 및 실제 계단 3경로의 Map/Sweep/Ray 분기 검증 |
+| `tools/test_plaza_move.ts` | f32·Pad·반지름 원본 근거 정정, 현재 .3턱/계단 기대값 및 정체 검증 |
+| `tools/test_plaza_actors.ts`, `tools/test_room_server.ts` | yaw/원격 f32 누산 허용 오차를 근거에 맞춰 정정 |
+| `tools/test_character.ts` | 할당 측정 work 경로 사전 예열. 할당0 및 기존 골든 유지 |
+| `tools/analysis/ghidra_scripts/ActorEntryDecomp.java` | readOnly 프로젝트에서 잘못 잡힌 등록 함수 경계의 임시 복구·C 출력 |
+| `analysis/decomp/actor_plaza_*.c`, `analysis/decomp/INDEX.tsv`(저장소 상위) | 16출력 파일·45주소 색인 추가 |
+| `docs/engine/17_actor.md` | §14.11~14.12에 근거·사용자 결정·현재 회귀 기준·남은 경계 기록 |
+
+[변경된 동작] Pad .1 문턱·대각 크기 무clamp, f32 누산, Adjust 반지름.5, cardinal 선회18f 및 원격 단일 보간은 판독 근거에 맞춘 현재 기본 경로다. .3턱과 중앙 계단을 자동으로 오르게 하는 기능은 추가하지 않았다. 실제 계단 앞 정체 위치도 기구 선택 영역(z<18)에 포함되는 것을 검사했다. 과거 §14.10의 ‘플레이 진행 회귀’는 z<9 도착을 요구했던 웹 시험 기준의 기록이며, 이것만으로 원본 기구 선택이 불가능하다고 판단하지 않는다.
+
+[사용자 확인 필요] 지금 추가 승인을 기다리는 항목은 없다. 계단의 Switch 실기 프레임별 query/pose 동등성(R35/R36), 나머지 §14.12 미확정 경계는 후속 작업으로 남긴다. 현재 회귀 시험 통과와 원본 전체 기능의 동등성 완료는 구별한다.
+
+
+#### 최종 단계 상태와 Node 재검증
+
+| 단계 | 최종 상태 | 남은 경계 |
+|---|---|---|
+| 1 수치·Param·registry·호출 골격 | 기본 경로 적용. pre/tick/jobs/postCollision 호출은 장면 명시 | 전체 외부 scheduler R02/R32, 미확정 Param 23행 raw 보존(R17) |
+| 2 Pad | style/mask/문턱/Dpad/analog/override/CPU 적용 | startup·edge 원본 전체 소비 R03/R04, cameraBasisApprox R05/R15/R16 |
+| 3 중력·이동·공중·낙하 | 기본 중력·f32·서브스텝 적용, 충돌 후 fall 누적 수정 | 가변 중력 R13/R14·SIMD/선회 동등 R35/R36 |
+| 4 JumpCalculator | 확정 기본 경로 및 §10 기대값 통과 | 게임 전용 setter는 소비자 경계 |
+| 5 condition·slot | generation/snapshot/교체·기본 수명 적용 | concrete 조건 효과 R11/R12 등 비활성 |
+| 6 충돌·접지·해제 | 정지 contact·Map 평균·Ray 오프셋·MTD·Y limit·해제 적용 | AA R18/R19 비활성, ground 선택/키/event R20/R21 |
+| 7 character | 주 슬롯 motion/pose/ground 연결 적용 | 비주 슬롯·전체 FTRG/공개 API R33/R34 |
+| 8 광장 | 공용 actor 사용·STEP_UP 제거·따라가기/원격 중복 이동 방지. 최신 사용자 승인 회귀 기준 통과 | 계단의 Switch 실기 동등성 R35/R36은 보류 |
+
+| 실행 | 결과 |
+|---|---|
+| `npx tsx tools/test_actor.ts` | 111/111 |
+| `npx tsx tools/test_plaza_actor.ts` | 17/17 |
+| `npx tsx tools/test_collision.ts` | 78/78 |
+| `npx tsx tools/test_character.ts` | 135/135. 기존 소비자 골든·할당0 유지 |
+| `npx tsx tools/test_plaza_move.ts` | 129/129 |
+| `npx tsx tools/test_plaza_actors.ts` | 248/248 |
+| `PLAZA_SKIP_GLSL=1 npx tsx tools/test_plaza_world.ts` | 458/458. 브라우저/GL 검증 제외 |
+| `npx tsx tools/test_plaza_ui.ts` | 126/126 |
+| `npx tsx tools/test_entry.ts` | 392/392 |
+| `npx tsx tools/test_room_server.ts` | 256/256 |
+| `npm run typecheck` | 종료0 |
+| 배포 esbuild 설정 `write:false` | 종료0, 출력167개를 메모리에서 생성 |
+| 변경 파일 `git diff HEAD --check` | 종료0, 공백 오류 없음 |
+
+[집계] **1,950/1,950**, 최종 시험 실패0. import 경계 시험도 포함한다. 브라우저·헤드리스 브라우저·GL 실행은 하지 않았다. 배포 스크립트의 dist 삭제를 실행하지 않도록 esbuild `write:false`로 번들만 검증했다. git add/stage/commit/rm 및 파일 삭제를 실행하지 않았다.
+
+[결정성] actor 동일 입력 재생 SHA256=`358843fd283aea97d5c67a2af7867f7ca08154d9532d379c9849acc0060d5024`, 실제 광장 APX pose/contact 재생 SHA256=`a8f4e2f80b7d5a79092af12faf20cbc1281b65081662c465298a3a31fc87f30b`. 각 시험에서 새로운 인스턴스/world로 두 번 실행해 일치했다.
+
+[실패 기록] 최종 실패 원문은 없음. 과거 18건은 §14.10에 보존했다. 마지막까지 남았던 .3턱/실제3경로의 오름 기대는 §14.12 사용자 결정으로 현재 경로의 정체·접지·분기 검사로 바꾸었으며, 계단 오름을 수정해 통과한 것으로 보고하지 않는다. 검증 명령 입력 중 존재하지 않는 `tools/test_plaza_entry.ts`에 대한 `ERR_MODULE_NOT_FOUND`가1회 있었고, 실제 파일 `tools/test_entry.ts`로 정정하여392/392 및 종료0을 확인했다.

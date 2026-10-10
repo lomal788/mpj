@@ -105,8 +105,16 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
     },
   };
   const parts: PlazaPart[] = [];
-  for (const p of PLAZA_PARTS) parts.push(await p.create(ctx));
-  const warm = o.params.get('nowarm') === '1' ? null : await stage.warmup();
+  let warm: Awaited<ReturnType<typeof stage.warmup>> | null = null;
+  try {
+    for (const p of PLAZA_PARTS) parts.push(await p.create(ctx));
+    if (o.params.get('nowarm') !== '1') warm = await stage.warmup();
+  } catch (error) {
+    for (const p of parts) p.dispose?.();
+    world.disposeActors?.();
+    stage.dispose();
+    throw error;
+  }
   stage.budget(PLAY_BUDGET_MS);
   const me = actors.find((x) => x.kind === 'input');
   if (me) world.setFocus?.(me.pos);
@@ -162,6 +170,7 @@ export async function startPlaza(o: PlazaRunOptions): Promise<PlazaRun> {
     },
     stop() {
       for (const p of parts) p.dispose?.();
+      world.disposeActors?.();
       stage.dispose();
     },
   };

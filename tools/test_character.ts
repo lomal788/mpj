@@ -557,6 +557,7 @@ console.log('11) import 경계·할당 0');
     await flush();
     return gcs === g0 ? a - b : null;
   };
+  for (let i = 0; i < 12; i++) await chunk(160000 + i * 2000, true);
   const empty: number[] = [];
   for (let i = 0; i < 9; i++) {
     const d = await chunk(0, false);

@@ -8,8 +8,9 @@
  *   AutoInterpolation 필드 = 목표 위치 +0x40·목표 회전 +0x50·위치 flag +0x60·회전 flag +0x61·속도 +0x64 [판독 main @0x710002023c·@0x7100020628].
  */
 import * as THREE from 'three';
+import { emptyActorHit } from '@game/lib/actor';
 import { MeshCollider } from '@app/common/render3d';
-import { ACTION_MOTION, NO_LEVER, PlazaCharaLoader, PlazaMover, shapeOf, type ActionName, type Lever, type PlazaChara } from './player';
+import { NO_LEVER, PlazaCharaLoader, PlazaMover, shapeOf, plazaCharacterRandApprox, type ActionName, type Lever, type PlazaChara } from './player';
 import { ROTATE_ONLY_DIST, TELEPORT_DIST, type RemoteMode } from './ui/net';
 import type { PlazaActor, PlazaContext, PlazaPart, PlazaPartFactory, PlazaPlayerSetup } from './types';
 
@@ -148,9 +149,7 @@ export class RemoteMotion {
   constructor(readonly mover: PlazaMover) {}
 
   private ground(p: THREE.Vector3): THREE.Vector3 {
-    const g = this.mover.collider?.groundHeight(p.x, p.z, p.y + 2);
-    if (g) p.y = g.y;
-    return p;
+    return this.mover.projectGround(p);
   }
 
   spawn(pos: THREE.Vector3, yawDeg: number): void {
@@ -180,8 +179,8 @@ export class RemoteMotion {
   tick(): ActionName {
     const a = this.mover.tick(this.interp.calculate(this.mover));
     const p = this.mover.pos;
-    const top = this.mover.collider?.groundHeight(p.x, p.z);
-    if (top && p.y < top.y - 1) this.mover.place(new THREE.Vector3(p.x, top.y, p.z), this.mover.yaw);
+    const top = this.mover.projectGround(p.clone(), 1000);
+    if (p.y < top.y - 1) this.mover.place(top, this.mover.yaw);
     return a;
   }
 }
@@ -258,19 +257,26 @@ export class FollowSystem {
   private loader: PlazaCharaLoader | null = null;
   private acc = 0;
   private readonly blocked: RayBlocked;
+  private disposed = false;
   private readonly loading = new Map<string, NetRemote>();
   enabled = true;
 
   constructor(private readonly ctx: PlazaContext) {
-    this.blocked = meshRayBlocked(ctx.world.collider);
+    if (!ctx.world.actorWorld) throw new Error('Plaza actor world is not ready');
+    this.blocked = (from, dir, len) => {
+      const hit = emptyActorHit();
+      return ctx.world.actorWorld!.adapter.ray([from.x, from.y, from.z], [dir.x, dir.y, dir.z], len, 4, { index: -1, generation: 0 }, hit) && hit.validity === 0;
+    };
   }
 
-  private async body(pc: string, slot: number, kind: 'follow' | 'remote'): Promise<Body> {
+  private async body(pc: string, slot: number, kind: 'follow' | 'remote'): Promise<Body | null> {
     const st = this.ctx.world.stage;
     this.loader ??= await PlazaCharaLoader.create((p) => this.ctx.assetUrl(p));
-    const chara = await this.loader.load(pc, st.renderer, (r) => st.prepare(r));
+    const chara = await this.loader.load(pc, st.renderer, (r) => st.prepare(r), plazaCharacterRandApprox(slot + 1));
+    if (this.disposed || !this.ctx.world.actorWorld) { chara.dispose(); return null; }
     st.scene.add(chara.root);
-    const mover = new PlazaMover(shapeOf(chara.spec), this.ctx.world.collider);
+    const mover = new PlazaMover(shapeOf(chara.spec), this.ctx.world.actorWorld);
+    chara.connect(mover);
     const actor: PlazaActor = { slot, kind, chara: chara.spec.pc, root: chara.root, pos: mover.pos, yaw: 0, speed: 0, motion: chara.motion, height: chara.spec.height };
     this.ctx.actors.push(actor);
     return { chara, mover, actor };
@@ -280,6 +286,7 @@ export class FollowSystem {
     const hs = plazaHumans(this.ctx.players);
     for (let i = 1; i < hs.length; i++) {
       const b = await this.body(hs[i].chara, hs[i].slot, 'follow');
+      if (!b) return;
       const s = this.ctx.world.pcSocket('balloon', hs.length, i);
       b.mover.place(s ? s.pos : new THREE.Vector3(0, -2.365, 22.316), s ? yawOfQuat(s.quat) : 180);
       this.followers.push({ ...b, logic: new FollowLogic(), leaderSlot: hs[i - 1].slot });
@@ -293,20 +300,20 @@ export class FollowSystem {
 
   private sync(b: Body): void {
     b.chara.root.position.copy(b.mover.pos);
-    b.chara.root.rotation.set(0, THREE.MathUtils.degToRad(b.mover.yaw), 0);
+    b.chara.root.quaternion.fromArray(b.mover.core.rotation);
     b.actor.yaw = THREE.MathUtils.degToRad(b.mover.yaw);
     b.actor.speed = b.mover.speed;
     b.actor.motion = b.chara.motion;
   }
 
   private tickBody(b: Body, lever: Lever): void {
-    const a = b.mover.tick(lever);
-    if (a !== 'Fall') b.chara.play(ACTION_MOTION[a]);
-    b.chara.tick();
+    b.mover.tick(lever);
+    b.mover.publish();
   }
 
   /** 한 프레임(1/60 s) */
   frame(): void {
+    if (this.disposed) return;
     for (const f of this.followers) {
       const lp = this.leaderPos(f.leaderSlot);
       let lever = NO_LEVER;
@@ -324,14 +331,14 @@ export class FollowSystem {
       this.tickBody(f, lever);
     }
     for (const r of this.remotes.values()) {
-      const a = r.motion.tick();
-      if (a !== 'Fall') r.chara.play(ACTION_MOTION[a]);
-      r.chara.tick();
+      r.motion.tick();
+      r.mover.publish();
     }
   }
 
   /** PlayerManager::OnReceive 결과(mode 는 RemoteMotion.receive 가 표시 위치 기준 원본 규칙 > 5 순간이동·≤ 1 회전만·그 사이 보간으로 정함) */
   async remote(e: NetRemote): Promise<void> {
+    if (this.disposed) return;
     const key = `${e.station}#${e.slot}`;
     const r = this.remotes.get(key);
     const pos = new THREE.Vector3(e.pos[0], e.pos[1], e.pos[2]);
@@ -343,9 +350,10 @@ export class FollowSystem {
       }
       this.loading.set(key, e);
       const b = await this.body(e.chara, e.slot, 'remote');
+      if (!b) { this.loading.delete(key); return; }
       const last = this.loading.get(key);
       if (!last) {
-        this.drop(b.actor, b.chara);
+        this.drop(b);
         return;
       }
       this.loading.delete(key);
@@ -359,10 +367,10 @@ export class FollowSystem {
     r.motion.receive(pos, yaw);
   }
 
-  private drop(actor: PlazaActor, chara: PlazaChara): void {
-    const i = this.ctx.actors.indexOf(actor);
+  private drop(body: Body): void {
+    const i = this.ctx.actors.indexOf(body.actor);
     if (i >= 0) this.ctx.actors.splice(i, 1);
-    chara.dispose();
+    body.mover.dispose(); body.chara.dispose();
   }
 
   /** 스테이션 이탈·세션 끝(ResetRemotePlayer) — 그 스테이션의 모든 슬롯 */
@@ -370,7 +378,7 @@ export class FollowSystem {
     for (const k of [...this.loading.keys()]) if (k.startsWith(`${station}#`)) this.loading.delete(k);
     for (const [k, r] of [...this.remotes]) {
       if (r.station !== station) continue;
-      this.drop(r.actor, r.chara);
+      this.drop(r);
       this.remotes.delete(k);
     }
   }
@@ -408,11 +416,14 @@ export class FollowSystem {
   }
 
   dispose(): void {
+    this.disposed = true; this.loading.clear();
     for (const b of [...this.followers, ...this.remotes.values()]) {
       const i = this.ctx.actors.indexOf(b.actor);
       if (i >= 0) this.ctx.actors.splice(i, 1);
+      b.mover.dispose();
       b.chara.dispose();
     }
+    this.followers.length = 0; this.remotes.clear();
   }
 }
 
@@ -424,7 +435,8 @@ export function followSystemOf(ctx: PlazaContext): FollowSystem | null {
 
 export const createFollow: PlazaPartFactory = async (ctx: PlazaContext): Promise<PlazaPart> => {
   const sys = new FollowSystem(ctx);
-  await sys.load();
+  try { await sys.load(); }
+  catch (error) { sys.dispose(); throw error; }
   registry.set(ctx, sys);
   const offs = [
     ctx.on('net:remote', (v) => void sys.remote(v as NetRemote)),

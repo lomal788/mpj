@@ -253,9 +253,9 @@ for j in json.load(sys.stdin):
 print(json.dumps(out))
 `;
   if (process.env.PLAZA_GLSL_DUMP) writeFileSync(process.env.PLAZA_GLSL_DUMP, JSON.stringify(jobs.slice(0, 3)));
-  const r = spawnSync('python', ['-c', py], { input: JSON.stringify(jobs), encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024, env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
+  const r = process.env.PLAZA_SKIP_GLSL === '1' ? { stdout: '{"skip":true}' } : spawnSync('python', ['-c', py], { input: JSON.stringify(jobs), encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024, env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
   const res = JSON.parse(r.stdout || '{"skip":true}') as Record<string, string | null> & { skip?: boolean };
-  if (res.skip) console.log('   (moderngl 없음 — GLSL 컴파일 건너뜀)');
+  if (res.skip) console.log('   (GLSL 컴파일 생략: PLAZA_SKIP_GLSL 또는 moderngl 없음)');
   else {
     ok(res['(표준)'] === null, `표준 물리 재질 기준 컴파일 ${String(res['(표준)'] ?? '').replace(/\s+/g, ' ').slice(0, 400)}`);
     const bad = Object.entries(res).filter(([k, v]) => k !== '(표준)' && v);
@@ -307,13 +307,13 @@ const scan = (dir: string, allowed: string[]): void => {
     if (!f.endsWith('.ts')) continue;
     for (const m of readFileSync(p2, 'utf-8').matchAll(/from '([^']+)'/g)) {
       const spec = m[1];
-      const lib = ['@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition', '@game/lib/character', '@game/lib/character-three'].includes(spec);
+      const lib = ['@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition', '@game/lib/character', '@game/lib/character-three', '@game/lib/actor', '@game/lib/actor-collision', '@game/lib/collision', '@game/lib/collision-physx', '@game/lib/physx'].includes(spec);
       const okSpec = spec === 'three' || spec.startsWith('three/') || lib || ((spec.startsWith('.') || spec.startsWith('@app/')) && allowed.some((a) => specPath(dir, spec).startsWith(a)));
       ok(okSpec, `${p2.slice(WEB.length + 1)} import ${spec}`);
     }
   }
 };
-scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(COMMON, 'render3d'), join(COMMON, 'ui'), join(SCENE, 'menu', 'online'), join(COMMON, 'net'), join(SCENE, 'menu', 'charselect')]);
+scan(join(SCENE, 'world', 'plaza'), [join(SCENE, 'world', 'plaza'), join(COMMON, 'render3d'), join(COMMON, 'actor'), join(COMMON, 'ui'), join(SCENE, 'menu', 'online'), join(COMMON, 'net'), join(SCENE, 'menu', 'charselect')]);
 scan(join(COMMON, 'render3d'), [join(COMMON, 'render3d')]);
 
 console.log('9. 단계 로딩 계획(loader_manager.md §11.4·§11.5 — plaza_first.json)');

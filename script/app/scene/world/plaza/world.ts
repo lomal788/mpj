@@ -16,6 +16,7 @@ import type { PrepJob } from '@game/lib/assetcore-three';
 import { LOAD_BUDGET_MS, MeshCollider, Stage3D, type PriorityFloor, type StageGpu, type AssetSource, type ClipHandle, type ClipOptions, type Collider, type MeshColliderData, type SocketPose, type StageLoader, type StageModel } from '@app/common/render3d';
 import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from '@app/common/render3d/assetHandlers';
 import { decoVisible, defaultDecoState } from './deco';
+import { loadPlazaActorWorld, type PlazaActorWorld } from './actor-world';
 import type { PlazaCameraParam, PlazaDecoState, PlazaLayoutEntry, PlazaWorld } from './types';
 
 export interface PlazaWorldOptions {
@@ -153,6 +154,7 @@ class OffCollider implements Collider {
 }
 
 class World implements PlazaWorld {
+  actorWorld?: PlazaActorWorld;
   readonly deco: PlazaDecoState;
   readonly anims = new Map<string, ClipHandle[]>();
   private readonly models = new Map<string, StageModel>();
@@ -237,6 +239,7 @@ class World implements PlazaWorld {
     ]);
     if (!col) throw new Error('광장 충돌 데이터를 읽지 못했다');
     for (const [k, v] of Object.entries(col)) this.colliders.set(k, new MeshCollider(v));
+    this.actorWorld = await loadPlazaActorWorld(path => this.stage.assetUrl(path));
     this.refreshCollider();
     this.stagedAt.planned = !!first;
     if (!first) {
@@ -492,6 +495,7 @@ class World implements PlazaWorld {
   setCollisionEnabled(key: 'CollisionMain' | 'CollisionFirst', on: boolean): void {
     if (on) this.enabled.add(key);
     else this.enabled.delete(key);
+    this.actorWorld?.setEnabled(key, on);
     this.refreshCollider();
   }
 
@@ -505,6 +509,7 @@ class World implements PlazaWorld {
   addUpdater(u: { update(df: number, frame: number): void }): () => void {
     return this.stage.addUpdater(u);
   }
+  disposeActors(): void { this.actorWorld?.dispose(); this.actorWorld = undefined; }
 }
 
 /**
@@ -529,6 +534,7 @@ export async function createPlazaWorld(opts: PlazaWorldOptions): Promise<PlazaWo
   if (opts.deco?.display) deco.display = [...opts.deco.display];
   if (opts.deco?.unlockBd !== undefined) deco.unlockBd = opts.deco.unlockBd;
   const w = new World(stage, ext, deco, { loadMode: opts.loadMode, gltfTextures: opts.gltfTextures, pace: opts.pace });
-  await w.load(opts.onProgress);
+  try { await w.load(opts.onProgress); }
+  catch (error) { w.disposeActors(); stage.dispose(); throw error; }
   return w;
 }

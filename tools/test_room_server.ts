@@ -1,3 +1,4 @@
+import { createTestMover, disposeActorFixtures } from './plaza_actor_fixture';
 /**
  * 방 서버 시험 — docs/shell/online.md 9.5(HTTP + socket.io 바이너리·연결 수명·케이스) + docs/shell/plaza_3d.md §5.2(광장 대기실). 재구현 시험(원본 실행 대조 아님).
  * ① 바이너리 배치·바이트 수 ② PlazaRooms 순수 상태(가상 시계) ③ SocketIoOnline ↔ 실제 서버(server/main.ts: express API + socket.io /mpj-plaza)·연결 수명·케이스
@@ -570,7 +571,7 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
         const d = s.disp.get(k);
         if (d) d.receive(pos, yaw);
         else {
-          const m = new RemoteMotion(new PlazaMover({ radius: 0.9, height: 1.6 }, null));
+          const m = new RemoteMotion(createTestMover({ radius: 0.9, height: 1.6 }, -2.4));
           m.spawn(pos, yaw);
           s.disp.set(k, m);
         }
@@ -668,7 +669,7 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
     const hKey = [...C.disp.keys()][0];
     const disp = C.disp.get(hKey)!;
     ok(Math.abs(disp.mover.pos.x - H.x) < 1e-6 && disp.mode === 'spawn', '첫 표시 = sendAll 좌표');
-    H.mover = new PlazaMover({ radius: 0.9, height: 1.6 }, null);
+    H.mover = createTestMover({ radius: 0.9, height: 1.6 }, -2.4);
     H.mover.place(new THREE.Vector3(H.x, -2.4, 21), 180);
     const errOf = (): number => Math.hypot(H.mover!.pos.x - disp.mover.pos.x, H.mover!.pos.z - disp.mover.pos.z);
     const trial = async (depth: number, moveTicks: number): Promise<{ maxErr: number; finalErr: number; modes: Record<string, number>; acts: Record<string, number>; lastWire: number }> => {
@@ -894,4 +895,5 @@ const engineOf = (n: SocketIoOnline): EngineLike | null => (n as unknown as { so
 }
 
 console.log(`\n${count - fails}/${count} 통과`);
+disposeActorFixtures();
 if (fails) process.exit(1);

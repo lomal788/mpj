@@ -7,6 +7,7 @@
 import type * as THREE from 'three';
 import type { OnlineAdapter, OnlineSelf } from '@app/common/net/protocol/types';
 import type { ClipHandle, ClipOptions, Collider, SocketPose, Stage3D, StageModel } from '@app/common/render3d';
+import type { PlazaActorWorld } from './actor-world';
 
 /** 버튼 비트(script/game/core/pad.ts NPAD 와 같은 값) */
 export const PLAZA_BTN = {
@@ -75,6 +76,8 @@ export interface PlazaDecoState {
 
 export interface PlazaWorld {
   readonly stage: Stage3D;
+  readonly actorWorld?: PlazaActorWorld;
+  disposeActors?(): void;
   /** 원본 CollisionMain(PhysX 삼각 메시) — stage.collider 와 같다 */
   readonly collider: Collider;
   readonly cameraParam: PlazaCameraParam;

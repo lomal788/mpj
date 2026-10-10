@@ -1,3 +1,4 @@
+import { createTestMover, disposeActorFixtures } from './plaza_actor_fixture';
 /**
  * 광장 C 갈래 시험 — NPC 배치·따라가기·상호작용 영역·기구 출발 사건(docs/shell/plaza_3d.md §6.10).
  * 기대값 근거: §6.10 판독(어셈블리 포함). 원본 실행 대조가 아니라 판독식의 재구현 시험이다. 소켓·클립은 실제 변환물(glb·spec)에서 읽는다.
@@ -8,7 +9,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as THREE from 'three';
 import { MeshCollider } from '@app/common/render3d/meshCollider';
-import { PlazaMover, NO_LEVER } from '@app/scene/world/plaza/player';
+import { NO_LEVER } from '@app/scene/world/plaza/player';
 import { DECO_NPCS, DECO_PROPS, MANAGER_NPCS, NPC_MODEL, type NpcSpecFile } from '@app/scene/world/plaza/npc';
 import { autoInterp, FOLLOW, FollowLogic, leverToward, meshRayBlocked, plazaHumans, RemoteMotion } from '@app/scene/world/plaza/follow';
 import { RemoteSender } from '@app/scene/world/plaza/ui/net';
@@ -167,8 +168,8 @@ console.log('2. 따라가기(§6.10 ②)');
   const ai2 = autoInterp(new THREE.Vector3(0, 0, 0), new THREE.Vector3(3, 0, 4));
   near(ai2.dirX, 0.6, 1e-9, '수평 단위 방향 x');
   const floor = new MeshCollider({ vertices: [-60, 0, -60, 60, 0, -60, 60, 0, 60, -60, 0, 60], indices: [0, 2, 1, 0, 3, 2] });
-  const leader = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
-  const fol = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
+  const leader = createTestMover({ radius: 0.9, height: 1.5 }, floor);
+  const fol = createTestMover({ radius: 0.9, height: 1.5 }, floor);
   leader.place(new THREE.Vector3(0, 0, 0), 0);
   fol.place(new THREE.Vector3(0, 0, -1.5), 0);
   const logic = new FollowLogic();
@@ -202,7 +203,7 @@ console.log('2. 따라가기(§6.10 ②)');
 console.log('2b. 원격 표시 actor — OnReceive 거리 분기·AutoInterpolation 하나(12_online_sync §6.2.1)');
 {
   const floor = new MeshCollider({ vertices: [-60, 0, -60, 60, 0, -60, 60, 0, 60, -60, 0, 60], indices: [0, 2, 1, 0, 3, 2] });
-  const mover = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
+  const mover = createTestMover({ radius: 0.9, height: 1.5 }, floor);
   const m = new RemoteMotion(mover);
   const V = (x: number, y = 0, z = 0): THREE.Vector3 => new THREE.Vector3(x, y, z);
   const ticks = (n: number): string[] => {
@@ -215,7 +216,7 @@ console.log('2b. 원격 표시 actor — OnReceive 거리 분기·AutoInterpolat
   ok(m.receive(V(6), 0) === 'teleport' && mover.pos.x === 6 && mover.yaw === 0, '표시 위치에서 > 5 → 순간이동(위치·회전 즉시)');
   ok(m.receive(V(6.8), 45) === 'rotate' && !m.interp.movePos && m.interp.moveRot, '≤ 1 → 회전 전용 Start(위치 flag 끔)');
   ticks(30);
-  ok(mover.pos.x === 6 && Math.abs(mover.yaw - 45) < 1e-9, `회전만: 위치 그대로·몸 선회 도착: ${mover.pos.x} ${mover.yaw}`);
+  ok(mover.pos.x === 6 && Math.abs(mover.yaw - 45) <= 2 ** -17, `회전만: 위치 그대로·몸 선회 도착: ${mover.pos.x} ${mover.yaw}`);
   ok(m.receive(V(8), 90) === 'interp', '1 < d ≤ 5 → 위치·회전 Start');
   ok(m.receive(V(8.5), 90) === 'interp', '거리 = 표시 위치(6) 기준 2.5 m → 보간(마지막 수신 8 기준이면 0.5 m 회전만)');
   const acts = ticks(30);
@@ -226,7 +227,7 @@ console.log('2b. 원격 표시 actor — OnReceive 거리 분기·AutoInterpolat
   m.receive(V(11), 90);
   ticks(5);
   const mid = mover.pos.x;
-  ok(Math.abs(mid - 9) < 1e-9, `보간 5틱 = 0.5 m: ${mid}`);
+  ok(Math.abs(mid - 9) <= 5 * 2 ** -20, `보간 5틱 = 0.5 m: ${mid}`);
   ok(m.receive(V(9.5), 90) === 'rotate', '진행 중 ≤ 1 수신 = 회전 전용');
   ticks(10);
   ok(mover.pos.x === mid, '회전 전용은 남은 위치 진행을 멈춤(원본 flag 0x0100)');
@@ -239,8 +240,8 @@ console.log('2b. 원격 표시 actor — OnReceive 거리 분기·AutoInterpolat
   ok(m.interp.movePos, '> 5 분기는 보간기를 멈추지 않음(원본 분기에 Stop 없음)');
 
   const trial = (depth: number, moveTicks: number): { maxErr: number; finalErr: number; modes: Record<string, number>; acts: Record<string, number> } => {
-    const snd = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
-    const rcv = new PlazaMover({ radius: 0.9, height: 1.5 }, floor);
+    const snd = createTestMover({ radius: 0.9, height: 1.5 }, floor);
+    const rcv = createTestMover({ radius: 0.9, height: 1.5 }, floor);
     snd.place(V(-20, 0, 5), 90);
     const rm = new RemoteMotion(rcv);
     rm.spawn(snd.pos.clone(), 90);
@@ -270,7 +271,7 @@ console.log('2b. 원격 표시 actor — OnReceive 거리 분기·AutoInterpolat
   console.log(`   직선 걷기 2 m/s 2 s(지연 0): 틱별 최대 오차 ${walk.maxErr.toFixed(3)} m, 멈춘 뒤 ${walk.finalErr.toFixed(3)} m, 수신 ${JSON.stringify(walk.modes)}, 표시 액션 ${JSON.stringify(walk.acts)}`);
   console.log(`   직선 달리기 6 m/s 2 s(지연 0): 틱별 최대 오차 ${run.maxErr.toFixed(3)} m, 멈춘 뒤 ${run.finalErr.toFixed(3)} m, 수신 ${JSON.stringify(run.modes)}, 표시 액션 ${JSON.stringify(run.acts)}`);
   ok(walk.maxErr <= 1 + (13 / 60) * 2 + 0.1 + 1e-6, `걷기 오차 ≤ 1(회전만 구간) + 13틱 송신 간격 × 2 m/s + 한 틱: ${walk.maxErr.toFixed(3)}`);
-  ok(run.maxErr <= (13 / 60) * 6 + 0.1 + 1e-6, `달리기 오차 ≤ 13틱 송신 간격 × 6 m/s + 한 틱: ${run.maxErr.toFixed(3)}`);
+  ok(run.maxErr <= (13 / 60) * 6 + 0.1 + 14 * 2 ** -19, `달리기 오차 ≤ 13틱 송신 간격 × 6 m/s + 한 틱: ${run.maxErr.toFixed(3)}`);
   ok((walk.modes.rotate ?? 0) > 0 && (walk.modes.interp ?? 0) > 0, '걷기 = 회전만·보간이 섞임(0.4 m/패킷)');
   ok((run.modes.rotate ?? 0) === 1 && (run.modes.interp ?? 0) > 0, '달리기 = 출발 첫 패킷(0.1 m)만 회전만, 나머지 보간(1.3 m/패킷 > 1)');
   ok(!walk.acts.Walk && !run.acts.Walk, '표시 actor 는 보간 중 Run 만(원본 보간 속도 6 고정)');
@@ -449,4 +450,5 @@ console.log('5. NPC 셰이더 그래프(§6.11)');
 }
 
 console.log(`\n${count - fails}/${count} 통과`);
+disposeActorFixtures();
 if (fails) process.exit(1);

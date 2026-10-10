@@ -1,3 +1,4 @@
+import { createTestMover } from './plaza_actor_fixture';
 /**
  * 캐릭터 런타임 이전 골든(노드, WebGL·헤드리스 없음) — docs/engine/09_character.md §14.6.
  * 소비자(캐릭터 선택·광장 플레이어·광장 NPC·결과 무대·mg1801)를 같은 조건으로 돌려 틱마다 뼈 로컬 TRS·모프·메시 보임·눈/몸/NPC 재질 uniform·
@@ -15,7 +16,7 @@ import { assetHooks } from '@app/scene/menu/charselect/assetHooks';
 import { Preview3D } from '@app/scene/menu/charselect/preview3d';
 import { CharSelectState, PAD, type CharSelectEvent } from '@app/scene/menu/charselect/state';
 import type { Spec } from '@app/scene/menu/charselect/types';
-import { ACTION_MOTION, PlazaCharaLoader, PlazaMover, shapeOf, type Lever } from '@app/scene/world/plaza/player';
+import { PlazaCharaLoader, shapeOf, type Lever } from '@app/scene/world/plaza/player';
 import { BLEND_NPC, NpcSystem, type Npc, type NpcSpecFile } from '@app/scene/world/plaza/npc';
 import type { PlazaContext } from '@app/scene/world/plaza/types';
 import { createResultStage } from '@app/minigame/frame/result/stage';
@@ -231,7 +232,8 @@ async function plazaPlayer(full: boolean, out: Out): Promise<void> {
   for (const pc of ['pc01', 'pc07', 'pc13', 'pc54']) {
     const log = new Log(`plaza_player_${pc}`, full);
     const chara = await loader.load(pc, gl, async () => undefined, lcg(3), sleep0);
-    const mover = new PlazaMover(shapeOf(chara.spec), null);
+    const mover = createTestMover(shapeOf(chara.spec), null);
+    chara.connect(mover);
     mover.place(new THREE.Vector3(0, 0, 0), 180);
     let forced = false;
     for (let f = 0; f < 520; f++) {
@@ -245,15 +247,16 @@ async function plazaPlayer(full: boolean, out: Out): Promise<void> {
       }
       if (f === 380) chara.play('co_look02');
       if (f === 450) forced = false;
+      mover.motionEnabled = !forced;
       const a = mover.tick(lever);
-      if (a !== 'Fall' && !forced) chara.play(ACTION_MOTION[a]);
-      chara.tick();
+      mover.publish();
       chara.root.position.copy(mover.pos);
-      chara.root.rotation.set(0, THREE.MathUtils.degToRad(mover.yaw), 0);
+      chara.root.quaternion.fromArray(mover.core.rotation);
       const o: string[] = [`act ${a} ${chara.motion}`];
       slotState((chara as Any).preview.slots[0], o);
       log.tick(`f${f} ${a} ${chara.motion}`, o);
     }
+    mover.dispose();
     chara.dispose();
     out(log);
   }

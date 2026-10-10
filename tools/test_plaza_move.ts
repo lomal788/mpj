@@ -1,7 +1,8 @@
+import { createTestMover, disposeActorFixtures } from './plaza_actor_fixture';
 /**
  * 광장 B 갈래 시험 — 1번 플레이어 이동(player.ts)·추종 카메라(camera.ts)를 노드에서 돈다.
  * 기대값 근거: docs/shell/plaza_3d.md §3.5(actorparam.json·FollowPlayerImpl 어셈블리 판독). 원본 실행 대조가 아니라 판독식의 재구현 시험이다.
- * 충돌은 원본 CollisionMain(PhysX 삼각 메시 → extracted/converted/scene/apx obj)을 stage3d MeshCollider 로 읽는다.
+ * 충돌은 원본 CollisionMain APX를 PhysX로 읽는다. 기존 OBJ/MeshCollider는 지면 자료 대조에만 쓴다.
  *
  *   npx tsx tools/test_plaza_move.ts
  */
@@ -9,10 +10,12 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import * as THREE from 'three';
 import { MeshCollider } from '@app/common/render3d/meshCollider';
-import { ACTOR, leverFromStick, NO_LEVER, PlazaMover, startSocketCount, transitBlend, wrapDeg, type Lever, type Transit } from '@app/scene/world/plaza/player';
+import { ACTOR, leverFromStick, NO_LEVER, startSocketCount, transitBlend, wrapDeg, type Lever, type Transit } from '@app/scene/world/plaza/player';
 import { applyPose, isBalloonFront, MenuCameraFollow } from '@app/scene/world/plaza/camera';
 import type { PlazaCameraParam } from '@app/scene/world/plaza/types';
 
+const F = Math.fround;
+const YAW_EPS = 2 ** -15;
 const ROOT = join(import.meta.dirname, '..', '..');
 let fails = 0;
 let count = 0;
@@ -62,13 +65,14 @@ console.log('2. 레버(카메라 기준) · 달리기 문턱');
   const right = leverFromStick(1, 0, cam);
   near(right.dirX, 1, 1e-6, '오른쪽 x');
   near(right.deg, 90, 1e-6, '오른쪽 각');
-  near(leverFromStick(1, 1, cam).depth, 1, 1e-9, '대각 깊이 1 로 자름');
-  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  near(leverFromStick(1, 1, cam).depth, F(Math.sqrt(2)), 0, '17 §6.1: 대각 깊이는 clamp 없이 f32 길이');
+  const m = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m.place(new THREE.Vector3(0, 0, 0), 0);
   const at = (d: number): string => m.tick({ ...leverFromStick(0, d, cam) });
   ok(at(0.79) === 'Walk', '깊이 0.79 → Walk');
   ok(at(0.8) === 'Run', '깊이 0.8 → Run');
-  ok(at(0.01) === 'Walk', '깊이 0.01 → Walk');
+  ok(at(0.01) === 'Idle', '17 §6.1: 깊이 0.01 < .1 → Idle');
+  ok(at(0.1) === 'Walk', '깊이 0.1 → Walk');
   ok(m.tick(NO_LEVER) === 'Idle', '깊이 0 → Idle');
   near(m.speed, 0, 0, 'Idle 들어가면 속도 0');
 }
@@ -76,11 +80,13 @@ console.log('2. 레버(카메라 기준) · 달리기 문턱');
 console.log('3. 속도(1 s = 60 프레임, 평지)');
 {
   for (const [depth, expect, name] of [[0.5, 2, '걷기'], [1, 6, '달리기']] as const) {
-    const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+    const m = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
     m.place(new THREE.Vector3(0, 0, 0), 90);
     const lv: Lever = leverFromStick(depth, 0, cam);
     for (let i = 0; i < 60; i++) m.tick(lv);
-    near(m.pos.x, expect, 1e-6, `${name} 60f 이동 x`);
+    let distance = F(0);
+    for (let i = 0; i < 60; i++) distance = F(distance + F(expect * F(1 / 60)));
+    near(m.pos.x, distance, 0, `${name} 60f f32 이동 x`);
     near(m.speed, expect, 1e-9, `${name} 속도`);
     near(m.pos.y, 0, 1e-9, `${name} 지면 y`);
   }
@@ -88,22 +94,22 @@ console.log('3. 속도(1 s = 60 프레임, 평지)');
 
 console.log('4. 선회(360°/s, 85° 이상 1100°/s)');
 {
-  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  const m = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m.place(new THREE.Vector3(0, 0, 0), 0);
   const back = leverFromStick(0, -1, cam);
   near(back.deg, 0, 1e-6, '아래 = 카메라 쪽(+Z) 0°');
   const left: Lever = { ...leverFromStick(-1, 0, cam), depth: 0.5 };
   m.tick(left);
-  near(m.yaw, -1100 / 60, 1e-9, '90° 차 → 첫 프레임 1100/60');
+  near(m.yaw, F(-1100 * F(1 / 60)), YAW_EPS, '90° 차 → 첫 프레임 1100/60');
   m.tick(left);
-  near(m.yaw, -1100 / 60 - 360 / 60, 1e-9, '차 71.7° (<85) → 둘째 프레임 360/60');
+  near(m.yaw, F(F(-1100 * F(1 / 60)) - F(360 * F(1 / 60))), YAW_EPS, '차 71.7° (<85) → 둘째 프레임 360/60');
   let n = 2;
   while (Math.abs(wrapDeg(m.yaw + 90)) > 1e-9 && n < 100) {
     m.tick(left);
     n++;
   }
   ok(n === 13, `90° 도는 데 13 프레임(1 + ceil(71.67/6)): ${n}`);
-  const m2 = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  const m2 = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m2.place(new THREE.Vector3(0, 0, 0), 0);
   const up = leverFromStick(0, 1, cam);
   let k = 0;
@@ -117,28 +123,34 @@ console.log('4. 선회(360°/s, 85° 이상 1100°/s)');
 
 console.log('5. 지면 보정(아래 d+0.4 안 붙이기, 위 0.5 안 오르기, 그 밖 낙하 49 m/s²)');
 {
-  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  const m = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m.place(new THREE.Vector3(0, 0.39, 0), 0);
   m.tick(NO_LEVER);
   near(m.pos.y, 0, 1e-9, '0.39 위 → 붙음');
   ok(m.grounded, '붙은 뒤 접지');
-  const m2 = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  const m2 = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m2.place(new THREE.Vector3(0, 0.6, 0), 0);
   m2.tick(NO_LEVER);
   ok(!m2.grounded, '0.6 위 → 공중');
   m2.tick(NO_LEVER);
   ok(m2.action === 'Fall', '공중 → Fall');
-  near(m2.vVert, -(9.8 * 5) / 60, 1e-9, '낙하 1 프레임 속도 = −9.8·5/60');
+  near(m2.vVert, F(-F(F(9.8) * 5) * F(1 / 60)), 0, '낙하 1 프레임 속도 = −9.8·5/60');
   let f = 0;
   while (!m2.grounded && f < 60) {
     m2.tick(NO_LEVER);
     f++;
   }
-  ok(m2.grounded && Math.abs(m2.pos.y) < 1e-9, `착지 y 0 (${f} f)`);
-  const m3 = new PlazaMover({ radius: 0.9, height: 1.54 }, MeshCollider.merge([plane(0), new MeshCollider({ vertices: [0.5, 0.3, -5, 5, 0.3, -5, 5, 0.3, 5, 0.5, 0.3, 5], indices: [0, 2, 1, 0, 3, 2] })]));
+  ok(m2.grounded && Math.abs(m2.pos.y) <= F(Math.max(F(-m2.vVert * F(1 / 60)), F(.01)) + F(.01)), `17 §6.7: 최초 ray 접지 허용 d+.01 (${f} f, y=${m2.pos.y})`);
+  m2.tick(NO_LEVER);
+  near(m2.pos.y, 0, 2 ** -22, '접지 다음 프레임 vVert reset·평면 sweep 정착');
+  const m3 = createTestMover({ radius: 0.9, height: 1.54 }, MeshCollider.merge([plane(0), new MeshCollider({ vertices: [0.5, 0.3, -5, 5, 0.3, -5, 5, 0.3, 5, 0.5, 0.3, 5], indices: [0, 2, 1, 0, 3, 2] })]));
   m3.place(new THREE.Vector3(0, 0, 0), 90);
   for (let i = 0; i < 30; i++) m3.tick({ ...leverFromStick(1, 0, cam), depth: 0.5 });
-  near(m3.pos.y, 0.3, 1e-6, '0.3 턱 오름');
+  near(m3.pos.y, 0, 1e-6, '17 §14.12: 현재 .3 box 턱 경로는 아래 단 유지');
+  near(m3.pos.x, .04904563, 1e-4, '.3 턱은 Adjust 캡슐 앞에서 막힘');
+  ok(m3.grounded && m3.core.ground.source === 'ray', '.3 턱: steep sweep 거부 후 ray 접지');
+  m3.tick(NO_LEVER);
+  near(m3.pos.y, 0, 1e-6, '.3 턱 앞 정지해도 임의 step-up 없음');
 }
 
 console.log('6. 원본 CollisionMain(삼각 4440) 위 보행');
@@ -156,23 +168,29 @@ console.log('6. 원본 CollisionMain(삼각 4440) 위 보행');
   const g = col.groundHeight(0, 22.316, -2.365);
   ok(!!g, '시작 자리 지면 있음');
   if (g) near(g.y, -2.365, 0.05, '시작 자리 지면 y');
-  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, col);
+  const m = createTestMover({ radius: 0.9, height: 1.54 }, col);
   m.place(new THREE.Vector3(0, -2.365, 22.316), 180);
   const towardShop = leverFromStick(0, -1, cam);
   for (let i = 0; i < 600; i++) m.tick(towardShop);
   ok(m.grounded, '10 s 달린 뒤 접지');
-  ok(m.pos.z > 25.49 - 0.9 - 0.1 && m.pos.z < 25.49 - 0.9 + 0.1, `+Z 로 달리면 중앙 원형 벽(z 25.49)에 반지름 0.9 앞에서 막힘 z=${m.pos.z.toFixed(3)}`);
+  ok(m.pos.z > 25.49 - 0.5 - 0.1 && m.pos.z < 25.49 - 0.5 + 0.1, `+Z 로 달리면 중앙 원형 벽(z 25.49)에 Adjust 반지름 0.5 앞에서 막힘 z=${m.pos.z.toFixed(3)}`);
   near(m.pos.y, -2.266, 1e-3, '벽 앞 0.099 턱(바닥 −2.266)에 올라섬');
   console.log(`   +Z 달리기 10 s → (${m.pos.toArray().map((x) => x.toFixed(3))})`);
   for (const x of [0, -1, 1]) {
-    const s = new PlazaMover({ radius: 0.9, height: 1.54 }, col);
+    const s = createTestMover({ radius: 0.9, height: 1.54 }, col);
     s.place(new THREE.Vector3(x, -2.365, 22.316), 180);
     let reached = -1;
     for (let i = 0; i < 360 && reached < 0; i++) {
       s.tick({ depth: 1, dirX: 0, dirZ: -1, deg: 180 });
       if (s.pos.z < 9 && s.pos.y >= -0.01) reached = i;
     }
-    ok(reached >= 0, `계단 오르기 x=${x}: 시작 → 기구 앞(z < 9, y ≥ 0) ${reached >= 0 ? `${(reached / 60).toFixed(2)} s` : `실패 (${s.pos.toArray().map((v) => v.toFixed(2))})`}`);
+    ok(reached === -1, `17 §14.12 현재 계단 x=${x}: 자동 오름 없음(실기 골든 아님)`);
+    nearV(s.pos, [x, -1.8301867, 13.2789669], 2e-4, `계단 x=${x}: 판독 경로의 웹 회귀 위치`);
+    ok(s.grounded && s.core.ground.source === 'ray', `계단 x=${x}: 아래 단 ray 접지`);
+    ok(isBalloonFront(s.pos), `계단 x=${x}: 기구 선택 영역(z<18)에는 진입`);
+    const stopped = s.pos.clone();
+    for (let i = 0; i < 60; i++) s.tick({ depth: 1, dirX: 0, dirZ: -1, deg: 180 });
+    ok(s.pos.distanceTo(stopped) < 2e-4, `계단 x=${x}: 추가60f에도 현재 단 유지`);
   }
 }
 
@@ -192,7 +210,7 @@ console.log('7. 모션 전이(sys_pc.mpat)');
 
 console.log('7c. LookAt(기구 선택: 입력 끔 → balloon_pos 쪽으로 선회 규칙 그대로)');
 {
-  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  const m = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m.place(new THREE.Vector3(0, 0, 22.316), 0);
   m.inputEnabled = false;
   m.lookAt(new THREE.Vector3(0, 0, 0));
@@ -203,8 +221,8 @@ console.log('7c. LookAt(기구 선택: 입력 끔 → balloon_pos 쪽으로 선�
     n++;
   }
   ok(n === 18, `180° = 1100°/s 6f + 360°/s 12f = 18f: ${n}`);
-  near(m.pos.z, 22.316, 1e-9, 'LookAt 중 이동 없음');
-  const m2 = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(0));
+  near(m.pos.z, F(22.316), 0, 'LookAt 중 f32 위치 변화 없음');
+  const m2 = createTestMover({ radius: 0.9, height: 1.54 }, plane(0));
   m2.place(new THREE.Vector3(3, 0, 3), 0);
   m2.lookAt(new THREE.Vector3(0, 5, 0), true);
   near(m2.yaw, -135, 1e-9, 'immediate(SetRotateLookAt) = 바로, y 무시');
@@ -289,7 +307,7 @@ console.log('8b. 캡처 구도 재검증(내려보는 각 = atan(sin 각), 세�
 
 console.log('9. 플레이어·카메라 함께(달리며 따라가기)');
 {
-  const m = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(-2.365));
+  const m = createTestMover({ radius: 0.9, height: 1.54 }, plane(-2.365));
   m.place(new THREE.Vector3(0, -2.365, 22.316), 180);
   const c = new MenuCameraFollow(param);
   const camera = new THREE.PerspectiveCamera(40, 16 / 9, 1, 2000);
@@ -302,7 +320,7 @@ console.log('9. 플레이어·카메라 함께(달리며 따라가기)');
   }
   console.log(`   오른쪽 달리기 4 s: 플레이어 (${m.pos.toArray().map((x) => x.toFixed(3))}), 목표 (${c.target.toArray().map((x) => x.toFixed(3))}), 최대 거리 ${maxLag.toFixed(3)}`);
   ok(maxLag > 3 && maxLag < 6, `달리기 중 목표 지연 3~6 m: ${maxLag}`);
-  const m2 = new PlazaMover({ radius: 0.9, height: 1.54 }, plane(-2.365));
+  const m2 = createTestMover({ radius: 0.9, height: 1.54 }, plane(-2.365));
   m2.place(new THREE.Vector3(0, -2.365, 22.316), 180);
   const c2 = new MenuCameraFollow(param);
   applyPose(camera, c2.pose());
@@ -316,4 +334,5 @@ console.log('9. 플레이어·카메라 함께(달리며 따라가기)');
 }
 
 console.log(`\n${count - fails}/${count} 통과`);
+disposeActorFixtures();
 if (fails) process.exit(1);

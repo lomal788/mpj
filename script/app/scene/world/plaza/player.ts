@@ -4,8 +4,11 @@
  * PlazaCharaLoader.load 의 tick = Preview3D 준비 단계 사이 기다림(기본 setTimeout 0, 광장 렌더러 미리 준비는 프레임마다 — docs/engine/loader_manager.md §14.5).
  */
 import * as THREE from 'three';
-import { characterDefaults, mpatBlendCompat, type MpatRow } from '@game/lib/character';
-import type { Collider } from '@app/common/render3d';
+import { characterDefaults, mpatBlendCompat, motionArg, fnv1a64, type MpatRow } from '@game/lib/character';
+import { ActorCore, ActorPad, ActorParams, JumpCalculator, basicGravity, identityPosition, F, quaternionYawApprox, yawQuaternionApprox, zeroPacket, type ActorEvent, type ActorMotionCommand, type MoveLever, type V3 } from '@game/lib/actor';
+import { actorCapsuleFromSegment, type ActorCollisionBinding } from '@game/lib/actor-collision';
+import { ActorCharacterBinding, NpadActorInput, cameraBasisApprox, packetEdgesApprox } from '@app/common/actor';
+import { PlazaActorWorld, PLAZA_MAP_MASK, firstAcceptedApprox } from './actor-world';
 import type { Spec } from '@app/scene/menu/charselect';
 import { mpatTables, Preview3D } from '@app/scene/menu/charselect/preview3d';
 import type { PlazaActor, PlazaContext, PlazaPad, PlazaPart, PlazaPartFactory } from './types';
@@ -32,9 +35,6 @@ export const ACTOR = {
   groundMinD: 0.01,
 } as const;
 
-/** [근사] PhysX 침투 밀어내기 대신 발 위 이 높이 안의 걸을 수 있는 면으로 올림(meshCollider STEP 과 같음) */
-export const STEP_UP = 0.5;
-
 export type ActionName = 'Idle' | 'Walk' | 'Run' | 'Fall';
 
 export const ACTION_MOTION: Record<Exclude<ActionName, 'Fall'>, string> = { Idle: 'co_idle00', Walk: 'co_walk00', Run: 'co_run00' };
@@ -49,28 +49,22 @@ export interface Lever {
 
 export const NO_LEVER: Lever = { depth: 0, dirX: 0, dirZ: 0, deg: 0 };
 
-/** 카메라 기준 레버(GetPadActorDeg): 깊이 = |스틱|(1 이하), 방향 = 카메라 수평 오른쪽·앞 [추정: 레버 카메라 변환] */
+/** 카메라 기준 레버(GetPadActorDeg): ActorPad radial .1·clamp 없음, 카메라 수평 오른쪽·앞 [근사: cameraBasisApprox] */
 export function leverFromStick(lx: number, ly: number, camera: THREE.Camera): Lever {
-  const depth = Math.min(1, Math.hypot(lx, ly));
-  if (!(depth > 0)) return NO_LEVER;
+  const pad = createPlazaPad();
+  pad.setInput({ ...zeroPacket(), stick: [F(lx), F(-ly), 0, 0] });
+  const [right, front] = cameraBasis(camera);
+  return publicLever(cameraBasisApprox(pad.getLever(), right, front));
+}
+const createPlazaPad = (): ActorPad => new ActorPad({ moveAnalog: true, moveDpad: true, subdivisionCount: 0,
+  overlayMask: 0xffffffff, overlay: zeroPacket(), edgePolicy: packetEdgesApprox });
+function cameraBasis(camera: THREE.Camera): [V3, V3] {
   camera.updateMatrixWorld();
-  const e = camera.matrixWorld.elements;
-  let rx = e[0];
-  let rz = e[2];
-  let fx = -e[8];
-  let fz = -e[10];
-  const rl = Math.hypot(rx, rz) || 1;
-  const fl = Math.hypot(fx, fz) || 1;
-  rx /= rl;
-  rz /= rl;
-  fx /= fl;
-  fz /= fl;
-  let x = rx * lx + fx * ly;
-  let z = rz * lx + fz * ly;
-  const l = Math.hypot(x, z) || 1;
-  x /= l;
-  z /= l;
-  return { depth, dirX: x, dirZ: z, deg: THREE.MathUtils.radToDeg(Math.atan2(x, z)) };
+  const e = camera.matrixWorld.elements, rl = Math.hypot(e[0], e[2]) || 1, fl = Math.hypot(e[8], e[10]) || 1;
+  return [[F(e[0] / rl), 0, F(e[2] / rl)], [F(-e[8] / fl), 0, F(-e[10] / fl)]];
+}
+function publicLever(lever: MoveLever): Lever {
+  return { depth: lever.depth, dirX: lever.direction[0], dirZ: lever.direction[2], deg: quaternionYawApprox(lever.rotation) };
 }
 
 export function wrapDeg(d: number): number {
@@ -84,132 +78,124 @@ export interface MoverShape {
   height: number;
 }
 
-/** ComActor 한 프레임(1/60 s) — 액션(ChangeAction 0x38/0x68/0x58)·MoveLeverDirection·MoveAir·회전·적분·접지 */
+/** ComActor 한 프레임(1/60 s) — pre→tick(integrate·rotate)→sync→(Map→sync→Limit→sync)×2→postCollision→ground→sync. 계산은 공용 actor, 광장은 포트만 연결한다. */
 export class PlazaMover {
   readonly pos = new THREE.Vector3();
   readonly vel = new THREE.Vector3();
-  vVert = 0;
-  yaw = 0;
-  targetYaw = 0;
-  action: ActionName = 'Idle';
-  grounded = true;
-  inputEnabled = true;
-  frames = 0;
+  readonly core: ActorCore;
+  readonly binding: ActorCollisionBinding;
+  readonly pad = createPlazaPad();
+  motionEnabled = true;
+  contactCalls = 0;
+  onEvent: ((event: ActorEvent) => void) | null = null;
+  private epoch = 0;
+  private externalLever: MoveLever | null = null;
+  private right: V3 = [1, 0, 0];
+  private front: V3 = [0, 0, 1];
+  private readonly raw = new NpadActorInput({ extraButtons: null });
+  private character: ActorCharacterBinding | null = null;
+  private closed = false;
+  private readonly hashes = { Idle: BigInt(fnv1a64('Idle')), Walk: BigInt(fnv1a64('Walk')), Run: BigInt(fnv1a64('Run')),
+    Fall: BigInt(fnv1a64('Fall')), Jump: BigInt(fnv1a64('Jump')), Landing: BigInt(fnv1a64('Landing')) };
 
-  constructor(
-    public shape: MoverShape,
-    public collider: Collider | null,
-  ) {}
-
+  constructor(readonly shape: MoverShape, readonly physics: PlazaActorWorld) {
+    this.binding = physics.createBinding();
+    const ref = this.binding.ref, entity = physics.registry.actorInfo(ref)!.entity;
+    const capsule = actorCapsuleFromSegment([0, .5, 0], [0, 1, 0], .5);
+    this.binding.addShape({ owner: entity, nameHash: BigInt(fnv1a64('Adjust')), classMask: 0x2022, enabled: true, ...capsule }, { layer: 1 });
+    this.core = new ActorCore({ ref, pad: this.pad, params: new ActorParams(physics.paramRows), position: [0, 0, 0, 0], rotation: [0, 0, 0, 1],
+      leverReference: [0, 0, 0, 0], verticalReference: [0, 0, 0, 0], rotationMode: 'yaw-approx', groundedLimitY: -2.5,
+      jumpCalculator: new JumpCalculator(), selectGround: firstAcceptedApprox,
+      moveLever: p => this.externalLever ?? cameraBasisApprox(p.getLever(), this.right, this.front),
+      ports: { registry: physics.registry, collision: physics.adapter, gravity: basicGravity, finalPosition: identityPosition,
+        motionState: () => this.character?.motionState() ?? { present: false, hash: null, playback: 0 },
+        motion: command => { if (this.motionEnabled) this.character?.motion(command); },
+        event: event => { if (event.kind === 'ground-contact') this.contactCalls++; this.onEvent?.(event); } } });
+    this.core.installBasicActions({ hashes: this.hashes, motions: {
+      Idle: this.motion('Idle'), Walk: this.motion('Walk'), Run: this.motion('Run'),
+    }, landingEnabled: false, groundInput: null, airInput: null, groundLever: null });
+    this.binding.onDispose(() => { this.closed = true; this.core.dispose(); this.character?.dispose(); this.character = null; this.onEvent = null; });
+  }
+  private motion(action: Exclude<ActionName, 'Fall'>) {
+    const name = ACTION_MOTION[action];
+    return { ...motionArg(name), hash: BigInt(fnv1a64(name)), transitionType: 1 as const };
+  }
+  connectCharacter(binding: ActorCharacterBinding, motion: (command: ActorMotionCommand) => void): void {
+    this.character?.dispose(); this.character = binding;
+    this.core.ports.motion = command => { if (this.motionEnabled) motion(command); };
+  }
+  publish(): void {
+    if (this.closed) return;
+    const action = this.action;
+    if (this.motionEnabled && action !== 'Fall') this.core.ports.motion({ kind: 'play', slot: 'main', arg: this.motion(action) });
+    this.character?.publish(this.core);
+  }
+  get inputEnabled(): boolean { return !this.core.inputBlocked; }
+  set inputEnabled(enabled: boolean) { this.core.inputBlocked = !enabled; }
+  get grounded(): boolean { return this.core.grounded; }
+  set grounded(value: boolean) { this.core.groundedFlag = value; }
+  get vVert(): number { return this.core.vVert[1]; }
+  set vVert(value: number) { this.core.vVert[1] = F(value); }
+  get yaw(): number { return quaternionYawApprox(this.core.rotation); }
+  set yaw(value: number) { this.core.rotation = yawQuaternionApprox(value); }
+  get targetYaw(): number { return quaternionYawApprox(this.core.targetRotation); }
+  set targetYaw(value: number) { this.core.targetRotation = yawQuaternionApprox(value); }
+  get action(): ActionName {
+    return this.core.actionHash === this.hashes.Run ? 'Run' : this.core.actionHash === this.hashes.Walk ? 'Walk' : this.core.actionHash === this.hashes.Idle ? 'Idle' : 'Fall';
+  }
+  get frames(): number { return this.core.frameId + 1; }
+  get speed(): number { return Math.hypot(this.core.vLever[0], this.core.vLever[2]); }
+  private sync(teleport = false): void {
+    this.binding.syncPose([this.core.position[0], this.core.position[1], this.core.position[2]], this.core.rotation, ++this.epoch, teleport);
+    this.pos.set(this.core.position[0], this.core.position[1], this.core.position[2]);
+    this.vel.set(this.core.vLever[0], this.core.vLever[1], this.core.vLever[2]);
+  }
   place(pos: THREE.Vector3, yawDeg: number): void {
-    this.pos.copy(pos);
-    this.yaw = this.targetYaw = yawDeg;
-    this.vel.set(0, 0, 0);
-    this.vVert = 0;
-    this.grounded = true;
-    this.enter('Idle');
+    if (this.closed) return;
+    this.core.teleport([pos.x, pos.y, pos.z, 0], yawQuaternionApprox(yawDeg));
+    this.core.vLever.fill(0); this.core.vVert.fill(0); this.core.groundedFlag = true; this.core.jumpStatus = 0;
+    this.core.callAction(this.hashes.Idle); this.sync(true);
   }
 
-  /** PlayerManager::LookAt → ComPlayerUtil::TurnLookAt(수평 방향 CalcTurnDegY → AutoInterpolation::StartRotateY = 목표 회전, 회전은 rotate() 선회 규칙) / immediate = SetRotateLookAt */
+  /** PlayerManager::LookAt → ComPlayerUtil::TurnLookAt(수평 방향 CalcTurnDegY → AutoInterpolation::StartRotateY = 목표 회전, 회전은 공용 actor 선회 규칙) / immediate = SetRotateLookAt */
   lookAt(target: THREE.Vector3, immediate = false): void {
-    const dx = target.x - this.pos.x;
-    const dz = target.z - this.pos.z;
+    const dx = target.x - this.pos.x, dz = target.z - this.pos.z;
     if (dx === 0 && dz === 0) return;
     this.targetYaw = THREE.MathUtils.radToDeg(Math.atan2(dx, dz));
-    if (immediate) this.yaw = this.targetYaw;
+    if (immediate) { this.core.rotation = [...this.core.targetRotation]; this.sync(true); }
   }
-
-  get speed(): number {
-    return Math.hypot(this.vel.x, this.vel.z);
+  projectGround(pos: THREE.Vector3, fromY = pos.y + 2): THREE.Vector3 {
+    const entity = this.physics.registry.actorInfo(this.binding.ref)?.entity;
+    if (!entity) return pos;
+    const hit = this.physics.ground([pos.x, fromY, pos.z], 1000, entity);
+    if (hit) pos.y = hit.position[1];
+    return pos;
   }
-
-  private enter(a: ActionName): void {
-    this.action = a;
-    if (a === 'Idle') this.vel.set(0, 0, 0);
-  }
-
   tick(input: Lever): ActionName {
-    const lever = this.inputEnabled ? input : NO_LEVER;
-    const next: ActionName = !this.grounded ? 'Fall' : lever.depth >= ACTOR.leverRun ? 'Run' : lever.depth > 0 ? 'Walk' : 'Idle';
-    if (next !== this.action) this.enter(next);
-    let ax = 0;
-    let az = 0;
-    let decel = 0;
-    if (this.action === 'Walk' || this.action === 'Run') {
-      const sp = this.action === 'Run' ? ACTOR.runSpeed : ACTOR.walkSpeed;
-      this.vel.set(lever.dirX * sp, 0, lever.dirZ * sp);
-      this.targetYaw = lever.deg;
-    } else if (this.action === 'Fall') {
-      if (lever.depth > 0) {
-        this.targetYaw = lever.deg;
-        const m = ACTOR.airAccel * (lever.depth < ACTOR.leverRun ? ACTOR.airSlowMul : 1);
-        ax = lever.dirX * m;
-        az = lever.dirZ * m;
-      } else decel = ACTOR.airDecel;
+    this.externalLever = { depth: F(input.depth), direction: [F(input.dirX), 0, F(input.dirZ), 0], rotation: yawQuaternionApprox(input.deg) };
+    return this.step();
+  }
+  tickPad(input: PlazaPad | null, camera: THREE.Camera): Lever {
+    this.externalLever = null; [this.right, this.front] = cameraBasis(camera);
+    this.pad.setInput(this.raw.read({ buttons: input?.buttons ?? 0, lx: (input?.lx ?? 0) * 32767, ly: (input?.ly ?? 0) * 32767,
+      rx: (input?.rx ?? 0) * 32767, ry: (input?.ry ?? 0) * 32767, accX: 0, accY: 0, accZ: 0 }));
+    this.step(); return publicLever(this.core.lever);
+  }
+  private step(): ActionName {
+    if (this.closed) return this.action;
+    this.core.setPosition([this.pos.x, this.pos.y, this.pos.z, 0]);
+    this.core.gravityScale = this.grounded ? 0 : 1;
+    this.core.preFrame(this.frames); this.core.tick(); this.sync();
+    const stamp = { frameId: this.core.frameId, phase: 'map' as const, pass: 0, sequence: 0, poseEpoch: this.epoch };
+    for (let pass = 0; pass < 2; pass++) {
+      this.core.collisionJobs({ ...stamp, pass, poseEpoch: this.epoch }, { kind: 'map', mapMask: PLAZA_MAP_MASK, classMask: 1 << 13 }); this.sync();
+      this.core.collisionJobs({ ...stamp, phase: 'limit', pass, poseEpoch: this.epoch }, { kind: 'limit' }); this.sync();
     }
-    this.rotate();
-    this.integrate(ax, az, decel);
-    this.groundCheck();
-    this.frames++;
+    this.core.postCollision();
+    this.core.collisionJobs({ ...stamp, phase: 'ground', poseEpoch: this.epoch }, { kind: 'ground', mapMask: PLAZA_MAP_MASK }); this.sync();
     return this.action;
   }
-
-  private rotate(): void {
-    const diff = wrapDeg(this.targetYaw - this.yaw);
-    const fast = Math.abs(diff) >= ACTOR.turnFastDeg;
-    const spd = this.grounded ? (fast ? ACTOR.turnGroundFast : ACTOR.turnGround) : fast ? ACTOR.turnAirFast : ACTOR.turnAir;
-    const step = spd / 60;
-    this.yaw = wrapDeg(this.yaw + Math.max(-step, Math.min(step, diff)));
-  }
-
-  private integrate(ax: number, az: number, decel: number): void {
-    if (!this.grounded) {
-      this.vel.x += ax / 60;
-      this.vel.z += az / 60;
-      let s = this.speed;
-      if (decel > 0 && s > 0) {
-        const ns = Math.max(0, s - decel / 60);
-        this.vel.multiplyScalar(ns / s);
-        s = ns;
-      }
-      if (s > ACTOR.airMax) this.vel.multiplyScalar(ACTOR.airMax / s);
-    }
-    const move = new THREE.Vector3(this.vel.x / 60, 0, this.vel.z / 60);
-    if (move.x !== 0 || move.z !== 0) {
-      const real = this.collider ? this.collider.collide(this.pos, move, this.shape.radius, this.shape.height) : move;
-      this.pos.x += real.x;
-      this.pos.z += real.z;
-    }
-    const gScale = this.grounded ? 0 : 1;
-    if (this.grounded) this.vVert = 0;
-    else {
-      this.vVert -= (ACTOR.gravity * gScale * ACTOR.jumpCalcOffFactor) / 60;
-      if (this.vVert < -ACTOR.fallMax) this.vVert = -ACTOR.fallMax;
-    }
-    this.pos.y += this.vVert / 60;
-  }
-
-  private groundCheck(): void {
-    if (!this.collider) {
-      this.grounded = true;
-      return;
-    }
-    const d = Math.max(-this.vVert / 60, ACTOR.groundMinD);
-    const hit = this.collider.groundHeight(this.pos.x, this.pos.z, this.pos.y + d);
-    if (!hit) {
-      this.grounded = false;
-      return;
-    }
-    const dist = this.pos.y + d - hit.y;
-    if (dist > d + ACTOR.groundCast) {
-      this.grounded = false;
-      return;
-    }
-    if (dist > d + ACTOR.groundSnap) this.pos.y -= dist - d;
-    else if (hit.y > this.pos.y && hit.y - this.pos.y <= STEP_UP) this.pos.y = hit.y;
-    if (!this.grounded) this.vVert = 0;
-    this.grounded = true;
-  }
+  dispose(): void { if (!this.closed) this.binding.dispose(); }
 }
 
 export interface Transit {
@@ -256,6 +242,20 @@ export class PlazaChara {
     this.motion = clip;
   }
 
+  connect(mover: PlazaMover): void {
+    const core = this.preview.slots[0].core;
+    const names = new Map(Object.keys(this.spec.clips ?? {}).map(name => [BigInt(fnv1a64(name)), name]));
+    const binding = new ActorCharacterBinding({ core, pose: (p, q) => { this.root.position.fromArray(p); this.root.quaternion.fromArray(q); }, step: () => this.tick() }, names, null);
+    mover.connectCharacter(binding, command => {
+      if (command.kind === 'condition-speed' || characterDefaults.motion.mpatBlend) { binding.motion(command); return; }
+      const blend = core.main.name ? transitBlend(this.transit, core.main.name, command.arg.name) : undefined;
+      if (command.kind === 'play' && command.arg.speedValid) {
+        this.preview.playMotion(0, command.arg.name, { blend: blend ?? command.arg.blendTime, force: command.arg.forceRestart,
+          start: command.arg.randomStartFrame ? 'random' : command.arg.startFrame, speed: command.arg.speed, type: command.arg.transitionType });
+      } else binding.motion({ ...command, arg: { ...command.arg, blendTime: blend ?? command.arg.blendTime } });
+    });
+  }
+
   tick(): void {
     this.preview.update();
     this.motion = this.preview.slots[0].current;
@@ -265,6 +265,11 @@ export class PlazaChara {
     this.root.removeFromParent();
     this.preview.dispose();
   }
+}
+
+export function plazaCharacterRandApprox(seed: number): (n: number) => number {
+  let state = seed >>> 0;
+  return n => { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return n > 0 ? state % n : 0; };
 }
 
 export class PlazaCharaLoader {
@@ -295,18 +300,20 @@ export class PlazaCharaLoader {
     preview.setup([[1, 1]]);
     preview.prefetch([idx]);
     preview.setChara(0, idx, true);
-    const t0 = performance.now();
-    while (!preview.slots[0].root) {
-      if (performance.now() - t0 > 60000) throw new Error(`plaza player 모델 준비 시간 초과: ${c.pc}`);
-      preview.render(renderer);
-      await (tick ? tick() : new Promise((res) => setTimeout(res, 0)));
-    }
-    const ch = new PlazaChara(preview, c, this.spec.transit);
-    ch.motion = preview.slots[0].current;
-    ch.root.add(preview.slots[0].root!);
-    ch.root.name = `Player_${c.pc}`;
-    await prepare(ch.root);
-    return ch;
+    try {
+      const t0 = performance.now();
+      while (!preview.slots[0].root) {
+        if (performance.now() - t0 > 60000) throw new Error(`plaza player 모델 준비 시간 초과: ${c.pc}`);
+        preview.render(renderer);
+        await (tick ? tick() : new Promise((res) => setTimeout(res, 0)));
+      }
+      const ch = new PlazaChara(preview, c, this.spec.transit);
+      ch.motion = preview.slots[0].current;
+      ch.root.add(preview.slots[0].root!);
+      ch.root.name = `Player_${c.pc}`;
+      await prepare(ch.root);
+      return ch;
+    } catch (error) { preview.dispose(); throw error; }
   }
 }
 
@@ -340,10 +347,13 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
   const world = ctx.world;
   const stage = world.stage;
   const me = ctx.players.find((p) => p.slot === 0 && p.local) ?? ctx.players.find((p) => p.local && !p.isCom) ?? ctx.players[0];
+  if (!world.actorWorld) throw new Error('Plaza actor world is not ready');
   const loader = await PlazaCharaLoader.create((p) => ctx.assetUrl(p));
-  const chara = await loader.load(me?.chara ?? 'pc01', stage.renderer, (r) => stage.prepare(r));
+  const chara = await loader.load(me?.chara ?? 'pc01', stage.renderer, (r) => stage.prepare(r), plazaCharacterRandApprox((me?.slot ?? 0) + 1));
+  if (!world.actorWorld) { chara.dispose(); throw new Error('Plaza actor world was disposed during player load'); }
   stage.scene.add(chara.root);
-  const mover = new PlazaMover(shapeOf(chara.spec), world.collider);
+  const mover = new PlazaMover(shapeOf(chara.spec), world.actorWorld!);
+  chara.connect(mover);
   const localCount = startSocketCount(ctx.players);
   const sock = world.pcSocket('balloon', localCount, 0) ?? world.socket('char_start_pos');
   mover.place(sock ? sock.pos : new THREE.Vector3(0, -2.365, 22.316), sock ? yawOfQuat(sock.quat) : 180);
@@ -363,17 +373,16 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
   let acc = 0;
   const sync = (): void => {
     chara.root.position.copy(mover.pos);
-    chara.root.rotation.set(0, THREE.MathUtils.degToRad(mover.yaw), 0);
+    chara.root.quaternion.fromArray(mover.core.rotation);
     actor.yaw = THREE.MathUtils.degToRad(mover.yaw);
     actor.speed = mover.speed;
     actor.motion = chara.motion;
   };
   sync();
-  let forced = false;
   const offInput = ctx.on('player:input', (v) => {
     mover.inputEnabled = !!v;
     if (!v) lever = NO_LEVER;
-    else forced = false;
+    else mover.motionEnabled = true;
   });
   const offPlace = ctx.on('player:place', (v) => {
     const r = v as { pos: THREE.Vector3; yawDeg?: number };
@@ -386,7 +395,7 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
   });
   const offPlay = ctx.on('player:play', (v) => {
     const r = v as { clip: string; next?: string };
-    forced = true;
+    mover.motionEnabled = false;
     chara.play(r.clip, r.next);
   });
   return {
@@ -396,10 +405,8 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
       while (acc >= 1 - 1e-6) {
         acc -= 1;
         const pad: PlazaPad | null = ctx.pad(actor.slot);
-        lever = pad ? leverFromStick(pad.lx, pad.ly, stage.camera) : NO_LEVER;
-        const a = mover.tick(lever);
-        if (a !== 'Fall' && !forced) chara.play(ACTION_MOTION[a]);
-        chara.tick();
+        lever = mover.tickPad(pad, stage.camera);
+        mover.publish();
       }
       sync();
     },
@@ -422,6 +429,7 @@ export const createPlayer: PlazaPartFactory = async (ctx: PlazaContext): Promise
       offPlace();
       const i = ctx.actors.indexOf(actor);
       if (i >= 0) ctx.actors.splice(i, 1);
+      mover.dispose();
       chara.dispose();
     },
   };

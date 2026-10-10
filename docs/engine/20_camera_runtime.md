@@ -271,6 +271,7 @@
 
 [설계] mg0116 연결은 motion.Stop과 하한20의 비교식을 보존한다. field 대응의 추정이 해소되면 common shake 인수로 연결하며, 추정 bool에 따른 소비 기대값을 원본 실행 결과로 쓰지 않는다. main Start 첫target 소비0은 이미 확정된 별도 규칙이다. mg0116 `@0x7100005330`,main `@0x71004e0e50`; [C][C0116], [07 §7.6][CAM], [DESIGN §10][D10].
 
+→ 정리본: [mg0116.md](../minigame/mg0116.md#73-추가-c의-모션소리카메라-연결) §7.3
 ### 6.8 보완 판독 — mg1704 별도 shake·Perlin
 
 [판독] mg1704 생성자는 owner Entity(+20), active(+28)=0, mode(+2C)=3, remaining(+30)/amplitude(+34)/frequency(+38)/requestPriority(+3C)=0, baseTerm(+40~4C)=`PTR_ConstantZero_710009b1e8` 값, Camera handle(+50/+58/+60)을 설정한다. owner에서 ComCamera를 찾지 못하면 AbortImpl이다. mg1704 `@0x7100008f60`; [C][C1704].

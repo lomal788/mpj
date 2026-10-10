@@ -1,0 +1,11 @@
+{
+  "name": "mpj-editor",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/start.mjs",
+    "typecheck": "node ../../node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+    "build": "npm run typecheck && node build.mjs",
+    "test": "node tests/run.mjs"
+  }
+}

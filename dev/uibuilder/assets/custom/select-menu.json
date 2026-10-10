@@ -1,0 +1,284 @@
+{
+  "format": "mpj-editor-document",
+  "version": 1,
+  "id": "select-menu",
+  "title": "모드 메뉴",
+  "tool": "ui-builder",
+  "entities": [
+    {
+      "id": "b09419a4-7174-4404-b2d0-7a51e5519a37",
+      "type": "ui.part",
+      "name": "sys_bg_set_00",
+      "parent": null,
+      "visible": true,
+      "locked": true,
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "scale": 1,
+        "rotation": 0
+      },
+      "props": {
+        "part": "P/sys_bg_set_00",
+        "bindings": [],
+        "actions": [],
+        "interactive": false,
+        "owner": 0,
+        "animationMode": "initial"
+      }
+    },
+    {
+      "id": "0ca4393d-debd-4a55-bd45-7852630c09be",
+      "type": "ui.part",
+      "name": "mn01_base_map_00",
+      "parent": null,
+      "visible": true,
+      "locked": false,
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "scale": 1,
+        "rotation": 0
+      },
+      "props": {
+        "part": "M/mn01_base_map_00",
+        "bindings": [
+          {
+            "pane": "x_btn_00",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_01",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_02",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_03",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_04",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_05",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_06",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_07",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_btn_08",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_00",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_01",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_02",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_03",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_04",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_05",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_06",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_07",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_win_08",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_00",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_01",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_02",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_03",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_04",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_05",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_06",
+            "kind": "visible",
+            "value": "false"
+          },
+          {
+            "pane": "x_parts_map/x_icon_mode_07",
+            "kind": "visible",
+            "value": "false"
+          }
+        ],
+        "actions": [],
+        "interactive": false,
+        "owner": 0,
+        "animationMode": "initial"
+      }
+    },
+    {
+      "id": "01086d39-23cd-4e9a-be48-512c6ae71729",
+      "type": "ui.part",
+      "name": "mn01_btn_map_00",
+      "parent": null,
+      "visible": true,
+      "locked": false,
+      "transform": {
+        "x": -490,
+        "y": 364,
+        "width": 1920,
+        "height": 1080,
+        "scale": 1,
+        "rotation": 0
+      },
+      "props": {
+        "part": "M/mn01_btn_map_00",
+        "bindings": [
+          {
+            "pane": "x_text_00",
+            "kind": "text",
+            "field": "name"
+          }
+        ],
+        "actions": [
+          {
+            "event": "decide",
+            "kind": "work",
+            "target": "party.mode",
+            "value": "$item"
+          },
+          {
+            "event": "decide",
+            "kind": "call",
+            "target": "party.round",
+            "value": "$item"
+          }
+        ],
+        "interactive": true,
+        "owner": 0,
+        "animationMode": "initial",
+        "dataset": "modes",
+        "columns": 1,
+        "gapY": 91
+      }
+    },
+    {
+      "id": "08e0adc2-d37a-424a-aa3b-5708022c004f",
+      "type": "ui.scene3d",
+      "name": "3D 장면 영역",
+      "parent": null,
+      "visible": true,
+      "locked": false,
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 900,
+        "height": 500,
+        "scale": 1,
+        "rotation": 0
+      },
+      "props": {
+        "sceneService": "character-preview"
+      }
+    }
+  ],
+  "settings": {
+    "screen": [
+      1920,
+      1080
+    ],
+    "datasets": {
+      "modes": [
+        {
+          "name": "10턴 파티",
+          "id": "party"
+        },
+        {
+          "name": "미니게임 선택",
+          "id": "freeplay"
+        },
+        {
+          "name": "캐릭터 선택",
+          "id": "characters"
+        }
+      ]
+    },
+    "work": {},
+    "input": {
+      "wrap": true,
+      "repeatWrap": false,
+      "multi": false,
+      "players": 1,
+      "repeatDelay": 24,
+      "repeatInterval": 6
+    }
+  }
+}

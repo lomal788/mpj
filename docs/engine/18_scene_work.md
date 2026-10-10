@@ -743,3 +743,135 @@ manager.step(gatedInput, ready):
 [설계] 웹의 clearNetworkSession 쓰기 권한은 net 이탈/reentry 어댑터에 둔다. 일반 Call/Return/Exchange·장면 cleanup/mode Exit가 이를 자동 호출하도록 확장하지 않는다. SaveData는 별도 Save 어댑터와 mutator/request 경계를 유지한다. main @0x710029f6b0·menu01 @0x7100055d70 [12 §9.15.5·9.14.2][NETLIFE], main SaveRequest @0x710023ff64 [16 §2][SAVE], 장면·Work 분리 [DESIGN §10.5][DESIGN].
 
 [데이터] §8.1 추가 후 검증은 CommonMark 링크520개·참조 정의44개, 링크 대상/절/미정의 참조 오류0, UTF-8(no BOM)·LF·후행 공백0이다. 새 판독55·열린 U11·이 갈래 요청24·미식별3묶음은 그대로이며 원래55,104 B와 현재 부모 index의 접두부 보존을 다시 확인했다. git diff --check 통과, 원본 실행 확인은 없다.
+
+## 후속 보강: mgm_modes C.4 공용 Work9함수
+
+[데이터] 이번 범위는 [MGM_MODES 부록 C.4][MGM_MODES]의 main 공용 Work9함수만이다. 기존 §11.6·B.2의55함수와 주소가 겹치지 않아 이번 새 판독9·현재 누계64다. 이전 집계는 해당 시점의 스냅샷으로 보존한다. [FN][FN]·[INDEX][IX]·[GAP][GAP].
+
+### 2.3 Work9의 기존 판독·가용성·관련 근거 일괄
+
+[판독] 기존 §4.3의 공용100칸 ring은 MinigameModeWork+0xc+i*0xc, §11.5의 GetMinigameMode는 WorkModule+0x12e8을 반환한다. 두 완료 판독을 재사용하며 다시 C를 읽지 않았다. main @0x71001f0460 [FREE §6.6][FREE], main @0x710029e980 [§11.5](18_scene_work.md#115-장면-스택과-embedded-work의-최신-근거)·[GAP][GAP].
+
+[데이터] 아래9주소는 기존18 새 판독 목록에 없고, 모드 문서는 C.4에서 공유 판독을 기다렸다. main TSV의 심볼/주소·INDEX의 docs_gap_main.c 대응·해당 C 함수 헤더9개를 일괄 확인했다. 이번 가용성 대조9·기존 판독 재사용 대상0·새 본체 판독9·새 추출0이다. 기존 caller 근거는 모드 §4·§6.4의 mgmet 결과/보상 reader와 mgm02 CoinMgr/Scene이며 그 C는 다시 읽지 않았다. [MGM_MODES][MGM_MODES]·[FN][FN]·[INDEX][IX].
+
+| 모듈·주소 [데이터] | 식별자 그대로 | C 가용성·판독 대응 |
+|---|---|---|
+| main @0x71001f3120 | bq::MinigameModeWork::Mgm02AddMgResult | [GAP][GAP] L1026, 새 판독 N01 → §4.4·§6.1 |
+| main @0x71001f3370 | bq::MinigameModeWork::Mgm02GetTotalCoinCount | [GAP][GAP] L1122, 새 판독 N02 → §4.4 |
+| main @0x71001f3470 | bq::MinigameModeWork::Mgm02GetTotalLeviedCoinCount | [GAP][GAP] L1138, 새 판독 N03 → §4.4·§6.1 |
+| main @0x71001f35d0 | bq::MinigameModeWork::Mgm02IsPlayedMgId | [GAP][GAP] L1150, 새 판독 N04 → §4.4·§6.1 |
+| main @0x71001f396c | bq::MinigameModeWork::Mgm04GetTargetVictoryCount | [GAP][GAP] L1171, 새 판독 N05 → §4.4 |
+| main @0x71001f3974 | bq::MinigameModeWork::Mgm04GetTeamVitoryCount | [GAP][GAP] L1182, 새 판독 N06 → §4.4 |
+| main @0x71001f39e0 | bq::MinigameModeWork::Mgm04AddMGResult | [GAP][GAP] L1200, 새 판독 N07 → §4.4·§6.1 |
+| main @0x71001f3be0 | bq::MinigameModeWork::Mgm04AddMGIDHistory | [GAP][GAP] L1288, 새 판독 N08 → §4.4·§6.1 |
+| main @0x71001f3d50 | bq::MinigameModeWork::Mgm04IsPlayMGID | [GAP][GAP] L1371, 새 판독 N09 → §4.4·§6.1 |
+
+[판독] 새 본체의 하위 호출은 확장 시 HeapModule::Alloc/Free와 실패 helper뿐이다. Mgm02AddMgResult·Mgm04AddMGResult·Mgm04AddMGIDHistory가 payload 복사/추가와 container pointer 갱신을 맡고, 나머지6함수는 getter/조회다. 하위 helper를 새 판독하거나 추가 추출하지 않았다. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP].
+
+### 4.4 MinigameModeWork의 mgm02·mgm04 전용 필드와9계약
+
+[판독] 아래 offset은 모두 MinigameModeWork view의 this 기준이다. WorkModule 절대 offset·GameWork·PlayerWork·generic GameModeWork buffer의 offset으로 바꾸지 않는다. embedded view는 기존 main @0x710029e980의 §11.5 판독을 재사용한다. [GAP][GAP]·[§11.5](18_scene_work.md#115-장면-스택과-embedded-work의-최신-근거).
+
+| API·offset [판독] | 핵심 계약·읽기/쓰기 소유자 | 근거·남는 공백 |
+|---|---|---|
+| Mgm02AddMgResult: +0x830 begin/+0x838 end/+0x840 capacity | 입력 MGM02_MG_RESULT const&의0x24 B 전체를 끝에 복사한다. 공간 부족이면 새 영역에 기존 순서를 유지해 복사하고 pointer3개를 갱신한 뒤 이전 영역을 Free한다. 결과 payload/container writer는 이 메서드 | main @0x71001f3120 [GAP][GAP]. record 내부 필드 의미·초기화/최종 파괴 caller는 미확정 |
+| Mgm02GetTotalCoinCount: +0x85c+4*Order | 인자가 unsigned 비교로0~3이면 raw4 B 반환, 그 밖은 비복귀 실패 경로다. getter가 누적값을 계산하거나 쓰지는 않는다 | main @0x71001f3370 [GAP][GAP].4칸 누적 writer와 인자 전달은 이번9밖 |
+| Mgm02GetTotalLeviedCoinCount: +0x86c/+0x870/+0x874/+0x878 | 4개의 s32를 더해 int 반환한다. 결과 배열이나 totalCoin4칸을 순회/변경하지 않는다 | main @0x71001f3470 [GAP][GAP]. 각 징수칸 writer·범위는 이번9밖 |
+| Mgm02IsPlayedMgId: +0x880 begin/+0x888 end | int ID4 B 배열의 반열린 범위를 선형 검색한다. 일치 true, 빈 배열/미일치 false. 쓰기·추가·capacity 접근은 없다 | main @0x71001f35d0 [GAP][GAP]. 이력 writer/reset과 capacity offset은 미확정 |
+| Mgm04GetTargetVictoryCount: +0x8d0 | raw4 B 목표 승수 getter. 이 함수에는 검증·기본값·쓰기가 없다 | main @0x71001f396c [GAP][GAP]. setter·선택값 연결은 이번9밖 |
+| Mgm04GetTeamVitoryCount: +0x8d4/+0x8d8 | TeamID0→+0x8d4,1→+0x8d8,그 밖→0. raw4 B 반환이며 result 배열을 집계하지 않는다 | main @0x71001f3974 [GAP][GAP]. Vitory 철자 보존. 승수 writer/reset은 미확정 |
+| Mgm04AddMGResult: +0x8e8 begin/+0x8f0 end/+0x8f8 capacity | 두 bool 인자의 low bit가 모두0이면 무변경. 하나라도1이면8 B record 추가: low32=ID,bit32=param_2&1,bit40=param_3&1,나머지0. ID 유효범위 검사는 없다. 이 메서드는 결과 배열만 갱신 | main @0x71001f39e0 [GAP][GAP]. +0x8d4/+0x8d8 승수·ID이력은 증가하지 않음; 두 bool의 원본 팀 caller 연결은 별도 |
+| Mgm04AddMGIDHistory: +0x908 begin/+0x910 end/+0x918 capacity | int ID4 B 배열에서 같은 ID가 이미 있으면 무변경, 없으면 끝에1개 추가한다. 확장 시 기존 순서와 새 ID를 보존하고 이전 영역을 Free한다 | main @0x71001f3be0 [GAP][GAP]. 유일한 이력의 writer 계약은 확보, clear/최종 해제 수명은 미확정 |
+| Mgm04IsPlayMGID: +0x908 begin/+0x910 end | 같은 이력 배열을 선형 검색하며 일치 true, 빈 배열/미일치 false. 쓰기 없음 | main @0x71001f3d50 [GAP][GAP]. 이력과 결과 record 배열을 서로 대신 조회하지 않음 |
+
+[판독] mgm02 전용36 B 결과와 mgm04 전용8 B 결과는 동적 pointer container다. 공용100칸 ring(+0xc, stride0xc)과 레코드 크기·필드·주소가 다르며 이번9함수는 그 ring의 index/Round를 직접 갱신하지 않는다. main @0x71001f3120/@0x71001f39e0 [GAP][GAP], 공용 ring은 기존 main @0x71001f0460 [FREE §6.6][FREE] 재사용.
+
+[판독] 기존 모드 reader는 mgm02 record+0을 thumbnail ID로, +0x14/+0x18/+0x1c/+0x20의0 비교를 연속 보상 계산으로 사용한다. mgm04 reader는 record+0 ID<152를 거르고 +4/+5의bit0을 팀별 표시 승수로 누적한다. 이번 writer는 mgm02 전체36 B 복사와 mgm04 bit32/40 저장까지 확인했으며 이 reader C는 다시 읽지 않았다. mgmet @0x7100066610/@0x7100055370/@0x7100078e70 [MGM_MODES §4·§6.4][MGM_MODES], main @0x71001f3120/@0x71001f39e0 [GAP][GAP].
+
+### 5.1 Work9 상태·container 수명·SaveData 경계
+
+[판독] Mgm02AddMgResult와 Mgm04AddMGResult는 같은 record를 다시 넘겨도 추가하며 중복 검사·회차 증가·자동 코인/승수 반영을 하지 않는다. Mgm04AddMGIDHistory만 동일 ID의 재추가를 막는다. 결과 commit 중복 방지를 이력 메서드에 대신 맡길 근거는 없다. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP].
+
+[판독] 확장 경로는 HeapModule::Alloc(heap1,원소수×stride,alignment4)→새 record 저장→기존 record 역방향 복사→begin/end/capacity 교체→old begin이 null이 아니면 Free 순이다. 역방향 복사는 기존 순서를 보존한다. embedded MinigameModeWork는 이 pointer들을 담고 payload는 별도 할당된다. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP]; view의 parent는 기존 main @0x710029e980 [§11.5](18_scene_work.md#115-장면-스택과-embedded-work의-최신-근거).
+
+[미확정] 이9함수에는 최초 pointer 설치·모드 시작 clear·전체 종료 destructor·최종 payload Free caller가 없다. 기존 ResetMinigameModeWork의 제한된 reset 계약은 §5를 재사용하지만 새 container 모두가 언제 비워지는지는 확대 해석하지 않는다. main @0x71001efdc0 [WORKC][WORKC], 이번9의 allocation 경로는 main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP].
+
+[판독] 이번9의 직접 접근과 이름 있는 호출에는 SaveData mutator·SaveRequest·PlayerWork/GameWork write가 없다. 따라서 이번9의 결과/이력/누적 getter 계약과 SaveData 쓰기 권한은 별도다. main @0x71001f3120/@0x71001f3370/@0x71001f3470/@0x71001f35d0/@0x71001f396c/@0x71001f3974/@0x71001f39e0/@0x71001f3be0/@0x71001f3d50 [GAP][GAP]. [미확정] 상위 모드 commit/보상/저장 caller의 간접 효과가 없다는 뜻은 아니다. mgmet @0x7100055370·mgm02 @0x7100018cc0의 기존 보상/하이스코어 근거는 [MGM_MODES §6.4][MGM_MODES], Save 완료 경계는 [SAVE §2][SAVE]를 재사용한다.
+
+### 6.1 Work9 계산식·의사코드
+
+| 의사코드·계산 [판독] | 원본 계약·근거 |
+|---|---|
+| Mgm02AddMgResult: append(copyBytes(input,0x24)) | 남은 capacity면36 B 복사 후 end+=0x24. 꽉 찬 정상 vector의 n=(end−begin)/0x24, 새 capacity 원소수=max(n+1,2*n). main @0x71001f3120 [GAP][GAP] |
+| Mgm02GetTotalCoinCount(i): i<4 ? read4(this+0x85c+4*i) : fail | 비교는 unsigned이므로 음수 int의 unsigned 표현도 실패 분기다. 반환은4 B이며 이 getter만으로 signed 범위/포화 정책을 만들지 않는다. main @0x71001f3370 [GAP][GAP] |
+| Mgm02GetTotalLeviedCoinCount: s32[0x86c]+s32[0x870]+s32[0x874]+s32[0x878] | 네 정수칸 합. float/f32·새 코인 지급 계산을 하지 않는다. main @0x71001f3470 [GAP][GAP] |
+| Mgm02IsPlayedMgId(id): any(history880,id) | end888까지4 B씩 증가하며 int equality. 빈 범위 false. main @0x71001f35d0 [GAP][GAP] |
+| Mgm04AddMGResult(id,a,b): if ((a&1)\|(b&1)) append8(u64(id)\|((a&1)<<32)\|((b&1)<<40)) | a=b=0이면 append/allocate 없음. 둘 다1도 허용하며 ID는 uint32 입력 그대로다. 꽉 찬 정상 vector의 새 capacity=max(n+1,2*n). main @0x71001f39e0 [GAP][GAP] |
+| Mgm04AddMGIDHistory(id): if (!any(history908,id)) append4(id) | 순서 유지·중복 ID 무변경. capacity 부족이면 n=(end−begin)/4, c=(capacity−begin)/4, 새 capacity=max(n+1,2*c). main @0x71001f3be0 [GAP][GAP] |
+| Mgm04IsPlayMGID(id): any(history908,id) | end910까지4 B씩 증가하며 int equality. result8 배열을 찾지 않는다. main @0x71001f3d50 [GAP][GAP] |
+
+[판독] 위 capacity 식은 C의 pointer 차이·정수 상수 곱을 정상 vector의 원소수로 정리한 것이다. mgm02의 (end−begin)>>2는9*n이고, 이어 모듈러 상수 곱이 n+1/2*n을 만든다. 초대형 길이의 실패 helper와 allocation 실패의 상위 처리는 별도로 남긴다. main @0x71001f3120 [GAP][GAP]; mgm04 result/history의 원소수 식은 main @0x71001f39e0/@0x71001f3be0 [GAP][GAP].
+
+[설계] 원본 uint32 ID·bool low bit·int equality 계약을 웹에 옮기며 임의 clamp나 난수 소비를 추가하지 않는다. main @0x71001f3370/@0x71001f39e0 [GAP][GAP].
+
+### 9.5 Work9 웹 모듈·쓰기 권한
+
+[설계] import0의 game/lib 코어에는36 B opaque record 복사·8 B raw flag record·순서 유지 ID membership/추가·getter 계약을 둔다. app/common/work는 기존 WorkModule owner의 mode view에 연결하는 어댑터이며, app/scene/mode의 mgm02/mgm04 흐름이 위3 writer를 명시 호출한다. 앱은 dev를 부르지 않고 기존 고정1/60·주입 난수·FrameGate·f32 계약을 유지한다. [DESIGN §10.5][DESIGN], 원본 main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP].
+
+[설계] totalCoin/leviedCoin/targetVictory/teamVictory는 getter와 별도 writer 권한으로 둔다. AddMgResult/AddMGResult가 누적합이나 승수를 자동 증가시키는 구현은 원본 직접 경로와 맞지 않는다. 이력 writer와 result writer, 공용 ring commit writer, SaveData writer도 분리한다. main @0x71001f3370/@0x71001f3470/@0x71001f396c/@0x71001f3974/@0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP], 기존 ring main @0x71001f0460 [FREE §6.6][FREE]·[DESIGN §10.5][DESIGN].
+
+[설계] 브라우저 메모리의 네이티브 pointer/capacity 대신 원소 배열을 쓰는 것은 어댑터 구현 선택이며 미승인 추천이다. 원본 관찰 계약인 append 순서·payload 크기·무변경 분기·중복 허용/금지·reader 범위를 보존해야 한다. allocator의 개별 용량 증가 자체를 웹 게임 규칙으로 노출하지 않는다. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP]·[DESIGN §10.5][DESIGN].
+
+### 10.1 Work9 정적 검증 기대값
+
+[설계] 아래는 기존 C에서 도출한 입력/출력 대조 기준이며 원본 실행 결과가 아니다. 네이티브 allocation·실패 helper·SDK/저장 완료는 실행 확인하지 않았다. main9주소·심볼은 §2.3의 [GAP][GAP]·[FN][FN] 대응을 사용한다.
+
+| 입력·사전 상태 [설계] | 기대값·근거 |
+|---|---|
+| mgm02 결과2개에36 B 입력1개 추가 | 기존2개 bytes/순서 유지, 새 입력36 B가 마지막, 원소수3. 동일 입력 재호출도4개. 코인·이력·Round·공용 ring 직접 변경 없음. main @0x71001f3120 [GAP][GAP] |
+| totalCoin4칸=[10,20,30,40] | Order2→30; unsigned4/0xffffffff→실패 분기. 기록 배열에서 합을 재계산하지 않음. main @0x71001f3370 [GAP][GAP] |
+| levied4칸=[1,2,3,4] | 합10; [1,−2,3,−4]면−2이며 이 함수에0 clamp 없음. main @0x71001f3470 [GAP][GAP] |
+| mgm02 이력=[4,9] | ID9 true,8 false,빈 이력 false. result36에 ID8이 있어도 이력880에 없으면 false. main @0x71001f35d0 [GAP][GAP] |
+| target=7, team count=[3,5] | target getter7; TeamID0→3,1→5,2/−1→0. result 배열을 추가해도 이 getter 필드가 직접 바뀌지 않음. main @0x71001f396c/@0x71001f3974/@0x71001f39e0 [GAP][GAP] |
+| mgm04 ID10,a=false,b=false | result8의 원소수·begin/end/capacity 무변경. main @0x71001f39e0 [GAP][GAP] |
+| mgm04 ID10,a=true,b=true | packed u64=0x1010000000a를1개 추가, low32 ID10·bit32/40 모두1. teamCount/ID이력 직접 변경 없음. 동일 호출은 또 추가. main @0x71001f39e0 [GAP][GAP] |
+| mgm04 이력=[4,9]에9→7 순서 추가 |9 추가는무변경,7 추가 후[4,9,7]; lookup7 true·8 false. result8 추가와 이력 추가를 별도 호출해야 함. main @0x71001f3be0/@0x71001f3d50 [GAP][GAP] |
+| 꽉 찬 정상 result vector의 n=0/1/2 | 새 capacity 원소수1/2/4; stride는 mgm02 36 B·mgm04 8 B. ID이력은4 B. allocator 실패/극한 크기는 실행 기대값으로 확정하지 않음. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP] |
+
+### 11.8 Work9의 남는 공백5항목
+
+[데이터]9함수의 직접 계약/offset은 판독 완료다. 기존 U12항목의 해결1·부분9·진전없음2·열린11과 기존 미식별3묶음은 유지한다. 아래W01~W05는 이번 좁은 범위의 공백 묶음이며 U 집계나 숫자 주소 요청에 중복 합산하지 않는다. main9주소 [GAP][GAP]·기존 §11.6/C.1·[MGM_MODES C.1·C.4][MGM_MODES].
+
+| 공백 [미확정] | 확보한 근거·남은 범위 |
+|---|---|
+| W01 mgm02 record의 전체 의미 |36 B 복사와 기존 reader의 ID/4개 tail slot 사용은 확보. +4~+0x10 필드 의미·record 조립 caller·각 slot의 전체 enum은 미확정. main @0x71001f3120 [GAP][GAP]·mgmet @0x7100066610/@0x7100055370 [MGM_MODES §4·§6.4][MGM_MODES] |
+| W02 mgm02 누적/징수 writer |+0x85c..+0x868 totalCoin4칸, +0x86c..+0x878 levied4칸 getter만 확보. setter 전달·commit 순서·값 범위/overflow 정책은 이9함수 밖. main @0x71001f3370/@0x71001f3470 [GAP][GAP]·모드 계산 [MGM_MODES §6.4][MGM_MODES] |
+| W03 mgm02 ID이력 수명 |begin880/end888 조회는 확보. 이력 writer·capacity 위치·시작/reset의 clear 시점은 이번 C에 없음. main @0x71001f35d0 [GAP][GAP]·후보/재추첨 caller [MGM_MODES §6.4][MGM_MODES] |
+| W04 mgm04 목표/승수와 결과 입력 연결 |target8d0/team8d4·8d8 및 result8 writer/중복금지 history writer는 확보. target/team setter·reset과 두 bool을 만드는 팀 caller·승수 갱신 commit 순서는 별도. main @0x71001f396c/@0x71001f3974/@0x71001f39e0/@0x71001f3be0 [GAP][GAP]·결과 UI [MGM_MODES §3·§6][MGM_MODES] |
+| W05 container 전체 수명·상위 Save 효과 |확장 중 old payload Free는확보. 최초 설치/종료 destructor/reset 및 mode 복귀·net 종료에서 어떤 배열을 보존하는지는 미확정. 상위 Save/보상도 직접9계약과 구분. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP], 기존 reset main @0x71001efdc0 [WORKC][WORKC]·[SAVE §2][SAVE] |
+
+### 13.3 Work9 준비도
+
+| 준비도 [설계] | 이번9범위의 구현 가능/차단 경계 |
+|---|---|
+| 바로 가능 |9함수의 직접 offset·getter/범위 실패·payload 복사·flag packing·append 순서·history dedup/lookup 계약. main9주소는 §2.3 [GAP][GAP] |
+| 근사 필요 |네이티브 pointer/capacity를 브라우저 배열로 표현하는 메모리 어댑터는 미승인 추천. 게임 관찰값을 바꾸는 근사는 이번9계약에 추가하지 않음. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [GAP][GAP]·[DESIGN §10.5][DESIGN] |
+| 판독 필요 |W01~W05의 조립/누적 writer·commit·reset/최종 해제·상위 저장. 기존 §13.2의6/4/8묶음은 전체 장면/Work 준비도 스냅샷이며9개 API를 완료했다고 전체 모드/수명을 완료로 바꾸지 않음. main9주소 [GAP][GAP]·[MGM_MODES C.1][MGM_MODES] |
+
+### B.3 이번 Work9 새 판독 대응·부모 공유
+
+[데이터] 새 판독 주소는 §2.3 N01~N09의9개 전부이며 기존55와 중복0,누계64(최초13+첫 후속5+docs_gap37+이번9)다. Work9 중 기존 판독 재사용 함수0,새 C 생성/추출0이다. 기존 공용 ring·embedded getter·mode reader·Reset·Save 판독은 주소와 기존 절로만 재사용했다. [GAP][GAP]·[FN][FN]·[INDEX][IX]·[MGM_MODES][MGM_MODES].
+
+[설계] 부모는 모드 작성자에게 §4.4의9행 계약/offset/owner와 §11.8의W01~W05를 공유한다. 이 갈래만9본체를 새 판독했고 모드·온라인 갈래는 이 문서의 절을 재사용한다. 기존 부록 A 및 부모 통합 줄은 보존하며, 다른 문서는 쓰지 않았다.
+
+### C.2 이번 Work9 추출 요청·통합 한 줄
+
+[데이터] C.4의9주소는 TSV·INDEX·C 본체가 모두 있으므로 새 Ghidra 요청0이다. 기존 C.1 고유24주소·미식별3묶음은 유지하며, W01~W05의 scope 밖 함수를 임의 주소로 요청/추출하지 않는다. [FN][FN]·[INDEX][IX]·[GAP][GAP].
+
+[설계] 부모 통합 대상은 web/docs/shell/mgm_modes.md 부록 C.4 끝의 정리본 링크 한 줄이다: `[판독] 공용 Work9함수의 계약·필드·공백은 [18_scene_work §4.4·11.8](../engine/18_scene_work.md#44-minigamemodework의-mgm02mgm04-전용-필드와9계약)에 정리했다.` 출처 원문/README/기존 통합 줄은 이 갈래에서 변경하지 않았다.
+
+[데이터] Work9 최종 정적 검증: CommonMark 링크618개·고유 목적지55개·참조 정의44개, 실제 경로/절/미정의 참조 오류0이다. 괄호 설명·배열 표기를 링크로 오인하지 않았고 docs_gap의 literal underscore를 보존한 heading slug로 확인했다. GFM 표의 escaped OR pipe도2/3열 구조를 유지한다. UTF-8(no BOM)·LF·후행 공백0, git diff --check 통과다.
+
+[데이터] 새9주소의 main TSV·INDEX·C 헤더9/9, 기존55와 중복0·누계64를 확인했다. 정상 vector의 mgm02 capacity 상수 곱과 mgm04 packed flag 예시는 정수식으로 정적 대조했으며 원본 실행/헤드리스/화면 촬영은 없다. 이번 미확정W5묶음·기존 열린U11·고유 요청24·주소 미식별3묶음은 서로 중복 합산하지 않는다.
+
+[데이터] 이번 시작의95,981 B는 부모 통합 링크를 포함한 기준이며 SHA-256 2adad46f3e26435d510a20e71f469170f8e541c2b74be47df4a9de2839207881과 대조해 전부 보존했다. 이전55,104 B 검증은 이전 시점 기록이다. 각 쓰기 직전 전체를 읽고 후속 내용만 추가했으며 현재 부모 index의 접두부도 보존했다. 자기 MD 외 파일·C·INDEX·SHARED·JSON·코드·스크립트 파일·에셋은 쓰지 않았고 git add/stage/commit/rm은 하지 않았다. 문자열 literal은 출력 시 마스킹했으며 키/로그/설정 파일은 읽지 않았다.

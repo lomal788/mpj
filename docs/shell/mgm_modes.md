@@ -57,7 +57,7 @@
 | 데일리 팩·조합·시간 | main @0x7100361e00/@0x7100362860/@0x7100362a10/@0x7100362bcc [DAILY-C]; mgmet @0x7100056e10/@0x7100056f40/@0x71000597a0 [MODE-H]; mgm03 @0x710000a440 [C03] | [미확정] 날짜 helper @0x71003628bc·파서2함수·DailytrialResultData의 스타 판정 |
 | MGList·모드/보드 추첨 | main @0x71001e14b0/@0x71001e15d4/@0x71001e1600/@0x71001e1630/@0x71001e1690 [GAP]; bd01 16함수 [BOARD-C]; mgm02/04/05/06 선택 [C02]·[C04]·[C05]·[C06] | [미확정] 런타임152행 초기화·JsonMgTeam 확률·C에서 빠진 RNG 상한 |
 | 누적·종료·보상 | mgm02 CoinMgr·RankMgr·Scene·기본 Params, mgm04 TeamMgr·Flow, mgm05 투표/룰렛·결과, mgm06 점수 합·MVP [C02]~[C06] | [미확정] 정적 테이블3개·보스 ID 배열·보상 callee·서바이벌 실력 포인트 식 |
-| 공용 Work·온라인·렌더 | [18_scene_work §11.4~11.6](../engine/18_scene_work.md#11-미확정)·[12_online_sync](../engine/12_online_sync.md)·[render_unify §3.4](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체) 재사용 | [미확정] 모드 고유 Work9함수는 C가 있으며18 담당이다. C.4에 판독 공유 요청만 남긴다. |
+| 공용 Work·온라인·렌더 | [18_scene_work §4.4·11.8·B.3][WORK9]·[12_online_sync](../engine/12_online_sync.md)·[render_unify §3.4](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체) 재사용 | [판독] Work9 직접 계약은 완료. 공용 재사용9·모드 새 판독 가산0. writer/reset/해제 잔여는 [W01~W05][WORK9-GAPS] |
 
 [데이터] mgm02 Params의 `mg_type_table_five_round/seven_round/ten_round`·`rank_coin_count`·`bonus_mg_coin_count_coef`·`battle_mg_levied_coin_count` 기본 생성값은 C에서 확보했다. 기존 extracted JSON에서 해당 override 필드를 찾지 못했다. 실제 override 부재는 증명하지 않았다. mgm02 @0x710001b0a8/@0x710001b33c [C02]·§4.2.
 
@@ -112,7 +112,7 @@
 
 [판독] 데일리 결과 UI는 DailytrialResultData의 IsGotStarBefore·IsWinLose·IsGetStar·GetRank를 읽어 이전 스타·이번 스타·순위를 표시한다. 이 함수는 스타 지급 산식의 writer가 아니다. [미확정] 승패형 게임과 rank형 게임의 별 지급·동점 처리·중복 지급 방지는 해당 Data의 Setup/SetupRandomMatch C가 필요하다. mgmet @0x710006c4e0 [callers], @0x71000083e0/@0x7100008ba4 [fnH].
 
-[판독] 태그 결과 UI는 ID<152인 결과의 record+4/+5 bit0을 집계하고 어느 팀이 목표 이상 또는 결과 소진이면 멈춘다. 10개 초과 결과는 스크롤하며 최대 시작 위치는count−10이다. mgmet @0x7100078e70/@0x7100085900 [callers]. 실제 종료도 >=target임은 mgm04 @0x7100015f70 [C04]에서 확인했다. [미확정] getter index 인자·Work record 물리 배치는18 추가 판독 참조다.
+[판독] 태그 결과 UI는 ID<152인 전용8 B 결과의 +4/+5 bit0을 집계하고 어느 팀이 목표 이상 또는 결과 소진이면 멈춘다. 10개 초과는 스크롤하며 최대 시작 위치count−10이다. mgmet @0x7100078e70/@0x7100085900 [callers]·main @0x71001f39e0 [WORK9]. 실제 종료 >=target은 mgm04 @0x7100015f70 [C04]. [미확정] getter index 인자·원본 팀에서 두 bool로 이어지는 인자는 W04 잔여다 [WORK9-GAPS].
 
 [판독] 태그 복귀 연출은 각 팀 승수==목표를 승리 모션/이름 선택에 사용한다. 로컬에서 승리 팀의 상대 승수가0이면 업적 ID0x45를 두 팀원에게 요청한다. 결과 UI 후 로컬 분기에서 WinContinuousCount·WinCount 보상 카운터를 호출하고 MGMRewardUiFlow → BGM 정지 → FadeOutWait 순서로 진행한다. mgmet @0x71000818e0 [callers]. [미확정] 카운터·보상량은 @0x71000864a0/@0x71000866fc [fnH] C가 없어 보류한다. UI의 >= 집계와 복귀 연출의 == 비교를 실제 모드 종료 비교로 합치지 않는다.
 
@@ -137,7 +137,7 @@
 | [판독] MinigameModeWork 결과 ring | Round+0·결과+0xc·100칸×0xc·ID/judge/raw byte4; SetMinigameResult 자체는 Round를 증가시키지 않음 | main @0x71001f0460/@0x71001f0440/@0x71001f2a80 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring)·[공용 소유권 §4.3](../engine/18_scene_work.md#43-gameworkminigamemodeworksyncminigamework) |
 | [데이터] GameRule 최신 대응 | VS4=0·2VS2=1·1VS3=2·1VS1=3·Chara=7·Item=8·Boss=9·Rhythm=10·Busters=11·Athlon=12·AthlonSP=13 | main의 `main.decomp.bin`에 기재된 offset 0x19d8390~0x19d8740 [한 판 §12.1](minigame_scene.md#121-추가-판독-구현에-필요해서-이번에-읽은-것); 구 문서의 Chara8/Athlon13 추정을 대입하지 않음 |
 | [데이터] MGList JSON 필드 | `Name/GameRule/Available/Coin/Gyro/BD01Normal/BD01Serious` | [ND]·[CA] `mgList[]`; 파일 행의 데이터이며 런타임 숫자 ID는 부여하지 않음 |
-| [미확정] 모드 고유 Work | mgm02 결과/코인/이력·mgm04 승수/이력 API9함수의 C는 [GAP]에 있음 | main @0x71001f3120/@0x71001f3370/@0x71001f3470/@0x71001f35d0/@0x71001f396c/@0x71001f3974/@0x71001f39e0/@0x71001f3be0/@0x71001f3d50;18담당 판독 공유는C.4. 이번 재판독0 |
+| [판독] 모드 고유 Work | mgm02 전용36 B 결과·total/levied4칸·ID이력, mgm04 전용8 B 결과·target/승수·유일한ID이력 | main9주소의 직접 계약은 [18 §4.4][WORK9] 재사용9. 결과추가가 코인·승수·이력을 자동 갱신하지 않음; 잔여는 [W01~W05][WORK9-GAPS] |
 
 [판독] 승·패·무는 1/0/2다. 프리 플레이의 history 승점은 raw byte와 `(judge!=0)` 비교이며 코인 수·게임 rank·MVP 점수의 대체물이 아니다. main @0x71002f0ba0/@0x71002f4840/@0x71002f4a30 [결과 §6.1](minigame_result.md#61-패턴-고르기-fun_71002ee230), @0x71001f2a80 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring).
 
@@ -148,7 +148,7 @@
 | 데일리 로드 레코드 | mgpack 입력 stride0x5c → 런타임 레코드0x68. MGList::GetMinigameID로 이름3개를 해석해 추가 ID3개를 저장 | main @0x7100361e00 [DAILY-C]. 숫자 ID 값/매핑은 기록하지 않음 |
 | 데일리 조합 | packcombo 입력·런타임 값은 s32×3, 0xc. 로더는 mgpack/packcombo 파싱 둘 다 성공해야 진행 | main @0x7100361e00 [DAILY-C]; 파서 @0x7100362300/@0x71003624e0 [fnMain] C 없음 |
 | 팩 저장 목록 | Scene+0x110/0x118 begin/end, 조합 목록+0x128/0x130. 각 목록의 smart pointer 항목 stride0x10 | main @0x7100362860/@0x7100362bcc [DAILY-C]. 공용 SceneBase/Work 수명 해석은 [18 §4·5](../engine/18_scene_work.md#5-상태수명) 재사용 |
-| 챌린지 결과 reader | Mgm02GetMgResult 반환 record[0]은 thumbnail ID로 사용. record[5+Order]의 s32를 표시용으로 읽음 | mgmet @0x7100066610 [callers]; main getter @0x71001f32cc [fnMain] C 없음. 전체 record 구조·코인 writer 의미는 미확정 |
+| 챌린지 결과 reader | Mgm02GetMgResult 반환 record[0]은 thumbnail ID로 사용. record[5+Order]의 s32를 표시용으로 읽음 | mgmet @0x7100066610 [callers]; main getter @0x71001f32cc [fnMain] C 없음. record36 B 크기는 main @0x71001f3120 [WORK9]로 확정; +4~+0x10 의미·조립/누적 writer는 W01/W02 잔여 [WORK9-GAPS] |
 | 태그 결과 reader | ID s32 @+0, 두 팀 집계용 bit0 @+4/+5. TeamData reader는 팀당 stride0xc, 팀원 Order는 +4/+8 | mgmet @0x7100078e70/@0x71000818e0 [callers]. getter 반환 영역의 관찰이며 Work 물리 offset을 부여하지 않음 |
 
 ### 4.2 추가 C 판독: 고유 필드·기본 상수
@@ -166,6 +166,26 @@
 | 보스 course 결과 | 네 점수 +0x50..5c·네 rank +0x60..6c·정렬 playerID +0x70..7c. ScoreTable DAT @0x7100049a30 | mgm06 @0x710002329c [C06]. 점수 테이블 값·정렬 동률 표시 순서는 미확정 |
 
 [판독] Name→ID는 FNV-1a32 hash를 계산해 152행의 +0x14와 비교하고 첫 일치 index를 반환한다. 문자열 재검증은 이 getter에 없으며 미일치는0xffffffff다. JSON122행 순서로 ID를 만들지 않는다. main @0x71001e14b0 [GAP].
+
+### 4.3 공용 재사용9: 모드 전용 Work 직접 계약
+
+[판독] 아래 offset은 MinigameModeWork view의 this 기준이다. 공용100칸 ring(+0xc, stride0xc)과 mgm02/04 전용 배열은 별도다. 이 갈래는 C를 다시 읽지 않고18의9계약을 재사용한다. main @0x71001f3120/@0x71001f39e0, [18 §4.4][WORK9]·[새 판독 대응 B.3][WORK9-NEW]; 공용 ring은 main @0x71001f0460 [18 §4.3](../engine/18_scene_work.md#43-gameworkminigamemodeworksyncminigamework).
+
+| API [판독] | 확정된 필드·직접 효과 | 원본 주소·재사용 출처 |
+|---|---|---|
+| Mgm02AddMgResult | +0x830/838/840 begin/end/capacity에36 B record 전체 복사. 확장 시 순서 보존·이전 영역 Free | main @0x71001f3120 [WORK9] |
+| Mgm02GetTotalCoinCount | +0x85c+4×Order의 raw4 B 반환. unsigned Order0~3,그 밖 비복귀 실패. 계산/쓰기 없음 | main @0x71001f3370 [WORK9] |
+| Mgm02GetTotalLeviedCoinCount | +0x86c/870/874/878의 s32합 반환. 결과/totalCoin을 변경하지 않음 | main @0x71001f3470 [WORK9] |
+| Mgm02IsPlayedMgId | +0x880/888의 int ID 반열린 배열 선형검색. 빈/미일치false,쓰기 없음 | main @0x71001f35d0 [WORK9] |
+| Mgm04GetTargetVictoryCount | +0x8d0 raw4 B 반환. 검증·기본값·쓰기 없음 | main @0x71001f396c [WORK9] |
+| Mgm04GetTeamVitoryCount | TeamID0→+0x8d4,1→+0x8d8,그 밖0. result를 집계하지 않음 | main @0x71001f3974 [WORK9] |
+| Mgm04AddMGResult | +0x8e8/8f0/8f8에8 B record 추가. 두 bool low bit가 모두0이면 무변경; 하나라도1이면 ID+0·low bit+4/+5·그 밖0. ID범위검사 없음 | main @0x71001f39e0 [WORK9] |
+| Mgm04AddMGIDHistory | +0x908/910/918의 int ID 배열. 중복이면 무변경,새ID만끝에추가. 확장 시 이전 영역 Free | main @0x71001f3be0 [WORK9] |
+| Mgm04IsPlayMGID | 같은 +0x908/910 ID배열 선형검색. 빈/미일치false,쓰기 없음 | main @0x71001f3d50 [WORK9] |
+
+[판독] Mgm02AddMgResult는 결과 복사만, Mgm04AddMGResult는 결과 추가만 수행한다. 이 호출 자체는 누적코인·징수칸·팀승수·ID이력·Round·공용ring index를 갱신하지 않는다. main @0x71001f3120/@0x71001f39e0 [WORK9]. 특히 양팀 bool0은 전용 결과 기록도 추가하지 않으므로 결과개수=실행회수로 설계하지 않는다.
+
+[미확정] 직접9계약은 닫았지만 W01=mgm02 record+4~+0x10 의미/조립, W02=누적·징수 setter/commit, W03=mgm02 이력 writer/reset, W04=태그 target/승수 setter/reset·bool 연결, W05=최초/최종 container 수명·상위 Save효과는 남는다. [18 §11.8][WORK9-GAPS]의5묶음을 그대로 재사용하며 기존 U12묶음이나 Ghidra주소 수에 중복 합산하지 않는다.
 
 ## 5. 상태·수명
 
@@ -229,7 +249,7 @@ index = injectedSyncRandRange(0, len(ordered))
 
 ### 6.3 후속 판독: 결과 집계의 범위
 
-[판독] 태그 결과 표시의 승수는 각 결과 byte의 bit0 누적이다. 원본 WinLose1/0/2 규칙을 이 전용 레코드의 전체 형식으로 단정하지 않는다. 공용 Work 필드 판독은18에 맡겼기 때문이다. 아래는 reader에서 확인한 비교만 재현하는 의사코드다. mgmet @0x7100078e70 [callers]; main Mgm04AddMGResult @0x71001f39e0 [fnMain].
+[판독] 태그 전용 결과는8 B이고 +4/+5의 bool low bit를 표시 승수로 집계한다. 공용 WinLose1/0/2나100칸 ring으로 대신하지 않는다. 아래는 기존 reader 비교를 재현한다. mgmet @0x7100078e70 [callers]·main Mgm04AddMGResult @0x71001f39e0 [WORK9]. 두 bool의 원본 팀 caller 연결은 W04 [WORK9-GAPS].
 
 ```text
 [판독] 승수 = [0, 0]; 표시개수 = 0
@@ -264,7 +284,7 @@ index = injectedSyncRandRange(0, len(ordered))
 | 기록·최종 보상 | 각 결과 record+0x14/+0x18/+0x1c/+0x20==0의 최장 연속 길이→CharaMgBattleMgStreak; count/rank→CharaMgBattleRank | mgmet @0x7100055370 [MODE-H]. 실제 지급 수량은 main @0x7100231788/@0x71002318b8 C 없음 |
 | 하이스코어 | 로컬 operation player 저장 +4/+8/+0xc를 tableKind0/1/2로 고르고 현재 최장 연속이 더 클 때 SaveRequest; RM 별도 | mgm02 @0x7100018cc0 [C02]. 저장 완료는 실행 확인 없음 |
 
-[판독] CoinMgr::ExistsGotCoinPlayer는 네 지급 중 양수 존재를 검사한다. 지급자가 없으면 ResultFlow가5초 기다리는 경로를 탄다. mgm02 @0x7100004960/@0x7100018300 [C02]. [미확정] 누적 total을 Work에 쓰는 실제 setter 전달값과 전용 record 배치는18의 추가 판독 대상으로 남긴다.
+[판독] CoinMgr::ExistsGotCoinPlayer는 네 지급 중 양수 존재를 검사한다. 지급자가 없으면 ResultFlow가5초 기다리는 경로를 탄다. mgm02 @0x7100004960/@0x7100018300 [C02]. [미확정] 전용36 B 배열 배치는 main @0x71001f3120 [WORK9]로 확정했다. record 조립 의미·누적 setter 전달값/commit은 W01/W02 [WORK9-GAPS] 잔여다.
 
 ### 6.5 추가 C 판독: 보드 후보·인원 형태·난수
 
@@ -341,6 +361,8 @@ index = injectedSyncRandRange(0, len(ordered))
 | 보스 Versus RT 재사용 | RT 참조 flow+0x10/+0x18 저장·color/depth attachment·clear setter 호출 | mgm06 @0x7100012cf0 [render_unify §3.4·5·11](../engine/render_unify.md#34-mgm06-별도-rt와-레이어-상태-교체). bool·치수·layer 번호 인자 누락; 재판독0 |
 | 카메라·공용 UI | 공용 결과 무대·렌더·Work 계약을 담당 문서에서 재사용 | main @0x71002ee230 [minigame_result §12](minigame_result.md#12-웹-구현-계약--3d-결과-무대-2026-10-09-mg-result3d)·[18_scene_work §5](../engine/18_scene_work.md#5-상태수명)·[render_unify §5](../engine/render_unify.md#5-상태수명) |
 
+→ 정리본: [render_unify.md](../engine/render_unify.md) §3.4·§5·§11
+[판독][설계] 신규 모드 결과표의 원본 부품·칸 조합 정리: [../engine/ui_parts_catalog.md](../engine/ui_parts_catalog.md).
 ## 8. 상호작용
 
 ### 8.1 모집단·인원 형태·체감
@@ -522,7 +544,7 @@ index = injectedSyncRandRange(0, len(ordered))
 | 제품 서비스 | `app/common`에서 장면 요청·입력·소리·에셋·저장을 연결한다. 실제로 공유하는 기능만 올린다. | [DESIGN §10.2·10.3][design] |
 | 진입 화면·모드 | 광장/항구는 `app/scene/world`의 각 단위, 설정은 `app/scene/menu`, mgm02~06은 `app/scene/mode/<단위>`, 시스템은 `app/scene/system`. 원본 모듈별 폴더 하나. | [DESIGN §10.1·10.2][design] |
 | 게임·한 판·계열 | `app/minigame/{frame,kit,mg####}`. 모드는 ID로 장면을 요청한다. 모드/게임끼리 직접 import하지 않는다. | main @0x71003601ac [프리 플레이 §3.2](mgm01_freeplay.md#32-한-판-호출과-돌아온-뒤), [DESIGN §10.3·10.5][design] |
-| Work 계약 | 모드는 자신의 규칙·라운드·누적 결과를 쓴다. 한 판 틀이 setup/result를 중개한다. 결과 backing은 work.mode.results 하나이며 work.game 노출은 readonly facade로 연결하는 미승인 추천이다. | [DESIGN §10.5][design]·[공용 계약 §9.3](../engine/18_scene_work.md#93-쓰기-권한), 원본 소유 main @0x71001f0460 [프리 플레이 §6.6](mgm01_freeplay.md#66-승패-표100판-ring) |
+| Work 계약 | 공용ring backing은 work.mode.results 하나·GameWork readonly facade. mgm02 전용 challengeResults(36 B)·코인/징수/이력과 mgm04 tagResults(8 B)·target/승수/이력은 별도이며 append와 누적갱신을 나눈다. | [DESIGN §10.5][design]·[18 §4.4][WORK9]. 원본 main @0x71001f3120/@0x71001f39e0; 웹 필드명은 미승인 추천 |
 | 결정적 스텝 | 고정 1/60·주입 난수·FrameGate·원본 계산 단계별 f32. Math.random/벽시계로 규칙을 판정하지 않는다. | [DESIGN §3·10][design], [한 판 §12.12.6](minigame_scene.md#12126-결정성-규칙-2026-10-09-사용자-결정--게임-계약), main @0x7100189438 [코어 §6.6](../engine/01_core.md#66-난수-알고리즘-판독-디스어셈블리-core_b3c-1578행) |
 | 개발 분리 | seed·추첨 trace·비교 fixture는 `dev`. app은 dev를 호출하지 않는다. 이번 작업은 문서만 작성한다. | [DESIGN §10.1][design] |
 
@@ -572,15 +594,17 @@ index = injectedSyncRandRange(0, len(ordered))
 | 보스 rank/MVP | 총점[9,9,5,2]→rank[0,0,2,3]·MVP2명; 전원동점→4명 | mgm06 @0x7100011ba0/@0x710001e5e0 [C06]. 점수표를 주입한 기대 |
 | 데일리 경계 | 남은시간00:00:00에서 A도눌림→A선택검사가 우선 | mgmet @0x7100056f40 [MODE-H] |
 
+[설계] 공용 재사용9의 기대값: Mgm02AddMgResult는 결과36 B 하나만 추가하고 코인/징수/이력은 그대로다. Mgm04AddMGResult의(bool0,bool0)는 전용결과·승수·이력 모두변경0이며(bool1,bool0)는8 B 결과만추가한다. 동일ID의 Mgm04AddMGIDHistory 두번째호출은추가0이다. main @0x71001f3120/@0x71001f39e0/@0x71001f3be0 [WORK9]. 원본 실행값이 아닌 직접계약 기대다.
+
 ## 11. 미확정
 
 | 번호 [미확정] | 남은 쟁점 | 판정 [설계] | 해결한 범위·남은 근거 |
 |---|---|---|---|
 | U01 | 최대 Round 실제 표·SetRound 값 | 부분 해결 | Bonus/Battle이N회 안에 포함됨·종료 비교 확인. mgm02 @0x7100017728/@0x7100017008 [C02]; DAT @0x710005036c 내용·SetRound 누락 |
-| U02 | 추첨 상한·Params override·전체 소비열 | 부분 해결 | Rule7·체감·이력소진Clear·type기본표 확인. mgm02 @0x710000f0b0/@0x710000f030/@0x710001b33c [C02]. RNG 상한 인자·override 미식별 |
-| U03 | 배틀 rank0비율·Work writer 값·실제 보상량 | 부분 해결 | 기본10/3/2/0·×2·징수10·잔액보정·dense rank·최장연속 확인. mgm02 @0x71000049c0/@0x71000042d0/@0x7100013200 [C02]; DAT @0x710004e3c0·main 보상2callee 남음 |
+| U02 | 추첨 상한·Params override·이력 writer/reset·전체 소비열 | 부분 해결 | Rule7·체감·type 기본표/재추첨 caller는확정. mgm02 @0x710000f0b0/@0x710000f030 [C02]; Played검색의+0x880/888 직접 계약은 main @0x71001f35d0 [WORK9]. writer/reset은W03 [WORK9-GAPS], RNG 상한·override는잔여 |
+| U03 | 배틀 rank0비율·record 조립/누적 writer·실제 보상량 | 부분 해결 | 기본코인·징수·dense rank와36 B append/코인getter는확정. mgm02 @0x71000049c0 [C02]·main @0x71001f3120/@0x71001f3370 [WORK9]. 전체 record·setter/commit은 W01/W02 [WORK9-GAPS]; DAT·보상callee 잔여 |
 | U04 | 날짜 기준·reset·스타/동률·중복/저장 보상 | 부분 해결 | 40조합·팩fallback·시간경계·팩내고정순서·업적합계 확인. main @0x7100362bcc [DAILY-C]·mgmet @0x7100056f40/@0x71000597a0 [MODE-H]. 날짜 helper·DailytrialResultData·Reward C 없음 |
-| U05 | 태그 Work 이력 형식·RM 연승·보상량·룰렛RNG 상한 | 부분 해결 | Rule1후보·뒤처진팀선택·양팀승리+1·>=target종료·이력해제 확인. mgm04 @0x710000d860/@0x710001ce70/@0x7100015f70 [C04]. Work9주소는18담당, 카운터2callee C 없음 |
+| U05 | 태그 target/승수 writer·bool 연결·RM/보상·RNG상한 | 부분 해결 | 후보·선택권·종료와8 B append·유일ID이력/조회는확정. mgm04 @0x710000d860/@0x7100015f70 [C04]·main @0x71001f39e0/@0x71001f3be0 [WORK9]. W04/W05 [WORK9-GAPS]와RM/카운터 잔여 |
 | U06 | 서바이벌 동시 인원·듀얼 기준·실력포인트식 | 부분 해결 | VS4/duel후보·전원일치/네표룰렛·5중4·재매칭경계 확인. mgm05 @0x710000fb40/@0x7100018690/@0x710000c210 [C05]. setup의 누락 Round값·포인트 callee 미식별 |
 | U07 | 보스 슬롯별ID·ScoreTable·동률표시순서·보상량 | 부분 해결 | 고정5슬롯·전원WinLose1·competition rank·rank0전체MVP 확인. mgm06 @0x7100011610/@0x7100011ed0/@0x7100011ba0/@0x710001e5e0 [C06]; DAT @0x7100049a30·pointer @0x7100057d98 |
 | U08 | 보드 JsonMgTeam 가중치·그 RNG·history commit | 부분 해결 | 최소playcount·last/gyro/tired·후보완화·표시추가RNG·색별팀분기 확인. bd01 @0x71000b09f0/@0x710028b7f0/@0x710028cb00 [BOARD-C]; @0x71000690e0/@0x710028a260 C 없음 |
@@ -607,9 +631,9 @@ index = injectedSyncRandRange(0, len(ordered))
 
 | 판정 [설계] | 바로 쓸 수 있는 것 / 남은 조건 | 근거 |
 |---|---|---|
-| 바로 가능 | 112종 대응·인원형태·체감·모드 모집단; 원본모드 진행/종료 비교; mgm02 기본코인/유형표·이력·dense rank; 보드 최소횟수선택; 투표일치/룰렛; 보스5슬롯·competition rank | §3~8·§10, mgm02 @0x710001b33c [C02]·bd01 @0x71000b09f0 [BOARD-C]·mgm05 @0x7100018690 [C05]·mgm06 @0x7100011ba0 [C06] |
+| 바로 가능 | 112종 대응·인원형태·체감·모드 모집단; 원본모드 진행/종료 비교; mgm02 기본코인/유형표·이력·dense rank; 보드 최소횟수선택; 투표일치/룰렛; 보스5슬롯·competition rank; Work9의전용배열/조회/중복금지계약 | §4.3·[18 §4.4][WORK9]·§3~8·§10, mgm02 @0x710001b33c [C02]·bd01 @0x71000b09f0 [BOARD-C]·mgm05 @0x7100018690 [C05]·mgm06 @0x7100011ba0 [C06] |
 | 근사 필요 | 부분집합 축소·원본기본값 적용·임의N 유형표·연속 중복 회피·애니완료 신호 | §6.1·§9·§12. 사용자 미승인 추천; 원본 RNG 소비/게임열과 동등하지 않음 |
-| 판독 필요 | 배틀rank0비율·최대회차 표·보스ID/점수표·누락setter/RNG 상한·runtime초기화·Daily스타·보드팀가중치·실력포인트·보상량 | §11·부록C. 이미 확보한 mode본체를 다시 추출 요청하지 않음 |
+| 판독 필요 | 배틀rank0비율·최대회차 표·보스ID/점수표·W01~W05의record/setter/reset/해제·RNG 상한·runtime초기화·Daily스타·보드팀가중치·실력포인트·보상량 | §11·부록C·[W01~W05][WORK9-GAPS]. 이미 확보한 mode본체/공유9함수는 다시 추출 요청하지 않음 |
 | 현재 등록 제한 | mg1801 Rhythm1종. 원본 mgm02 Chara 교집합0으로 시작 차단. 최소1종 Chara의 입력/팀/결과 이식이선행 | [registry] GAMES·[ND]/[CA] `GameRule`·mgm02 @0x710000f0b0 [C02]·§9.1 |
 
 ## 부록 A. 출처 대응
@@ -785,9 +809,11 @@ index = injectedSyncRandRange(0, len(ordered))
 
 | mgm04 | 0x710001ed50 | `mgm04::UIMgRoulette::Update` | [C04]; 후보 표시·사전 난수2호출·f32 대기 논리; 문자열 마스킹 판독 |
 
+[판독] 후속 Work9는 [18 B.3][WORK9-NEW]의 기존 판독을 재사용했다. 공용 재사용9·모드 새 판독 추가0·누적148 유지. C 본체를 다시 읽지 않았다. main9주소의 대응은 §4.3/C.4.
+
 ## 부록 C. Ghidra 요청 표
 
-[미확정] 새 C 확보 뒤 본체가 있는102개 요청은 제거했다. 남은 함수33개는 module별 TSV 심볼·허용 C 헤더를 대조했다. 정적 데이터4주소·미식별3갈래·18담당 C존재9함수는 별도다. 요청 기록만 남겼으며 Ghidra·추출·원본실행0이다. [INDEX][idx]·[fnMain]·[fnH]·[fnBD].
+[미확정] 새 C 확보 뒤 본체가 있는102개 요청은 제거했다. 남은 함수33개는 module별 TSV 심볼·허용 C 헤더를 대조했다. 정적 데이터4주소·미식별3갈래·완료된 공용 재사용9함수는 별도다. 요청 기록만 남겼으며 Ghidra·추출·원본실행0이다. [INDEX][idx]·[fnMain]·[fnH]·[fnBD].
 
 ### C.1 본체 C 없는 함수33개
 
@@ -848,33 +874,34 @@ index = injectedSyncRandRange(0, len(ordered))
 
 ### C.3 우선 확인할 남은 공백
 
-[설계] 가장 가까운 mgm02의 Scene/MgMgr/CoinMgr/기본 Params 본체는 확보·판독 완료다. 첫 구현 전 우선 확인은 최대회차 DAT @0x710005036c·배틀 rank0비율 DAT @0x710004e3c0·실제 override 및 빠진 RNG/SetRound 인자다. 공용 기록/rank7함수는18의 공유 판독을 기다린다. mgm02 @0x7100017008/@0x71000049c0/@0x7100017408 [C02]·C.1~C.2.
+[설계] 가장 가까운 mgm02의 Scene/MgMgr/CoinMgr/기본 Params 본체는 확보·판독 완료다. 첫 구현 전 우선 확인은 최대회차 DAT @0x710005036c·배틀 rank0비율 DAT @0x710004e3c0·실제 override 및 빠진 RNG/SetRound 인자다. Work9 기록/조회는 §4.3에서 닫았다. 별도 C없는 getter/setter7주소는 C.1의 기존 요청으로 유지하며 대기 상태와 구분한다. mgm02 @0x7100017008/@0x71000049c0/@0x7100017408 [C02]·C.1~C.2.
 
 [설계] 다른 모드의 우선 공백은 데일리 day helper main @0x71003628bc·Data Setup mgmet @0x71000083e0, 보드 JsonMgTeam bd01 @0x71000690e0, 보스 ID/ScoreTable 위2주소다. 태그·서바이벌의 기본 진행/투표 판독은 이미 가능하며 실력포인트·온라인 결과는별도다. [fnMain]·[fnH]·[fnBD]·[C05]·[C06].
 
-### C.4 C가 있는 공용 Work9함수 —18 공유 요청
+### C.4 공용 Work9 재사용 완료 — 추가 판독·추출 요청0
 
-| 모듈 [데이터] | 주소 | 심볼 | 담당·근거 |
+| 모듈 [판독] | 주소 | 심볼 | 완료 근거·재사용 |
 |---|---|---|---|
-| main | 0x71001f3120 | `bq::MinigameModeWork::Mgm02AddMgResult` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f3370 | `bq::MinigameModeWork::Mgm02GetTotalCoinCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f3470 | `bq::MinigameModeWork::Mgm02GetTotalLeviedCoinCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f35d0 | `bq::MinigameModeWork::Mgm02IsPlayedMgId` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f396c | `bq::MinigameModeWork::Mgm04GetTargetVictoryCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f3974 | `bq::MinigameModeWork::Mgm04GetTeamVitoryCount` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f39e0 | `bq::MinigameModeWork::Mgm04AddMGResult` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f3be0 | `bq::MinigameModeWork::Mgm04AddMGIDHistory` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
-| main | 0x71001f3d50 | `bq::MinigameModeWork::Mgm04IsPlayMGID` | [GAP] C 있음·18담당. 이번 새 판독0·추출 요청0 |
+| main | 0x71001f3120 | `bq::MinigameModeWork::Mgm02AddMgResult` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f3370 | `bq::MinigameModeWork::Mgm02GetTotalCoinCount` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f3470 | `bq::MinigameModeWork::Mgm02GetTotalLeviedCoinCount` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f35d0 | `bq::MinigameModeWork::Mgm02IsPlayedMgId` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f396c | `bq::MinigameModeWork::Mgm04GetTargetVictoryCount` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f3974 | `bq::MinigameModeWork::Mgm04GetTeamVitoryCount` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f39e0 | `bq::MinigameModeWork::Mgm04AddMGResult` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f3be0 | `bq::MinigameModeWork::Mgm04AddMGIDHistory` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
+| main | 0x71001f3d50 | `bq::MinigameModeWork::Mgm04IsPlayMGID` | [18 §4.4][WORK9] 직접 계약 완료. 공용 재사용·모드 새 판독 가산0 |
 
-[설계] 모드 고유 필드 의미는 이 문서의 caller에 필요하지만 공용 소유권·물리 배치는18의 같은 출처를 인용한다. 부모가18의 해당 절을 공유하면 그 링크로 정리할 수 있다. 이번에는 새 필드offset을 추측하지 않았다. [18_scene_work §11](../engine/18_scene_work.md#11-미확정)·[GAP].
+[판독] 공유 대기 상태를 닫았다. main9함수의 직접 계약/offset은 §4.3·[18 §4.4][WORK9]에서 확정이며 이 문서의 새 판독148에 중복 가산하지 않는다. W01~W05의 writer/reset/해제 잔여는 [18 §11.8][WORK9-GAPS]에 남는다. [판독 대응 B.3][WORK9-NEW].
 
+[판독] 공용 Work9함수의 계약·필드·공백은 [18_scene_work §4.4·11.8](../engine/18_scene_work.md#44-minigamemodework의-mgm02mgm04-전용-필드와9계약)에 정리했다.
 ## 부록 D. 검증·부모 통합
 
-[데이터] 최종 정적 검증 범위: §1~13·부록A~D, 새 판독148함수(최초8+추가140), 미확정12묶음=부분11/남음1, 중복제거요청37주소=함수33+데이터4·미식별3갈래. C가 있는공용9함수는18 공유 목록으로 분리. 새 C·추출·분석스크립트0. [INDEX][idx]·부록B/C.
+[데이터] 최종 정적 검증 범위: §1~13·부록A~D, 새 판독148함수(최초8+추가140), 미확정12묶음=부분11/남음1, 중복제거요청37주소=함수33+데이터4·미식별3갈래. 공용 재사용9함수는 §4.3/C.4에서 완료로 분리. 새 C·추출·분석스크립트0. [INDEX][idx]·부록B/C.
 
-[데이터] 최종 링크 검증: 인라인·참조식 링크875회, 실제 로컬 대상52개, 고유 fragment35개, 출처 통합6줄. 없는 파일·없는 anchor·의도된 참조 미정의·표 열 수 오류0. 인접 확실성 태그6쌍과 코드/괄호 설명은 링크 오류 오검출에서 제외했다. UTF-8·BOM 없음·LF·줄 끝 공백0. [이 문서](mgm_modes.md).
+[데이터] 최종 링크 검증: 인라인·참조식 링크910회, 실제 로컬 대상52개, 고유 fragment37개, 출처 통합6줄. 없는 파일·없는 anchor·의도된 참조 미정의·표 열 수 오류0. 인접 확실성 태그6쌍과 코드/괄호 설명은 링크 오류 오검출에서 제외했다. UTF-8·BOM 없음·LF·줄 끝 공백0. [이 문서](mgm_modes.md).
 
-[데이터] 새 판독148개는 각각 모듈 TSV·지정 C 헤더와 일치하고 중복0이다. catalog 대응112행·체감25·팩49·서바이벌26·함수요청33·데이터요청4·미식별3을 메모리에서 검증했다. 기존 보유 C 요청102개 제거·공용 C존재9함수 공유 분리. [catalog]·[idx]·부록B/C.
+[데이터] 새 판독148개는 각각 모듈 TSV·지정 C 헤더와 일치하고 중복0이다. catalog 대응112행·체감25·팩49·서바이벌26·함수요청33·데이터요청4·미식별3을 메모리에서 검증했다. 기존 보유 C 요청102개 제거·공용 재사용9함수 완료·새 판독 가산0. [catalog]·[idx]·부록B/C.
 
 [미확정] 원본 실행·헤드리스·화면 촬영 검증은 없다. 검증 명령은 메모리 내에서만 실행했으며 분석 스크립트 파일·코드·데이터·출처 문서·README·git index를 변경하지 않았다. [이번 범위](mgm_modes.md#2-자료).
 
@@ -931,3 +958,7 @@ index = injectedSyncRandRange(0, len(ordered))
 [C05]: ../../../analysis/decomp/mgm05.nro.c
 
 [C06]: ../../../analysis/decomp/mgm06.nro.c
+
+[WORK9]: ../engine/18_scene_work.md#44-minigamemodework의-mgm02mgm04-전용-필드와9계약
+[WORK9-GAPS]: ../engine/18_scene_work.md#118-work9의-남는-공백5항목
+[WORK9-NEW]: ../engine/18_scene_work.md#b3-이번-work9-새-판독-대응부모-공유

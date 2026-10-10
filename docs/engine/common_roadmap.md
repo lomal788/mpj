@@ -230,3 +230,10 @@
 3. 편집기 + 행동 부품.
 4. 10턴 파티(7장)에 필요한 화면을 빌더로 만들면서 검증 — 실제 쓰임과 함께 다듬는다.
 [설계] 원본 UI 부품·템플릿 정리본: [ui_parts_catalog.md](ui_parts_catalog.md).
+
+
+### 8.6 장면 계약·Work 첫 소비자 완료 (2026-10-10)
+
+[구현] A2/P1의 장면 계약·Work 선행 구조를 `script/game/lib/scene`·`script/app/flow/scenes`·`script/app/common/work`로 구현하고 프리플레이↔미니게임에 첫 적용했다. Call에서 부모 논리를 종료하고 Return에서 새 객체가 Work를 읽어 복원한다. 정상 결과/Round/ring은 frame 단일 포트가 기록하며 실패·취소·늦은 완료는 기록하지 않는다. 기존 공용 renderer·자산 캐시·prepareQueue를 유지한다. Node 시험21개 묶음2756/2756, 명세/import 검사12971/12971, typecheck 통과. 상세는 [18_scene_work §14](18_scene_work.md#14-웹-구현-기록-2026-10-10).
+
+[후속] A2/P1 전체 완료 표시는 아니다. 다른 메뉴·광장·보드의 registry 이전과 Work schema·온라인 gate·named return은 후속이다. 새 미니게임은 기존 GameDef/한 판 frame에 연결하여 같은 결과·취소·복귀 경계를 사용하므로 게임별 전환 관리자를 다시 만들 필요가 없다.

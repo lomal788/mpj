@@ -20,6 +20,8 @@ import { fmabRepeatBad } from './anim_repeat';
 import { Mg1801Harness, NodeMgRun } from './mg_node_host';
 import { determinismCheck, staticLogicCheck } from './mg_determinism';
 import { WIPE_WHITE } from '@game/lib/transition';
+import { WorkModule } from '@app/common/work';
+import { commitMinigameResult } from '@app/minigame/frame/return';
 
 let bad = 0;
 const check = (name: string, ok: boolean, info = ''): void => {
@@ -513,6 +515,11 @@ function runObserved(lag: number | null, opts: Mg1801Options = {}): { g: Mg1801H
   check('나갈 때 틀 와이프 FadeOut(White) 끝 = 덮음', h.run.scene.wipe.core.closed && h.run.scene.wipe.core.lastType === WIPE_WHITE);
   const e = h.run.resultEntry(1801);
   check('기록 byte: GameRule 10(Rhythm)·judge 1 → [2,2,2,2](FUN_71001f271c)', e.judge === 1 && e.results.join() === '2,2,2,2', JSON.stringify(e));
+  const work = new WorkModule<{ id: number }>(); work.prepare({ id: 1801 }); const frame = work.openFrame();
+  const committed = commitMinigameResult(h.run, 1801, frame);
+  check('실제 mg1801 한 판 종료 → frame Work에 정상 결과 1회 기록', committed?.id === 1801 && work.mode.round === 1 && work.mode.results.length === 1);
+  commitMinigameResult(h.run, 1801, frame);
+  check('같은 실제 종료 결과 재관찰 → Round/ring 중복 증가 없음', work.mode.round === 1 && work.mode.results.length === 1);
 }
 {
   const h = new Mg1801Harness(setup([true, true, true, true]), mg1801Options({ mode: '3' }));

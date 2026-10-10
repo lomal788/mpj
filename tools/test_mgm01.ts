@@ -13,6 +13,7 @@ import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { resolveFontsFromDisk } from './fontSpecNode';
 import { createWork, FiberRunner, MemorySave, mergeSpec, MgmInput, MgmSound, plainText, type MgmDrawHost, type MgmSpec, type MgmSpecPart, type MgmView, type MgResultEntry } from '@app/common/ui';
+import { WorkModule } from '@app/common/work';
 import { mkdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fmabRepeatBad, glbRepeatBad } from './anim_repeat';
@@ -706,8 +707,10 @@ console.log('10. 상태기계: 목록 ↔ 설정 ↔ 승패 표 ↔ 한 판 호�
   const calls: Mgm01PlayRequest[] = [];
   let exited = 0;
   const carry: Mgm01Carry = { values: { team: 0, cpu: 2, endless: false, rhythm: 0 } };
-  const mk = (returned?: MgResultEntry): Mgm01Scene =>
-    new Mgm01Scene(
+  const session = new WorkModule<{ id: number }>(work);
+  const mk = (returned?: MgResultEntry, returning = false): Mgm01Scene => {
+    if (returned) { session.prepare({ id: returned.id }); session.openFrame().commit(returned); }
+    return new Mgm01Scene(
       {
         view: view2,
         input,
@@ -723,9 +726,10 @@ console.log('10. 상태기계: 목록 ↔ 설정 ↔ 승패 표 ↔ 한 판 호�
         carry,
         call: (r) => calls.push(r),
         exit: () => exited++,
+        returning,
       },
-      returned ?? null,
     );
+  };
   let sc = mk();
   const run = (n = 1, b = 0): void => {
     for (let i = 0; i < n; i++) {
@@ -801,6 +805,16 @@ console.log('10. 상태기계: 목록 ↔ 설정 ↔ 승패 표 ↔ 한 판 호�
   run(60);
   eq([states().slice(-2), exited], [[7, 9], 1], '목록 B → 7 → 9 → 항구로');
   ok(!sc.guide.shown, 'Back 안내 Out');
+  const before = [work.round, work.results.length];
+  const restored = mk(undefined, true);
+  eq([work.round, work.results.length], before, '새 부모 생성은 결과·Round를 다시 기록하지 않음');
+  eq([restored.enumNo, restored.selectedId, restored.resume], [0, req.id, true], '복귀 진입 사유로 Work 선택 복원');
+  restored.dispose(); const logSize = restored.log.length; restored.step();
+  eq(restored.log.length, logSize, '폐기한 부모 파이버는 다시 진행하지 않음');
+  work.round = 0; work.results = [];
+  const failed = mk(undefined, true);
+  eq([failed.selectedId, failed.resume, work.round, work.results.length], [req.id, true, 0, 0], '첫 판 실패 복귀도 선택 복원, 결과·Round 증가 없음');
+  failed.dispose();
 }
 
 console.log('11. 3D 애니 커브 반복(원본 wrap Repeat — 변환기 Curves.cs, plaza_3d.md §6.14 #14c ③). mgm01 바다·mgm00 바나나 결과 모션은 아직 변환 산출물이 없어 변환기를 그 자리에서 돌린다');

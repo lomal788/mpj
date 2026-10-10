@@ -185,6 +185,12 @@ ID → 모듈은 `app/flow` 등록표가 정한다(원본 장면 이름표 `@0x7
 
 **한 판의 흐름**: 모드(예: freeplay)가 `work.game` 에 ID·설정을 쓰고 `scenes.call('minigame')` → 매니저가 `app/minigame/frame` 을 연다 → 틀이 등록표에서 `mg####` 를 받아 0~19단계를 돈다 → 결과를 `work.game` 결과 링에 쓴다 → `scenes.return()` → 모드의 `onReturn()` 이 결과를 읽는다(원본 Call/Return).
 
+**2026-10-10 원본 수명 확인:** 위 표의 “부른 장면은 스택에 남는다”는 이름·설정·파라미터의 논리 이력이다. 원본의 일반 Call/Return은 부모 실행 객체를 종료·파괴하고, 복귀 때 factory 생성과 Entry를 다시 수행한다. 프리플레이는 새 장면이 Work를 읽어 ContinueFlow로 복원한다. `onReturn()`은 웹 알림 계약이며 원본 SceneBase에 같은 이름의 훅이 확인된 것은 아니다. 직접 C·현재 웹 차이·잔여는 [18_scene_work §11.9](docs/engine/18_scene_work.md#scene-return-lifetime)에 기록했다.
+
+**웹 권고(미구현):** 논리 Scene은 재생성하고 renderer·다운로드/파싱 캐시·명시적 공유 자원은 별도 소유한다. 복귀의 필수 복원은 일반 진입 경로에서 Work를 읽어 수행하고, `onReturn()`에 결과 commit/Round 증가를 중복하지 않는다. 기존 onReturn 설계·현재 CPU 레이아웃 보관은 웹 어댑터와 최적화로 구분한다. 준비된 view의 prepare/take/activate 구조는 유지하고 게임 로직 수명과 분리한다. 세부 권고와 후속 검증 조건은 위 §11.9.3~§11.9.4이며, 이번 문서 반영을 전체 lifecycle 이전 완료로 세지 않는다.
+
+[구현 후속 2026-10-10] 위 권고를 공용 `game/lib/scene`·`app/flow/scenes`·`app/common/work`와 첫 소비자 프리플레이↔미니게임에 적용했다. ID 이력으로 부모 논리를 재생성하고 일반 진입에서 Work를 읽으며, 필수 `onReturn`은 없다. 실제 한 판의 정상 종료 tick에서 frame 포트가 Round/결과 ring을 한 번 기록하고 무인자 return한다. `work.game.result`는 mode의 동일 ring을 읽는 view이며 새 ring을 만들지 않는다. 기존 renderer·MenuSurface·준비 자원 재사용은 유지하고 취소된 이전 scope의 완료/명령을 차단한다. 다른 메뉴/광장/보드 전체 이전은 후속이다. 상세 파일·검증·웹 어댑터 경계는 [18_scene_work §14](docs/engine/18_scene_work.md#14-웹-구현-기록-2026-10-10)에 기록했다.
+
 ### 10.6 흐름 추적
 
 등록표·요청 방식은 "정의로 이동"으로 다음 화면을 따라가기 어렵다. 그래서 세 곳에서 읽히게 한다.

@@ -11,7 +11,12 @@ import { menuCanvas } from './view/menuRenderer';
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
-import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, pushResult, SceneStack, type Flow, type MgmPlayer, type MgmSceneInstance, type MgResultEntry, type MgmWork } from '@app/common/ui';
+import { BexRandModule } from '@game/core/rng';
+import { localSeed } from './mgrun';
+import { createWork, FiberRunner, MemorySave, MG_FLAG, MgmInput, MgmSound, MgmView, plainText, pushResult, type Flow, type MgmPlayer, type MgResultEntry, type MgmWork } from '@app/common/ui';
+import { WorkModule, type FrameResultPort } from '@app/common/work';
+import { SceneHost } from '@app/flow/scenes';
+import { minigameReturn } from '@app/minigame/frame/return';
 import {
   FilterScreen,
   FILTER,
@@ -63,8 +68,12 @@ export interface Mgm01Cfg {
   pads: (PadSource | null)[];
   muted: boolean;
   /** 한 판 요청을 페이지가 실제 게임으로 돌릴 때(app/flow 흐름: / 배포·/dev?plaza=1). null·없음 = 가짜 한 판 */
-  play?(req: Mgm01PlayRequest): Promise<MgResultEntry | null>;
+  play?(req: Mgm01PlayRequest, frame?: FrameResultPort, signal?: AbortSignal): Promise<MgResultEntry | null>;
   prepare?(name: string | null): void;
+  work?: WorkModule<Mgm01PlayRequest>;
+  cancelPlay?(): void;
+  rand?(n: number): number;
+  onError?(error: unknown): void;
   onDone(result: string): void;
 }
 
@@ -77,6 +86,7 @@ export interface Mgm01Env {
   readonly catalog: Mgm01Catalog;
   readonly players: Mgm01Player[];
   readonly params: URLSearchParams;
+  readonly rand: (n: number) => number;
   readonly overlay: HTMLElement;
   press(bits: number): void;
   persist(): void;
@@ -128,8 +138,10 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
   const mgmPlayers: MgmPlayer[] = players.map((p) => ({ pid: p.pid, type: p.type }));
 
   const save = params.get('save') === '0' ? new MemorySave() : appSave().mgm;
+  const rng = cfg.rand ? null : new BexRandModule(localSeed(params.get('seed')));
+  const rand = cfg.rand ?? ((n: number) => rng!.randMod(n));
   const persist = (): void => save.requestSave();
-  const work = createWork();
+  const work = cfg.work?.mode ?? createWork();
   for (const g of catalog.games) work.mg.set(g.id, { isNew: (save.minigame(g.id).flags & MG_FLAG.NEW) !== 0, unlock: true, favorite: (save.minigame(g.id).flags & MG_FLAG.FAVORITE) !== 0 });
   for (const n of (params.get('fav') ?? '').split(',').filter(Boolean)) {
     const g = catalog.gameByName(n);
@@ -169,6 +181,7 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
     catalog,
     players,
     params,
+    rand,
     overlay,
     press(bits) {
       extra |= bits;
@@ -306,7 +319,7 @@ export async function runMgm01Setting(stage: HTMLElement, cfg: Mgm01Cfg): Promis
     unlocked: [],
     isFavorite: env.favorite,
     setFavorite: env.setFavorite,
-    rand: (n) => Math.floor(Math.random() * n),
+    rand: env.rand,
     sound: env.sound,
     input: () => ({ trig: env.input.trig(), rep: env.input.rep() }),
     record: (id) => catalog.defaultRecord(catalog.game(id)?.name ?? ''),
@@ -473,7 +486,7 @@ export interface Mgm01ListRun {
 function fakeResult(env: Mgm01Env, req: Mgm01PlayRequest): MgResultEntry {
   const play = req.team.gamePlayByPid;
   const pids = [0, 1, 2, 3].filter((p) => play[p]);
-  const w = pids.length ? pids[Math.floor(Math.random() * pids.length)] : 0;
+  const w = pids.length ? pids[env.rand(pids.length)] : 0;
   const team = req.team.teamIdByPid[w];
   const results = [0, 1, 2, 3].map((p) => (!play[p] ? 255 : p === w || (team >= 0 && req.team.teamIdByPid[p] === team && req.team.format !== 0 && req.team.format !== 3) ? 1 : 0)) as [number, number, number, number];
   countMinigamePlay(env.save, req.id);
@@ -525,82 +538,86 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
     cfg.prepare?.(name ?? null);
     if (name) appFlow().state('mgm01', 'game', name);
   };
-  let stack: SceneStack;
-  const factory = async (name: string, _ctx: unknown, args: unknown, returned?: unknown): Promise<MgmSceneInstance> => {
-    if (name === 'minigame') {
-      const req = args as Mgm01PlayRequest;
+  const session = cfg.work ?? new WorkModule<Mgm01PlayRequest>(work);
+  const stack = new SceneHost<'mgm01' | 'minigame'>({
+    minigame: ({ scope, scenes }) => {
+      const req = session.request;
+      if (!req) throw new Error('Minigame request missing');
+      const frame = session.openFrame();
       scene = null;
-      phase = `한 판(가짜) ${req.name}`;
-      let done = false;
-      let real: MgResultEntry | null | undefined = cfg.play ? undefined : null;
-      if (cfg.play) {
-        void sceneOut().then(() => {
-          if (stopped) return null;
+      phase = `한 판 ${req.name}`;
+      return minigameReturn({
+        frame, scope,
+        play: async signal => {
+          if (!cfg.play) return null;
+          await sceneOut();
+          if (signal.aborted || stopped) return null;
           env.view.surface.suspend();
-          return cfg.play!(req);
-        }).catch(() => null)
-          .then(async r => {
-            await env.view.surface.resume();
-            if (!stopped) sceneIn();
-            real = r;
-          })
-          .catch(() => { real = null; });
-      }
+          return cfg.play(req, frame, signal);
+        },
+        return: () => scenes.return(),
+        cancel: () => cfg.cancelPlay?.(),
+        restore: async () => {
+          if (stopped) return;
+          await env.view.surface.resume();
+          if (!stopped) sceneIn();
+        },
+        onError: error => console.error('mgm01: 한 판 전환 실패', error),
+        complete: real => settlePlayResult(env.save, req.id, !!cfg.play, real, () => fakeResult(env, req), !!cfg.play),
+      });
+    },
+    mgm01: ({ scenes, reason }) => {
+      const sc = new Mgm01Scene(
+        {
+          view: env.view,
+          input: env.input,
+          sound: env.sound,
+          catalog,
+          work,
+          save,
+          players: () => env.players,
+          lockEnv: env.lockEnv,
+          online: params.get('connected') === '1',
+          rand: env.rand,
+          record: (id) => catalog.defaultRecord(catalog.game(id)?.name ?? ''),
+          faces,
+          carry,
+          call: (req) => {
+            calls.push(req);
+            env.persist();
+            session.prepare(req);
+            session.setPlayers(session.player.map(p => ({ ...p, comLevel: req.cpu, teamId: req.team.teamIdByPid[p.playerId], gamePlay: req.team.gamePlayByPid[p.playerId] })));
+            scenes.call('minigame');
+          },
+          exit: () => scenes.return(),
+          dt: MGM01_DT,
+          startEnum,
+          returning: reason === 'return',
+        },
+      );
+      scene = sc;
+      phase = '프리 플레이';
       return {
-        step() {
-          if (done || real === undefined) return;
-          done = true;
-          stack.ret(settlePlayResult(env.save, req.id, !!cfg.play, real, () => fakeResult(env, req), !!cfg.play));
+        update: () => {
+          sc.step();
+          noteCursor(sc);
         },
-        render() {},
-        dispose() {},
+        render: () => sc.draw(),
+        cleanup: () => { sc.dispose(); if (scene === sc) scene = null; },
       };
-    }
-    const sc = new Mgm01Scene(
-      {
-        view: env.view,
-        input: env.input,
-        sound: env.sound,
-        catalog,
-        work,
-        save,
-        players: () => env.players,
-        lockEnv: env.lockEnv,
-        online: params.get('connected') === '1',
-        rand: (n) => Math.floor(Math.random() * n),
-        record: (id) => catalog.defaultRecord(catalog.game(id)?.name ?? ''),
-        faces,
-        carry,
-        call: (req) => {
-          calls.push(req);
-          env.persist();
-          stack.call('minigame', req);
-        },
-        exit: () => stack.ret(),
-        dt: MGM01_DT,
-        startEnum,
-      },
-      (returned as MgResultEntry | undefined) ?? null,
-    );
-    scene = sc;
-    phase = '프리 플레이';
-    return {
-      step: () => {
-        sc.step();
-        noteCursor(sc);
-      },
-      render: () => sc.draw(),
-      dispose: () => {},
-    };
-  };
-  stack = new SceneStack(factory, save, work, () => {
+    },
+  }, { onError: error => {
+    phase = `장면 전환 실패: ${String(error)}`;
+    console.error('mgm01: 장면 전환 실패', error);
+    cfg.onError?.(error);
+  }, onEmpty: () => {
     phase = '끝';
     const texts = env.view.spec.texts;
     cfg.onDone(
       [`항구로 돌아감(목록 B) — 한 판 ${calls.length}회, Round ${work.round}`, ...calls.map((c) => `${c.id} ${plainText(texts[`im_${c.name}_name`] ?? '', texts)} cpu ${c.cpu} 팀 ${c.team.teamIdByPid.join(',')}`)].join('\n'),
     );
-  });
-  try { await stack.start('mgm01'); }
+  } });
+  try { stack.start('mgm01'); }
   catch (error) { stack.dispose(); env.stop(); throw error; }
   env.loop(
     () => stack.step(),

@@ -314,7 +314,7 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
       const s = m[1] ?? m[2];
       const r = resolve(dirname(f), s);
       const inside = s.startsWith('@app/common/ui/') || s.startsWith('.') && (r === dir || r.startsWith(dir + '\\') || r.startsWith(dir + '/'));
-      const shared = ['@app/common/render3d/assetHooks', '@app/common/render3d/assetLoader'].includes(s) || SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}` || s === `@app/scene/menu/${x}`);
+      const shared = ['@app/common/work', '@app/common/render/hud', '@app/common/render/menu', '@app/common/render3d/assetHooks', '@app/common/render3d/assetLoader'].includes(s) || SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}` || s === `@app/scene/menu/${x}`);
       const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(r);
       ok(inside || shared || lib || s === 'three', `${f.slice(dir.length + 1)}: 금지 import '${s}'`);
     }
@@ -328,7 +328,7 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
       for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
         const s = legacySpec(m[1] ?? m[2]);
         const inside = s.startsWith('./') || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
-        const shared = SHARED.some((x) => s === `../${x}`);
+        const shared = s === '@app/common/work' || SHARED.some((x) => s === `../${x}`);
         const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
         ok(inside || shared || lib || s === 'three', `mgmet/${f}: 금지 import '${s}'`);
       }
@@ -345,7 +345,7 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
         const inside = (s.startsWith('./') && !s.slice(2).includes('/')) || s.startsWith('../mgmcommon/') || s === '../mgmcommon';
         const shared = SHARED.some((x) => s === `../${x}`);
         const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(resolve(dirname(join(WEB, 'script/shell', 'x', f)), s));
-        ok(inside || shared || lib || s === 'three', `mgm01/${f}: 금지 import '${s}'`);
+        ok(inside || shared || lib || s === '@app/common/work' || s === 'three', `mgm01/${f}: 금지 import '${s}'`);
       }
     }
     console.log(`   mgm01 파일 ${m01.length}개(같은 폴더·mgmcommon·charselect 공용·three 허용)`);

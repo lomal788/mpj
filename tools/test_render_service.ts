@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { GamePreparation } from '@app/flow/preparation';
+import { Mg1801View } from '@app/minigame/mg1801/view';
 import type { GameDef, GameSetup, GameView } from '../script/game';
 import type { Assets } from '../script/view/assets';
 import { readFileSync } from 'node:fs';
@@ -497,5 +498,47 @@ await test('Plaza world creation failure restores the shared CPU scheduler budge
   const f = fixture(), gpu = { renderer: f.g.gl, uploads: new WeakMap(), keep: new Map() };
   await assert.rejects(starter({ gpu, params: new URLSearchParams(), prewarm: true }).world, /world fixture failure/);
   assert.equal(scheduler.budgetMs, 4); f.service.dispose();
+});
+await test('scene abort cancels a pending preparation handoff without activation', async () => {
+  const f = selectionFixture(), abort = new AbortController();
+  const take = f.prep.take(f.def, f.setup, abort.signal); const rejected = assert.rejects(take, /cancelled/);
+  await flush(); abort.abort(new Error('scene cancelled')); await rejected; await flush();
+  assert.deepEqual(f.counts(), { built: 1, disposed: 1, activated: 0, cancelled: 1 });
+  assert.equal(f.prep.state, 'idle'); f.service.dispose();
+});
+await test('aborting an old handoff cannot cancel a newer selection', async () => {
+  const f = selectionFixture(), abort = new AbortController();
+  const old = f.prep.take(f.def, f.setup, abort.signal); const rejected = assert.rejects(old, /cancelled/);
+  await flush(); const next = f.prep.select(f.def, { ...f.setup, players: [{ char: 'pc02', isCom: false, comLevel: 0 }] });
+  abort.abort(); await flush(); f.service.prepareQueue.drain(); await next; await rejected;
+  assert.equal(f.prep.state, 'ready'); assert.deepEqual(f.counts(), { built: 2, disposed: 1, activated: 0, cancelled: 1 });
+  f.prep.cancel(); await flush(); f.service.dispose();
+});
+await test('already aborted activation does not consume a valid prepared selection', async () => {
+  const f = selectionFixture(), ready = f.prep.select(f.def, f.setup); await flush(); f.service.prepareQueue.drain(); await ready;
+  const abort = new AbortController(); abort.abort(new Error('scene cancelled'));
+  await assert.rejects(f.prep.take(f.def, f.setup, abort.signal), /scene cancelled/);
+  assert.equal(f.prep.state, 'ready'); assert.equal(f.counts().disposed, 0);
+  const prepared = await f.prep.take(f.def, f.setup); assert.ok(prepared); prepared.view.dispose(); f.service.dispose();
+});
+await test('cancelled mg1801 activation cannot change renderer state after late sound load', async () => {
+  const manifest = deferred<{ bpms: number[]; sounds: Record<string, never>; substitute: Record<string, never>; listener3d: { default: { interiorSize: number; maxVolumeDistance: number; unitDistance: number }; preset: never[] } }>();
+  let activated = 0, effects = 0;
+  const view = {
+    assets: { disposed: false, json: () => manifest.promise }, ctx: { audio: null, renderer: {} },
+    stage: { activate: () => { activated++; } }, fxLoaded: true,
+    fx: { start: () => { effects++; } }, gpu: {},
+  };
+  const pending = Mg1801View.prototype.activate.call(view as unknown as Mg1801View);
+  const rejected = assert.rejects(pending, /Game resources cancelled/);
+  await flush(); view.assets.disposed = true;
+  manifest.resolve({ bpms: [], sounds: {}, substitute: {}, listener3d: { default: { interiorSize: 10, maxVolumeDistance: 20, unitDistance: 50 }, preset: [] } });
+  await rejected; assert.deepEqual([activated, effects], [0, 0]);
+});
+await test('already cancelled mg1801 activation does not start sound loading', async () => {
+  let loads = 0;
+  const view = { assets: { disposed: true, json: async () => { loads++; return {}; } }, ctx: { audio: null } };
+  await assert.rejects(Mg1801View.prototype.activate.call(view as unknown as Mg1801View), /Game resources cancelled/);
+  assert.equal(loads, 0);
 });
 console.log(`통과 ${count}/${count}`);

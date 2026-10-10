@@ -10,6 +10,8 @@
  * 설정: muted(소리 끄기) · fixedSeed(빈 문자열 = 무작위) · audioClock(오디오 시계를 따름) · latency(출력 지연 보정, 기본 자동). 루프는 runGameLoop.
  */
 import { GamePreparation } from './preparation';
+import type { FrameResultPort } from '@app/common/work';
+import { commitMinigameResult } from '@app/minigame/frame/return';
 import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from '@game/core/clock';
 import type { GameDef, GameLogic, GameSetup, GameView } from '../../game';
 import type { LogicTransition } from '@game/lib/transition';
@@ -35,6 +37,8 @@ export interface StartOptions {
   endless?: boolean;
   save?: MgRunSave;
   leaveWipe?: boolean;
+  frame?: FrameResultPort;
+  signal?: AbortSignal;
 }
 
 export type HostEvent = { type: 'stage'; stage: Stage } | { type: 'view'; view: GameView } | { type: 'step'; t: number; observed: boolean };
@@ -141,12 +145,16 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   let pads: (PadSource | null)[] = [];
   let audio: AudioOut | null = null;
   let token = 0;
+  let returnFrame: FrameResultPort | null = null;
+  let releaseAbort: (() => void) | null = null;
   /** 스텝 시계 종류(판마다 시작 때 정한다)와 스텝 0 의 시계 시각(초, NaN = 첫 그리기 뒤 정함). 스텝 n = base + n/FPS, n = frame */
   let clockKind: 'audio' | 'wall' = 'wall';
   let base = 0;
 
   const dispose = (): void => {
     token++;
+    releaseAbort?.(); releaseAbort = null;
+    returnFrame?.cancel(); returnFrame = null;
     const oldView = view, oldLoading = loadingView, oldLease = gameLease, oldAssets = gameAssets;
     view = null; loadingView = null; gameLease = null;
     oldAssets?.cancel(); gameAssets = null;
@@ -184,9 +192,17 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   };
 
   async function start(d: GameDef, draft: SetupDraft, o: StartOptions = {}): Promise<void> {
+    if (o.signal?.aborted) return;
     const { play, endless = false, save } = o;
     dispose();
     const my = ++token;
+    returnFrame = o.frame ?? null;
+    if (o.signal) {
+      const signal = o.signal;
+      const abort = (): void => { if (my === token) { preparation.cancel(); stop(); } };
+      signal.addEventListener('abort', abort, { once: true });
+      releaseAbort = () => signal.removeEventListener('abort', abort);
+    }
     const setup: GameSetup = { ...draft, seed: localSeed(host.fixedSeed) };
     curSetup = setup;
     leaveWipe = !!o.leaveWipe;
@@ -214,7 +230,7 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
     try {
       await d.load?.();
       if (my !== token) return;
-      const prepared = d.preparationKey ? await preparation.take(d, setup) : null;
+      const prepared = d.preparationKey ? await preparation.take(d, setup, o.signal) : null;
       if (my !== token) { prepared?.view.dispose(); prepared?.assets.dispose(); return; }
       assets = prepared?.assets ?? new Assets(d.assetsDir); gameAssets = assets;
       view = prepared?.view ?? null;
@@ -257,6 +273,7 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
       if (my === token) {
         setMsg(`시작 실패: ${(e as Error).message}`);
         error = String((e as Error).stack ?? e);
+        returnFrame?.fail();
         dispose();
         sceneIn();
         finish('error');
@@ -301,6 +318,7 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
     emit({ type: 'step', t, observed: sound !== null });
     if (run.ended) {
       result = logic.result;
+      if (returnFrame) commitMinigameResult(run, returnFrame.id, returnFrame);
       finish('done');
       if (!leaveWipe) {
         runWipe?.release();

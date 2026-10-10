@@ -4,6 +4,8 @@
 
 [미확정] 원본 실행 확인은 없다. 기존 판독을 우선 재사용했고, 기존 C가 없는 주소는 부록 C에 요청만 남겼다. 코드·스크립트·C·INDEX·SHARED·JSON·에셋·원본·extracted는 변경하지 않았다. 관련 저장소/상위 경로에서 AGENTS.md와 .agents/skills는 발견되지 않았다.
 
+[데이터] 최신 Call/Return 수명 판정과 웹 권고는 [§11.9](#scene-return-lifetime)를 우선한다. 일반 부모 객체 재생성은 확인됐으며, 아래의 이전 미확정/추출 요청 수는 각 판독 시점 기록이다.
+
 ## 1. 기능 개요
 
 [판독] SceneBase는 요청을 저장하고, 흐름 파이버 종료/페이드 대기 뒤 OnMainEnd에서 엔진 전환으로 넘긴다. 요청 함수 자체가 즉시 장면을 바꾸지는 않는다. main RequestCallScene @0x71002caf30·OnMainEnd @0x71002ca9c8·FUN_71002ca9e0 @0x71002ca9e0; [새 판독 C][C1], UpdateMain @0x71002ca780의 기존 [코어 §5.2][CORE].
@@ -875,3 +877,135 @@ manager.step(gatedInput, ready):
 [데이터] 새9주소의 main TSV·INDEX·C 헤더9/9, 기존55와 중복0·누계64를 확인했다. 정상 vector의 mgm02 capacity 상수 곱과 mgm04 packed flag 예시는 정수식으로 정적 대조했으며 원본 실행/헤드리스/화면 촬영은 없다. 이번 미확정W5묶음·기존 열린U11·고유 요청24·주소 미식별3묶음은 서로 중복 합산하지 않는다.
 
 [데이터] 이번 시작의95,981 B는 부모 통합 링크를 포함한 기준이며 SHA-256 2adad46f3e26435d510a20e71f469170f8e541c2b74be47df4a9de2839207881과 대조해 전부 보존했다. 이전55,104 B 검증은 이전 시점 기록이다. 각 쓰기 직전 전체를 읽고 후속 내용만 추가했으며 현재 부모 index의 접두부도 보존했다. 자기 MD 외 파일·C·INDEX·SHARED·JSON·코드·스크립트 파일·에셋은 쓰지 않았고 git add/stage/commit/rm은 하지 않았다. 문자열 literal은 출력 시 마스킹했으며 키/로그/설정 파일은 읽지 않았다.
+
+<a id="scene-return-lifetime"></a>
+
+### 11.9 Call/Return의 장면 객체 수명 확정과 웹 권고 (2026-10-10)
+
+[판독] 일반 `bex::Scene::CallScene/ReturnScene`은 부모 실행 객체를 정지 상태로 보존하는 경로가 아니다. Call은 현재 장면의 종료를 요청하고 다른 이름을 생성 큐에 넣는다. 현재 객체는 Shutdown→ShutdownProcess→IsShutdownComplete 이후 release되고, Return은 이력의 이전 이름·설정·파라미터를 생성 큐에 다시 넣어 factory→Entry를 수행한다. §1·§5·§11.5·§11.6·§13.2 및 C.1의 부모 instance 미확정/C 부재 표시는 당시 기록이며, 이 일반 경로의 수명 판정은 이번 절이 갱신한다. 전체 registry·named return 열거 순서·WorkModule 전체 수명까지 해결됐다는 뜻은 아니다.
+
+#### 11.9.1 원본 하위 경로
+
+| 경로 [판독] | 직접 근거·확정 내용 |
+|---|---|
+| Call 요청 | main @0x71001a830c→@0x71001a4bcc(seq,2)→@0x71001a4808. 첫 active record에 종료 플래그(mask 0x2)를 설정하고, 대상 이름을 pending 생성 큐에 넣는다. [wrapper][GAP]·[새 수명 C](../../../analysis/decomp/scene_return_lifetime.c) |
+| 현재 객체 종료 | main @0x71001a6650은 virtual+0x40 Shutdown, +0x48 ShutdownProcess, +0x50 IsShutdownComplete 뒤 @0x71001a026c로 해제한다. GetResetDelay가 음수면 deferred release vector를 거쳐 @0x71001a52b0 끝에서 해제하고, 그 외 경로는 종료 완료 뒤 해제한다. 지연은 부모의 복귀용 보존이 아니다. [core_b12.c](../../../analysis/decomp/core_b12.c)·[core_b7.c](../../../analysis/decomp/core_b7.c)·[release wrapper][GAP] |
+| 실제 삭제 | @0x71001a026c의 scene virtual+8은 소멸 경로다. 구체적인 mgm01 @0x7100004d54는 Scene 소멸 뒤 `operator_delete(this)`를 실행한다. allocator가 같은 주소를 재사용하더라도 이전 객체 수명이 유지되는 것은 아니다. [mgm01_stage3.c](../../../analysis/decomp/mgm01_stage3.c) |
+| 이력 레코드 | @0x71001a5c04/@0x71001a6128/@0x71001a5eb0의 stride0x50 record는 vtable, 소유 이름 문자열, sequence ID(+0x20), 자기 이름 pointer/length(+0x28/+0x30), pause(+0x38), 불투명 파라미터16 B(+0x3c~+0x4b)다. 실행 중인 부모 Scene 객체를 직접 저장하는 필드는 없다. 파라미터 내부의 개별 의미·간접 참조 수명은 이번 범위 밖이다. [새 수명 C](../../../analysis/decomp/scene_return_lifetime.c)·[새 params C](../../../analysis/decomp/scene_return_params.c) |
+| Return | @0x71001a4968(seq,1)은 현재 history entry를 제거하고 이전 entry를 복사해 pending 큐에 넣은 뒤 그 이전 기록도 history에서 제거한다. 빈 history/복귀 항목 없음 또는 impl+0xb8 차단 상태면 false. 부모 포인터를 꺼내 resume하지 않는다. [새 수명 C](../../../analysis/decomp/scene_return_lifetime.c) |
+| 복귀 생성·진입 | @0x71001a6360은 active가 비고 cleanup 지연이 끝난 뒤 pending record로 @0x71001a00d4→@0x71001a29e0를 호출한다. descriptor의 factory virtual+0x30으로 객체를 받고, pause/16 B params를 적용한 뒤 scene virtual+0x18 Entry와 history 기록을 수행한다. 메모리 할당/pool 전체 정책과 별개로 종료한 부모 객체를 재개하는 경로는 아니다. [core_b12.c](../../../analysis/decomp/core_b12.c)·[새 수명 C](../../../analysis/decomp/scene_return_lifetime.c)·[새 params C](../../../analysis/decomp/scene_return_params.c) |
+
+[판독] 원본 SceneBase vtable의 기존 §3.2에는 `onReturn`이라는 가상 훅이 없다. 복귀도 일반 Entry와 §3.1의 로드·설정·GameFlow 경로를 다시 탄다. mgm01 `MinigameModeFlow @0x710000ad60`은 `Work.GetRound()<1`이고 flag0x3c가 꺼졌을 때 EnterFlow/StartFlow, 그 외에는 `ContinueFlow @0x710000dad0`를 실행한다. ContinueFlow는 `Mgm01GetModeData()`의 세 값을 새 Scene의 +0x210/+0x214/+0x278에 복원한다. 이 기능은 기존 객체의 파이버를 재개하거나 SceneBase 복귀 훅을 호출하는 방식이 아니다. [기존 vtable][VT]·[mgm01_stage3.c](../../../analysis/decomp/mgm01_stage3.c)·[프리플레이 §3.1][FREE].
+
+#### 11.9.2 현재 웹과 차이
+
+[데이터] 현재 [SceneStack](../../script/app/common/ui/contracts.ts)은 전환 step에서 active instance를 dispose하고, 이름/args 이력으로 factory를 다시 호출한다. [mgm01_page](../../script/mgm01_page.ts)의 factory도 복귀 시 새 Mgm01Scene을 만든다. [freeplay Scene](../../script/app/scene/mode/freeplay/scene.ts)은 shared Work의 선택값을 복원한다. 따라서 부모 로직 객체의 재생성이라는 큰 수명 방향은 원본과 맞는다. 다만 결과는 `ret(result)`→factory의 `returned`→Mgm01Scene ctor에서 Round/ring에 반영되므로, §9.3의 frame 단일 commit/무인자 Work 계약으로 옮길 부분이 남는다. 원본 한 판 결과 commit caller 미확정 U08과 이 웹의 현재 구현을 혼동하지 않는다.
+
+[데이터] 현재 프리플레이 페이지는 논리 Scene을 재생성하면서 `env.view`의 CPU 레이아웃을 유지하고 MenuSurface를 suspend/resume한다. [GamePreparation](../../script/app/flow/preparation.ts)은 준비된 view/assets를 take로 활성 호스트에 인계하며, [host](../../script/app/flow/host.ts)는 게임 종료/취소 때 지역 자원을 정리한다. 부모 논리 객체, 화면 자원 보관, 활성 renderer lease는 이미 서로 다른 수명이다. 모든 장면이 새 공용 lifecycle/Work에 이전된 상태는 아니다.
+
+<a id="scene-return-web"></a>
+
+#### 11.9.3 웹 권고: 로직 재생성·자원 재사용
+
+[설계: 추천·미구현] 웹도 종료한 장면의 논리 객체/파이버를 history에 보관하지 않고, ID와 필요한 진입 정보로 재생성한다. 캐릭터·선택·모드 진행·보드 상태처럼 복귀에 필요한 게임 상태는 장면 밖 Work에 둔다. 입력 구독·연출·지역 effect·진행 중 비동기 작업의 소유권은 종료 시 정리한다. 이렇게 하면 새 장면은 Work 기준으로 초기화되고 오래된 파이버/구독이 다시 실행되는 문제를 줄일 수 있다.
+
+[설계: 추천·미구현] 객체 재생성을 다운로드/GPU 자원의 일괄 폐기로 연결하지 않는다. 앱 renderer/canvas, 다운로드·파싱 캐시, 명시적으로 공유 소유한 재사용 자원은 장면과 분리하고, scene cleanup은 자기 참조와 lease를 반납한다. RT·camera·배치된 actor처럼 장면별 가변 자원은 소유자 정리가 기본이다. 현재 MenuSurface/CPU 레이아웃 보관은 웹 최적화로 유지할 수 있으나, 새 논리 Scene의 표시·입력·애니 상태를 다시 연결/초기화해야 한다. 기존 부모 Scene 전체 보존을 공용 계약으로 만들지는 않는 방향을 추천한다. [렌더러 통합](render_unify.md)·[GamePreparation](../../script/app/flow/preparation.ts).
+
+[설계: 추천·미구현] 재사용 자원 캐시는 강하게 고정하지 않고 보관 예산/퇴출 정책을 둔다. 캐시에서 퇴출되거나 renderer generation이 바뀌면 재준비 후 진입한다. 정확한 메모리 예산·광장 전체 그래프 보관 범위는 실측 후 정하며 이번에 숫자를 임의 확정하지 않는다. 재생성 구조는 사전 다운로드·prepareQueue와 양립한다. 준비 단계는 view 자원만 만들고 Work commit/게임 tick/RNG 진행을 하지 않는다. 활성화 때 최신 setup·Work를 주입하고 generation/취소 유효성을 검사한다. [현재 준비 구현 §18](render_unify.md).
+
+[설계: 추천·미구현] 복귀의 필수 처리는 일반 진입 경로가 Work를 읽어 수행하게 한다. 매니저가 웹 진입 사유 `enter/return`을 제공하는 경우 이는 원본에 없는 어댑터 메타데이터로 명시한다. `onReturn()`을 호환 알림으로 남겨도 결과 commit·Round 증가·자원 준비의 별도 필수 경로를 넣지 않는다. 결과는 frame의 단일 commit 이후 return하고, 복귀 Scene은 이를 읽는다. §9.2/DESIGN의 `onReturn` 계약은 기존 설계 기록이며 원본 동명 훅이라는 뜻이 아니다. 새 코어에서 필수 훅으로 제외하는 것은 이번 권고이며 아직 코드에 적용하지 않았다.
+
+[설계: 추천·미구현] 이전은 현재 SceneStack의 재생성 정책을 유지한 채 결과/선택 Work 경계→공용 cleanup/entry gate→현재 prepare/take/activate 연결 순으로 작게 진행한다. 게임별 수식·계산과 prepareQueue를 다시 작성할 필요는 없다. 현 UI의 args/returned를 새 Work 계약으로 옮기는 작업과 자원 소유권 확인은 필요하며, 전체 코드가 이미 원본 등가라는 판정은 하지 않는다.
+
+#### 11.9.4 후속 검증 기대값
+
+| 항목 [설계] | Node에서 확인할 조건 |
+|---|---|
+| A→B→A | A의 논리 instance는 새 객체, 기존 A cleanup 1회, 새 A entry/setup 정상 순서, Work의 복귀 상태 동일 |
+| 결과 복귀 | frame commit/Round 증가/ring append 1회, 새 모드는 읽기만 수행, 실패/취소에서는 가짜 결과 0 |
+| 자원 수명 | 같은 정상 renderer generation 재사용, shared 자원의 조기 dispose 0, scene RT/입력 구독 정리, 캐시 miss 시 재준비 |
+| 비동기 취소 | 이전 request/generation의 늦은 완료로 Work commit/활성화 0, 준비된 view는 활성화 소유자에게 한 번 인계 |
+| 복귀 알림 | onReturn 호환 알림 유무에 따라 필수 복원 결과가 달라지지 않음, 복귀 때문에 setup/commit이 중복되지 않음 |
+
+[데이터] 위 표는 후속 구현의 기대값이며 이번에 수행한 런타임 시험 결과가 아니다. 이번 변경은 문서 반영과 권고 정리이고 앱 코드/원본 실행/브라우저 실행은 없다.
+
+#### 11.9.5 C 확보·잔여 요청 갱신
+
+[데이터] 새 `scene_return_lifetime.c` 8함수와 `scene_return_params.c` 3함수, 합계11함수의 C를 확보하고 INDEX에 등록했다. 함수 헤더11/11·추출 실패0·INDEX 기존 내용과 LF 보존을 확인했다. C.1의24요청 중 @0x71001a4808·0x71001a4968·0x71001a4bcc·0x71001a4c10·0x71001a4f30·0x71001a5c04·0x71001a6128·0x71001a5eb0·0x71001a29e0의9주소는 현재 요청에서 제외된다. @0x71001a2c90·0x71001a2c9c의2주소는 새 params setter/getter 보강이며 기존24요청에는 없었다. [INDEX][IX]·[새 수명 C](../../../analysis/decomp/scene_return_lifetime.c)·[새 params C](../../../analysis/decomp/scene_return_params.c).
+
+[미확정] C.1의 남은 고유 요청은15주소다: @0x71001a51d0·0x71001a2900·0x71001a8ee0·0x710019fd28·0x710019f324·0x71001a4b44·0x71001a51b8·0x710029e4e8·0x710029e6f8·0x710029e99c·0x710029e9ac·0x710029ea08·0x710029ea1c·0x710021da6c·0x710021da74. named return 열거 순서·전체 등록/factory 정책·Work allocator/reset 등은 계속 열린다. 사용자 요청의 일반 부모 재생성/복귀 훅 확인을 이 잔여 전체 분석으로 확장하지 않는다.
+
+## 14. 웹 구현 기록 (2026-10-10)
+
+[설계] 사용자 구현 요청에 따라 §11.9.3의 권고를 첫 소비자 프리플레이↔미니게임에 적용한다. 부모 논리 객체는 재생성하고, 현재 CPU 레이아웃/공용 renderer/prepareQueue는 별도 자원 수명으로 유지한다. 이전 문장은 판독·설계 시점 기록으로 보존한다.
+
+### 14.1 파일·착수 범위
+
+| 위치 [설계] | 책임·착수 상태 |
+|---|---|
+| `script/game/lib/scene/index.ts` | import 0, 명시적 고정 tick/gate, lifecycle·pending call/return/change·이름 이력·cleanup 완료 대기·dispose; 착수 |
+| `script/app/flow/scenes.ts` | ID registry·AbortSignal/비동기 job scope·이전 요청 유효성·늦은 완료 정리; 착수 |
+| `script/app/common/work/{mode,index}.ts` | 기존 MgmWork/ring 소유 이동·호환 재export, 한 판 요청 snapshot·실행 번호·frame 단일 결과 기록 capability; 착수 |
+| `script/app/minigame/frame/return.ts` | 한 판 실행/완료/복귀 bridge, Promise 완료는 지역 ready만 기록, tick에서 결과 처리; 착수 |
+| `script/app/flow/{index,host,preparation}.ts` | Work의 한 판 요청→기존 host 준비/활성화, 종료 tick에서 결과 1회 기록, 취소 signal과 기존 token 연결; 필요한 연결부만 수정 |
+| `script/mgm01_page.ts`, `app/scene/mode/freeplay/scene.ts` | 새 공용 manager 사용, args/returned 결과 전달 제거, 새 부모는 Work로 복원, 지역 파이버 종료; 착수 |
+| `tools/test_scene.ts`, 관련 기존 시험 | 순서·gate·정리 대기·재생성·결과 1회·취소/늦은 완료·같은 trace·import 경계·사전 준비 인계 회귀; 착수 |
+
+[설계] 새 core에는 원본 SceneBase에 없는 필수 onReturn 훅을 만들지 않는다. 일반 entry/setup/update로 복귀를 연결한다. Promise/AbortSignal/renderer/Work는 app 어댑터에만 둔다. 기존 다른 화면의 SceneStack API와 UI Work import는 호환 경로로 남겨 한 번에 전체 메뉴를 재작성하지 않는다.
+
+### 14.2 원본과 웹 경계·보류
+
+[설계] 첫 범위는 공용 lifecycle와 프리플레이↔한 판의 논리 전환이다. 기존 MgScene의 0~19단계·FrameGate·seed·한 판 save 사건은 유지한다. 공유 UI 환경의 pause/resume와 host의 prepare/take/activate는 웹 환경 연결이며 네이티브 로더의 프레임/할당 비용 등가성을 주장하지 않는다. 비동기 job은 완료 사실만 전달하고 결과/Round/ring 기록은 유효한 한 판의 고정 update tick에서 수행한다.
+
+[설계] 현재 모드 Work의 배열 ring/객체 payload는 메모리 표현 어댑터다. ring은 mode 한 곳에 있고 game 결과 view는 같은 저장소를 읽는다. 새 한 판 실행 번호·취소 상태는 웹 중복 방지 메타데이터이며 원본 offset을 지어 붙이지 않는다. mode 초기화/전체 메뉴 Work 통합·modeSync/online gate 전체·named return·원본 등록표 전체·보드별 상태 schema·캐시 예산/퇴출 정책은 후속 범위로 남긴다. 기존 U08의 네이티브 결과 commit caller 미확정은 유지하며 웹 frame 단일 writer를 원본 추가 판독으로 세지 않는다.
+
+[설계] 구현 중 확인한 계약 변경·시험 결과·사용자 확인 필요는 이 절에 후속 기록한다. 브라우저/헤드리스 실행·추가 디컴파일·npm 의존성·git stage/commit/delete는 이번에 수행하지 않는다.
+
+[설계 보완] 웹 진입 사유 entry/return을 어댑터가 제공한다. 첫 게임의 실패·취소도 return이면 저장된 선택을 복원하되 Round/ring은 늘리지 않는다. 네이티브 flag0x3c의 실패 경로 전체와 동등하다는 판독은 아니며, 기존 웹의 첫 실패 시 처음 목록으로 돌아가던 동작을 보완하는 명시적 웹 정책이다. app/flow가 WorkModule을 소유하고, 새 freeplay 세션 진입에서 기존 페이지의 createWork 동작에 대응하는 bounded beginMode를 호출한다. 전체 WorkModule reset/Save 초기화로 일반화하지 않는다.
+
+[설계 보완] 프리플레이 목록/가짜 한 판의 난수는 페이지 환경에 주입한 BexRandModule.randMod를 사용하며 부모 재생성 때 같은 페이지 난수 소유자를 유지한다. app/flow는 기존 localSeed(host.fixedSeed) 경계에서 세션 seed를 만들고 rand 함수를 주입한다. seed 생성 자체와 고정 tick에서의 결정적 소비를 구분한다. 정상 제품에서는 가짜 한 판을 실행하지 않고, 기존 dev/ui 단독 계약만 호환한다.
+
+[설계 보완] STAGE_END 도달 자체는 정상 결과의 증명이 아니다. 게임 결과가 없거나 GameResult.quit이면 frame 결과 어댑터는 Round/ring을 기록하지 않는다. 정상 결과가 있을 때만 기록하고, 이미 기록된 포트는 복귀 bridge의 가짜/Save 정리 콜백도 다시 실행하지 않는다. 사용자 취소로 늦게 온 결과는 무효 실행 포트로 차단한다.
+
+[검증 중 보완] 기존 check_mgmcommon 허용 목록에 앞선 렌더러 통합의 `@app/common/render/hud`·`@app/common/render/menu`가 빠져 12969/12971(두 import 실패)이었다. HEAD의 실제 공용 UI import와 대조해 두 정확한 경로를 허용하며 app→dev나 게임 단위 간 import를 넓히지 않는다. 새 Work 이동 경로도 허용한다. mg1801 view의 소리 로드 완료 뒤 취소된 Assets로 stage.activate/steam을 시작하지 않도록 disposed 검사를 추가한다. 이는 정상 게임 수식/연출 순서 변경이 아닌 취소 자원 경계 보완이다.
+
+### 14.3 첫 소비자 구현 완료
+
+| 단계 [구현] | 완료 범위 |
+|---|---|
+| 공용 장면 코어 | `game/lib/scene`의 import 0 코어, f32 1/60 tick, Entry→begin→loading→LoadComplete→setup→sync→active, 다음 tick 요청 반영, cleanup 완료 뒤 dispose/다음 생성. gate가 닫히면 진행하지 않는다. 이력에는 ID만 보관하고 복귀 부모는 재생성한다. |
+| 앱 연결 | `flow/scenes`의 타입 registry와 장면별 AbortSignal/job scope. 정리 중에는 이전 명령을 차단하고 추적한 작업의 완료를 기다린다. 강제 종료 시 지역 dispose는 작업 완료 뒤 실행한다. |
+| Work·한 판 | `common/work/{mode,index}`로 기존 Work 타입/함수/100칸 ring을 옮기고 UI 재export를 유지했다. 요청·참가자 snapshot과 frame 결과 포트가 실행을 식별하며 정상 결과만 Round/ring에 1회 기록한다. `work.game.result`는 같은 mode 저장소를 읽는 view다. |
+| 첫 소비자 | `mgm01_page`·freeplay Scene은 무인자 call/return으로 이전했다. 부모 생성자에서 결과를 기록하지 않고 Work의 선택/진행을 읽는다. 이전 부모 파이버는 취소한다. 다른 메뉴의 기존 SceneStack은 호환 경로로 남는다. |
+| 기존 한 판 호스트 | `flow/{index,host,preparation}`·`minigame/frame/return`을 연결했다. 실제 결과는 host의 종료 고정 tick에서 기록한다. Promise는 지역 완료 사실을 전달하고 복귀 요청은 장면 tick에서 수행한다. 취소/실패/결과 없음/quit에서는 Round/ring 기록 0이다. |
+| 준비·공유 자원 | 기존 prepareQueue/take/activate·renderer·MenuSurface 보관을 유지했다. 이전 take의 abort가 새 준비 슬롯을 취소하지 않는다. 취소된 mg1801 Assets가 소리 로드 완료 뒤 무대를 활성화하지 않는다. 메뉴 resume 실패는 부모 진입을 차단하고 흐름 오류로 전달한다. |
+
+[구현] 새로운 게임은 기존 `GameDef`/한 판 frame에 등록하면 같은 결과/취소/복귀 경계를 사용한다. 게임 수식과 결과 byte 의미는 게임 로직의 책임이며 Work를 직접 쓰지 않는다. 새 모드를 이전할 때는 registry factory와 읽기/쓰기 Work 영역을 연결한다. 웹 `entry/return` 사유, 실행 번호, AbortSignal과 메모리 객체 표현은 §14.2의 어댑터 경계다. 네이티브 불투명16 B 파라미터나 전체 등록표를 이 ID 전용 코어에서 복원한 것은 아니다.
+
+[변경 파일] 신규6: `script/game/lib/scene/index.ts`, `script/app/flow/scenes.ts`, `script/app/common/work/index.ts`, `script/app/common/work/mode.ts`, `script/app/minigame/frame/return.ts`, `tools/test_scene.ts`. 기존 코드/시험11: `script/app/common/ui/contracts.ts`, `script/app/flow/index.ts`, `script/app/flow/host.ts`, `script/app/flow/preparation.ts`, `script/app/minigame/mg1801/view/index.ts`, `script/app/scene/mode/freeplay/scene.ts`, `script/mgm01_page.ts`, `tools/check_mgmcommon.ts`, `tools/test_mgm01.ts`, `tools/test_mg1801.ts`, `tools/test_render_service.ts`. 문서는 이 파일·`DESIGN.md`·`render_unify.md`·`common_roadmap.md`에 상태를 반영했다.
+
+### 14.4 Node 검증 결과
+
+| 시험 [실행] | 통과 |
+|---|---|
+| `test_scene` | 27/27 — lifecycle/gate/다음 tick 전환·cleanup 대기·부모 재생성·scope 취소·단일 commit·raw byte·100칸 ring·동일 trace hash·복귀 bridge·복원 실패·import 경계 |
+| `test_mgm01`, `test_mg1801`, `test_mgscene` | 281/281 · 99/99 · 79/79. mg1801 실제 종료 결과→Work 단일 commit과 기존 3247 tick 결정성 유지 |
+| `test_render_service`, `test_plaza_gl`, `test_render_common`, `test_splitscreen` | 47/47 · 69/69 · 129/129 · 159/159. 실제 mg1801 activate의 지연된 sound manifest 완료 취소 회귀 포함; WebGL 실화면 시험은 아니다. |
+| `test_game_prepare`, `test_prefetch` | 8/8 · 136/136 |
+| `test_mgmcommon`, `test_save`, `test_mgmet` | 119/119 · 65/65 · 218/218 |
+| `test_layout`, `test_layout_runtime`, `test_layout_draw` | 68/68 · 16/16 · 68/68 |
+| `test_charselect`, `test_setplayer`, `test_modeselect` | 67/67 · 116/116 · 71/71 |
+| `test_entry`, `test_plaza_world` | 440/440 · 474/474. 광장 시험은 `PLAZA_SKIP_GLSL=1`로 GLSL 검사를 제외했다. |
+| `check_mgmcommon` | 12971/12971 — 자산/문서/import 경계 검사 |
+| `npm run typecheck`, `git diff HEAD --check` | 통과 |
+
+[검증] Node 시험21개 묶음의 assertion 합계2756/2756, 별도 명세/경계 검사12971/12971이다. 최종 실패0. 기존 수치 기대값은 변경하지 않았으며, 생성자 결과 전달 시험은 먼저 frame으로 Work를 기록하는 fixture로 이전했다. 시험 로그는 `test/out/scene_work_*.log`에 있다. 브라우저/헤드리스·원본 실행·화면 출력 검증은 하지 않았다.
+
+[검증] 중간 실패 원문은 아래 두 줄이며 앞선 renderer 통합의 기존 import에 대한 허용 목록 누락을 수정했다. 후행 빈 줄1건도 정리하여 diff check를 통과했다.
+
+```text
+실패: layout\render.ts: 금지 import '@app/common/render/hud'
+실패: view.ts: 금지 import '@app/common/render/menu'
+```
+
+[보류·사용자 확인 필요] 첫 소비자 범위에서 결정을 기다려 중단한 항목은 없다. 전체 메뉴/광장/보드의 공용 registry 이전, modeSync/온라인 gate, named return, 보드 Work schema, 캐시 예산/퇴출 정책은 후속이다. 기존 원본 U08 결과 commit caller·W01~W05와 §11.9.5 잔여15주소는 그대로 열려 있다. 이번 구현을 이 미확정의 원본 판독 완료로 세지 않는다. 새 Ghidra 추출 요청0주소·추출0함수다.

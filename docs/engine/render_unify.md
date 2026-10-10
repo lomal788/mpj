@@ -946,3 +946,11 @@ tools/test_render_service.ts(291,35): error TS2322: Type '"srgb"' is not assigna
 - 프리패치의 게임별 CPU 목록 캐시는 선택 캐릭터가 바뀌면 이전 조합을 보유할 수 있다. 최종 view 준비는 현재 preparationKey/캐릭터로 다시 확인하여 실제 자원을 받는다. 캐시 키 세분화는 후속 최적화이며 시작 정확성의 조건으로 사용하지 않는다.
 
 [사용자 확인 필요] 이번 구현/오류 수정에서 추가 결정 필요 없음. 실제 브라우저 화면·GPU 시간 확인은 미실행으로 남는다. 원본 추가 분석 없음, 신규 Ghidra 추출 요청 주소 **0개**. 기존 P01~P03·후처리 R1~R3 미확정은 유지한다.
+
+### 18.5 Call/Return 객체 수명 후속 확인 (2026-10-10)
+
+[판독] 일반 원본 Call/Return은 현재 장면을 종료·파괴하고 복귀할 이름/파라미터로 factory→Entry를 다시 실행한다. §2·§5 및 U11의 부모 instance 보존 미확정은 이 범위에서 해소됐다. named return 열거·전체 registry·웹 renderer 상태 복원/시각 확인 등 U11의 다른 경계는 유지한다. 직접 C와 프리플레이 ContinueFlow의 Work 복원은 [18_scene_work §11.9](18_scene_work.md#scene-return-lifetime)에 정리했다.
+
+[설계: 추천·미구현] 웹은 논리 Scene 재생성과 자원 보관을 분리한다. 현재 §15·§18의 MenuSurface/CPU 레이아웃 보관, 앱 renderer 하나, 사전 다운로드·prepareQueue는 유지할 수 있다. 공유 자원 보관은 정상 generation/캐시 소유권에 한정하고, 새 논리 Scene은 Work로 표시·입력·연출을 복원한다. 부모 논리 Scene의 파이버/구독 전체를 계속 살리는 것을 기본 계약으로 삼지 않는다. 현재 구현을 바꾼 것이 아니며 구체적인 lifecycle 이전과 캐시 예산은 후속이다. [18_scene_work §11.9.3](18_scene_work.md#scene-return-web).
+
+[구현 후속 2026-10-10] 위 권고의 공용 lifecycle/Work와 첫 소비자 프리플레이↔한 판 이전을 완료했다. 논리 부모 재생성 때 공용 renderer·MenuSurface·CPU 레이아웃을 보존하고, 한 판 cleanup의 비동기 완료와 surface resume 성공 뒤 부모를 생성한다. 기존 prepareQueue/take/activate는 유지한다. 이전 take의 abort가 새 슬롯을 취소하지 않고, 취소된 mg1801 Assets의 소리 로드 완료가 stage/steam을 뒤늦게 활성화하지 않도록 보강했다. 복원 실패는 부모 진입을 차단한다. Node `test_render_service` 47/47·`test_plaza_gl` 69/69·`test_splitscreen` 159/159 통과이며 실화면 검증/전체 장면 이전/캐시 예산 확정은 포함하지 않는다. 파일·전체 검증은 [18_scene_work §14](18_scene_work.md#14-웹-구현-기록-2026-10-10).

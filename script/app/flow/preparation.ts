@@ -58,11 +58,19 @@ export class GamePreparation {
     slot.state = 'cancelled'; slot.gpu.cancel();
     void slot.ready.catch(() => undefined).then(() => this.cleanup(slot));
   }
-  async take(def: GameDef, setup: GameSetup): Promise<PreparedGame | null> {
+  async take(def: GameDef, setup: GameSetup, signal?: AbortSignal): Promise<PreparedGame | null> {
+    if (signal?.aborted) throw signal.reason ?? new Error('Game activation cancelled');
     const pending = this.select(def, setup);
     const slot = this.current;
-    await pending;
-    if (this.current !== slot || !slot || slot.def !== def || slot.state !== 'ready' || !slot.gpu.valid()) return null;
+    const abort = (): void => { if (this.current === slot) this.cancel(); };
+    signal?.addEventListener('abort', abort, { once: true });
+    try { await pending; }
+    finally { signal?.removeEventListener('abort', abort); }
+    if (signal?.aborted) throw signal.reason ?? new Error('Game activation cancelled');
+    if (this.current !== slot || !slot || slot.def !== def || slot.state !== 'ready' || !slot.gpu.valid()) {
+      if (this.current === slot) this.cancel();
+      return null;
+    }
     this.current = null; slot.gpu.signal.removeEventListener('abort', slot.abort);
     slot.gpu.cancel(new Error('Preparation transferred'));
     const data = slot.data!; slot.data = null; slot.cleaned = true;

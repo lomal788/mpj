@@ -6,7 +6,8 @@
  * 읽기 전용 상태(screen·plaza·plazaLoad·entry), flowScreens(화면 실행 함수 표), prepareFlow(흐름 미리 받기·광장 GL 준비).
  */
 import { GAMES } from '@app/minigame';
-import { freePlaySetup } from '../../mgrun';
+import { freePlaySetup, localSeed } from '../../mgrun';
+import { BexRandModule } from '@game/core/rng';
 import { prefetchMode, appFlow } from '../../view/appFlow';
 import { sceneIn, sceneOut } from '../../view/appTransition';
 import { FLOW_END_FADE } from '../../view/screenBgm';
@@ -19,6 +20,8 @@ import type { PlazaPageRun } from '../../plaza_page';
 import type { SetPlayerRun } from '../../setplayer_page';
 import type { MgResultEntry } from '@app/common/ui';
 import type { Mgm01PlayRequest } from '@app/scene/mode/freeplay';
+import { WorkModule, type FrameResultPort } from '@app/common/work';
+import { commitMinigameResult } from '@app/minigame/frame/return';
 import type { GameHost, SetupDraft } from './host';
 
 export { createGameHost, runGameLoop, type GameHost, type HostEvent, type SetupDraft, type Stage, type StartOptions } from './host';
@@ -78,6 +81,8 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
   let screen: string | undefined;
   let plazaLoad: string | undefined;
   let entryNow: MgResultEntry | null | undefined;
+  const work = new WorkModule<Mgm01PlayRequest>();
+  let playSerial = 0;
   host.listen((e) => {
     if (e.type === 'stage' && e.stage === 'loading') entryNow = undefined;
   });
@@ -104,10 +109,13 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
     emit({ type: 'end', text, reason });
   };
 
-  async function playFromList(req: Mgm01PlayRequest): Promise<MgResultEntry | null> {
+  async function playFromList(req: Mgm01PlayRequest, frame?: FrameResultPort, signal?: AbortSignal): Promise<MgResultEntry | null> {
+    const serial = ++playSerial;
+    const valid = (): boolean => serial === playSerial && !signal?.aborted;
     const d = GAMES.find((g) => g.id === req.name);
     if (!d) return null;
     await sceneOut();
+    if (!valid()) return null;
     const others = [...stageBox.children].filter((c) => c !== glCanvas && c !== hudCanvas && c !== msg && !c.classList.contains('tr-wipe')) as HTMLElement[];
     for (const c of others) c.style.visibility = 'hidden';
     glCanvas.style.visibility = hudCanvas.style.visibility = '';
@@ -115,7 +123,8 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
     appFlow().enter('game');
     const fp = freePlaySetup(req, flowPlayers.chars, flowPlayers.com);
     const draft: SetupDraft = { players: fp.players, practice: false, options: {} };
-    await host.start(d, draft, { play: fp.play, endless: fp.endless, save: mgRunSaveHooks(appSave(), req.id), leaveWipe: true });
+    await host.start(d, draft, { play: fp.play, endless: fp.endless, save: mgRunSaveHooks(appSave(), req.id), leaveWipe: true, frame, signal });
+    if (!valid()) return null;
     await new Promise<void>((res) => {
       const t = setInterval(() => {
         if (host.stage === 'done' || host.stage === 'error' || host.stage === 'idle') {
@@ -124,9 +133,11 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
         }
       }, 100);
     });
+    if (!valid()) return null;
     const run = host.run;
-    const entry: MgResultEntry | null = host.stage === 'done' && run?.ended ? run.resultEntry(req.id) : null;
+    const entry: MgResultEntry | null = host.stage === 'done' && run ? commitMinigameResult(run, req.id) : null;
     await sceneOut();
+    if (!valid()) return null;
     dispose();
     glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
     for (const c of others) c.style.visibility = '';
@@ -137,18 +148,25 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
 
   function flowMgm01(): void {
     flowStep('mgm01-loading', null);
+    work.beginMode();
+    const rng = new BexRandModule(localSeed(host.fixedSeed));
+    work.setPlayers(flowPlayers.chars.map((chara, playerId) => ({ playerId, chara, isCom: flowPlayers.com[playerId] ?? false, comLevel: 0, teamId: 0, gamePlay: true })));
     appFlow().hint('gameCharacters', JSON.stringify(flowPlayers.chars));
     appFlow().enter('mgm01');
     void screens.mgm01(stageBox, {
       com: flowPlayers.com,
       pads: flowPlayers.pads,
       muted: host.muted,
+      work,
+      rand: n => rng.randMod(n),
       prepare: name => {
         const def = GAMES.find(g => g.id === name);
         if (prefetchMode() !== 'off' && def?.preparationKey) host.prepare(def, { players: flowPlayers.chars.map((char, i) => ({ char, isCom: flowPlayers.com[i] ?? false, comLevel: 0 })), practice: false, options: {} });
         else host.cancelPreparation();
       },
       play: playFromList,
+      cancelPlay: () => { playSerial++; host.stop(); },
+      onError: error => endFlow(`프리 플레이 장면 전환 실패: ${String(error)}`, 'error'),
       onDone: () => void sceneOut().then(flowMgmet),
     }).then((r: Mgm01ListRun) => flowStep('mgm01', r));
   }

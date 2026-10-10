@@ -132,6 +132,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
   }
 
   async load(onProgress: Progress): Promise<void> {
+    if (this.assets.disposed) throw new Error('Game resources cancelled');
     onProgress(0, 1, 'mg1801 manifest');
     if (!this.gpu) await this.sound.load((n, total, name) => onProgress(n, total, name));
     onProgress(0, 1, 'chara/index.json');
@@ -182,6 +183,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
     }
     onProgress(0, 1, '화면 준비');
     await Promise.all([this.stage.prepare(this.scene), ...this.assets.roots().map(root => this.stage.prepare(root))]);
+    if (this.assets.disposed) throw new Error('Game resources cancelled');
     if (!this.gpu) this.stage.activate(this.ctx.renderer);
     await this.assets.prepare(this.scene, this.camera, this.ctx.renderer.gl, this.stage.loaded, { uploads: this.gpu?.uploads ?? this.ctx.renderer.uploads, offscreen: true, valid: () => this.gpu ? this.gpu.valid() : this.ctx.renderer.active !== false, scheduler: this.gpu?.scheduler, signal: this.gpu?.signal });
     onProgress(1, 1, '완료');
@@ -202,9 +204,11 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
   }
 
   async activate(): Promise<void> {
+    if (this.assets.disposed) throw new Error('Game resources cancelled');
     this.gpu = undefined;
     this.sound = new SoundMap(this.assets, this.ctx.audio, 'mg1801');
     await this.sound.load();
+    if (this.assets.disposed) throw new Error('Game resources cancelled');
     this.stage.activate(this.ctx.renderer);
     if (this.fxLoaded) this.steam = this.fx.start('mg1801_steam00', { x: 0, y: 0, z: 0 });
   }

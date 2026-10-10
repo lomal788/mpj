@@ -1,11 +1,12 @@
 /**
  * 프리 플레이 화면 상태기계 — DecideMinigameFlow(0 처음·2 목록·3 승패 표·4 개별 설정·5 자이로·6/7 연출 정리·8 한 판 호출·9 끝)를 한 Fiber 로 묶는다.
- * 한 판은 Mgm01PlayRequest 를 바깥(call)으로 내고 장면이 버려진다. 돌아오면(returned) 결과 기록·ContinueFlow(선택 복원, resume1 → 목록).
+ * 한 판은 Mgm01PlayRequest 를 바깥(call)으로 내고 장면이 버려진다. 돌아오면 Work의 결과·선택을 읽어 ContinueFlow(선택 복원, resume1 → 목록).
  * 근거: docs/shell/mgm01_freeplay.md 3.1·3.2(Enter/Continue)·5.2·5.5(전이·안내·SE)·8.3·8.4(호출·복귀 계약). 웹 결정 9.2.
  * BGM(docs/engine/04_sound.md §12.14): Start/ContinueFlow PlayBgm(4), MgStartFlow 맨 앞 StopBgm(3)+PlayBgm(5), ExitFlow StopBgm(2).
  */
-import { pushResult, type MgmSave, type MgmWork, type MgResultEntry } from '@app/common/ui/contracts';
-import { FiberRunner, waitTime, type Flow } from '@app/common/ui/fiber';
+import { type MgmSave, type MgResultEntry } from '@app/common/ui/contracts';
+import type { MgmWork } from '@app/common/work';
+import { FiberRunner, waitTime, type Flow, type FiberHandle } from '@app/common/ui/fiber';
 import { MgmGuide } from '@app/common/ui/guides';
 import type { MgmInput } from '@app/common/ui/input';
 import type { MgmSound } from '@app/common/ui/sound';
@@ -45,6 +46,7 @@ export interface Mgm01SceneDeps {
   dt?: number;
   newRate?: number;
   startEnum?: number;
+  returning?: boolean;
 }
 
 export type SceneEvent =
@@ -69,19 +71,13 @@ export class Mgm01Scene {
   history: HistoryScreen | null = null;
   readonly log: SceneEvent[] = [];
   private readonly fibers = new FiberRunner();
+  private readonly flow: FiberHandle<void>;
+  private disposed = false;
   private reasons = new Map<number, number>();
 
-  constructor(
-    readonly deps: Mgm01SceneDeps,
-    returned?: MgResultEntry | null,
-  ) {
+  constructor(readonly deps: Mgm01SceneDeps) {
     const { work } = deps;
     deps.carry.values = { ...deps.carry.values, team: 0 };
-    if (returned) {
-      work.round += 1;
-      pushResult(work, returned);
-      this.log.push({ type: 'record', entry: returned, round: work.round });
-    }
     deps.sound.playBgm(4);
     this.refreshLock();
     this.guide = new MgmGuide(deps.view, 17, 'sys_ctrl_back');
@@ -99,13 +95,13 @@ export class Mgm01Scene {
       newRate: deps.newRate,
     });
     const sel = work.freeplaySelect;
-    if (work.round >= 1 && sel) {
+    if ((work.round >= 1 || deps.returning) && sel) {
       this.enumNo = sel.filter;
       this.index = sel.index;
       this.selectedId = sel.id;
       this.resume = true;
     }
-    this.fibers.start(this.decide());
+    this.flow = this.fibers.start(this.decide());
   }
 
   private refreshLock(): void {
@@ -249,6 +245,7 @@ export class Mgm01Scene {
   }
 
   step(): void {
+    if (this.disposed) return;
     this.fibers.step();
     this.list.update(this.deps.dt ?? Math.fround(1 / 60));
     this.setting?.update();
@@ -257,9 +254,18 @@ export class Mgm01Scene {
   }
 
   draw(): void {
+    if (this.disposed) return;
     this.list.draw();
     this.setting?.draw();
     this.history?.draw();
     this.guide.draw();
+  }
+
+  dispose(): void {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.flow.cancel();
+    this.setting = null;
+    this.history = null;
   }
 }

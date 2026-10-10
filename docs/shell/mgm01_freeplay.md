@@ -714,3 +714,9 @@ null_all/x_filter_0T 보임 = (T==type);  x_no_favorite 보임 = (enum13 && N==0
 
 [설계] `script/app/scene/mode/freeplay/historyScreen.ts`(HistoryState → `mgm01_history_title_00`·`mgm01_history_00` 공용 창, 열 `x_parts_NN/x_history_PP` 에 win_normal/normal, 얼굴 `x_face_0P/x_face_pc128` 칸 1 = `face_128_pcNN^u`, 승리 수 `num/x_text_0P` = `mgm01_ui_countWin` Number0, 기록 0 이면 `x_no_history` 표시)·`announceScreen.ts`(AnnounceState → `mgm01_mes_announce_00`). 얼굴 텍스처는 charselect 변환물을 가리키는 조각 `assets/mgm01/faces.json`(`web/tools/analysis/mgm01_faces_part.py`). 미니게임 썸네일(`x_thumbnail`)은 아직 변환하지 않아 원래 텍스처, 스크롤바 `x_scr_mgm` 은 노드가 비어 위치만 계산. 시험 `tools/test_mgmscreens.ts`, 확인 `dev/ui?ui=mgm01-history&rounds=N` · `ui=mgm01-announce`.
 [데이터] 모드별 모집단·형태·체감의 정리본은 [mgm_modes.md §8](mgm_modes.md#8-상호작용)을 참조한다.
+
+### 사전 로딩 후속 조사 (2026-10-10)
+
+[후속 판독] `PrepareLoadArchives @0x7100004d78`은 모드 공통 자원/NPC 적재이며 선택 게임 전체의 커서 prefetch와 같지 않다. 확인한 `MgListFlow_MoveCursor @0x71000166ec`·`ApplyChangeMgList2 @0x7100015550`에서는 게임 archive 적재 요청이 발견되지 않았다. 간접 콜백을 포함한 전체 경로 부재를 확정한 것은 아니다.
+
+[판독: 기존 + 보충] §3.2의 CallMinigameScene 분기를 재사용한다. 설명 조건일 때 넘어가는 mgInst는 **실제 게임을 다른 sequence로 먼저 호출하고, 설명용 초기화 완료 콜백 후 안내 UI를 표시**한다. 따라서 원본의 안내 중 게임 실행과 웹의 커서 예측/GPU prewarm을 구분한다. 신규 [mgInst.nro.c](../../../analysis/decomp/mgInst.nro.c)의 `GameFlow @0x7100004ea0`·`MgStartInst @0x7100004828`·cleanup 경로와 자세한 한계는 [render_unify §17](../engine/render_unify.md#17-원본-사전-로딩과-preparequeue-대응-조사-2026-10-10)에 기록했다. 웹 mgm01 실행/시험은 변경하지 않았다.

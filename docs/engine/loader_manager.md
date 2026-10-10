@@ -936,3 +936,16 @@ mgr.stats                                               // 숫자 필드만(요�
 실패: RULES_WEB mgresult_dice = 이전 전 코드 기록 (3a7dfc775ccc25f3fac752509e5697e5319c982bd75f397ab1293e0c46403870)
 실패 8/135
 ```
+
+## 16. 원본 사전 적재·공용 큐와 웹 대응 (2026-10-10)
+
+[후속 판독] §2.3의 “구체적인 원본 로딩 방식은 판독하지 않았다”는 당시 기록이다. 공용 ArchiveModule/AssetModule의 요청·완료 대기와 mgInst 안내 중 실제 게임 장면 실행을 보충했다. 상세 C·주소·추출/검증·미확정은 [render_unify §17](render_unify.md#17-원본-사전-로딩과-preparequeue-대응-조사-2026-10-10)에 둔다.
+
+- [판독] 부팅 상주 category0, 게임/모드/메뉴/모션 category별 적재·재사용, 장면의 로딩 완료 대기는 원본 공통 경로다. 기존 [06_scene_data §1](06_scene_data.md)을 재사용했다.
+- [판독] 원본 공용 job 큐에서 이번에 확인한 것은 **파일 I/O**다. main `FUN_71008df750 → FUN_71008e0574`, `FUN_71008e00a0`의 4MiB 조각 읽기·LightEvent 통지이며 프레임4ms나 GPU32메시 묶음이 아니다.
+- [판독] mgInst `GameFlow @0x7100004ea0`은 다른 sequence로 게임을 호출하고 callback5의 `MgStartInst @0x7100004828` 이후 안내 UI를 시작한다. 이는 실제 설명/연습 게임 실행이며 로직을 진행하지 않는 prewarm과 구별한다. 안내 cleanup은 다른 sequence의 shutdown을 요청한다.
+- [설계] 웹 fetch/decode는 AssetManager, GPU 준비는 RenderService의 `prepareQueue`, 게임 활성화는 장면 완료 조건이 담당한다. 메뉴 활성 대여와 함께 실행하는 프레임 단위 GPU prepare는 아직 미구현이다.
+- [설계] §5·§11의 PC4ms/모바일2ms·compileAsync·scratch 준비와 커서 기반 예측은 웹 최적화다. 선택 게임을 미리 받는 기능과 완성 게임 인스턴스 인계는 별도로 검증하며, 둘 다 원본에서 그대로 확인됐다고 표현하지 않는다.
+- [미확정] 커서에서 게임 전체 적재하는 모든 경로·원본 GPU 프레임 예산·안내용 게임의 본게임 직접 인계는 미확정이다. 다운로드 완료와 GPU 준비 완료, 실제 게임 시작을 하나의 ready로 합치지 않는다.
+
+[범위] 조사와 문서 보충만 수행했다. §13~15의 웹 구현·시험 기대값과 사전 로딩 실행 시점은 변경하지 않았다.

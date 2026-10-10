@@ -716,3 +716,11 @@ PREROLL 60 대기(옛 웹 근사)를 틀 단계 1~7 이 대신한다. 리듬 프
 | 낡은 코드 주석 | 고치지 않았다(주석 임의 추가·삭제 금지 규칙). 옛 PREROLL·`stepFrame`·흐름 번호 12/13 을 설명하는 줄이 남아 있다: `app/minigame/kit/rhythm/scene.ts` 머리 17·22~23행과 `beginFrame` 위 문서 주석·`onGameFinish` 문서 주석 끝 줄, `app/minigame/mg1801/logic/game.ts` 머리 5~10·17행, `app/minigame/kit/rhythm/types.ts` `RmSceneState.flow`, `app/minigame/kit/rhythm/data.ts` `PREROLL_FRAMES`·`gameWork.ts` `prerollFrames`(이제 읽는 곳 없음), `script/game.ts`·`script/main.ts` 머리의 `logic.step` 설명 | 고칠지 사용자 결정 |
 
 보충(2026-10-09, [../engine/16_save.md](../engine/16_save.md) §7): "플레이 횟수 +1 자리" 해소 — 이 장면의 `save` 사건을 `script/mgrun.ts` `MgRunInit.save` 가 받는다. 단계 11 → `playCount(참가자)`(FUN_71002db9f0 규칙: 사람·참가·세이브 있는 칸만 +1, 웹은 1P = 칸 0 만 세이브), 단계 16 → SaveRequest(공용 저장 요청 수명). 목록은 `settlePlayResult(…, countedByScene)` 로 다시 세지 않는다. 단계 16 sub 1 의 IsProcessing 대기는 틀에 넣지 않았다(웹 기록이 페이드 안에 끝나고 로직이 저장을 읽지 않게, 16_save §9). 저장 고리 있음/없음 로직 같음: `tools/test_save.ts` 7절.
+
+## 13. mgInst 설명 장면의 게임 선행 실행 확인 (2026-10-10)
+
+[후속 판독] §8·§11·§12의 “mgInst 범위 밖/미구현”은 당시 조사/웹 구현 기록으로 보존한다. 이번에는 원본 사전 로딩 조사로 [mgInst.nro.c](../../../analysis/decomp/mgInst.nro.c)를 새로 추출했다. 웹 mgInst는 구현하지 않았다. 세부 흐름·원본과 웹 준비 큐의 차이는 [render_unify §17.3](../engine/render_unify.md#173-게임-선택설명본게임의-정확한-구분)을 참조한다.
+
+[판독] mgInst ctor `@0x7100004608`은 callback5에 `MgStartInst @0x7100004828`을 등록한다. `GameFlow @0x7100004ea0`은 flag0을 켜고 실제 게임 이름을 다른 sequence에 CallScene하며, 설명용 초기화 완료 콜백 표시(this+0x110)가 켜진 뒤 안내 UI를 Start한다. callback5는 본플레이 OnGameStart가 아니라 §5 단계2의 OnGameInstInit 성공 시점이다. 이는 이미 판독한 flag0의 설명/연습 반복 경로와 연결된다.
+
+[판독] 안내 종료 뒤 와이프 완료·RequestExchangeScene 요청으로 진행한다. `CleanupGame @0x7100004da0`은 다른 sequence ShutdownCurrentScene 및 flag0 Off, `IsCleanupComplete @0x7100004e6c`은 해당 sequence의 실행 장면이 사라질 때 완료다. 설명 중에 준비한 동일 게임 인스턴스를 본게임에 그대로 넘긴다는 결론은 내리지 않는다. 게임 아카이브 재사용과 객체/진행 상태 인계는 별개다. 원본의 생략된 RequestExchangeScene 문자열 인자는 [18_scene_work §5](../engine/18_scene_work.md)의 기존 미확정 경계를 유지한다.

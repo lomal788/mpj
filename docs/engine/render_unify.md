@@ -777,3 +777,93 @@ tools/test_render_service.ts(291,35): error TS2322: Type '"srgb"' is not assigna
 - 선택 시 게임 사전 로딩·준비 취소·완성 장면 인계와 메뉴 표시 중 prepareQueue의 프레임 예산 분배는 미구현이다. 메뉴가 활성 대여를 가진 동안 광장 GPU prewarm은 시작하지 않으며 CPU/네트워크 캐시는 기존 경로를 유지한다.
 - 실제 화면의 UI 색·반투명 가장자리·DOM HUD 순서와 업로드 비용은 별도 실기 확인 대상이다. Node 검증은 호출 순서·상태·수명·레이아웃 명령 골든을 확인한다.
 - 새 원본 판독·C 추출 없음. 사용자 결정 대기 항목 없음. Ghidra 추출 요청 주소0개.
+
+## 17. 원본 사전 로딩과 prepareQueue 대응 조사 (2026-10-10)
+
+[범위] 사용자 요청으로 원본의 사전 로딩 시점·공용 큐·완료 대기·안내 화면을 조사했다. §6·§16.5의 웹 `prepareQueue`와 게임 선택 사전 준비는 구현하지 않았다. 앞 절의 “신규 추출 없음”, “mgInst 범위 밖”은 각 작업 당시 기록으로 보존한다. 기존 판독은 [06_scene_data §1.4~1.7](06_scene_data.md)·[18_scene_work §3·§5](18_scene_work.md)·[mgm01_freeplay §3.2·§5.5](../shell/mgm01_freeplay.md)·[minigame_scene §5·§8](../shell/minigame_scene.md)을 재사용했다. 부족한 C만 [디컴파일 가이드](../analysis/decompile_guide.md)에 따라 보충했다.
+
+### 17.1 결론과 범위
+
+[판독] 원본은 **공용 ArchiveModule/AssetModule이 자원을 적재하고, 장면이 필요한 묶음을 등록한 뒤 완료를 기다리는 구조**다. 부팅 시 상주 공용 자원을 먼저 싣는다. 설명을 표시하는 `mgInst`에서는 **실제 미니게임 장면을 다른 sequence로 호출하고 설명용 게임 초기화 완료 콜백을 받은 뒤 안내 UI를 시작**한다. 따라서 게임 시작 버튼 뒤에서 모든 적재를 처음 시작하는 구조로 볼 수 없다. 다만 `mgInst`를 거치지 않는 경로도 있다.
+
+[판독] 이번에 확인한 AssetModule 아래 큐는 mutex/condition variable로 보호한 **파일 읽기 job 큐**다. `0x400000`은 읽기 처리의 최대 조각 크기(4MiB)로 이어진다. 이는 밀리초 프레임 예산이나 GPU 업로드 묶음 수가 아니다. [render_prepare_asset_jobs.c](../../../analysis/decomp/render_prepare_asset_jobs.c) main `@0x71008dead0/0x71008df750`, [render_prepare_queue.c](../../../analysis/decomp/render_prepare_queue.c) main `@0x71008dfe28/0x71008e00a0/0x71008e0574`.
+
+[미확정] 메뉴 커서가 가리키는 게임 전체를 미리 준비하는 경로, 표시 프레임 뒤 남은 시간을 GPU 준비에 배분하는 원본 큐, 안내 중 게임 인스턴스의 본게임 직접 인계는 이번 근거에서 확인되지 않았다. **웹의 `prepareQueue`·커서 기반 예측 준비·완성 장면 인계를 모두 원본 구현이라고 설명하지 않는다.** 공용 자원과 장면별 설정을 나누는 방향은 원본에 대응하며, 구체적인 브라우저 GPU 준비 정책은 웹 설계다.
+
+### 17.2 원본 자원 적재 흐름
+
+| 수준 | 단계 | 확인한 처리·근거 |
+|---|---|---|
+| [판독: 기존] | 부팅 상주 | boot `GameFlow` main `@0x7100004520`: 캐릭터22명·mgInst/mgResult·공용 오브젝트·모션을 category0에 등록하고 `LoadAsync(0)`; [06 §1.5](06_scene_data.md), [scene_boot.c](../../../analysis/decomp/scene_boot.c). 상주 자원 사전 적재이며 모든 미니게임 무대 적재를 뜻하지 않음 |
+| [판독: 기존] | 장면이 요구 등록 | `EntryArchive @0x71001d493c`: 상주/같은 category에 이미 있으면 중복 등록을 피함. `SceneLoadAsync @0x71001d4b60`: 게임 본체 category1, 게임 계열 공통 category2, 모드3/4·메뉴5/6·모션7/8 등을 구분; [06 §1.4~1.5](06_scene_data.md), [scene_load.c](../../../analysis/decomp/scene_load.c) |
+| [판독: 기존] | 비동기 요청 | `LoadAsync @0x71001d4a50` → `FUN_7100109020`: 아직 loaded/loading이 아닌 항목에 pending 요청을 세움. 호출 그 자체가 즉시 GPU 준비 완료가 아님; [scene_load.c](../../../analysis/decomp/scene_load.c) |
+| [판독] | 자원 I/O job | `FUN_71008d7b90`: 이미 있는 아카이브 재사용, 파일 레코드별 `FUN_71008df750(...,0x400000)` 요청. `FUN_71008dead0`은 AssetModule의 공용 처리 객체를 돌려줌. job 생성 후 `FUN_71008e0574`가 보호된 큐에 넣고 큐가 비어 있었으면 condition variable 신호; [scene_load.c](../../../analysis/decomp/scene_load.c), [render_prepare_asset_jobs.c](../../../analysis/decomp/render_prepare_asset_jobs.c), [render_prepare_queue.c](../../../analysis/decomp/render_prepare_queue.c) |
+| [판독] | 조각 읽기·통지 | `FUN_71008dfe28`에서 job의 +0x10에 조각 한도를 저장. `FUN_71008e00a0`은 남은 크기와 한도의 min만큼 버퍼를 할당하고 파일 객체 virtual+0x40으로 읽음. 결과 버퍼·크기·최종 조각 여부를 쌓고 LightEvent 신호. 종료 요청 비트(+0x2d bit0)를 확인하는 경로도 있음; [render_prepare_queue.c](../../../analysis/decomp/render_prepare_queue.c) |
+| [판독: 기존] | 완료 대기 | `FUN_7100109370`: pending(+0x1b)/loading(+0x1a)이 남으면 완료 아님. `SceneBase::OnLoaded @0x71002ca37c`: 모션7/8 적재 단계와 가상 `IsLoadingArchive`·사운드 로딩 조건을 기다림. 이후 Setup/SyncedSetup/FrameGate는 기존 장면 수명에 따름; [06 §1.5](06_scene_data.md), [18 §3](18_scene_work.md) |
+| [판독] | 해제 | `ArchiveLoader::ReleaseAll @0x7100109620`: 참조 수(+0x20)·유지 플래그(+0x19)를 확인하고 조건 충족 항목에 해제 요청(+0x1c)을 기록. 이미 판독된 이름별 해제 `FUN_7100109700`와 함께 사용. 즉시 모든 실행 job을 강제 중단하는 웹 AbortController와 같은 계약으로 단정하지 않음; [render_prepare_archive.c](../../../analysis/decomp/render_prepare_archive.c), [scene_load.c](../../../analysis/decomp/scene_load.c) |
+
+[판독] 보충한 `FUN_7100108ef0`은 미적재 항목의 `AssetModule::LoadArchive` 핸들을 얻고 완료 상태를 검사하는 경로다. 이 함수 하나를 비동기 로더의 매 프레임 update 전체라고 이름 붙이지 않는다. `FUN_71008e00a0`의 I/O 큐·이벤트는 확인했지만 worker 개수·스레드 우선순위·프레임 시간 할당 정책까지 판독한 것은 아니다.
+
+### 17.3 게임 선택·설명·본게임의 정확한 구분
+
+[판독: 기존 + 공백 보충] mgm01 `PrepareLoadArchives @0x7100004d78`은 모드 공통 묶음·NPC 적재다. 목록의 `MgListFlow_MoveCursor @0x71000166ec`와 `ApplyChangeMgList2 @0x7100015550`에서 확인한 처리는 커서·SE/FX·새 게임 표시·목록 UI이며, 이 두 함수에서 선택 게임 본체에 대한 archive 요청은 발견하지 않았다. 이는 조사한 경로의 결과이지 모든 메뉴·간접 콜백에 사전 적재가 없다는 증명은 아니다. [mgm01_stage3.c](../../../analysis/decomp/mgm01_stage3.c).
+
+[판독: 기존] 시작 확정 후 `MgStartFlow @0x7100011a50`은 Work/플레이어 준비와 와이프를 거쳐 `CallMinigameScene`을 호출한다. main `CallMinigameScene @0x71003601ac`는 gyro 경로를 우선하고, flag4와 `MGList::IsCallInst` 조건이면 `mgInst`, 그렇지 않으면 실제 게임 이름으로 장면을 호출한다. [mgm01_freeplay §3.2](../shell/mgm01_freeplay.md), [minigame_scene §8](../shell/minigame_scene.md). 원본 와이프의 속도1.0을 1초로 해석하지 않는다.
+
+[판독: 신규] 아래 주소는 모두 **mgInst.nro**이며 같은 주소의 main 함수와 구별한다. C는 [mgInst.nro.c](../../../analysis/decomp/mgInst.nro.c), 기능 주소는 [mgInst.nro.tsv](../../../analysis/functions/mgInst.nro.tsv)와 대조했다.
+
+1. `Scene ctor @0x7100004608`: `MgStartInst`를 SystemCallBackModule의 번호5에 등록하고 완료 표시 `this+0x110`을0으로 시작한다.
+2. `BeginScene @0x7100005064`: NetTransferSceneBegin 동기화를 기다리고 GameWork의 게임 ID를 받는다. 이 함수에서 커서 기반 archive prefetch를 호출하지 않는다.
+3. `SetupGame @0x7100004b28`: 두 sequence의 gfx scene type·공용 renderer의 레이어/overlay를 연결하고 안내 UI·네트워크 관리자를 만든다.
+4. `GameFlow @0x7100004ea0`: flag0을 켜고 `MGList::GetName(id)`의 실제 게임을 `CallScene(name, currentSequence == 0, -1)`로 호출한다. 즉 현재0이면1, 현재1이면0인 다른 sequence다.
+5. 같은 GameFlow는 `this+0x110`이 참이 될 때까지 Fiber::Wait한다. callback5의 `MgStartInst @0x7100004828`은 공용 렌더 설정·소리 처리를 하고 이 표시를1로 바꾼다. 그 뒤에만 `MgInstUI::Start`한다. 단순 파일 다운로드 완료가 아니라 설명용 초기화 성공까지 기다리는 경로다. 콜백5는 본플레이의 OnGameStart가 아니라 기존 미니게임 틀 단계2의 OnGameInstInit 성공 시점이다([minigame_scene §5](../shell/minigame_scene.md)).
+6. 안내 UI의 `IsEnd`를 기다린 뒤 콜백 호출·와이프·전환 소리를 처리하고, 와이프 완료 후 `RequestExchangeScene`을 요청한다. C가 일부 호출 인자를 생략하는 문제는 기존 [18 §5](18_scene_work.md)와 같으므로 잘못 복원된 `this` 인자를 게임 이름으로 새로 판정하지 않는다.
+7. `CleanupGame @0x7100004da0`: 반대 sequence의 `ShutdownCurrentScene`, overlay/gfx 설정 복원, flag0 Off. `IsCleanupComplete @0x7100004e6c`은 반대 sequence에 실행 장면이 남지 않을 때 완료한다.
+
+[판독: 기존] flag0은 `IsInstActive`, 즉 설명 화면 안의 게임 실행을 뜻하며 미니게임 틀은 이때 오프닝·결과 없는 반복 경로를 쓴다. [minigame_scene §4·§5·§8](../shell/minigame_scene.md). 따라서 이 경로는 **게임을 실제로 실행하는 설명/연습 장면**이다. 로직을 전혀 진행하지 않는 웹 GPU prewarm과 같지 않다.
+
+[미확정] cleanup에서 안내용 게임의 shutdown은 확인된다. 준비된 게임 객체·RNG 상태·진행 프레임이 본게임 인스턴스로 그대로 넘어간다고 볼 수 없다. 같은 아카이브 재사용 경로는 있지만, 안내 종료 시 게임 자원의 정확한 유지 범위·재생성 비용과 본게임까지 무적재임은 추가 lifecycle 근거가 필요하다. 설명 생략/gyro 조건에서도 동일한 시간 여유가 있다고 가정하지 않는다.
+
+### 17.4 웹 설계에 반영할 계약
+
+[설계] 원본과 대응되는 책임 분리는 **공용 자원 관리 + 장면별 적재 요구 + 시작 전 완료 확인 + 공용 renderer/장면별 레이어**다. 메뉴에서 선택한 게임을 더 일찍 받아 준비하는 것은 이 구조 위의 웹 최적화로 표시한다. `mgInst` 자체 구현이나 원본 연습 로직을 이번에 추가하지 않는다.
+
+| 원본 근거 | 웹 대응 | 동일성의 한계 |
+|---|---|---|
+| 부팅 상주·category 공통 묶음 | AssetManager의 앱 공용 캐시와 scope별 요구 | 웹 키·fetch/parse·캐시 퇴출 규칙은 웹 포맷에 따른다 |
+| 공용 파일 I/O job 큐 | AssetManager의 fetch/decode 요청·동시성 관리 | 원본4MiB 조각을 WebGL 작업 단위나 browser budget으로 옮기지 않는다 |
+| 장면 로딩 완료·Setup·설명용 초기화 콜백 | CPU 자원 완료 → GPU 준비 완료 → 장면 활성화의 별도 상태 | 다운로드 Promise 완료만으로 GPU/게임 ready 판정 금지 |
+| 하나의 renderer와 scene/layer 구분 | RenderService의 표시 프레임과 GPU prepare 직렬화 | `activeFrame/prepareQueue`는 웹 계약, 원본 동명의 자료형 아님 |
+| 안내 중 실제 게임 실행 | 향후 mgInst 소비자의 별도 장면 수명 | 일반 prewarm에서 game.step·FrameGate·RNG·소리/저장 부작용을 대신 실행하지 않는다 |
+| 참조/유지 조건과 해제 요청 | 준비 owner/scope 해제·늦은 완료 무효화 | 실행 I/O/GPU 작업의 즉시 강제 중단·원본 generation 체계는 미확정 |
+
+[설계] `prepareQueue`는 **GPU 준비 전용**으로 RenderService에 붙인다. 메뉴가 활성 대여를 가진 상태에서도 프레임 경계에서 표시 draw와 준비 단위를 같은 renderer로 직렬 실행하고, scratch RT와 상태 복원 scope를 사용한다. 준비 작업이 일반 대여를 다시 요청해 메뉴 종료까지 기다리는 방식으로 만들면 메뉴 표시 중 준비 목적을 달성하지 못한다. 기존 독점 lease의 수명과 프레임 단위 준비 권한을 구분하는 후속 구현이 필요하다.
+
+[설계] 텍스처 initTexture → compileAsync → 메시 버퍼 upload라는 기존 ScenePreparer 단위를 재사용한다. PC4ms/모바일2ms 예산·메시32개 묶음은 [loader_manager §11](loader_manager.md)의 **웹 설정**이다. 한 단위/compile 호출 비용은 선점할 수 없어 엄격한 프레임 상한을 보장하지 않으며, 실측으로 조정한다. 원본은 컴파일된 shader 자원을 사용한다는 기존 [03_graphics](03_graphics.md)·[14_shader_graphs §30](14_shader_graphs.md)와 shader 자원 처리 `main @0x7100883ab0`([shader_fs_deg_env_sampler.c](../../../analysis/decomp/shader_fs_deg_env_sampler.c))의 binary 복사/메모리 pool 경로를 재사용한다. 이를 WebGL 런타임 compileAsync나 드라이버 비용0과 동일시하지 않는다.
+
+[설계] 게임 선택 요청은 game ID·설정·owner·renderer generation과 연결한다. 선택 변경/화면 종료 뒤 늦은 결과를 현재 장면에 활성화하지 않고 scope를 해제한다. 완료 여부는 CPU ready/GPU ready/activated를 구분하며, 준비가 끝나지 않은 경우 기존 장면 전환의 완료 조건에서 기다린다. **선택 시 미리 받기와 완성 장면 직접 인계는 별도 기능**이다. 후자는 게임 로직·RNG·물리·소리 수명까지 검증하기 전 원본 등가라고 선언하지 않는다.
+
+### 17.5 추출·검증·남은 조사
+
+[데이터] 신규 산출물4개와 INDEX 행443개를 추가했다. main 추출본16헤더에는 이미 있던 `FUN_71008d7b90`의 호출 체인 재출력1개를 포함한다. mgInst 작은 NRO는 가이드대로 전체 추출했으며 **427함수 전부를 새로 판독했다는 뜻은 아니다**. 이번 의미 판독은 위 장면 수명7함수와 필요한 main 호출 체인으로 제한했다.
+
+| 모듈 | 파일 | 함수 헤더·추출 실패 | 조사 목적 |
+|---|---|---|---|
+| main.nso | [render_prepare_archive.c](../../../analysis/decomp/render_prepare_archive.c) | 7·0 | loader 상태·수명·동기 적재·해제 |
+| main.nso | [render_prepare_asset_jobs.c](../../../analysis/decomp/render_prepare_asset_jobs.c) | 6·0 | 공용 처리 객체·파일 job 생성 |
+| main.nso | [render_prepare_queue.c](../../../analysis/decomp/render_prepare_queue.c) | 3·0 | job 조각 크기·읽기·큐 통지 |
+| mgInst.nro | [mgInst.nro.c](../../../analysis/decomp/mgInst.nro.c) | 427·0 | 설명 화면의 실제 게임 호출·설명용 초기화 대기·정리 |
+
+[데이터] main은 기존 프로젝트 `-noanalysis -readOnly`, mgInst는 원본 NRO를 읽기만 하여 별도 `ghidra_work/render_prepare/mginst_prepare` 프로젝트에 import/분석했다. 로그는 `test/out/render_prepare_{archive,asset_jobs,queue,mginst}_ghidra.log`다. mgInst import의 `.got section` 경고는 가이드의 알려진 경고이며 최종 import 성공·decompiled=427 failed=0을 확인했다. 최초 시도는 프로젝트 디렉터리 부재로 실패했고 디렉터리 생성 후 재시도로 완료했다. 생성된 C는 Ghidra 추정 인자/외부 블록 경고가 포함될 수 있으며 의미 확정은 근거 본문 범위에 한정한다.
+
+[검증] C 헤더 수·추출 실패 표식·INDEX와 헤더의 1:1 대응·문서 링크/줄바꿈·diff 공백을 정적으로 확인한다. 런타임 코드 변경이 없어 Node 회귀/typecheck는 재실행하지 않았고 브라우저/헤드리스도 실행하지 않았다. §16의 구현·시험 결과와 이번 조사 검증을 구분한다.
+
+| 번호 | 남은 미확정 | 후속 조사 기준 |
+|---|---|---|
+| P01 | 메뉴 커서에서 게임 전체를 준비하는 모든 간접 호출 경로 | 이번 확인은 mgm01 커서/목록2함수; 전체 콜백까지 부재를 확정하지 않음 |
+| P02 | 원본 GPU 준비 job에 프레임 예산 분배가 있는지 | 확인된 공용 큐는 파일 I/O; GPU dispatcher와 frame budget을 임의 연결하지 않음 |
+| P03 | 안내 종료 → 본게임의 자원 유지 범위·객체 재생성 비용 | 다른 sequence shutdown과 exchange 하위 수명, ArchiveModule 유지/참조 증감의 교차 근거 필요 |
+
+[상태] 사용자 결정 대기 없이 문서 반영 완료. 이번 추출 대상은 모두 확보하여 Ghidra 추출 요청 잔여 주소0개다. P01~P03은 새로 특정하지 않은 분석 범위이며 원본 동작을 임의 기본값으로 채우지 않는다.
+
+[최종 검증 결과] 기존 본문 보존/작업 전 줄바꿈8항목, 추가 링크43개, C 헤더와 INDEX 대응443개 모두 통과했다. 추출 실패0, `git diff --check` 공백 오류0. 처음 검증기의 줄바꿈 비교는 git blob의 LF를 작업 트리 CRLF와 비교해 실패했으며, 작업 전 실제 줄바꿈을 기준으로 고쳐 재검증했다. 문서 줄바꿈은 변환하지 않았다.

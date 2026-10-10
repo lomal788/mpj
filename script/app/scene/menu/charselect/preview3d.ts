@@ -209,6 +209,9 @@ async function loadTex(url: string): Promise<THREE.Texture> {
 type FileKind = 'gltf' | 'json' | 'texture';
 
 export class Preview3D {
+  private readonly compiling = new Set<Promise<unknown>>();
+  private closed = false;
+  async settle(): Promise<void> { await Promise.allSettled([...this.compiling]); }
   private readonly loader = assetHooks.createGltfLoader();
   private readonly preps = new Map<string, Prep>();
   private order: number[] = [];
@@ -383,7 +386,9 @@ export class Preview3D {
     gl.setRenderTarget(prev);
     p.state = 'compiling';
     const t1 = performance.now();
+    this.compiling.add(done);
     void done.then(() => {
+      if (this.closed) return;
       p.stat.compileWaitMs = performance.now() - t1;
       const set = new Set<THREE.Texture>();
       root.traverse((o) => {
@@ -396,7 +401,8 @@ export class Preview3D {
       const seen = new Set<unknown>();
       p.textures = [...set].filter((x) => (seen.has(x.source) ? false : (seen.add(x.source), true)));
       p.state = 'textures';
-    });
+    }).catch(error => { p.state = 'failed'; console.warn('charselect compile', error); })
+      .finally(() => this.compiling.delete(done));
   }
 
   private prepTexture(gl: THREE.WebGLRenderer, p: Prep): void {
@@ -654,6 +660,8 @@ export class Preview3D {
   }
 
   dispose(): void {
+    if (this.closed) return;
+    this.closed = true;
     this.disposeSlots();
     this.warmRt.dispose();
     const b = assetHooks.broker;

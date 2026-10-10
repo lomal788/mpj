@@ -2,7 +2,7 @@
 
 [설계] 2026-10-10 정적 조사본이다. 앱 수명 렌더러 통합의 근거와 이전 조건을 정리한다. 이번 변경은 이 문서뿐이며 구현 승인을 뜻하지 않는다. 폴더·의존 방향은 [DESIGN §10.1~10.7][design]을 따른다.
 
-[후속 기록] 위 조사 당시 범위와 이후 작업을 구분한다. 광장·게임 호스트의 웹 구현은 §14, 사용자 요청으로 확인한 원본의 광장·게임·메뉴·레이아웃 UI 공용 경로와 추가 C 추출5함수는 §15에 기록한다. 기존 “신규 추출 없음” 문장은 당시 조사/구현 범위의 기록으로 보존한다.
+[후속 기록] 위 조사 당시 범위와 이후 작업을 구분한다. 광장·게임 호스트의 웹 구현은 §14, 사용자 요청으로 확인한 원본의 광장·게임·메뉴·레이아웃 UI 공용 경로와 추가 C 추출5함수는 §15에 기록한다. 기존 “신규 추출 없음” 문장은 당시 조사/구현 범위의 기록으로 보존한다. 메뉴·Lyt 통합 완료와 검증 결과는 §16에 기록한다.
 
 [데이터] 원본·웹 실행, 헤드리스, 화면 촬영, 신규 추출, 시험 실행은 없다. 기존 판독 재사용·기존 C의 빈 판독 보충·웹 파일의 정적 읽기를 수행했다. 원본·extracted·코드·분석 파일은 수정하지 않았다. 주소는 모듈별이며 데이터에 주소를 만들지 않는다. 출처 대응은 부록 A에 둔다.
 
@@ -699,3 +699,81 @@
 [설계] 메뉴·Lyt 이전에서도 고유 그래프·후처리 설정·UI 색공간·알파·합성 순서는 보존한다. 공용 renderer를 쓴다는 이유로 모든 UI를 같은 overlay/pass에 강제하지 않는다. 원본도 유효한 지정 레이어와 기본 overlay 경로를 구분한다. §7.1의 UI 전용 RT·기존 합성 계약과 §9.3의 후속 이전 순서를 유지한다.
 
 [미완료] §14의 광장·게임 호스트 연결 이후 메뉴·Lyt의 별도 renderer 제거와 선택 시 사전 로딩은 후속 작업이다. 이번 원본 확인은 그 방향의 근거를 보완하며 해당 구현·원본 픽셀 등가·내부 renderer 객체 수1을 완료 판정하는 근거로 쓰지 않는다.
+
+
+## 16. 메뉴·Lyt 공유 렌더러 이전 (2026-10-10)
+
+### 16.1 구현 범위와 계약 (착수)
+
+[설계] MgmView·modeselect·charselect는 앱 RenderService의 renderer/canvas를 대여한다. 메뉴 전용 MenuSurface가 크기·상태와 suspend/resume/해제를 관리한다. 인원 설정→캐릭터 선택, 게임 목록→게임은 부모의 CPU 레이아웃을 유지하고 출력 대여만 반납한다. 비활성 부모는 GL을 호출하지 않으며 복귀 시 재획득한다. 대기 중 종료·손실·초기화 실패에서도 후속 소유자의 canvas를 제거하지 않는다.
+
+[설계] Lyt의 별도 WebGLRenderer를 제거하고 호출자가 현재 renderer를 명시한다. hudPremultiplied 프로필을 1920×1080 RGBA8/MSAA4 투명 RT로 그린 뒤 공유 화면에 premultiplied over로 합성한다. 이전 Canvas2D HUD 내용은 Lyt 직전에 텍스처로 올려 먼저 합성하고 지운다. 이후 Canvas2D 내용은 기존 DOM HUD 위에 남겨 호출 순서를 보존한다. 게임 3D 복사·readPixels는 하지 않는다. 메뉴 menuLinear의 HalfFloat/MSAA4→sRGB 경로와 캐릭터 카드 RT는 그대로 둔다.
+
+[설계] HUD 합성의 상태 scope 복원은 크기·DPR가 실제 바뀐 때만 resize한다. 같은 크기를 재설정하여 직전 게임 프레임버퍼를 지우지 않는다. Lyt RT는 linear 출력의 기존 표시값을 유지하며 최종 합성에서 sRGB 변환을 중복하지 않는다.
+
+[제한] 활성 메뉴와 게임 사전 준비의 동시 시간 분할·prepareQueue·게임 선택 시 사전 로딩은 이번 범위에 포함하지 않는다. 메뉴 진입은 기존 광장 prewarm을 drain하고, 메뉴가 renderer를 보유할 때 새로운 GPU prewarm은 시작하지 않는다. Canvas2D→GPU 업로드 비용과 실제 픽셀 등가는 Node 시험만으로 확정하지 않는다.
+
+### 16.2 단계 상태
+
+| 단계 | 착수 상태 |
+|---|---|
+| 메뉴 대여·부모 복귀·실패/손실 처리 | 구현 중 |
+| Lyt 전용 RT·HUD 순서·명시적 renderer 연결 | 구현 중 |
+| Node 회귀·경계·타입 검사 | 예정 |
+
+[설계 보완] 메뉴→게임은 기존 장면 와이프가 닫힌 뒤 반납하고, 메뉴를 재획득한 뒤 와이프를 연다. charselect의 진행 중 compileAsync는 종료 시 settle한 뒤 카드 RT와 대여를 해제한다. context loss에서는 렌더 호출을 멈추고 복구 이벤트 뒤 새 generation으로 메뉴 대여를 재획득한다.
+
+[설계 보완] Canvas2D 텍스처는 업로드부터 `premultiplyAlpha=true`로 유지한다. 투명 가장자리의 선형 필터링도 premultiplied 값에 적용하며 Lyt RT와 같은 over 패스로 합성한다.
+
+
+### 16.3 완료 기록·파일 구성
+
+[구현 완료] §16.2의 착수 항목 세 가지를 완료했다. 제품 광장·게임 호스트·메뉴·Lyt는 같은 앱 renderer를 사용한다. 이전 §14·§15의 메뉴/Lyt 미완료 문장은 당시 상태이며 현재 상태는 이 절을 따른다. standalone dev의 3D renderer 생성 경로는 유지하되, 그 화면의 Lyt도 호출자가 가진 renderer를 사용하여 추가 context를 생성하지 않는다.
+
+| 구분 | 파일·변경 |
+|---|---|
+| 신규 공용 대여 | `script/app/common/render/menu.ts`: MenuSurface, suspend/resume·대기 중 종료·복구·compile 정리 대기 |
+| 신규 HUD 합성 | `script/app/common/render/hud.ts`: 투명 UI RT·Canvas2D 선행 내용 업로드·premultiplied over·상태 복원·자원 해제 |
+| 신규 화면 연결 | `script/view/menuRenderer.ts`: 광장 준비 drain 뒤 앱 canvas 제공 |
+| 서비스 | `script/app/common/render/service.ts`: 재부착 시 canvas를 DOM HUD/와이프 아래에 놓음; `state.ts`: 불필요한 resize 제거 |
+| 메뉴 소비자 | `script/app/common/ui/view.ts`, `script/app/scene/menu/{charselect,modeselect,setplayer}/screen.ts`: 독립 renderer 생성·dispose 제거, 비활성 출력 차단, 초기화 실패 정리 |
+| 카드 준비 | `script/app/scene/menu/charselect/preview3d.ts`: compileAsync 추적·settle, 종료 뒤 결과 적용 차단 |
+| 제품 페이지 | `script/{charselect,modeselect,setplayer,mgmet,mgm01}_page.ts`: 앱 canvas 연결; 자식 메뉴·게임 전환 시 대여 반납/복귀; 오래된 페이지의 canvas.remove 제거 |
+| UI 소비자·호스트 | `script/app/common/ui/layout/render.ts`, `script/view/{mgsceneUi,hud}.ts`, `script/app/minigame/kit/rhythm/view/ui.ts`, `script/app/minigame/mg1801/view/index.ts`, `script/app/flow/{host,index}.ts`: 명시적 renderer 인자·UI 수명·와이프 복귀 순서 |
+| 개발 소비자 | `script/dev/{mgmcommon,mgmscreens,online,partyrule}_page.ts`: 같은 메뉴 경로; `script/dev/mgscene_page.ts`: 기존 3D renderer를 Lyt에 전달, UI dispose |
+| 시험·문서 | `tools/test_render_service.ts`, 이 문서, `DESIGN.md`, `docs/engine/common_roadmap.md` |
+
+메뉴의 종료 대기 중에는 그리기와 context 복구 재획득을 먼저 막고, 카드 compile 정리 뒤 대여를 반납한다. 잃은 context가 복구되더라도 종료한 메뉴가 다음 장면의 canvas를 다시 가져오지 않는다. 메뉴 명세·애니메이션·카드 카메라·후처리 그래프·기존 골든 기대값은 변경하지 않았다.
+
+### 16.4 검증 결과
+
+Node 시험20개 스크립트 모두 종료 코드0. 기존 시험 기대값 변경 없음. 결과 로그는 `test/out/menu_*.log`에 둔다.
+
+| 시험 | 통과 |
+|---|---|
+| `test_render_service` | 29/29 — 기존15 + 메뉴 중첩/복귀·취소·손실/복구·실패·compile drain·HUD 순서/상태/수명·생성/import 경계14 |
+| `test_layout` / `test_layout_draw` / `test_layout_runtime` | 68/68 · 68/68 · 16/16 |
+| `test_charselect` / `test_modeselect` / `test_setplayer` | 67/67 · 71/71 · 116/116 |
+| `test_mgmcommon` / `test_mgm01` / `test_mgmet` / `test_mgmscreens` | 119/119 · 277/277 · 218/218 · 38통과/0실패 |
+| `test_render_common` / `test_game_assets` | 129/129 · 17/17 |
+| `test_entry` / `test_plaza_gl` / `test_plaza_world` | 418/418 · 60/60 · 471/471 (`PLAZA_SKIP_GLSL=1`) |
+| `test_mg1801` / `test_mgscene` | 통과 출력97개, 종료0 · 79/79 |
+| `test_splitscreen` / `test_prefetch` | 115/115 · 133/133 |
+| `npm run typecheck` | 통과 |
+| 메모리 esbuild | 출력171개, 디스크 번들 생성 없음 |
+| `git diff HEAD --check` | 오류 없음 |
+
+작업 중 타입 검사에서 아래 두 오류를 수정한 뒤 최종 통과했다. 첫 오류는 renderer 생성 제거 뒤 남은 미사용 import, 두 번째는 새 시험 probe의 색공간 필드가 하나의 문자열 리터럴로 좁혀진 문제였다.
+
+```text
+script/app/scene/menu/charselect/screen.ts(6,1): error TS6133: 'THREE' is declared but its value is never read.
+tools/test_render_service.ts(291,35): error TS2322: Type '"srgb"' is not assignable to type '"srgb-linear"'.
+```
+
+브라우저/헤드리스·실제 GPU context 복구·픽셀 비교·프레임 비용 측정은 하지 않았다. HUD 선형 필터링의 투명 가장자리를 보존하려고 CanvasTexture도 premultiplied로 업로드하며 sRGB 재변환을 넣지 않았다. 기존 별도 canvas의 구현별 MSAA 샘플 수와 새 RT의 고정 samples4가 모든 GPU에서 같은 픽셀이라는 보장은 없다. §14.3에 기록된 기존 `test_character` 카메라 골든8개는 이번 변경 대상/재실행 대상이 아니다.
+
+### 16.5 남은 범위
+
+- 선택 시 게임 사전 로딩·준비 취소·완성 장면 인계와 메뉴 표시 중 prepareQueue의 프레임 예산 분배는 미구현이다. 메뉴가 활성 대여를 가진 동안 광장 GPU prewarm은 시작하지 않으며 CPU/네트워크 캐시는 기존 경로를 유지한다.
+- 실제 화면의 UI 색·반투명 가장자리·DOM HUD 순서와 업로드 비용은 별도 실기 확인 대상이다. Node 검증은 호출 순서·상태·수명·레이아웃 명령 골든을 확인한다.
+- 새 원본 판독·C 추출 없음. 사용자 결정 대기 항목 없음. Ghidra 추출 요청 주소0개.

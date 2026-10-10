@@ -130,7 +130,6 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
     dispose();
     glCanvas.style.visibility = hudCanvas.style.visibility = 'hidden';
     for (const c of others) c.style.visibility = '';
-    sceneIn();
     screen = 'mgm01';
     entryNow = entry;
     return entry;

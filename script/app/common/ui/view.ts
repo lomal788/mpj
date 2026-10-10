@@ -5,6 +5,7 @@
  * 글꼴: 명세 fonts = 공용 글꼴 참조 {dir, chars}, 같은 글꼴이면 chars 를 합친다(docs/engine/font_assets.md §5.3).
  */
 import * as THREE from 'three';
+import { MenuSurface } from '@app/common/render/menu';
 import { nodeMatrix, Render2D } from '@app/common/ui/layout/render';
 import { LayoutInst } from '@game/lib/layout';
 import type { LayoutDocument as Spec } from '@game/lib/layout';
@@ -90,7 +91,7 @@ export class MgmView {
 
   private constructor(
     readonly spec: MgmSpec,
-    readonly gl: THREE.WebGLRenderer,
+    readonly surface: MenuSurface,
     readonly r2d: Render2D,
     readonly url: (p: string) => string,
   ) {
@@ -100,17 +101,18 @@ export class MgmView {
   static async create(opts: MgmViewOptions): Promise<MgmView> {
     const url = (p: string): string => opts.assets.url(p);
     const spec = await loadMgmSpec(url, opts.parts ?? []);
-    const gl = new THREE.WebGLRenderer({ canvas: opts.canvas, antialias: true, alpha: false });
-    gl.setPixelRatio(1);
-    gl.setSize(spec.screen[0], spec.screen[1], false);
-    gl.autoClear = false;
-    gl.outputColorSpace = THREE.SRGBColorSpace;
     const r2d = new Render2D(spec as unknown as Spec);
-    await r2d.load(url);
-    const v = new MgmView(spec, gl, r2d, url);
-    if (opts.backdrop) v.setBackdrop(opts.backdrop);
-    return v;
+    let surface: MenuSurface | null = null;
+    try {
+      await r2d.load(url);
+      surface = await MenuSurface.create(opts.canvas, spec.screen[0], spec.screen[1]);
+      const v = new MgmView(spec, surface, r2d, url);
+      if (opts.backdrop) v.setBackdrop(opts.backdrop);
+      return v;
+    } catch (error) { r2d.dispose(); surface?.dispose(); throw error; }
   }
+
+  get gl(): THREE.WebGLRenderer { return this.surface.gl; }
 
   text(label: string): string {
     return this.spec.texts[label] ?? '';
@@ -193,6 +195,7 @@ export class MgmView {
   }
 
   begin(): void {
+    if (!this.surface.active) return;
     this.gl.setRenderTarget(null);
     this.gl.setClearColor(0x000000, 1);
     this.gl.clear();
@@ -201,18 +204,18 @@ export class MgmView {
   }
 
   draw(inst: LayoutInst, base: Mat3 = IDENTITY, alpha = 255): void {
-    if (!inst.visible) return;
+    if (!this.surface.active || !inst.visible) return;
     splitVc(this.spec, inst);
     this.zabuton(inst, base);
     this.r2d.draw(inst, base, alpha);
   }
 
   end(): void {
-    this.r2d.render(this.gl);
+    if (this.surface.active) this.r2d.render(this.gl);
   }
 
   dispose(): void {
     this.r2d.dispose();
-    this.gl.dispose();
+    this.surface.dispose();
   }
 }

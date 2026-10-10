@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { HudComposite } from '@app/common/render/hud';
 import { LayoutRenderer, type LayoutRenderProviders } from '@game/lib/layout-three';
 import { type LayoutDocument, nodeMatrix, rectOf, tr } from '@game/lib/layout';
 import { assetHooks } from '@app/common/render3d/assetHooks';
@@ -113,31 +114,22 @@ export function createHudBackend(res: LytResources): LayoutRenderer {
   const backend = new HudBackend(spec, providers, 'hudPremultiplied'); backend.setImages(res.images); return backend;
 }
 
-/** 레이아웃 그리기(화면 밖 WebGL → HUD 2D 캔버스) */
+/** 레이아웃 그리기(공유 WebGL의 UI 전용 RT → 화면, Canvas2D HUD 호출 순서 유지) */
 export class LytRenderer {
-  readonly canvas: HTMLCanvasElement;
-  private readonly gl: THREE.WebGLRenderer;
   private readonly backend: LayoutRenderer;
-  /** WebGL 문맥은 페이지에 하나만 만들어 게임을 다시 시작해도 늘지 않게 한다 */
-  private static shared: THREE.WebGLRenderer | null = null;
-  constructor(readonly res: LytResources) {
-    if (!LytRenderer.shared) {
-      const gl = new THREE.WebGLRenderer({ canvas: document.createElement('canvas'), alpha: true, premultipliedAlpha: true, antialias: true });
-      gl.outputColorSpace = THREE.LinearSRGBColorSpace; gl.setPixelRatio(1); gl.setSize(1920, 1080, false); gl.setClearColor(0x000000, 0);
-      LytRenderer.shared = gl;
-    }
-    this.gl = LytRenderer.shared; this.canvas = this.gl.domElement; this.backend = createHudBackend(res);
-  }
+  /** WebGL 문맥은 호출자가 빌려주며 UI 타깃만 소유한다 */
+  private readonly composite = new HudComposite();
+  constructor(readonly res: LytResources) { this.backend = createHudBackend(res); }
   /** 프레임 시작: 지난 프레임 사각형을 모두 숨긴다 */
   begin(): void { this.backend.begin(); }
   draw(inst: LayoutInstance): void {
     inst.syncTexts(); this.backend.setImages(this.res.images);
     this.backend.draw(inst.core, tr(inst.pos.x, inst.pos.y));
   }
-  /** 그려서 ctx 에 겹친다 */
-  end(ctx: CanvasRenderingContext2D): void {
+  /** ctx 의 앞선 내용을 먼저 합성한 뒤 레이아웃을 겹친다 */
+  end(ctx: CanvasRenderingContext2D, gl: THREE.WebGLRenderer): void {
     if (this.backend.drawCount === 0) return;
-    this.backend.render(this.gl); ctx.drawImage(this.canvas, 0, 0, 1920, 1080);
+    this.composite.render(gl, ctx, () => this.backend.render(gl));
   }
-  dispose(): void { this.backend.dispose(); }
+  dispose(): void { this.backend.dispose(); this.composite.dispose(); }
 }

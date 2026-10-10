@@ -24,7 +24,7 @@ export class RenderLease {
   onLost(fn: () => void): () => void { this.lost.add(fn); return () => this.lost.delete(fn); }
   invalidate(): void { for (const fn of this.lost) fn(); }
   attach(host: HTMLElement): void {
-    this.assert(); this.canvas.style.visibility = ''; host.append(this.canvas);
+    this.assert(); this.canvas.style.visibility = ''; host.prepend(this.canvas);
   }
   resize(w: number, h: number, ratio = 1): void {
     this.assert(); this.service.resize(this, w, h, ratio);

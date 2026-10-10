@@ -219,3 +219,5 @@ ID → 모듈은 `app/flow` 등록표가 정한다(원본 장면 이름표 `@0x7
 6. **렌더러 하나로 통합** — 위 "화면마다 새 WebGL 문맥" 목록(플레이어 설정·캐릭터 선택·모드 메뉴·항구·프리 플레이 목록)을 앱 수명 three.js 렌더러 하나(`view/plazaGl` 방식 확장, `ScenePreparer`)에 그리게 바꾼다. 주소·문서 그대로, 화면만 바뀌는 배포 원칙(10.1)의 마지막 조각.
 7. **장면 계약·요청 API·Work(10.5)** — 아래 상태 참고.
 [설계] 렌더러 하나로 통합하기 위한 원본/웹 분석: [render_unify.md](docs/engine/render_unify.md).
+
+[구현 후속 2026-10-10] 위 화면별 renderer 서술은 이전 상태다. 제품 광장·게임 호스트·메뉴·Lyt는 `app/common/render`의 앱 renderer/canvas 공유로 이전했다. 메뉴는 suspend/resume과 장면별 RT를 소유하고 Lyt는 호출자의 renderer로 HUD를 합성한다. 완료·검증은 [render_unify §16](docs/engine/render_unify.md#16-메뉴lyt-공유-렌더러-이전-2026-10-10)을 따른다. 게임 선택 시 사전 로딩과 활성 메뉴/GPU 준비의 프레임 예산 분배는 별도 미완료다.

@@ -2,6 +2,7 @@
  * 페이지 ↔ 모드 선택 독립 모듈(app/scene/menu/modeselect) 연결 — 어댑터(입력·소리·에셋 경로)와 60Hz 고정 스텝 루프. charselect_page.ts 와 같은 방식.
  *   bex 비트: A 0x1, B 0x2, 0x8(취소에 같이 쓰임, Y [추정]), 십자 아래 0x400·위 0x800, 스틱 위 0x20000·아래 0x80000 (docs/shell/modeselect.md 5절)
  */
+import { menuCanvas } from './view/menuRenderer';
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
 import { appFlow } from './view/appFlow';
@@ -37,12 +38,12 @@ export interface ModeSelectRun {
   press(bits: number): void;
 }
 
-/** stage 안에 캔버스를 만들어 모드 선택을 돌린다. 끝나면 onDone(결과 | null = 취소) */
+/** stage 안에 공유 캔버스를 붙여 모드 선택을 돌린다. 끝나면 onDone(결과 | null = 취소) */
 export async function runModeSelect(
   stage: HTMLElement,
   cfg: { pad: PadSource | null; muted: boolean; flags?: ModeSelectFlags; onNotice?(text: string): void; onDecided?(r: ModeSelectResult): void; onDone(r: ModeSelectResult | null): void },
 ): Promise<ModeSelectRun> {
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   let prev = 0;
@@ -132,7 +133,6 @@ export async function runModeSelect(
       done = true;
       wipe.release();
       handle.dispose();
-      canvas.remove();
       snd.close(300);
     },
   };

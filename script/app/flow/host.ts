@@ -321,7 +321,7 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   function drawFrame(): void {
     if (!view || !logic || !renderer.active) return;
     view.render(logic.state);
-    if (run) mgUi?.draw(hudCtx, run.scene.layers());
+    if (run) mgUi?.draw(hudCtx, run.scene.layers(), renderer.gl);
   }
 
   const host: GameHost = {

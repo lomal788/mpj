@@ -2,6 +2,7 @@
  * 페이지 ↔ 미니게임 항구 단독 화면(승패 표·잠금 안내·플레이 방법) 연결 — mgmcommon_page.ts 와 같은 어댑터·60Hz 고정 스텝 루프.
  * 시험값(URL): ?rounds=N 승패 기록 판 수(기본 12, 0 = 기록 없음), ?first=0 플레이 방법 다시 보기(B 로 끝낼 수 있음), ?howto=1~6 종류.
  */
+import { menuCanvas } from '../view/menuRenderer';
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
@@ -62,7 +63,7 @@ export async function runMgmScreen(
   cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; onDone(result: string): void },
 ): Promise<MgmScreenRun> {
   const q = new URLSearchParams(location.search);
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'mgmscreens', pads: (pid) => cfg.pads[pid] });
@@ -233,7 +234,6 @@ export async function runMgmScreen(
       cancelAnimationFrame(raf);
       done = true;
       view.dispose();
-      canvas.remove();
       snd.close(300);
     },
   };

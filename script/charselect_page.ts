@@ -3,6 +3,7 @@
  * 모듈 자체는 엔진층을 모르고, 이 파일이 페이지의 입력(view/input PadSource)을 원본 bex 입력 비트로 바꿔 넘긴다.
  *   bex 비트 [판독: docs/shell/charselect.md 4절]: A 0x1, B 0x2, 십자 왼 0x100·오 0x200·아래 0x400·위 0x800, 스틱 왼 0x10000·위 0x20000·오 0x40000·아래 0x80000
  */
+import { menuCanvas } from './view/menuRenderer';
 import { ASSETS } from './env';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
 import { createCharSelect, type CharSelectHandle } from '@app/scene/menu/charselect';
@@ -37,11 +38,11 @@ export interface CharSelectRun {
   press(player: number, bits: number): void;
 }
 
-/** stage 안에 캔버스를 만들어 캐릭터 선택을 돌린다. 끝나면 onDone(pcNN 목록 | null = 취소) */
+/** stage 안에 공유 캔버스를 붙여 캐릭터 선택을 돌린다. 끝나면 onDone(pcNN 목록 | null = 취소) */
 export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; names?: string[]; bgm?: boolean; onDone(chars: string[] | null): void }): Promise<CharSelectRun> {
   const flow = appFlow();
   flow.enter('charselect');
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const prev = cfg.com.map(() => 0);
@@ -127,7 +128,6 @@ export async function runCharSelect(stage: HTMLElement, cfg: { com: boolean[]; p
       done = true;
       for (const t of wakeEvents) window.removeEventListener(t, wake, { capture: true });
       handle.dispose();
-      canvas.remove();
       // 결정 때 BGM 페이드(0.5 s)가 끝난 뒤 닫는다
       snd.close(600);
     },

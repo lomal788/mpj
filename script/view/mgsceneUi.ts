@@ -1,9 +1,10 @@
 /**
  * 미니게임 공용 틀 2D 그리기 — 로직(app/minigame/frame/scene)의 UiLayer 상태를 원본 레이아웃(assets/mgscene/ui.json)으로 그린다.
- * 재생기 = view/lyt.ts(mg1801 과 같음: 텔롭 OTF 글꼴·부품·마스크). 게임 3D 다음에 HUD 캔버스로 겹친다(docs/shell/minigame_scene.md §12.2).
+ * 재생기 = view/lyt.ts(mg1801 과 같음: 텔롭 OTF 글꼴·부품·마스크). 게임 3D 다음에 공유 renderer의 UI RT로 겹친다(docs/shell/minigame_scene.md §12.2).
  * 상태 → 인스턴스: 애니 태그가 바뀌면 play, 매 그리기 setFrame(로직 프레임), 그 뒤 글자·페인 표시·재질 ty(타이머 숫자)·얼굴 텍스처를 덮어쓴다.
  * 얼굴 = 부품 sys_face_00 의 x_face_pc64 재질 둘째 칸(sys_face_dummy*)을 face_128_pcNN^u 로(UiControlStatusFace 규칙, mg1801 과 같음).
  */
+import type * as THREE from 'three';
 import { resolveSpecFonts } from '@app/common/ui/layout/fontSheet';
 import type { UiLayer } from '@app/minigame/frame/scene';
 import { type UiImage } from '@app/common/render3d/assetLoader';
@@ -52,6 +53,8 @@ export class MgSceneUi {
     }
     return new MgSceneUi(d, new LytRenderer({ images, fonts, telop }));
   }
+
+  dispose(): void { this.r.dispose(); this.bound.clear(); }
 
   private instance(layer: UiLayer): Bound {
     let b = this.bound.get(layer.id);
@@ -120,9 +123,9 @@ export class MgSceneUi {
   }
 
   /** 레이어 목록(로직 MgScene.layers() — order 오름차순)을 HUD 에 그린다 */
-  draw(ctx: CanvasRenderingContext2D, layers: readonly UiLayer[]): void {
+  draw(ctx: CanvasRenderingContext2D, layers: readonly UiLayer[], gl: THREE.WebGLRenderer): void {
     this.r.begin();
     for (const l of layers) this.r.draw(this.apply(l));
-    this.r.end(ctx);
+    this.r.end(ctx, gl);
   }
 }

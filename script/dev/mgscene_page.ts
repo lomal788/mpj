@@ -127,7 +127,7 @@ export async function runMgScenePage(
       renderer.render(view.scene, view.camera);
     }
     hud.clearRect(0, 0, 1920, 1080);
-    ui.draw(hud, scene.layers());
+    ui.draw(hud, scene.layers(), renderer.gl);
     if (scene.stage === STAGE_END && !reported) {
       reported = true;
       cfg.onDone(scene.players.map((p) => `${p.pid + 1}P ${p.chara} 순위 ${p.rank + 1} 승패 ${p.winLose} 점수 ${game.state.scores[p.pid]}`).join('\n'));
@@ -146,6 +146,7 @@ export async function runMgScenePage(
       sound.dispose();
       audio?.dispose();
       view.dispose();
+      ui.dispose();
       renderer.dispose();
       canvas.remove();
       hudCanvas.remove();
@@ -217,7 +218,7 @@ async function runRegistered(
     }
     if (n === MAX_STEPS_PER_RAF) acc = Math.min(acc, STEP_MS);
     view.render(run.logic.state);
-    ui.draw(hud, run.scene.layers());
+    ui.draw(hud, run.scene.layers(), renderer.gl);
     if (run.ended && !reported) {
       reported = true;
       const e = run.resultEntry(-1);
@@ -236,6 +237,7 @@ async function runRegistered(
       sound.dispose();
       view.dispose();
       audio?.dispose();
+      ui.dispose();
       renderer.dispose();
       canvas.remove();
       hudCanvas.remove();

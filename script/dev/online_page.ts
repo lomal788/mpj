@@ -5,6 +5,7 @@
  * humans=1~4(이 기기 사람 수), chara=0~21, match=매칭 걸리는 s, mtime=MATCHING_TIME. 배경 ?bg=none|URL(기본 modeselect/backdrop_temp.png).
  * 키: J=A, K=B, U=X(갱신·방 정보), I=Y(방 ID·패스워드 표시), Q=L, E=R, Enter=+(매칭 취소), 방향키.
  */
+import { menuCanvas } from '../view/menuRenderer';
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
@@ -123,7 +124,7 @@ export interface OnlineRun {
 
 export async function runOnline(stage: HTMLElement, cfg: { pads: (PadSource | null)[]; muted: boolean; test: OnlineTest; onDone(result: string): void }): Promise<OnlineRun> {
   const q = new URLSearchParams(location.search);
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: cfg.test.entry === 'world' ? 'matching00' : 'menu00', pads: (pid) => cfg.pads[pid] });
@@ -142,8 +143,8 @@ export async function runOnline(stage: HTMLElement, cfg: { pads: (PadSource | nu
     }
   }
   const url = (p: string): string => `${ASSETS}mgmcommon/${p}`;
-  const view = await MgmView.create({ canvas, assets: { url }, parts: [ONLINE_PART, ONLINE_FACES], backdrop });
   const extra = (await (await fetch(url(ONLINE_PART))).json()) as OnlineExtra;
+  const view = await MgmView.create({ canvas, assets: { url }, parts: [ONLINE_PART, ONLINE_FACES], backdrop });
   applyOnlineExtra(view.spec, extra);
   const sound = new MgmSound(view.spec.sounds, view.url, snd.mgm());
 
@@ -237,7 +238,6 @@ export async function runOnline(stage: HTMLElement, cfg: { pads: (PadSource | nu
       cancelAnimationFrame(raf);
       done = true;
       view.dispose();
-      canvas.remove();
       snd.close(300);
     },
   };

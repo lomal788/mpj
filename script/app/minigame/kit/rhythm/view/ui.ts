@@ -651,7 +651,7 @@ export class RmUi {
     else pad.vibrate(segs);
   }
 
-  draw(ctx: CanvasRenderingContext2D, state: RmUiState): void {
+  draw(ctx: CanvasRenderingContext2D, state: RmUiState, gl: THREE.WebGLRenderer): void {
     this.sync(state);
     const r = this.lyt;
     if (!r) return;
@@ -666,7 +666,7 @@ export class RmUi {
       for (const f of this.panel.flash01) r.draw(f);
       r.draw(this.panel.flash00);
     }
-    r.end(ctx);
+    r.end(ctx, gl);
   }
 
   dispose(): void {

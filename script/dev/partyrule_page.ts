@@ -3,6 +3,7 @@
  * 시험값(패널 또는 URL): step=checkMember|member|check|rule(시작 단계), turn=10|12|15|20|25|30, bonus=0|1|2, handi=0,0,0,0, level=0~3(COM 난이도),
  * fast=1, inst=0, gyro=0, vote=1, flag20=1, flag22=1, board=0~6, champ=1. 사람/CPU = 패널 COM 칸. 배경 ?bg=none|URL(기본 modeselect/backdrop_temp.png).
  */
+import { menuCanvas } from '../view/menuRenderer';
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
@@ -154,7 +155,7 @@ export async function runPartyRule(
   cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; test: PartyRuleTest; onDone(result: string): void },
 ): Promise<PartyRuleRun> {
   const q = new URLSearchParams(location.search);
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const snd = shellSound({ muted: cfg.muted, pan2d: false, scene: 'menu01', pads: (pid) => cfg.pads[pid] });
@@ -173,8 +174,8 @@ export async function runPartyRule(
     }
   }
   const url = (p: string): string => `${ASSETS}mgmcommon/${p}`;
-  const view = await MgmView.create({ canvas, assets: { url }, parts: [PARTYRULE_PART, PARTYRULE_FACES], backdrop });
   const extra = (await (await fetch(url(PARTYRULE_PART))).json()) as PartyRuleExtra;
+  const view = await MgmView.create({ canvas, assets: { url }, parts: [PARTYRULE_PART, PARTYRULE_FACES], backdrop });
   applyPartyRuleExtra(view.spec, extra);
   const sound = new MgmSound(view.spec.sounds, view.url, snd.mgm());
 
@@ -255,7 +256,6 @@ export async function runPartyRule(
       cancelAnimationFrame(raf);
       done = true;
       view.dispose();
-      canvas.remove();
       snd.close(300);
     },
   };

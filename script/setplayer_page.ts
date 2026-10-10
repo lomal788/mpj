@@ -3,6 +3,7 @@
  * WebAudio SE, 60 Hz 고정 스텝, 그리고 "플레이어 설정 → 캐릭터 선택(runCharSelect 그대로)" 이어 붙이기.
  * 근거: docs/shell/setplayer.md 9.3~9.5. 컨트롤러 지원 애플릿·유저 선택·소프트웨어 키보드는 원본이 시스템 UI 라 이 화면은 [설계].
  */
+import { menuCanvas } from './view/menuRenderer';
 import { runCharSelect, type CharSelectRun } from './charselect_page';
 import { appBgm } from './view/bgm';
 import { shellSound } from './view/sound';
@@ -105,7 +106,7 @@ export async function runSetPlayer(
   stage: HTMLElement,
   cfg: { com: boolean[]; keyboard: KeyboardPad; muted: boolean; onResult?(r: SetPlayerResult, chars: string[] | null, pads: (PadSource | null)[]): void; onDone(result: string): void },
 ): Promise<SetPlayerRun> {
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const controllers = new PageControllers(cfg.keyboard);
@@ -215,7 +216,10 @@ export async function runSetPlayer(
     },
     onApplet: showApplet,
     onCharSelect: (r) => {
-      void sceneOut().then(() => runCharSelect(stage, {
+      void sceneOut().then(() => {
+        if (stopped) return null;
+        handle.view.surface.suspend();
+        return runCharSelect(stage, {
         com: r.slots.map((s) => s.type === 'com'),
         pads: r.slots.map((s) => (s.type === 'human' && s.controller ? controllers.source(s.controller) : null)),
         names: r.slots.map((s) => s.displayName),
@@ -223,16 +227,26 @@ export async function runSetPlayer(
         bgm: false,
         onDone: (chars) => {
           charRun = null;
-          canvas.style.visibility = '';
-          sceneIn();
-          chosen = chars;
-          if (!chars) appFlow().enter('setplayer');
-          handle.resolveCharSelect(chars !== null);
+          void handle.view.surface.resume().then(() => {
+            if (stopped) return;
+            sceneIn();
+            chosen = chars;
+            if (!chars) appFlow().enter('setplayer');
+            handle.resolveCharSelect(chars !== null);
+          }).catch(error => console.warn('setplayer renderer resume', error));
         },
-      })).then((cr) => {
-        canvas.style.visibility = 'hidden';
+      });
+      }).then((cr) => {
+        if (!cr) return;
+        if (stopped) { cr.stop(); return; }
         charRun = cr;
         sceneIn();
+      }).catch(error => {
+        console.warn('charselect', error);
+        if (!stopped) void handle.view.surface.resume().then(() => {
+          if (stopped) return;
+          sceneIn(); handle.resolveCharSelect(false);
+        }).catch(error => console.warn('setplayer renderer resume', error));
       });
     },
     onDone: (r) => {
@@ -281,7 +295,6 @@ export async function runSetPlayer(
       cancelAnimationFrame(raf);
       charRun?.stop();
       handle.dispose();
-      canvas.remove();
       overlay.remove();
       snd.close(300);
     },

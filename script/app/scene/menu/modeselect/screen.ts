@@ -4,6 +4,7 @@
  * 이 화면 고유 배치·흐름은 docs/shell/modeselect.md 4~6·9절. 엔진층(script/game/core·games·view)을 쓰지 않는다.
  */
 import * as THREE from 'three';
+import { MenuSurface } from '@app/common/render/menu';
 import { nodeMatrix, Render2D } from '@app/common/ui/layout/render';
 import { LayoutInst } from '@game/lib/layout';
 import { RepeatGen } from '@app/scene/menu/charselect/state';
@@ -38,13 +39,13 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
   const url = (p: string): string => opts.assets.url(p);
   const spec = (await (await fetch(url('spec.json'))).json()) as ModeSpec;
   const all = spec as unknown as Spec;
-  const gl = new THREE.WebGLRenderer({ canvas: opts.canvas, antialias: true, alpha: false });
-  gl.setPixelRatio(1);
-  gl.setSize(spec.screen[0], spec.screen[1], false);
-  gl.autoClear = false;
-  gl.outputColorSpace = THREE.SRGBColorSpace;
   const r2d = new Render2D(all);
+  let surface: MenuSurface | null = null;
+  try {
   await r2d.load(url);
+  surface = await MenuSurface.create(opts.canvas, spec.screen[0], spec.screen[1]);
+  const gpu = surface;
+  const gl = gpu.gl;
 
   const L = (name: string): LayoutInst => new LayoutInst(name, spec.layouts[name], all);
   const base = L('mn01_base_map_00');
@@ -384,6 +385,7 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
   };
 
   const render = (): void => {
+    if (!gpu.active) return;
     gl.setRenderTarget(null);
     gl.setClearColor(0x000000, 1);
     gl.clear();
@@ -421,7 +423,8 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
     },
     dispose(): void {
       r2d.dispose();
-      gl.dispose();
+      gpu.dispose();
     },
   };
+  } catch (error) { r2d.dispose(); surface?.dispose(); throw error; }
 }

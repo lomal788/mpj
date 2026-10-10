@@ -6,6 +6,8 @@
  * bex 비트: A 0x1, B 0x2, X 0x4, Y 0x8 (online.md 4.9 정정), L 0x10, R 0x20, ZL 0x40, ZR 0x80, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10, mgm01_freeplay.md 6.2)
  * 시험 배치(패널·저장 키·기본 기록 = gamerecord 초기값)는 docs/shell/mgm01_freeplay.md 9절 [설계].
  */
+import { sceneIn, sceneOut } from './view/appTransition';
+import { menuCanvas } from './view/menuRenderer';
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
@@ -85,7 +87,7 @@ export interface Mgm01Env {
 }
 
 export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise<Mgm01Env> {
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const overlay = document.createElement('div');
@@ -115,10 +117,10 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
       console.warn(`mgm01: 배경 이미지를 읽지 못했다 ${bgUrl}`);
     }
   }
-  const view = await MgmView.create({ canvas, assets: { url: (p) => `${ASSETS}mgmcommon/${p}` }, parts: ['mgm01.json', '../mgm01/faces.json', '../mgm01/thumbs.json'], backdrop });
   const cr = await fetch(`${ASSETS}mgm01/catalog.json`);
   if (!cr.ok) throw new Error(`mgm01: catalog.json 을 읽지 못했다 (${cr.status})`);
   const catalog = new Mgm01Catalog((await cr.json()) as Mgm01CatalogJson);
+  const view = await MgmView.create({ canvas, assets: { url: (p) => `${ASSETS}mgmcommon/${p}` }, parts: ['mgm01.json', '../mgm01/faces.json', '../mgm01/thumbs.json'], backdrop });
   const params = new URLSearchParams(location.search);
   const players: Mgm01Player[] = [0, 1, 2, 3].map((pid) => ({ pid, type: cfg.com[pid] ? 1 : 0 }));
   if (players.every((p) => p.type === 1)) players[0].type = 0;
@@ -211,7 +213,6 @@ export async function createMgm01Env(stage: HTMLElement, cfg: Mgm01Cfg): Promise
       stopped = true;
       cancelAnimationFrame(raf);
       view.dispose();
-      canvas.remove();
       overlay.remove();
       appBgm().exit('mgm01', 'leave');
       snd.close(300);
@@ -510,6 +511,7 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
   const carry: Mgm01Carry = { values: { team: 0, cpu: Math.max(0, Math.min(3, Number(params.get('cpu') ?? 0) || 0)), endless: params.get('endless') === '1', rhythm: 0 } };
   const faces = env.players.map((p) => `pc${String(p.pid + 1).padStart(2, '0')}`);
   const calls: Mgm01PlayRequest[] = [];
+  let stopped = false;
   let scene: Mgm01Scene | null = null;
   let phase = '시작';
   let cursorGame: string | undefined;
@@ -529,11 +531,19 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
       phase = `한 판(가짜) ${req.name}`;
       let done = false;
       let real: MgResultEntry | null | undefined = cfg.play ? undefined : null;
-      if (cfg.play)
-        void cfg
-          .play(req)
-          .then((r) => (real = r))
-          .catch(() => (real = null));
+      if (cfg.play) {
+        void sceneOut().then(() => {
+          if (stopped) return null;
+          env.view.surface.suspend();
+          return cfg.play!(req);
+        }).catch(() => null)
+          .then(async r => {
+            await env.view.surface.resume();
+            if (!stopped) sceneIn();
+            real = r;
+          })
+          .catch(() => { real = null; });
+      }
       return {
         step() {
           if (done || real === undefined) return;
@@ -588,7 +598,8 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
       [`항구로 돌아감(목록 B) — 한 판 ${calls.length}회, Round ${work.round}`, ...calls.map((c) => `${c.id} ${plainText(texts[`im_${c.name}_name`] ?? '', texts)} cpu ${c.cpu} 팀 ${c.team.teamIdByPid.join(',')}`)].join('\n'),
     );
   });
-  await stack.start('mgm01');
+  try { await stack.start('mgm01'); }
+  catch (error) { stack.dispose(); env.stop(); throw error; }
   env.loop(
     () => stack.step(),
     () => stack.render(),
@@ -604,6 +615,7 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
     calls,
     press: (b) => env.press(b),
     stop: () => {
+      stopped = true;
       stack.dispose();
       env.stop();
     },

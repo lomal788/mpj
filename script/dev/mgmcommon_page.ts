@@ -6,6 +6,7 @@
  *   ④ 공용 메뉴 mgm01_base_freeplay_00 + 항목 레이아웃 mgm01_thum_00 15개(x_filter_02 의 x_thum_02_NN 에 SetConstraint), 3행×5열 격자, 안내 Back·HowTo
  *   bex 비트: A 0x1, B 0x2, 십자 0x100~0x800, 스틱 0x10000~0x80000 (docs/shell/mgm_common.md 6.10)
  */
+import { menuCanvas } from '../view/menuRenderer';
 import { ASSETS } from '../env';
 import { shellSound } from '../view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
@@ -68,7 +69,7 @@ export async function runMgmCommonDemo(
   stage: HTMLElement,
   cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; onDone(result: string): void },
 ): Promise<MgmCommonRun> {
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
       // Play2D 위치 → 좌우 팬: 원본 팬 곡선 [미확정] → 화면 x 선형 [근사] (charselect_page 와 같음)
@@ -282,7 +283,6 @@ export async function runMgmCommonDemo(
       cancelAnimationFrame(raf);
       done = true;
       view.dispose();
-      canvas.remove();
       snd.close(300);
     },
   };

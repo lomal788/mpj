@@ -29,7 +29,9 @@ export class RendererState {
   restore(): void {
     const gl = this.gl;
     gl.setRenderTarget(null);
-    gl.setPixelRatio(this.ratio); gl.setSize(this.size.x, this.size.y, false);
+    if (gl.getPixelRatio() !== this.ratio) gl.setPixelRatio(this.ratio);
+    const size = gl.getSize(new THREE.Vector2());
+    if (!size.equals(this.size)) gl.setSize(this.size.x, this.size.y, false);
     gl.setViewport(this.viewport); gl.setScissor(this.scissor); gl.setScissorTest(this.scissorTest);
     gl.setClearColor(this.color, this.alpha);
     [gl.autoClear, gl.autoClearColor, gl.autoClearDepth, gl.autoClearStencil] = this.auto;

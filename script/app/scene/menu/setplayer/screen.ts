@@ -58,6 +58,7 @@ export function defaultSlots(): SlotWork[] {
 
 export async function createSetPlayer(opts: SetPlayerOptions): Promise<SetPlayerHandle> {
   const view = await MgmView.create({ canvas: opts.canvas, assets: opts.assets, parts: ['../setplayer/setplayer.json'], backdrop: opts.backdrop });
+  try {
   const part = (await (await fetch(opts.assets.url('../setplayer/setplayer.json'))).json()) as { texts: Record<string, string>; sounds: Record<string, { file: string; gain: number }> };
   const texts = { ...view.spec.texts, ...part.texts };
   const sounds = { ...view.spec.sounds, ...part.sounds };
@@ -282,4 +283,5 @@ export async function createSetPlayer(opts: SetPlayerOptions): Promise<SetPlayer
       view.dispose();
     },
   };
+  } catch (error) { view.dispose(); throw error; }
 }

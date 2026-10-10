@@ -434,7 +434,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
     const hud = this.hud;
     hud.clear();
     /* 원본 레이아웃 UI(텔롭·게이지·PERFECT, ui.ts). 아래 글자는 ?debug=1 일 때만 */
-    mg1801Ui(this, this.assets, () => this.camera).draw(hud.ctx, state);
+    mg1801Ui(this, this.assets, () => this.camera).draw(hud.ctx, state, this.ctx.renderer.gl);
     if (!Hud.debug) return;
     const phaseText: Record<string, string> = { ready: '준비', main: '진행', ending: '끝', result: '결과' };
     hud.text(`싹둑싹둑 수프 — ${phaseText[state.phase]}  줄 ${state.row}/${state.rows}  BPM ${state.bpm}  달성 ${state.rate.toFixed(0)}% (수프 ${state.starJudge})`, 40, 30, { size: 40 });

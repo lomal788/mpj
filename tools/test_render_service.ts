@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { createIblShare, MaterialSetup } from '@app/common/render3d/material';
+import { MenuSurface } from '@app/common/render/menu';
+import { HudComposite } from '@app/common/render/hud';
+import { RendererState } from '@app/common/render/state';
+import { MgmView } from '@app/common/ui/view';
 import { RenderService } from '@app/common/render/service';
 import { Renderer } from '../script/view/renderer';
 import { PlazaGl } from '../script/view/plazaGl';
@@ -29,8 +33,10 @@ class Probe {
   shadowMap = { enabled: true, type: THREE.PCFSoftShadowMap as THREE.ShadowMapType, autoUpdate: false, needsUpdate: true };
   toneMapping: THREE.ToneMapping = THREE.ACESFilmicToneMapping;
   toneMappingExposure = 1.8;
-  outputColorSpace = THREE.LinearSRGBColorSpace;
+  outputColorSpace: string = THREE.LinearSRGBColorSpace;
   disposed = 0;
+  resizes = 0;
+  clears: (THREE.WebGLRenderTarget | null)[] = [];
   info = { programs: [], memory: {} };
   draws: (THREE.WebGLRenderTarget | null)[] = [];
   compileTargets: (THREE.WebGLRenderTarget | null)[] = [];
@@ -49,9 +55,10 @@ class Probe {
   getSize(v: THREE.Vector2) { return v.copy(this.size); }
   getPixelRatio() { return this.ratio; }
   setPixelRatio(v: number) { this.ratio = v; }
-  setSize(w: number, h: number) { this.size.set(w, h); this.viewport.set(0, 0, w, h); }
+  setSize(w: number, h: number) { this.resizes++; this.size.set(w, h); this.viewport.set(0, 0, w, h); }
   dispose() { this.disposed++; }
   render() { this.draws.push(this.target); }
+  clear() { this.clears.push(this.target); }
   compile() {}
   compileAsync() { this.compileTargets.push(this.target); return Promise.resolve(); }
   initTexture() {}
@@ -64,7 +71,7 @@ class Probe {
 function fixture() {
   const c = new Canvas(), g = new Probe(); let creates = 0;
   const service = new RenderService({ canvas: () => c as unknown as HTMLCanvasElement, renderer: () => { creates++; return g.gl; } });
-  const host = { append(canvas: Canvas) { canvas.parent = this; } } as unknown as HTMLElement;
+  const host = { prepend(canvas: Canvas) { canvas.parent = this; } } as unknown as HTMLElement;
   return { c, g, service, host, creates: () => creates };
 }
 function deferred<T = void>() {
@@ -216,12 +223,158 @@ await test('restoration waits for old lease cleanup before discarding late cache
 });
 await test('render service import boundary and product shared-renderer injection', () => {
   const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-  for (const file of ['state', 'service']) {
+  for (const file of ['state', 'service', 'menu', 'hud']) {
     const imports = [...read(`script/app/common/render/${file}.ts`).matchAll(/from ['"]([^'"]+)['"]/g)].map(m => m[1]);
-    for (const spec of imports) assert.ok(['three', '@game/lib/assetcore-three', './state'].includes(spec), spec);
+    for (const spec of imports) assert.ok(['three', '@game/lib/assetcore-three', './state', './service'].includes(spec), spec);
   }
   assert.match(read('script/app/flow/host.ts'), /new Renderer\(glCanvas, renderService\)/);
   assert.match(read('script/view/plazaGl.ts'), /service: appRenderService\(\)/);
   assert.match(read('script/view/assetMode.ts'), /setAssetSupportRenderer\(\(\) => appRenderService\(\).renderer\)/);
+});
+
+await test('menu parent → child → game → parent shares one renderer and restores menu dimensions', async () => {
+  const f = fixture(), parent = new MenuSurface(f.host, 1920, 1080, f.service);
+  await parent.resume(); assert.equal(parent.active, true); assert.equal(f.g.autoClear, false);
+  parent.suspend();
+  const child = new MenuSurface(f.host, 1920, 1080, f.service);
+  await child.resume(); assert.equal(parent.active, false); child.dispose();
+  await parent.resume(); parent.suspend();
+  const game = await f.service.acquire('game'); game.resize(960, 540, 2); game.release();
+  await parent.resume(); assert.deepEqual(f.g.size.toArray(), [1920, 1080]); assert.equal(f.g.ratio, 1);
+  assert.equal(f.g.outputColorSpace, THREE.SRGBColorSpace); assert.equal(f.creates(), 1);
+  parent.dispose(); parent.dispose(); assert.equal(f.g.disposed, 0); f.service.dispose();
+});
+await test('queued menu disposed before grant cannot steal canvas or retain lease', async () => {
+  const f = fixture(), game = await f.service.acquire('game'), menu = new MenuSurface(f.host, 1920, 1080, f.service);
+  const pending = menu.resume(); menu.dispose();
+  const next = f.service.acquire('next'); game.release(); await pending;
+  const lease = await next; lease.attach(f.host); menu.dispose();
+  assert.equal(f.service.current, lease); assert.equal(f.c.parent, f.host); assert.equal(menu.active, false);
+  lease.release(); f.service.dispose();
+});
+await test('suspend cancels old queued resume while a later resume waits normally', async () => {
+  const f = fixture(), game = await f.service.acquire('game'), menu = new MenuSurface(f.host, 1920, 1080, f.service);
+  const old = menu.resume(); menu.suspend(); const fresh = menu.resume();
+  assert.equal(menu.resume(), fresh); game.release(); await old; await fresh;
+  assert.equal(menu.active, true); assert.equal(f.c.parent, f.host); menu.dispose(); f.service.dispose();
+});
+await test('menu context loss releases old generation and resumes only after restore', async () => {
+  const f = fixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service);
+  await menu.resume(); const first = f.service.current;
+  f.c.dispatchEvent(new Event('webglcontextlost', { cancelable: true }));
+  assert.equal(menu.active, false); assert.equal(f.service.current, null);
+  f.c.dispatchEvent(new Event('webglcontextrestored')); await flush();
+  assert.equal(menu.active, true); assert.notEqual(f.service.current, first);
+  assert.equal(f.service.current!.generation, 2); menu.dispose(); f.service.dispose();
+});
+await test('suspended/disposed menu does not revive on another owner context restore', async () => {
+  const f = fixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service);
+  await menu.resume(); menu.suspend();
+  const game = await f.service.acquire('game');
+  f.c.dispatchEvent(new Event('webglcontextlost', { cancelable: true })); game.release();
+  f.c.dispatchEvent(new Event('webglcontextrestored')); await flush();
+  assert.equal(f.service.current, null); menu.dispose(); await menu.resume(); assert.equal(f.service.current, null); f.service.dispose();
+});
+await test('suspended MgmView cannot clear or draw the child/game output', async () => {
+  const f = fixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service);
+  let begun = 0, drawn = 0, freed = 0;
+  const backend = { begin() { begun++; }, render() { drawn++; }, dispose() { freed++; } };
+  const view = Reflect.construct(MgmView, [{}, menu, backend, () => '']) as MgmView;
+  await menu.resume(); view.begin(); view.end(); assert.equal(begun, 1); assert.equal(drawn, 1);
+  menu.suspend(); const child = await f.service.acquire('child'); const clears = f.g.clears.length;
+  view.begin(); view.end(); view.draw({ visible: true } as never);
+  assert.equal(f.g.clears.length, clears); assert.equal(begun, 1); assert.equal(drawn, 1);
+  view.dispose(); assert.equal(f.service.current, child); assert.equal(freed, 1); child.release(); f.service.dispose();
+});
+await test('state scope leaves framebuffer intact when dimensions and DPR are unchanged', () => {
+  const f = fixture(), state = new RendererState(f.g.gl), before = f.g.snapshot();
+  f.g.viewport.set(0, 0, 20, 10); f.g.outputColorSpace = THREE.SRGBColorSpace;
+  state.restore(); assert.equal(f.g.resizes, 0); assert.deepEqual(f.g.snapshot(), before); f.service.dispose();
+});
+function hudContext(events: string[]): CanvasRenderingContext2D {
+  return { canvas: { width: 1920, height: 1080 }, save() { events.push('save'); }, restore() { events.push('restore'); },
+    setTransform(...v: number[]) { assert.deepEqual(v, [1, 0, 0, 1, 0, 0]); },
+    clearRect(...v: number[]) { assert.deepEqual(v, [0, 0, 1920, 1080]); events.push('clear-hud'); },
+  } as unknown as CanvasRenderingContext2D;
+}
+await test('HUD draws transparent MSAA UI RT then pending 2D then Lyt without clearing game framebuffer', () => {
+  const f = fixture(), hud = new HudComposite(), events: string[] = [], ctx = hudContext(events), before = f.g.snapshot();
+  let uiTarget: THREE.WebGLRenderTarget | null = null;
+  f.g.gl.render = (scene) => {
+    const m = (scene.children[0] as THREE.Mesh).material as THREE.ShaderMaterial;
+    assert.equal(f.g.target, null); assert.equal(f.g.autoClear, false);
+    assert.deepEqual(f.g.viewport.toArray(), [0, 0, 800, 600]); assert.equal(f.g.scissorTest, false);
+    assert.equal(m.blendSrc, THREE.OneFactor); assert.equal(m.blendDst, THREE.OneMinusSrcAlphaFactor);
+    assert.equal(m.depthTest, false); assert.equal(m.toneMapped, false);
+    if (m.uniforms.source.value.isCanvasTexture) {
+      assert.equal(m.uniforms.source.value.premultiplyAlpha, true);
+      assert.equal(m.uniforms.source.value.image, ctx.canvas); events.push('pending-2d');
+    } else { assert.equal(m.uniforms.source.value, uiTarget!.texture); events.push('lyt-over'); }
+  };
+  hud.render(f.g.gl, ctx, () => {
+    uiTarget = f.g.target; assert.ok(uiTarget); assert.equal(uiTarget.samples, 4);
+    assert.equal(uiTarget.width, 1920); assert.equal(uiTarget.height, 1080);
+    assert.equal(uiTarget.texture.type, THREE.UnsignedByteType); assert.equal(f.g.alpha, 0);
+    assert.equal(f.g.outputColorSpace, THREE.LinearSRGBColorSpace); events.push('ui-rt');
+  });
+  assert.deepEqual(events, ['ui-rt', 'pending-2d', 'save', 'clear-hud', 'restore', 'lyt-over']);
+  assert.deepEqual(f.g.clears, [uiTarget]); assert.equal(f.g.resizes, 0); assert.deepEqual(f.g.snapshot(), before);
+  hud.dispose(); f.service.dispose();
+});
+await test('HUD restores GL state on backend failure and does not consume the pending 2D canvas', () => {
+  const f = fixture(), hud = new HudComposite(), events: string[] = [], before = f.g.snapshot();
+  assert.throws(() => hud.render(f.g.gl, hudContext(events), () => { throw new Error('draw failed'); }), /draw failed/);
+  assert.deepEqual(f.g.snapshot(), before); assert.deepEqual(events, []); assert.equal(f.g.resizes, 0);
+  hud.dispose(); f.service.dispose();
+});
+await test('HUD owns only its RT/material/geometry/canvas texture and disposal is idempotent', () => {
+  const f = fixture(), hud = new HudComposite(), events: string[] = []; let disposed = 0;
+  const resources = new Set<THREE.EventDispatcher>();
+  f.g.gl.render = scene => {
+    const mesh = scene.children[0] as THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>;
+    resources.add(mesh.geometry); resources.add(mesh.material); resources.add(mesh.material.uniforms.source.value);
+  };
+  hud.render(f.g.gl, hudContext(events), () => { resources.add(f.g.target!); });
+  for (const resource of resources) (resource as THREE.Texture).addEventListener('dispose', () => disposed++);
+  hud.dispose(); const once = disposed; hud.dispose(); assert.equal(disposed, once); assert.ok(once >= 4);
+  assert.equal(f.g.disposed, 0); hud.render(f.g.gl, hudContext(events), () => assert.fail('closed')); f.service.dispose();
+});
+await test('all menu and Lyt entry points borrow GL and product flow resumes before opening wipe', () => {
+  const read = (path: string) => readFileSync(new URL(`../script/${path}`, import.meta.url), 'utf8');
+  for (const file of ['app/common/ui/view.ts', 'app/scene/menu/charselect/screen.ts', 'app/scene/menu/modeselect/screen.ts', 'app/common/ui/layout/render.ts']) {
+    assert.doesNotMatch(read(file), /new THREE.WebGLRenderer|gl\.dispose\(/, file);
+  }
+  for (const file of ['charselect_page', 'modeselect_page', 'setplayer_page', 'mgmet_page', 'mgm01_page']) {
+    assert.match(read(file + '.ts'), /await menuCanvas\(\)/); assert.doesNotMatch(read(file + '.ts'), /canvas\.remove\(\)/);
+  }
+  assert.match(read('mgm01_page.ts'), /await env.view.surface.resume\(\);\s+if \(!stopped\) sceneIn\(\)/);
+  assert.match(read('setplayer_page.ts'), /handle.view.surface.suspend\(\)/);
+  assert.doesNotMatch(read('setplayer_page.ts'), /canvas.style.visibility/);
+  assert.doesNotMatch(read('app/common/render/hud.ts'), /readPixels|readRenderTargetPixels|drawImage/);
+});
+await test('menu setup failure returns the lease so another scene can enter', async () => {
+  const f = fixture(), menu = new MenuSurface({ prepend() { throw new Error('mount failed'); } } as unknown as HTMLElement, 1920, 1080, f.service);
+  await assert.rejects(menu.resume(), /mount failed/); assert.equal(f.service.current, null);
+  menu.dispose(); const game = await f.service.acquire('game'); game.release(); f.service.dispose();
+});
+await test('menu cleanup waits for preview compilation and stops drawing while the next owner waits', async () => {
+  const f = fixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service), compiling = deferred();
+  await menu.resume(); let cleaned = false;
+  const closing = menu.disposeAfter(compiling.promise, () => { cleaned = true; });
+  assert.equal(menu.active, false); assert.equal(cleaned, false);
+  let entered = false;
+  const next = f.service.acquire('game').then(lease => { entered = true; return lease; });
+  await flush(); assert.equal(entered, false); menu.dispose();
+  compiling.resolve(); await closing; const game = await next; assert.equal(cleaned, true);
+  assert.equal(f.service.current, game); game.release(); f.service.dispose();
+});
+await test('closing menu cannot revive on context restore while preview cleanup is pending', async () => {
+  const f = fixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service), compiling = deferred();
+  await menu.resume(); const closing = menu.disposeAfter(compiling.promise, () => undefined);
+  f.c.dispatchEvent(new Event('webglcontextlost', { cancelable: true }));
+  f.c.dispatchEvent(new Event('webglcontextrestored')); await flush();
+  assert.equal(f.service.current, null); const game = await f.service.acquire('game'); game.attach(f.host);
+  compiling.resolve(); await closing; assert.equal(f.service.current, game); assert.equal(f.c.parent, f.host);
+  game.release(); f.service.dispose();
 });
 console.log(`통과 ${count}/${count}`);

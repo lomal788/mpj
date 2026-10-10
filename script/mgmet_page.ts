@@ -3,6 +3,7 @@
  * 시험값: 패널의 "항구 시험값"(첫 설명 flag 8·재방문 flag 1·시작 지점·보스 개방·이름) 또는 URL ?first=1 ?again=1 ?sp=0~7 ?boss=0 ?nick=…, 사람/COM = 패널 COM 칸.
  * bex 비트: A 0x1·B 0x2·X 0x4·Y 0x8 [추정 mgm_common.md 11]·L 0x10·R 0x20·ZL 0x40·ZR 0x80·십자 0x100~0x800·스틱 0x10000~0x80000. 3D 항구 = 고정 배경 그림(modeselect 임시 대역).
  */
+import { menuCanvas } from './view/menuRenderer';
 import { ASSETS } from './env';
 import { shellSound } from './view/sound';
 import { NPAD, STICK_MAX, type PadInput } from '@game/core/pad';
@@ -124,7 +125,7 @@ export async function runMgmet(
   cfg: { com: boolean[]; pads: (PadSource | null)[]; muted: boolean; test?: MgmetTestValues; onDone(result: string): void },
 ): Promise<MgmetRun> {
   const test = cfg.test ?? MGMET_DEFAULT_VALUES;
-  const canvas = document.createElement('canvas');
+  const canvas = await menuCanvas();
   canvas.className = 'jw-gl';
   stage.append(canvas);
   const snd = shellSound({ muted: cfg.muted, pan2d: true, scene: 'mgmet', pads: (pid) => cfg.pads[pid] });
@@ -143,8 +144,8 @@ export async function runMgmet(
     }
   }
   const url = (p: string): string => `${ASSETS}mgmcommon/${p}`;
-  const view = await MgmView.create({ canvas, assets: { url }, parts: ['mgmet.json', MGMET_EXTRA_PART], backdrop });
   const extra = (await (await fetch(url(MGMET_EXTRA_PART))).json()) as MgmetExtra;
+  const view = await MgmView.create({ canvas, assets: { url }, parts: ['mgmet.json', MGMET_EXTRA_PART], backdrop });
   applyMgmetExtra(view.spec, extra);
   lastTexts = view.spec.texts;
 
@@ -263,7 +264,6 @@ export async function runMgmet(
       done = true;
       wipe.release();
       view.dispose();
-      canvas.remove();
       appBgm().exit('mgmet', 'leave');
       snd.close(300);
     },

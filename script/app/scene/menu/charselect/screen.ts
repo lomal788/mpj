@@ -3,7 +3,7 @@
  * 레이아웃 조립·그리기 순서·문구는 docs/shell/charselect.md 3.1·5·6·7 [판독·데이터]. 엔진층(script/game/core·games·view)을 쓰지 않는다.
  * 3D 미리 받기 등급(커서 → 주변 칸 → 나머지)은 charaTiers — docs/engine/loader_manager.md §13.4.
  */
-import * as THREE from 'three';
+import { MenuSurface } from '@app/common/render/menu';
 import { mpatTables, Preview3D, type LoadStat, type PrepStat } from './preview3d';
 import { nodeMatrix, Render2D } from '@app/common/ui/layout/render';
 import { LayoutInst } from '@game/lib/layout';
@@ -62,17 +62,18 @@ export function charaTiers(
 export async function createCharSelect(opts: CharSelectOptions & { controller?: string[] }): Promise<CharSelectHandle> {
   const url = (p: string): string => opts.assets.url(p);
   const spec = (await (await fetch(url('spec.json'))).json()) as Spec;
-  const gl = new THREE.WebGLRenderer({ canvas: opts.canvas, antialias: true, alpha: false });
-  gl.setPixelRatio(1);
-  gl.setSize(spec.screen[0], spec.screen[1], false);
-  gl.autoClear = false;
-  gl.outputColorSpace = THREE.SRGBColorSpace;
   const r2d = new Render2D(spec);
+  let surface: MenuSurface | null = null;
+  let preview: Preview3D | null = null;
+  try {
   await r2d.load(url);
+  surface = await MenuSurface.create(opts.canvas, spec.screen[0], spec.screen[1]);
+  const gpu = surface;
+  const gl = gpu.gl;
   const mpat = await fetch(url('../chara/mpat.json'))
     .then((r) => (r.ok ? r.json() : null))
     .catch(() => null);
-  const p3d = new Preview3D(spec, url, undefined, { mpat: mpatTables(mpat, ['sys_pc']) });
+  const p3d = preview = new Preview3D(spec, url, undefined, { mpat: mpatTables(mpat, ['sys_pc']) });
 
   const L = (name: string): LayoutInst => new LayoutInst(name, spec.layouts[name], spec);
   const layouts = {
@@ -302,7 +303,9 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
   if (spec.bgm) opts.sound?.bgm?.(spec.bgm.label, url(spec.bgm.file), spec.bgm.gain, spec.bgm.loopStart, spec.bgm.loopEnd);
   handle(state.start(false));
 
+  let disposed = false;
   const step = (): void => {
+    if (disposed) return;
     const pads: PadFrame[] = players.map((p, i) => {
       if (p.type !== 'human') return { trig: 0, rep: 0 };
       const { hold, trig } = opts.input.poll(i);
@@ -314,6 +317,7 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
   };
 
   const render = (): void => {
+    if (disposed || !gpu.active) return;
     gl.setRenderTarget(null);
     gl.setClearColor(0x000000, 1);
     gl.clear();
@@ -337,9 +341,11 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     loadStats: p3d.stats,
     prepStats: p3d.prepStats,
     dispose(): void {
-      p3d.dispose();
-      r2d.dispose();
-      gl.dispose();
+      if (disposed) return;
+      disposed = true;
+      void gpu.disposeAfter(p3d.settle(), () => { p3d.dispose(); r2d.dispose(); })
+        .catch(error => console.warn('charselect cleanup', error));
     },
   };
+  } catch (error) { await preview?.settle(); preview?.dispose(); r2d.dispose(); surface?.dispose(); throw error; }
 }

@@ -7,8 +7,8 @@
  * 렌더러의 autoClear·지우기 색·렌더 타깃을 되돌린다.
  */
 import * as THREE from 'three';
-import { Render2D } from '@app/scene/menu/charselect/render2d';
-import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import { Render2D } from '@app/common/ui/layout/render';
+import { LayoutInst } from '@game/lib/layout';
 import type { Spec } from '@app/scene/menu/charselect/types';
 import { IDENTITY, loadMgmSpec, splitVc, type Mat3, type MgmDrawHost, type MgmSpec } from '@app/common/ui';
 

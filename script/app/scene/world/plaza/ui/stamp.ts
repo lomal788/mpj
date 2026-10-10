@@ -3,7 +3,7 @@
  * 판독 C: analysis/decomp/plaza_main_stamp.c·plaza_main_stamp_list.c. 상태만(LayoutInst 를 직접 바꾼다).
  */
 import { RepeatGen } from '@app/scene/menu/charselect/state';
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import { plainText, type MgmDrawHost } from '@app/common/ui';
 import { stampTexture, UI_LAYOUT, type StampDef } from './data';
 

@@ -2,7 +2,7 @@
  * 장소 텔롭 menu00::ComUiLocationTelop · 다가가기 안내 bq::ComUiPopGuide · 온라인 안내 menu00::ComUiOnlineGuide — docs/shell/plaza_3d.md §5.1 ③④⑤.
  * 상태만(LayoutInst 를 직접 바꾼다).
  */
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import { alignPanes, plainText, type MgmDrawHost } from '@app/common/ui';
 import { AREA_LABELS, UI_LAYOUT } from './data';
 

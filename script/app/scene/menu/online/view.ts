@@ -2,8 +2,8 @@
  * 그리기 — 흐름 사건(OEv)을 명세 레이아웃(assets/online/online.json + 공용 spec.json + mgm01/faces.json)에 옮긴다. 근거: docs/shell/online.md 7·9.3.
  * 그리기 순서 [설계]: 배경 → 판(만들기/찾기·방 종류·목록·정보·대전 상대·매칭) → 대기 텔롭·로딩 → 대화상자·숫자 입력 → 알림 → 안내.
  */
-import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import { nodeMatrix } from '@app/common/ui/layout/render';
+import type { LayoutInst } from '@game/lib/layout';
 import type { Mat3 } from '@app/common/ui/itemLayout';
 import { alignPanes } from '@app/common/ui/alignment';
 import { layoutDialogBox } from '@app/common/ui/dialogBox';

@@ -13,8 +13,9 @@
  *   npx tsx tools/test_plaza_gl.ts
  */
 import { readFileSync, readdirSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve, sep } from 'node:path';
+import { registerHooks } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import * as THREE from 'three';
 import { createAssetManager, P0, P1, P2, P3, type AssetHandler, type AssetManagerApi } from '@game/lib/assetcore';
 import { Render2D } from '@app/scene/menu/charselect/render2d';
@@ -27,6 +28,26 @@ import { LOAD_BUDGET_MS, PriorityFloor } from '@app/common/render3d';
 import { FramePacer, KEEP_RATIO, PlazaGl, PREWARM_BUDGET_MS, prewarmEnabled, worldStarter, type PlazaWorldJob, type WorldStart } from '../script/view/plazaGl';
 
 const WEB = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const physxUrl = pathToFileURL(join(WEB, 'script/game/lib/physx/physx.wasm')).href;
+const wasmHook = registerHooks({
+  load(url, context, nextLoad) {
+    if (url === physxUrl) return { format: 'module', source: `export default ${JSON.stringify(physxUrl)}`, shortCircuit: true };
+    return nextLoad(url, context);
+  },
+});
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async (input, init) => {
+  const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+  if (url === physxUrl) return new Response(readFileSync(fileURLToPath(url)));
+  if (url.startsWith('mem/plaza/')) {
+    const local = resolve(WEB, 'assets', url.slice(4));
+    if (!local.startsWith(resolve(WEB, 'assets/plaza') + sep)) throw new Error(`Unexpected fixture URL: ${url}`);
+    return new Response(readFileSync(local));
+  }
+  return originalFetch(input, init);
+};
+await import('@app/common/actor/physx');
+
 let fails = 0;
 let count = 0;
 const ok = (cond: boolean, msg: string): void => {
@@ -785,6 +806,8 @@ function GPU_BUDGET_MOBILE_MB(): number {
   return 600;
 }
 
+globalThis.fetch = originalFetch;
+wasmHook.deregister();
 console.log(`\n${count - fails}/${count} 통과`);
 console.log('수치:', JSON.stringify(report));
 if (fails) process.exit(1);

@@ -290,7 +290,7 @@ console.log('6. import 그래프 (독립성)');
     const src = readFileSync(join(dir, f), 'utf8');
     for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
       const spec2 = m[1] ?? m[2];
-      const allowed = spec2.startsWith('./') ? !spec2.includes('..') : spec2 === 'three' || spec2.startsWith('three/examples/jsm/') || spec2 === '@game/lib/character' || spec2 === '@game/lib/character-three';
+      const allowed = spec2.startsWith('./') ? !spec2.includes('..') : spec2 === 'three' || spec2.startsWith('three/examples/jsm/') || spec2 === '@game/lib/character' || spec2 === '@game/lib/character-three' || spec2 === '@game/lib/layout' || spec2.startsWith('@app/common/ui/layout/') || spec2 === '@app/common/render3d/assetHooks';
       ok(allowed, `${f}: 금지 import '${spec2}'`);
     }
   }

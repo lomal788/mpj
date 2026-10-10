@@ -306,15 +306,15 @@ console.log('6. import 그래프 (mgm_common.md 9.1 경계)');
   scan(dir);
   const SHARED = ['charselect/scene2d', 'charselect/render2d', 'charselect/state', 'charselect/types'];
   const LIB = [join(WEB, 'script/game/lib/assetcore'), join(WEB, 'script/game/lib/assetcore-three'), join(WEB, 'script/game/lib/transition')];
-  const LIB_SPEC = ['@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition'];
+  const LIB_SPEC = ['@game/lib/layout', '@game/lib/layout-three', '@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition'];
   for (const f of files) {
     const src = readFileSync(f, 'utf8');
     const depth = f.slice(dir.length + 1).split(/[\\/]/).length - 1;
     for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g)) {
       const s = m[1] ?? m[2];
       const r = resolve(dirname(f), s);
-      const inside = s.startsWith('.') && (r === dir || r.startsWith(dir + '\\') || r.startsWith(dir + '/'));
-      const shared = SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}` || s === `@app/scene/menu/${x}`);
+      const inside = s.startsWith('@app/common/ui/') || s.startsWith('.') && (r === dir || r.startsWith(dir + '\\') || r.startsWith(dir + '/'));
+      const shared = ['@app/common/render3d/assetHooks', '@app/common/render3d/assetLoader'].includes(s) || SHARED.some((x) => s === `${'../'.repeat(depth + 1)}${x}` || s === `@app/scene/menu/${x}`);
       const lib = LIB_SPEC.includes(s) || s.startsWith('.') && LIB.includes(r);
       ok(inside || shared || lib || s === 'three', `${f.slice(dir.length + 1)}: 금지 import '${s}'`);
     }

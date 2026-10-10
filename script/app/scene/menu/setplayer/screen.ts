@@ -4,7 +4,7 @@
  * 시스템 애플릿(컨트롤러 지원·유저 선택·소프트웨어 키보드)은 어댑터·페이지 몫 [설계 9.4].
  */
 import { MgmGuide, MgmView, parseMessage, plainText, RichTextPane, type MgmAssetAdapter } from '@app/common/ui';
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import { ControllerPool } from './applet';
 import { displayName, hardIcon, hasLamp } from './names';
 import { ALL_WINS, SetPlayerFlow, USER, win, type SpEvent } from './state';

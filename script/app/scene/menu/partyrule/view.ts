@@ -2,8 +2,8 @@
  * 그리기 — 판 사건(PEvent)을 명세 레이아웃(assets/partyrule/partyrule.json + 공용 spec.json)에 옮기고 그린다. 근거: docs/shell/partyrule.md 6·7·9.
  * 그리기 순서: 제목 띠·보드 이름 띠·판·안내(원본 그리기 순위 0x200·0x500, 메시지 창 0x9200 은 화면이 마지막에 그린다).
  */
-import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import { nodeMatrix } from '@app/common/ui/layout/render';
+import type { LayoutInst } from '@game/lib/layout';
 import { alignPanes, type AlignParams } from '@app/common/ui/alignment';
 import { MgmGuide } from '@app/common/ui/guides';
 import type { Mat3 } from '@app/common/ui/itemLayout';

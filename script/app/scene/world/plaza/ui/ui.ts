@@ -3,7 +3,7 @@
  * 근거: docs/shell/plaza_3d.md §5·§5.1. WebGL 없이 도는 상태 묶음(시험 = tools/test_plaza_ui.ts), 그리기는 view.ts.
  * 한 틱 순서 [설계]: 입력 → 어댑터(광장 사건 가르기) → 온라인 화면 → 메인 레이아웃 시작/끝 → 하단 줄·스탬프·텔롭 갱신.
  */
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import { IDENTITY, MgmGuide, operationPlayerId, type Mat3, type MgmDrawHost, type MgmPadSource, type MgmPlayer, type MgmSound } from '@app/common/ui';
 import { OnlineScreen } from '@app/scene/menu/online';
 import { type OnlineAdapter, type OnlineEvent, type OnlineSelf, type RoomState } from '@app/common/net/protocol/types';

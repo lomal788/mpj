@@ -2,8 +2,8 @@
  * 조작 안내 ComUiGuide00(sys_guide_03 1칸) — 위치 번호(sys_guide_pos_01 x_pos_NN)·정렬(6..11 왼쪽 [추정], 12..17 오른쪽 [판독 charselect.md 6.1])·
  * In/Out, mgmet::UiManager 의 HowTo(11)·Back(17)·Skip(12)·Next(17) (docs/shell/mgm_common.md 5.4). 배치는 charselect 화면과 같은 방식.
  */
-import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import { nodeMatrix } from '@app/common/ui/layout/render';
+import type { LayoutInst } from '@game/lib/layout';
 import type { Mat3 } from './itemLayout';
 import type { MgmSound } from './sound';
 import { measure, plainText } from './text';

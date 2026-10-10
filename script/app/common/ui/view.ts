@@ -5,9 +5,9 @@
  * 글꼴: 명세 fonts = 공용 글꼴 참조 {dir, chars}, 같은 글꼴이면 chars 를 합친다(docs/engine/font_assets.md §5.3).
  */
 import * as THREE from 'three';
-import { nodeMatrix, Render2D } from '@app/scene/menu/charselect/render2d';
-import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
-import type { Spec } from '@app/scene/menu/charselect/types';
+import { nodeMatrix, Render2D } from '@app/common/ui/layout/render';
+import { LayoutInst } from '@game/lib/layout';
+import type { LayoutDocument as Spec } from '@game/lib/layout';
 import { IDENTITY, mul, type Mat3 } from './itemLayout';
 import type { MgmAssetAdapter, MgmSpec, MgmSpecPart } from './types';
 

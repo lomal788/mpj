@@ -2,7 +2,7 @@
  * 잠금 안내 화면 — AnnounceState(announce.ts)를 mgm01_mes_announce_00 에 옮긴다 (docs/shell/mgm01_freeplay.md 6.2·6.4·7).
  * play(reason) → in → normal(0.75 s 또는 skip) → out. 잠금 선택 때 ERROR SE 는 목록 쪽이 낸다(6.2).
  */
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import type { MgmView } from '@app/common/ui/view';
 import { AnnounceState } from './announce';
 

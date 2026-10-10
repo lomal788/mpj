@@ -4,8 +4,8 @@
  * 이 화면 고유 배치·흐름은 docs/shell/modeselect.md 4~6·9절. 엔진층(script/game/core·games·view)을 쓰지 않는다.
  */
 import * as THREE from 'three';
-import { nodeMatrix, Render2D } from '@app/scene/menu/charselect/render2d';
-import { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import { nodeMatrix, Render2D } from '@app/common/ui/layout/render';
+import { LayoutInst } from '@game/lib/layout';
 import { RepeatGen } from '@app/scene/menu/charselect/state';
 import type { LayoutSpec, Spec } from '@app/scene/menu/charselect/types';
 import { BUTTONS, ModeSelectState, type ModeEvent } from './state';

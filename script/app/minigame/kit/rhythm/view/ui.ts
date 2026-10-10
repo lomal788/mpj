@@ -49,13 +49,14 @@
 import * as THREE from 'three';
 import { appTransition, CLOSED, CLOSING, OPEN, OPENING, Transition, WIPE_WHITE } from '@game/lib/transition';
 import type { V3 } from '@game/core/fmath';
-import { resolveSpecFonts } from '@app/scene/menu/charselect/fontSheet';
+import { resolveSpecFonts } from '@app/common/ui/layout/fontSheet';
 import { loadUiImage, type UiImage } from '@app/common/render3d/assetLoader';
 import type { Assets } from '../../../../../view/assets';
 import { envelopeSamples, envelopeWeb50, vibDefaults } from '@game/lib/vibration';
 import type { PadSource, VibSegment } from '../../../../../view/input';
 import { playVibration } from '../../../../../view/vibration';
-import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from '../../../../../view/lyt';
+import { LayoutInstance, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from '@app/common/ui/layout/raw';
+import { LytRenderer } from '@app/common/ui/layout/render';
 import type { RmEvent, RmSceneState } from '../types';
 
 /** 공용 UI 가 읽는 state(게임 state 가 넓힌다) */

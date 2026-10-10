@@ -9,7 +9,7 @@
 import { ASSET_MODE } from '../env';
 import { GAMES } from '@app/minigame';
 import { P0, P1 } from '@game/lib/assetcore';
-import { assetHooks, type UiImageLike } from '@app/scene/menu/charselect/assetHooks';
+import { assetHooks, type UiImageLike } from '@app/common/render3d/assetHooks';
 import { KIND_BYTES, KIND_UI_IMAGE } from '@app/common/render3d/assetHandlers';
 import { appAssets, assetKeyOf } from './appAssets';
 import { bgmPrefetchKey } from './bgm';

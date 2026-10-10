@@ -3,8 +3,8 @@
  * Mgr = mncom_base_status_00(in/normal/out), 사람 칸 = mncom_status_00(이름·얼굴), 빈 칸 = mncom_status_01.
  * 그리기 없이 상태만(LayoutInst 를 직접 바꾼다). 그리기는 view 가 slotBase() 로 칸에 붙여서 한다.
  */
-import { nodeMatrix } from '@app/scene/menu/charselect/render2d';
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import { nodeMatrix } from '@app/common/ui/layout/render';
+import type { LayoutInst } from '@game/lib/layout';
 import { IDENTITY, mul, plainText, type Mat3, type MgmDrawHost } from '@app/common/ui';
 import { faceKey } from '@app/scene/menu/online';
 import { UI_LAYOUT } from './data';

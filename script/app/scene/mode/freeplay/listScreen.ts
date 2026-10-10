@@ -2,7 +2,7 @@
  * 프리 플레이 목록 화면 — ListState(listView.ts)를 공용 창 mgm01_base_freeplay_00(3행×112열 메뉴)과 항목 레이아웃 mgm01_thum_00 112개(MinigameListItem%03d)에 옮긴다. DecideMinigameFlow 상태 2(MgListFlow).
  * 근거: docs/shell/mgm01_freeplay.md 5.5(진입·나감 순서)·6.7(ApplyChangeMgList·ApplyChangeMgList2·ResetMgItem·MoveCursor·PrepareMgListFlow)·7.1(썸네일 = 재질 칸1). 웹 결정 9.2.
  */
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import type { Flow } from '@app/common/ui/fiber';
 import type { MgmGuide } from '@app/common/ui/guides';
 import { MgmLayout, paneGlobal } from '@app/common/ui/itemLayout';

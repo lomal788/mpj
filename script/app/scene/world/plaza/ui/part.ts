@@ -10,7 +10,7 @@
  *   앱 수명 렌더러(stage.keep)면 그리기 객체(PlazaUiView — 명세·그림·텍스처·셰이더)를 렌더러에 두고 다시 들어오면 그대로 쓴다(덧붙이기 extra 는 없는 키만 넣어 여러 번 불러도 같음).
  */
 import * as THREE from 'three';
-import { assetHooks } from '@app/scene/menu/charselect/assetHooks';
+import { assetHooks } from '@app/common/render3d/assetHooks';
 import { MgmSound } from '@app/common/ui';
 import { applyOnlineExtra, ONLINE_FACES, ONLINE_PART, type OnlineExtra } from '@app/scene/menu/online';
 import { CHARA_PC, defaultCard, type OnlineAdapter } from '@app/common/net/protocol/types';

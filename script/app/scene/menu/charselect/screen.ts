@@ -5,8 +5,8 @@
  */
 import * as THREE from 'three';
 import { mpatTables, Preview3D, type LoadStat, type PrepStat } from './preview3d';
-import { nodeMatrix, Render2D } from './render2d';
-import { LayoutInst } from './scene2d';
+import { nodeMatrix, Render2D } from '@app/common/ui/layout/render';
+import { LayoutInst } from '@game/lib/layout';
 import { CharSelectState, RANDOM, RepeatGen, type CharSelectEvent, type PadFrame } from './state';
 import type { CharSelectOptions, Spec } from './types';
 

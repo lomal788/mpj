@@ -27,7 +27,7 @@
  */
 import * as THREE from 'three';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { assetHooks } from './assetHooks';
+import { assetHooks } from '@app/common/render3d/assetHooks';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { CharacterCore, characterDefaults, mpatRows, type CharacterCoreOptions, type MpatRow, type PlayOptions } from '@game/lib/character';
 import { CharacterView, wrap, type MotionData } from '@game/lib/character-three';

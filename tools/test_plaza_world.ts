@@ -307,7 +307,7 @@ const scan = (dir: string, allowed: string[]): void => {
     if (!f.endsWith('.ts')) continue;
     for (const m of readFileSync(p2, 'utf-8').matchAll(/from '([^']+)'/g)) {
       const spec = m[1];
-      const lib = ['@game/lib/camera', '@game/lib/camera-three', '@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition', '@game/lib/character', '@game/lib/character-three', '@game/lib/actor', '@game/lib/actor-collision', '@game/lib/collision', '@game/lib/collision-physx', '@game/lib/physx'].includes(spec);
+      const lib = ['@game/lib/layout', '@game/lib/layout-three', '@game/lib/camera', '@game/lib/camera-three', '@game/lib/assetcore', '@game/lib/assetcore-three', '@game/lib/transition', '@game/lib/character', '@game/lib/character-three', '@game/lib/actor', '@game/lib/actor-collision', '@game/lib/collision', '@game/lib/collision-physx', '@game/lib/physx'].includes(spec);
       const okSpec = spec === 'three' || spec.startsWith('three/') || lib || ((spec.startsWith('.') || spec.startsWith('@app/')) && allowed.some((a) => specPath(dir, spec).startsWith(a)));
       ok(okSpec, `${p2.slice(WEB.length + 1)} import ${spec}`);
     }

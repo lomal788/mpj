@@ -7,7 +7,7 @@
  * 광장 무대 = world.ts plazaP0Paths(World 와 같은 규칙). 화면 BGM = 'bgm:<라벨>' → common/sound/bgm.json 의 파일 첫 조각(docs/engine/04_sound.md §12.14).
  * 명세 json 은 받은 json 함수(관리자 json, 묶음 등급)로 읽고 고치지 않는다. 동적 import 로만 불러 진입 청크를 키우지 않는다.
  */
-import { FCPX_FILE, sheetsFor, tablePath, type FcpxTable, type FontRef, type FontTable } from '@app/scene/menu/charselect/fontTable';
+import { FCPX_FILE, sheetsFor, tablePath, type FcpxTable, type FontRef, type FontTable } from '@app/common/ui/layout/fontTable';
 import type { CharaSpec } from '@app/scene/menu/charselect/types';
 import { NPC_MODEL } from '@app/scene/world/plaza/npc';
 import { PLAZA_CARD_PART } from '@app/scene/world/plaza/ui/card';

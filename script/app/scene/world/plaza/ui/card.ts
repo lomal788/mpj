@@ -3,7 +3,7 @@
  * 근거: docs/shell/online.md 5.8 (C analysis/decomp/plaza_main_card.c·plaza_main_card2.c·plaza_main_cardviewer_upd.c·plaza_menu00_lobby.c).
  * 상태만(LayoutInst 를 직접 바꾼다). 에셋 assets/plaza/ui/plaza_card.json(tools/analysis/plaza_card_assets.py).
  */
-import type { LayoutInst } from '@app/scene/menu/charselect/scene2d';
+import type { LayoutInst } from '@game/lib/layout';
 import { MgmGuide, plainText, type MgmDrawHost } from '@app/common/ui';
 import type { CardData } from '@app/common/net/protocol/types';
 

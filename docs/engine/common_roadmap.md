@@ -44,7 +44,7 @@
 | B1 | 이펙트 공용 런타임(registry·수명·입자 운동·모션 FTRG fx 연결) | **완료 2026-10-09**(캐릭터 fx eset 자료 변환·다른 게임 `_Vfx` 변환은 남음) | 중 |
 | B2 | 후처리 공용화(톤맵 원본 식·bloom·FXAA 순서·DOF) | 공용 `stage3d/post.ts`와 mg1801 `view/post.ts` 두 벌, 톤맵 식이 원본과 다름 | 소~중 |
 | B3 | 카메라 공용 계약(애니 카메라 evaluator·흔들림·직교·FSNB) | 광장·`mgstage`·mg1801 각자 구현 | 소~중 |
-| B4 | 게임 에셋을 로더 관리자로 받기(게임 `Assets` 자체 캐시 → broker·ScenePreparer) | mg1801이 공용 캐시·GPU 준비를 안 씀 | 소~중 |
+| B4 | 게임 에셋을 로더 관리자로 받기(게임 `Assets` 자체 캐시 → broker·ScenePreparer) | **기본 통합 완료 2026-10-10**([loader_manager §15](loader_manager.md#15-b4-게임-에셋-로더-통합-2026-10-10)): mg1801 실사용 자산·owner 수명·ScenePreparer 연결. 커서별 전체 예측·문맥 통합은 별도 | 소~중 |
 | B5 | 레이아웃 재생기 하나로(셸 `render2d` vs 게임 HUD `view/lyt`) | **기본 통합 완료 2026-10-10**([21_layout_runtime.md](21_layout_runtime.md)): `lib/layout`·`layout-three`, 셸·HUD 소비자 이전. 기존 출력 profile 보존, 픽셀 검증·context 단일화는 별도 | 중 |
 | B6 | 소리 공용 계약(3D 음원·SoundHandle 수명·그룹) + 캐릭터 효과음·보이스 변환 | **①② + 게임 경로 완료 2026-10-09**([04_sound.md](04_sound.md) §13, 원본 규칙 기본). 남음: 셸 화면 이전, 캐릭터 효과음·보이스·발소리 파일 변환, 리전 점프, 메시지 덕킹 연결 | 중 |
 | B7 | 재질·물·기본 셰이더 경로 하나로(`stage3d/material.ts` vs mg1801 `view/material.ts`·`water.ts`) | 두 벌 | 중 |

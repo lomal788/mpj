@@ -168,7 +168,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
       console.warn('NPC(헤이호)를 읽지 못했다', e);
     }
     /* 캐릭터 재질에 cha IBL·그림자(stage.ts) — 장면 첫 스캔 뒤에 만든 것도 걸리게 */
-    for (const a of [...this.actors, ...(this.npcs?.actors ?? [])]) void this.stage.prepare(a.root);
+    await Promise.all([...this.actors, ...(this.npcs?.actors ?? [])].map(a => this.stage.prepare(a.root)));
     onProgress(0, 1, 'effect/effects.json');
     try {
       await this.fx.load();
@@ -178,6 +178,9 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
     } catch (e) {
       console.warn('이펙트를 읽지 못해 물보라만 고리로 그린다', e);
     }
+    onProgress(0, 1, '화면 준비');
+    await Promise.all([this.stage.prepare(this.scene), ...this.assets.roots().map(root => this.stage.prepare(root))]);
+    await this.assets.prepare(this.scene, this.camera, this.ctx.renderer.gl, this.stage.loaded);
     onProgress(1, 1, '완료');
   }
 
@@ -501,6 +504,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
     this.actors = [];
     this.npcs = null;
     const seen: Seen = new Set();
+    this.assets.preserve(seen);
     disposeScene(this.scene, seen);
     this.assets.dispose(seen);
   }

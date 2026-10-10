@@ -36,7 +36,28 @@ export function gltfHandler(loader: GltfParserLike, kind = 'gltf'): AssetHandler
     fetch: (url, _k, io) => okBytes(io, url),
     decode: (raw, _k, url) => loader.parseAsync(raw, THREE.LoaderUtils.extractUrlBase(url)),
     bytes: (b) => b.byteLength,
+    gpuBytes: gltfGeometryBytes,
+    dispose: value => { for (const geometry of gltfGeometry(value)) geometry.dispose(); },
   };
+}
+
+function gltfGeometry(value: unknown): Set<THREE.BufferGeometry> {
+  const geometries = new Set<THREE.BufferGeometry>();
+  const gltf = value as { scene?: THREE.Object3D; scenes?: THREE.Object3D[] };
+  for (const scene of gltf.scenes ?? (gltf.scene ? [gltf.scene] : [])) scene.traverse(o => {
+    const geometry = (o as THREE.Mesh).geometry;
+    if (geometry) geometries.add(geometry);
+  });
+  return geometries;
+}
+
+function gltfGeometryBytes(value: unknown): number {
+  const buffers = new Set<ArrayBufferLike>();
+  for (const geometry of gltfGeometry(value)) {
+    const attributes = [...Object.values(geometry.attributes), ...Object.values(geometry.morphAttributes).flat(), ...(geometry.index ? [geometry.index] : [])];
+    for (const attribute of attributes) buffers.add(attribute.array.buffer);
+  }
+  let bytes = 0; for (const buffer of buffers) bytes += buffer.byteLength; return bytes;
 }
 
 /** 텍스처 GPU 바이트 추정(압축 = 밉 데이터 합, 그 밖 = 폭 × 높이 × 4 × 밉 4/3) */

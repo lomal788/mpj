@@ -430,6 +430,13 @@ export class AssetManager implements AssetManagerApi {
     this.handlers.set(h.kind, h as AssetHandler<unknown, unknown>);
   }
 
+  resetFailed(key: string): boolean {
+    const entry = this.entries.get(key);
+    if (!entry || entry.state !== ST_FAILED || entry.refs !== 0 || entry.value !== undefined) return false;
+    this.entries.delete(key);
+    return true;
+  }
+
   hasKind(kind: string): boolean {
     return this.handlers.has(kind);
   }

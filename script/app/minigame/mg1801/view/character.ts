@@ -40,7 +40,7 @@ import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { characterDefaults, EyeLook, HeadLook, headInput } from '@game/lib/character';
 import { HeadView } from '@game/lib/character-three';
-import { loadTexture } from '@app/common/render3d/assetLoader';
+import { P2 } from '@game/lib/assetcore';
 import type { Assets } from '../../../../view/assets';
 
 const BODY_MAPS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap'] as const;
@@ -133,8 +133,8 @@ export class CharacterTemplate {
       Promise.all((info.anims ?? []).map((a) => assets.gltf(`chara/${a}`))),
     ]);
     const t = new CharacterTemplate(key, info, gltf, motions, [...gltf.animations, ...anims.flatMap((g) => g.animations)]);
-    if (info.eyeTex) t.eyeMap = await loadTex(assets.url(`chara/${info.eyeTex}`));
-    if (info.color) t.colorMap = await loadTex(assets.url(`chara/${info.color.albedo}`));
+    if (info.eyeTex) t.eyeMap = await loadTex(assets, `chara/${info.eyeTex}`);
+    if (info.color) t.colorMap = await loadTex(assets, `chara/${info.color.albedo}`);
     return t;
   }
 
@@ -150,7 +150,7 @@ export class CharacterTemplate {
   loadResult(assets: Assets): Promise<void> {
     const files = this.info.resultAnims ?? (this.info.resultGlb ? [this.info.resultGlb] : []);
     if (!files.length) return Promise.resolve();
-    this.resultLoad ??= Promise.all(files.map((f) => assets.gltf(`chara/${f}`)))
+    this.resultLoad ??= Promise.all(files.map((f) => assets.gltf(`chara/${f}`, P2)))
       .then((gs) => {
         for (const g of gs) this.extraClips.push(...g.animations);
       })
@@ -170,8 +170,8 @@ export class CharacterTemplate {
   }
 }
 
-function loadTex(url: string): Promise<THREE.Texture> {
-  return loadTexture(url).then((t) => {
+function loadTex(assets: Assets, path: string): Promise<THREE.Texture> {
+  return assets.texture(path).then((t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.flipY = false;
     t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
@@ -352,7 +352,10 @@ export class CharacterActor {
         matCache.set(ck, m);
       }
       o.material = m;
-      if (useEye && !o.geometry.getAttribute('eyeUv')) o.geometry.setAttribute('eyeUv', o.geometry.getAttribute('uv1'));
+      if (useEye && !o.geometry.getAttribute('eyeUv')) {
+        o.geometry = o.geometry.clone();
+        o.geometry.setAttribute('eyeUv', o.geometry.getAttribute('uv1'));
+      }
     });
     this.mixer = new THREE.AnimationMixer(this.root);
     for (const clip of tpl.clips) {

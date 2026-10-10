@@ -2,8 +2,7 @@
  * 공용 이펙트 런타임 mpj 연결 — docs/engine/08_effects.md §14.1·§14.2.
  * createEffectSystem(parent, {loader | assets, files}): 코어(lib/effect) + three 어댑터(lib/effect-three)를 묶어 장면 그룹에 올리고,
  * 미니게임·셸은 fx.play('mg1801_water_entry00', pos) 처럼 이름으로 부르고 update(dt)/step() 만 돌린다(고정 1/60, 최대 15 스텝).
- * - 에셋: Assets(게임 폴더) 경유 — json·gltf = Assets 캐시, 텍스처 = stage3d loadTexture(압축본이면 KTX2). 공용 로더 관리자(lib/assetcore)를 쓰려면
- *   EffectLoader 를 그쪽으로 만들어 넘긴다(끼움점만, 지금 받는 경로는 이전 mg1801 과 같다).
+ * - 에셋: Assets(게임 폴더) 경유 — json·gltf·텍스처 모두 공용 로더 관리자. 수정 가능한 장면 복제본을 사용한다.
  * - 공용 성공 이펙트: ca::rm::util::ShowCommonEffect(id, pos) 표 CMN_EFFECT_ID(0 = mg1800_success01 JUST, 1 = mg1800_success00 FAST·SLOW, §3.4).
  * - 캐릭터 FX 트리거(05 §7.5): routeCharacterFx(ch, fx) — fx 사건의 .eset 을 훅 본(없으면 캐릭터 root)에 Attach 해 재생, 키 '_Stop' 은 같은 키를 fade 정지 [추정].
  * 원본 스위치: 기본 = 코어 effectDefaults(원본 규칙, 2026-10-09 사용자 결정). original:false 면 RULES_WEB.
@@ -12,7 +11,6 @@ import * as THREE from 'three';
 import { EffectCore, RULES_ORIGINAL, RULES_WEB, Xorshift128, effectDefaults, type EffectRules, type MatrixSource } from '@game/lib/effect';
 import { EffectView, type EffectLoader } from '@game/lib/effect-three';
 import type { CharacterEvent } from '@game/lib/character';
-import { loadTexture } from '@app/common/render3d/assetLoader';
 import type { Assets } from './assets';
 
 /** CMN_EFFECT_ID 표 @0x71019f1aa8 [데이터 §3.4] */
@@ -25,7 +23,7 @@ export const EFFECT_FILES = { mg1801: 'effect/effects.json' } as const;
 export function assetsLoader(assets: Assets): EffectLoader {
   return {
     json: <T>(p: string) => assets.json<T>(p),
-    texture: (p: string) => loadTexture(assets.url(p)),
+    texture: (p: string) => assets.texture(p),
     gltf: (p: string) => assets.gltf(p),
   };
 }

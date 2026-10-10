@@ -6,7 +6,7 @@
  */
 import { resolveSpecFonts } from '@app/common/ui/layout/fontSheet';
 import type { UiLayer } from '@app/minigame/frame/scene';
-import { loadUiImage, type UiImage } from '@app/common/render3d/assetLoader';
+import { type UiImage } from '@app/common/render3d/assetLoader';
 import type { Assets } from './assets';
 import { LayoutInstance, LytRenderer, type Lan, type Lyt, type LytFontAtlas, type LytTelopFont } from './lyt';
 
@@ -37,7 +37,7 @@ export class MgSceneUi {
   static async load(assets: Assets): Promise<MgSceneUi> {
     const d = await assets.json<MgSceneUiJson>('ui.json');
     const images = new Map<string, UiImage>();
-    await Promise.all(Object.entries(d.textures).map(async ([name, file]) => images.set(name, await loadUiImage(assets.url(file)))));
+    await Promise.all(Object.entries(d.textures).map(async ([name, file]) => images.set(name, await assets.image(file))));
     await resolveSpecFonts(d.fonts as Record<string, unknown>, (p) => assets.url(p));
     const fonts = new Map<string, { meta: LytFontAtlas }>();
     for (const [fam, meta] of Object.entries(d.fonts)) fonts.set(fam, { meta });

@@ -21,9 +21,7 @@
  * 큐브 면 순서 [px,nx,py,ny,pz,nz] 는 [추정](03_graphics.md 8절).
  */
 import * as THREE from 'three';
-import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js';
-import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
-import { loadTexture } from '@app/common/render3d/assetLoader';
+import { hdrCube, hdrTexture } from '@app/common/assets/hdr';
 import type { Assets } from '../../../../view/assets';
 
 interface TexEntry {
@@ -123,15 +121,14 @@ export class MaterialSetup {
       p = (async () => {
         const radFiles = this.cubeFiles(rad);
         if (!radFiles) return null;
-        const loader = new HDRCubeTextureLoader();
-        const cube = await loader.loadAsync(radFiles.map((f) => this.assets.url(`tex/${f}`)));
+        const cube = await hdrCube(this.assets, radFiles.map((f) => `tex/${f}`));
         const target = this.pmrem.fromCubemap(cube);
         cube.dispose();
         this.targets.push(target);
         let irrCube: THREE.CubeTexture | null = null;
         const irrFiles = irr ? this.cubeFiles(irr) : null;
         if (irrFiles) {
-          irrCube = await loader.loadAsync(irrFiles.map((f) => this.assets.url(`tex/${f}`)));
+          irrCube = await hdrCube(this.assets, irrFiles.map((f) => `tex/${f}`));
           this.owned.push(irrCube);
         }
         return { rad: target.texture, irr: irrCube };
@@ -151,8 +148,8 @@ export class MaterialSetup {
       p = (async () => {
         const e = this.index[name];
         if (!e || e.cube || !e.files.length) return null;
-        const url = this.assets.url(`tex/${e.files[0]}`);
-        const t = e.files[0].endsWith('.hdr') ? await new HDRLoader().loadAsync(url) : await loadTexture(url);
+        const path = `tex/${e.files[0]}`;
+        const t = e.files[0].endsWith('.hdr') ? await hdrTexture(this.assets, path) : await this.assets.texture(path);
         t.flipY = false;
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         if (!e.files[0].endsWith('.hdr') && e.srgb) t.colorSpace = THREE.SRGBColorSpace;

@@ -50,7 +50,7 @@ import * as THREE from 'three';
 import { appTransition, CLOSED, CLOSING, OPEN, OPENING, Transition, WIPE_WHITE } from '@game/lib/transition';
 import type { V3 } from '@game/core/fmath';
 import { resolveSpecFonts } from '@app/common/ui/layout/fontSheet';
-import { loadUiImage, type UiImage } from '@app/common/render3d/assetLoader';
+import { type UiImage } from '@app/common/render3d/assetLoader';
 import type { Assets } from '../../../../../view/assets';
 import { envelopeSamples, envelopeWeb50, vibDefaults } from '@game/lib/vibration';
 import type { PadSource, VibSegment } from '../../../../../view/input';
@@ -196,7 +196,7 @@ export class RmUi {
 
   private async load(): Promise<void> {
     const d = await this.assets.json<UiJson>('ui/ui.json');
-    const loadImg = (path: string): Promise<UiImage> => loadUiImage(this.assets.url(`ui/${path}`)).catch(() => Promise.reject(new Error(`UI 그림을 읽지 못했다: ${path}`)));
+    const loadImg = (path: string): Promise<UiImage> => this.assets.image(`ui/${path}`).catch(() => Promise.reject(new Error(`UI 그림을 읽지 못했다: ${path}`)));
     const images = new Map<string, UiImage>();
     await Promise.all(Object.entries(d.textures).map(async ([name, file]) => images.set(name, await loadImg(file))));
     const fonts = new Map<string, { meta: LytFontAtlas }>();

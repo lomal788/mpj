@@ -123,6 +123,7 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   let mgHost: Promise<{ tables: MgTables; data: MgUiData; ui: MgSceneUi }> | null = null;
   let mgUi: MgSceneUi | null = null;
   let view: GameView | null = null;
+  let gameAssets: Assets | null = null;
   let pads: (PadSource | null)[] = [];
   let audio: AudioOut | null = null;
   let token = 0;
@@ -133,6 +134,8 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   const dispose = (): void => {
     view?.dispose();
     view = null;
+    gameAssets?.dispose();
+    gameAssets = null;
     logic = null;
     run = null;
     mgSound?.dispose();
@@ -146,8 +149,10 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   const loadMgHost = (): Promise<{ tables: MgTables; data: MgUiData; ui: MgSceneUi }> =>
     (mgHost ??= (async () => {
       const sa = new Assets('mgscene/');
-      const [uiJson, tables, { MgSceneUi: Ui }] = await Promise.all([sa.json<MgSceneUiJson & Parameters<typeof mgUiData>[0]>('ui.json'), sa.json<MgTables>('tables.json'), import('../../view/mgsceneUi')]);
-      return { tables, data: mgUiData(uiJson), ui: await Ui.load(sa) };
+      try {
+        const [uiJson, tables, { MgSceneUi: Ui }] = await Promise.all([sa.json<MgSceneUiJson & Parameters<typeof mgUiData>[0]>('ui.json'), sa.json<MgTables>('tables.json'), import('../../view/mgsceneUi')]);
+        return { tables, data: mgUiData(uiJson), ui: await Ui.load(sa) };
+      } finally { sa.dispose(); }
     })().catch((e: unknown) => {
       mgHost = null;
       throw e;
@@ -184,18 +189,24 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
       setup.players.map((p) => p.isCom),
       keyboard,
     );
+    if (my !== token) return;
     const assets = new Assets(d.assetsDir);
+    gameAssets = assets;
     try {
       await d.load?.();
+      if (my !== token) return;
       const host = await loadMgHost();
+      if (my !== token) return;
       view = d.createView({ renderer, hud: hudCtx, audio, setup, pads }, assets);
       emit({ type: 'view', view });
       setMsg('에셋 읽는 중…');
       await view.load((n, total, what) => {
         if (my === token && stage === 'loading') setMsg(`에셋 읽는 중 ${n}/${total}\n${what}`);
       });
+      if (my !== token) return;
       const { MgSceneSound: Snd } = await import('../../view/mgsceneSound');
-      const snd = await Snd.load(audio, [{ assets: new Assets('mgscene/'), path: 'sound/sound.json' }]);
+      const soundAssets = new Assets('mgscene/');
+      const snd = await Snd.load(audio, [{ assets: soundAssets, path: 'sound/sound.json' }]).finally(() => soundAssets.dispose());
       if (my !== token) {
         snd.dispose();
         return;

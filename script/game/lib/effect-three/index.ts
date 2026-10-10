@@ -393,8 +393,9 @@ export class EffectView {
       gltf.scene.traverse((o) => {
         const m = o as THREE.Mesh;
         if (!m.isMesh) return;
-        m.geometry.userData.hasUv = !!m.geometry.getAttribute('uv');
-        this.prims.set(m.name || o.parent?.name || '', m.geometry);
+        const geometry = m.geometry.clone();
+        geometry.userData.hasUv = !!geometry.getAttribute('uv');
+        this.prims.set(m.name || o.parent?.name || '', geometry);
       });
     }
     const walk = (e: EmitterDef, res: string): void => {

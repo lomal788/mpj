@@ -385,6 +385,7 @@ async function mg1801(full: boolean, out: Out): Promise<void> {
     json: async (p: string) => JSON.parse(fs.readFileSync(fileOf(`mg1801/${p}`), 'utf8')),
     gltf: (p: string) => parseGlb(`mg1801/${p}`),
     url: (p: string) => `assets/mg1801/${p}`,
+    texture: (p: string) => new THREE.TextureLoader().loadAsync(`assets/mg1801/${p}`),
   } as unknown as Assets;
   const index = (await assets.json('chara/index.json')) as Record<string, CharaInfo>;
   const runs: [string, string[], ReturnType<typeof mg1801Options>][] = [

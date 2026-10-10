@@ -59,6 +59,7 @@ function fakeAssets(dir: string): Any {
   const file = (p: string): string => path.join(WEB, 'assets', dir, p);
   return {
     url: (p: string) => `${dir}${p}`,
+    texture: (p: string) => new THREE.TextureLoader().loadAsync(`${dir}${p}`),
     json: (p: string) => {
       const k = `json:${p}`;
       if (!cache.has(k)) cache.set(k, Promise.resolve(JSON.parse(fs.readFileSync(file(p), 'utf8'))));

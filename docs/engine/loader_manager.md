@@ -863,3 +863,76 @@ mgr.stats                                               // 숫자 필드만(요�
 - 원인: `view/appAssets.ts assetKeyOf` 가 상대 URL(`assets/mgmcommon/…`)을 **에셋 루트 기준**으로 풀어 키가 `assets/mgmcommon/…` 가 되고, resolver(루트 + 키)가 `assets/assets/…` 를 요청 → 404. 노드 시험은 가짜 fetch 라 URL 해석 경로를 타지 않아 못 잡음.
 - 수정: 상대 URL 은 페이지 기준(`document.baseURI`)으로 푼다. 순수 함수 `view/assetKey.ts assetKeyFrom` 로 빼고 `test_prefetch` 7절(4건)에 회귀 시험. 실제 페이지 콘솔 확인 1회: 인원 설정·광장 404 0, 오류 0.
 [설계] 광장 유지 렌더러를 앱 전체로 확장하는 분석: [render_unify.md](render_unify.md).
+
+
+## 15. B4 게임 에셋 로더 통합 (2026-10-10)
+
+### 15.1 구현 전 계약
+
+- `app/common/assets`: 게임 폴더를 논리 키로 정규화하고 기존 앱 AssetManager에 요청하는 장면 수명 연결부. `view/assets`는 기존 생성자 경로를 유지하는 앱 기본값 연결부다. 공용 `assetcore`에 게임·DOM 의존을 추가하지 않는다.
+- 관리자에는 깨끗한 glTF 템플릿·텍스처·JSON·바이트를 둔다. 게임별 glTF는 뼈/노드·재질·텍스처를 복제하고 기하만 공유한다. JSON은 게임별 복사, 바이트는 매 호출 복사하여 decodeAudioData의 원본 버퍼 detach를 막는다. 장면 전용 복제 캐시는 manager의 공유 받기/파싱 캐시와 구분한다.
+- 게임 시작에 필요한 요청은 P0, 늦게 읽던 결과 모션은 P2로 요청한다. 소리의 기존 manager bytes/DecodeCache·스트리밍 경로는 유지한다. UI 그림·이펙트·캐릭터 보조 텍스처·HDR 바이트도 같은 관리자 경유로 받는다. 소스 GLTF 내부 이미지 경로는 §11.4의 기존 ImageBitmap 처리, 압축본은 기존 managed KTX2 경로를 유지한다.
+- 각 Assets scope가 고유 owner를 갖고 자식 scope를 함께 해제한다. 퇴장 때 복제 자원만 dispose하고 manager owner를 release한다. 공유 geometry는 장면 dispose의 seen에 먼저 넣는다. 로딩 중 해제되면 새 복제본을 만들거나 owner를 다시 등록하지 않는다. glTF geometry의 GPU 추정/내림은 관리자의 refs/LRU 규칙에 연결한다.
+- mg1801 재질 준비를 모두 기다린 뒤 같은 manager scheduler의 ScenePreparer로 첫 장면을 준비한다. 화면이 running 상태가 되기 전에 완료하며 로직 frame은 진행하지 않는다. 숨은 메시·템플릿도 준비하되 visible·부모·renderer 상태를 되돌린다. 게임별 IBL·PMREM·후처리는 B2/B7 범위로 현 구현을 유지한다.
+- 전체 WebGL 문맥 통합·전 게임 커서별 에셋 예측표·GPU 재진입 컴파일0 보장은 이번 B4 범위가 아니다. 기존 game 묶음의 코드+manifest 미리 받기는 같은 manager에서 재사용한다. 현재 게임의 실사용 자산을 공용 관리자와 GPU 준비기에 연결하는 작업이다.
+
+### 15.2 파일과 검증 계획
+
+| 경로 | 내용 | 상태 |
+|---|---|---|
+| `app/common/assets/`, `view/assets.ts` | manager 연결·복제·owner 수명·HDR/준비 | 완료 |
+| `game/lib/assetcore/index.ts`, `assetcore-three/index.ts` | refs0 실패 초기화·glTF 공유 기하 GPU 계수·해제 | 완료 |
+| mg1801 view, rhythm UI, effect, mgscene UI, flow host | 소비자 연결·준비 완료 대기·owner 해제 | 완료 |
+| `tools/test_game_assets.ts` | 중복 받기/재진입·격리·취소/실패·우선순위·공유 기하 해제·가짜 GL 준비·실제 자산 | 완료 |
+
+노드 시험만 실행한다. 기존 게임 로직/화면 기대값은 바꾸지 않는다. typecheck·관련 로더/프리페치/게임/경계 시험·메모리 번들을 확인하고 결과를 추가한다. 신규 원본 판독·Ghidra 추출은 필요하지 않다.
+
+[구현 전 보완] 이펙트 primitive는 EffectView가 직접 수정·해제하므로 입력 glTF 기하를 복제해 자기 소유로 둔다. 공용 템플릿 기하를 직접 dispose하지 않는다. 게임 호스트는 view 생성 전 실패에도 Assets owner를 해제하고 일회성 mgscene sound scope를 finally에서 놓는다.
+
+[구현 전 보완] 캐릭터의 eyeUv 속성 추가도 공유 기하 수정이다. 해당 메시 기하만 actor 인스턴스에서 복제한 뒤 속성을 추가한다. 일반 기하는 계속 공유한다.
+
+[구현 전 보완] 공유 실패 Promise가 다음 게임 진입까지 영구 고정되지 않도록, refs0인 fetch/decode 실패 항목만 명시적으로 초기화하는 `resetFailed`를 코어에 추가한다. 활성 owner·업로드 실패·성공 캐시는 건드리지 않는다. 게임 scope의 새 요청 때만 사용하고 자동 반복 재시도는 하지 않는다.
+
+
+### 15.3 적용 결과와 제한
+
+[구현] mg1801의 모델/모션·JSON·바이트·캐릭터 보조 텍스처·재질 그림·HDR 면 바이트·이펙트·HUD 그림을 앱 관리자에 연결했다. 기존 소리 경로는 이미 공용 bytes/DecodeCache라 그대로 재사용한다. HDR은 기존 three HDRLoader의 parse 결과를 같은 HalfFloat·색공간·필터·flipY·면 순서로 조립한다. PMREM 결과와 후처리 RT는 장면 소유다.
+
+[구현] 초기 P0와 결과 모션 P2, 동일 논리 키의 Promise/받기/파싱 재사용, owner release, 부모 scope 해제, 늦은 응답 거부, 버퍼 detach 격리, glTF 수정 격리를 검증했다. 기하 GPU 추정치는 중복 ArrayBuffer를 한 번씩 더한 수치다. manager의 기존 budget/trim 호출 정책은 유지하며 이 단계에서 앱 전체 CPU 캐시 퇴출 정책을 추가하지 않았다.
+
+[제한] GPU 준비는 실제 게임 장면의 현재 메시와 받은 glTF 템플릿을 대상으로 한다. 실행 중 새로 만드는 이펙트 batch·그림자 변형·후처리·별도 HUD 문맥의 첫 컴파일0, 재진입 업로드0을 보장하지 않는다. 전체 문맥 통합과 B2/B7 작업에서 이어서 다룬다. 기존 커서 예측은 코드+manifest까지만이며 대형 게임 파일 전체를 커서 이동마다 받도록 확대하지 않았다.
+
+### 15.4 노드 검증 (2026-10-10)
+
+| 시험 | 결과 |
+|---|---|
+| `test_game_assets.ts` | 16/16; 실제 모델·캐릭터·HDR, 120프레임 직접 로더 대 공용 복제본 bone pose 완전 일치 |
+| `test_assetcore.ts`, `test_prefetch.ts` | 47/47, 133/133 |
+| `test_mg_assets.ts` | 2052/2052; 131 glb·참조2283개 |
+| `test_effect.ts`, `test_sound.ts` | 106/106, 115/115; 기존 골든 유지 |
+| `test_mgscene.ts`, `test_mg1801.ts` | 79/79, mg1801 종료 코드0 |
+| `test_layout.ts`, `test_layout_draw.ts` | 68/68, 68/68 |
+| `test_plaza_world.ts`, `test_plaza_gl.ts` | 466/466 (`PLAZA_SKIP_GLSL=1`), 60/60 |
+| `test_camera.ts`, `test_entry.ts` | 70/70, 408/408 |
+| `test_character.ts` | 127/135; 결과 무대4종 × 원본/web = **기존 실패8건**, 아래 분리 조사 |
+| `npm run typecheck` | 통과 |
+| esbuild 기존 options(false), write:false | 165출력 메모리 번들 통과 |
+
+계수 합계3815/3823. B4 신규 시험16건은 모두 통과했지만 전체 회귀가 전부 통과한 것은 아니다. 브라우저·헤드리스·실제 WebGL·실기 실행은 하지 않았다. 자원 해제/GPU 준비는 노드 가짜 GL, HDR/모델은 실제 파일로 확인했다. 신규 Ghidra 추출 요청0.
+
+[수정한 시험 준비 문제] 초기 캐릭터·이펙트 시험의 `TypeError: assets.texture is not a function`은 이전 가짜 Assets가 새 인터페이스를 제공하지 않아 발생했다. `character_golden.ts`·`effect_golden.ts`의 가짜 로더에 기존 TextureLoader 스텁을 그대로 연결했다. 골든 해시는 변경하지 않았다.
+
+[기존 카메라 실패 분리] B4 이전 HEAD `8a63be4`의 script 변경 파일을 git show로 읽어 **메모리 번들만** 만들어 돌려도 아래8개 해시가 동일했다. 결과 무대 `stage.ts`만 카메라 공통화 이전 `2a69b6a`로 바꾸면8개 모두 기존 골든과 일치했다. 원인은 B4 캐시/복제가 아니라 이전 결과 카메라 적용 경로의 변경으로 좁혀졌다. 수학의 비트 차이인지 동작 차이인지는 추가 분석이 필요하며 임의로 골든을 갱신하거나 카메라 구현을 되돌리지 않았다. [20 §14 후속 기록](20_camera_runtime.md#144-b4-검증에서-발견한-기존-회귀-2026-10-10).
+
+실패 원문(최종):
+```text
+실패: 원본 규칙(기본) mgresult_win1 틱 477 기준과 같음 (7a0a7362897717c4e12174cb86832c8344f08a30fe70cdce82dc97563bf97132)
+실패: 원본 규칙(기본) mgresult_draw 틱 477 기준과 같음 (10d3d208a785b68df2f7b5ed9288c147557c75a11ab5060884c3492c77d3d501)
+실패: 원본 규칙(기본) mgresult_win2_theme 틱 477 기준과 같음 (3f1018388fe0ce6916ff1b02f75240d720a255b597a87da89748f529794cad75)
+실패: 원본 규칙(기본) mgresult_dice 틱 1001 기준과 같음 (1654eb8ea0f1926afc47d708a8ccee6189b6e1f9c7497b338b25ec1f58c4142e)
+실패: RULES_WEB mgresult_win1 = 이전 전 코드 기록 (1a129c5018e3c79c80e344505870f7644554163ffb5fd06f1c7108cc7d3ee856)
+실패: RULES_WEB mgresult_draw = 이전 전 코드 기록 (40bba936a815146ed55406312cd29aeb54d9d3c6d018b784ed5fe915386dfe46)
+실패: RULES_WEB mgresult_win2_theme = 이전 전 코드 기록 (487093d7b12516c4e33ed91c8ffba386f5e3a6e0cb87a446adf9a963e2a9fd21)
+실패: RULES_WEB mgresult_dice = 이전 전 코드 기록 (3a7dfc775ccc25f3fac752509e5697e5319c982bd75f397ab1293e0c46403870)
+실패 8/135
+```

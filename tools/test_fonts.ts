@@ -21,6 +21,8 @@ const SPECS: [string, string][] = [
   ['online/online.json', 'mgmcommon'],
   ['partyrule/partyrule.json', 'mgmcommon'],
   ['setplayer/setplayer.json', 'mgmcommon'],
+  ['mginst/mginst.json', 'mgmcommon'],
+  ['controllerstandby/controllerstandby.json', 'mgmcommon'],
   ['plaza/ui/plaza_ui.json', 'mgmcommon'],
   ['plaza/ui/plaza_card.json', 'mgmcommon'],
   ['mg1801/ui/ui.json', 'mg1801/ui'],

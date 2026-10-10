@@ -91,6 +91,8 @@ script/
       world/       plaza(menu00) · mgmet(항구)
       mode/        freeplay(mgm01) · [board(bd01) · bowser(kb01) · athlon(ca01) · rhythmcooking(rc_stage01) …]
       system/      [op · ed · matching00 · gyroPadChange …]
+                   mginst(게임 설명 화면, 2026-10-10): 미니게임 실행은 연결하지 않고 데이터·준비 입력·빌린 preview texture 포트만 둔다.
+                   controllerstandby(2026-10-10): 컨트롤러 설정 대기 모달 표시·OK 상태 주입만 제공. 게임 흐름·기기 등록·통신 미연결 — docs/shell/controller_standby.md.
     minigame/    미니게임 전부
       frame/       한 판 틀(mgscene) · 결과(mgresult) · 장면 로더(mgstage)        (원본 main bq::MinigameScene·MGResult)
       kit/         계열 공통: rhythm · [athlon · kb · patapata …]                (원본 main ca::rm·ca::coin_athlon·ca::kb·sb)

@@ -23,10 +23,13 @@ export interface LayoutRenderProviders {
 
 const VERT = `
 attribute vec4 vcol;
+attribute vec2 uv1;
 varying vec2 vUv;
+varying vec2 vUv1;
 varying vec4 vCol;
 void main() {
   vUv = uv;
+  vUv1 = uv1;
   vCol = vcol;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }`;
@@ -49,6 +52,7 @@ uniform vec4 black;
 uniform vec4 white;
 uniform float alpha;
 varying vec2 vUv;
+varying vec2 vUv1;
 varying vec4 vCol;
 vec3 toLinear(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
 void main() {
@@ -58,7 +62,7 @@ void main() {
     if (red0 == 1) t = vec4(1.0, 1.0, 1.0, t.r);
     if (srgb0 == 1) t.rgb = toLinear(t.rgb);
     if (texCount > 1) {
-      vec4 t1 = texture2D(map1, (srt1 * vec3(vUv, 1.0)).xy);
+      vec4 t1 = texture2D(map1, (srt1 * vec3(vUv1, 1.0)).xy);
       if (srgb1 == 1) t1.rgb = toLinear(t1.rgb);
       t *= t1;
     }
@@ -77,6 +81,7 @@ interface Quad {
   mesh: THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>;
   pos: Float32Array;
   uv: Float32Array;
+  uv1: Float32Array;
   col: Float32Array;
 }
 
@@ -176,9 +181,11 @@ export class LayoutRenderer {
       const g = new THREE.BufferGeometry();
       const pos = new Float32Array(12);
       const uv = new Float32Array(8);
+      const uv1 = new Float32Array(8);
       const col = new Float32Array(16);
       g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      g.setAttribute('uv1', new THREE.BufferAttribute(uv1, 2));
       g.setAttribute('vcol', new THREE.BufferAttribute(col, 4));
       g.setIndex([0, 2, 1, 1, 2, 3]);
       const m = new THREE.ShaderMaterial({
@@ -210,7 +217,7 @@ export class LayoutRenderer {
       const mesh = new THREE.Mesh(g, m);
       mesh.frustumCulled = false;
       this.scene.add(mesh);
-      q = { mesh, pos, uv, col };
+      q = { mesh, pos, uv, uv1, col };
       this.quads.push(q);
     }
     q.mesh.visible = true;
@@ -218,7 +225,7 @@ export class LayoutRenderer {
     return q;
   }
 
-  private emit(c: [number, number][], uv: number[], vc: Rgba[], black: Rgba, white: Rgba, alpha: number, mode: number, tex: THREE.Texture[], srt?: THREE.Matrix3, blend?: { op: number; src: number; dst: number }, srt1?: THREE.Matrix3, mask?: NodeState['spec']['mask']): void {
+  private emit(c: [number, number][], uv: number[], vc: Rgba[], black: Rgba, white: Rgba, alpha: number, mode: number, tex: THREE.Texture[], srt?: THREE.Matrix3, blend?: { op: number; src: number; dst: number }, srt1?: THREE.Matrix3, mask?: NodeState['spec']['mask'], uv1 = uv): void {
     const q = this.quad();
     const mt = q.mesh.material;
     if (this.profile === 'hudPremultiplied') {
@@ -235,10 +242,12 @@ export class LayoutRenderer {
       q.pos[i * 3 + 2] = 0;
       q.uv[i * 2] = uv[i * 2];
       q.uv[i * 2 + 1] = uv[i * 2 + 1];
+      q.uv1[i * 2] = uv1[i * 2];
+      q.uv1[i * 2 + 1] = uv1[i * 2 + 1];
       for (let k = 0; k < 4; k++) q.col[i * 4 + k] = vc[i][k] / 255;
     }
     const g = q.mesh.geometry;
-    for (const a of ['position', 'uv', 'vcol']) (g.getAttribute(a) as THREE.BufferAttribute).needsUpdate = true;
+    for (const a of ['position', 'uv', 'uv1', 'vcol']) (g.getAttribute(a) as THREE.BufferAttribute).needsUpdate = true;
     const u = q.mesh.material.uniforms;
     (u.black.value as THREE.Vector4).set(black[0] / 255, black[1] / 255, black[2] / 255, black[3] / 255);
     (u.white.value as THREE.Vector4).set(white[0] / 255, white[1] / 255, white[2] / 255, white[3] / 255);
@@ -322,9 +331,11 @@ export class LayoutRenderer {
       srt.set(a, b, 0.5 - 0.5 * a - 0.5 * b + st.t[0], d, e, 0.5 - 0.5 * d - 0.5 * e + st.t[1], 0, 0, 1);
     }
     if (inst.spec.compatibility === 'hudLegacy') srt.copy(this.srtMatrix(st));
-    // 렌더 타깃은 아래가 v = 0 이라 첫 칸만 세로로 뒤집는다(마스크 칸은 그대로)
+    // 렌더 타깃은 아래가 v = 0 이라 해당 칸만 세로로 뒤집는다(마스크 칸은 그대로)
     if (tex[0]?.userData.flipV) srt.premultiply(new THREE.Matrix3().set(1, 0, 0, 0, -1, 1, 0, 0, 1));
-    return { tex, srt, srt1: inst.spec.compatibility === 'hudLegacy' ? this.srtMatrix(inst.mats[mi].srt[1]) : new THREE.Matrix3() };
+    const srt1 = inst.spec.compatibility === 'hudLegacy' ? this.srtMatrix(inst.mats[mi].srt[1]) : new THREE.Matrix3();
+    if (tex[1]?.userData.flipV) srt1.premultiply(new THREE.Matrix3().set(1, 0, 0, 0, -1, 1, 0, 0, 1));
+    return { tex, srt, srt1 };
   }
 
   private corners(m: Mat3, l: number, b: number, r: number, t: number): [number, number][] {
@@ -339,7 +350,7 @@ export class LayoutRenderer {
     }
     const { tex, srt, srt1 } = this.matTex(inst, mi);
     const mat = inst.mats[mi];
-    this.emit(this.corners(m, l, b, r, t), n.uv, n.vc, mat.black, mat.white, alpha, 0, tex, srt, inst.spec.mats[mi].blend, srt1, n.spec.mask);
+    this.emit(this.corners(m, l, b, r, t), n.uv, n.vc, mat.black, mat.white, alpha, 0, tex, srt, inst.spec.mats[mi].blend, srt1, n.spec.mask, n.uv1);
   }
 
   private window(inst: LayoutInst, n: NodeState, m: Mat3, [l, b, r, t]: number[], alpha: number): void {

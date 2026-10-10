@@ -27,6 +27,7 @@ export interface NodeSpec {
   vc?: Rgba[];
   m?: number;
   uv?: number[];
+  uv1?: number[];
   txt?: { font: string; fs: [number, number]; cs: number; al: [number, number]; text: string };
   wnd?: { fs: { l: number; r: number; t: number; b: number }; frame: number; content: number; flags: number };
   part?: string;
@@ -116,6 +117,7 @@ export interface NodeState {
   vc: Rgba[];
   /** 그림 UV(덮어쓰기 가능) */
   uv: number[];
+  uv1?: number[];
   children: number[];
 }
 
@@ -200,6 +202,7 @@ export class LayoutInst {
         [255, 255, 255, 255],
       ]).map((c) => [...c] as Rgba),
       uv: n.uv ? [...n.uv] : [0, 0, 1, 0, 0, 1, 1, 1],
+      uv1: n.uv1 ? [...n.uv1] : undefined,
       children: [],
     }));
     this.nodes.forEach((n, i) => {

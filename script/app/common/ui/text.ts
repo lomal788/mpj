@@ -122,6 +122,7 @@ export class RichTextPane {
     readonly path: string,
     private readonly lineSpace = 0,
     private readonly useColor = true,
+    private readonly glyphStyle: 'original' | 'paneTint' = 'original',
   ) {
     host.setText(path, '');
   }
@@ -161,7 +162,7 @@ export class RichTextPane {
       for (const { u, i } of line) {
         const w = adv(u.ch);
         const colorGlyph = !!font?.glyphs[u.ch]?.color;
-        const vc: Rgba[] = colorGlyph && !ts.font.endsWith('_shadow') ? [WHITE, WHITE, WHITE, WHITE] : this.useColor && u.color ? [u.color, u.color, u.color, u.color] : pane.vc.map((c) => [...c] as Rgba);
+        const vc: Rgba[] = colorGlyph && !ts.font.endsWith('_shadow') && this.glyphStyle === 'original' ? [WHITE, WHITE, WHITE, WHITE] : this.useColor && u.color ? [u.color, u.color, u.color, u.color] : pane.vc.map((c) => [...c] as Rgba);
         idxOf[i] = nodes.length;
         nodes.push({ n: `c${i}`, p: 0, k: 'txt', v: true, ia: false, o: [0, 0], po: [0, 0], t: [pen + w / 2, cy], r: 0, s: [1, 1], z: [w, lh], a: 255, vc, m: pane.spec.m, txt: { font: ts.font, fs: ts.fs, cs: 0, al: [0, 0], text: u.ch } });
         pen += w + ts.cs;

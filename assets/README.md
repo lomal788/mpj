@@ -15,6 +15,8 @@ assets/
   chara/              캐릭터·NPC 공용(모든 화면이 같은 파일): tex/*.png, <pcNN|npc키>/<모델>.glb·motions.json·motion/<모션>.glb
                       화면 명세가 상대 경로(../chara/…)로 가리킨다 — ../docs/engine/chara_assets.md
   font/               비트맵 글꼴 공용(원본 시트·글리프 표) — ../docs/engine/font_assets.md
+  mginst/             게임 설명 화면의 Lyt·한국어 메시지·원본 raw 표(mginst.json), 미니게임 실행 미연결 — ../docs/shell/mginst.md §12
+  controllerstandby/  컨트롤러 설정 대기 모달 Lyt·애니·한국어 메시지, 얼굴은 기존 charselect 256px 그림 참조 — ../docs/shell/controller_standby.md
   common/             시스템 효과음(SQ_SE_SYS_* 전부)·공용 UI 그림(sys_* 전부 + 여러 화면이 같이 쓰는 것): sound/<라벨>.wav, tex/<원본 이름>.png
                       화면 명세가 상대 경로(../common/…)로 가리킨다 — ../docs/engine/common_assets.md
 ```

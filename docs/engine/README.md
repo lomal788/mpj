@@ -25,3 +25,5 @@
 | [18_scene_work.md](18_scene_work.md) | SceneBase 수명·Call/Return/Exchange·7행 모드표·Work 소유권·장면 계약/요청 API | 판독 통합·stack/offset 일부 미확정 |
 | [20_camera_runtime.md](20_camera_runtime.md) | 카메라 수학·FSNB·추종·흔들림 통합, import 0 코어·three 어댑터 설계 | 판독 재사용·미확정 12개 |
 | [mps_porting.md](mps_porting.md) | MPS 미니게임→MPJ 웹 포팅 지침, hsmg402 호환 경계·작업 순서·견적·기존 시험 결과 | 사전 검토·설계 제안, 포팅 미착수 |
+| [../shell/mginst.md](../shell/mginst.md) | 공용 게임 설명·조작 연습 화면(mgInst), mg0905 첨부 대조·준비 입력·렌더 타깃·웹 연결 계획 | 판독·데이터 대조, 웹 화면 미구현 |
+| [../shell/controller_support.md](../shell/controller_support.md) | 컨트롤러 등록 시스템 애플릿·HidModule 인원 인자·gyroPadChange 안내·웹 키 설정/입력 확인 화면 설계 | 판독·현황 확인, 입력 확인 UI 미구현 |

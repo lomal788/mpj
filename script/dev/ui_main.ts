@@ -24,6 +24,8 @@ import { runCharacterPage, type CharacterPageRun } from './character_page';
 import { runEffectPage, type EffectPageRun } from './effect_page';
 import { runSoundPage, type SoundPageRun } from './sound_page';
 import { runCollisionPage, type CollisionPageRun } from './collision_page';
+import { runMgInstPage, type MgInstRun } from './mginst_page';
+import { runControllerStandbyPage, type ControllerStandbyRun } from './controllerstandby_page';
 import { KeyboardPad, padSourcesFor } from '../view/input';
 import { appBgm } from '../view/bgm';
 import { appSave } from '../view/save';
@@ -69,6 +71,24 @@ const UIS: UiDef[] = [
           return lines.join('\n');
         },
       };
+    },
+  },
+  {
+    id: 'controllerstandby',
+    name: '컨트롤러 설정 대기: 표시 전용',
+    async run(stage, cfg) {
+      const r: ControllerStandbyRun = await runControllerStandbyPage(stage, cfg);
+      (window as unknown as { __controllerstandby?: ControllerStandbyRun }).__controllerstandby = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
+    },
+  },
+  {
+    id: 'mginst',
+    name: '게임 설명(mgInst): 화면·준비 표시',
+    async run(stage, cfg) {
+      const r: MgInstRun = await runMgInstPage(stage, { com: cfg.com, pads: padSourcesFor(cfg.com, keyboard), onDone: cfg.onDone });
+      (window as unknown as { __mginst?: MgInstRun }).__mginst = r;
+      return { stop: () => r.stop(), debug: () => r.debug() };
     },
   },
   {

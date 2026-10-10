@@ -544,3 +544,7 @@ u32 메타 크기(4 | 12 | 16), u16 형식 3, u16 **200 Hz**, (메타 12/16: u32
 | 우선순위·슬롯 | 패드마다 한 줄, 낮은 우선순위 버림 | VibrationModule 판독 안 함 |
 | 주파수·Pitch·Global 명령 | 쓰지 않음 | 브라우저 dual-rumble 로 표현 불가 / 뜻 미확정 |
 
+## 12. 웹 layout의 두 번째 UV 보존 (2026-10-10)
+
+[데이터] `sys_mginst_ok/x_face_pc128`의 원본 pic1은 mask UV 0..2와 얼굴 UV 0..1을 별도로 갖는다. 첫 UV를 두 texture에 같이 쓰면 얼굴 가장자리가 늘어난다. mgInst 변환기는 선택 필드 `uv1`에 두 번째 UV를 보존한다. 공용 `lib/layout`·`layout-three`는 slot 1에 별도 UV와 render target의 세로 방향을 적용한다. `uv1`이 없는 기존 명세는 첫 UV를 그대로 공유한다. 원본의 모든 texture 컴바이너를 재현한 변경은 아니다.
+

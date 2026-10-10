@@ -88,6 +88,7 @@ export const mg1801Game: GameDef<Mg1801State, Mg1801Event, Mg1801Result> = {
   id: 'mg1801',
   title: '싹둑싹둑 수프',
   assetsDir: 'mg1801/',
+  motionProfile: { id: 'mg1801-keyboard-mouse-approx', revision: 1, mode: 'pulse', acceleration: [3, 0, 0], angularVelocity: [0, 0, 0], tiltRadians: 0 },
   assetKeys: mg1801AssetKeys,
   preparationKey: setup => JSON.stringify(setup.players.map(p => p.char)),
   players: 4,

@@ -3,6 +3,7 @@
  * 버튼 비트와 스틱 범위는 nn::hid::NpadButton / AnalogStickState 공개 문서(switchbrew HID services) 기준이다 [문서].
  * 게임별로 어떤 버튼을 읽는지는 게임 판독 문서에 적는다(예: mg1801 Player::PadDriver).
  */
+import type { MotionPacket } from '../lib/motion';
 
 export const NPAD = {
   A: 1 << 0,
@@ -38,6 +39,7 @@ export interface PadInput {
   accX: number;
   accY: number;
   accZ: number;
+  motion?: MotionPacket;
 }
 
 export const emptyPad = (): PadInput => ({ buttons: 0, lx: 0, ly: 0, rx: 0, ry: 0, accX: 0, accY: 0, accZ: 0 });

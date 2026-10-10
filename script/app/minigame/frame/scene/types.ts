@@ -4,6 +4,7 @@
  */
 import type { SplitScreenLayerList } from '@game/lib/splitscreen';
 import type { Transition } from '@game/lib/transition';
+import type { MotionPacket } from '@game/lib/motion';
 import type { CreateResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
 
 /** MGSetting 한 행(문자열 열거는 정수, None = −1) — tables.json mgSetting */
@@ -137,6 +138,7 @@ export interface MgPadState {
   accX: number;
   accY: number;
   accZ: number;
+  motion?: MotionPacket;
 }
 
 /** 시작/종료 텔롭 종류 3·4 의 사용자 구현(IUserStartFinish vt+0x18/0x20) */

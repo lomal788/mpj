@@ -6,7 +6,7 @@
  */
 import { FADE_TIME_PRESET } from '@game/lib/sound';
 import { SplitScreen } from '@game/lib/splitscreen';
-import type { FrameGate } from './gate';
+import type { FrameGate, MgPadInput } from './gate';
 import type { ResultStage, ResultStageHost, ResultStageInput, WinLose } from './resultContract';
 import { DEFAULT_RESULT_OPTIONS } from './resultContract';
 import { MgSound } from './sound';
@@ -312,13 +312,14 @@ export class MgScene {
     return true;
   }
 
-  private step(inputs: readonly ({ buttons: number; lx: number; ly: number; rx: number; ry: number; accX?: number; accY?: number; accZ?: number } | null)[]): void {
+  private step(inputs: readonly (MgPadInput | null)[]): void {
     this.events.length = 0;
     this.pads = [];
     for (let i = 0; i < 4; i++) {
       const p = inputs[i];
       const b = p?.buttons ?? 0;
       this.pads[i] = { now: b, down: b & ~this.prevButtons[i], lx: p?.lx ?? 0, ly: p?.ly ?? 0, rx: p?.rx ?? 0, ry: p?.ry ?? 0, accX: p?.accX ?? 0, accY: p?.accY ?? 0, accZ: p?.accZ ?? 0 };
+      if (p?.motion) this.pads[i].motion = p.motion;
       this.prevButtons[i] = b;
     }
     this.game.update?.();

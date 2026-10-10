@@ -469,3 +469,78 @@ if reject: return
 | [설계] `web/docs/minigame/mg1809.md` §6.2 끝 | `[설계] → 정리본: [19_motion_input.md](../engine/19_motion_input.md) §6.3, 9.3` |
 | [설계] `web/docs/minigame/mg1810.md` §6.3 끝 | `[설계] → 정리본: [19_motion_input.md](../engine/19_motion_input.md) §6.3, 9.3` |
 
+
+
+## 14. 웹 구현 기록 (2026-10-10)
+
+[설계] 사용자 요청으로 체감 입력을 공통화한다. 현재 조작은 키보드·마우스이며 일반 패드 센서·모바일·WebHID·DeviceMotion은 이번 범위에서 제외한다. 기존 일반 패드 버튼/스틱 지원은 유지한다. 기존 문장과 미확정 M01~M10은 당시 근거로 보존한다.
+
+### 14.1 파일·착수 범위
+
+| 위치 | 구현 범위 |
+|---|---|
+| `script/game/lib/motion/index.ts` | import 0. 정규화 sample/packet, f32 수치, 고정 용량 Converter/ring, 주입 회전 포트, WaveDetector·Value/Sum, 프레임당 한 번 처리, 명시 reset·해제, 가상 pulse/hold/tilt 근사 |
+| `script/game/lib/motion-dom/index.ts` | motion 상대 import만. 키/마우스 이벤트는 지역 상태·대기 action만 저장, 프레임에서 가상 sample 확정, 반복 keydown 억제·blur/reset·구독 해제 |
+| `script/app/common/input/index.ts` | 패드·motion source 분리, 하나의 motion 소유자 선택, 불변 프레임 snapshot, raw acc와 Converter 구분, 게임 profile 연결 |
+| `core/pad`, `frame/scene/{gate,types,flow}`, `game.ts` | 기존 acc 호환 + 선택 motion packet, 승인된 frame의 깊은 불변 사본, 닫힌 gate에서 상태 진행0 |
+| `app/flow/host.ts`, `app/minigame/mg1801/index.ts`, `view/input.ts` | 첫 소비자 mg1801은 원본 문턱2.9보다 큰 가상 acc3.0 profile을 선택한다. Space/마우스 좌클릭 pulse를 사용하고 기존 J/A 경로는 유지한다. 게임별 판정·쿨다운은 변경하지 않는다. |
+| `tools/test_motion.ts`, 기존 관련 시험 | §10 기대값·옵션 순서·링·generation/해제·키 반복·mouse·gate latch·병합·f32 재생 hash·mg1801 실제 소비·import 경계 |
+
+### 14.2 원본·웹 경계와 보류
+
+[설계] Converter의 RemoveGravity/RotateInPosture는 원본 회전 방향 M03이 미확정이므로 주입 회전 포트를 필수로 한다. 없는 포트로 임의 quaternion 수식을 기본 적용하지 않는다. 가상 입력의 자세 생성은 이름에 Approx를 붙인 웹 조작 근사다. 실센서 축·calibration·posture convention·직접 GetAcc의 w를 확정하지 않는다.
+
+[설계] 가상 sample은 중력 제거 완료 값을 표시한다. Converter는 중력 제거 옵션이 켜져 있어도 완료 값에는 중력을 두 번 빼지 않는다. raw GetAcc용 acc는 별도 계약이며 실제 센서 프로필을 추가할 때 이 구분을 유지한다. 키/마우스는 한 제출 frame에 action을 모아 하나의 sample을 만든다. 같은 frame의 반복 읽기는 동일 snapshot이고 다음 frame만 대기 action을 소비한다. pulse 반복 keydown은 새 action이 아니다. gate 대기 중 이벤트 수집만 허용하고 논리 Converter/Wave/Sum은 진행하지 않는다.
+
+[근사] 가상 기본은 원본 센서 측정이 아닌 조작 profile이다. profile마다 pulse/hold의 acc·angVel과 tilt 한계를 명시하며 강도를 공용 고정 문턱으로 합치지 않는다. 샘플 중복 번호/새 샘플 없음 M05는 native 규칙을 발명하지 않고 웹 packet의 유효 새 sample만 한 번 소비한다. 게임별 tilt/calib/cooldown·CPU·리듬의 직접 크기/상승 에지는 소비자 책임이다.
+
+[보류] WebHID/DeviceMotion·모바일·일반 패드 센서 및 온라인 wire/합의는 구현하지 않는다. 원본 C 추가 판독·추출은 확정 기본 경로 구현에 필요하지 않으므로 수행하지 않는다. 기존 요청3주소·주소 미식별3건은 유지하고 새 추출 요청0이다. Node 시험만 실행하며 브라우저/헤드리스는 실행하지 않는다.
+
+[範囲訂正・ユーザー指定] 続行中のユーザー指示により、上の入力源除外は着手時点の記録である。ゲームパッド・モバイルのアダプターも今回実装し、実際の選択・有効化は後で接続できる構成にする。
+
+[범위 수정·사용자 지정] 위 입력원 제외는 착수 시점 기록이며, 후속 사용자 지시로 일반 게임패드·모바일 어댑터까지 이번에 구현한다. `game/lib/motion-gamepad`는 주입 버튼/스틱 값의 가상 motion 대체 및 외부 정규화 sample 포트를 제공한다. 일반 Gamepad API가 센서 데이터를 제공한다고 가정하지 않는다. `motion-dom`에는 모바일 터치(pulse/hold/tilt)와 DeviceMotion 수집·명시 permission 요청을 추가한다. 센서 활성화·게임별 입력원 선택 UI·온라인 wire는 후속이다. permission은 사용자가 활성화를 요청할 때만 호출하며 초기 게임 진입에서 요청하지 않는다.
+
+[설계 보완] DeviceMotion은 W3C orientation-event 규약의 acceleration(m/s²)·rotationRate(°/s)를 읽는다. 명시적 axis 변환 callback/profile 없이는 native 축 일치로 표시하지 않는다. 중력 제거 완료 acceleration을 G로 변환하는 크기 전용 profile부터 제공한다. posture는 없으며 실제 tilt quaternion을 임의 합성하지 않는다. 일반 게임패드/터치 tilt는 별도의 Approx 자세다. capability·validity로 부족한 angVel/posture를 구분하고 Converter가 필요한 성분을 요구할 때 미지원 경계를 드러낸다. 단위·permission 규약은 https://www.w3.org/TR/orientation-event/ , 일반 Gamepad 센서 부재 판단의 입력 계약은 https://www.w3.org/TR/gamepad/ 를 참조한다.
+
+[설계 보완] 마우스 좌클릭은 pulse/hold이고 드래그는 명시된 픽셀 범위로 tilt를 만든다. Space는 pulse/hold, F/H·T/G는 두 tilt 축이다. 모바일 터치도 같은 profile의 pulse/hold/drag를 사용하고 터치 surface의 touch-action과 구독을 해제 시 복원한다. 키/클릭 원천 값은 이벤트에서만 수집하고 제출 frame에서 가상 sample 하나로 확정한다.
+
+
+### 14.3 구현 완료·활용
+
+[구현] `motion`(import 0), `motion-dom`(motion만 import), `motion-gamepad`(motion만 import), `app/common/input`을 추가했다. Converter는 고정 용량·초기 getter·clear·해제·옵션 순서를 구현한다. Wave의 경계·반전·Value/Sum과 callback 중 reset/remove/dispose의 generation 재검사도 구현했다. MotionSensor는 승인 frame/유효 새 sample만 한 번 처리한다. 파형 중복 방지와 게임 cooldown은 별개다.
+
+[구현] 게임별 `GameDef.motionProfile`로 가상 acc/angVel 강도·pulse/hold·tilt 한계를 선택한다. mg1801은 acc=(3,0,0), pulse, tilt0을 사용한다. 한 판 host의 첫 사람 입력에 Space/게임 canvas 좌클릭을 연결했다. 기존 J/A 휘두름·게임 문턱2.9·판정·쿨다운·CPU는 유지한다. 수동 호출 코어나 Node fixture의 기존 acc 전달도 유지한다. 패드 병합은 벡터 성분별 최대값이 아니라 한 입력원의 전체 motion을 선택한다. legacy acc-only 병합은 첫 nonzero 벡터를 보존하며, 새 FrameMotionPad는 명시한 단일 source가 소유한다.
+
+[구현] 일반 게임패드는 `gamepadMotionSource(index,profile,mapping)` 또는 `GamepadMotionApprox`로 버튼/스틱을 가상 motion에 대응시킨다. 모바일 터치는 `TouchMotion(surface,profile,dragPixels,window)`를 FrameMotionPad에 연결한다. DeviceMotionInput은 `browserMotionPermission()` 및 명시 profile/축 mapper로 만들고 사용자 활성화에서 enable을 호출한다. motion/orientation 권한 요청은 같은 활성화 호출에서 시작하며, 거부·미지원·dispose 뒤 늦은 허가에서는 구독하지 않는다. 모바일 입력원 선택 UI·제품 기본 활성화는 후속이며 현재 host 기본은 키보드/마우스다.
+
+[구현] 모바일 가속도 m/s²→G는9.80665로, angular rate °/s→회전수/s는360으로 나눈다. 기본 제공 `magnitudeOnlyAccelerationApprox`는 크기 전용으로 native 축 일치를 주장하지 않는다. 실제 posture는 명시 mapPosture가 있을 때만 공급하며, 없는 angVel/posture는 null capability로 유지한다. 일반 Gamepad의 센서 보고서·Joy-Con WebHID parser/calibration/fusion은 제공하지 않는다. W3C DeviceMotion/Gamepad 규약을 사용하며 브라우저/장치 지원 조합은 M08/M09 실기 확인이 남는다.
+
+[구현] PadInput·MgPadInput·MgPadState에 선택 motion packet을 연결했다. localGate는 마지막 제출 frame의 pad/벡터/packet을 깊은 불변 사본으로 보관한다. 같은 frame은 동일 객체를 반환하고 늦은 이벤트는 다음 frame에서만 소비한다. 이전 frame의 재조회는 오류이며 과거 재생/온라인 retransmission은 별도 기록 gate의 책임이다. canStep=false에서는 source 제출·Converter·Wave/Sum이 진행하지 않는다. 논리 tick이 센서 callback에서 실행되는 경로는 없다.
+
+[활용] 직접 GetAcc 게임은 기존 accXYZ와 원본 크기/상승 에지 판정을 사용한다. 공용 센서 게임은 ctx.pad(pid).motion을 MotionSensor.accept(ctx.frame,packet)에 넣고 게임 setup에서 Converter/Wave/emitter를 구성한다. 문턱·CPU·게임 callback·tilt/calib는 게임에 둔다. RemoveGravity/RotateInPosture가 필요한 원본 경로의 회전 포트는 M03이 확인된 어댑터를 주입해야 한다. 이 미확정을 기본 quaternion 연산으로 채우지 않았다.
+
+### 14.4 시험·남은 범위
+
+| Node 시험 | 통과 |
+|---|---|
+| `test_motion` | 20/20 — 링/옵션·경계·Sum/Value·callback 수명·packet/f32·pulse/hold/tilt·키/마우스·게임패드·모바일 touch/permission/단위/capability·merge·latch·닫힌 gate·동일 hash·실제 mg1801 26 JUST |
+| `test_actor` | 111/111, 기존 pose SHA256 유지 |
+| `test_scene`, `test_mgm01`, `test_mgscene` | 27/27 · 281/281 · 79/79 |
+| `test_mg1801`, `test_save` | 99/99 · 65/65, 기존 게임 수치·3247 tick 결정성 유지 |
+| `test_splitscreen`, `test_render_service`, `test_entry` | 159/159 · 47/47 · 442/442 |
+| `check_mgmcommon` | 12971/12971 |
+
+[검증] 위 Node10개 묶음1330/1330, 별도 명세/import 검사12971/12971. 기존 수치 기대값을 변경하지 않았다. frame/scene 허용 목록에는 import0 motion 한 경로만 추가했다. 실행 로그는 `test/out/motion_test_*.log`(actor 별도 실행)다. 타입 검사 중 신규 시험 fixture에서 unused import, MgSyncRand 구조·MgPlayerSetup 필수 필드 오류3건을 수정했다. 최종 타입 검사·diff check 결과와 추가 메뉴/광장 회귀는 후속 줄에 기록한다.
+
+[보류·사용자 확인 필요] 이번 범위에서 추가 승인을 기다리는 항목은 없다. 일반 게임패드는 버튼/스틱 조작 대체까지, 모바일은 터치 및 명시 센서/권한 어댑터까지 구현했다. 실제 장치/브라우저·posture 좌표 교정·Joy-Con HID·온라인 wire·모바일 입력원 선택/활성화 UI는 검증/후속 연결이 남는다. M01~M10과 기존 추출 요청3주소/미식별3건은 유지한다. 새 원본 분석0·추출0·새 요청0주소, 브라우저/헤드리스 실행0이다.
+
+[설계 보완] emitter는 문서의 callback→fired 순서를 유지하고 callback에서 reset/dispose되면 이전 generation의 fired 기록을 적용하지 않는다. Wave 시작도 notify→진행 상태 순서를 따른다. 동일 trace hash 시험은 JSON의 숫자 표현 대신 f32 비트 표현을 해시에 넣어 signed zero도 구별한다.
+
+[설계 보완] pointerup은 짧은 탭/click의 대기 pulse를 보존하고, pointercancel/blur는 취소된 gesture의 대기 pulse를 폐기한다. 터치 취소를 정상 tap 종료와 합치지 않는다.
+
+[설계 보완] 키보드/마우스의 pulse는 입력원별 새 누름을 수집한 뒤 같은 frame에서 하나로 병합한다. Space를 누른 채 좌클릭해도 새 클릭은 pulse가 되며, 두 입력을 같은 frame에 누르면 sample을 두 번 만들지 않는다. hold는 입력원 OR 상태를 사용한다.
+
+
+[최종 검증] 추가 `test_charselect`67/67·`test_setplayer`116/116·`test_plaza_actor`17/17·`test_plaza_world`474/474 통과. 광장은 `PLAZA_SKIP_GLSL=1`로 GLSL 컴파일을 제외했다. 총 Node14개 묶음2004/2004, 명세/import12971/12971, npm typecheck 통과, 최종 실패0이다. 원본 입력 판정/기존 게임 수치 기대값은 변경하지 않았으며 브라우저/장치 실행은 하지 않았다. 문서·소스 UTF-8(no BOM)과 기존 줄바꿈을 유지하고 git diff HEAD --check를 확인했다.
+
+[파일 목록] 신규5: `script/game/lib/motion/index.ts`, `script/game/lib/motion-dom/index.ts`, `script/game/lib/motion-gamepad/index.ts`, `script/app/common/input/index.ts`, `tools/test_motion.ts`. 변경11: `script/game/core/pad.ts`, `script/game.ts`, `script/app/minigame/frame/scene/gate.ts`, `script/app/minigame/frame/scene/types.ts`, `script/app/minigame/frame/scene/flow.ts`, `script/app/flow/host.ts`, `script/app/minigame/mg1801/index.ts`, `script/view/input.ts`, `tools/test_mgscene.ts`, 이 문서, `docs/engine/common_roadmap.md`.

@@ -380,7 +380,7 @@ let finishTicks = 0;
   const bad: string[] = [];
   for (const f of fs.readdirSync(dir)) {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');
-    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '@game/lib/transition' && m[1] !== '@game/lib/splitscreen' && m[1] !== '@game/lib/sound') bad.push(`${f}: ${m[1]}`);
+    for (const m of src.matchAll(/(?:import|export)[^'"]*from\s+'([^']+)'/g)) if (!m[1].startsWith('./') && m[1] !== '@game/lib/transition' && m[1] !== '@game/lib/splitscreen' && m[1] !== '@game/lib/sound' && m[1] !== '@game/lib/motion') bad.push(`${f}: ${m[1]}`);
   }
   ok(bad.length === 0, 'app/minigame/frame/scene import 0(같은 폴더 + import 0 공용 코어 lib/transition·lib/splitscreen, mgm_common §9.1 lib 예외)', bad.join(' '));
   const pre = mgscenePrefetch(ui);

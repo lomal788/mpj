@@ -6,6 +6,7 @@
  */
 import { NPAD, STICK_MAX, emptyPad, type PadInput } from '@game/core/pad';
 import { GamepadVibrator, type RumbleActuator } from '@game/lib/vibration-gamepad';
+import { mergePadInputs } from '@app/common/input';
 
 /** 진동 포락선 한 구간: ms 동안 dual-rumble 세기(0..1). strong = 저역 모터, weak = 고역 모터 */
 export interface VibSegment {
@@ -126,23 +127,12 @@ export class GamepadPad implements PadSource {
   }
 }
 
-/** 키보드와 패드를 합친다(버튼 OR, 스틱은 큰 쪽) */
+/** 키보드와 패드를 합친다(버튼 OR, 스틱은 큰 쪽, motion은 한 입력원 전체 벡터) */
 class MergedPad implements PadSource {
   constructor(private readonly srcs: PadSource[]) {}
 
   read(): PadInput | null {
-    let out: PadInput | null = null;
-    for (const s of this.srcs) {
-      const p = s.read();
-      if (!p) continue;
-      if (!out) {
-        out = { ...p };
-        continue;
-      }
-      out.buttons |= p.buttons;
-      for (const a of ['lx', 'ly', 'rx', 'ry'] as const) if (Math.abs(p[a]) > Math.abs(out[a])) out[a] = p[a];
-    }
-    return out;
+    return mergePadInputs(this.srcs.map(s => s.read()));
   }
 
   rumble(ms: number): void {

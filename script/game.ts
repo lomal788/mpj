@@ -15,6 +15,7 @@ import type { AudioOut } from './view/audio';
 import type { PadSource } from './view/input';
 import type { Renderer } from './view/renderer';
 import type { PreparationGpu } from '@app/common/render/prepare';
+import type { VirtualMotionProfile } from '@game/lib/motion';
 
 export interface PlayerSetup {
   /** 캐릭터 ID(원본 im_pcNN_name 의 pcNN, 예 'pc01' = 마리오) */
@@ -137,6 +138,7 @@ export interface GameDef<S = unknown, E = unknown, R extends GameResult = GameRe
   /** 로직·뷰 코드를 받는다(코드 분할 — 메타만 정적, 몸체는 import()). 있으면 createLogic·createView 전에 한 번 기다린다 */
   load?(): Promise<void>;
   preparationKey?(setup: GameSetup): string;
+  motionProfile?: VirtualMotionProfile;
   assetKeys?(json: <T>(key: string) => Promise<T>, chars: readonly string[], bgmKey: (key: string) => string): Promise<readonly (readonly [string, string])[]>;
   createLogic(setup: GameSetup, play?: MgPlaySettings): GameLogic<S, E, R>;
   createView(ctx: ViewContext, assets: Assets): GameView<S, E>;

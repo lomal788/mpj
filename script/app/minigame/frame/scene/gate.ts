@@ -4,6 +4,8 @@
  * 게임 로직은 패드를 게이트가 준 입력으로만 받는다(로컬 패드를 직접 읽는 경로 없음). 기본 = 로컬(항상 진행, 로컬 패드 그대로).
  */
 
+import { snapshotMotion, type MotionPacket } from '@game/lib/motion';
+
 /** 한 플레이어 한 프레임 입력(core/pad PadInput 과 같은 모양 — 셸 경계 때문에 여기 다시 둔다) */
 export interface MgPadInput {
   buttons: number;
@@ -14,6 +16,7 @@ export interface MgPadInput {
   accX?: number;
   accY?: number;
   accZ?: number;
+  motion?: MotionPacket;
 }
 
 export interface FrameGate {
@@ -23,7 +26,15 @@ export interface FrameGate {
   inputsFor(frame: number): readonly (MgPadInput | null)[];
 }
 
-/** 로컬 게이트: 항상 진행, 입력 = read() 가 주는 로컬 패드 */
-export function localGate(read: () => readonly (MgPadInput | null)[]): FrameGate {
-  return { canStep: () => true, inputsFor: () => read() };
+/** 로컬 게이트: 항상 진행, 입력 = read() 가 주는 로컬 패드의 프레임별 불변 사본 */
+export function localGate(read: (frame: number) => readonly (MgPadInput | null)[]): FrameGate {
+  let current = -1;
+  let inputs: readonly (MgPadInput | null)[] = [];
+  return { canStep: () => true, inputsFor: frame => {
+    if (!Number.isSafeInteger(frame) || frame < 0 || frame < current) throw new Error('Input frame order invalid');
+    if (frame === current) return inputs;
+    const next = read(frame).map(p => p === null ? null : Object.freeze({ ...p, ...(p.motion ? { motion: snapshotMotion(p.motion) } : {}) }));
+    current = frame; inputs = Object.freeze(next);
+    return inputs;
+  } };
 }

@@ -14,6 +14,7 @@ import type { Assets, Progress } from './view/assets';
 import type { AudioOut } from './view/audio';
 import type { PadSource } from './view/input';
 import type { Renderer } from './view/renderer';
+import type { PreparationGpu } from '@app/common/render/prepare';
 
 export interface PlayerSetup {
   /** 캐릭터 ID(원본 im_pcNN_name 의 pcNN, 예 'pc01' = 마리오) */
@@ -95,6 +96,8 @@ export interface ViewContext {
 
 export interface GameView<S = unknown, E = unknown> {
   load(onProgress: Progress): Promise<void>;
+  prepare?(onProgress: Progress, gpu: PreparationGpu): Promise<void>;
+  activate?(): Promise<void>;
   /**
    * 다음 로직 스텝에 넘길 사운드 관측 — time = 그 스텝이 나타내는 AudioContext 시각(지금 들리는 소리 기준).
    * 소리 쪽이 그 값을 만들고 있지 않으면 null(로직은 자기 모델). 없으면 늘 null
@@ -133,6 +136,8 @@ export interface GameDef<S = unknown, E = unknown, R extends GameResult = GameRe
   options?: readonly GameOption[];
   /** 로직·뷰 코드를 받는다(코드 분할 — 메타만 정적, 몸체는 import()). 있으면 createLogic·createView 전에 한 번 기다린다 */
   load?(): Promise<void>;
+  preparationKey?(setup: GameSetup): string;
+  assetKeys?(json: <T>(key: string) => Promise<T>, chars: readonly string[], bgmKey: (key: string) => string): Promise<readonly (readonly [string, string])[]>;
   createLogic(setup: GameSetup, play?: MgPlaySettings): GameLogic<S, E, R>;
   createView(ctx: ViewContext, assets: Assets): GameView<S, E>;
   describeResult(r: R, setup: GameSetup): { head: string; rows: ResultRow[] };

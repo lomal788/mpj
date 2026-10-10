@@ -208,6 +208,25 @@ await test('real mg1801 model templates retain topology, animation and skinned b
   a.dispose(); b.dispose(); assert.ok(real.snapshot().every(entry => entry.refs === 0));
 });
 
+await test('real animation Points copies preserve morph weights and pass three WebGLMorphtargets.update', async () => {
+  const { WebGLMorphtargets } = await import(new URL('../node_modules/three/src/renderers/webgl/WebGLMorphtargets.js', import.meta.url).href);
+  const targets = WebGLMorphtargets({}, { maxTextureSize: 4096 }, {});
+  const a = new Assets('mg1801/', realRuntime); let checked = 0;
+  for (const pc of ['pc01', 'pc02', 'pc03', 'pc04']) for (const clip of ['rhy_knife_idle00', 'rhy_knife_swing00', 'fcl_blink00', 'co_win00a']) {
+    const file = `../chara/${pc}/motion/${clip}.glb`, copy = await a.gltf(file), original = real.peek<GLTF>(a.key(file))!;
+    const sources: THREE.Object3D[] = []; original.scene.traverse(o => sources.push(o)); let index = 0;
+    copy.scene.traverse(o => {
+      const src = sources[index++] as THREE.Points, dst = o as THREE.Points;
+      if (!dst.isPoints || !Object.keys(dst.geometry.morphAttributes).length) return;
+      assert.ok(dst.morphTargetInfluences, `${pc}/${clip}/${dst.name}`);
+      assert.deepEqual(dst.morphTargetInfluences, src.morphTargetInfluences); assert.notEqual(dst.morphTargetInfluences, src.morphTargetInfluences);
+      assert.deepEqual(dst.morphTargetDictionary, src.morphTargetDictionary); assert.notEqual(dst.morphTargetDictionary, src.morphTargetDictionary);
+      targets.update(dst, dst.geometry, { getUniforms: () => ({ setValue() {} }) });
+      dst.morphTargetInfluences![0] = 0.5; assert.equal(src.morphTargetInfluences![0], 0); checked++;
+    });
+  }
+  assert.equal(checked, 32); a.dispose();
+});
 await test('real HDR bytes match existing parser; cube face order and settings match HDRCubeTextureLoader', async () => {
   const a = new Assets('mg1801/', realRuntime);
   const files = readdirSync(resolve(web, 'assets/mg1801/tex')).filter(file => file.startsWith('mg1801_bg00_rad') && file.endsWith('.hdr')).sort();

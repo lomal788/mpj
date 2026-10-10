@@ -79,10 +79,12 @@ await test('선택한 패스 사전 컴파일·타깃 복원·사용 자원 해�
   }
 });
 
-await test('근사 영역 출력은 GL 상태를 바꾸기 전에 명시적으로 거절', () => {
+await test('Neutral·UnrealBloom·DOF 영역 출력은 독립 중간 타깃을 쓰고 GL 상태를 복원', () => {
   const g = new RenderProbe(); const p = new GamePost(g.gl);
-  assert.throws(() => p.render(new THREE.Scene(), new THREE.PerspectiveCamera(), { target: null, viewport: new THREE.Vector4(0, 0, 10, 10), scissor: new THREE.Vector4(0, 0, 10, 10) }), /region/);
-  assert.equal(g.rows.length, 0); p.dispose();
+  const before = g.getViewport(new THREE.Vector4()).clone();
+  p.render(new THREE.Scene(), new THREE.PerspectiveCamera(), { target: null, viewport: new THREE.Vector4(10, 20, 10, 10), scissor: new THREE.Vector4(10, 20, 10, 10) });
+  assert.ok(g.rows.length > 0); assert.ok([...g.targets.keys()].some(t => t.depthTexture && t.width === 10 && t.height === 10));
+  assert.equal(g.target, null); assert.ok(g.getViewport(new THREE.Vector4()).equals(before)); assert.equal(g.getScissorTest(), false); p.dispose();
 });
 
 await test('주입한 텍스처·HDR·큐브 로더와 PMREM 수명·캐시를 공용으로 처리', async () => {

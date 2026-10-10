@@ -70,3 +70,19 @@
 ## 5. 사용자 확인 필요·추출 요청
 
 이번 범위에서 추가 결정이 필요한 항목은 없다. 원본 추가 분석·Ghidra 추출 요청은 0건이다. 원본 식 복원(R1~R3)과 기존 카메라 골든 문제는 별도 작업으로 남긴다.
+
+## 6. 분할 화면 DOF·Neutral/UnrealBloom 영역 출력 수정 (2026-10-10)
+
+[실행: 사용자] `/dev/ui` 분할 화면 시작 시 `Approx post does not support region rendering`, PostChain.renderRegion → SplitRenderer.render → MgStageImpl.renderSplit. 실제 기본 게임 `assets/mg/mg0508/manifest.json`의 env.post는 dof=true다. 기존 §3의 명시적 거절이 실제 소비자를 막았다. 이번 절이 §3의 영역 미지원 상태를 대체하며 기존 기록은 보존한다.
+
+[설계: 구현 전] DOF 또는 neutralBloomApprox일 때는 분할 scissor 크기의 독립 HDR/DOF/블룸/FXAA 중간 타깃을 사용한다. 장면 viewport는 전체 화면 좌표에서 scissor 원점을 뺀 값으로 이동하여 분할 전환 중 큰 viewport·잘린 영역을 보존한다. 마지막 패스만 canvas/출력 RT의 해당 scissor에 배치한다. 인접 화면의 색/깊이를 DOF·블룸 표본으로 읽지 않으며 표시/RT의 viewport·scissor·autoClear·target을 복원한다.
+
+[근사] 기존 DOF 식과 local 높이에 따른 6px/1080 비율을 사용한다. 원본 분할 DOF의 경계 표본 방식은 새로 판독하지 않는다. DOF·Neutral 없는 기존 전체 RT 영역 경로와 단일 화면 식·패스 순서는 유지한다. 레이어마다 후처리하므로 비용은 레이어 수에 비례한다.
+
+[검증 계획] Node로 실제 mg0508 설정 + SplitRenderer 2×1·2×2·focus/전환·홀수 크기·DPR·RT/capture·예외 복원과 Neutral/UnrealBloom+DOF 모드를 확인한다. 기존 단일 화면 golden과 분할 코어/기존 영역 출력 기대값을 유지한다. 과거 미지원 거절 시험은 새 지원 계약의 시험으로 대체한다. 브라우저/헤드리스는 실행하지 않는다.
+
+[구현 완료] `common/render3d/post.ts`에 영역 크기 선택·viewport 원점 이동·최종 출력 영역·finally 복원을 적용했다. `tools/test_splitscreen.ts`에는 실제 mg0508 설정을 사용하는 44개 검사를 추가했다(기존 115개 유지). `tools/test_render_common.ts`의 기존 영역 미지원 거절 검사를 지원/복원 검사로 바꾸고 `tools/render_common_fixture.ts`에 필요한 renderer 상태 인터페이스를 추가했다.
+
+[검증] 수정 전 실제 설정 + SplitRenderer 시험에서 `Error: Approx post does not support region rendering`을 재현했다(`test/out/game_prepare_split_before.log`). 수정 후 분할 시험 **159/159**, 공용 재질/물/후처리 golden·수명·경계 시험 **129/129**, `npm run typecheck` 통과. 2×1·2×2·focus·viewport/scissor 차이·DPR1.25/1.5·홀수 크기·RT·capture·FXAA on/off·stage/neutralBloomApprox·빈 영역·예외 복원·다음 단일 화면 크기를 확인했다. 분할 코어의 GC 0회 기대값은 유지했다. 워밍업의 지연 GC 통지가 측정에 섞여 `FAIL ... GC 0회 ... — gc 1`이 발생하여 측정을 GPU fixture 생성 전에 두고 워밍업 뒤 이벤트 통지를 기다리도록 했다. 이후 두 차례 159/159 통과했다.
+
+[한계] 독립 중간 타깃은 다른 레이어 표본이 섞이지 않는 구조지만 실제 GL 픽셀/브라우저 화면은 실행하지 않았다. 분할 크기 변경 때 RT를 재할당하며 각 레이어에 체인을 실행하는 비용이 있다. 원본 미확정 식 R1~R3은 이 수정으로 확정되지 않는다. 새 원본 판독·Ghidra 추출 요청 0건, 사용자 추가 결정 필요 없음.

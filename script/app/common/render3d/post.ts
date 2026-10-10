@@ -199,6 +199,7 @@ export class PostChain {
   readonly mips = { n: 0 };
   private out: THREE.WebGLRenderTarget | null = null;
   private inRegion = false;
+  private readonly regionSize = new THREE.Vector2();
   private readonly prevVp = new THREE.Vector4();
   private readonly prevSc = new THREE.Vector4();
   private readonly outVp = new THREE.Vector4();
@@ -289,7 +290,7 @@ export class PostChain {
   }
 
   private resize(): void {
-    const s = this.out ? new THREE.Vector2(this.out.width, this.out.height) : this.gl.getDrawingBufferSize(new THREE.Vector2());
+    const s = this.regionSize.x > 0 ? this.regionSize : this.out ? new THREE.Vector2(this.out.width, this.out.height) : this.gl.getDrawingBufferSize(new THREE.Vector2());
     if (s.equals(this.size)) return;
     this.size.copy(s);
     this.scene.setSize(s.x, s.y);
@@ -364,7 +365,8 @@ export class PostChain {
   }
 
   private renderRegion(scene: THREE.Scene, camera: THREE.Camera, r: PostRegion): void {
-    if (this.approx || this.p.dof) throw new Error('Approx post does not support region rendering');
+    if (r.scissor.z <= 0 || r.scissor.w <= 0 || r.viewport.z <= 0 || r.viewport.w <= 0) return;
+    const local = !!this.approx || !!this.p.dof;
     const gl = this.gl;
     const out = r.target;
     const sc = r.scissor;
@@ -381,24 +383,33 @@ export class PostChain {
     }
     this.out = out;
     this.inRegion = true;
+    if (local) this.regionSize.set(Math.ceil(sc.z), Math.ceil(sc.w));
     try {
       this.resize();
       const W = this.size.x;
       const H = this.size.y;
       const s = this.scene;
-      s.viewport.copy(r.viewport);
-      s.scissor.copy(sc);
+      if (local) {
+        s.viewport.set(r.viewport.x - sc.x, r.viewport.y - sc.y, r.viewport.z, r.viewport.w);
+        s.scissor.set(0, 0, sc.z, sc.w);
+      } else { s.viewport.copy(r.viewport); s.scissor.copy(sc); }
       s.scissorTest = true;
-      this.first.uniforms.region.value.set((sc.x + 0.5) / W, (sc.y + 0.5) / H, (sc.x + sc.z - 0.5) / W, (sc.y + sc.w - 0.5) / H);
-      this.comp.uniforms.vigRect.value.set(sc.x / W, sc.y / H, sc.z / W, sc.w / H);
+      if (local) {
+        this.first.uniforms.region.value.set(0.5 / W, 0.5 / H, (W - 0.5) / W, (H - 0.5) / H);
+        this.comp.uniforms.vigRect.value.set(0, 0, 1, 1);
+      } else {
+        this.first.uniforms.region.value.set((sc.x + 0.5) / W, (sc.y + 0.5) / H, (sc.x + sc.z - 0.5) / W, (sc.y + sc.w - 0.5) / H);
+        this.comp.uniforms.vigRect.value.set(sc.x / W, sc.y / H, sc.z / W, sc.w / H);
+      }
       if (out) {
-        out.viewport.set(0, 0, W, H);
+        if (local) out.viewport.copy(sc); else out.viewport.set(0, 0, W, H);
         out.scissor.copy(sc);
         out.scissorTest = true;
       } else {
         gl.setRenderTarget(null);
         const pr = gl.getPixelRatio();
-        gl.setViewport(0, 0, (W + 0.25) / pr, (H + 0.25) / pr);
+        if (local) gl.setViewport((sc.x + 0.25) / pr, (sc.y + 0.25) / pr, (sc.z + 0.25) / pr, (sc.w + 0.25) / pr);
+        else gl.setViewport(0, 0, (W + 0.25) / pr, (H + 0.25) / pr);
         gl.setScissor((sc.x + 0.25) / pr, (sc.y + 0.25) / pr, (sc.z + 0.25) / pr, (sc.w + 0.25) / pr);
         gl.setScissorTest(true);
       }
@@ -418,6 +429,7 @@ export class PostChain {
       }
       this.out = null;
       this.inRegion = false;
+      this.regionSize.set(0, 0);
       gl.autoClear = prevAuto;
       gl.setRenderTarget(null);
       gl.setViewport(this.prevVp);

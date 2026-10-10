@@ -25,6 +25,7 @@
  * - 라이트맵(gi_diffuse)·AO 는 재질 데이터대로(material.ts). water00 은 근사 셰이더(water.ts).
  */
 import * as THREE from 'three';
+import type { PreparationGpu } from '@app/common/render/prepare';
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { Assets } from '../../../../view/assets';
 import type { Renderer } from '../../../../view/renderer';
@@ -104,17 +105,13 @@ export class Stage {
     }
   }
 
-  async load(assets: Assets, renderer: Renderer, onProgress: (n: number, total: number, label: string) => void): Promise<void> {
+  async load(assets: Assets, renderer: Renderer, onProgress: (n: number, total: number, label: string) => void, gpu?: PreparationGpu): Promise<void> {
     const gl = renderer.gl;
-    this.renderer = renderer;
-    this.savedShadow = { enabled: gl.shadowMap.enabled, type: gl.shadowMap.type };
-    gl.shadowMap.enabled = true;
-    gl.shadowMap.type = THREE.PCFShadowMap;
     const names = ['mg1801_bg00', 'mg1801_floor00', 'mg1801_water00', 'mg1801_stool_npc00', 'mg1801_result00'];
     let n = 0;
     const total = names.length + STOOL_MODEL.length + 4 + 2;
     const step = (label: string): void => onProgress(++n, total, label);
-    const mats = new MaterialSetup(assets, gl);
+    const mats = new MaterialSetup(assets, gl, gpu);
     this.mats = mats;
     try {
       await mats.load();
@@ -181,9 +178,18 @@ export class Stage {
     step('mg1801_arrow00');
     this.loaded = this.stageModels.length > 0;
     if (this.loaded) {
-      this.post = new PostChain(gl);
-      renderer.setPost(this.post);
+      this.post = gpu ? await gpu.run(() => new PostChain(gl)) : new PostChain(gl);
     }
+  }
+
+  async precompile(gpu: PreparationGpu): Promise<void> { if (this.post) await gpu.run(() => this.post!.precompile()); }
+
+  activate(renderer: Renderer): void {
+    this.renderer = renderer;
+    const gl = renderer.gl;
+    this.savedShadow = { enabled: gl.shadowMap.enabled, type: gl.shadowMap.type };
+    gl.shadowMap.enabled = true; gl.shadowMap.type = THREE.PCFShadowMap;
+    if (this.post) { gl.toneMapping = THREE.NeutralToneMapping; renderer.setPost(this.post); }
   }
 
   /**

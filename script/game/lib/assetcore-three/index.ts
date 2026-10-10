@@ -109,7 +109,7 @@ export interface PreparerOptions {
   /** 무대 장면(빛·안개·환경맵이 셰이더 키에 들어감) */
   scene: THREE.Scene;
   camera(): THREE.Camera;
-  scheduler: FrameScheduler;
+  scheduler: Pick<FrameScheduler, 'add' | 'raise' | 'remove'>;
   /** 장면을 렌더 타깃에 그리는가(후처리 체인) */
   linear(): boolean;
   layer?: number;
@@ -175,7 +175,10 @@ export class PrepJob implements SchedTask {
 const isDrawable = (o: THREE.Object3D): boolean => !!((o as THREE.Mesh).isMesh || (o as THREE.Points).isPoints || (o as THREE.Line).isLine || (o as THREE.Sprite).isSprite);
 
 export class ScenePreparer {
+  failure: unknown = null;
   readonly stats = { jobs: 0, done: 0, textures: 0, compiles: 0, meshes: 0, units: 0, errors: 0, reused: 0 };
+  private readonly compiles = new Set<Promise<void>>();
+  get settled(): Promise<unknown> { return Promise.allSettled([...this.compiles]); }
   private readonly meshDone = new WeakSet<THREE.Object3D>();
   private readonly texDone = new WeakSet<THREE.Texture>();
   private readonly live = new Set<PrepJob>();
@@ -231,7 +234,7 @@ export class ScenePreparer {
       return this.stepInner(job);
     } catch (e) {
       console.warn('assetcore-three: GPU 준비 실패 — 준비 없이 보인다', job.root.name, e);
-      this.stats.errors++;
+      this.stats.errors++; this.failure ??= e;
       this.live.delete(job);
       job.finish();
       return RUN_DONE;
@@ -346,7 +349,9 @@ export class ScenePreparer {
       r.setRenderTarget(prev);
     }
     this.stats.compiles++;
-    p.then(job.onCompiled, job.onCompiled);
+    const done = p.then(job.onCompiled, error => { this.stats.errors++; this.failure ??= error; job.onCompiled(); });
+    this.compiles.add(done);
+    void done.finally(() => this.compiles.delete(done));
   }
 
   private upload(job: PrepJob): void {

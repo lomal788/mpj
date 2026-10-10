@@ -59,6 +59,34 @@ const near = (a: number, b: number, e = 1e-6): boolean => Math.abs(a - b) <= e;
 const rects = (l: SplitScreenLayerList): number[][] => l.layers.slice(0, l.count).map((x) => [x.cur.id, x.cur.x, x.cur.y, x.cur.w, x.cur.h]);
 const r4 = (p: { x: number; y: number; w: number; h: number }): number[] => [p.x, p.y, p.w, p.h];
 
+console.log('11) 할당 0');
+{
+  const s = new SplitScreen();
+  s.to(2, 2, 0, 0);
+  s.step();
+  const layers = s.list.layers.slice();
+  const cur = layers.map((l) => l.cur);
+  const panes = s.lines.panes.slice();
+  let gcs = 0;
+  const obs = new PerformanceObserver((list) => {
+    gcs += list.getEntries().length;
+  });
+  for (let k = 0; k < 2000; k++) {
+    s.to(2, 2, k % 2 ? 0 : -1, 0.5);
+    for (let i = 0; i < 40; i++) s.step();
+  }
+  await new Promise((r) => setTimeout(r, 50));
+  obs.observe({ entryTypes: ['gc'] });
+  for (let k = 0; k < 20000; k++) {
+    s.to(2, 2, k % 2 ? 0 : -1, 0.5);
+    for (let i = 0; i < 40; i++) s.step();
+  }
+  await new Promise((r) => setTimeout(r, 50));
+  obs.disconnect();
+  ok(s.list.layers.every((l, i) => l === layers[i] && l.cur === cur[i]) && s.lines.panes.every((p, i) => p === panes[i]), '스텝·SplitTo 반복 뒤 레이어·Param·pane 객체 그대로(재사용)');
+  ok(gcs === 0, `80만 스텝 + 2만 SplitTo 동안 GC 0회(매 스텝 할당 0)`, `gc ${gcs}`);
+}
+
 console.log('1) rect·ID');
 {
   const out: SplitParam[] = [];
@@ -308,6 +336,13 @@ class FakeGl implements SplitGl {
   autoClear = true;
   readonly shadowMap = { autoUpdate: true, needsUpdate: false };
   toneMapping: THREE.ToneMapping = THREE.NoToneMapping;
+  toneMappingExposure = 1;
+  outputColorSpace: string = THREE.SRGBColorSpace;
+  private readonly color = new THREE.Color(0x123456);
+  private alpha = 1;
+  getClearColor(c: THREE.Color): THREE.Color { return c.copy(this.color); }
+  getClearAlpha(): number { return this.alpha; }
+  setClearColor(c: THREE.Color, alpha = 1): void { this.color.copy(c); this.alpha = alpha; }
   pr = 1.5;
   W = 1920;
   H = 1080;
@@ -562,31 +597,61 @@ console.log('10) import 경계');
   ok(!/\btransition\s*:/.test(read('script/game/lib/splitscreen-dom/index.ts')), 'DOM 어댑터: CSS transition 안 씀');
 }
 
-console.log('11) 할당 0');
+console.log('12) 실제 mg0508 DOF 분할 출력 회귀');
 {
-  const s = new SplitScreen();
-  s.to(2, 2, 0, 0);
-  s.step();
-  const layers = s.list.layers.slice();
-  const cur = layers.map((l) => l.cur);
-  const panes = s.lines.panes.slice();
-  let gcs = 0;
-  const obs = new PerformanceObserver((list) => {
-    gcs += list.getEntries().length;
-  });
-  for (let k = 0; k < 2000; k++) {
-    s.to(2, 2, k % 2 ? 0 : -1, 0.5);
-    for (let i = 0; i < 40; i++) s.step();
+  const params = JSON.parse(fs.readFileSync(path.join(A, 'mg/mg0508/manifest.json'), 'utf8')).env.post as PostParams;
+  ok(params.dof === true, '실제 /dev/ui 기본 게임 mg0508은 DOF 사용');
+  const gl = new FakeGl(), post = new PostChain(gl as unknown as THREE.WebGLRenderer, params, null), split = new SplitScreen();
+  const scene = new THREE.Scene(), cameras = mkCams(), renderer = new SplitRenderer(gl);
+  split.to(2, 1, -1, 0); const before = JSON.stringify(gl.state());
+  renderer.render(scene, cameras, split.list, { post });
+  const scenes = gl.log.filter(r => r.obj === scene), outputs = gl.log.filter(r => r.op === 'render' && r.target === null);
+  eq(scenes.map(r => [r.vp, r.sc, r.target?.width, r.target?.height]), [[[0, 0, 960, 1080], [0, 0, 960, 1080], 960, 1080], [[0, 0, 960, 1080], [0, 0, 960, 1080], 960, 1080]], 'DOF 입력은 레이어 scissor 크기의 독립 타깃');
+  eq(outputs.map(r => [r.vp, r.sc]), [[[0, 0, 960, 1080], [0, 0, 960, 1080]], [[960, 0, 960, 1080], [960, 0, 960, 1080]]], 'DOF 최종 패스 좌/우 영역 출력');
+  eq(JSON.stringify(gl.state()), before, 'DOF 분할 출력 뒤 GL 상태 복원'); post.dispose();
+}
+{
+  const original = JSON.parse(fs.readFileSync(path.join(A, 'mg/mg0508/manifest.json'), 'utf8')).env.post as PostParams;
+  for (const mode of ['stage', 'neutralBloomApprox'] as const) {
+    for (const fxaa of [false, true]) {
+      const gl = new FakeGl(); gl.W = 1919; gl.H = 1079; gl.pr = 1.25;
+      const post = new PostChain(gl as unknown as THREE.WebGLRenderer, { ...original, fxaa }, null, { mode });
+      const scene = new THREE.Scene(), cameras = mkCams(), split = new SplitScreen(), renderer = new SplitRenderer(gl);
+      const before = JSON.stringify(gl.state()); split.to(2, 2, -1, 0);
+      renderer.render(scene, cameras, split.list, { post });
+      const outputs = gl.log.filter(r => r.op === 'render' && r.target === null);
+      eq(outputs.map(r => [r.vp, r.sc]), [
+        [[0, 540, 959, 539], [0, 540, 959, 539]], [[959, 540, 959, 539], [959, 540, 959, 539]],
+        [[0, 1, 959, 539], [0, 1, 959, 539]], [[959, 1, 959, 539], [959, 1, 959, 539]],
+      ], `${mode} FXAA=${fxaa}: 홀수 크기·DPR 1.25의 4분할 출력`);
+      eq(JSON.stringify(gl.state()), before, `${mode} FXAA=${fxaa}: 분할 후 상태 복원`);
+      gl.log.length = 0;
+      const out = new THREE.WebGLRenderTarget(999, 777); out.viewport.set(2, 3, 4, 5); out.scissor.set(6, 7, 8, 9); out.scissorTest = true;
+      const fields = [out.viewport.toArray(), out.scissor.toArray(), out.scissorTest];
+      const region = { target: out, viewport: new THREE.Vector4(101, 51, 500, 350), scissor: new THREE.Vector4(110, 60, 480, 330) };
+      post.render(scene, cameras[0], region);
+      const source = gl.log.find(r => r.obj === scene)!; const last = gl.log.at(-1)!;
+      eq([source.vp, source.sc, source.target?.width, source.target?.height], [[-9, -9, 500, 350], [0, 0, 480, 330], 480, 330], `${mode} FXAA=${fxaa}: 전환 중 viewport 원점 차이를 보존`);
+      ok(last.target === out && JSON.stringify(last.vp) === '[110,60,480,330]' && JSON.stringify(last.sc) === '[110,60,480,330]', `${mode} FXAA=${fxaa}: RT 출력 영역 유지`);
+      eq([out.viewport.toArray(), out.scissor.toArray(), out.scissorTest], fields, `${mode} FXAA=${fxaa}: RT 필드 복원`);
+      const draw = gl.render; const failure = new Error('region draw failed'); let caught: unknown;
+      gl.render = () => { throw failure; };
+      try { post.render(scene, cameras[0], region); } catch (error) { caught = error; } finally { gl.render = draw; }
+      ok(caught === failure && JSON.stringify(gl.state()) === before, `${mode} FXAA=${fxaa}: 예외 전달·GL 복원`);
+      eq([out.viewport.toArray(), out.scissor.toArray(), out.scissorTest], fields, `${mode} FXAA=${fxaa}: 예외에도 RT 필드 복원`);
+      gl.log.length = 0; post.render(scene, cameras[0]);
+      const full = gl.log.find(r => r.obj === scene)!;
+      ok(full.target?.width === 1919 && full.target?.height === 1079 && !full.test, `${mode} FXAA=${fxaa}: 다음 단일 화면은 전체 크기 복구`);
+      const draws = gl.log.length; post.render(scene, cameras[0], { ...region, scissor: new THREE.Vector4(0, 0, 0, 330) });
+      ok(gl.log.length === draws, `${mode} FXAA=${fxaa}: 면적 0은 건너뜀`);
+      split.to(2, 2, 0, 0); gl.log.length = 0;
+      const cap = new THREE.WebGLRenderTarget(960, 540); let captured = 0;
+      renderer.capture({ layer: 0, target: cap, type: 0, flags: 1, onDone: () => captured++ });
+      renderer.render(scene, cameras, split.list, { post });
+      ok(gl.log.filter(r => r.obj === scene).length === 2 && captured === 1 && gl.log.at(-1)?.target === cap, `${mode} FXAA=${fxaa}: focus 화면·별도 캡처 함께 출력`);
+      post.dispose(); out.dispose(); cap.dispose();
+    }
   }
-  obs.observe({ entryTypes: ['gc'] });
-  for (let k = 0; k < 20000; k++) {
-    s.to(2, 2, k % 2 ? 0 : -1, 0.5);
-    for (let i = 0; i < 40; i++) s.step();
-  }
-  await new Promise((r) => setTimeout(r, 50));
-  obs.disconnect();
-  ok(s.list.layers.every((l, i) => l === layers[i] && l.cur === cur[i]) && s.lines.panes.every((p, i) => p === panes[i]), '스텝·SplitTo 반복 뒤 레이어·Param·pane 객체 그대로(재사용)');
-  ok(gcs === 0, `80만 스텝 + 2만 SplitTo 동안 GC 0회(매 스텝 할당 0)`, `gc ${gcs}`);
 }
 
 console.log(fails ? `실패 ${fails}/${count}` : `통과 ${count}/${count}`);

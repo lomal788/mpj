@@ -27,7 +27,7 @@ const PLAZA_NEXT = (pri: number, next: boolean): FlowPredict[] => [
 ];
 
 export const FLOW_TABLE: Readonly<Record<FlowScreen, FlowEntry>> = {
-  boot: { own: ['setplayer'], predict: [] },
+  boot: { own: ['setplayer'], predict: PLAZA_NEXT(P3, false) },
   setplayer: {
     own: ['setplayer', 'bgm:SM_BGM_TITLE'],
     predict: [{ bundle: 'bgm:SM_BGM_MENU', pri: P3, next: false }, { bundle: 'charselect', pri: P2, next: true }, { bundle: 'char:first', pri: P2, next: true }, { bundle: 'charselect:sound', pri: P2, next: true }, ...PLAZA_NEXT(P3, false)],

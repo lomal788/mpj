@@ -8,6 +8,7 @@
  * 근사는 각 파일 머리 주석(조명·재질 stage.ts, 레이아웃 재생 view/lyt.ts·ui.ts).
  */
 import * as THREE from 'three';
+import type { PreparationGpu } from '@app/common/render/prepare';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { disposeScene, type Seen } from '../../../../view/dispose';
 import type { GameView, SoundSnapshot, ViewContext } from '../../../../game';
@@ -63,7 +64,8 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
   private readonly players: { body: THREE.Mesh; knife: THREE.Group }[] = [];
   private readonly telops: Telop[] = [];
   private readonly splashes: Splash[] = [];
-  private readonly sound: SoundMap;
+  private sound: SoundMap;
+  private gpu: PreparationGpu | undefined;
   private readonly assets: Assets;
   private actors: CharacterActor[] = [];
   /** NPC 헤이호 둘(npc.ts) */
@@ -131,7 +133,7 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
 
   async load(onProgress: Progress): Promise<void> {
     onProgress(0, 1, 'mg1801 manifest');
-    await this.sound.load((n, total, name) => onProgress(n, total, name));
+    if (!this.gpu) await this.sound.load((n, total, name) => onProgress(n, total, name));
     onProgress(0, 1, 'chara/index.json');
     try {
       /* 플레이어 캐릭터 = GameSetup.players[i].char(pcNN). 같은 캐릭터는 템플릿 하나를 같이 쓴다 */
@@ -174,19 +176,42 @@ export class Mg1801View implements GameView<Mg1801State, Mg1801Event> {
       await this.fx.load();
       this.fxLoaded = true;
       /* MapImpl::Initialize — 김 steam00 을 시작부터 원점에 */
-      this.steam = this.fx.start('mg1801_steam00', { x: 0, y: 0, z: 0 });
+      if (!this.gpu) this.steam = this.fx.start('mg1801_steam00', { x: 0, y: 0, z: 0 });
     } catch (e) {
       console.warn('이펙트를 읽지 못해 물보라만 고리로 그린다', e);
     }
     onProgress(0, 1, '화면 준비');
     await Promise.all([this.stage.prepare(this.scene), ...this.assets.roots().map(root => this.stage.prepare(root))]);
-    await this.assets.prepare(this.scene, this.camera, this.ctx.renderer.gl, this.stage.loaded, { uploads: this.ctx.renderer.uploads, offscreen: true, valid: () => this.ctx.renderer.active !== false });
+    if (!this.gpu) this.stage.activate(this.ctx.renderer);
+    await this.assets.prepare(this.scene, this.camera, this.ctx.renderer.gl, this.stage.loaded, { uploads: this.gpu?.uploads ?? this.ctx.renderer.uploads, offscreen: true, valid: () => this.gpu ? this.gpu.valid() : this.ctx.renderer.active !== false, scheduler: this.gpu?.scheduler, signal: this.gpu?.signal });
     onProgress(1, 1, '완료');
+  }
+
+  async prepare(onProgress: Progress, gpu: PreparationGpu): Promise<void> {
+    this.gpu = gpu;
+    gpu.configure?.(() => {
+      const gl = this.ctx.renderer.gl;
+      gl.shadowMap.enabled = true; gl.shadowMap.type = THREE.PCFShadowMap;
+      gl.toneMapping = this.stage.loaded ? THREE.NeutralToneMapping : THREE.NoToneMapping;
+      gl.outputColorSpace = THREE.SRGBColorSpace;
+    });
+    await this.load(onProgress);
+    await mg1801Ui(this, this.assets, () => this.camera).ready;
+    await this.stage.precompile(gpu);
+    if (!gpu.valid()) throw new Error('Game preparation expired');
+  }
+
+  async activate(): Promise<void> {
+    this.gpu = undefined;
+    this.sound = new SoundMap(this.assets, this.ctx.audio, 'mg1801');
+    await this.sound.load();
+    this.stage.activate(this.ctx.renderer);
+    if (this.fxLoaded) this.steam = this.fx.start('mg1801_steam00', { x: 0, y: 0, z: 0 });
   }
 
   /** 무대·채소·칼 원본 모델. 실패한 것은 상자로 남긴다 */
   private async loadModels(onProgress: Progress): Promise<void> {
-    await this.stage.load(this.assets, this.ctx.renderer, (n, total, name) => onProgress(n, total, `model/${name}.glb`));
+    await this.stage.load(this.assets, this.ctx.renderer, (n, total, name) => onProgress(n, total, `model/${name}.glb`), this.gpu);
     if (this.stage.loaded) {
       for (const o of this.boxOnly) o.visible = false;
       this.scene.background = null;

@@ -20,6 +20,7 @@ export class MenuSurface {
   }
   get active(): boolean { return !this.closed && this.lease?.valid === true; }
   get gl(): THREE.WebGLRenderer { return this.service.renderer; }
+  frame(draw: () => void): void { if (this.active) this.service.activeFrame(draw); }
   suspend(): void {
     this.wanted = false; this.epoch++;
     this.lease?.release(); this.lease = null;

@@ -23,6 +23,7 @@ import { BGM_SPEC_PATH } from './screenBgm';
 export interface FlowCatalogOptions {
   /** 압축 모드: glb 안 텍스처도 관리자를 지남 → 광장 P0 모델 텍스처를 묶음에 넣음 */
   gltfTextures: boolean;
+  gameKeys?(name: string, json: FlowJson): Promise<FlowKeys | null>;
   /** 게임 이름 → 에셋 폴더(ASSETS 기준, 끝 '/') */
   gameDir?(name: string): string | null;
   /** BGM wav 키 → 미리 받을 키(압축 모드 = 첫 조각, docs/engine/04_sound.md §12). 없으면 그대로 */
@@ -116,9 +117,15 @@ export async function flowKeys(bundle: string, json: FlowJson, o: FlowCatalogOpt
       return out;
     }
     case 'plaza:p0': {
-      const man = await json<{ models: Record<string, { url: string }>; plaza: { layout: PlazaLayoutEntry[]; extraLayout?: PlazaLayoutEntry[]; collision: string } }>('plaza/world/manifest.json');
+      const man = await json<{ textures?: Record<string, { files: string[] }>; anims?: Record<string, string>; env?: { ibl?: { common: string[]; chara?: string[] | null }; sky?: { texture?: string }; post?: { lut?: string }; envAnim?: string }; models: Record<string, { url: string }>; plaza: { layout: PlazaLayoutEntry[]; extraLayout?: PlazaLayoutEntry[]; collision: string } }>('plaza/world/manifest.json');
       const first = await json<PlazaFirstFile>('plaza/world/plaza_first.json');
-      return [['plaza/world/manifest.json', 'json'], ...plazaP0Paths(man.models, man.plaza, first, defaultDecoState(), o.gltfTextures).map(([p, k]) => [`plaza/world/${p}`, k] as const)];
+      const env = man.env, extra: [string, string][] = [];
+      for (const name of [...(env?.ibl?.common ?? []), ...(env?.ibl?.chara ?? []), env?.sky?.texture, env?.post?.lut]) {
+        if (!name) continue;
+        for (const file of man.textures?.[name]?.files ?? []) extra.push([`plaza/world/tex/${file}`, /\.hdr$/i.test(file) ? 'bytes' : 'texture']);
+      }
+      if (env?.envAnim && man.anims?.[env.envAnim]) extra.push([`plaza/world/${man.anims[env.envAnim]}`, 'json']);
+      return [['plaza/world/manifest.json', 'json'], ...extra, ...plazaP0Paths(man.models, man.plaza, first, defaultDecoState(), o.gltfTextures).map(([p, k]) => [`plaza/world/${p}`, k] as const)];
     }
     case 'plaza:ui':
       return screen2d(json, 'mgmcommon/', [ONLINE_PART, ONLINE_FACES, PLAZA_UI_PART, PLAZA_CARD_PART]);
@@ -158,6 +165,7 @@ export async function flowKeys(bundle: string, json: FlowJson, o: FlowCatalogOpt
     return [[BGM_SPEC_PATH, 'json'], [o.bgmKey?.(k) ?? k, 'bytes']];
   }
   if (bundle.startsWith('game:')) {
+    if (o.gameKeys) return o.gameKeys(bundle.slice(5), json);
     const dir = o.gameDir?.(bundle.slice(5));
     return dir ? [[normPath(`${dir}manifest.json`), 'json']] : null;
   }

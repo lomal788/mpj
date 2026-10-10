@@ -9,6 +9,7 @@
  * 공개 API: start(한 판 시작) · step(한 스텝) · prime/due/resync(시계) · draw · stop · 읽기 전용 상태(stage·frame·seed·result·error …) · listen(사건).
  * 설정: muted(소리 끄기) · fixedSeed(빈 문자열 = 무작위) · audioClock(오디오 시계를 따름) · latency(출력 지연 보정, 기본 자동). 루프는 runGameLoop.
  */
+import { GamePreparation } from './preparation';
 import { FPS, MAX_BACKLOG_STEPS, MAX_STEPS } from '@game/core/clock';
 import type { GameDef, GameLogic, GameSetup, GameView } from '../../game';
 import type { LogicTransition } from '@game/lib/transition';
@@ -64,6 +65,8 @@ export interface GameHost {
   setMsg(s: string): void;
   setMuted(muted: boolean): void;
   setError(error: string | null): void;
+  prepare(d: GameDef, draft: SetupDraft): void;
+  cancelPreparation(): void;
   start(d: GameDef, draft: SetupDraft, o?: StartOptions): Promise<void>;
   step(): boolean;
   prime(): boolean;
@@ -97,6 +100,12 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
   const renderer = new Renderer(glCanvas, renderService);
   const hudCtx = hudCanvas.getContext('2d')!;
   const hud = new Hud(hudCtx);
+  const preparation = new GamePreparation(renderService.prepareQueue, (d, setup) => {
+    const assets = new Assets(d.assetsDir); assets.setPriority(2);
+    const context = { renderer, hud: hudCtx, audio: null, setup, pads: [] };
+    try { return { view: d.createView(context, assets), context, assets }; }
+    catch (error) { assets.dispose(); throw error; }
+  });
   const keyboard = new KeyboardPad();
   window.addEventListener('resize', () => renderer.resize());
 
@@ -138,12 +147,12 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
 
   const dispose = (): void => {
     token++;
-    const oldView = view, oldLoading = loadingView, oldLease = gameLease;
+    const oldView = view, oldLoading = loadingView, oldLease = gameLease, oldAssets = gameAssets;
     view = null; loadingView = null; gameLease = null;
-    gameAssets?.dispose(); gameAssets = null;
+    oldAssets?.cancel(); gameAssets = null;
     const cleanup = (): void => {
       try { oldView?.dispose(); }
-      finally { if (oldLease) renderer.release(oldLease); }
+      finally { oldAssets?.dispose(); if (oldLease) renderer.release(oldLease); }
     };
     if (oldLoading) void oldLoading.catch(() => undefined).then(cleanup).catch(console.error);
     else cleanup();
@@ -201,11 +210,14 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
       keyboard,
     );
     if (my !== token) return;
-    const assets = new Assets(d.assetsDir);
-    gameAssets = assets;
+    let assets: Assets | null = null;
     try {
       await d.load?.();
       if (my !== token) return;
+      const prepared = d.preparationKey ? await preparation.take(d, setup) : null;
+      if (my !== token) { prepared?.view.dispose(); prepared?.assets.dispose(); return; }
+      assets = prepared?.assets ?? new Assets(d.assetsDir); gameAssets = assets;
+      view = prepared?.view ?? null;
       const host = await loadMgHost();
       if (my !== token) return;
       await plazaGl().yieldPreparation();
@@ -216,10 +228,11 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
       lease?.onLost(() => {
         stop(); setMsg('그래픽 연결이 끊겼습니다. 복구 후 게임을 다시 시작해 주세요.');
       });
-      view = d.createView({ renderer, hud: hudCtx, audio, setup, pads }, assets);
-      emit({ type: 'view', view });
+      if (prepared) Object.assign(prepared.context, { renderer, hud: hudCtx, audio, setup, pads });
+      else view = d.createView({ renderer, hud: hudCtx, audio, setup, pads }, assets);
+      emit({ type: 'view', view: view! });
       setMsg('에셋 읽는 중…');
-      const pending = view.load((n, total, what) => {
+      const pending = prepared ? view!.activate!() : view!.load((n, total, what) => {
         if (my === token && stage === 'loading') setMsg(`에셋 읽는 중 ${n}/${total}\n${what}`);
       });
       loadingView = pending;
@@ -382,6 +395,11 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
     setError(e) {
       error = e;
     },
+    prepare(d, draft) {
+      if (!d.preparationKey) return;
+      void preparation.select(d, { ...draft, seed: 0 }).catch(() => undefined);
+    },
+    cancelPreparation: () => preparation.cancel(),
     start,
     step: stepOnce,
     prime() {
@@ -406,8 +424,8 @@ export function createGameHost(mount: (stageBox: HTMLElement) => void): GameHost
     draw: drawFrame,
     heardTime,
     stepTime: () => base + frame / FPS,
-    stop,
-    dispose,
+    stop: () => { preparation.cancel(); stop(); },
+    dispose: () => { preparation.cancel(); dispose(); },
   };
   return host;
 }

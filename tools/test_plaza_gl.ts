@@ -12,6 +12,8 @@
  *
  *   npx tsx tools/test_plaza_gl.ts
  */
+import { RenderService } from '@app/common/render/service';
+import { MenuSurface } from '@app/common/render/menu';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { registerHooks } from 'node:module';
@@ -115,6 +117,14 @@ class FakeGl {
   outputColorSpace: string = THREE.SRGBColorSpace;
   toneMapping: THREE.ToneMapping = THREE.NoToneMapping;
   autoClear = true;
+  autoClearColor = true; autoClearDepth = true; autoClearStencil = true;
+  toneMappingExposure = 1;
+  private readonly viewport = new THREE.Vector4(0, 0, 1920, 1080);
+  private readonly scissor = new THREE.Vector4(0, 0, 1920, 1080);
+  getViewport(v: THREE.Vector4): THREE.Vector4 { return v.copy(this.viewport); }
+  setViewport(v: THREE.Vector4): void { this.viewport.copy(v); }
+  getSize(v: THREE.Vector2): THREE.Vector2 { return v.set(this.w, this.h); }
+  getPixelRatio(): number { return 1; }
   readonly n = { compiles: 0, destroyed: 0, texUploads: 0, texDeleted: 0, geoUploads: 0, geoFreed: 0, renders: 0, disposed: 0, lost: 0 };
   readonly log: LogRow[] = [];
   readonly geoUp = new Map<THREE.BufferGeometry, number>();
@@ -328,9 +338,9 @@ class FakeGl {
     return this.ca;
   }
   getScissor(v: THREE.Vector4): THREE.Vector4 {
-    return v.set(0, 0, this.w, this.h);
+    return v.copy(this.scissor);
   }
-  setScissor(): void {}
+  setScissor(v: THREE.Vector4): void { this.scissor.copy(v); }
   setScissorTest(on: boolean): void {
     this.scTest = on;
   }
@@ -806,6 +816,32 @@ function GPU_BUDGET_MOBILE_MB(): number {
   return 600;
 }
 
+console.log('11. 시작 메뉴 중 실제 worldStarter·Stage3D·ScenePreparer 경로');
+{
+  const canvas = Object.assign(new EventTarget(), fakeCanvas(), { style: { visibility: '' } });
+  const probe = new FakeGl(canvas);
+  const service = new RenderService({ canvas: () => canvas as unknown as HTMLCanvasElement, renderer: () => asGl(probe), now: () => clock.t, tick, budgetMs: 2 });
+  const host = { prepend() {} } as unknown as HTMLElement;
+  const menu = new MenuSurface(host, 1920, 1080, service);
+  await menu.resume();
+  const state = (): unknown[] => [probe.getSize(new THREE.Vector2()).toArray(), probe.getViewport(new THREE.Vector4()).toArray(), probe.getScissor(new THREE.Vector4()).toArray(), probe.getScissorTest(), probe.getRenderTarget(), probe.outputColorSpace, probe.toneMapping, probe.autoClear, { ...probe.shadowMap }, probe.getClearColor(new THREE.Color()).toArray()];
+  const before = state(), beforeRefs = mgr.refs('plaza/world/manifest.json'); let job: PlazaWorldJob | null = null;
+  const scoped = new PlazaGl({ service, createCanvas: () => { throw new Error('extra canvas'); }, createRenderer: () => { throw new Error('extra renderer'); }, startWorld(o) { return job = starter(o); }, gpuBudget: () => 2e9 });
+  ok(scoped.prewarm(new URLSearchParams()), '캐릭터 메뉴 대여 중 광장 준비 시작');
+  const done = settled(job!.world);
+  for (let i = 0; !done.done && i < 3000; i++) { menu.frame(() => undefined); await frame(); }
+  ok(done.done && !done.error, `실제 공용 큐 준비 완료 ${String(done.error ?? '')}`);
+  eq(service.current?.owner, 'menu', '준비 동안 표시 대여는 메뉴');
+  eq(state(), before, '광장 생성·post compile·GPU 업로드 뒤 메뉴 상태 복원');
+  ok(probe.log.every(row => row.target !== null), '배경 준비 중 표시 canvas draw 없음');
+  menu.dispose(); await scoped.reserve(); const entry = scoped.enter(host, new URLSearchParams());
+  const world = await entry.world;
+  ok(entry.prewarmed && world === done.value, '광장 진입은 같은 준비 world를 인계');
+  eq(probe.shadowMap.type, THREE.PCFShadowMap, '진입 시 광장 표시 상태 활성화');
+  scoped.leave(world.stage.scene, () => { world.disposeActors?.(); world.stage.dispose(); });
+  eq(service.current, null, '광장 해제 후 대여 반환');
+  eq(mgr.refs('plaza/world/manifest.json'), beforeRefs, '광장 준비 owner 참조 해제'); service.dispose();
+}
 globalThis.fetch = originalFetch;
 wasmHook.deregister();
 console.log(`\n${count - fails}/${count} 통과`);

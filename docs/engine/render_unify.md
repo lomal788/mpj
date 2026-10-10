@@ -867,3 +867,82 @@ tools/test_render_service.ts(291,35): error TS2322: Type '"srgb"' is not assigna
 [상태] 사용자 결정 대기 없이 문서 반영 완료. 이번 추출 대상은 모두 확보하여 Ghidra 추출 요청 잔여 주소0개다. P01~P03은 새로 특정하지 않은 분석 범위이며 원본 동작을 임의 기본값으로 채우지 않는다.
 
 [최종 검증 결과] 기존 본문 보존/작업 전 줄바꿈8항목, 추가 링크43개, C 헤더와 INDEX 대응443개 모두 통과했다. 추출 실패0, `git diff --check` 공백 오류0. 처음 검증기의 줄바꿈 비교는 git blob의 LF를 작업 트리 CRLF와 비교해 실패했으며, 작업 전 실제 줄바꿈을 기준으로 고쳐 재검증했다. 문서 줄바꿈은 변환하지 않았다.
+
+## 18. 선택 게임 실제 에셋·메뉴 중 GPU 준비 구현 (2026-10-10)
+
+[설계: 구현 전 기록] 사용자 요청으로 game 코드/manifest 예측을 필수 에셋까지 확장하고 RenderService prepareQueue를 추가한다. 게임별 자원 준비와 활성화를 분리한다. §17의 원본과 웹의 차이를 유지하며 mgInst·게임 로직의 선행 실행은 추가하지 않는다.
+
+- 파일 구성: `app/common/render/prepare.ts`의 취소 가능한 GPU 준비 scope·budget 큐, RenderService와 MenuSurface의 표시 프레임 경계; `app/flow/preparation.ts`의 선택 준비 수명; GameView 준비/활성화 계약; mg1801 소비자와 game 에셋 목록; flowCatalog·mgm01·게임 호스트 연결.
+- 선택 범위: 현재 제품 등록 게임 mg1801. 다른 게임은 준비 계약을 제공할 때 같은 경로를 사용한다. 현재 목록/설정에서 선택 게임을 유지하고 선택 변경·목록 종료 때 취소한다. 옵션/캐릭터의 준비 키와 renderer generation을 확인하고 완료된 그래픽 준비 결과만 활성화에 사용한다.
+- 자원 준비: 게임 manifest·모델·재질/IBL 파일·이펙트·캐릭터/모션·UI·소리의 실제 필요 경로를 열거한다. 공용 AssetManager를 재사용하며 입력/논리 frame/난수/소리 재생은 진행하지 않는다. 사운드 디코드·시퀀서 연결은 활성화에서 수행한다.
+- GPU 경계: PMREM·post 생성/준비·ScenePreparer 작업을 같은 renderer의 취소 가능한 준비 scope에 등록한다. GPU 단위는 scratch RT와 RendererState 복원으로 표시 상태를 보존한다. 메뉴 draw 뒤 예산 내 단위를 실행하며 활성 화면이 없을 때도 준비가 진행된다. PC4ms/모바일2ms는 웹 정책이며 비선점 단위의 엄격한 시간 상한을 보장하지 않는다.
+- 취소: 더 이상 필요한 준비가 아니면 scope와 자원 owner를 해제하고 늦은 완료를 활성화하지 않는다. 진행 중 compileAsync는 완료를 기다린 후 그래픽 자원을 정리한다. 실패/취소를 ready와 구별하고 게임 시작에서 재시도할 수 있게 한다.
+- 시험: 기존 기대값 유지. Node로 필수 에셋 목록·CPU 캐시 재사용·메뉴 중 GPU 호출/상태 복원·예산/취소/실패/손실·준비→활성화·선택 변경·늦은 완료·재시도를 검증한다. typecheck와 관련 기존 시험을 실행한다. 브라우저/헤드리스·새 npm 의존성·원본 추가 판독은 수행하지 않는다.
+
+[진행] 문서 기록 완료, 구현/검증 진행 중. 구현 결과·제한·시험 결과는 이 절에 추가한다.
+
+### 18.1 시작 화면부터 광장 준비 — 추가 사용자 요청
+
+[설계: 구현 전 기록] 첫 게임 시작의 인원 설정·캐릭터 선택부터 광장 필수 에셋 다운로드와 GPU 준비를 진행한다. boot에서 광장 P0/UI/NPC 묶음을 유휴 P3로 예측하고 현재 화면 P0와 캐릭터 선택 P2를 우선한다. 데이터 절약 lite/off 정책은 유지한다. 광장 코드/manifest 준비를 기다리는 동안 메뉴 진행을 막지 않는다.
+
+[설계] 기존 광장 prewarm의 독점 lease를 준비 scope로 바꾼다. 메뉴 진입에서 준비 world를 정리하지 않으며 메뉴 표시 프레임 뒤에 광장 ScenePreparer·PMREM·post 작업을 실행한다. 공유 renderer의 canvas·크기·출력 상태를 준비 때문에 바꾸지 않는다. 광장 진입은 표시 lease를 얻은 뒤 기존 world를 promote/adopt하고, 표시용 상태 적용을 따로 수행한다. 게임 진입/문맥 손실은 준비 scope를 취소하고 진행 중 작업 종료 후 world를 해제한다.
+
+[검증 계획] 메뉴 활성 상태에서 광장 준비·GPU 상태 복원·world 재사용·취소/손실을 Node로 확인한다. 부팅 광장 예측을 새로 검증하고 기존 인원 설정/캐릭터 선택 우선순위·캐시·광장 동작 시험을 유지한다. 실제 GPU 드라이버 비용·시각적 결과는 이번 Node 검증으로 확정하지 않는다.
+
+[설계 보완] 광장 P0 목록은 첫 모델뿐 아니라 env의 IBL·sky·LUT·env animation을 포함한다. HDR 바이트도 공용 관리자에서 받아 재사용하며 준비 중 직접 HDR 다운로드로 같은 파일을 중복 받지 않는다. 준비 실패/취소된 IBL 캐시 항목은 재시도 가능하게 비운다.
+
+[설계 보완] HDR 변환의 자원 인터페이스만 `common/render3d/hdr.ts`로 옮기고 기존 `common/assets/hdr.ts`는 재수출한다. render3d가 assets 폴더에 의존하지 않도록 기존 경계를 유지한다. envAnim은 이름이 아닌 manifest.anims의 실제 JSON 경로를 받는다. 설치 시 이미 setplayer에 진입한 경우에도 광장 예측을 요청하여 boot → setplayer의 빠른 전환에 누락되지 않게 한다.
+
+[설계 보완] 광장 준비의 자원 owner는 실행 광장과 구별한다. 준비 취소 시 owner를 release하고 모델/compile 정리를 기다린다. 인계된 stage도 같은 owner를 보유하다가 stage 해제 때 release한다. CPU 캐시를 삭제하지 않으며 다른 장면 참조를 취소하지 않는다. Node 렌더 서비스의 이전 독점 prewarm 시험은 메뉴 중 scope 준비 계약으로 갱신하고, 기존 광장 수치 기대값은 유지한다.
+
+### 18.2 사용자 보고 시작 실패 — 재현·수정 방침
+
+[실행: 사용자] 프리 플레이 → 싹둑싹둑 수프에서 `시작 실패: GPU preparation failed`. 상세 스택은 `TypeError: Cannot read properties of undefined (reading 'length')`, three.module.js:4295 WebGLMorphtargets.update → ScenePreparer.upload다.
+
+[판독: 웹 코드/에셋] 설치된 three의 WebGLMorphtargets.update는 object.morphTargetInfluences.length를 읽는다. 모션 GLB의 Points는 원본 파싱 결과에 morphTargetInfluences가 있지만 SkeletonUtils.clone 뒤에는 없다(Points.copy가 Mesh.copy와 달리 morph 배열을 복사하지 않음). Assets.prepare의 숨겨진 모션 템플릿 업로드에서 노출된다. 실제 pc01~04 모션 GLB의 복제 Points에서 같은 결손을 Node로 확인했다. 원본 ComActor/모션 계산 규칙의 변경이 아니다.
+
+[수정 방침] Assets.gltf의 Points 복제에 source의 morphTargetInfluences·morphTargetDictionary를 독립 복사한다. 기존 가중치를 0으로 덮어쓰거나 모션을 생략하지 않는다. 실제 모션 파일과 three의 WebGLMorphtargets.update를 Node에서 호출하여 같은 예외 경로를 재현/검증한다. GPU 준비의 후속 실패는 원인도 전달하도록 개선한다.
+
+[설계 보완] 광장 world 생성 도중 실패/취소한 경우에도 공유 CPU scheduler 예산을 복원한다. 캐릭터 GPU 준비 실패 시 생성한 캐릭터도 정리한다. 준비 scope의 owner 해제를 별도 Node 검사한다.
+
+### 18.3 완료 파일·상태·검증
+
+[완료] 선택 게임 실제 에셋 예측, 메뉴 중 GPU prepareQueue, view 준비/활성화 분리와 취소/완료 인계, 초기 메뉴부터 광장 준비/입장 재사용을 적용했다. 앞선 진행 중 기록의 최종 상태다. 현재 등록 소비자는 mg1801과 광장이다. 다른 게임은 선택적 준비 계약을 구현하면 같은 호스트 경로를 사용한다.
+
+| 구성 | 만든·변경한 파일(web 기준) |
+|---|---|
+| 공용 큐/메뉴 프레임 | `script/app/common/render/{prepare,service,menu}.ts`, `script/app/common/ui/view.ts`, `script/app/scene/menu/{charselect,modeselect}/screen.ts` |
+| 자원/GPU | `script/app/common/assets/{index,hdr}.ts`, `script/app/common/render3d/{hdr,material,stage}.ts`, `script/game/lib/assetcore-three/index.ts` |
+| 선택/호스트 계약 | `script/game.ts`, `script/app/flow/{preparation,host,index}.ts`, `script/mgm01_page.ts`, `script/view/{appFlow,flow,flowCatalog,flowTable,menuRenderer}.ts` |
+| mg1801 소비자 | `script/app/minigame/mg1801/{assets,index}.ts`, `script/app/minigame/mg1801/view/{index,material,stage}.ts` |
+| 초기 광장 | `script/view/plazaGl.ts`, `script/app/scene/world/plaza/world.ts` |
+| 신규/보완 시험 | `tools/test_{game_prepare,game_assets,render_service,plaza_gl}.ts` |
+| 분할 오류 후속 | `script/app/common/render3d/post.ts`, `tools/{test_splitscreen,test_render_common,render_common_fixture}.ts`, `docs/engine/{10_split_screen,render_common}.md` |
+| 문서 | 이 문서 §18, `docs/engine/loader_manager.md` §17, `DESIGN.md` 후속 |
+
+[시작 실패 수정 완료] 실제 pc01~04의 idle/swing/blink/win 모션 GLB16개와 Points32개를 검사했다. 수정 전 **17/18**에서 복제 morph 배열 결손을 재현했으며 수정 후 game_assets **18/18** 통과했다. 복제 weights/dictionary의 독립성과 설치된 Three WebGLMorphtargets.update 호출도 확인했다. GPU 실패 메시지에는 원인을 포함한다. 이후 추가 사용자 보고의 `/dev/ui` 분할 오류는 [render_common §6](render_common.md#6-분할-화면-dofneutralunrealbloom-영역-출력-수정-2026-10-10)에 별도 재현·수정·회귀 결과를 기록했다.
+
+| Node 시험 | 통과 수 |
+|---|---:|
+| test_game_prepare / test_game_assets / test_assetcore | 8/8 (실재 367키) · 18/18 · 47/47 |
+| test_render_service / test_plaza_gl | 42/42 · 69/69 |
+| test_splitscreen / test_render_common | 159/159 · 129/129 |
+| test_prefetch / test_entry / test_mgm01 | 136/136 · 429/429 · 277/277 |
+| test_mg1801 / test_mgscene | 97/97 · 79/79 |
+| test_charselect / test_setplayer / test_modeselect | 67/67 · 116/116 · 71/71 |
+| test_layout / test_layout_runtime / test_layout_draw | 68/68 · 16/16 · 68/68 |
+| test_plaza_world (PLAZA_SKIP_GLSL=1) | 474/474 |
+
+[검증] 관련 Node 검사 합계 **2370/2370**, `npm run typecheck` 통과. 로그 `test/out/game_prepare_*.log`. 브라우저/헤드리스 실행 없음. 광장 GLSL 검증은 기존 시험 옵션으로 제외했고 WebGL 픽셀/첫 프레임 실측은 수행하지 않았다. 기존 문서의 별도 character/camera 골든 실패를 이번 관련 검사 전체 통과에 포함하지 않는다.
+
+[검증 중 보완] 실제 envAnim 이름을 파일 경로로 해석한 예측 키 누락은 manifest.anims 매핑으로, render3d→assets import 경계 위반은 공용 HDR 인터페이스 이동으로 수정했다. 새 실패 fixture의 typecheck 오류 `Type '{}' is missing ... PlazaDecoState: display, unlockBd`는 올바른 fixture 반환 구조로 수정했다. 기존 광장/분할 수치 기대값은 바꾸지 않았다. 이전 독점 prewarm과 영역 거절의 시험 계약만 이번 구현 계약으로 갱신했다.
+
+### 18.4 웹 정책·한계·사용자 확인
+
+- 준비는 game.step/물리/실제 RNG/패드/소리 재생을 진행하지 않는다. 실제 게임 setup/audio/pads는 활성화에서 주입한다. 사운드 파일 예측과 디코드 완료는 구별하며 BGM의 나머지 chunk는 스트리밍한다.
+- PC4ms/저메모리2ms·scratch RT·메뉴 프레임 남은 시간은 웹 정책이다. GPU 단위를 선점하지 못해 드라이버 compile/PMREM이 한 프레임 예산을 넘을 수 있다. 동적 이펙트/Lyt·shadow/RT 최초 할당까지 모두 0ms가 되는 보장은 없다.
+- 광장 초기 요청은 기본 full 정책에서 인원 설정부터, lite는 캐릭터 선택 시점부터 진행하고 off는 끈다. 현재 메뉴/캐릭터의 우선순위를 유지한다. 설치 시 boot 화면을 놓친 경우에도 초기 광장 묶음을 요청한다.
+- GPU 준비 scope/Assets owner는 취소·해제하고 진행 중 compile 완료 뒤 정리한다. 공용 CPU 캐시와 이미 요청한 owner 없는 예측 fetch는 삭제/강제 취소하지 않는다. 늦은 결과는 활성 장면에 인계하지 않는다.
+- 프리패치의 게임별 CPU 목록 캐시는 선택 캐릭터가 바뀌면 이전 조합을 보유할 수 있다. 최종 view 준비는 현재 preparationKey/캐릭터로 다시 확인하여 실제 자원을 받는다. 캐시 키 세분화는 후속 최적화이며 시작 정확성의 조건으로 사용하지 않는다.
+
+[사용자 확인 필요] 이번 구현/오류 수정에서 추가 결정 필요 없음. 실제 브라우저 화면·GPU 시간 확인은 미실행으로 남는다. 원본 추가 분석 없음, 신규 Ghidra 추출 요청 주소 **0개**. 기존 P01~P03·후처리 R1~R3 미확정은 유지한다.

@@ -1,8 +1,12 @@
 import * as THREE from 'three';
 import type { UploadRecord } from '@game/lib/assetcore-three';
 import { RendererState } from './state';
+import { PrepareQueue } from './prepare';
 
 export interface RenderServiceDeps {
+  now?(): number;
+  tick?(fn: () => void): void;
+  budgetMs?: number;
   canvas(): HTMLCanvasElement;
   renderer(canvas: HTMLCanvasElement): THREE.WebGLRenderer;
 }
@@ -46,7 +50,15 @@ export class RenderService {
   current: RenderLease | null = null;
   uploads: UploadRecord = new WeakMap();
 
-  constructor(private readonly deps: RenderServiceDeps) {}
+  readonly prepareQueue: PrepareQueue;
+  constructor(private readonly deps: RenderServiceDeps) {
+    this.prepareQueue = new PrepareQueue({
+      renderer: () => this.renderer, ready: () => this.ready, generation: () => this.generation, uploads: () => this.uploads,
+      now: deps.now ?? (() => performance.now()), tick: deps.tick ?? (fn => { requestAnimationFrame(fn); }),
+      active: () => this.current?.owner === 'menu', budgetMs: deps.budgetMs ?? (typeof navigator !== 'undefined' && (navigator as { deviceMemory?: number }).deviceMemory !== undefined && (navigator as { deviceMemory?: number }).deviceMemory! <= 4 ? 2 : 4),
+    });
+  }
+  activeFrame(draw: () => void): void { this.prepareQueue.frame(draw); }
   get ready(): boolean { return !this.closed && !this.lost; }
   get canvas(): HTMLCanvasElement {
     if (this.closed) throw new Error('Render service disposed');
@@ -113,6 +125,7 @@ export class RenderService {
   private readonly onLost = (event: Event): void => {
     event.preventDefault(); this.lost = true; this.generation++; this.uploads = new WeakMap();
     for (const waiter of this.waiters.splice(0)) waiter.reject(new Error('Render context lost'));
+    this.prepareQueue.invalidate(new Error('Render context lost'));
     this.current?.invalidate();
   };
   private readonly onRestored = (): void => {
@@ -122,7 +135,7 @@ export class RenderService {
   dispose(): void {
     if (this.closed) return;
     if (this.current) throw new Error('Release render lease before disposing service');
-    this.closed = true;
+    this.closed = true; this.prepareQueue.dispose();
     for (const waiter of this.waiters.splice(0)) waiter.reject(new Error('Render service disposed'));
     for (const owner of this.caches.keys()) this.trim(owner);
     this.canvas_?.removeEventListener('webglcontextlost', this.onLost);

@@ -46,6 +46,7 @@ export interface IblSet {
 }
 
 export interface MaterialOptions {
+  gpu?: <T>(unit: () => T) => Promise<T>;
   surfaceMode?: 'full' | 'lightingOnlyApprox';
   lightingKey?: string;
   texture?: (path: string) => Promise<THREE.Texture>;
@@ -316,8 +317,9 @@ export class MaterialSetup {
           ? this.options.hdrCube(files.map((f) => `tex/${f}`))
           : new HDRCubeTextureLoader().loadAsync(files.map((f) => this.assets.url(`tex/${f}`)));
         const cube = await load(radFiles);
-        const target = this.pmrem.fromCubemap(cube);
-        cube.dispose();
+        let target: THREE.WebGLRenderTarget;
+        try { target = this.options.gpu ? await this.options.gpu(() => this.pmrem.fromCubemap(cube)) : this.pmrem.fromCubemap(cube); }
+        finally { cube.dispose(); }
         if (!this.share) this.targets.push(target);
         else this.share.resources?.add(target);
         let irrCube: THREE.CubeTexture | null = null;
@@ -329,6 +331,7 @@ export class MaterialSetup {
         }
         return { rad: target.texture, irr: irrCube };
       })().catch((e) => {
+        this.cubes.delete(key);
         console.warn(`stage3d IBL 큐브를 읽지 못했다: ${rad}`, e);
         return null;
       });

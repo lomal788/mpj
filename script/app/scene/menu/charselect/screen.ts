@@ -318,6 +318,7 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
 
   const render = (): void => {
     if (disposed || !gpu.active) return;
+    gpu.frame(() => {
     gl.setRenderTarget(null);
     gl.setClearColor(0x000000, 1);
     gl.clear();
@@ -330,6 +331,7 @@ export async function createCharSelect(opts: CharSelectOptions & { controller?: 
     r2d.draw(layouts.guide, guideBase);
     r2d.draw(layouts.title);
     r2d.render(gl);
+    });
   };
 
   return {

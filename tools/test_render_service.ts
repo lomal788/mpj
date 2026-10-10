@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { GamePreparation } from '@app/flow/preparation';
+import type { GameDef, GameSetup, GameView } from '../script/game';
+import type { Assets } from '../script/view/assets';
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { createIblShare, MaterialSetup } from '@app/common/render3d/material';
@@ -8,7 +11,7 @@ import { RendererState } from '@app/common/render/state';
 import { MgmView } from '@app/common/ui/view';
 import { RenderService } from '@app/common/render/service';
 import { Renderer } from '../script/view/renderer';
-import { PlazaGl } from '../script/view/plazaGl';
+import { PlazaGl, worldStarter } from '../script/view/plazaGl';
 import type { PlazaWorld } from '@app/scene/world/plaza/types';
 import type { StageGpu } from '@app/common/render3d';
 import { FrameScheduler, P0 } from '@game/lib/assetcore';
@@ -70,7 +73,7 @@ class Probe {
 }
 function fixture() {
   const c = new Canvas(), g = new Probe(); let creates = 0;
-  const service = new RenderService({ canvas: () => c as unknown as HTMLCanvasElement, renderer: () => { creates++; return g.gl; } });
+  const service = new RenderService({ tick: () => undefined, canvas: () => c as unknown as HTMLCanvasElement, renderer: () => { creates++; return g.gl; } });
   const host = { prepend(canvas: Canvas) { canvas.parent = this; } } as unknown as HTMLElement;
   return { c, g, service, host, creates: () => creates };
 }
@@ -155,13 +158,13 @@ function plazaFixture() {
     startWorld(o) { gpu = o.gpu; return { world: ready.promise, promote() {} }; }, gpuBudget: () => 1e9 });
   return { ...f, plaza, ready, settled, world, gpu: () => gpu!, stopped: () => stopped };
 }
-await test('game handoff drains prewarm/world background work before releasing GL', async () => {
+await test('game handoff cancels scoped prewarm and drains resources without owning display GL', async () => {
   const f = plazaFixture(); assert.equal(f.plaza.prewarm(new URLSearchParams()), true);
   const drained = f.plaza.yieldPreparation(); let gameReady = false;
   const game = f.service.acquire('game').then(lease => { gameReady = true; return lease; });
-  await flush(); assert.equal(gameReady, false); f.ready.resolve(f.world); await flush(); assert.equal(gameReady, false);
+  await flush(); assert.equal(gameReady, true); assert.equal(f.stopped(), 0); f.ready.resolve(f.world); await flush(); assert.equal(f.stopped(), 0);
   f.settled.resolve(); await drained; const lease = await game;
-  assert.equal(f.stopped(), 1); assert.equal(f.gpu().valid!(), false); assert.equal(f.plaza.prewarm(new URLSearchParams()), false);
+  assert.equal(f.stopped(), 1); assert.equal(f.gpu().valid!(), false); assert.equal(f.plaza.prewarming, false);
   lease.release(); await f.plaza.reserve(); assert.equal(f.gpu().valid!(), false);
   f.plaza.leave(null, () => undefined); f.service.dispose();
 });
@@ -223,9 +226,9 @@ await test('restoration waits for old lease cleanup before discarding late cache
 });
 await test('render service import boundary and product shared-renderer injection', () => {
   const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-  for (const file of ['state', 'service', 'menu', 'hud']) {
+  for (const file of ['state', 'service', 'menu', 'hud', 'prepare']) {
     const imports = [...read(`script/app/common/render/${file}.ts`).matchAll(/from ['"]([^'"]+)['"]/g)].map(m => m[1]);
-    for (const spec of imports) assert.ok(['three', '@game/lib/assetcore-three', './state', './service'].includes(spec), spec);
+    for (const spec of imports) assert.ok(['three', '@game/lib/assetcore-three', './state', './service', './prepare', '@game/lib/assetcore'].includes(spec), spec);
   }
   assert.match(read('script/app/flow/host.ts'), /new Renderer\(glCanvas, renderService\)/);
   assert.match(read('script/view/plazaGl.ts'), /service: appRenderService\(\)/);
@@ -376,5 +379,123 @@ await test('closing menu cannot revive on context restore while preview cleanup 
   assert.equal(f.service.current, null); const game = await f.service.acquire('game'); game.attach(f.host);
   compiling.resolve(); await closing; assert.equal(f.service.current, game); assert.equal(f.c.parent, f.host);
   game.release(); f.service.dispose();
+});
+await test('menu displays before GPU units and retains lease, canvas and every renderer state', async () => {
+  const f = fixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service); await menu.resume();
+  const scope = f.service.prepareQueue.create(), calls: string[] = [], saved = f.g.snapshot();
+  const work = scope.run(() => { calls.push('prepare'); assert.ok(f.g.target); f.g.toneMappingExposure = 9; f.g.shadowMap.enabled = true; });
+  menu.frame(() => { calls.push('draw'); assert.equal(f.g.target, null); });
+  await work; assert.deepEqual(calls, ['draw', 'prepare']); assert.deepEqual(f.g.snapshot(), saved);
+  assert.equal(f.service.current?.owner, 'menu'); assert.equal(f.c.parent, f.host); assert.equal(f.creates(), 1);
+  scope.cancel(); menu.dispose(); f.service.dispose();
+});
+await test('cancel queued GPU unit never runs and rejects completion', async () => {
+  const f = fixture(), scope = f.service.prepareQueue.create(); let ran = false;
+  const job = scope.run(() => { ran = true; }); const rejected = assert.rejects(job, /cancelled/);
+  scope.cancel(); f.service.prepareQueue.drain(); await rejected; assert.equal(ran, false); assert.equal(f.service.prepareQueue.scheduler.pending, 0); f.service.dispose();
+});
+await test('GPU unit exception restores state and invalidates its scope', async () => {
+  const f = fixture(), scope = f.service.prepareQueue.create(), saved = f.g.snapshot();
+  const job = scope.run(() => { f.g.alpha = 0; throw new Error('gpu failed'); }); const rejected = assert.rejects(job, /gpu failed/);
+  f.service.prepareQueue.drain(); await rejected; assert.deepEqual(f.g.snapshot(), saved); assert.equal(scope.valid(), false); f.service.dispose();
+});
+await test('context loss rejects GPU preparation and recovery uses new uploads and generation', async () => {
+  const f = fixture(), scope = f.service.prepareQueue.create(); void f.service.renderer;
+  const job = scope.run(() => undefined), rejected = assert.rejects(job, /context lost/);
+  f.c.dispatchEvent(new Event('webglcontextlost', { cancelable: true })); await rejected;
+  f.c.dispatchEvent(new Event('webglcontextrestored')); const next = f.service.prepareQueue.create();
+  assert.notEqual(next.generation, scope.generation); assert.notEqual(next.uploads, scope.uploads); next.cancel(); f.service.dispose();
+});
+await test('prepare budget stops between expensive units and drawing can consume the frame', async () => {
+  const c = new Canvas(), gl = new Probe(); let now = 0, units = 0;
+  const service = new RenderService({ canvas: () => c as unknown as HTMLCanvasElement, renderer: () => gl.gl, now: () => now, tick: () => undefined, budgetMs: 4 });
+  const scope = service.prepareQueue.create();
+  const jobs = [1, 2, 3].map(() => scope.run(() => { units++; now += 5; }));
+  service.activeFrame(() => { now += 17; }); assert.equal(units, 0);
+  service.prepareQueue.drain(); assert.equal(units, 1); service.prepareQueue.drain(); service.prepareQueue.drain(); await Promise.all(jobs);
+  assert.equal(service.prepareQueue.scheduler.stats.overBudget, 3); scope.cancel(); service.dispose();
+});
+function selectionFixture() {
+  const f = fixture(); let built = 0, disposed = 0, activated = 0, cancelled = 0;
+  const setup: GameSetup = { players: [{ char: 'pc01', isCom: false, comLevel: 0 }], seed: 0, practice: false };
+  const def = { id: 'probe', preparationKey: (s: GameSetup) => s.players[0].char } as GameDef;
+  const prep = new GamePreparation(f.service.prepareQueue, (_d, s) => {
+    built++;
+    const view = { prepare: async (_p, gpu) => { await gpu.run(() => undefined); }, activate: async () => { activated++; }, dispose: () => { disposed++; } } as GameView;
+    const assets = { cancel: () => { cancelled++; }, dispose: () => undefined, setPriority: () => undefined } as unknown as Assets;
+    return { view, assets, context: { renderer: {} as Renderer, hud: {} as CanvasRenderingContext2D, audio: null, setup: s, pads: [] } };
+  });
+  return { ...f, prep, setup, def, counts: () => ({ built, disposed, activated, cancelled }) };
+}
+await test('selected view prepares once without activation then transfers with actual setup', async () => {
+  const f = selectionFixture(), one = f.prep.select(f.def, f.setup), two = f.prep.select(f.def, { ...f.setup, seed: 123 });
+  assert.equal(one, two); await flush(); f.service.prepareQueue.drain(); await one; assert.equal(f.prep.state, 'ready');
+  assert.deepEqual(f.counts(), { built: 1, disposed: 0, activated: 0, cancelled: 0 });
+  const result = await f.prep.take(f.def, { ...f.setup, seed: 321 }); assert.ok(result); assert.equal(result.context.setup.seed, 321);
+  assert.equal(f.counts().activated, 0); await result.view.activate!(); assert.equal(f.counts().activated, 1); assert.equal(f.prep.state, 'idle');
+  result.view.dispose(); f.service.dispose();
+});
+await test('selection change cancels old GPU work, disposes it and prepares the next selection', async () => {
+  const f = selectionFixture(), old = f.prep.select(f.def, f.setup); await flush(); const rejected = assert.rejects(old, /cancelled/);
+  const next = f.prep.select(f.def, { ...f.setup, players: [{ char: 'pc02', isCom: false, comLevel: 0 }] });
+  await flush(); f.service.prepareQueue.drain(); await next; await rejected; await flush();
+  assert.equal(f.counts().built, 2); assert.equal(f.counts().disposed, 1); assert.equal(f.counts().activated, 0);
+  f.prep.cancel(); await flush(); assert.equal(f.counts().disposed, 2); f.service.dispose();
+});
+await test('cancel during code download prevents view construction after late completion', async () => {
+  const f = selectionFixture(), downloading = deferred(); f.def.load = () => downloading.promise;
+  const ready = f.prep.select(f.def, f.setup); const rejected = assert.rejects(ready, /cancelled/); f.prep.cancel(); downloading.resolve(); await rejected;
+  assert.equal(f.counts().built, 0); assert.equal(f.prep.state, 'idle'); f.service.dispose();
+});
+await test('failed preparation can retry with fresh scope and cannot become ready', async () => {
+  const f = selectionFixture(); let tries = 0; f.def.load = async () => { if (++tries === 1) throw new Error('network'); };
+  await assert.rejects(f.prep.select(f.def, f.setup), /network/); assert.notEqual(f.prep.state, 'ready');
+  const retry = f.prep.select(f.def, f.setup); await flush(); f.service.prepareQueue.drain(); await retry; assert.equal(f.prep.state, 'ready');
+  f.prep.cancel(); await flush(); f.service.dispose();
+});
+await test('cancel during async compile waits for completion before destroying the view', async () => {
+  const f = selectionFixture(), compilation = deferred();
+  const prep = new GamePreparation(f.service.prepareQueue, () => ({
+    view: { prepare: async (_p, gpu) => { await gpu.run(() => compilation.promise); }, activate: async () => undefined, dispose: () => { destroyed++; } } as GameView,
+    assets: { cancel: () => undefined, dispose: () => undefined } as unknown as Assets,
+    context: { renderer: {} as Renderer, hud: {} as CanvasRenderingContext2D, audio: null, setup: f.setup, pads: [] },
+  }));
+  let destroyed = 0; const ready = prep.select(f.def, f.setup); await flush(); f.service.prepareQueue.drain(); await flush();
+  prep.cancel(); await flush(); assert.equal(destroyed, 0); const rejected = assert.rejects(ready);
+  compilation.resolve(); await rejected; await flush(); assert.equal(destroyed, 1); f.service.dispose();
+});
+await test('Plaza prewarm starts while the character menu owns GL and adopts the same world', async () => {
+  const f = plazaFixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service);
+  await menu.resume(); const before = f.g.snapshot(), parent = f.c.parent;
+  assert.equal(f.plaza.prewarm(new URLSearchParams()), true);
+  assert.equal(f.service.current?.owner, 'menu'); assert.ok(f.gpu().preparation?.valid());
+  let prepared = false;
+  const gpu = f.gpu();
+  const task = gpu.preparation!.run(() => { assert.ok(f.g.target); f.g.toneMapping = THREE.NoToneMapping; f.g.render(); prepared = true; });
+  await f.plaza.yieldForMenu(); menu.frame(() => undefined); await task;
+  assert.equal(prepared, true); assert.deepEqual(f.g.snapshot(), before); assert.equal(f.c.parent, parent);
+  f.ready.resolve(f.world); f.settled.resolve(); menu.dispose(); await f.plaza.reserve();
+  const entry = f.plaza.enter(f.host, new URLSearchParams()); assert.equal(entry.prewarmed, true);
+  assert.equal(await entry.world, f.world); assert.equal(f.plaza.stats.adopted, 1); assert.equal(f.plaza.stats.fresh, 0);
+  f.plaza.leave(null, () => f.world.stage.dispose()); assert.equal(gpu.valid!(), false); f.service.dispose();
+});
+await test('Plaza cancellation during a menu removes queued GPU work and waits for async compilation', async () => {
+  const f = plazaFixture(), menu = new MenuSurface(f.host, 1920, 1080, f.service); await menu.resume();
+  f.plaza.prewarm(new URLSearchParams()); let executed = 0;
+  const queued = f.gpu().preparation!.run(() => executed++), rejected = assert.rejects(queued);
+  f.ready.resolve(f.world); const drained = f.plaza.yieldPreparation(); menu.frame(() => undefined);
+  await rejected; await flush(); assert.equal(executed, 0); assert.equal(f.stopped(), 0);
+  f.settled.resolve(); await drained; assert.equal(f.stopped(), 1); assert.equal(f.service.current?.owner, 'menu');
+  menu.dispose(); f.service.dispose();
+});
+await test('Plaza world creation failure restores the shared CPU scheduler budget', async () => {
+  const scheduler = { budgetMs: 4 };
+  const starter = worldStarter({ tick: fn => fn(), assetsRoot: '', gltfTextures: false, modules: async () => ({
+    manager: { scheduler } as never, LOAD_BUDGET_MS: 50, PriorityFloor: class { lower() {} } as never, parseDecoParam: () => ({ display: [], unlockBd: 0 }),
+    createPlazaWorld: async () => { scheduler.budgetMs = 2; throw new Error('world fixture failure'); },
+  }) });
+  const f = fixture(), gpu = { renderer: f.g.gl, uploads: new WeakMap(), keep: new Map() };
+  await assert.rejects(starter({ gpu, params: new URLSearchParams(), prewarm: true }).world, /world fixture failure/);
+  assert.equal(scheduler.budgetMs, 4); f.service.dispose();
 });
 console.log(`통과 ${count}/${count}`);

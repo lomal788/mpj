@@ -64,6 +64,7 @@ export interface Mgm01Cfg {
   muted: boolean;
   /** 한 판 요청을 페이지가 실제 게임으로 돌릴 때(app/flow 흐름: / 배포·/dev?plaza=1). null·없음 = 가짜 한 판 */
   play?(req: Mgm01PlayRequest): Promise<MgResultEntry | null>;
+  prepare?(name: string | null): void;
   onDone(result: string): void;
 }
 
@@ -521,6 +522,7 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
     const name = id === undefined ? undefined : catalog.game(id)?.name;
     if (name === cursorGame) return;
     cursorGame = name;
+    cfg.prepare?.(name ?? null);
     if (name) appFlow().state('mgm01', 'game', name);
   };
   let stack: SceneStack;
@@ -616,6 +618,7 @@ export async function runMgm01List(stage: HTMLElement, cfg: Mgm01Cfg): Promise<M
     press: (b) => env.press(b),
     stop: () => {
       stopped = true;
+      cfg.prepare?.(null);
       stack.dispose();
       env.stop();
     },

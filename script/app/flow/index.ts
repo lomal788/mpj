@@ -7,7 +7,7 @@
  */
 import { GAMES } from '@app/minigame';
 import { freePlaySetup } from '../../mgrun';
-import { appFlow } from '../../view/appFlow';
+import { prefetchMode, appFlow } from '../../view/appFlow';
 import { sceneIn, sceneOut } from '../../view/appTransition';
 import { FLOW_END_FADE } from '../../view/screenBgm';
 import { padSourcesFor } from '../../view/input';
@@ -137,11 +137,17 @@ export function createGameFlow(host: GameHost, screens: FlowScreens = flowScreen
 
   function flowMgm01(): void {
     flowStep('mgm01-loading', null);
+    appFlow().hint('gameCharacters', JSON.stringify(flowPlayers.chars));
     appFlow().enter('mgm01');
     void screens.mgm01(stageBox, {
       com: flowPlayers.com,
       pads: flowPlayers.pads,
       muted: host.muted,
+      prepare: name => {
+        const def = GAMES.find(g => g.id === name);
+        if (prefetchMode() !== 'off' && def?.preparationKey) host.prepare(def, { players: flowPlayers.chars.map((char, i) => ({ char, isCom: flowPlayers.com[i] ?? false, comLevel: 0 })), practice: false, options: {} });
+        else host.cancelPreparation();
+      },
       play: playFromList,
       onDone: () => void sceneOut().then(flowMgmet),
     }).then((r: Mgm01ListRun) => flowStep('mgm01', r));

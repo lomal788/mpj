@@ -221,3 +221,5 @@ ID → 모듈은 `app/flow` 등록표가 정한다(원본 장면 이름표 `@0x7
 [설계] 렌더러 하나로 통합하기 위한 원본/웹 분석: [render_unify.md](docs/engine/render_unify.md).
 
 [구현 후속 2026-10-10] 위 화면별 renderer 서술은 이전 상태다. 제품 광장·게임 호스트·메뉴·Lyt는 `app/common/render`의 앱 renderer/canvas 공유로 이전했다. 메뉴는 suspend/resume과 장면별 RT를 소유하고 Lyt는 호출자의 renderer로 HUD를 합성한다. 완료·검증은 [render_unify §16](docs/engine/render_unify.md#16-메뉴lyt-공유-렌더러-이전-2026-10-10)을 따른다. 게임 선택 시 사전 로딩과 활성 메뉴/GPU 준비의 프레임 예산 분배는 별도 미완료다.
+
+[구현 후속 2026-10-10 — 선택 게임/광장 준비] 이전 미완료 기록의 후속이다. `GameView`의 선택적 `prepare(progress, gpu)`와 `activate()`로 자원 준비/게임 활성화를 구분한다. 호스트가 준비 시 보유한 ViewContext에 실제 setup/audio/pads를 주입한 뒤 활성화한다. `GameDef.assetKeys`·`preparationKey`가 소비자 요구와 재사용 키를 제공하며 게임 호스트의 `prepare`·`cancelPreparation`이 선택 수명을 연결한다. RenderService의 `prepareQueue`는 표시 lease와 구분되는 프레임 단위 권한이고 메뉴 `activeFrame` 뒤 GPU 작업을 직렬 실행한다. 제품 초기 메뉴에서 광장 준비를 유지하여 입장에 world를 인계한다. 상세 계약·구현 범위·Node 검증은 [render_unify §18](docs/engine/render_unify.md#18-선택-게임-실제-에셋메뉴-중-gpu-준비-구현-2026-10-10)을 따른다.

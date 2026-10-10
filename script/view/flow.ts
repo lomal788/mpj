@@ -33,6 +33,7 @@ type Manager = Pick<AssetManagerApi, 'get' | 'want' | 'raise' | 'state' | 'defin
 
 export class FlowPrefetch {
   screen: FlowScreen | null = null;
+  readonly hints = new Map<string, string>();
   private readonly keys = new Map<string, FlowKeys>();
   private readonly resolving = new Map<string, Promise<FlowKeys | null>>();
   private readonly specKeys = new Map<string, Set<string>>();
@@ -111,6 +112,7 @@ export class FlowPrefetch {
 
   /** 받기와 무관한 알림(예: 'chara1P' = 캐릭터 선택에서 고른 1P 캐릭터 — 광장 GPU 미리 준비가 그 재질을 컴파일) */
   hint(key: string, value: string): void {
+    this.hints.set(key, value);
     this.emit({ type: 'hint', key, value });
   }
 

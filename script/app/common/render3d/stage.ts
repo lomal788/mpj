@@ -20,7 +20,8 @@ import { clone as cloneSkinned } from 'three/examples/jsm/utils/SkeletonUtils.js
 import { FrameScheduler, P0, P1, type AssetManagerApi } from '@game/lib/assetcore';
 import { ScenePreparer, type PrepJob, type UploadRecord } from '@game/lib/assetcore-three';
 import { createGltfLoader } from './assetLoader';
-import { KIND_GLTF, KIND_JSON, KIND_TEXTURE } from './assetHandlers';
+import { hdrCube, hdrTexture, type HdrSource } from './hdr';
+import { KIND_BYTES, KIND_GLTF, KIND_JSON, KIND_TEXTURE } from './assetHandlers';
 import { Clip } from './clip';
 import { createIblShare, fresOf, MaterialSetup, type IblShare } from './material';
 import type { GraphDef } from './graph';
@@ -66,7 +67,16 @@ export interface StageLoader {
   owner: string;
 }
 
+export interface StagePreparation {
+  readonly signal: AbortSignal;
+  readonly scheduler: Pick<FrameScheduler, 'add' | 'raise' | 'remove'>;
+  configure?(state: () => void): void;
+  valid(): boolean;
+  run<T>(unit: () => T): Promise<T>;
+}
+
 export interface StageGpu {
+  preparation?: StagePreparation;
   valid?(): boolean;
   resize?(w: number, h: number): void;
   offscreen?: boolean;
@@ -223,15 +233,15 @@ export class Stage3D {
 
   private constructor(private readonly opts: StageCreateOptions) {
     this.renderer = opts.gpu?.renderer ?? new THREE.WebGLRenderer({ canvas: opts.canvas, antialias: opts.antialias ?? true });
-    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    if (!opts.gpu?.preparation) this.activate();
+    opts.gpu?.preparation?.configure?.(() => this.activate());
     this.sun = new THREE.DirectionalLight(0xffffff, Math.PI);
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(SHADOW_MAP, SHADOW_MAP);
     this.scene.add(this.sun, this.sun.target);
     this.scheduler = opts.loader?.manager.scheduler ?? new FrameScheduler({ now: () => performance.now(), tick: (fn) => void requestAnimationFrame(fn) }, PLAY_BUDGET_MS);
-    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: this.scheduler, linear: () => !!this.post, uploads: opts.gpu?.uploads, valid: opts.gpu?.valid, offscreen: opts.gpu?.offscreen });
+    this.preparer = new ScenePreparer({ renderer: this.renderer, scene: this.scene, camera: () => this.camera, scheduler: opts.gpu?.preparation?.scheduler ?? this.scheduler, linear: () => !!this.post, uploads: opts.gpu?.uploads, valid: opts.gpu?.valid, offscreen: opts.gpu?.offscreen });
+    opts.gpu?.preparation?.signal.addEventListener('abort', () => { this.preparer.dispose(); this.opts.loader?.manager.release(this.opts.loader.owner); }, { once: true });
     this.floor = opts.floor ?? new PriorityFloor(P0);
     this.keep = opts.gpu?.keep ?? null;
     this.floor.onLower(() => {
@@ -239,6 +249,14 @@ export class Stage3D {
       for (const [k, p] of this.floor.keys) l?.manager.raise(k, p);
       for (const [j, p] of this.floor.jobs) this.preparer.raise(j, p);
     });
+  }
+
+  activate(): void {
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    if (this.env.clear) this.renderer.setClearColor(new THREE.Color(...this.env.clear));
+    if (this.post) this.renderer.toneMapping = THREE.NoToneMapping;
   }
 
   get assetLoader(): StageLoader | null {
@@ -253,6 +271,7 @@ export class Stage3D {
   /** 관리자가 있으면 관리자로(무대 상대 경로), 없으면 fetch 로 json 을 읽는다 */
   private async json<T>(path: string, pri: number): Promise<T | null> {
     const l = this.opts.loader;
+    if (this.opts.gpu?.preparation?.signal.aborted) throw this.opts.gpu.preparation.signal.reason;
     if (l) {
       const k = l.key(path);
       return l.manager.get<T>(k, KIND_JSON, this.floor.key(k, pri), l.owner).catch(() => null);
@@ -272,8 +291,13 @@ export class Stage3D {
       const keep = s.keep;
       let ibl = keep?.get('ibl') as IblShare | undefined;
       if (keep && !ibl) keep.set('ibl', (ibl = createIblShare(s.renderer)));
-      s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {}, ibl);
       const l = opts.loader;
+      const hdr: HdrSource = {
+        dir: l?.key('') ?? '',
+        get disposed() { return !!opts.gpu?.preparation?.signal.aborted; },
+        bytes: path => l ? l.manager.get<ArrayBuffer>(l.key(path), KIND_BYTES, s.floor.key(l.key(path), P1), l.owner).then(bytes => bytes.slice(0)) : fetch(opts.assets.url(path)).then(response => { if (!response.ok) throw new Error(`HDR fetch failed: ${path}`); return response.arrayBuffer(); }),
+      };
+      s.materials = new MaterialSetup(opts.assets, s.renderer, s.manifest.textures ?? {}, ibl, { gpu: opts.gpu?.preparation ? unit => opts.gpu!.preparation!.run(unit) : undefined, hdrCube: paths => hdrCube(hdr, paths), hdrTexture: path => hdrTexture(hdr, path) });
       if (l)
         s.materials.fetchTexture = (p) => {
           const k = l.key(p);
@@ -286,9 +310,10 @@ export class Stage3D {
       await s.setupExtras();
       if (s.materials.common) s.scene.environment = s.materials.common.rad;
       else s.scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      if (opts.gpu?.preparation?.signal.aborted) throw opts.gpu.preparation.signal.reason;
       s.stats.loadMs += performance.now() - t0;
       return s;
-    } catch (error) { s.dispose(); throw error; }
+    } catch (error) { await s.preparer.settled; s.dispose(); throw error; }
   }
 
   private applyEnv(): void {
@@ -307,7 +332,7 @@ export class Stage3D {
       this.shadowFar = n > 1 ? lam * near * (e.shadow.far / near) ** (k / n) + (1 - lam) * (near + ((e.shadow.far - near) * k) / n) : e.shadow.far;
       this.shadowOffset = e.shadow.offset;
     }
-    if (e.clear) this.renderer.setClearColor(new THREE.Color(...e.clear));
+    if (e.clear && !this.opts.gpu?.preparation) this.renderer.setClearColor(new THREE.Color(...e.clear));
   }
 
   private async setupExtras(): Promise<void> {
@@ -335,7 +360,9 @@ export class Stage3D {
         lut.minFilter = THREE.LinearFilter;
         lut.needsUpdate = true;
       }
-      this.post = new PostChain(this.renderer, e.post, lut);
+      this.post = this.opts.gpu?.preparation
+        ? await this.opts.gpu.preparation.run(() => new PostChain(this.renderer, e.post!, lut))
+        : new PostChain(this.renderer, e.post, lut);
       this.keep?.set(postKey, this.post);
     }
     const skyKey = e.sky ? `sky:${e.sky.model}:${e.sky.texture ?? ''}` : '';
@@ -417,6 +444,7 @@ export class Stage3D {
   }
 
   async loadModel(name: string, opts: { visible?: boolean; instance?: string; pri?: number } = {}): Promise<StageModel> {
+    if (this.opts.gpu?.preparation?.signal.aborted) throw this.opts.gpu.preparation.signal.reason;
     const id = opts.instance ?? name;
     const have = this.models.get(id);
     if (have) return have;
@@ -705,6 +733,7 @@ export class Stage3D {
   dispose(): void {
     const keep = !!this.opts.gpu;
     this.preparer.dispose();
+    if (this.opts.gpu?.preparation && this.opts.loader) this.opts.loader.manager.release(this.opts.loader.owner);
     if (!keep) this.post?.dispose();
     if (keep) this.sky?.removeFromParent();
     this.materials?.dispose(keep);

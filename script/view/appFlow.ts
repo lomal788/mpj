@@ -66,7 +66,7 @@ function installBroker(): void {
 export function appFlow(): FlowPrefetch {
   if (G.__mpjFlow) return G.__mpjFlow;
   installBroker();
-  const f = new FlowPrefetch(appAssets(), {
+  const f: FlowPrefetch = new FlowPrefetch(appAssets(), {
     mode: prefetchMode,
     catalog: (bundle, json) =>
       import('./flowCatalog').then((c) =>
@@ -74,6 +74,11 @@ export function appFlow(): FlowPrefetch {
           gltfTextures: ASSET_MODE === 'dist',
           gameDir: (name) => GAMES.find((g) => g.id === name)?.assetsDir ?? null,
           bgmKey: bgmPrefetchKey,
+          gameKeys: async (name, json) => {
+            const def = GAMES.find(g => g.id === name);
+            if (!def) return null;
+            return def.assetKeys ? def.assetKeys(json, JSON.parse(f.hints.get('gameCharacters') ?? '[]') as string[], bgmPrefetchKey) : [[`${def.assetsDir}manifest.json`, 'json']];
+          },
         }),
       ),
     loadCode: (bundle) => void GAMES.find((g) => g.id === bundle.slice(5))?.load?.()?.catch(() => undefined),

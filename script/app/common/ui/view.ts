@@ -211,7 +211,7 @@ export class MgmView {
   }
 
   end(): void {
-    if (this.surface.active) this.r2d.render(this.gl);
+    this.surface.frame(() => this.r2d.render(this.gl));
   }
 
   dispose(): void {

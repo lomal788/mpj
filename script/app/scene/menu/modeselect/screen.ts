@@ -386,6 +386,7 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
 
   const render = (): void => {
     if (!gpu.active) return;
+    gpu.frame(() => {
     gl.setRenderTarget(null);
     gl.setClearColor(0x000000, 1);
     gl.clear();
@@ -408,6 +409,7 @@ export async function createModeSelect(opts: ModeSelectOptions): Promise<ModeSel
     }
     r2d.draw(guide, guideBase);
     r2d.render(gl);
+    });
   };
   // 2D 셰이더를 첫 화면 전에 한 번 그려 컴파일해 둔다(캐릭터 선택의 첫 그리기 렉 대책과 같은 취지)
   render();

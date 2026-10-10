@@ -21,13 +21,15 @@
  * 큐브 면 순서 [px,nx,py,ny,pz,nz] 는 [추정](03_graphics.md 8절).
  */
 import type * as THREE from 'three';
+import type { PreparationGpu } from '@app/common/render/prepare';
 import { hdrCube, hdrTexture } from '@app/common/assets/hdr';
 import { MaterialSetup as CommonMaterialSetup, type TexEntry } from '@app/common/render3d/material';
 import type { Assets } from '../../../../view/assets';
 
 export class MaterialSetup extends CommonMaterialSetup {
-  constructor(private readonly source: Assets, gl: THREE.WebGLRenderer) {
+  constructor(private readonly source: Assets, gl: THREE.WebGLRenderer, gpu?: PreparationGpu) {
     super(source, gl, {}, undefined, {
+      gpu: gpu ? unit => gpu.run(unit) : undefined,
       surfaceMode: 'lightingOnlyApprox',
       lightingKey: 'mpj-mg1801-light',
       texture: (path) => source.texture(path),

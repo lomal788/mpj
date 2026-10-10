@@ -23,11 +23,19 @@ export class Assets {
   private readonly models = new Set<THREE.Object3D>();
   private readonly preparing = new Set<ScenePreparer>();
   private closed = false;
+  private cancelled = false;
+  private priority = P0;
 
   /** dir: ASSETS 기준 게임 폴더(끝에 '/') */
   constructor(readonly dir: string, private readonly runtime: AssetRuntime) {}
 
-  get disposed(): boolean { return this.closed; }
+  get disposed(): boolean { return this.closed || this.cancelled; }
+  setPriority(pri: number): void { this.priority = pri; for (const child of this.children) child.setPriority(pri); }
+  cancel(): void {
+    this.cancelled = true; this.runtime.manager.release(this.owner);
+    for (const preparer of this.preparing) preparer.dispose();
+    for (const child of this.children) child.cancel();
+  }
 
   url(path: string): string { return new URL(this.dir + path, this.runtime.root).href; }
 
@@ -37,10 +45,11 @@ export class Assets {
     return decodeURIComponent(url.slice(root.length));
   }
 
-  private alive(): void { if (this.closed) throw new Error(`Assets disposed: ${this.dir}`); }
+  private alive(): void { if (this.disposed) throw new Error(`Assets disposed: ${this.dir}`); }
 
   private get<T>(path: string, kind: string, pri: number): Promise<T> {
     this.alive();
+    pri = Math.max(pri, this.priority);
     const key = this.key(path);
     this.runtime.manager.resetFailed(key);
     return this.runtime.manager.get<T>(key, kind, pri, this.owner).then(value => { this.alive(); return value; });
@@ -48,6 +57,7 @@ export class Assets {
 
   private copy<T>(path: string, kind: string, pri: number, make: (value: T) => T): Promise<T> {
     this.alive();
+    pri = Math.max(pri, this.priority);
     const key = this.key(path), id = `${kind}:${key}`;
     this.runtime.manager.raise(key, pri);
     let p = this.copies.get(id) as Promise<T> | undefined;
@@ -94,7 +104,13 @@ export class Assets {
         let c = scenes.get(source);
         if (!c) {
           c = cloneSkinned(source) as THREE.Group; scenes.set(source, c); this.models.add(c);
+          const sources: THREE.Object3D[] = []; source.traverse(o => sources.push(o)); let index = 0;
           c.traverse(o => {
+            const original = sources[index++] as THREE.Points;
+            if ((o as THREE.Points).isPoints && original.morphTargetInfluences) {
+              (o as THREE.Points).morphTargetInfluences = original.morphTargetInfluences.slice();
+              if (original.morphTargetDictionary) (o as THREE.Points).morphTargetDictionary = { ...original.morphTargetDictionary };
+            }
             const mesh = o as THREE.Mesh;
             if (mesh.geometry) this.geometry.add(mesh.geometry);
             if (mesh.material) mesh.material = Array.isArray(mesh.material) ? mesh.material.map(mat) : mat(mesh.material);
@@ -111,7 +127,7 @@ export class Assets {
   /** 하위 폴더(공용 캐릭터 등) */
   sub(dir: string): Assets {
     this.alive();
-    const child = new Assets(dir, this.runtime); this.children.push(child); return child;
+    const child = new Assets(dir, this.runtime); child.setPriority(this.priority); this.children.push(child); return child;
   }
 
   preserve(seen: Set<object>): void {
@@ -121,18 +137,22 @@ export class Assets {
 
   roots(): THREE.Object3D[] { return [...this.models, ...this.children.flatMap(child => child.roots())]; }
 
-  async prepare(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer, linear: boolean, gpu: { uploads?: import('@game/lib/assetcore-three').UploadRecord; offscreen?: boolean; valid?(): boolean } = {}): Promise<void> {
+  async prepare(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer, linear: boolean, gpu: { uploads?: import('@game/lib/assetcore-three').UploadRecord; offscreen?: boolean; valid?(): boolean; signal?: AbortSignal; scheduler?: Pick<import('@game/lib/assetcore').FrameScheduler, 'add' | 'raise' | 'remove'> } = {}): Promise<void> {
     this.alive();
     const group = new THREE.Group(); group.visible = false;
     for (const root of this.roots()) if (!root.parent) group.add(root);
     scene.add(group);
-    const preparer = new ScenePreparer({ scene, camera: () => camera, renderer, scheduler: this.runtime.manager.scheduler, linear: () => linear, ...gpu });
+    const preparer = new ScenePreparer({ scene, camera: () => camera, renderer, linear: () => linear, ...gpu, scheduler: gpu.scheduler ?? this.runtime.manager.scheduler });
     this.preparing.add(preparer);
+    const cancel = (): void => preparer.dispose();
+    gpu.signal?.addEventListener('abort', cancel, { once: true });
     try {
+      if (gpu.signal?.aborted) throw gpu.signal.reason;
       await preparer.prepare(scene, P0).promise; this.alive();
+      if (preparer.stats.errors) throw new Error(`GPU preparation failed: ${preparer.failure instanceof Error ? preparer.failure.message : String(preparer.failure)}`, { cause: preparer.failure });
       if (gpu.valid && !gpu.valid()) throw new Error('Render preparation expired');
     }
-    finally { preparer.dispose(); this.preparing.delete(preparer); group.removeFromParent(); group.clear(); }
+    finally { await preparer.settled; gpu.signal?.removeEventListener('abort', cancel); preparer.dispose(); this.preparing.delete(preparer); group.removeFromParent(); group.clear(); }
   }
 
   /** 장면 복제 자원을 풀고 관리자 참조를 놓는다. 아직 읽는 중인 요청은 해제 뒤 복제하지 않는다 */

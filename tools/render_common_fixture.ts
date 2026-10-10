@@ -30,6 +30,16 @@ export class RenderProbe {
   readonly textures = new Map<THREE.Texture, string>();
   readonly materials = new Set<THREE.Material>();
   readonly gl = this as unknown as THREE.WebGLRenderer;
+  private readonly viewport = new THREE.Vector4(0, 0, 1920, 1080);
+  private readonly scissor = new THREE.Vector4(0, 0, 1920, 1080);
+  private scissorTest = false;
+  getViewport(v: THREE.Vector4): THREE.Vector4 { return v.copy(this.viewport); }
+  setViewport(x: number | THREE.Vector4, y?: number, w?: number, h?: number): void { if (typeof x === 'number') this.viewport.set(x, y!, w!, h!); else this.viewport.copy(x); }
+  getScissor(v: THREE.Vector4): THREE.Vector4 { return v.copy(this.scissor); }
+  setScissor(x: number | THREE.Vector4, y?: number, w?: number, h?: number): void { if (typeof x === 'number') this.scissor.set(x, y!, w!, h!); else this.scissor.copy(x); }
+  getScissorTest(): boolean { return this.scissorTest; }
+  setScissorTest(on: boolean): void { this.scissorTest = on; }
+  getPixelRatio(): number { return 1; }
   getDrawingBufferSize(v: THREE.Vector2): THREE.Vector2 { return v.set(this.width, this.height); }
   getRenderTarget(): THREE.WebGLRenderTarget | null { return this.target; }
   setRenderTarget(target: THREE.WebGLRenderTarget | null): void {

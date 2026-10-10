@@ -11,6 +11,7 @@
  *   읽는 곳이 없어(main·mg1801 전수 검색) mg1801 CPU 에 영향이 없다 — 설정으로 두지 않는다.
  */
 import { type GameDef, type GameOption, readOptions } from '../../../game';
+import { mg1801AssetKeys } from './assets';
 import type { Mg1801Options } from './logic/game';
 import type { Mg1801Event, Mg1801Result, Mg1801State } from './state';
 
@@ -87,6 +88,8 @@ export const mg1801Game: GameDef<Mg1801State, Mg1801Event, Mg1801Result> = {
   id: 'mg1801',
   title: '싹둑싹둑 수프',
   assetsDir: 'mg1801/',
+  assetKeys: mg1801AssetKeys,
+  preparationKey: setup => JSON.stringify(setup.players.map(p => p.char)),
   players: 4,
   hasPractice: false,
   options: OPTIONS,

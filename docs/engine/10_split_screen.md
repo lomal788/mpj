@@ -275,3 +275,9 @@ rect·ID(2×1·2×2·균등·모든 focus), 1920×1080·3840×2160·1919×1079 s
 | 분할 SE | `to(sec>0)` 그 프레임에 표 라벨 SE, 소리 파일 미변환 | MGSound::SetSplitScreen 미판독 |
 | 결과 무대 진입 | 틀이 분할 중이면 focus0 즉시 | 원본은 게임 몫(같은 값) |
 | viewport 정수화 | float 가장자리 반올림 | WebGL viewport 정수 |
+
+## 10. 공용 후처리 통합 뒤 DOF 영역 출력 회귀 수정 (2026-10-10)
+
+[실행: 사용자] `/dev/ui` 기본 mg0508의 DOF=true 설정이 공용 PostChain의 영역 거절에 걸려 분할 시작이 실패했다. 수정 계약은 [render_common §6](render_common.md)이다. DOF/Neutral 근사는 scissor별 독립 중간 타깃과 원점 이동 viewport를 사용하고 최종 패스만 출력 영역에 그린다. 기존 DOF 없는 분할 경로·전환/카메라/그림자 계산은 유지한다. 실제 설정을 사용하는 Node 회귀 시험을 추가하고 결과를 아래에 기록한다.
+
+[완료] `tools/test_splitscreen.ts` **159/159**, 공용 렌더 golden **129/129**, typecheck 통과. 실제 mg0508 DOF 설정의 시작 오류를 수정 전에 재현하고 수정 후 통과시켰다. 원래 115개 분할 기대값과 코어 GC 0회 조건을 유지하고 44개 영역 회귀 검사를 추가했다. 세부 범위·GC 측정 보완·성능/화면 검증 한계는 [render_common §6](render_common.md#6-분할-화면-dofneutralunrealbloom-영역-출력-수정-2026-10-10)에 기록한다. 브라우저/헤드리스 실행 없음.

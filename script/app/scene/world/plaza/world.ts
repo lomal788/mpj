@@ -515,6 +515,7 @@ class World implements PlazaWorld {
       count = this.loading.size;
       await Promise.allSettled([...this.loading.values()]);
     }
+    await this.stage.preparer.settled;
   }
   disposeActors(): void { this.actorWorld?.dispose(); this.actorWorld = undefined; }
 }

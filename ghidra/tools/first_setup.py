@@ -6,7 +6,9 @@
   python first_setup.py --dry        무엇을 할지만 출력
 
 1 기준본 .gzf   2 외부 연결   3 태그 등록   4 첫 내보내기
-5 이전 기록 병합(migrate.py)   6 클래스 타입 동기화(sync-types)   7 Ghidra 적용   8 다시 내보내기   9 이전 후 백업 .gzf
+5 이전 기록 병합(migrate.py)   6 클래스 타입 동기화(sync-types)   7 Ghidra 적용   8 다시 내보내기
+9 이전 상태 기록(다음 migrate 안전장치)   10 이전 후 백업 .gzf
+5단계 migrate 는 db가 마지막 9단계 뒤 바뀌었으면 멈춘다(MCP로 고친 내용 보호). 덮어쓸 때만 migrate.py --force.
 MCP 서버가 프로젝트를 열고 있으면 안 된다(잠금). 실패하면 그 단계에서 멈춘다.
 """
 import argparse
@@ -48,7 +50,8 @@ STEPS = [
     (6, "클래스 타입 동기화", lambda: [PY, "sync_types.py"]),
     (7, "Ghidra 적용", lambda: [PY, "snapshot.py", "apply", "--all"]),
     (8, "다시 내보내기", lambda: [PY, "snapshot.py", "export", "--all"]),
-    (9, "이전 후 백업 .gzf", lambda: [PY, "snapshot.py", "backup", "--all"]),
+    (9, "이전 상태 기록(다음 migrate 안전장치)", lambda: [PY, "migrate.py", "--stamp"]),
+    (10, "이전 후 백업 .gzf", lambda: [PY, "snapshot.py", "backup", "--all"]),
 ]
 
 

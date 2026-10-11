@@ -27,6 +27,7 @@ interface ExcellentSe {
  * 게임 BGM 이름 — 원본 FUN_7100441990 [판독]: 모드 3 이면 SQ_BGM_RC_REMIX. 아니면 SetGameBgmName 값(isGenericBgm ? SQ_BGM_RC_GENERIC : _A)이
  * "SQ_BGM_MG1801" 을 품을 때만 BPM > 120 이면 _B, 그 뒤 모드 2 이거나 chart01(+0x470)이면 _C 로 바꾼다(뒤가 앞을 덮는다).
  */
+/** @orig main:7100441990 ref */
 export function rmGameBgmName(PREFIX: string, mode: number, bpm: number, chart01: boolean, isGenericBgm: boolean): string {
   if (mode === 3) return 'SQ_BGM_RC_REMIX';
   let name = isGenericBgm ? 'SQ_BGM_RC_GENERIC' : `${PREFIX}_A`;
@@ -43,6 +44,7 @@ export function rmGameBgmName(PREFIX: string, mode: number, bpm: number, chart01
  * 그래서 롱(모드 1)·BPM 120 만 SQ_BGM_MG1801_MG_ENDING 그대로다. 라벨은 모두 subarc_mg1801.fsst 에 있다 [데이터].
  * finName = SetGameBgmFinName 값(mg1801 은 `${PREFIX}_MG_ENDING`).
  */
+/** @orig main:71004421a0 ref */
 export function rmEndingBgmName(finName: string, PREFIX: string, mode: number, bpm: number, chart01: boolean): string {
   let name = finName;
   if (mode === 0) name = `${PREFIX}_A_MG_ENDING`;
@@ -52,6 +54,7 @@ export function rmEndingBgmName(finName: string, PREFIX: string, mode: number, b
 }
 
 /** 코스 중간 게임(RmGameWork+0x2C ≠ 0)의 끝 BGM — 원본 FUN_71004429c0 [판독]: _A_INTER_END, BPM > 120 이면 _B, 모드 2·chart01 이면 _C */
+/** @orig main:71004429c0 ref */
 export function rmInterEndBgmName(PREFIX: string, mode: number, bpm: number, chart01: boolean): string {
   let name = `${PREFIX}_A_INTER_END`;
   if (bpm > 120) name = `${PREFIX}_B_INTER_END`;
@@ -75,6 +78,7 @@ export class RmSoundMan {
   ) {}
 
   /** 원본 FUN_7100427040 한 프레임 — RmSoundMan 생성(SetupGame)이 제품보다 먼저라 같은 프레임에서 제품 파이버보다 앞서 돈다 */
+  /** @orig main:7100427040 ref */
   tickExcellentSe(): void {
     const e = this.excellent;
     e.timer = F(this.dt + e.timer);
@@ -82,6 +86,7 @@ export class RmSoundMan {
   }
 
   /** 마스터 시작(FUN_71004263c8) 때 +0x2C = (60 / BPM) · 0.5 */
+  /** @orig main:71004263c8 ref */
   setExcellentLimit(bpm: number): void {
     this.excellent.limit = F(F(60 / bpm) * 0.5);
   }
@@ -94,6 +99,7 @@ export class RmSoundMan {
    * 핸들 수명: 원본은 시퀀스가 끝나면 핸들이 죽는다. 코드표에 있는 G8 이면 시퀀스가 마지막 단계 뒤 wait 96(2박) 이라
    * 반 박 조건이 먼저 걸려 결과가 같고, 코드표 밖 G8(무음 fin)만 핸들이 바로 죽는다. 로직은 G8 을 모르므로 핸들은 첫 재생 뒤 살아 있다고 둔다 [근사].
    */
+  /** @orig main:7100426e38 ref */
   playExcellentSe(): void {
     const e = this.excellent;
     let play = false;
@@ -112,6 +118,7 @@ export class RmSoundMan {
   // ------------------------------------------------------------------ RmSoundMan 곡 교대 (사운드 전역 G12·G14, 게임 BGM L0 을 읽는다)
 
   /** 원본 FUN_7100426948 [판독]: (재생 중이 아니면) +0x38 = G12, Play(게임 BGM). 끝에 +0x3C·+0x3D 를 함께 0(16비트 쓰기) */
+  /** @orig main:7100426948 ref */
   requestGameBgm(bgmLabel: string): void {
     const r = this.rhythm;
     this.snd.g12 = r.g12;
@@ -122,6 +129,7 @@ export class RmSoundMan {
   }
 
   /** 원본 FUN_7100426b8c [판독]: +0x3C 면 참. G14 == 16 이면 거짓. G12 == +0x38 이면 거짓. 아니면 +0x3C = 1, +0x38 = G12, 참 */
+  /** @orig main:7100426b8c ref */
   gameBgmAccepted(): boolean {
     const r = this.rhythm;
     if (this.snd.accepted) return true;
@@ -134,6 +142,7 @@ export class RmSoundMan {
   }
 
   /** 원본 FUN_7100426c2c [판독]: +0x3D 면 참. 게임 BGM 핸들이 없거나 (int)(G14·0.25) == 4 면 거짓. 핸들 L0 == 1 이면 +0x3D = 1, 참 */
+  /** @orig main:7100426c2c ref */
   gameBgmIntro(bgmLabel: string): boolean {
     const r = this.rhythm;
     if (this.snd.intro) return true;
@@ -148,6 +157,7 @@ export class RmSoundMan {
    * 종료 BGM 요청 — 원본 FUN_71004269d8 [판독]: +0x38 = G12, Play, +0x3C = 0, +0x3E(16비트) = 0.
    * 코스 중간(+0x2C ≠ 0)은 OnGameMain 이 +0x448 을 직접 Play 해 +0x38·+0x3E 를 건드리지 않는다(+0x38 은 단계 3 접수 때 값).
    */
+  /** @orig main:71004269d8 ref */
   requestEndingBgm(endingLabel: string, direct: boolean): void {
     const r = this.rhythm;
     if (!direct) {
@@ -160,6 +170,7 @@ export class RmSoundMan {
   }
 
   /** 원본 FUN_7100426d24 [판독]: +0x3E 면 참. G12 == +0x38 이면 거짓. 아니면 +0x3E = 1, +0x38 = G12, 참 */
+  /** @orig main:7100426d24 ref */
   endingBgmAccepted(): boolean {
     const r = this.rhythm;
     if (this.snd.endAccepted) return true;

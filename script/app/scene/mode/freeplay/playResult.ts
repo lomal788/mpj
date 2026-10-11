@@ -12,6 +12,7 @@ export function countMinigamePlay(save: MgmSave, id: number): void {
 }
 
 /** 미니게임 장면 단계 11 FUN_71002db9f0: 참가자 중 사람(PlayerType≠1)마다 그 플레이어 세이브(GetSaveData(PlayerID), 없으면 건너뜀)의 횟수 +1. docs/engine/16_save.md §1.3 */
+/** @orig main:71002db9f0 ref */
 export function commitPlayCount(saveOf: (pid: number) => MgmSave | null, id: number, players: readonly { pid: number; isCom: boolean; gamePlay?: boolean }[]): number {
   let n = 0;
   for (const p of players) {

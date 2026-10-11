@@ -126,8 +126,8 @@
 {"a":"71005356a8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"71005356b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"71005356b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100540cb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n역할: ScriptModule GC setter\n---\nnn::bezel::ScriptModule::_internalSetScriptBackgroundGarbageCollectionEnabled(bool)"}
-{"a":"7100540cb8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n역할: ScriptModule GC getter\n---\nnn::bezel::ScriptModule::_internalIsScriptBackgroundGarbageCollectionEnabled() const"}
+{"a":"7100540cb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n역할: ScriptModule GC setter"}
+{"a":"7100540cb8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n역할: ScriptModule GC getter"}
 {"a":"71005683bc","t":"plate","c":"nn::bezel::DevInterfaceModule::DeactivateDevSystem(nn::util::basic_string_view<char, std::char_traits<char> >)"}
 {"a":"71005683c0","t":"plate","c":"nn::bezel::DevInterfaceModule::IsDevSystemActive(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
 {"a":"710056845c","t":"plate","c":"nn::bezel::DevInterfaceModule::SetDevWindowVisible(nn::util::basic_string_view<char, std::char_traits<char> >, bool)"}
@@ -157,7 +157,7 @@
 {"a":"71005efe5c","t":"plate","c":"nn::bezel::ComFxTrigger::AttachFxTrigger(nn::util::basic_string_view<char, std::char_traits<char> >)"}
 {"a":"71005f0080","t":"plate","c":"nn::bezel::ComFxTrigger::SetBool(nn::util::basic_string_view<char, std::char_traits<char> >, bool)"}
 {"a":"71005f00a4","t":"plate","c":"nn::bezel::ComFxTrigger::SetListener(nn::bezel::WeakHandle<nn::bezel::IMessageListener> const&)"}
-{"a":"71005f0cec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5\n역할: nn::bezel::ComFxTrigger::Play\n호출: @0x7101112b40 (트리거 탐색·실행)\n호출자: bex::ComFxTrigger::Play @0x710010d224\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.1\n역할: 게임 진동 FTRG 대상\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_guide.md §5.1\n역할: nn::bezel::ComFxTrigger::Play — 재생 항목을 manager+0x188 목록에 등록(→ FUN_7101112940, 항목 생성 FUN_71011167e0)\n---\nnn::bezel::ComFxTrigger::Play(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71005f0cec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5\n역할: nn::bezel::ComFxTrigger::Play\n호출: @0x7101112b40 (트리거 탐색·실행)\n호출자: bex::ComFxTrigger::Play @0x710010d224\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.1\n역할: 게임 진동 FTRG 대상\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_guide.md §5.1\n역할: nn::bezel::ComFxTrigger::Play — 재생 항목을 manager+0x188 목록에 등록(→ FUN_7101112940, 항목 생성 FUN_71011167e0)"}
 {"a":"71005f0f9c","t":"plate","c":"nn::bezel::ComFxTrigger::Stop(nn::util::basic_string_view<char, std::char_traits<char> >)"}
 {"a":"71005f10cc","t":"plate","c":"nn::bezel::ComFxTrigger::StopAllPlayingFxTrigger()"}
 {"a":"71005f10dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5,7.8\n역할: 애니 노드 변경 리스너\n동작: 이전 이벤트 플레이어를 해제하고 새 노드의 자원 경로와 시작 프레임으로 등록(@0x71005f8830 → @0x710111347c)\n§7.8 forceRestart 의 노드 교체는 새 최초 평가를 만든다. 같은 노드 SetFrame 경로는 이 리스너를 부르지 않는다\n근거 C: analysis/decomp/character_ftrg_c_missing.c"}

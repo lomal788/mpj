@@ -187,6 +187,7 @@ export class CharSelectState {
   }
 
   /** In(skipIn) @0x710033d680 — 사건 목록을 돌려준다 */
+  /** @orig main:710033d680 ref */
   start(skipIn = false): CharSelectEvent[] {
     this.out = [];
     this.emit({ type: 'visible', target: 'all', visible: true });
@@ -250,6 +251,7 @@ export class CharSelectState {
   }
 
   /** 커서 놓기 FUN_710033c3f0 (5.3) */
+  /** @orig main:710033c3f0 ref */
   private place(p: PlayerState, c: number): void {
     const old = p.cursor;
     p.cursor = c;
@@ -265,6 +267,7 @@ export class CharSelectState {
   }
 
   /** 랜덤 선택 FUN_710033c650 */
+  /** @orig main:710033c650 ref */
   private randomPick(): number {
     const pool: number[] = [];
     for (let c = 0; c < CHARA_COUNT; c++) {
@@ -276,6 +279,7 @@ export class CharSelectState {
   }
 
   /** COM 선택 FUN_710033d270: 위 조건 + 이미 result 에 있는 캐릭터 제외 */
+  /** @orig main:710033d270 ref */
   private comPick(): number {
     const pool: number[] = [];
     for (let c = 0; c < CHARA_COUNT; c++) {
@@ -391,6 +395,7 @@ export class CharSelectState {
   }
 
   /** 상태 1 FUN_710033a1e0 */
+  /** @orig main:710033a1e0 ref */
   private select(pads: readonly (PadFrame | undefined)[]): void {
     for (const p of this.players) {
       if (p.type !== 0) continue;
@@ -461,6 +466,7 @@ export class CharSelectState {
   }
 
   /** 상태 2 FUN_710033b540 */
+  /** @orig main:710033b540 ref */
   private confirm(pads: readonly (PadFrame | undefined)[]): void {
     for (const p of this.players) {
       if (p.type !== 0) continue;
@@ -497,6 +503,7 @@ export class CharSelectState {
   }
 
   /** Out(false) @0x710033e9f0 */
+  /** @orig main:710033e9f0 ref */
   private doOut(): void {
     this.emit({ type: 'layout', target: 'grid', anim: 'out' });
     this.emit({ type: 'layout', target: 'cards', anim: 'out' });

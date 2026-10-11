@@ -260,6 +260,7 @@ export class MgScene {
 
   // ------------------------------------------------------------ 초기화 FUN_71002e0548
 
+  /** @orig main:71002e0548 ref */
   private init(): void {
     this.uiMgr.entries.length = 0;
     this.uiMgr.timers.length = 0;
@@ -405,6 +406,7 @@ export class MgScene {
 
   // ------------------------------------------------------------ 종료 타이머 FUN_71002e3260 / 2020 / 33a0
 
+  /** @orig main:71002e3260 ref */
   private endTimerStart(): void {
     const e = this.endTimer!;
     const sec = this.setup.endless ? this.setting.endlessEndTime : this.setting.gameEndTime;
@@ -618,6 +620,7 @@ export class MgScene {
   }
 
   /** 단계 7 시작(텔롭) FUN_71002e16c0 */
+  /** @orig main:71002e16c0 ref */
   private stage7(): number {
     const h = this.hook('onGameStart');
     if (this.sub === 0) {
@@ -645,6 +648,7 @@ export class MgScene {
   }
 
   /** 단계 11 종료 텔롭 FUN_71002e1910 */
+  /** @orig main:71002e1910 ref */
   private stage11(): number {
     const h = this.hook('onGameFinish');
     let next = 11;
@@ -695,6 +699,7 @@ export class MgScene {
   }
 
   /** 단계 13 결과 시작 FUN_71002e1b14 */
+  /** @orig main:71002e1b14 ref */
   private stage13(): number {
     if (!this.game.onEndingInit || this.game.onEndingInit(this.resultApi())) {
       if (this.resultPlayers.length === 0 || !this.setup.createResultStage) {
@@ -772,6 +777,7 @@ export class MgScene {
   }
 
   /** 단계 14 결과 대기 — 결과 파이버(갈래 A 무대 / 갈래 B 엔딩 5단계 FUN_71002e34d0) */
+  /** @orig main:71002e34d0 ref */
   private stage14(): number {
     if (this.branch === 'A') {
       if (this.resultWaiting || !this.resultStage) return 14;
@@ -830,6 +836,7 @@ export class MgScene {
   }
 
   /** 단계 16 마지막 페이드 FUN_71002e1c68 */
+  /** @orig main:71002e1c68 ref */
   private stage16(): number {
     const h = this.hook('onGameLastFade');
     if (this.sub === 0) {
@@ -850,6 +857,7 @@ export class MgScene {
   }
 
   /** 단계 18 설명 화면 반복 FUN_71002e1e8c — 4 프레임 뒤 다시 1 */
+  /** @orig main:71002e1e8c ref */
   private stage18(): number {
     if (this.sub === 1) {
       this.waitSec = F(this.waitSec + 1);

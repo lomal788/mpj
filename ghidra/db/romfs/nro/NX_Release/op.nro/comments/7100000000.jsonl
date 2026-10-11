@@ -1,10 +1,10 @@
 {"a":"7100003880","t":"plate","c":"op::BalloonManager00::BalloonManager00()"}
 {"a":"7100003950","t":"plate","c":"op::BalloonManager00::~BalloonManager00()"}
 {"a":"7100003a6c","t":"plate","c":"op::BalloonManager00::~BalloonManager00()"}
-{"a":"7100003a90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager00::Start — List01 시작 index 를 SyncRandRange 로 뽑고 이전 InTime 에서 시간 시작\n---\nop::BalloonManager00::Start()"}
+{"a":"7100003a90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager00::Start — List01 시작 index 를 SyncRandRange 로 뽑고 이전 InTime 에서 시간 시작"}
 {"a":"7100003b14","t":"plate","c":"op::BalloonManager00::Update()"}
-{"a":"7100003b50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager00::UpdateDelete — IsEndAnimation 이면 entity Destroy·목록 제거\n---\nop::BalloonManager00::UpdateDelete()"}
-{"a":"7100003d10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager00::UpdateCreate — elapsed ≥ InTime → Balloon entity·ComBalloon → ModelColor/CharaType/Hook·3모션/시간 → Play → camera position LookAt; 끝 index 에서 index/time 0 으로 순환\n---\nop::BalloonManager00::UpdateCreate()"}
+{"a":"7100003b50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager00::UpdateDelete — IsEndAnimation 이면 entity Destroy·목록 제거"}
+{"a":"7100003d10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager00::UpdateCreate — elapsed ≥ InTime → Balloon entity·ComBalloon → ModelColor/CharaType/Hook·3모션/시간 → Play → camera position LookAt; 끝 index 에서 index/time 0 으로 순환"}
 {"a":"71000040b0","t":"plate","c":"nn::bezel::WeakHandle<op::ComBalloon> nn::bezel::Entity::AddComponent<op::ComBalloon, char const*&, (void*)0>(char const*&)"}
 {"a":"7100004290","t":"plate","c":"op::ComBalloon::Setup(bq::NonPlayerCharacterID, nn::util::basic_string_view<char, std::char_traits<char> > const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, float)"}
 {"a":"7100004a40","t":"plate","c":"op::ComBalloon::SetCharaAnim(char const*, char const*, char const*, float, float, float)"}
@@ -14,10 +14,10 @@
 {"a":"7100004fd8","t":"plate","c":"op::BalloonManager01::BalloonManager01()"}
 {"a":"7100005090","t":"plate","c":"op::BalloonManager01::~BalloonManager01()"}
 {"a":"71000051ac","t":"plate","c":"op::BalloonManager01::~BalloonManager01()"}
-{"a":"71000051d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager01::Start — List02 용 풀 준비\n---\nop::BalloonManager01::Start()"}
+{"a":"71000051d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager01::Start — List02 용 풀 준비"}
 {"a":"71000055b0","t":"plate","c":"nn::bezel::WeakHandle<op::ComBalloon> nn::bezel::Entity::AddComponent<op::ComBalloon, char const (&) [5], (void*)0>(char const (&) [5])"}
-{"a":"7100005790","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager01::Update — dt 누적·InTime 게이트 뒤 pool index 선택해 Setup·Play\n---\nop::BalloonManager01::Update()"}
-{"a":"7100005a14","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::ComBalloon 생성자 — 모델명이 none 인지 확인한 뒤 flow/op/model/ 경로 조립\n---\nop::ComBalloon::ComBalloon(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100005790","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::BalloonManager01::Update — dt 누적·InTime 게이트 뒤 pool index 선택해 Setup·Play"}
+{"a":"7100005a14","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::ComBalloon 생성자 — 모델명이 none 인지 확인한 뒤 flow/op/model/ 경로 조립"}
 {"a":"7100005c60","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*, (void*)0>(char const*&&)"}
 {"a":"7100005e40","t":"plate","c":"op::ComBalloon::~ComBalloon()"}
 {"a":"7100006084","t":"plate","c":"non-virtual thunk to op::ComBalloon::~ComBalloon()"}
@@ -172,7 +172,7 @@
 {"a":"710000bf80","t":"plate","c":"nn::bezel::WeakHandle<op::ComNPC> nn::bezel::Entity::AddComponent<op::ComNPC, bq::NonPlayerCharacterID&, (void*)0>(bq::NonPlayerCharacterID&)"}
 {"a":"710000c160","t":"plate","c":"op::CharacterManager::GetPC(bq::PlayerCharacterID)"}
 {"a":"710000c2d0","t":"plate","c":"op::CharacterManager::GetNPC(bq::NonPlayerCharacterID)"}
-{"a":"710000c440","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1·9\n역할: op::ComPC 생성자 — Matter type 3·Heading 추가·co_idle00\n부수: 새 ComMatter/owner 생성 경로 → FTRG 조건 초기 문맥(bool false·enum 빈 문자열)\n---\nop::ComPC::ComPC(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::PlayerCharacterID)"}
+{"a":"710000c440","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1·9\n역할: op::ComPC 생성자 — Matter type 3·Heading 추가·co_idle00\n부수: 새 ComMatter/owner 생성 경로 → FTRG 조건 초기 문맥(bool false·enum 빈 문자열)"}
 {"a":"710000c640","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::PlayerCharacterID&, bq::MatterCreateArg&, (void*)0>(bq::PlayerCharacterID&, bq::MatterCreateArg&)"}
 {"a":"710000c820","t":"plate","c":"op::ComPC::PlayAnimation(nn::bezel::StringViewHashPair const&, float)"}
 {"a":"710000c9f0","t":"plate","c":"op::ComPC::~ComPC()"}
@@ -181,13 +181,13 @@
 {"a":"710000caec","t":"plate","c":"non-virtual thunk to op::ComPC::~ComPC()"}
 {"a":"710000cb20","t":"plate","c":"op::ComPC::AddAnimation(nn::bezel::StringViewHashPair const&, nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
 {"a":"710000ccc8","t":"plate","c":"op::ComPC::PlayDefaultAnimation()"}
-{"a":"710000cd20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComPC::PlayAnimation — none 무시, 없으면 AddAnimation(1,0,0,0) 후 Play\n---\nop::ComPC::PlayAnimation(nn::bezel::StringViewHashPair const&)"}
+{"a":"710000cd20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComPC::PlayAnimation — none 무시, 없으면 AddAnimation(1,0,0,0) 후 Play"}
 {"a":"710000cee0","t":"plate","c":"op::ComPC::EnqueuePlay(nn::bezel::StringViewHashPair const&)"}
 {"a":"710000d0a0","t":"plate","c":"op::ComPC::EnqueuePlay(nn::bezel::StringViewHashPair const&, float)"}
 {"a":"710000d274","t":"plate","c":"op::ComPC::HookModel(nn::bezel::WeakHandle<nn::bezel::ComModel> const&)"}
 {"a":"710000d35c","t":"plate","c":"op::ComPC::HookModel(nn::bezel::WeakHandle<nn::bezel::ComModel> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
-{"a":"710000d4b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComPC::SetTargetLookAtPosition — 지정 본 FindBoneIndex → CalculateWorldTransform → Heading target\n---\nop::ComPC::SetTargetLookAtPosition(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
-{"a":"710000d6e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComNPC 생성자 — Heading, ID 0x37 은 fly_idle00\n---\nop::ComNPC::ComNPC(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID)"}
+{"a":"710000d4b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComPC::SetTargetLookAtPosition — 지정 본 FindBoneIndex → CalculateWorldTransform → Heading target"}
+{"a":"710000d6e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComNPC 생성자 — Heading, ID 0x37 은 fly_idle00"}
 {"a":"710000d960","t":"plate","c":"op::ComNPC::~ComNPC()"}
 {"a":"710000da30","t":"plate","c":"non-virtual thunk to op::ComNPC::~ComNPC()"}
 {"a":"710000da38","t":"plate","c":"op::ComNPC::~ComNPC()"}
@@ -195,25 +195,25 @@
 {"a":"710000da90","t":"plate","c":"op::ComNPC::AddAnimation(nn::bezel::StringViewHashPair const&, nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
 {"a":"710000dc38","t":"plate","c":"op::ComNPC::PlayDefaultAnimation()"}
 {"a":"710000dd00","t":"plate","c":"op::ComNPC::PlayAnimation(nn::bezel::StringViewHashPair const&, float)"}
-{"a":"710000ded0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComNPC::PlayAnimation — none 무시, 없으면 AddAnimation(1,0,0,0) 후 Play\n---\nop::ComNPC::PlayAnimation(nn::bezel::StringViewHashPair const&)"}
+{"a":"710000ded0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComNPC::PlayAnimation — none 무시, 없으면 AddAnimation(1,0,0,0) 후 Play"}
 {"a":"710000e090","t":"plate","c":"op::ComNPC::EnqueuePlay(nn::bezel::StringViewHashPair const&)"}
 {"a":"710000e250","t":"plate","c":"op::ComNPC::EnqueuePlay(nn::bezel::StringViewHashPair const&, float)"}
 {"a":"710000e424","t":"plate","c":"op::ComNPC::HookModel(nn::bezel::WeakHandle<nn::bezel::ComModel> const&)"}
 {"a":"710000e520","t":"plate","c":"op::ComNPC::HookModel(nn::bezel::WeakHandle<nn::bezel::ComModel> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
-{"a":"710000e680","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComNPC::SetTargetLookAtPosition — 지정 본 FindBoneIndex → CalculateWorldTransform → Heading target\n---\nop::ComNPC::SetTargetLookAtPosition(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"710000e680","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComNPC::SetTargetLookAtPosition — 지정 본 FindBoneIndex → CalculateWorldTransform → Heading target"}
 {"a":"710000e8a8","t":"plate","c":"op::CharacterPosManager::CharacterPosManager()"}
 {"a":"710000e8f0","t":"plate","c":"op::CharacterPosManager::~CharacterPosManager()"}
 {"a":"710000e964","t":"plate","c":"op::CharacterPosManager::~CharacterPosManager()"}
-{"a":"710000e990","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::CharacterPosManager::AddPos\n---\nop::CharacterPosManager::AddPos()"}
+{"a":"710000e990","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::CharacterPosManager::AddPos"}
 {"a":"710000eba0","t":"plate","c":"nn::bezel::WeakHandle<op::ComPos> nn::bezel::Entity::AddComponent<op::ComPos, , (void*)0>()"}
-{"a":"710000ed80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::CharacterPosManager::GetPos\n---\nop::CharacterPosManager::GetPos()"}
-{"a":"710000eeb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComPos 생성자(배치 본 계층)\n---\nop::ComPos::ComPos(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"710000ed80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::CharacterPosManager::GetPos"}
+{"a":"710000eeb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::ComPos 생성자(배치 본 계층)"}
 {"a":"710000efd0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [26], (void*)0>(char const (&) [26])"}
 {"a":"710000f1b0","t":"plate","c":"op::ComPos::~ComPos()"}
 {"a":"710000f280","t":"plate","c":"non-virtual thunk to op::ComPos::~ComPos()"}
 {"a":"710000f288","t":"plate","c":"op::ComPos::~ComPos()"}
 {"a":"710000f2ac","t":"plate","c":"non-virtual thunk to op::ComPos::~ComPos()"}
-{"a":"710000f2e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1·10.5\n역할: op::ComPos::PlayAnimation — 배치 애니(SetFrameMax 와 구분)\n---\nop::ComPos::PlayAnimation(nn::bezel::StringViewHashPair const&)"}
+{"a":"710000f2e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1·10.5\n역할: op::ComPos::PlayAnimation — 배치 애니(SetFrameMax 와 구분)"}
 {"a":"710000f3e0","t":"plate","c":"op::ComPos::PlayAnimation(nn::bezel::StringViewHashPair const&, float)"}
 {"a":"710000f4f0","t":"plate","c":"op::ComPos::EnqueuePlay(nn::bezel::StringViewHashPair const&)"}
 {"a":"710000f5e0","t":"plate","c":"op::ComPos::EnqueuePlay(nn::bezel::StringViewHashPair const&, float)"}
@@ -401,7 +401,7 @@
 {"a":"710001688c","t":"plate","c":"std::__shared_ptr_pointer<bex::vector<op::JsonOpSoundData>*, std::shared_ptr<bex::vector<op::JsonOpSoundData> >::__shared_ptr_default_delete<bex::vector<op::JsonOpSoundData>, bex::vector<op::JsonOpSoundData> >, std::allocator<bex::vector<op::JsonOpSoundData> > >::__on_zero_shared_weak()"}
 {"a":"71000168b0","t":"plate","c":"op::SoundData::Impl::~Impl()"}
 {"a":"7100016e50","t":"plate","c":"op::MapManager00::MapManager00()"}
-{"a":"7100016eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §10.2·10.3\n역할: op::MapManager00::Create — AnimFileName.length != 0 일 때 model virtual +0x180 로 Add/LoadAnimation 후 +0x1a8 Play\n부수: op_env_c18 fmab(900f 루프) 실제 Play, DirLight AnimFileName 빈 문자열이라 op_dir_light_c18 fmab 은 재생 근거 없음\n---\nop::MapManager00::Create()"}
+{"a":"7100016eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §10.2·10.3\n역할: op::MapManager00::Create — AnimFileName.length != 0 일 때 model virtual +0x180 로 Add/LoadAnimation 후 +0x1a8 Play\n부수: op_env_c18 fmab(900f 루프) 실제 Play, DirLight AnimFileName 빈 문자열이라 op_dir_light_c18 fmab 은 재생 근거 없음"}
 {"a":"7100018a80","t":"plate","c":"op::MapManager00::MapStructureParam::MapStructureParam(op::MapManager00::MapStructureParam const&)"}
 {"a":"7100019114","t":"plate","c":"op::MapManager00::MapStructureParam::~MapStructureParam()"}
 {"a":"71000191f0","t":"plate","c":"op::MapManager00::GetDefaultDirLightRotation()"}
@@ -662,9 +662,9 @@
 {"a":"71000218c4","t":"plate","c":"op::Scene::Scene()"}
 {"a":"7100021908","t":"plate","c":"op::Scene::~Scene()"}
 {"a":"7100021960","t":"plate","c":"op::Scene::~Scene()"}
-{"a":"7100021984","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1\n역할: op::Scene::BeginScene — NPC·모션 준비\n---\nop::Scene::BeginScene()"}
-{"a":"7100021a20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1\n역할: op::Scene::SetupGame — Sequence 생성\n---\nop::Scene::SetupGame()"}
-{"a":"7100021ad0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::Scene::CleanupGame — Sequence 파괴\n---\nop::Scene::CleanupGame()"}
+{"a":"7100021984","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1\n역할: op::Scene::BeginScene — NPC·모션 준비"}
+{"a":"7100021a20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1\n역할: op::Scene::SetupGame — Sequence 생성"}
+{"a":"7100021ad0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::Scene::CleanupGame — Sequence 파괴"}
 {"a":"7100021af0","t":"plate","c":"op::Scene::GameFlow()"}
 {"a":"7100021af8","t":"plate","c":"op::Scene::getInstanceTypeinfo() const"}
 {"a":"7100021bd4","t":"plate","c":"op::Scene::GetSymbol() const"}
@@ -681,26 +681,26 @@
 {"a":"7100021d00","t":"plate","c":"op::Scene::Params::GetSymbol() const"}
 {"a":"7100021d10","t":"plate","c":"rtti::Class::~Class()"}
 {"a":"7100022040","t":"plate","c":"op::Sequence::Sequence(op::Scene*)"}
-{"a":"7100022250","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1·11\n역할: op::Sequence::Setup — 1920×1080 RT, picture.bflyt/x_pict, Movie bq_op.mp4 preload, b/g/r/y 풍선 모델 풀·색종이 준비\n호출: 풀 등록 4회(모델 경로·현재 World3d·uint 1·int 512, ARM64 w3=1, w4=0x200) → main FUN_7100127320\n---\nop::Sequence::Setup()"}
+{"a":"7100022250","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1·11\n역할: op::Sequence::Setup — 1920×1080 RT, picture.bflyt/x_pict, Movie bq_op.mp4 preload, b/g/r/y 풍선 모델 풀·색종이 준비\n호출: 풀 등록 4회(모델 경로·현재 World3d·uint 1·int 512, ARM64 w3=1, w4=0x200) → main FUN_7100127320"}
 {"a":"71000222e4","t":"pre","c":"풀 등록 1/4: (경로, World3d, 1, 0x200) → main 0x7100127320"}
 {"a":"7100022314","t":"pre","c":"풀 등록 2/4"}
 {"a":"7100022344","t":"pre","c":"풀 등록 3/4"}
 {"a":"7100022374","t":"pre","c":"풀 등록 4/4"}
 {"a":"71000225f0","t":"plate","c":"nn::bezel::UniqueHandlePtr<nn::bezel::RenderTarget>::~UniqueHandlePtr()"}
 {"a":"7100022660","t":"plate","c":"nn::bezel::HandleSource<op::Sequence>::~HandleSource()"}
-{"a":"7100022720","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::Sequence 소멸자\n순서: EffectModule UnregisterPoolInstance 해제 요청 먼저 → Camera(+18)·Character(+20)·Pos(+28)·Map(+30)·UI(+38)·Sound(+40)·Balloon00(+48)·01(+50) 소유 핸들 파괴 → RT entity(+58)·picture(+70)·Movie weak(+a0) 파괴 → Fiber(+10) 지연삭제 큐 → singleton clear\n부수: Character 는 정상 GameFlow 에서 먼저 해제됐으면 null 검사로 건너뜀\n---\nop::Sequence::~Sequence()"}
+{"a":"7100022720","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::Sequence 소멸자\n순서: EffectModule UnregisterPoolInstance 해제 요청 먼저 → Camera(+18)·Character(+20)·Pos(+28)·Map(+30)·UI(+38)·Sound(+40)·Balloon00(+48)·01(+50) 소유 핸들 파괴 → RT entity(+58)·picture(+70)·Movie weak(+a0) 파괴 → Fiber(+10) 지연삭제 큐 → singleton clear\n부수: Character 는 정상 GameFlow 에서 먼저 해제됐으면 null 검사로 건너뜀"}
 {"a":"7100022a9c","t":"plate","c":"op::Sequence::~Sequence()"}
 {"a":"7100022ac0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUi> nn::bezel::Entity::AddComponent<bq::ComUi, char const (&) [19], char const (&) [14], (void*)0>(char const (&) [19], char const (&) [14])"}
-{"a":"7100022ca0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §3.3\n역할: op::Sequence::GameFlow. menu00 장면으로 교체\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1·4\n역할: op::Sequence::GameFlow\n순서: preload 완료 → flag18(GameFlag 0x18) 을 +0xbd 에 캐시 → Character/Pos/Camera/Map/UI/Sound/Balloon00/01 관리자 → SetupChara → Cut00 루프 → Cut18 루프 → CharacterManager 해제 → 타이틀 기구 관리자 시작\n끝: 제목 종료 → White out 완료 → flag18 on(On(0x18,0,PlayerID=−1)) → SaveRequest/IsProcessing 대기 → NextScene(+0xc)==0 이면 ReturnCode(4,0)·RequestExchangeScene(\"menu00\")·Sleep(−1)\n부수: SM_BGM_TITLE 은 여기서 Stop 하지 않아 Front 로 이어짐\n---\nop::Sequence::GameFlow()"}
+{"a":"7100022ca0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §3.3\n역할: op::Sequence::GameFlow. menu00 장면으로 교체\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1·4\n역할: op::Sequence::GameFlow\n순서: preload 완료 → flag18(GameFlag 0x18) 을 +0xbd 에 캐시 → Character/Pos/Camera/Map/UI/Sound/Balloon00/01 관리자 → SetupChara → Cut00 루프 → Cut18 루프 → CharacterManager 해제 → 타이틀 기구 관리자 시작\n끝: 제목 종료 → White out 완료 → flag18 on(On(0x18,0,PlayerID=−1)) → SaveRequest/IsProcessing 대기 → NextScene(+0xc)==0 이면 ReturnCode(4,0)·RequestExchangeScene(\"menu00\")·Sleep(−1)\n부수: SM_BGM_TITLE 은 여기서 Stop 하지 않아 Front 로 이어짐"}
 {"a":"7100022ef4","t":"eol","c":"\"menu00\" — RequestExchangeScene 문자열"}
-{"a":"7100022f20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::Sequence::SetupMgr — 관리자들 생성(소유 핸들 +18~+50)\n---\nop::Sequence::SetupMgr()"}
-{"a":"7100023120","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::Sequence::SetupChara — Locator HookModel, 행별 SyncRandRangeF(0, Rand) → AddTimr (Cut18 45행: 카멕 5행 + PC20명 × 2)\n---\nop::Sequence::SetupChara()"}
-{"a":"7100023800","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1\n역할: op::Sequence::StartCut00 — Movie 시작\n---\nop::Sequence::StartCut00()"}
-{"a":"71000239dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1·4\n역할: op::Sequence::UpdateCut00 — Movie 위치(마이크로초)를 f32 초로 변환해 메시지·Sound 에 전달\n분기: trigger & 0x3000 은 flag18 허용(+0xbd)일 때만 +0xbc(skip). 첫 시청은 버튼 스킵 불가\n분기: SceneParams Cut(+8) != 0 이면 영상 시작·Sound 타임라인을 건너뛰는 별도 경로\n---\nop::Sequence::UpdateCut00()"}
-{"a":"7100023b60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §2.1·§9.2\n역할: op::Sequence::StartCut18 — 인트로 Cut18 클립 시작(Cut18 1200f Aim).\n규칙: Cut18 clip·skipFrameMax·local/global 시간 유지.\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1·8.2\n역할: op::Sequence::StartCut18\n분기(자연): 영상 페인 숨김, 카메라 op_cam_c18·배치 애니·normal confetti 시작\n분기(스킵): White out(speed 1) 완료 → Sleep(0.5초) → 캐릭터 초기화 → 카메라/배치 FrameMax → skip confetti/UI/소리 정리 → in\n---\nop::Sequence::StartCut18()"}
-{"a":"7100024190","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §2.1·§8·§9.2\n역할: op::Sequence::UpdateCut18 — Cut18 진행.\n규칙: clip frame / MainModule dt / Fiber / Movie global 자막 시계를 분리한다.\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1·8.2\n역할: op::Sequence::UpdateCut18\n동작: 로컬 +0xb8 = f32(dt + elapsed); 자막 global +0xb4 는 첫 갱신에서 dt 를 더하지 않고 이후 더함\n동작: 미재생 행의 f32(Time + AddTimr) < elapsed → Played → Anim00 Play → 01/02 Enqueue → LookAt\n분기: elapsed ≥ 20 → 제목 In 과 SM_BGM_TITLE\n부수: SoundManager Update 호출 없음\n---\nop::Sequence::UpdateCut18()"}
+{"a":"7100022f20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::Sequence::SetupMgr — 관리자들 생성(소유 핸들 +18~+50)"}
+{"a":"7100023120","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1\n역할: op::Sequence::SetupChara — Locator HookModel, 행별 SyncRandRangeF(0, Rand) → AddTimr (Cut18 45행: 카멕 5행 + PC20명 × 2)"}
+{"a":"7100023800","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1\n역할: op::Sequence::StartCut00 — Movie 시작"}
+{"a":"71000239dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §3.1·4\n역할: op::Sequence::UpdateCut00 — Movie 위치(마이크로초)를 f32 초로 변환해 메시지·Sound 에 전달\n분기: trigger & 0x3000 은 flag18 허용(+0xbd)일 때만 +0xbc(skip). 첫 시청은 버튼 스킵 불가\n분기: SceneParams Cut(+8) != 0 이면 영상 시작·Sound 타임라인을 건너뛰는 별도 경로"}
+{"a":"7100023b60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §2.1·§9.2\n역할: op::Sequence::StartCut18 — 인트로 Cut18 클립 시작(Cut18 1200f Aim).\n규칙: Cut18 clip·skipFrameMax·local/global 시간 유지.\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1·8.2\n역할: op::Sequence::StartCut18\n분기(자연): 영상 페인 숨김, 카메라 op_cam_c18·배치 애니·normal confetti 시작\n분기(스킵): White out(speed 1) 완료 → Sleep(0.5초) → 캐릭터 초기화 → 카메라/배치 FrameMax → skip confetti/UI/소리 정리 → in"}
+{"a":"7100024190","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §2.1·§8·§9.2\n역할: op::Sequence::UpdateCut18 — Cut18 진행.\n규칙: clip frame / MainModule dt / Fiber / Movie global 자막 시계를 분리한다.\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.1·8.2\n역할: op::Sequence::UpdateCut18\n동작: 로컬 +0xb8 = f32(dt + elapsed); 자막 global +0xb4 는 첫 갱신에서 dt 를 더하지 않고 이후 더함\n동작: 미재생 행의 f32(Time + AddTimr) < elapsed → Played → Anim00 Play → 01/02 Enqueue → LookAt\n분기: elapsed ≥ 20 → 제목 In 과 SM_BGM_TITLE\n부수: SoundManager Update 호출 없음"}
 {"a":"7100024844","t":"plate","c":"op::Sequence::StartTitle()"}
-{"a":"710002488c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::Sequence::UpdateTitle — 타이틀 동안 Balloon00/01 관리자 갱신\n---\nop::Sequence::UpdateTitle()"}
+{"a":"710002488c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §8.3\n역할: op::Sequence::UpdateTitle — 타이틀 동안 Balloon00/01 관리자 갱신"}
 {"a":"7100024900","t":"plate","c":"op::Sequence::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"7100024a10","t":"plate","c":"nn::bezel::HandleSource<op::Sequence>::Reset(op::Sequence*)"}
 {"a":"7100024b78","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUi> bex::ComponentUtil::SafeCreate<bq::ComUi, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [19], char const (&) [14]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [19], char const (&) [14])"}
@@ -709,12 +709,12 @@
 {"a":"7100024d48","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUi, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100024d5c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUi, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100024d64","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUi, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100024d6c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9·13.2\n역할: op::SoundManager 생성자\n---\nop::SoundManager::SoundManager()"}
+{"a":"7100024d6c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9·13.2\n역할: op::SoundManager 생성자"}
 {"a":"7100024e14","t":"plate","c":"op::SoundManager::~SoundManager()"}
 {"a":"7100024e8c","t":"plate","c":"op::SoundManager::~SoundManager()"}
-{"a":"7100024eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9\n역할: op::SoundManager::Update(짧은 갈래, 96 B) — Movie 사운드 목록 갱신 진입\n---\nop::SoundManager::Update(float, int)"}
-{"a":"7100024f10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9\n역할: op::SoundManager::Update — Params+8 == 0 일 때 네 목록(BGM/SE/VO/VB), 미재생·row.Time < movieSeconds 면 1회\n동작: Play = fade0 → volume Parameter1·pan Parameter2; Stop = 같은 라벨 핸들 Stop_Time(Parameter1); Preset = LoadSettingPreset. NONE 도 Played\n진동: 유효 Input0..3 에 SetPlayerCom/Play\n---\nop::SoundManager::Update(op::SoundData::SoundDataType, float)"}
-{"a":"71000255e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9\n역할: op::SoundManager::Skip — StopGroup_Time(0.3초) 그룹 0x22/0x23/1/0x25/0x29 → 같은 그룹 EntryCancel 1\n---\nop::SoundManager::Skip()"}
+{"a":"7100024eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9\n역할: op::SoundManager::Update(짧은 갈래, 96 B) — Movie 사운드 목록 갱신 진입"}
+{"a":"7100024f10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9\n역할: op::SoundManager::Update — Params+8 == 0 일 때 네 목록(BGM/SE/VO/VB), 미재생·row.Time < movieSeconds 면 1회\n동작: Play = fade0 → volume Parameter1·pan Parameter2; Stop = 같은 라벨 핸들 Stop_Time(Parameter1); Preset = LoadSettingPreset. NONE 도 Played\n진동: 유효 Input0..3 에 SetPlayerCom/Play"}
+{"a":"71000255e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §9\n역할: op::SoundManager::Skip — StopGroup_Time(0.3초) 그룹 0x22/0x23/1/0x25/0x29 → 같은 그룹 EntryCancel 1"}
 {"a":"71000256d0","t":"plate","c":"op::SoundManager::LoadSettingPresetCut18()"}
 {"a":"71000256e8","t":"plate","c":"std::__tree<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, std::__map_value_compare<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, std::less<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > >, true>, bex::HeapModule::Allocator_multimap<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> > > >::destroy(std::__tree_node<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, void*>*)"}
 {"a":"7100025740","t":"plate","c":"std::__tree_iterator<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, std::__tree_node<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, void*>*, long> std::__tree<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, std::__map_value_compare<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> >, std::less<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > >, true>, bex::HeapModule::Allocator_multimap<std::__value_type<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, nn::bezel::WeakHandle<bex::sound::SoundHandle> > > >::__emplace_multi<char const*, nn::bezel::HandlePtr<bex::sound::SoundHandle>&>(char const*&&, nn::bezel::HandlePtr<bex::sound::SoundHandle>&)"}
@@ -731,10 +731,10 @@
 {"a":"7100026020","t":"plate","c":"nn::bezel::WeakHandle<op::ComUiTitle> nn::bezel::Entity::AddComponent<op::ComUiTitle, , (void*)0>()"}
 {"a":"7100026200","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMessageWindow> nn::bezel::Entity::AddComponent<bq::ComUiMessageWindow, , (void*)0>()"}
 {"a":"71000263e0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiGuide00> nn::bezel::Entity::AddComponent<bq::ComUiGuide00, , (void*)0>()"}
-{"a":"71000265c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1\n역할: op::UiManager::UpdateTitle — Cut18 로컬 20초부터 제목 In\n---\nop::UiManager::UpdateTitle(float)"}
+{"a":"71000265c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1\n역할: op::UiManager::UpdateTitle — Cut18 로컬 20초부터 제목 In"}
 {"a":"710002679c","t":"plate","c":"op::ComUiTitle::IsFinished() const"}
 {"a":"71000267b0","t":"plate","c":"op::UiManager::UpdateMessage(float, int)"}
-{"a":"71000269d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::UiManager::Skip — TitleIn(true)·titleStarted=1·기존 subtitle/message 소유 핸들(+28/+40) 정리. 스킵 뒤 일반 Cut18 actor 45행/자막을 다시 재생하지 않음\n---\nop::UiManager::Skip()"}
+{"a":"71000269d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §11\n역할: op::UiManager::Skip — TitleIn(true)·titleStarted=1·기존 subtitle/message 소유 핸들(+28/+40) 정리. 스킵 뒤 일반 Cut18 actor 45행/자막을 다시 재생하지 않음"}
 {"a":"7100026ad0","t":"plate","c":"op::UiManager::GetTitle()"}
 {"a":"7100026c00","t":"plate","c":"op::ComUiTitle::In(bool)"}
 {"a":"7100026db8","t":"plate","c":"op::UiManager::SkipGuideIn()"}
@@ -747,7 +747,7 @@
 {"a":"71000275a0","t":"plate","c":"nn::bezel::WeakHandle<op::ComUiTitleGuide> nn::bezel::Entity::AddComponent<op::ComUiTitleGuide, , (void*)0>()"}
 {"a":"7100027780","t":"plate","c":"op::ComUiTitle::DestroyComponentImpl()"}
 {"a":"7100027810","t":"plate","c":"op::ComUiTitle::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"7100027850","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1·9\n역할: op::ComUiTitle::Update — In 종료 후 안내 In·state2, (hold & 0x50) != 0 && (hold & 0xa0) != 0 이면 SQ_SE_SYS_START_TITLE·진동 bv_vib_sys_start_title·Out\n---\nop::ComUiTitle::Update()"}
+{"a":"7100027850","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §1·3.1·9\n역할: op::ComUiTitle::Update — In 종료 후 안내 In·state2, (hold & 0x50) != 0 && (hold & 0xa0) != 0 이면 SQ_SE_SYS_START_TITLE·진동 bv_vib_sys_start_title·Out"}
 {"a":"7100027b90","t":"plate","c":"non-virtual thunk to op::ComUiTitle::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"7100027bd0","t":"plate","c":"op::ComUiTitle::Out(bool)"}
 {"a":"7100027eb0","t":"plate","c":"op::ComUiTitleGuide::Out(bool)"}

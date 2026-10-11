@@ -182,6 +182,7 @@ Ghidra 타입은 프로그램마다 따로 있다. 자동 분석의 디맹글러
 | `full` | 원본 식·분기를 그대로 옮김 |
 | `partial` | 일부 분기만 옮김 |
 | `approx` | 근사(원본과 다름을 알고 있음). **메모에 이유 필수** |
+| `ref` | 연결만 확인, 수준 미정. `tools/orig_scan.mjs`가 자동으로 단 것. 그 선언을 작업할 때 위 셋 중 하나로 바꾼다 |
 
 - 한 표시 = 원본 하나 ↔ 웹 선언 하나의 연결. 여러 대 여러로 단다.
 - **수준은 같은 주소 표시가 붙은 웹 선언 전체가 그 원본을 얼마나 옮겼는지**다.
@@ -197,9 +198,9 @@ Ghidra 타입은 프로그램마다 따로 있다. 자동 분석의 디맹글러
 
 - progress는 같은 주소의 표시를 모아 원본 하나에 연결된 웹 선언을 모두 보여 주고, 구현 수준은 그중 가장 높은 것으로 센다.
 - 규칙 위반: 같은 주소 조각끼리 수준이 다름, `approx`인데 메모 없음, 스냅샷에 없는 주소.
-- 기존 자유 형식 참조(`@0x…`, `main FUN_…`)는 "후보"로만 보여 주고 `@orig`로 바꿔 간다.
+- 기존 자유 형식 참조(`@0x…`, `main FUN_…`)는 그대로 두고, `orig_scan.mjs`가 그 위에 `@orig … ref`를 더한다(§13.8).
 - 표시를 모두 지울 때는 `web/ghidra/tools/strip_orig.py`.
-- 원본 사실을 새로 알게 되면 **Ghidra에 먼저** 기록하고 코드를 고친다. Ghidra가 기준이고 웹은 그에 맞춘다(§13.8 웹 코드 대조).
+- 원본 사실을 새로 알게 되면 **Ghidra에 먼저** 기록하고 코드를 고친다. Ghidra가 기준이고 웹은 그에 맞춘다(§13.9 작업하면서 맞추기).
 
 ## 7. 기능 목록 `features.json`
 
@@ -361,8 +362,10 @@ web/ghidra/
 │   ├── ApplySnapshot.java         db → 프로그램 (복원·동기화)
 │   ├── ExportGzf.java             기준본·백업 .gzf
 │   ├── snapshot.py                export·apply·baseline·backup·link·tags·roundtrip
+│   ├── orig_scan.mjs              웹 코드 ↔ 원본 함수 @orig ref 연결·상수 차이 후보(§13.8)
 │   ├── headless_conventions.patch ghidra-mcp 헤드리스 패치
 │   └── ghidra-mcp.commit          패치를 적용한 ghidra-mcp 커밋
+├── reports/                       orig_scan 보고서
 └── db/                            git diff용 내보내기(기준 원본)
     ├── tags.json
     ├── features.json
@@ -479,18 +482,29 @@ https://github.com/bethington/ghidra-mcp
 - 중간에 멈춰도 그때까지 옮긴 시스템은 바로 쓸 수 있다.
 - C 덤프(`analysis/decomp/*.c`)와 INDEX.tsv는 이전이 끝날 때까지 그대로 둔다.
 
-### 13.8 웹 코드 대조 (md 이전 다음)
-md에 적지 않고 구현하면서 알게 된 것, 구현하며 md와 다르게 바로잡은 것을 Ghidra에 맞춘다. **판정 기준은 원본 디컴파일**이다. md와 웹이 다르면 어느 쪽도 그대로 이기지 않는다.
+### 13.8 웹 코드 연결 (1회, 자동)
+웹 전체를 미리 대조하지 않는다. 기계적으로 이어지는 것만 스크립트로 잇고 끝낸다.
 
-1. 웹 모듈 단위로 원본 참조가 있는 코드를 읽고, Ghidra 스냅샷·디컴파일 C와 대조한다.
-2. 결과물
-   - **추가 기록**(이전 기록 형식): 코드에만 있는 원본 사실(상수·계산식·분기·필드·시그니처). 디컴파일 C로 확인한 것만 `[판독]`, 확인 못 한 것은 `[추정] 웹 구현 근거`로 plate에 → `migrate.py`
-   - **차이 목록**: Ghidra(md 출처)와 웹이 다른 곳마다 함수·Ghidra 내용·웹 동작·디컴파일 판정
-     - 웹 오류 → 웹 수정 대상
-     - 문서가 낡음 → Ghidra를 고치고 확인 전까지 `ST_RECHECK`
-     - 의도한 근사 → 코드 `@orig … approx — 이유`, Ghidra plate에 `웹 근사:` 줄
-   - **`@orig` 표시**(§6): 기존 자유 형식 참조를 바꾸고, 빠진 곳에 단다. 코드 동작은 건드리지 않는다.
-3. 이후 progress에서 같은지 점검한다.
-   - `@orig full`인데 Ghidra 완료가 아님 → 분석보다 구현이 앞섬
-   - Ghidra 완료인데 `@orig`가 없음 → 구현 안 됨
-   - `approx`인데 Ghidra plate에 근사 기록이 없음 → 기록 누락
+```
+node web/ghidra/tools/orig_scan.mjs --code web/script            # 보고서만 (web/ghidra/reports/orig_scan_<폴더>.md)
+node web/ghidra/tools/orig_scan.mjs --code web/script --apply    # 선언 위에 /** @orig <모듈>:<주소> ref */ 추가
+```
+
+- 잇는 기준: ① 선언 주석의 원본 주소가 스냅샷의 함수 시작이고, 선언 이름이 원본 이름과 같거나 주석의 주소가 하나뿐인 함수 선언 ② 모듈 폴더(`mg####`) 안 클래스·메서드 이름이 원본 `클래스::메서드`와 하나만 일치.
+- 주소 앞에 모듈 이름이 없으면 파일 경로의 모듈, 그 모듈에 없는 주소면 `main`에서 찾는다.
+- 기존 주석·코드는 바꾸지 않는다. 이미 단 표시는 다시 달지 않으므로 여러 번 돌려도 된다.
+- 보고서의 약한 연결(주소 여럿·이름 다름)·데이터 주소는 표시하지 않는다. 그 코드를 작업할 때 사람이 단다.
+- 상수 차이 후보: 연결된 함수의 디컴파일 C(`analysis/decomp/INDEX.tsv`) 실수 상수 중 웹 파일에 없는 값. 참고용이다.
+- 2026-10-11 실행: 파일 310, 표시 168곳(함수 155개), `tsc --noEmit` 통과.
+
+### 13.9 이후: 작업하면서 맞추기
+일괄 대조·충돌 정리·이전 기록 재생성은 하지 않는다. md 이전은 끝났고, 이후 Ghidra는 MCP로 직접 고친다(`migration/*.jsonl`·`first_setup.py`는 다시 쓰지 않는다).
+
+새 포팅·수정으로 원본 함수를 만질 때 그 함수만:
+1. MCP로 디컴파일과 이름·plate·태그를 읽는다. md에서 옮긴 plate는 낡았을 수 있으니 디컴파일이 기준이다.
+2. `.ts`와 비교한다. 웹이 틀렸으면 웹을 고친다. 원본 사실을 새로 알았거나 plate가 틀렸으면 MCP로 Ghidra에 넣는다(이름·시그니처·구조체 필드·plate·`ST_*`).
+3. 만진 선언의 `@orig`를 `full`/`partial`/`approx — 이유`로 바꾸거나 단다.
+4. db 반영은 서버 런처가 바뀐 프로그램만 자동으로 내보낸다(§10.1).
+
+- 이전 때 충돌로 남은 것(`migration/report.md`)도 그 함수를 만질 때 정한다.
+- `migration/RECONCILE_PROMPT.md`는 모듈 단위 일괄 대조가 꼭 필요할 때를 위해 보관만 한다.

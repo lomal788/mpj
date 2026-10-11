@@ -75,6 +75,7 @@ export class Typer {
   }
 
   /** FUN_71003235f0 */
+  /** @orig main:71003235f0 ref */
   get done(): boolean {
     return !this.typing && this.after >= this.afterLimit;
   }

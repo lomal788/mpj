@@ -122,6 +122,7 @@ export class MsgWinState {
   }
 
   /** SetMessageLabel @0x710031f2d0: 넘김 요청 0, 페이지 0, 하위 단계 0 (partyrule.md 6.3) */
+  /** @orig main:710031f2d0 ref */
   setMessageLabel(label: string): void {
     this.nextRequested = false;
     this.pages = [{ label }];
@@ -194,6 +195,7 @@ export class MsgWinState {
   }
 
   /** FUN_7100318340: 페이지·삽입·선택지 비움, 오프셋 0. 글자 객체는 지우지 않는다(partyrule.md 6.3) */
+  /** @orig main:7100318340 ref */
   private endProcess(): void {
     this.nextRequested = false;
     this.pages = [];
@@ -204,6 +206,7 @@ export class MsgWinState {
   }
 
   /** Start @0x710031e660 */
+  /** @orig main:710031e660 ref */
   start(): void {
     if (this.pages.length === 0) {
       this.endProcess();
@@ -233,6 +236,7 @@ export class MsgWinState {
   }
 
   /** Out @0x7100316f38 */
+  /** @orig main:7100316f38 ref */
   outRequest(): void {
     if (this.state === -1 || this.state >= 4) return;
     this.state = 3;
@@ -273,6 +277,7 @@ export class MsgWinState {
   }
 
   /** SetDecideChoice @0x7100319e78 */
+  /** @orig main:7100319e78 ref */
   private decideChoice(i: number): void {
     this.choiceCursor = i;
     this.choiceResult = i;
@@ -282,6 +287,7 @@ export class MsgWinState {
   }
 
   /** FUN_71003197d0 사람 선택지 입력: in_choice 끝 뒤 A 결정·B 취소(+0x515)·위/아래 이동(끝에서 멈춤) */
+  /** @orig main:71003197d0 ref */
   private choiceInput(io: MsgIO): boolean {
     if (!io.animEnd || this.padDisabled) return false;
     const trig = io.trigOf(this.owner);
@@ -319,6 +325,7 @@ export class MsgWinState {
   }
 
   /** FUN_7100318030 넘김 판정 */
+  /** @orig main:7100318030 ref */
   private judge(dt: number, io: MsgIO): boolean {
     this.inputLock = f(this.inputLock - dt);
     if (this.inputLock > 0) return false;
@@ -356,6 +363,7 @@ export class MsgWinState {
   }
 
   /** FUN_7100316fb0: 페이지 시작 */
+  /** @orig main:7100316fb0 ref */
   private pageStart(): void {
     const pg = this.pages[this.page];
     if (pg) this.current = { ...this.resolve(pg, this.userOffset, this.choice), layout: this.current!.layout };
@@ -370,6 +378,7 @@ export class MsgWinState {
   }
 
   /** 매 프레임(메시지 0x5f454e00 → FUN_7100315328) + 글자 객체 갱신 */
+  /** @orig main:7100315328 ref */
   update(dt: number, io: MsgIO): void {
     switch (this.state) {
       case 0:

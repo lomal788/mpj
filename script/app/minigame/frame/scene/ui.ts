@@ -310,6 +310,7 @@ export class MgTelop {
   }
 
   /** FUN_7100211bc0 — "count" 가 끝날 때마다 */
+  /** @orig main:7100211bc0 ref */
   private countdown(): void {
     const L = this.layer;
     switch (this.counter) {
@@ -434,6 +435,7 @@ export class MgUiTimer {
   }
 
   /** FUN_71002d5030 — 표시 정수(trunc)가 바뀐 프레임만 갱신 */
+  /** @orig main:71002d5030 ref */
   private display(v: number, force: boolean): void {
     if (v > 999) v = 999;
     if (v <= 0) v = 0;
@@ -546,6 +548,7 @@ const POS4 = ['pos4_10', 'pos4_01', 'pos4_02', 'pos4_08', 'pos4_09', 'pos4_06', 
 const POS22 = ['pos22_01', 'pos22_02', 'pos22_07', 'pos22_08', 'pos22_03', 'pos22_04', 'pos22_05', 'pos22_06'];
 
 /** FUN_710030d4b8 — (match, place) → 레이아웃 */
+/** @orig main:710030d4b8 ref */
 export function statusLayout(match: number, place: number): string {
   let s: string;
   if (match === 0) s = place - 1 >= 0 && place - 1 < 11 ? POS4[place - 1] : 'pos4_00';
@@ -672,6 +675,7 @@ export class MgSkipGuide {
   }
 
   /** FUN_71002e2690 — ComUiGuideBase::In(0) */
+  /** @orig main:71002e2690 ref */
   show(): void {
     this.shown = true;
     this.layer.visible = true;
@@ -680,6 +684,7 @@ export class MgSkipGuide {
   }
 
   /** FUN_71002e40f0 — 엔티티 삭제(바로 사라짐) */
+  /** @orig main:71002e40f0 ref */
   close(): void {
     this.shown = false;
     this.layer.visible = false;
@@ -716,6 +721,7 @@ export class MgUiMgr {
   }
 
   /** FUN_71002d6cd0(n) */
+  /** @orig main:71002d6cd0 ref */
   timingIn(n: number): void {
     this.log.push(['in', n]);
     for (const e of this.entries) if (e.inTiming === n) e.in(false);
@@ -728,6 +734,7 @@ export class MgUiMgr {
   }
 
   /** FUN_71002d74e0 — 등록 타이머 전부 Out */
+  /** @orig main:71002d74e0 ref */
   timersOut(): void {
     this.log.push(['timersOut', 0]);
     for (const e of this.timers) e.out(false);

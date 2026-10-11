@@ -79,6 +79,7 @@ export interface MotionArg {
 }
 
 /** Play(name) 기본값: forceRestart 0, speedValid 1·speed 1, blend −FLT_MAX, type 1 [판독 @0x71000237f8] */
+/** @orig main:71000237f8 ref */
 export function motionArg(name: string, o?: Partial<MotionArg>): MotionArg {
   const a: MotionArg = { name, forceRestart: false, randomStartFrame: false, speedValid: true, startFrame: 0, speed: 1, blendTime: BLEND_DEFAULT, transitionType: TRANSITION_DEFAULT };
   return o ? Object.assign(a, o) : a;
@@ -223,6 +224,7 @@ export class MotionSlot {
   }
 
   /** 비루프 && (속도 ≥ 0 ? frame ≥ FrameMax : frame ≤ 0) [판독 @0x71008135f4] */
+  /** @orig main:71008135f4 ref */
   isFinished(): boolean {
     if (!this.name || this.loop) return false;
     const s = this.speed * this.conditionSpeed;
@@ -230,6 +232,7 @@ export class MotionSlot {
   }
 
   /** ComActorMotion::Play → ActorAnimationSlot::Play → FUN_7100022a80 → 리스너 → mpat → 노드 교체. 받아들이면 true */
+  /** @orig main:7100022a80 ref */
   play(arg: MotionArg): boolean {
     if (arg.name.length === 0) return false;
     if (!arg.forceRestart && this.name !== '' && this.name === arg.name) return false;
@@ -335,6 +338,7 @@ export class MotionSlot {
   }
 
   /** 새 노드 가중치(0..1) — 전이 없음 1. type 4 = elapsed/blend, type 1 = 뼈 시간 clamp D = max(min, min(blend, max)), D ≤ 0 이면 1 [판독 FUN_71006a77f0, 선형 [추정]] */
+  /** @orig main:71006a77f0 ref */
   weight(min = 0, max = FLT_MAX): number {
     if (!this.transitType) return 1;
     const d = this.transitType === TRANSITION_CROSSFADE ? this.transitDuration : Math.max(min, Math.min(this.transitDuration, max));
@@ -516,6 +520,7 @@ export function eulerYZX(q: Quat, out: Float64Array): Float64Array {
 }
 
 /** 단위 → q slerp(최단 경로, t 가 1 을 넘으면 연장). 거의 같으면 선형 [판독 FUN_71001c5a58 앞머리] */
+/** @orig main:71001c5a58 ref */
 function slerpFromIdentitySC(out: Quat, q: Quat): Quat {
   const t = SC[2];
   const dot = q[3];
@@ -1253,6 +1258,7 @@ export class FtrgBank {
 }
 
 /** 가중 선택: W = Σw, r = u·W, 배열 순서대로 r ≤ wᵢ 인 첫 자원, 아니면 r −= wᵢ [판독 @0x710110f2e0] */
+/** @orig main:710110f2e0 ref */
 export function pickWeighted(res: readonly (readonly [string, number])[], u: number): number {
   if (res.length <= 1) return 0;
   let W = 0;

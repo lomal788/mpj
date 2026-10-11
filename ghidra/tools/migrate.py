@@ -127,14 +127,44 @@ class Program:
                 fh.write("".join(self.types[k] + "\n" for k in sorted(self.types)))
 
 
+STAMP = os.path.join(os.path.dirname(CFG["project"]), "migrate_stamp.txt")
+
+
+def db_hash():
+    """db 내용 해시. 내보내기가 같은 내용을 다시 쓰면 같은 값이다."""
+    import hashlib
+    h = hashlib.sha1()
+    for root, dirs, files in os.walk(CFG["db"]):
+        dirs.sort()
+        for f in sorted(files):
+            p = os.path.join(root, f)
+            h.update(os.path.relpath(p, CFG["db"]).replace(os.sep, "/").encode())
+            with open(p, "rb") as fh:
+                h.update(fh.read())
+    return h.hexdigest()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*")
     ap.add_argument("--dry", action="store_true")
+    ap.add_argument("--force", action="store_true", help="db가 마지막 이전 뒤 바뀌었어도 덮어쓴다")
+    ap.add_argument("--stamp", action="store_true", help="지금 db 상태를 '마지막 이전 완료'로 기록만 한다(first_setup 8단계 뒤)")
     ap.add_argument("--report", default=os.path.join(MIG, "report.md"))
     a = ap.parse_args()
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
+    if a.stamp:
+        with open(STAMP, "w", encoding="utf-8") as fh:
+            fh.write(db_hash() + "\n")
+        print(f"db 상태 기록: {STAMP}")
+        return
+    if not a.dry and not a.force and os.path.exists(STAMP):
+        if open(STAMP, encoding="utf-8").read().strip() != db_hash():
+            print("db가 마지막 이전(5~8단계) 뒤에 바뀌었다(MCP 작업·내보내기 등).")
+            print("이전 기록을 다시 적용하면 그 뒤에 Ghidra에서 고친 plate·태그·타입을 되돌릴 수 있다.")
+            print("덮어써도 되면 --force, 검사만 하려면 --dry.")
+            sys.exit(2)
     tagfile = json.load(open(CFG["tags"], encoding="utf-8"))
     tagdef = tagfile["tags"]
     plate_head = re.compile(tagfile.get("plate", {}).get("head", "^.+$"))

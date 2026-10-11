@@ -49,6 +49,7 @@ export { starJudge };
 export const FIBER_ORDER: readonly ('object' | 'player')[] = ['object', 'player'];
 
 /** 원본 Scene::CalcTotalPoint @0x710000eb10 — 합계 = Σ 자르기 수·2, 레인별 자르기 수 */
+/** @orig mg1801:710000eb10 ref */
 export function calcTotalPoint(rows: readonly ChartRow[]): { total: number; personal: number[] } {
   const personal = [0, 0, 0, 0];
   let total = 0;
@@ -67,16 +68,19 @@ export function calcTotalPoint(rows: readonly ChartRow[]): { total: number; pers
 const PREFIX = 'SQ_BGM_MG1801';
 
 /** 게임 BGM 이름 — 원본 FUN_7100441990 (공용 app/minigame/kit/rhythm/soundMan.ts rmGameBgmName, 접두 SQ_BGM_MG1801) */
+/** @orig main:7100441990 ref */
 export function gameBgmName(mode: number, bpm: number, chart01: boolean, isGenericBgm: boolean): string {
   return rmGameBgmName(PREFIX, mode, bpm, chart01, isGenericBgm);
 }
 
 /** 종료 BGM 이름 — 원본 FUN_71004421a0 (공용 rmEndingBgmName, SetGameBgmFinName = SQ_BGM_MG1801_MG_ENDING) */
+/** @orig main:71004421a0 ref */
 export function endingBgmName(mode: number, bpm: number, chart01: boolean): string {
   return rmEndingBgmName(`${PREFIX}_MG_ENDING`, PREFIX, mode, bpm, chart01);
 }
 
 /** 코스 중간 게임(RmGameWork+0x2C ≠ 0)의 끝 BGM — 원본 FUN_71004429c0 (공용 rmInterEndBgmName) */
+/** @orig main:71004429c0 ref */
 export function interEndBgmName(mode: number, bpm: number, chart01: boolean): string {
   return rmInterEndBgmName(PREFIX, mode, bpm, chart01);
 }
@@ -156,6 +160,7 @@ export class Mg1801Game extends RmMgSceneBase {
   }
 
   /** 원본 ca::rm::util::SetModelMotionSpeedAdjustFromTime @0x7100438a40: 속도 = FrameMax / (시간·60) */
+  /** @orig main:7100438a40 ref */
   private npcSpeed(file: string, sec: number): number {
     return F(NPC_MOTION_FRAMES[file] / F(sec * 60));
   }
@@ -188,6 +193,7 @@ export class Mg1801Game extends RmMgSceneBase {
   }
 
   /** 원본 MapImpl::ReceiveState(0,2) [판독 @0x7100010a90]: 두 NPC 에 co_joyful00 키, 길이 GetBeatToSec(1, MotNo != 1 ? 4 : 2), SetFrame(0) */
+  /** @orig mg1801:7100010a90 ref */
   protected trigRmGameMainBgmTopStart(): void {
     if (!this.npc.visible) return;
     const motNo = this.w.params.rhythmNpcMotNo;
@@ -201,6 +207,7 @@ export class Mg1801Game extends RmMgSceneBase {
   }
 
   /** 원본 mg1801::Scene::TrigRmGameEndingSetting @0x710000efc8: RmUiStatusMan::Hide + 채널(0,6) */
+  /** @orig mg1801:710000efc8 ref */
   protected trigRmGameEndingSetting(): void {
     this.statusUi = false;
     /* MapImpl::ReceiveState(0,6): steam01, NPC·NPC 의자 숨김, 결과 모델·수프, 카메라 'result', post_result00. PlayerMan: Player::Ending */

@@ -3,10 +3,10 @@
 {"a":"7100003644","t":"plate","c":"mg0108::ButtonMgr::UpdateAnimation()"}
 {"a":"7100003678","t":"plate","c":"mg0108::ButtonMgr::PlayPushAnimation(int)"}
 {"a":"71000036ac","t":"plate","c":"mg0108::ButtonMgr::SetLightOn(int)"}
-{"a":"7100003760","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §7.4\nCamera Matter(type1)→default layer.SetCamera→모션2개→Timer.SetupGame. flag0 false: 첫 clip/frame0/speed0, true: 둘째 clip/state+0x28=4\n소실: camera2 alias/resource·초기 frame/speed native 인수(부록 C.4)\n---\nmg0108::Camera::SetupGame()"}
+{"a":"7100003760","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §7.4\nCamera Matter(type1)→default layer.SetCamera→모션2개→Timer.SetupGame. flag0 false: 첫 clip/frame0/speed0, true: 둘째 clip/state+0x28=4\n소실: camera2 alias/resource·초기 frame/speed native 인수(부록 C.4)"}
 {"a":"7100003ae0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
 {"a":"7100003cbc","t":"plate","c":"mg0108::Camera::OnGameOpeningSkip()"}
-{"a":"7100003d20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.3\n오프닝 카메라 상태기계: 0 Timer.Start(Params+0x94)→1; 1 timer 종료 뒤 speed1/첫 clip→2; 2 motion 완료 뒤 둘째 clip/Timer.Start(Params+0xac)→3; 3 timer 종료 뒤 4\n한 호출에 한 전이만. 직접 RNG 0회\n---\nmg0108::Camera::OnGameOpening()"}
+{"a":"7100003d20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.3\n오프닝 카메라 상태기계: 0 Timer.Start(Params+0x94)→1; 1 timer 종료 뒤 speed1/첫 clip→2; 2 motion 완료 뒤 둘째 clip/Timer.Start(Params+0xac)→3; 3 timer 종료 뒤 4\n한 호출에 한 전이만. 직접 RNG 0회"}
 {"a":"7100003e9c","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetTypeDesc() const"}
 {"a":"7100003ea8","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtr()"}
 {"a":"7100003eac","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtrConst() const"}
@@ -36,13 +36,13 @@
 {"a":"7100004168","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"710000417c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100004184","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"71000041e0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §7.4\nMatrix4x3 translation/정규화 rotation→button Matter→모션6개·slot2개→첫 clip FrameMax에서 정지→callback +0x30 저장. ray Matter→모션1개/speed1/Play/frame0/speed0; index +0x60, state +0x64=1. callback 실행 없음\n소실: SetTranslation/Rotation native 전달·6+1모션/2slot 바인딩·callback target(부록 C.4)\n---\nmg0108::Button::SetupGame(int, nn::util::MatrixRowMajor4x3f const&, std::function<void (int, float)> const&)"}
+{"a":"71000041e0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §7.4\nMatrix4x3 translation/정규화 rotation→button Matter→모션6개·slot2개→첫 clip FrameMax에서 정지→callback +0x30 저장. ray Matter→모션1개/speed1/Play/frame0/speed0; index +0x60, state +0x64=1. callback 실행 없음\n소실: SetTranslation/Rotation native 전달·6+1모션/2slot 바인딩·callback target(부록 C.4)"}
 {"a":"7100004e80","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
 {"a":"7100004ff0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*, (void*)0>(char const*&&)"}
 {"a":"71000051cc","t":"plate","c":"mg0108::Button::SetLightOn() const"}
 {"a":"7100005238","t":"plate","c":"mg0108::Button::OnGameOpeningSkip()"}
-{"a":"7100005444","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\nButton state(+0x64) 2/3의 motion 완료를 보고 2→3→1로 전환\n+0x68 표시 경로에서 대기를 생략하는 분기 있음(세부 미기술)\n---\nmg0108::Button::UpdateAnimation()"}
-{"a":"710000565c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\nButton state(+0x64)==1일 때만 push 애니를 시작하고 state2로 전환\n---\nmg0108::Button::PlayPushAnimation()"}
+{"a":"7100005444","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\nButton state(+0x64) 2/3의 motion 완료를 보고 2→3→1로 전환\n+0x68 표시 경로에서 대기를 생략하는 분기 있음(세부 미기술)"}
+{"a":"710000565c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\nButton state(+0x64)==1일 때만 push 애니를 시작하고 state2로 전환"}
 {"a":"7100005798","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
 {"a":"710000581c","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
 {"a":"71000058a8","t":"plate","c":"virtual thunk to std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
@@ -60,65 +60,65 @@
 {"a":"71000065ec","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
 {"a":"7100006784","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&&)"}
 {"a":"7100006ab4","t":"plate","c":"std::bad_function_call::~bad_function_call()"}
-{"a":"7100006ae0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n파동 초기화. 원점을 SetupGame에 저장하고 이동 중 player 위치를 다시 추적하지 않음\n반지름 elapsedSec*scale*5+1, 14 이상에서 Stop·Hide(§10.2 fixture가 이 주소를 근거로 듦)\n---\nmg0108::LightWave::SetupGame(int, nn::util::Vector3f const&)"}
+{"a":"7100006ae0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n파동 초기화. 원점을 SetupGame에 저장하고 이동 중 player 위치를 다시 추적하지 않음\n반지름 elapsedSec*scale*5+1, 14 이상에서 Stop·Hide(§10.2 fixture가 이 주소를 근거로 듦)"}
 {"a":"7100006ed0","t":"plate","c":"mg0108::LightWave::Hide()"}
-{"a":"7100007020","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n파동 매 프레임 갱신. radius=elapsedSec*scale*5+1, radius>=14이면 Timer.Stop·Hide (§5.1이 6ae0/7020 등을 함께 인용)\n---\nmg0108::LightWave::OnGameMain()"}
-{"a":"71000070c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\nspeed<=0이면 반환. 활성 시 flag +0x78=1, +0x70=speed/Params+0x10, Timer 999.0, 모션 wave_ma(channel sub)\n직접 소리 SQ_SE_MG0108_WAVE_FIR·SQ_SE_MG0108_WAVE_LOP. 루프 소리 stop 위치는 미확정(§11 U11)\n---\nmg0108::LightWave::BeginMove(float)"}
-{"a":"710000735c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\nD=(wave.x-p.x)^2+wave.y^2+(wave.z-p.z)^2+wave.w^2 를 (2r-0.25)^2<D<(2r+0.25)^2 와 엄격 비교\nplayer.y는 피연산자 아님\n---\nmg0108::LightWave::WithinLightWave(nn::util::Vector3f const&) const"}
-{"a":"71000073c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n이름(부록 B)은 WithinComAvoidArea: 회피 고리 (2r-1)^2<D<(2r+1)^2 엄격 비교(4성분 제곱합 D)로 보임\n문서 주소 교차: §3.1은 PlayerMgr.Update/AlivePlayerCount 설명에 이 주소를, §6.2·§10.2는 회피 고리에 @0x710000b558을 적음\n---\nmg0108::LightWave::WithinComAvoidArea(nn::util::Vector3f const&) const"}
+{"a":"7100007020","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n파동 매 프레임 갱신. radius=elapsedSec*scale*5+1, radius>=14이면 Timer.Stop·Hide (§5.1이 6ae0/7020 등을 함께 인용)"}
+{"a":"71000070c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\nspeed<=0이면 반환. 활성 시 flag +0x78=1, +0x70=speed/Params+0x10, Timer 999.0, 모션 wave_ma(channel sub)\n직접 소리 SQ_SE_MG0108_WAVE_FIR·SQ_SE_MG0108_WAVE_LOP. 루프 소리 stop 위치는 미확정(§11 U11)"}
+{"a":"710000735c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\nD=(wave.x-p.x)^2+wave.y^2+(wave.z-p.z)^2+wave.w^2 를 (2r-0.25)^2<D<(2r+0.25)^2 와 엄격 비교\nplayer.y는 피연산자 아님"}
+{"a":"71000073c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n이름(부록 B)은 WithinComAvoidArea: 회피 고리 (2r-1)^2<D<(2r+1)^2 엄격 비교(4성분 제곱합 D)로 보임\n문서 주소 교차: §3.1은 PlayerMgr.Update/AlivePlayerCount 설명에 이 주소를, §6.2·§10.2는 회피 고리에 @0x710000b558을 적음"}
 {"a":"7100007424","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100007444","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetBaseTypeDesc()"}
 {"a":"7100007450","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100007464","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"710000746c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100007474","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nParamMgr가 유효한 Params 포인터를 보관하고 null이면 abort\n---\nmg0108::ParamMgr::SetupGame(mg0108::Scene::Params*)"}
-{"a":"7100007490","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별(stride 0x1c) 대기 시간. wait 1.5..[5,4,3,2]\n결과는 Com 시작에서 *0.25로 Timer에 사용. 난수 draw 세부는 공용 규칙 재사용\n---\nmg0108::ParamMgr::GetComWaitTimeSec(bq::ComLevel) const"}
-{"a":"710000752c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별(stride 0x1c) hipDrop 대기 시간. 범위 0.1..0.7\n---\nmg0108::ParamMgr::GetComHipDropTimeSec(bq::ComLevel) const"}
-{"a":"71000075c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별(stride 0x1c) 회피 대기 시간. 범위 0.03..0.08\n---\nmg0108::ParamMgr::GetComAvoidTimeSec(bq::ComLevel) const"}
-{"a":"7100007664","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별 avoid→hipDrop 확률 threshold [20,40,75,95] (SyncRandRangeF(0,100)과 비교됨)\n---\nmg0108::ParamMgr::GetComAvoidToHitDropProbMaster(bq::ComLevel) const"}
+{"a":"7100007474","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nParamMgr가 유효한 Params 포인터를 보관하고 null이면 abort"}
+{"a":"7100007490","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별(stride 0x1c) 대기 시간. wait 1.5..[5,4,3,2]\n결과는 Com 시작에서 *0.25로 Timer에 사용. 난수 draw 세부는 공용 규칙 재사용"}
+{"a":"710000752c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별(stride 0x1c) hipDrop 대기 시간. 범위 0.1..0.7"}
+{"a":"71000075c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별(stride 0x1c) 회피 대기 시간. 범위 0.03..0.08"}
+{"a":"7100007664","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nCPU level0..3별 avoid→hipDrop 확률 threshold [20,40,75,95] (SyncRandRangeF(0,100)과 비교됨)"}
 {"a":"71000076c0","t":"plate","c":"mg0108::ParamMgr::GetOpeningStartJumpTimeSec(int) const"}
-{"a":"710000771c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nPlayer 초기화. life +0x160=3, state +0x158=1\n---\nmg0108::Player::SetupGame(bex::PlayerID const&, int, nn::util::MatrixRowMajor4x3f const&, std::function<void (int, float)> const&)"}
+{"a":"710000771c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nPlayer 초기화. life +0x160=3, state +0x158=1"}
 {"a":"7100007ca0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID const&, bq::MatterType, (void*)0>(bex::PlayerID const&, bq::MatterType&&)"}
 {"a":"7100007e7c","t":"plate","c":"mg0108::Player::OnGameOpening()"}
 {"a":"7100007e84","t":"plate","c":"mg0108::Player::OnGameOpeningSkip()"}
-{"a":"7100007e8c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3.1\n입력 연결, PlayerType1이면 Com 시작 호출, 시선 시작, state2 설정\n---\nmg0108::Player::OnGameStartAfter()"}
+{"a":"7100007e8c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3.1\n입력 연결, PlayerType1이면 Com 시작 호출, 시선 시작, state2 설정"}
 {"a":"7100007f34","t":"plate","c":"mg0108::Player::OnGameEnd()"}
 {"a":"7100007fa0","t":"plate","c":"mg0108::Player::OnEndingInit()"}
-{"a":"7100007fa8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\nlife(+0x160)=max(0,life-damage). life>0이면 PlayerDirection.Damage 연출, 0이면 DropOut·입력 차단·state(+0x158)=3\n---\nmg0108::Player::AddDamage(nn::util::Vector3f const&, int)"}
+{"a":"7100007fa8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\nlife(+0x160)=max(0,life-damage). life>0이면 PlayerDirection.Damage 연출, 0이면 DropOut·입력 차단·state(+0x158)=3"}
 {"a":"7100008038","t":"plate","c":"mg0108::Player::SetComAvoidState()"}
 {"a":"7100008098","t":"plate","c":"mg0108::Player::SetRotationY(float)"}
 {"a":"71000080a0","t":"plate","c":"mg0108::Player::SetPositionY(float)"}
 {"a":"7100008128","t":"plate","c":"mg0108::Player::SetRandomLookPositions(std::vector<std::tuple<int, nn::util::Vector3f>, std::allocator<std::tuple<int, nn::util::Vector3f> > > const&)"}
 {"a":"7100008130","t":"plate","c":"mg0108::Player::RemoveRandomLookPos(int)"}
 {"a":"7100008138","t":"plate","c":"mg0108::Player::IsCompGameOpening() const"}
-{"a":"7100008148","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §3\nDirection 갱신 뒤 CPU 정책 호출. 이전/현재 jumpStatus(+0x150/+0x154)·Y(+0x164/+0x168)로 jumpStatus3에서 이전Y>0·현재Y<=0 착지 경계를 감지해 callback 호출\n소실: actor action/무적 유지·해제 native 인수(부록 C.4)\n---\nmg0108::Player::Update()"}
+{"a":"7100008148","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §3\nDirection 갱신 뒤 CPU 정책 호출. 이전/현재 jumpStatus(+0x150/+0x154)·Y(+0x164/+0x168)로 jumpStatus3에서 이전Y>0·현재Y<=0 착지 경계를 감지해 callback 호출\n소실: actor action/무적 유지·해제 native 인수(부록 C.4)"}
 {"a":"7100008384","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID const&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID const&, bq::MatterType&&)"}
 {"a":"71000085c0","t":"plate","c":"mg0108::Com::SetupGame(nn::bezel::HandlePtr<actor::ComActor> const&, nn::bezel::WeakHandle<bq::PlayerWork> const&)"}
-{"a":"71000085dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nGetComWaitTimeSec(level)*0.25로 Timer 시작 후 CPU state1 진입\n---\nmg0108::Com::OnGameStartAfter()"}
+{"a":"71000085dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nGetComWaitTimeSec(level)*0.25로 Timer 시작 후 CPU state1 진입"}
 {"a":"7100008654","t":"plate","c":"mg0108::Com::OnGameEnd()"}
-{"a":"71000086c8","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\nCPU 상태기계: 1 wait 끝 trigger/hold→2; 2 hipDrop 대기 끝 trigger→3; 3 jumpStatus3 벗어나면 새 wait→1; 4 avoid 대기 뒤 trigger와 SyncRandRangeF(0,100) 비교로 2/5; 5 jumpStatus0이면 새 wait→1\noverlay의 정확한 bit 인자는 prototype 손실로 미확정\n---\nmg0108::Com::OnGameMain()"}
-{"a":"71000089fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n사람→CPU 전환: jumpStatus1/2→state5, 3→state3, 나머지→대기*0.25/state1\n---\nmg0108::Com::SetPlayerToCom()"}
-{"a":"7100008ba4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nCPU state1일 때만 회피 시간 Timer 시작과 state4로 전환\n---\nmg0108::Com::SetAvoidState()"}
+{"a":"71000086c8","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\nCPU 상태기계: 1 wait 끝 trigger/hold→2; 2 hipDrop 대기 끝 trigger→3; 3 jumpStatus3 벗어나면 새 wait→1; 4 avoid 대기 뒤 trigger와 SyncRandRangeF(0,100) 비교로 2/5; 5 jumpStatus0이면 새 wait→1\noverlay의 정확한 bit 인자는 prototype 손실로 미확정"}
+{"a":"71000089fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n사람→CPU 전환: jumpStatus1/2→state5, 3→state3, 나머지→대기*0.25/state1"}
+{"a":"7100008ba4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nCPU state1일 때만 회피 시간 Timer 시작과 state4로 전환"}
 {"a":"7100008c20","t":"plate","c":"mg0108::LightWaveMgr::SetupGame(std::array<nn::util::Vector3f, 4ul> const&)"}
 {"a":"7100008e5c","t":"plate","c":"mg0108::LightWaveMgr::OnGameOpeningSkip()"}
 {"a":"7100008e68","t":"plate","c":"mg0108::LightWaveMgr::Hide()"}
 {"a":"710000908c","t":"plate","c":"mg0108::LightWaveMgr::OnGameStartAfter()"}
-{"a":"71000091b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n파동 풀 owner4×slot8=32개를 owner 우선 순서로 OnGameMain 호출\n§10.2는 8 slot 모두 활성 시 생성 없음 근거로도 이 주소를 인용\n---\nmg0108::LightWaveMgr::OnGameMain()"}
+{"a":"71000091b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n파동 풀 owner4×slot8=32개를 owner 우선 순서로 OnGameMain 호출\n§10.2는 8 slot 모두 활성 시 생성 없음 근거로도 이 주소를 인용"}
 {"a":"71000092c4","t":"plate","c":"mg0108::LightWaveMgr::OnGameEnd()"}
-{"a":"71000092d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\nenabled일 때 해당 owner의 첫 inactive slot에 파동 생성, 8개 모두 활성이면 생성을 버림(덮어쓰기 없음)\n---\nmg0108::LightWaveMgr::CreateLightWave(int, float)"}
+{"a":"71000092d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\nenabled일 때 해당 owner의 첫 inactive slot에 파동 생성, 8개 모두 활성이면 생성을 버림(덮어쓰기 없음)"}
 {"a":"71000093c8","t":"plate","c":"mg0108::LightWaveMgr::WithinLightWave(int, int, nn::util::Vector3f const&) const"}
 {"a":"710000940c","t":"plate","c":"mg0108::LightWaveMgr::WithinComAvoidArea(int, int, nn::util::Vector3f const&) const"}
 {"a":"7100009450","t":"plate","c":"mg0108::LightWaveMgr::IsMoving(int, int) const"}
 {"a":"7100009494","t":"plate","c":"mg0108::PlayerDirection::SetupGame(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::HandlePtr<actor::ComActor> const&, nn::bezel::HandlePtr<bex::ComHeading> const&, int)"}
-{"a":"7100009664","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\naction 변경 실패 시 반환, 성공 시 motion·velocity reset·gravity scale0·jump count reset\n이후 다섯 state jump table은 C 미복구(A 수락/낙하 동작 미확정, 부록 C.4)\n---\nmg0108::PlayerDirection::ExActionHipDrop(actor::ActionContext const&)"}
+{"a":"7100009664","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\naction 변경 실패 시 반환, 성공 시 motion·velocity reset·gravity scale0·jump count reset\n이후 다섯 state jump table은 C 미복구(A 수락/낙하 동작 미확정, 부록 C.4)"}
 {"a":"7100009940","t":"plate","c":"nn::bezel::WeakHandle<mg0108::ComDropOutMover> nn::bezel::Entity::AddComponent<mg0108::ComDropOutMover, , (void*)0>()"}
 {"a":"7100009b1c","t":"plate","c":"mg0108::PlayerDirection::OnGameOpening()"}
 {"a":"7100009dac","t":"plate","c":"mg0108::PlayerDirection::OnGameOpeningSkip()"}
 {"a":"7100009e48","t":"plate","c":"mg0108::PlayerDirection::OnEndingInit()"}
-{"a":"7100009e7c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n시선 상태기계: state2·대기 끝·후보 비어있지 않음이면 SyncRandRange 1회로 대상, SyncRandRangeF(2,3) 1회로 대기 고르고 state3\nstate3 대기 끝은 RangeF(2,3) 1회 뒤 state2/target=-1\n---\nmg0108::PlayerDirection::Update()"}
-{"a":"7100009fdc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nDamageAction: effect.Start→ChangeActionDamage\n---\nmg0108::PlayerDirection::Damage()"}
-{"a":"710000a030","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nDropOutAction: (현재 위치-피격 원점)을 정규화해 X/Z/W에 Params+0x1c를 곱하고 Y는 그 값을 직접 사용, zero length는 zero vector\n---\nmg0108::PlayerDirection::DropOut(nn::util::Vector3f const&)"}
-{"a":"710000a290","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n입력 목록을 복사하고 자기 ID와 반대 배치 ID(0→3,1→2,2→1,3→0)를 제거. RNG 없음\n---\nmg0108::PlayerDirection::SetRandomLookPositions(std::vector<std::tuple<int, nn::util::Vector3f>, std::allocator<std::tuple<int, nn::util::Vector3f> > > const&)"}
+{"a":"7100009e7c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n시선 상태기계: state2·대기 끝·후보 비어있지 않음이면 SyncRandRange 1회로 대상, SyncRandRangeF(2,3) 1회로 대기 고르고 state3\nstate3 대기 끝은 RangeF(2,3) 1회 뒤 state2/target=-1"}
+{"a":"7100009fdc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nDamageAction: effect.Start→ChangeActionDamage"}
+{"a":"710000a030","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\nDropOutAction: (현재 위치-피격 원점)을 정규화해 X/Z/W에 Params+0x1c를 곱하고 Y는 그 값을 직접 사용, zero length는 zero vector"}
+{"a":"710000a290","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6.2\n입력 목록을 복사하고 자기 ID와 반대 배치 ID(0→3,1→2,2→1,3→0)를 제거. RNG 없음"}
 {"a":"710000a720","t":"plate","c":"mg0108::PlayerDirection::RemoveRandomLookPos(int)"}
 {"a":"710000a7f8","t":"plate","c":"mg0108::PlayerDirection::BeginRandomLook()"}
 {"a":"710000a83c","t":"plate","c":"mg0108::PlayerDirection::EndRandomLook()"}
@@ -155,7 +155,7 @@
 {"a":"710000b4bc","t":"plate","c":"mg0108::PlayerMgr::OnGameOpening()"}
 {"a":"710000b4f0","t":"plate","c":"mg0108::PlayerMgr::OnGameOpeningSkip()"}
 {"a":"710000b524","t":"plate","c":"mg0108::PlayerMgr::OnGameStartAfter()"}
-{"a":"710000b558","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3.1\n이름(부록 B)은 PlayerMgr::Update: player0..3(stride 0x180)을 순서대로 Update 호출로 보임\n문서 주소 교차: §6.2·§10.2는 회피 고리(±1) 판정 근거로 이 주소를, §3.1은 PlayerMgr.Update 설명에 @0x71000073c0을 적음\n---\nmg0108::PlayerMgr::Update()"}
+{"a":"710000b558","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3.1\n이름(부록 B)은 PlayerMgr::Update: player0..3(stride 0x180)을 순서대로 Update 호출로 보임\n문서 주소 교차: §6.2·§10.2는 회피 고리(±1) 판정 근거로 이 주소를, §3.1은 PlayerMgr.Update 설명에 @0x71000073c0을 적음"}
 {"a":"710000b58c","t":"plate","c":"mg0108::PlayerMgr::OnGameEnd()"}
 {"a":"710000b5c0","t":"plate","c":"mg0108::PlayerMgr::OnEndingInit()"}
 {"a":"710000b5f4","t":"plate","c":"mg0108::PlayerMgr::AddDamage(int, nn::util::Vector3f const&, int)"}
@@ -167,13 +167,13 @@
 {"a":"710000b748","t":"plate","c":"mg0108::PlayerMgr::GetPositions() const"}
 {"a":"710000b844","t":"plate","c":"mg0108::PlayerMgr::GetPosition(int) const"}
 {"a":"710000b8a0","t":"plate","c":"mg0108::PlayerMgr::GetLife(int) const"}
-{"a":"710000b8d4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3.1\nPlayer+0x158==2(생존)인 플레이어 수를 셈\n§3.1의 해당 문장은 @0x71000073c0을 인용(부록 B 이름과 어긋남)\n---\nmg0108::PlayerMgr::GetAlivePlayerCount() const"}
+{"a":"710000b8d4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3.1\nPlayer+0x158==2(생존)인 플레이어 수를 셈\n§3.1의 해당 문장은 @0x71000073c0을 인용(부록 B 이름과 어긋남)"}
 {"a":"710000b908","t":"plate","c":"mg0108::PlayerMgr::IsCompGameOpening() const"}
 {"a":"710000b958","t":"plate","c":"mg0108::PlayerMgr::IsAlive(int) const"}
 {"a":"710000b994","t":"plate","c":"mg0108::PlayerMgr::IsDamageInvincible(int) const"}
-{"a":"710000c890","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n탈락 플레이어를 같은 Main의 배치(vector +0x10/+0x18/+0x20)에 모음\n---\nmg0108::RankMgr::SetRank(int)"}
-{"a":"710000c9c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n배치 n명 처리: n==4이고 flag=false면 rank0, 그 외 rank=remainingRank(+0x28)-n+1; 배치 모두 같은 rank, 다음 remainingRank=max(rank,1)-1\n---\nmg0108::RankMgr::UpdateRank(bool)"}
-{"a":"710000ca98","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n승패 = rank==0\n---\nmg0108::RankMgr::GetWinLose(int) const"}
+{"a":"710000c890","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n탈락 플레이어를 같은 Main의 배치(vector +0x10/+0x18/+0x20)에 모음"}
+{"a":"710000c9c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n배치 n명 처리: n==4이고 flag=false면 rank0, 그 외 rank=remainingRank(+0x28)-n+1; 배치 모두 같은 rank, 다음 remainingRank=max(rank,1)-1"}
+{"a":"710000ca98","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n승패 = rank==0"}
 {"a":"710000caa8","t":"plate","c":"mg0108::RankMgr::GetRank(int) const"}
 {"a":"710000cac4","t":"plate","c":"mg0108::Scene::DummySymbolLink(bool)"}
 {"a":"710000cb0c","t":"plate","c":"mg0108::Scene::getStaticTypeinfo()"}
@@ -183,27 +183,27 @@
 {"a":"710000cc88","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
 {"a":"710000cc8c","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
 {"a":"710000cc90","t":"plate","c":"mg0108::Scene::Params::getStaticTypeinfo()"}
-{"a":"710000cd6c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.5\nstatic guard의 property 편집 범위 등록. flags 8/9/a type40; timer +0xc [0,999]/1; float 0x10/0x14 [.01,10]/.01, 0x18/0x1c [0,1]/.01; int 0x20 [1,10]/1\nCPU 4×7필드(base +0x24/40/5c/78), opening float 7개(+0x94..0xac) [.01,5]/.01. label/native 바인딩 미확정(§11 U01)\n---\nmg0108::Scene::Params::getPropertyList()"}
-{"a":"710000d808","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nScene::Params 할당 0xb0, 기본값 +0x0c=60.0, +0x10=2.0, +0x18=0.03, +0x20=int 3, CPU level별 stride 0x1c 기본값\nlabel/native 바인딩 미확정(§11 U01)\n---\nmg0108::Scene::Params::createInstance()"}
+{"a":"710000cd6c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.5\nstatic guard의 property 편집 범위 등록. flags 8/9/a type40; timer +0xc [0,999]/1; float 0x10/0x14 [.01,10]/.01, 0x18/0x1c [0,1]/.01; int 0x20 [1,10]/1\nCPU 4×7필드(base +0x24/40/5c/78), opening float 7개(+0x94..0xac) [.01,5]/.01. label/native 바인딩 미확정(§11 U01)"}
+{"a":"710000d808","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.3\nScene::Params 할당 0xb0, 기본값 +0x0c=60.0, +0x10=2.0, +0x18=0.03, +0x20=int 3, CPU level별 stride 0x1c 기본값\nlabel/native 바인딩 미확정(§11 U01)"}
 {"a":"710000d950","t":"plate","c":"mg0108::Scene::Params::deleteInstance(void*)"}
 {"a":"710000d964","t":"plate","c":"mg0108::Scene::Scene()"}
 {"a":"710000d9d0","t":"plate","c":"mg0108::Scene::~Scene()"}
 {"a":"710000dbe4","t":"plate","c":"mg0108::Scene::~Scene()"}
-{"a":"710000dc10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nScene 초기화. Rank holder rank[4]=-1, 잔여 순위 counter +0x28=3, 파동 원점 저장\n---\nmg0108::Scene::SetupGame()"}
+{"a":"710000dc10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nScene 초기화. Rank holder rank[4]=-1, 잔여 순위 counter +0x28=3, 파동 원점 저장"}
 {"a":"710000eb80","t":"plate","c":"mg0108::Scene::SyncedSetupGame()"}
-{"a":"710000eb90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n해제 순서 Button→Camera→Map→Wave→Params→Players(3→0)→Ranks→Timer→UI, 전역 Params/Timer 포인터 null\n---\nmg0108::Scene::CleanupGame()"}
+{"a":"710000eb90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5.1\n해제 순서 Button→Camera→Map→Wave→Params→Players(3→0)→Ranks→Timer→UI, 전역 Params/Timer 포인터 null"}
 {"a":"710000eda4","t":"plate","c":"mg0108::Scene::OnGameFirstFade()"}
 {"a":"710000edac","t":"plate","c":"mg0108::Scene::OnGameOpening()"}
 {"a":"710000ee08","t":"plate","c":"mg0108::Scene::OnGameOpeningSkip()"}
-{"a":"710000ee64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3\nWaveMgr→PlayerMgr→UIMgr 시작 후 Scene+0x358=2\n---\nmg0108::Scene::OnGameStartAfter()"}
-{"a":"710000eec0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3\nButton 애니→WaveMgr→PlayerMgr→TimerMgr→CheckHit→Rank.UpdateRank(false)→순위 UI\n종료: alive<2 또는 UI Timer 종료\n---\nmg0108::Scene::OnGameMain()"}
-{"a":"710000f130","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\nplayer0→3 중 생존·Y<=Params+0x18만 검사, owner0→3(자기 제외)·slot0→7 순회, 첫 이동 중 hit에 ProcessHit 호출 후 그 플레이어 검사 종료\n소실: action/무적 수명 인수(부록 C.4)\n---\nmg0108::Scene::CheckHitLightWave()"}
-{"a":"710000f5b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n종료 훅: 생존자를 life1..10 bucket에 담고 낮은 life부터 같은 bucket을 한 배치(flag=true)로 순위 처리. PlayerID로 동률을 가르지 않음\n---\nmg0108::Scene::OnGameEnd()"}
+{"a":"710000ee64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3\nWaveMgr→PlayerMgr→UIMgr 시작 후 Scene+0x358=2"}
+{"a":"710000eec0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §3\nButton 애니→WaveMgr→PlayerMgr→TimerMgr→CheckHit→Rank.UpdateRank(false)→순위 UI\n종료: alive<2 또는 UI Timer 종료"}
+{"a":"710000f130","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\nplayer0→3 중 생존·Y<=Params+0x18만 검사, owner0→3(자기 제외)·slot0→7 순회, 첫 이동 중 hit에 ProcessHit 호출 후 그 플레이어 검사 종료\n소실: action/무적 수명 인수(부록 C.4)"}
+{"a":"710000f5b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n종료 훅: 생존자를 life1..10 bucket에 담고 낮은 life부터 같은 bucket을 한 배치(flag=true)로 순위 처리. PlayerID로 동률을 가르지 않음"}
 {"a":"710000fee4","t":"plate","c":"std::array<std::vector<int, std::allocator<int> >, 10ul>::~array()"}
 {"a":"710000ffa8","t":"plate","c":"mg0108::Scene::OnGameFinish()"}
-{"a":"710000ffd8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n종료 순위/승패 처리 경로의 하나로 §6에서 인용(세부 동작 미기술)\n---\nmg0108::Scene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
-{"a":"71000103d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\n피격 처리: damage 1 소비, invincible이면 damage 없음\n---\nmg0108::Scene::ProcessHitLightWave(int, nn::util::Vector3f const&)"}
-{"a":"7100010614","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n파동 speed=min+(startY/2.6)*(max-min), 함수 자체에 clamp 없음\n---\nmg0108::Scene::ProcessHipDrop(int, float)"}
+{"a":"710000ffd8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n종료 순위/승패 처리 경로의 하나로 §6에서 인용(세부 동작 미기술)"}
+{"a":"71000103d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\n피격 처리: damage 1 소비, invincible이면 damage 없음"}
+{"a":"7100010614","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §6\n파동 speed=min+(startY/2.6)*(max-min), 함수 자체에 clamp 없음"}
 {"a":"710001067c","t":"plate","c":"mg0108::Scene::SetLookAtAlivePlayer()"}
 {"a":"7100010828","t":"plate","c":"mg0108::Scene::UpdateState(mg0108::Scene::State)"}
 {"a":"7100010830","t":"plate","c":"mg0108::Scene::getInstanceTypeinfo() const"}
@@ -248,17 +248,17 @@
 {"a":"7100011cd0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [41], (void*)0>(char const (&) [41])"}
 {"a":"7100011eac","t":"plate","c":"mg0108::Map::OnGameOpening()"}
 {"a":"7100011f34","t":"plate","c":"mg0108::Map::OnEndingInit()"}
-{"a":"7100011f40","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §7.4\nlocator0..3 FindBoneIndex→CalculateLocalTransform→output stride 64(world transform 아님)\n첫 16B 외 3행이 entry register로 남아 행렬/반환 ABI 소실(부록 C.4)\n---\nmg0108::Map::GetPlayerInitMatrices() const"}
+{"a":"7100011f40","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0108.md §7.4\nlocator0..3 FindBoneIndex→CalculateLocalTransform→output stride 64(world transform 아님)\n첫 16B 외 3행이 entry register로 남아 행렬/반환 ABI 소실(부록 C.4)"}
 {"a":"7100012330","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [30]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [30])"}
 {"a":"71000124c0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [36]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [36])"}
 {"a":"7100012650","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [34]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [34])"}
 {"a":"71000127e0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [41]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [41])"}
-{"a":"7100012970","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nParams+0x0c(기본60)를 ComUiTimer::SetTimer에 전달. life 기본값별 StatusType 2→0xb, 4→0xd, 5→0xe, 10→0xf, 그 외 0xc\n---\nmg0108::UIMgr::SetupGame()"}
+{"a":"7100012970","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nParams+0x0c(기본60)를 ComUiTimer::SetTimer에 전달. life 기본값별 StatusType 2→0xb, 4→0xd, 5→0xe, 10→0xf, 그 외 0xc"}
 {"a":"7100012b40","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiStatus> nn::bezel::Entity::AddComponent<bq::ComUiStatus, bq::ComUiStatus::UiStatusType&, bq::ComUiStatus::UiStatusMatchType const&, bq::ComUiStatus::UiStatusPlaceType const&, (void*)0>(bq::ComUiStatus::UiStatusType&, bq::ComUiStatus::UiStatusMatchType const&, bq::ComUiStatus::UiStatusPlaceType const&)"}
 {"a":"7100012d20","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiTimer> nn::bezel::Entity::AddComponent<bq::ComUiTimer, bq::ComUiTimer::UiTimerType, (void*)0>(bq::ComUiTimer::UiTimerType&&)"}
 {"a":"7100012efc","t":"plate","c":"mg0108::UIMgr::OnGameStartAfter()"}
 {"a":"7100012f04","t":"plate","c":"mg0108::UIMgr::OnGameEnd()"}
-{"a":"7100012f0c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §B\n부록 B 판독 목록에만 있음. 본문 동작 설명 없음\n---\nmg0108::UIMgr::SetLife(bex::PlayerID const&, int)"}
+{"a":"7100012f0c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §B\n부록 B 판독 목록에만 있음. 본문 동작 설명 없음"}
 {"a":"7100012f3c","t":"plate","c":"mg0108::UIMgr::SetRank(bex::PlayerID const&, int, bq::GameRank)"}
 {"a":"7100012f9c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiStatus> bex::ComponentUtil::SafeCreate<bq::ComUiStatus, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiStatus::UiStatusType&, bq::ComUiStatus::UiStatusMatchType const&, bq::ComUiStatus::UiStatusPlaceType const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiStatus::UiStatusType&, bq::ComUiStatus::UiStatusMatchType const&, bq::ComUiStatus::UiStatusPlaceType const&)"}
 {"a":"710001312c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiStatus, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
@@ -273,10 +273,10 @@
 {"a":"710001333c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100013344","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
 {"a":"7100013350","t":"plate","c":"mg0108::Timer::SetupGame()"}
-{"a":"71000134a4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음\n---\nmg0108::Timer::Start(float)"}
-{"a":"71000134e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음\n---\nmg0108::Timer::Start(std::string, float, float)"}
-{"a":"71000136ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음\n---\nmg0108::Timer::Start(std::string, float)"}
-{"a":"710001374c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음\n---\nmg0108::Timer::Start(float, float)"}
+{"a":"71000134a4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음"}
+{"a":"71000134e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음"}
+{"a":"71000136ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음"}
+{"a":"710001374c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §4.4\nTimer.Start overload(4개 중 하나). record paused+0x18/end+0x19=false, elapsed+0x1c=start, limit+0x20=지정값; 같은 이름 record 교체·없으면 추가\n문서가 overload와 주소를 짝짓지 않음"}
 {"a":"7100013780","t":"plate","c":"mg0108::Timer::FindIndex(std::string) const"}
 {"a":"7100013890","t":"plate","c":"mg0108::Timer::Stop(std::string)"}
 {"a":"7100013a74","t":"plate","c":"mg0108::Timer::SetPause(bool)"}
@@ -287,7 +287,7 @@
 {"a":"71000140b0","t":"plate","c":"mg0108::Timer::GetRemainRate(std::string) const"}
 {"a":"7100014240","t":"plate","c":"mg0108::Timer::IsEnd(std::string) const"}
 {"a":"71000143c0","t":"plate","c":"mg0108::Timer::IsActive(std::string) const"}
-{"a":"7100014540","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\nrecord(stride 0x28)의 paused/end가 모두 false일 때 elapsed를 limit까지 clamp, >=limit이면 end=true\n---\nmg0108::Timer::Update()"}
+{"a":"7100014540","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0108.md §5\nrecord(stride 0x28)의 paused/end가 모두 false일 때 elapsed를 limit까지 clamp, >=limit이면 end=true"}
 {"a":"7100014750","t":"plate","c":"void std::vector<mg0108::Timer::Param, std::allocator<mg0108::Timer::Param> >::__push_back_slow_path<mg0108::Timer::Param const&>(mg0108::Timer::Param const&)"}
 {"a":"7100014920","t":"plate","c":"mg0108::TimerMgr::Register(std::function<void ()> const&)"}
 {"a":"71000149b0","t":"plate","c":"mg0108::TimerMgr::Update()"}

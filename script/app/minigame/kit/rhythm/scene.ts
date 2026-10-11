@@ -191,11 +191,13 @@ export abstract class RmMgSceneBase {
   }
 
   /** 원본 SetGameBgmName + FUN_7100441990 결과(게임 BGM 라벨) */
+  /** @orig main:7100441990 ref */
   protected setGameBgmLabel(label: string): void {
     this.bgmLabel = label;
   }
 
   /** 원본 SetGameBgmFinName(단계 6 에서 FUN_71004421a0 규칙으로 바뀐다) */
+  /** @orig main:71004421a0 ref */
   protected setGameBgmFinName(name: string): void {
     this.gameBgmFinName = name;
   }
@@ -288,6 +290,7 @@ export abstract class RmMgSceneBase {
   // ------------------------------------------------------------------ MinigameFlow 처리기
 
   /** 원본 RmMgSceneBase::OnGameStartAfter @0x7100443fa8 (inst 아님) */
+  /** @orig main:7100443fa8 ref */
   onGameStartAfter(): boolean {
     /* FUN_71004263c8: 마스터 SQ_BGM_RC_MAIN_RHYTHM + SQ_BGM_RC_MGCMN_OP 재생(이 순서, 같은 프레임), RmSoundMan+0x28 의 limit = (60/BPM)·0.5.
        OnGameStartAfter 는 첫 줄에서 이것을 부르고 1 을 돌려주므로 MinigameFlow 8 의 한 프레임에만 돈다 [판독 @0x7100443fa8].
@@ -318,6 +321,7 @@ export abstract class RmMgSceneBase {
    * - 모드 3 이 아니고 (메들리 결과 || +0x2C == 0): 흰 페이드아웃(1.0), +0x370 = 0, OnRmGameEnd(=1) → 단계 11
    * - 그 밖(리믹스): +0x370 = 0 이면 (+0x2C ≠ 0 이면 셰프 모자 FUN_710042a300) 페이드아웃, +0x370 = 1 → 페이드가 끝나면 RequestReturnScene
    */
+  /** @orig main:71004453c4 ref */
   onGameEnd(): boolean {
     const c = this.cfg;
     this.statusUi = false;
@@ -346,6 +350,7 @@ export abstract class RmMgSceneBase {
   }
 
   /** 원본 RmMgSceneBase::OnGameEndingBefore @0x7100445518 */
+  /** @orig main:7100445518 ref */
   onGameEndingBefore(): boolean {
     const c = this.cfg;
     if (this.stage !== 0) {
@@ -382,6 +387,7 @@ export abstract class RmMgSceneBase {
   }
 
   /** 원본 RmMgSceneBase::OnGameEnding @0x7100445620 */
+  /** @orig main:7100445620 ref */
   onGameEnding(): boolean {
     const c = this.cfg;
     const rec = this.record;
@@ -646,6 +652,7 @@ export abstract class RmMgSceneBase {
   }
 
   /** 원본 결과 기록 FUN_710042ca10(단계 8, +0x462 로 한 번) — 점수·달성률·별 판정과 GetResultPlayerScoreMax 비교 */
+  /** @orig main:710042ca10 ref */
   private recordResult(): void {
     if (this.record) return;
     const gw = this.gameWork;
@@ -660,6 +667,7 @@ export abstract class RmMgSceneBase {
    * PERFECT 텔롭 — 원본 FUN_710043af00 [판독]: 플레이어 0~3 마다 GetResultPlayerScore == GetResultPlayerScoreMax 면 띄운다.
    * RmCmnParamMan+0x30(생성자 기본 1)이면 COM 은 뺀다(IsPlayerCom). 이 값을 덮어쓰는 곳은 찾지 못해 기본 1 로 둔다.
    */
+  /** @orig main:710043af00 ref */
   private showPerfect(): void {
     const rec = this.record!;
     rec.perfect.forEach((ok, p) => {

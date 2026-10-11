@@ -1,11 +1,11 @@
-{"a":"71000036f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0106::CameraManager::CameraManager — 단일 카메라(op00/op01/game00/game01), 기본 GraphicsLayer.\n분할: VS4·Endless 모두 추가 분할 없음.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 공동 화면; op00/op01/game00/game01.\n주의: 문서 §7.2 는 mg0106 0x71000036f0/0x7100004ca0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: CameraManager. 카메라 엔티티 하나 생성(분할 화면 없음)\n---\nmg0106::CameraManager::CameraManager()"}
+{"a":"71000036f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0106::CameraManager::CameraManager — 단일 카메라(op00/op01/game00/game01), 기본 GraphicsLayer.\n분할: VS4·Endless 모두 추가 분할 없음.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 공동 화면; op00/op01/game00/game01.\n주의: 문서 §7.2 는 mg0106 0x71000036f0/0x7100004ca0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: CameraManager. 카메라 엔티티 하나 생성(분할 화면 없음)"}
 {"a":"71000037c0","t":"plate","c":"nn::bezel::WeakHandle<mg0106::ComCamera> nn::bezel::Entity::AddComponent<mg0106::ComCamera, , (void*)0>()"}
 {"a":"71000039a0","t":"plate","c":"mg0106::CameraManager::~CameraManager()"}
 {"a":"7100003a14","t":"plate","c":"mg0106::CameraManager::~CameraManager()"}
 {"a":"7100003a40","t":"plate","c":"mg0106::CameraManager::SceneInit()"}
 {"a":"7100003b30","t":"plate","c":"mg0106::ComCamera::SceneInit()"}
 {"a":"7100003c60","t":"plate","c":"mg0106::CameraManager::GameInit()"}
-{"a":"7100003d50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComCamera::GameInit. game00을 속도0으로 설정(game00 재생 완료 뒤 game01로 이동)\n---\nmg0106::ComCamera::GameInit()"}
+{"a":"7100003d50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComCamera::GameInit. game00을 속도0으로 설정(game00 재생 완료 뒤 game01로 이동)"}
 {"a":"7100003e80","t":"plate","c":"mg0106::CameraManager::OpeningSkip()"}
 {"a":"7100003f70","t":"plate","c":"mg0106::ComCamera::OpeningSkip()"}
 {"a":"7100003f80","t":"plate","c":"mg0106::CameraManager::GameStart()"}
@@ -22,10 +22,10 @@
 {"a":"71000049f0","t":"plate","c":"mg0106::ComCamera::IsEndAnimation()"}
 {"a":"7100004ac0","t":"plate","c":"mg0106::CameraManager::IsThisPlaying(nn::bezel::StringViewHashPair const&)"}
 {"a":"7100004bc0","t":"plate","c":"mg0106::ComCamera::IsThisPlaying(nn::bezel::StringViewHashPair const&)"}
-{"a":"7100004ca0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0106::ComCamera::ComCamera — Camera 하나 → 기본 GraphicsLayer.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 공동 화면; op00/op01/game00/game01.\n주의: 문서 §7.2 는 mg0106 0x71000036f0/0x7100004ca0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComCamera 생성자. 카메라를 GetDefaultGraphicsLayer→SetCamera로 연결. op00/op01/game00/game01은 이 한 카메라의 전환 모션\n---\nmg0106::ComCamera::ComCamera(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100004ca0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0106::ComCamera::ComCamera — Camera 하나 → 기본 GraphicsLayer.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 공동 화면; op00/op01/game00/game01.\n주의: 문서 §7.2 는 mg0106 0x71000036f0/0x7100004ca0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComCamera 생성자. 카메라를 GetDefaultGraphicsLayer→SetCamera로 연결. op00/op01/game00/game01은 이 한 카메라의 전환 모션"}
 {"a":"7100005060","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
 {"a":"710000523c","t":"plate","c":"mg0106::ComCamera::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"7100005280","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComCamera::TickUpdate. game00 재생 완료 뒤 game01로 이동\n---\nmg0106::ComCamera::TickUpdate()"}
+{"a":"7100005280","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComCamera::TickUpdate. game00 재생 완료 뒤 game01로 이동"}
 {"a":"71000053bc","t":"plate","c":"non-virtual thunk to mg0106::ComCamera::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"71000053fc","t":"plate","c":"mg0106::ComCamera::NnDetailBezelGetTypeDesc() const"}
 {"a":"7100005408","t":"plate","c":"mg0106::ComCamera::NnDetailBezelGetThisPtr()"}
@@ -34,7 +34,7 @@
 {"a":"71000054e0","t":"plate","c":"bq::ComponentTemplate<mg0106::ComCamera, nn::bezel::Component>::DestroyComponentImpl()"}
 {"a":"7100005520","t":"plate","c":"mg0106::ComCamera::_internalGetTickMessageBitFlagSetImpl() const"}
 {"a":"7100005530","t":"plate","c":"mg0106::ComCamera::_internalGetComponentNameHashImpl() const"}
-{"a":"7100005544","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComCamera 메시지 우선순위 0x80 반환\n주의: 이 값은 서로 다른 엔티티의 순서를 확정하지 않는다\n---\nmg0106::ComCamera::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"7100005544","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComCamera 메시지 우선순위 0x80 반환\n주의: 이 값은 서로 다른 엔티티의 순서를 확정하지 않는다"}
 {"a":"710000554c","t":"plate","c":"non-virtual thunk to mg0106::ComCamera::NnDetailBezelGetTypeDesc() const"}
 {"a":"7100005558","t":"plate","c":"non-virtual thunk to mg0106::ComCamera::NnDetailBezelGetThisPtr()"}
 {"a":"7100005560","t":"plate","c":"non-virtual thunk to mg0106::ComCamera::NnDetailBezelGetThisPtrConst() const"}
@@ -94,7 +94,7 @@
 {"a":"7100006e30","t":"plate","c":"mg0106::MapManager::GameEnd()"}
 {"a":"7100006f20","t":"plate","c":"mg0106::ComMap::GameEnd()"}
 {"a":"7100007600","t":"plate","c":"mg0106::MapManager::SetEndingAsset()"}
-{"a":"71000076f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: ComMap::SetEndingAsset. 결과 환경 교체(결과 콜백에서 호출). MGResult에 플레이어 모델·배경 전달 흐름의 일부\n---\nmg0106::ComMap::SetEndingAsset()"}
+{"a":"71000076f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: ComMap::SetEndingAsset. 결과 환경 교체(결과 콜백에서 호출). MGResult에 플레이어 모델·배경 전달 흐름의 일부"}
 {"a":"71000078a0","t":"plate","c":"mg0106::MapManager::PlayBlinkingAnimation()"}
 {"a":"7100007990","t":"plate","c":"mg0106::ComMap::PlayBlinkingAnimation()"}
 {"a":"7100007b90","t":"plate","c":"mg0106::MapManager::PlayElectric()"}
@@ -110,10 +110,10 @@
 {"a":"7100008480","t":"plate","c":"mg0106::MapManager::GetObjWanwanCnt()"}
 {"a":"7100008590","t":"plate","c":"mg0106::MapManager::GetObjWanwanState(int)"}
 {"a":"7100008690","t":"plate","c":"mg0106::MapManager::GetRoute()"}
-{"a":"7100008784","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/13_asset_converter.md §5.2\n역할: mg0106::ComMap 생성자. CreateObj @0x7100009020 와 함께 게임 장면 배치의 근거(mg0106.md §7)\n배치 근거: 원본 미니게임에는 MapStructure.json 이 없고 장면 엔티티는 게임 코드(SyncedSetupGame·MapImpl·CreateBG)가 경로로 만든다 — 변환기 게임 표 SCENES[id] 의 근거 함수로 쓰임\nbase(원점에 보임): bg00·bg01·bg_roof00·rotate_floor00·search_light\nhooks: pos_obj_grp05 → rotate_floor00 뼈 pos_locator00\n카메라: 첫 카메라 cam_op00 → 본편 cam_game00\n환경: env_dark·dir_light·post, 재질 애니 bg00_light·roof00_light fmab\n함수별 분담: 이 문서는 ComMap·CreateObj 를 한 행에 함께 근거로 듦(물체 생성 spawn 은 CreateObj 기록 참조)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1·6.4\n역할: ComMap 생성자\n쓰는 필드: +0x1C0 = GameWork.GetGameStage 기반 배치 0~2\n---\nmg0106::ComMap::ComMap(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100008784","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/13_asset_converter.md §5.2\n역할: mg0106::ComMap 생성자. CreateObj @0x7100009020 와 함께 게임 장면 배치의 근거(mg0106.md §7)\n배치 근거: 원본 미니게임에는 MapStructure.json 이 없고 장면 엔티티는 게임 코드(SyncedSetupGame·MapImpl·CreateBG)가 경로로 만든다 — 변환기 게임 표 SCENES[id] 의 근거 함수로 쓰임\nbase(원점에 보임): bg00·bg01·bg_roof00·rotate_floor00·search_light\nhooks: pos_obj_grp05 → rotate_floor00 뼈 pos_locator00\n카메라: 첫 카메라 cam_op00 → 본편 cam_game00\n환경: env_dark·dir_light·post, 재질 애니 bg00_light·roof00_light fmab\n함수별 분담: 이 문서는 ComMap·CreateObj 를 한 행에 함께 근거로 듦(물체 생성 spawn 은 CreateObj 기록 참조)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1·6.4\n역할: ComMap 생성자\n쓰는 필드: +0x1C0 = GameWork.GetGameStage 기반 배치 0~2"}
 {"a":"71000088cc","t":"plate","c":"mg0106::ComMap::CreateEnv()"}
 {"a":"7100008a48","t":"plate","c":"mg0106::ComMap::CreateBg()"}
-{"a":"7100009020","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObj. 회전 바닥→pos_locator→grp05/06/07→B/C/D 소켓→model+rigid 생성\n\n[판독] 2026-10-11 / md: web/docs/engine/13_asset_converter.md §5.2\n역할: mg0106::ComMap::CreateObj — 배치 물체 생성. ComMap @0x7100008784 와 함께 근거(mg0106.md §7)\n배치 근거: 원본 미니게임에는 MapStructure.json 이 없고 장면 엔티티는 게임 코드(SyncedSetupGame·MapImpl·CreateBG)가 경로로 만든다 — 변환기 게임 표 SCENES[id] 의 근거 함수로 쓰임\nspawn: 그룹 grp05 의 뼈 pos_obj[A-E]NN 마다 모델 objX00 (X = 뼈 이름의 A~E)\n분기: 배치 그룹은 GetGameStage 값에 따름 — 변환기는 GetGameStage 0 → grp05 로 고정\n부착: hooks pos_obj_grp05 → rotate_floor00 pos_locator00 (부모 뼈 위치·회전만)\n§13 사용자 확인: 배치 그룹 grp05(GetGameStage 0) 로 정함, 원본은 스테이지 값\n§14 확인 항목: 회전 판 위에 Boo·멍멍 등 배치 물체 39개가 판 자리에 놓임, 위치 표 모델은 숨김\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2·6.4\n역할: ComMap::CreateObj. 배치 그룹 생성·부착\n부착 경로: rotate_floor00 → pos_locator00 → ObjPos(grp05/06/07) → pos_objB/C/DNN → 개별 모델·강체\nB/C/D 부착 모드: 위치(+0x68)=1·회전(+0xF8)=1·스케일(+0x188)=0\n배치 선택: GameWork::GetGameStage 0→grp05, 1→grp06, 2→grp07, 그 밖→grp05(난수 아님)\n---\nmg0106::ComMap::CreateObj()"}
+{"a":"7100009020","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObj. 회전 바닥→pos_locator→grp05/06/07→B/C/D 소켓→model+rigid 생성\n\n[판독] 2026-10-11 / md: web/docs/engine/13_asset_converter.md §5.2\n역할: mg0106::ComMap::CreateObj — 배치 물체 생성. ComMap @0x7100008784 와 함께 근거(mg0106.md §7)\n배치 근거: 원본 미니게임에는 MapStructure.json 이 없고 장면 엔티티는 게임 코드(SyncedSetupGame·MapImpl·CreateBG)가 경로로 만든다 — 변환기 게임 표 SCENES[id] 의 근거 함수로 쓰임\nspawn: 그룹 grp05 의 뼈 pos_obj[A-E]NN 마다 모델 objX00 (X = 뼈 이름의 A~E)\n분기: 배치 그룹은 GetGameStage 값에 따름 — 변환기는 GetGameStage 0 → grp05 로 고정\n부착: hooks pos_obj_grp05 → rotate_floor00 pos_locator00 (부모 뼈 위치·회전만)\n§13 사용자 확인: 배치 그룹 grp05(GetGameStage 0) 로 정함, 원본은 스테이지 값\n§14 확인 항목: 회전 판 위에 Boo·멍멍 등 배치 물체 39개가 판 자리에 놓임, 위치 표 모델은 숨김\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2·6.4\n역할: ComMap::CreateObj. 배치 그룹 생성·부착\n부착 경로: rotate_floor00 → pos_locator00 → ObjPos(grp05/06/07) → pos_objB/C/DNN → 개별 모델·강체\nB/C/D 부착 모드: 위치(+0x68)=1·회전(+0xF8)=1·스케일(+0x188)=0\n배치 선택: GameWork::GetGameStage 0→grp05, 1→grp06, 2→grp07, 그 밖→grp05(난수 아님)"}
 {"a":"7100009240","t":"plate","c":"mg0106::ComMap::~ComMap()"}
 {"a":"71000094c0","t":"plate","c":"mg0106::ComMap::DestroyEnv()"}
 {"a":"71000095c0","t":"plate","c":"mg0106::ComMap::DestroyBg()"}
@@ -132,13 +132,13 @@
 {"a":"710000a770","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [41], (void*)0>(char const (&) [41])"}
 {"a":"710000a950","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*&, (void*)0>(char const*&)"}
 {"a":"710000ab30","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComAttachment> nn::bezel::Entity::AddComponent<nn::bezel::ComAttachment, , (void*)0>()"}
-{"a":"710000ad20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2·6.4\n역할: ComMap::CreateObjA (Boo)\n형상: 캡슐 반지름 0.7(Scene+0x388)·높이 인자 Scene+0x380(3.5)의 절반, 태그 ObjA\n초기 주 모션(결정적): grp05/06의 인덱스 5~9·20~24, grp07의 10~14는 홀수 0f·짝수 150f\n나머지: i%5==0이면 [40,180,20,180,120,0][min(floor(i/5),5)], 그 외는 이전 Boo GetFrame+60을 SetFrame에 전달\n모션 속도·회전 주기: phase별 1.9/2.2/2.5, 10/10/10초(UpdateAnim에서 사용)\n---\nmg0106::ComMap::CreateObjA()"}
-{"a":"710000bda0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObjB. Box halfExtents (0.8,10,0.8), shape local position 0·quat identity\nAttachment pos1/rot1/scale0(소켓 Euler XYZ 회전 포함), RigidArg layer2/motion0/detection0, friction .5·.5, restitution .9 → 부착으로 포즈가 갱신되는 Static\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.2·6.2\n역할: ComMap::CreateObjB. 회전판 소켓을 따르는 상자 강체\n형상: JSON 벡터(Scene+0x390)를 배율 없이 CreateBox에 전달 → 반폭\n강체: 형상 로컬 위치0·회전항등, RigidBodyCreateArg+0x90/94/98=0.5/0.5/0.9, +0xA8=2, +0xB4=0, +0xB8=0(운동종류0 = 정적 액터)\nlayer 인자 2(Route 질의 마스크 4와 구분). 고유 코드에 힘·속도·키네마틱 setter 없음\n---\nmg0106::ComMap::CreateObjB()"}
+{"a":"710000ad20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2·6.4\n역할: ComMap::CreateObjA (Boo)\n형상: 캡슐 반지름 0.7(Scene+0x388)·높이 인자 Scene+0x380(3.5)의 절반, 태그 ObjA\n초기 주 모션(결정적): grp05/06의 인덱스 5~9·20~24, grp07의 10~14는 홀수 0f·짝수 150f\n나머지: i%5==0이면 [40,180,20,180,120,0][min(floor(i/5),5)], 그 외는 이전 Boo GetFrame+60을 SetFrame에 전달\n모션 속도·회전 주기: phase별 1.9/2.2/2.5, 10/10/10초(UpdateAnim에서 사용)"}
+{"a":"710000bda0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObjB. Box halfExtents (0.8,10,0.8), shape local position 0·quat identity\nAttachment pos1/rot1/scale0(소켓 Euler XYZ 회전 포함), RigidArg layer2/motion0/detection0, friction .5·.5, restitution .9 → 부착으로 포즈가 갱신되는 Static\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.2·6.2\n역할: ComMap::CreateObjB. 회전판 소켓을 따르는 상자 강체\n형상: JSON 벡터(Scene+0x390)를 배율 없이 CreateBox에 전달 → 반폭\n강체: 형상 로컬 위치0·회전항등, RigidBodyCreateArg+0x90/94/98=0.5/0.5/0.9, +0xA8=2, +0xB4=0, +0xB8=0(운동종류0 = 정적 액터)\nlayer 인자 2(Route 질의 마스크 4와 구분). 고유 코드에 힘·속도·키네마틱 setter 없음"}
 {"a":"710000c120","t":"pre","c":"형상 로컬 위치0·회전항등, JSON 크기 벡터 그대로(반폭)"}
 {"a":"710000c2e0","t":"eol","c":"RigidBodyCreateArg+0x90/94/98=0.5/0.5/0.9, +0xA8=2, +0xB4=0, +0xB8=0 (운동종류0 정적)"}
-{"a":"710000c500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObjC. Box halfExtents (1.6,10,0.8), shape local position 0·quat identity\nAttachment pos1/rot1/scale0(소켓 Euler XYZ 회전 포함), RigidArg layer2/motion0/detection0, friction .5·.5, restitution .9 → 부착으로 포즈가 갱신되는 Static\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2\n역할: ComMap::CreateObjC. CreateObjB와 같은 상자 강체 생성(Scene+0x39C 반폭, Arg 값 동일)\n---\nmg0106::ComMap::CreateObjC()"}
-{"a":"710000cc70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObjD. Box halfExtents (2.8,10,0.8), shape local position 0·quat identity\nAttachment pos1/rot1/scale0(소켓 Euler XYZ 회전 포함), RigidArg layer2/motion0/detection0, friction .5·.5, restitution .9 → 부착으로 포즈가 갱신되는 Static\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2\n역할: ComMap::CreateObjD. CreateObjB와 같은 상자 강체 생성(Scene+0x3A8 반폭, Arg 값 동일)\n---\nmg0106::ComMap::CreateObjD()"}
-{"a":"710000d3d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2·4.2\n역할: ComMap::CreateObjE (멍멍)\n형상: 캡슐 반지름 1.3·길이 인자 2.0, 태그 ObjE\n모션 속도 1.2/1.3/1.3, 등장 대기 2.1/1.4/0.4초(phase별, UpdateAnim에서 사용)\n---\nmg0106::ComMap::CreateObjE()"}
+{"a":"710000c500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObjC. Box halfExtents (1.6,10,0.8), shape local position 0·quat identity\nAttachment pos1/rot1/scale0(소켓 Euler XYZ 회전 포함), RigidArg layer2/motion0/detection0, friction .5·.5, restitution .9 → 부착으로 포즈가 갱신되는 Static\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2\n역할: ComMap::CreateObjC. CreateObjB와 같은 상자 강체 생성(Scene+0x39C 반폭, Arg 값 동일)"}
+{"a":"710000cc70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 ComMap::CreateObjD. Box halfExtents (2.8,10,0.8), shape local position 0·quat identity\nAttachment pos1/rot1/scale0(소켓 Euler XYZ 회전 포함), RigidArg layer2/motion0/detection0, friction .5·.5, restitution .9 → 부착으로 포즈가 갱신되는 Static\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2\n역할: ComMap::CreateObjD. CreateObjB와 같은 상자 강체 생성(Scene+0x3A8 반폭, Arg 값 동일)"}
+{"a":"710000d3d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2·4.2\n역할: ComMap::CreateObjE (멍멍)\n형상: 캡슐 반지름 1.3·길이 인자 2.0, 태그 ObjE\n모션 속도 1.2/1.3/1.3, 등장 대기 2.1/1.4/0.4초(phase별, UpdateAnim에서 사용)"}
 {"a":"710000e240","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [35], (void*)0>(char const (&) [35])"}
 {"a":"710000e420","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
 {"a":"710000e590","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [42], (void*)0>(char const (&) [42])"}
@@ -151,10 +151,10 @@
 {"a":"710000edb0","t":"plate","c":"mg0106::ComMap::DestroyObjD()"}
 {"a":"710000ee70","t":"plate","c":"mg0106::ComMap::DestroyObjE()"}
 {"a":"710000f010","t":"plate","c":"mg0106::ComMap::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"710000f0d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComMap::TickUpdate\n순서: 활성일 때 UpdateRotate→UpdateAnim→Route 각도·phase 전달→각 RouteNode.Update\n---\nmg0106::ComMap::TickUpdate()"}
+{"a":"710000f0d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComMap::TickUpdate\n순서: 활성일 때 UpdateRotate→UpdateAnim→Route 각도·phase 전달→각 RouteNode.Update"}
 {"a":"710000f170","t":"plate","c":"non-virtual thunk to mg0106::ComMap::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"710000f230","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.1\n역할: ComMap::UpdateRotate 회전판 회전\n계산: ω = clamp(ω + dt·accel[phase]·π/180, 0, maxSpeed[phase]·π/180); angle += dt·ω\n상수: maxSpeed 11.3/21.5/44.0 °/s, accel 6.0/3.3/3.9 °/s² (Scene+0x31C/+0x328)\n분기: angle ≥ 2π이면 초과분을 버리고 0, phase 0→1→2→2. phase 전환 때 ω 리셋 없음\n쓰는 필드: ComMap+0x1D0 phase, +0x1D8 누적 각도, +0x1DC 각속도\n부수 효과: 판 엔티티(+0xB8)에 SetRotation(quatY(angle))\n---\nmg0106::ComMap::UpdateRotate()"}
-{"a":"710000f4e0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.4\n역할: ComMap::UpdateAnim 장애물 애니\nBoo: pos_objA_teresa00 소켓 위치를 Entity.SetTranslation 후 ω+2π/period[phase]에 dt를 곱해 자체 회전. 슬롯0/1 속도 phase별 1.9/2.2/2.5\nBoo 대기: 주 모션 프레임 [0,60] 또는 [150,210]이면 AnimObj+0x3C f32 경과시간 < 2.5초 동안 주 모션 속도0·경과+=dt, 이후 phase 속도 복구. 구간 밖에서 경과 0\nBoo SE: 상승 루프 20<frame≤150, 하강 170<frame≤300에서 속도>0일 때 시작, 0<frame≤20·150<frame≤170에서 정지\n멍멍 상태: 0 ObjEInit→1 각도>−60° 대기→2 ObjWanwanStart 완료 대기→3 ObjEIn·ObjWanwanIn 시작·Mouth 예약→4 충돌 유효→5 마지막 10프레임부터 루프 SE 정지→6 ObjWanwanEnd 후 −90°<각도<−60°에서 0\n주의: 공용 슬롯 진행(f32(delta×60)×속도)과 이중 적용하지 않음\n[미확정] Boo 초기 SetFrame 요청의 300f 초과 정규화(공용 슬롯 규칙)\n---\nmg0106::ComMap::UpdateAnim()"}
+{"a":"710000f230","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.1\n역할: ComMap::UpdateRotate 회전판 회전\n계산: ω = clamp(ω + dt·accel[phase]·π/180, 0, maxSpeed[phase]·π/180); angle += dt·ω\n상수: maxSpeed 11.3/21.5/44.0 °/s, accel 6.0/3.3/3.9 °/s² (Scene+0x31C/+0x328)\n분기: angle ≥ 2π이면 초과분을 버리고 0, phase 0→1→2→2. phase 전환 때 ω 리셋 없음\n쓰는 필드: ComMap+0x1D0 phase, +0x1D8 누적 각도, +0x1DC 각속도\n부수 효과: 판 엔티티(+0xB8)에 SetRotation(quatY(angle))"}
+{"a":"710000f4e0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.4\n역할: ComMap::UpdateAnim 장애물 애니\nBoo: pos_objA_teresa00 소켓 위치를 Entity.SetTranslation 후 ω+2π/period[phase]에 dt를 곱해 자체 회전. 슬롯0/1 속도 phase별 1.9/2.2/2.5\nBoo 대기: 주 모션 프레임 [0,60] 또는 [150,210]이면 AnimObj+0x3C f32 경과시간 < 2.5초 동안 주 모션 속도0·경과+=dt, 이후 phase 속도 복구. 구간 밖에서 경과 0\nBoo SE: 상승 루프 20<frame≤150, 하강 170<frame≤300에서 속도>0일 때 시작, 0<frame≤20·150<frame≤170에서 정지\n멍멍 상태: 0 ObjEInit→1 각도>−60° 대기→2 ObjWanwanStart 완료 대기→3 ObjEIn·ObjWanwanIn 시작·Mouth 예약→4 충돌 유효→5 마지막 10프레임부터 루프 SE 정지→6 ObjWanwanEnd 후 −90°<각도<−60°에서 0\n주의: 공용 슬롯 진행(f32(delta×60)×속도)과 이중 적용하지 않음\n[미확정] Boo 초기 SetFrame 요청의 300f 초과 정규화(공용 슬롯 규칙)"}
 {"a":"710000fa6c","t":"pre","c":"Boo 대기 경과시간 AnimObj+0x3C는 f32(ldr/fadd/str s). 디컴파일 int 변환은 잘못된 타입 추론"}
 {"a":"710000fd00","t":"pre","c":"Boo 소켓 위치 Entity.SetTranslation 후 자체 Rotate"}
 {"a":"7100010c80","t":"plate","c":"mg0106::Route::Update(float, int)"}
@@ -163,12 +163,12 @@
 {"a":"71000110c0","t":"plate","c":"mg0106::Route::Route()"}
 {"a":"7100011280","t":"plate","c":"mg0106::Route::~Route()"}
 {"a":"7100011338","t":"plate","c":"mg0106::Route::~Route()"}
-{"a":"7100011360","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 RouteNode::Setup. CastShape로 0=빈 곳/1=ObjA/2=ObjE/3=기타 분류. Shape 등록 완료 전에 실행하지 않음\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: RouteNode::Setup. 100×5 표 노드마다 Physics.CastShape로 0 빈 곳 / 1 ObjA / 2 ObjE / 3 기타 기록\nRoute 분할: 각도 100개(간격 2π/100) × 반경 5개(8, 9.8, 11.6, 13.4, 15.2)\n---\nmg0106::RouteNode::Setup(float)"}
-{"a":"71000115ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: RouteNode::Update. 회전 좌표와 Boo 높이 갱신\n분기: 내려가면 방향1, 올라가면 0, 같은 높이면 이전 방향 유지\n---\nmg0106::RouteNode::Update(float)"}
-{"a":"71000118d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 Route::GetTargetRouteData(GetTarget). mask4 Ray 첫 hit ObjA 허용, E의 위쪽1 Sweep 등 게임 고유 규칙\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: Route::GetTargetRouteData\n선택: 현재보다 각도가 작은 가장 가까운 줄 j, 차이<1°이면 j−1(0이면 99)\n실패 시: 모든 단계 실패면 SyncRandMod(5)로 반경 k 선택\n---\nmg0106::Route::GetTargetRouteData(nn::util::Vector3f)"}
+{"a":"7100011360","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 RouteNode::Setup. CastShape로 0=빈 곳/1=ObjA/2=ObjE/3=기타 분류. Shape 등록 완료 전에 실행하지 않음\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: RouteNode::Setup. 100×5 표 노드마다 Physics.CastShape로 0 빈 곳 / 1 ObjA / 2 ObjE / 3 기타 기록\nRoute 분할: 각도 100개(간격 2π/100) × 반경 5개(8, 9.8, 11.6, 13.4, 15.2)"}
+{"a":"71000115ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: RouteNode::Update. 회전 좌표와 Boo 높이 갱신\n분기: 내려가면 방향1, 올라가면 0, 같은 높이면 이전 방향 유지"}
+{"a":"71000118d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §5\n역할: mg0106 Route::GetTargetRouteData(GetTarget). mask4 Ray 첫 hit ObjA 허용, E의 위쪽1 Sweep 등 게임 고유 규칙\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: Route::GetTargetRouteData\n선택: 현재보다 각도가 작은 가장 가까운 줄 j, 차이<1°이면 j−1(0이면 99)\n실패 시: 모든 단계 실패면 SyncRandMod(5)로 반경 k 선택"}
 {"a":"71000119ec","t":"eol","c":"모든 단계 실패 → SyncRandMod(5)로 k 선택"}
 {"a":"7100011a60","t":"plate","c":"mg0106::Route::GetTargetRouteID(nn::util::Vector3f)"}
-{"a":"7100011b60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: Route::GetTargetRouteNodeID 목표 노드 선택\n후보: 같은 반경 인덱스 k=0..4에서 j·j+1·j−1·j−2 검사(j−2는 j=0·1에서 98). 아래 단계에서 후보가 나오면 다음 단계로 가지 않음\n단계: 0 j,j+1,j−1,j−2 모두 / 1 j,j+1,j−1 / 2 j,j+1 / 3 j만 안전\n안전 조건: 빈 노드 안전. Boo는 하강 중·높이≤1.5일 때 j/j−1/j−2에서 안전, j+1은 빈 노드만. ObjE 줄은 저장 shape로 위쪽 1.0 CastShape(레이어 인자4) 무충돌이면 안전, 충돌이면 Boo 조건(j+1 제외)\n추가 조건: 플레이어→후보 CastRay(레이어4)가 없거나 첫 충돌 태그가 ObjA인 후보만\n선택: 단계 내 벡터 거리 최소, 엄격 < 비교라 동점은 먼저 검사한 k 유지\n점프 표: 0x7100048f56 = [0,10,18,23]. 디컴파일은 네 단계 switch를 하나로 지워 놓음\n---\nmg0106::Route::GetTargetRouteNodeID(int, nn::util::Vector3f)"}
+{"a":"7100011b60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: Route::GetTargetRouteNodeID 목표 노드 선택\n후보: 같은 반경 인덱스 k=0..4에서 j·j+1·j−1·j−2 검사(j−2는 j=0·1에서 98). 아래 단계에서 후보가 나오면 다음 단계로 가지 않음\n단계: 0 j,j+1,j−1,j−2 모두 / 1 j,j+1,j−1 / 2 j,j+1 / 3 j만 안전\n안전 조건: 빈 노드 안전. Boo는 하강 중·높이≤1.5일 때 j/j−1/j−2에서 안전, j+1은 빈 노드만. ObjE 줄은 저장 shape로 위쪽 1.0 CastShape(레이어 인자4) 무충돌이면 안전, 충돌이면 Boo 조건(j+1 제외)\n추가 조건: 플레이어→후보 CastRay(레이어4)가 없거나 첫 충돌 태그가 ObjA인 후보만\n선택: 단계 내 벡터 거리 최소, 엄격 < 비교라 동점은 먼저 검사한 k 유지\n점프 표: 0x7100048f56 = [0,10,18,23]. 디컴파일은 네 단계 switch를 하나로 지워 놓음"}
 {"a":"71000128d8","t":"pre","c":"단계 switch 분기 시작(점프 표 0x7100048f56=[0,10,18,23]); 후보가 나오면 다음 단계 안 감"}
 {"a":"7100012958","t":"eol","c":"단계 switch 분기 끝"}
 {"a":"7100012ac8","t":"plate","c":"mg0106::RouteNode::IsValid(int)"}
@@ -183,7 +183,7 @@
 {"a":"7100012f78","t":"plate","c":"bq::ComponentTemplate<mg0106::ComMap, nn::bezel::Component>::DestroyComponentImpl()"}
 {"a":"7100012fb8","t":"plate","c":"mg0106::ComMap::_internalGetTickMessageBitFlagSetImpl() const"}
 {"a":"7100012fc8","t":"plate","c":"mg0106::ComMap::_internalGetComponentNameHashImpl() const"}
-{"a":"7100012fdc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComMap 메시지 우선순위 0x80 반환\n---\nmg0106::ComMap::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"7100012fdc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComMap 메시지 우선순위 0x80 반환"}
 {"a":"7100012fe4","t":"plate","c":"non-virtual thunk to mg0106::ComMap::NnDetailBezelGetTypeDesc() const"}
 {"a":"7100012ff0","t":"plate","c":"non-virtual thunk to mg0106::ComMap::NnDetailBezelGetThisPtr()"}
 {"a":"7100012ff8","t":"plate","c":"non-virtual thunk to mg0106::ComMap::NnDetailBezelGetThisPtrConst() const"}
@@ -280,7 +280,7 @@
 {"a":"7100017494","t":"plate","c":"mg0106::ComNpc::GameInit()"}
 {"a":"71000174a0","t":"plate","c":"mg0106::NpcManager::OpeningSkip()"}
 {"a":"71000177e4","t":"plate","c":"mg0106::ComNpc::OpeningSkip()"}
-{"a":"71000177f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComNpc 생성자. 전기 NPC ID 0x2B, 공용 co_idle00, 배경 pos_bilikyu0… 소켓에 배치. 경계는 0·2 사용\n---\nmg0106::ComNpc::ComNpc(nn::bezel::HandlePtr<nn::bezel::Entity> const&, int)"}
+{"a":"71000177f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComNpc 생성자. 전기 NPC ID 0x2B, 공용 co_idle00, 배경 pos_bilikyu0… 소켓에 배치. 경계는 0·2 사용"}
 {"a":"7100017b70","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID, (void*)0>(bq::NonPlayerCharacterID&&)"}
 {"a":"7100017d50","t":"plate","c":"mg0106::ComNpc::~ComNpc()"}
 {"a":"7100017e20","t":"plate","c":"non-virtual thunk to mg0106::ComNpc::~ComNpc()"}
@@ -312,9 +312,9 @@
 {"a":"7100018770","t":"plate","c":"mg0106::PlayerManager::Destroy()"}
 {"a":"7100018828","t":"plate","c":"mg0106::PlayerManager::~PlayerManager()"}
 {"a":"7100018850","t":"plate","c":"nn::bezel::WeakHandle<mg0106::ComPlayer> nn::bezel::Entity::AddComponent<mg0106::ComPlayer, bex::PlayerID, int&, (void*)0>(bex::PlayerID&&, int&)"}
-{"a":"7100018a30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: PlayerManager::Update 탈락 순위 반영\n계산: 시작에서 탈락자 총수 D를 셈. 새 탈락자 모두 rank = 4−D(0이 1위), 같은 갱신 탈락자 공동 순위, 섞기 없음\n일반 대전 D=3: 마지막 생존자 rank=0·winLose=1. 전원 새로 탈락하면 전원 rank=3·winLose=2. 그 외 탈락자 winLose=0(D=4이면 1을 쓰는 중간 분기 있음)\n---\nmg0106::PlayerManager::Update()"}
+{"a":"7100018a30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: PlayerManager::Update 탈락 순위 반영\n계산: 시작에서 탈락자 총수 D를 셈. 새 탈락자 모두 rank = 4−D(0이 1위), 같은 갱신 탈락자 공동 순위, 섞기 없음\n일반 대전 D=3: 마지막 생존자 rank=0·winLose=1. 전원 새로 탈락하면 전원 rank=3·winLose=2. 그 외 탈락자 winLose=0(D=4이면 1을 쓰는 중간 분기 있음)"}
 {"a":"7100018ff0","t":"plate","c":"mg0106::PlayerManager::GetEndCnt() const"}
-{"a":"7100019128","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: ComPlayer::TimeRecord (엔들리스)\n처리: 탈락 순간 또는 생존 종료 시 카운트업 현재값을 ComUiStatus::SetTime·MGRecorder::SetPlayerRecord로 기록\n---\nmg0106::ComPlayer::TimeRecord()"}
+{"a":"7100019128","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: ComPlayer::TimeRecord (엔들리스)\n처리: 탈락 순간 또는 생존 종료 시 카운트업 현재값을 ComUiStatus::SetTime·MGRecorder::SetPlayerRecord로 기록"}
 {"a":"7100019250","t":"plate","c":"mg0106::PlayerManager::SceneInit()"}
 {"a":"7100019380","t":"plate","c":"mg0106::ComPlayer::SceneInit()"}
 {"a":"71000196f0","t":"plate","c":"mg0106::PlayerManager::GameInit()"}
@@ -324,41 +324,41 @@
 {"a":"7100019e30","t":"plate","c":"mg0106::PlayerManager::OpeningSkip()"}
 {"a":"7100019f60","t":"plate","c":"mg0106::ComPlayer::OpeningSkip()"}
 {"a":"710001a140","t":"plate","c":"mg0106::PlayerManager::GameStart()"}
-{"a":"710001a270","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: ComPlayer::GameStart. 입력 켜기, 위치·방향 초기화, 탈락 플래그 0\n---\nmg0106::ComPlayer::GameStart()"}
+{"a":"710001a270","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: ComPlayer::GameStart. 입력 켜기, 위치·방향 초기화, 탈락 플래그 0"}
 {"a":"710001a6c0","t":"plate","c":"mg0106::PlayerManager::GameEnd()"}
 {"a":"710001a7f0","t":"plate","c":"mg0106::ComPlayer::GameEnd()"}
-{"a":"710001aa40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: PlayerManager::GameFinish\n처리: 아직 결과가 없는 생존자 rank=0, winLose=1(시간 종료 시 여러 명이면 모두 승리). 공용 상태 UI/MGMgr로 반영\n---\nmg0106::PlayerManager::GameFinish()"}
+{"a":"710001aa40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §5\n역할: PlayerManager::GameFinish\n처리: 아직 결과가 없는 생존자 rank=0, winLose=1(시간 종료 시 여러 명이면 모두 승리). 공용 상태 UI/MGMgr로 반영"}
 {"a":"710001abfc","t":"plate","c":"mg0106::ComPlayer::GameFinish()"}
 {"a":"710001acb0","t":"plate","c":"mg0106::PlayerManager::GameEndingBefore()"}
 {"a":"710001add8","t":"plate","c":"mg0106::ComPlayer::GameEndingBefore()"}
 {"a":"710001adf0","t":"plate","c":"mg0106::PlayerManager::GameEnding()"}
-{"a":"710001af20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComPlayer::GameEnding. 생존자만 Win00·카메라 바라보기 호출\n---\nmg0106::ComPlayer::GameEnding()"}
+{"a":"710001af20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: ComPlayer::GameEnding. 생존자만 Win00·카메라 바라보기 호출"}
 {"a":"710001b170","t":"plate","c":"mg0106::PlayerManager::PlayLookoutAnimation()"}
 {"a":"710001b2a0","t":"plate","c":"mg0106::ComPlayer::PlayLookoutAnimation()"}
 {"a":"710001b410","t":"plate","c":"mg0106::PlayerManager::PlaySurpriseAnimation()"}
 {"a":"710001b540","t":"plate","c":"mg0106::ComPlayer::PlaySurpriseAnimation()"}
 {"a":"710001b720","t":"plate","c":"mg0106::PlayerManager::IsEnd() const"}
 {"a":"710001b870","t":"plate","c":"mg0106::PlayerManager::GetWinLose() const"}
-{"a":"710001b9c0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.4\n역할: mg0106 ComPlayer::ComPlayer. PCIndividualScale 값, 캐릭터ID13은 XYZ=.8로 대체해 ComActor.SetScale에 전달\n[미확정] ActorParam.json(ModelScale/ColRadius .8)의 공용 소비·최종 형상\n\n[미확정] 2026-10-11 / md: web/docs/engine/17_actor.md §4.2·11.3·11.4\n역할: mg0106 ComPlayer::ComPlayer. 전용 ActorParam.json ModelScale=.8/ColRadius=.8 근거 주소\n[미확정] ColRadius→HitShape consumer·최종 capsule 적용(R26)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.2·7·8\n역할: ComPlayer 생성자\n플레이어 초기 위치: 슬롯 i=0..3에서 대략 (0,0,9+2i), x는 cos(π/2) 잔차 약 −4.37e−8 포함\nu(+0x80)=(0,0,0)\n캐릭터별 PCIndividualScale 적용, ID0xD에 0.8 보정\nGroundedTest 켬, 마스크 0x6을 그대로 MapCollisionLayerBit에 저장(1<<6 변환 없음)\n---\nmg0106::ComPlayer::ComPlayer(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, int)"}
+{"a":"710001b9c0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.4\n역할: mg0106 ComPlayer::ComPlayer. PCIndividualScale 값, 캐릭터ID13은 XYZ=.8로 대체해 ComActor.SetScale에 전달\n[미확정] ActorParam.json(ModelScale/ColRadius .8)의 공용 소비·최종 형상\n\n[미확정] 2026-10-11 / md: web/docs/engine/17_actor.md §4.2·11.3·11.4\n역할: mg0106 ComPlayer::ComPlayer. 전용 ActorParam.json ModelScale=.8/ColRadius=.8 근거 주소\n[미확정] ColRadius→HitShape consumer·최종 capsule 적용(R26)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.2·7·8\n역할: ComPlayer 생성자\n플레이어 초기 위치: 슬롯 i=0..3에서 대략 (0,0,9+2i), x는 cos(π/2) 잔차 약 −4.37e−8 포함\nu(+0x80)=(0,0,0)\n캐릭터별 PCIndividualScale 적용, ID0xD에 0.8 보정\nGroundedTest 켬, 마스크 0x6을 그대로 MapCollisionLayerBit에 저장(1<<6 변환 없음)"}
 {"a":"710001bcd0","t":"eol","c":"GroundedTest 켬"}
 {"a":"710001bd68","t":"eol","c":"MapCollisionLayerBit = 0x6 그대로(1<<6 아님)"}
 {"a":"710001c100","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID&, bq::MatterType, (void*)0>(bex::PlayerID&, bq::MatterType&&)"}
-{"a":"710001c2dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.3\n역할: ComPlayer::ActionElectric. co_electric00 재생\n---\nmg0106::ComPlayer::ActionElectric(actor::ActionContext const&)"}
+{"a":"710001c2dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.3\n역할: ComPlayer::ActionElectric. co_electric00 재생"}
 {"a":"710001c3b0","t":"plate","c":"mg0106::CameraManager::GetCamera()"}
-{"a":"710001c4a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0106 ComPlayer::ReceiveMessageImpl. UpdateParam→UpdatePlayer→UpdateCom 순\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComPlayer::ReceiveMessageImpl\n분기: TickUpdate 메시지 0x5f454e00이고 +0xAD가 0일 때 UpdateParam→UpdatePlayer→UpdateCom\n---\nmg0106::ComPlayer::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"710001c4a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0106 ComPlayer::ReceiveMessageImpl. UpdateParam→UpdatePlayer→UpdateCom 순\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComPlayer::ReceiveMessageImpl\n분기: TickUpdate 메시지 0x5f454e00이고 +0xAD가 0일 때 UpdateParam→UpdatePlayer→UpdateCom"}
 {"a":"710001c500","t":"plate","c":"mg0106::ComPlayer::TickUpdate()"}
 {"a":"710001c540","t":"plate","c":"non-virtual thunk to mg0106::ComPlayer::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"710001c5a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: ComPlayer::UpdateParam CPU 최초 1회 초기화\n난수 순서: JumpInterval+U(0,.2), JumpThreshold+U(0,.2), MoveInterval+U(0,.2), 첫 대기 U(0,1), MoveArea+U(0,10). 모두 SyncRandRangeF. JumpLength는 그대로\nJumpThreshold는 확률이 아니라 낮은 Boo 접촉 요청의 높이 비교\n---\nmg0106::ComPlayer::UpdateParam()"}
-{"a":"710001c8c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §4.3\n역할: mg0106 Player::UpdatePlayer의 게임 고유 carry. y≤0에서 회전량 −ω·dt로 플레이어 위치와 heading 회전, y>0이면 미적용\nB/C/D 충돌 동기화와 별도로 구현해야 중복 carry가 생기지 않음\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §1·8.2·8.4\n역할: mg0106 ComPlayer::UpdatePlayer. 회전판 carry(게임 코드의 위치 작성)\n계산: y≤0이면 δ=−ω·dt, x'=x cosδ−z sinδ, z'=z cosδ+x sinδ, y'=0으로 위치와 heading 회전. y>0이면 적용 안 함\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\nNRO 고유 계산: 회전판 carry(y≤0)·Boo 순차 push/1.4\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2·6.1·6.2\n역할: ComPlayer::UpdatePlayer 플레이어 위치 보정\n순서: 생존·입력 활성일 때 판 이동→식1 Boo 밀어냄→식2 멍멍 보정→식3 반경 제한→FX float(bv_mg0106_elec_distance=θ/β)→UpdateAnim→UpdateAction\n판 이동: y≤0일 때 δ=−ω·dt로 (x cosδ−z sinδ, 0, z cosδ+x sinδ), 방향도 Y 회전. y>0이면 적용 안 함\n식1: Boo i 오름차순·k=0..9: c=(b.x, b.y+3.5·0.25−0.5k, b.z), v=p−c, d=|v|. d<1.4이면 h=(d>0?1/d:d), p←p+v·h·(1.4−d), 즉시 SetPosition. b.y≤JumpThreshold(+0xC0)이면 +0xD8=1. dt 없음\n식2: θ=atan2(p.x,p.z), φ=atan2(q.x,q.z), Δ=θ−φ(정규화 없음), d=|q−(p.x,0,p.z)|. 멍멍 상태4·d<3·|Δ|·180/π<3이면 γ=(Δ<0?+1.5:−1.5)·π/180, p←(p.x cosγ−p.z sinγ, p.y, p.z cosγ+p.x sinγ), SetPosition\n식3: r=|p|(y 포함). 8≤r≤16 밖이면 p←normalizeOrZero(p)·clamp(r,8,16), SetPosition\n---\nmg0106::ComPlayer::UpdatePlayer()"}
+{"a":"710001c5a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: ComPlayer::UpdateParam CPU 최초 1회 초기화\n난수 순서: JumpInterval+U(0,.2), JumpThreshold+U(0,.2), MoveInterval+U(0,.2), 첫 대기 U(0,1), MoveArea+U(0,10). 모두 SyncRandRangeF. JumpLength는 그대로\nJumpThreshold는 확률이 아니라 낮은 Boo 접촉 요청의 높이 비교"}
+{"a":"710001c8c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §4.3\n역할: mg0106 Player::UpdatePlayer의 게임 고유 carry. y≤0에서 회전량 −ω·dt로 플레이어 위치와 heading 회전, y>0이면 미적용\nB/C/D 충돌 동기화와 별도로 구현해야 중복 carry가 생기지 않음\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §1·8.2·8.4\n역할: mg0106 ComPlayer::UpdatePlayer. 회전판 carry(게임 코드의 위치 작성)\n계산: y≤0이면 δ=−ω·dt, x'=x cosδ−z sinδ, z'=z cosδ+x sinδ, y'=0으로 위치와 heading 회전. y>0이면 적용 안 함\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\nNRO 고유 계산: 회전판 carry(y≤0)·Boo 순차 push/1.4\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2·6.1·6.2\n역할: ComPlayer::UpdatePlayer 플레이어 위치 보정\n순서: 생존·입력 활성일 때 판 이동→식1 Boo 밀어냄→식2 멍멍 보정→식3 반경 제한→FX float(bv_mg0106_elec_distance=θ/β)→UpdateAnim→UpdateAction\n판 이동: y≤0일 때 δ=−ω·dt로 (x cosδ−z sinδ, 0, z cosδ+x sinδ), 방향도 Y 회전. y>0이면 적용 안 함\n식1: Boo i 오름차순·k=0..9: c=(b.x, b.y+3.5·0.25−0.5k, b.z), v=p−c, d=|v|. d<1.4이면 h=(d>0?1/d:d), p←p+v·h·(1.4−d), 즉시 SetPosition. b.y≤JumpThreshold(+0xC0)이면 +0xD8=1. dt 없음\n식2: θ=atan2(p.x,p.z), φ=atan2(q.x,q.z), Δ=θ−φ(정규화 없음), d=|q−(p.x,0,p.z)|. 멍멍 상태4·d<3·|Δ|·180/π<3이면 γ=(Δ<0?+1.5:−1.5)·π/180, p←(p.x cosγ−p.z sinγ, p.y, p.z cosγ+p.x sinγ), SetPosition\n식3: r=|p|(y 포함). 8≤r≤16 밖이면 p←normalizeOrZero(p)·clamp(r,8,16), SetPosition"}
 {"a":"710001cd0c","t":"pre","c":"식1 Boo 밀어냄 시작: 샘플 k=0..9, d<1.4이면 p+=v/d·(1.4−d)"}
 {"a":"710001ce20","t":"pre","c":"식2 적용: γ=±1.5° 회전, SetPosition"}
 {"a":"710001cf1c","t":"pre","c":"식2 계산: θ/φ atan2(x,z), d=|q−(p.x,0,p.z)|, 조건 d<3·|Δ|<3°"}
 {"a":"710001cf80","t":"pre","c":"식3 영역 제한: r=|p|, clamp(r,8,16)"}
-{"a":"710001d100","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n감사 근거(§2 CPU 전략): mg0106 UpdateCom — NRO 고유\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: ComPlayer::UpdateCom CPU 입력(생존·활성 CPU만)\n목표: 매번 Route.GetTargetRouteData. θ 플레이어 각도, β Bilikyu[2] 각도, area 보정 MoveArea\n상태0 대기: 스틱0, 대기시간+=dt. (첫 이동 전 && time>첫대기) || time>MoveInterval 이며 θ>β+(area+10)°이면 1\n상태1 이동: 목표−현재 정규화 → 스틱 (−dir.z, dir.x). θ<β+area°이면 0. 그 밖에서 y≤0이고 +0xD8이면 A trigger=1·hold=0, 점프 시간0, 상태2\n상태2 점프 유지: θ>β+10°일 때만 목표 방향(그 밖 스틱0), 크기 JumpLength. trigger=0, time<JumpInterval이면 A hold=1, 만료하면 hold=0·대기시간0·상태0\n필드: +0xB0 상태, +0xB4 첫 이동 완료, +0xB8 점프 시간, +0xC8 대기 시간, +0xD8 낮은 Boo 접촉 요청\n---\nmg0106::ComPlayer::UpdateCom()"}
+{"a":"710001d100","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n감사 근거(§2 CPU 전략): mg0106 UpdateCom — NRO 고유\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.5\n역할: ComPlayer::UpdateCom CPU 입력(생존·활성 CPU만)\n목표: 매번 Route.GetTargetRouteData. θ 플레이어 각도, β Bilikyu[2] 각도, area 보정 MoveArea\n상태0 대기: 스틱0, 대기시간+=dt. (첫 이동 전 && time>첫대기) || time>MoveInterval 이며 θ>β+(area+10)°이면 1\n상태1 이동: 목표−현재 정규화 → 스틱 (−dir.z, dir.x). θ<β+area°이면 0. 그 밖에서 y≤0이고 +0xD8이면 A trigger=1·hold=0, 점프 시간0, 상태2\n상태2 점프 유지: θ>β+10°일 때만 목표 방향(그 밖 스틱0), 크기 JumpLength. trigger=0, time<JumpInterval이면 A hold=1, 만료하면 hold=0·대기시간0·상태0\n필드: +0xB0 상태, +0xB4 첫 이동 완료, +0xB8 점프 시간, +0xC8 대기 시간, +0xD8 낮은 Boo 접촉 요청"}
 {"a":"710001d480","t":"pre","c":"CPU 버튼1·스틱 축 (−dir.z, dir.x)·JumpLength 곱 확인 구간"}
 {"a":"710001d5f0","t":"plate","c":"mg0106::NpcManager::GetBilikyu(int)"}
 {"a":"710001d740","t":"plate","c":"mg0106::ComPlayer::UpdateAnim()"}
-{"a":"710001d940","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.3\n역할: ComPlayer::UpdateAction 감전·탈락·퇴장\n판정: 입력 활성·생존자, θ=atan2(player.x,z), α=Bilikyu[0] 각도, β=Bilikyu[2] 각도. 안전 조건 β<θ<α(경계 같음도 탈락)\n탈락: +0xAE=1, 액터 충돌 플래그(+0x28) 해제, Electric 액션·입력 끄기·VB_MG0106_ELEC_WAVE 중지\n식4 퇴장: p₀(+0x60)=감전 순간 위치, D(+0x70)=t−p₀, t=(−8.74227794e−7,0,20)(0x7100048ed0). u(+0x80)는 생성자 0, 진입 때 재설정 없음\n식4: actor.y<0이면 건너뜀. L=|D|, n=normalizeOrZero(D), u.x+=20·n.x·dt, u.z+=20·n.z·dt(f32), h=√(u.x²+u.z²), a=(D.y−tan45°·L)/L², p=(p₀.x+u.x, p₀.y+tan45°·h+a·h², p₀.z+u.z), SetPosition\n부수: 탈락을 세운 같은 호출에서 첫 변위 적용. +0xAE가 켜져 있으면 +0xA8이 꺼져도 계속. L=0 보호 없음\n---\nmg0106::ComPlayer::UpdateAction()"}
+{"a":"710001d940","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.3\n역할: ComPlayer::UpdateAction 감전·탈락·퇴장\n판정: 입력 활성·생존자, θ=atan2(player.x,z), α=Bilikyu[0] 각도, β=Bilikyu[2] 각도. 안전 조건 β<θ<α(경계 같음도 탈락)\n탈락: +0xAE=1, 액터 충돌 플래그(+0x28) 해제, Electric 액션·입력 끄기·VB_MG0106_ELEC_WAVE 중지\n식4 퇴장: p₀(+0x60)=감전 순간 위치, D(+0x70)=t−p₀, t=(−8.74227794e−7,0,20)(0x7100048ed0). u(+0x80)는 생성자 0, 진입 때 재설정 없음\n식4: actor.y<0이면 건너뜀. L=|D|, n=normalizeOrZero(D), u.x+=20·n.x·dt, u.z+=20·n.z·dt(f32), h=√(u.x²+u.z²), a=(D.y−tan45°·L)/L², p=(p₀.x+u.x, p₀.y+tan45°·h+a·h², p₀.z+u.z), SetPosition\n부수: 탈락을 세운 같은 호출에서 첫 변위 적용. +0xAE가 켜져 있으면 +0xA8이 꺼져도 계속. L=0 보호 없음"}
 {"a":"710001dc14","t":"pre","c":"식4 퇴장 포물선: u+=20·n·dt, y=p₀.y+tan45°·h+a·h²"}
 {"a":"710001de00","t":"pre","c":"감전 초기화: p₀(+0x60)=현재 위치, D(+0x70)=t−p₀"}
 {"a":"710001de30","t":"plate","c":"mg0106::ComPlayer::Debug()"}
@@ -369,7 +369,7 @@
 {"a":"710001df20","t":"plate","c":"bq::ComponentTemplate<mg0106::ComPlayer, nn::bezel::Component>::DestroyComponentImpl()"}
 {"a":"710001df60","t":"plate","c":"mg0106::ComPlayer::_internalGetTickMessageBitFlagSetImpl() const"}
 {"a":"710001df70","t":"plate","c":"mg0106::ComPlayer::_internalGetComponentNameHashImpl() const"}
-{"a":"710001df84","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComPlayer 메시지 우선순위 0x80 반환\n---\nmg0106::ComPlayer::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"710001df84","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.2\n역할: ComPlayer 메시지 우선순위 0x80 반환"}
 {"a":"710001df8c","t":"plate","c":"non-virtual thunk to mg0106::ComPlayer::NnDetailBezelGetTypeDesc() const"}
 {"a":"710001df98","t":"plate","c":"non-virtual thunk to mg0106::ComPlayer::NnDetailBezelGetThisPtr()"}
 {"a":"710001dfa0","t":"plate","c":"non-virtual thunk to mg0106::ComPlayer::NnDetailBezelGetThisPtrConst() const"}
@@ -407,13 +407,13 @@
 {"a":"710001e798","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
 {"a":"710001e79c","t":"plate","c":"mg0106::Scene::Params::getStaticTypeinfo()"}
 {"a":"710001e878","t":"plate","c":"mg0106::Scene::Params::getPropertyList()"}
-{"a":"710001e8d8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1\n역할: Scene::Params::createInstance. 8바이트 객체 생성(게임 수치는 Scene 쪽 필드에 있음)\n---\nmg0106::Scene::Params::createInstance()"}
+{"a":"710001e8d8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1\n역할: Scene::Params::createInstance. 8바이트 객체 생성(게임 수치는 Scene 쪽 필드에 있음)"}
 {"a":"710001e900","t":"plate","c":"mg0106::Scene::Params::deleteInstance(void*)"}
-{"a":"710001e914","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1·4.2\n역할: Scene 생성자. 게임 수치 기본값 설정(Scene+0x31C 최고속도[3], +0x328 가속도[3], +0x380 Boo 높이 3.5, +0x388/+0x38C 캡슐 반지름, +0x390.. 상자 반폭, +0x3B4.. CPU 표)\n---\nmg0106::Scene::Scene()"}
+{"a":"710001e914","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1·4.2\n역할: Scene 생성자. 게임 수치 기본값 설정(Scene+0x31C 최고속도[3], +0x328 가속도[3], +0x380 Boo 높이 3.5, +0x388/+0x38C 캡슐 반지름, +0x390.. 상자 반폭, +0x3B4.. CPU 표)"}
 {"a":"710001ea7c","t":"plate","c":"mg0106::Scene::~Scene()"}
 {"a":"710001eac4","t":"plate","c":"mg0106::Scene::~Scene()"}
-{"a":"710001eae8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Scene::SyncedSetupGame. SetParams, 시작/종료 텔롭 설정, Sequence 생성\n---\nmg0106::Scene::SyncedSetupGame()"}
-{"a":"710001eb80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1·4.2\n역할: Scene::SetParams. MapParam·ComParam JSON을 이름으로 읽어 Scene 기본값을 덮어씀\n입력: MapParam(A 반지름 0.7, E 반지름 1.3, B/C/D 반폭 (0.8,10,0.8)/(1.6,10,0.8)/(2.8,10,0.8)), ComParam\nActorParam.json은 읽지 않음\n---\nmg0106::Scene::SetParams()"}
+{"a":"710001eae8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Scene::SyncedSetupGame. SetParams, 시작/종료 텔롭 설정, Sequence 생성"}
+{"a":"710001eb80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.1·4.2\n역할: Scene::SetParams. MapParam·ComParam JSON을 이름으로 읽어 Scene 기본값을 덮어씀\n입력: MapParam(A 반지름 0.7, E 반지름 1.3, B/C/D 반폭 (0.8,10,0.8)/(1.6,10,0.8)/(2.8,10,0.8)), ComParam\nActorParam.json은 읽지 않음"}
 {"a":"710001f22c","t":"plate","c":"mg0106::Scene::CleanupGame()"}
 {"a":"710001f24c","t":"plate","c":"mg0106::Scene::OnGameInit()"}
 {"a":"710001f254","t":"plate","c":"mg0106::Scene::OnGameInstInit()"}
@@ -427,7 +427,7 @@
 {"a":"710001f294","t":"plate","c":"mg0106::Scene::OnGameEnd()"}
 {"a":"710001f29c","t":"plate","c":"mg0106::Scene::OnGameFinish()"}
 {"a":"710001f2a4","t":"plate","c":"mg0106::Scene::OnGameFinishAfter()"}
-{"a":"710001f2b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1·7\n역할: Scene::OnEndingInit. MGResult에 플레이어 모델과 bg00을 넘기고 결과 콜백(@0x710001f8bc)으로 환경 교체\n---\nmg0106::Scene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"710001f2b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1·7\n역할: Scene::OnEndingInit. MGResult에 플레이어 모델과 bg00을 넘기고 결과 콜백(@0x710001f8bc)으로 환경 교체"}
 {"a":"710001f490","t":"plate","c":"mg0106::PlayerManager::GetPlayer(int)"}
 {"a":"710001f5f4","t":"plate","c":"mg0106::Scene::OnGameEndingBefore()"}
 {"a":"710001f5fc","t":"plate","c":"mg0106::Scene::OnGameEnding()"}
@@ -461,22 +461,22 @@
 {"a":"710001fbb0","t":"plate","c":"mg0106::Sequence::Sequence(mg0106::Scene*)"}
 {"a":"710001fd48","t":"plate","c":"mg0106::Sequence::~Sequence()"}
 {"a":"710001fe8c","t":"plate","c":"mg0106::Sequence::~Sequence()"}
-{"a":"710001feb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::SeqGameInit. 카메라→맵→NPC→플레이어 순서로 SceneInit\n---\nmg0106::Sequence::SeqGameInit()"}
+{"a":"710001feb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::SeqGameInit. 카메라→맵→NPC→플레이어 순서로 SceneInit"}
 {"a":"710001ff10","t":"plate","c":"mg0106::Sequence::SeqGameInstInit()"}
 {"a":"710001ff88","t":"plate","c":"mg0106::Sequence::SeqGameOpening()"}
-{"a":"71000200a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameOpeningSkip. 각 Manager OpeningSkip 호출. 별도 게임 루프를 만들지 않음\n---\nmg0106::Sequence::SeqGameOpeningSkip()"}
-{"a":"710002012c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameStartBefore. Map GameStartBefore(전기 FX·루프 SE)\n---\nmg0106::Sequence::SeqGameStartBefore()"}
-{"a":"7100020164","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameStart. GameTimerIn 호출(이 모듈에서 GameTimerIn은 빈 함수)\n---\nmg0106::Sequence::SeqGameStart()"}
-{"a":"710002019c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameStartAfter. GameMain을 FiberLite로 시작\n---\nmg0106::Sequence::SeqGameStartAfter()"}
+{"a":"71000200a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameOpeningSkip. 각 Manager OpeningSkip 호출. 별도 게임 루프를 만들지 않음"}
+{"a":"710002012c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameStartBefore. Map GameStartBefore(전기 FX·루프 SE)"}
+{"a":"7100020164","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameStart. GameTimerIn 호출(이 모듈에서 GameTimerIn은 빈 함수)"}
+{"a":"710002019c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: SeqGameStartAfter. GameMain을 FiberLite로 시작"}
 {"a":"710002029c","t":"plate","c":"mg0106::Sequence::SeqGameMain()"}
 {"a":"71000202b8","t":"plate","c":"mg0106::Sequence::SeqGameFinish()"}
 {"a":"71000203d0","t":"plate","c":"mg0106::Sequence::SeqGameFinishAfter()"}
-{"a":"71000203f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::Opening\n순서: op00 종료 대기 → lookout·op01 → dt 누적 2초 → 전기 시작·surprise → 2초 대기 → 각 Manager GameInit\n---\nmg0106::Sequence::Opening()"}
-{"a":"71000204e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1·3.2\n역할: Sequence::GameMain 게임 루프(파이버, 우선순위0, 흐름 파이버 뒤 등록)\n순서: Camera→Ui→Map→Player GameStart, 이후 Wait마다 PlayerManager::Update→IsGameEnd 반복\n3.2 타이밍: Entity 탈락 판정보다 앞서 실행되어 앞선 Tick까지의 탈락 플래그를 소비(공용 0x0E Scene→Fiber→Entity)\n종료 처리: Map GameEnd(회전·장애물 정지)→Player GameEnd(입력 중지·생존 시간 기록)→Ui GameEnd(타이머 정지), Sequence+0x0C=1\n---\nmg0106::Sequence::GameMain()"}
-{"a":"7100020588","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::IsGameEnd 종료 조건\n일반(flag::Check(1) 거짓): Timer.IsEndTimer 또는 PlayerManager.IsEnd(탈락 ≥3)\n엔들리스: CountUpTimer.IsCountStop 또는 탈락 4\n---\nmg0106::Sequence::IsGameEnd()"}
-{"a":"710002068c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::GameFinish\n순서: PlayerManager.GameFinish(생존자 결과) → 2초 → GameTimerOut(빈 함수) → 1초 → GameEndingBefore\n---\nmg0106::Sequence::GameFinish()"}
+{"a":"71000203f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::Opening\n순서: op00 종료 대기 → lookout·op01 → dt 누적 2초 → 전기 시작·surprise → 2초 대기 → 각 Manager GameInit"}
+{"a":"71000204e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1·3.2\n역할: Sequence::GameMain 게임 루프(파이버, 우선순위0, 흐름 파이버 뒤 등록)\n순서: Camera→Ui→Map→Player GameStart, 이후 Wait마다 PlayerManager::Update→IsGameEnd 반복\n3.2 타이밍: Entity 탈락 판정보다 앞서 실행되어 앞선 Tick까지의 탈락 플래그를 소비(공용 0x0E Scene→Fiber→Entity)\n종료 처리: Map GameEnd(회전·장애물 정지)→Player GameEnd(입력 중지·생존 시간 기록)→Ui GameEnd(타이머 정지), Sequence+0x0C=1"}
+{"a":"7100020588","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::IsGameEnd 종료 조건\n일반(flag::Check(1) 거짓): Timer.IsEndTimer 또는 PlayerManager.IsEnd(탈락 ≥3)\n엔들리스: CountUpTimer.IsCountStop 또는 탈락 4"}
+{"a":"710002068c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §3.1\n역할: Sequence::GameFinish\n순서: PlayerManager.GameFinish(생존자 결과) → 2초 → GameTimerOut(빈 함수) → 1초 → GameEndingBefore"}
 {"a":"710002083c","t":"plate","c":"mg0106::UiManager::UiManager()"}
-{"a":"71000208a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: UiManager::CreateStatus. 엔들리스에서만 ComUiStatus(type1, match0, place4) 생성, 참가 PlayerID별 시간0·score 비표시. 개별 뷰포트 연결 없음\n---\nmg0106::UiManager::CreateStatus()"}
+{"a":"71000208a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §7\n역할: UiManager::CreateStatus. 엔들리스에서만 ComUiStatus(type1, match0, place4) 생성, 참가 PlayerID별 시간0·score 비표시. 개별 뷰포트 연결 없음"}
 {"a":"7100020d34","t":"plate","c":"mg0106::UiManager::CreateTimer()"}
 {"a":"7100020e2c","t":"plate","c":"mg0106::UiManager::CreateCountUpTimer()"}
 {"a":"7100020f20","t":"plate","c":"mg0106::UiManager::~UiManager()"}

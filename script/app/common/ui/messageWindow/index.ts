@@ -185,6 +185,7 @@ export class MessageWindow implements MessageWindowAdapter {
   }
 
   /** FUN_71003175d0: 칸 보이기·애니(disable / cursor / normal)·정렬 */
+  /** @orig main:71003175d0 ref */
   private choiceOpen(cursor: number, items: ChoiceItem[]): void {
     const inst = this.cur?.inst;
     if (!inst) return;

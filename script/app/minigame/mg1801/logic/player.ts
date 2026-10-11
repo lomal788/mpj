@@ -66,6 +66,7 @@ export class Player {
   }
 
   /** 원본 Player::MyUpdate */
+  /** @orig mg1801:710000c9c0 ref */
   myUpdate(pads: Pads): void {
     const w = this.w;
     if (this.inputEnabled) {
@@ -127,6 +128,7 @@ export class Player {
   }
 
   /** 원본 Player::UpdateAttack */
+  /** @orig mg1801:710000cd10 ref */
   private updateAttack(): void {
     if (!this.swing) return;
     const w = this.w;
@@ -152,12 +154,14 @@ export class Player {
    * GetHeadTarget(레인)이 있으면 그 위치의 x 만 플레이어 엔티티 x 로 바꿔(@0x710000d26c str s0,[sp]) SetTargetLookAtPosition,
    * 없으면 SetTargetNone.
    */
+  /** @orig mg1801:710000d130 ref */
   private updateHeadControl(): void {
     const t = this.w.objectMan.getHeadTarget(this.lane);
     this.headTarget = t ? { x: this.pos.x, y: t.y, z: t.z } : null;
   }
 
   /** 원본 Player::Finish — 입력 끄기, 머리 SetTargetNone */
+  /** @orig mg1801:710000d580 ref */
   finish(): void {
     this.inputEnabled = false;
     this.headTarget = null;

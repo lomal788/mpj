@@ -130,7 +130,7 @@
 {"a":"710000cd20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mgm04::ComMotionQueue, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"710000cd28","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mgm04::ComMotionQueue, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
 {"a":"710000ce70","t":"plate","c":"nn::bezel::HandleSource<nn::bezel::Component>::Reset(nn::bezel::Component*)"}
-{"a":"710000d860","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.1, §6.6\n역할: 무작위 후보 ID 목록(GetRandTargetMinigameIds).\n필터: Available·Rule1(2VS2)·체감·이력 제외 → shuffle → 최대 요청수+1 을 남김. 후보 부족이면 history 초기화.\n난수: 후보 M>=2 이면 SyncRandMod M−1 회 호출.\n[미확정] 상한 인자가 C 에서 빠짐.\n---\nmgm04::GetRandTargetMinigameIds(int)"}
+{"a":"710000d860","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.1, §6.6\n역할: 무작위 후보 ID 목록(GetRandTargetMinigameIds).\n필터: Available·Rule1(2VS2)·체감·이력 제외 → shuffle → 최대 요청수+1 을 남김. 후보 부족이면 history 초기화.\n난수: 후보 M>=2 이면 SyncRandMod M−1 회 호출.\n[미확정] 상한 인자가 C 에서 빠짐."}
 {"a":"710000dad0","t":"plate","c":"mgm04::ToStringFillZero(int, int)"}
 {"a":"710000dc60","t":"plate","c":"mgm04::ToStringFillZero(char const*, int, int)"}
 {"a":"710000dd00","t":"plate","c":"mgm04::IsKoopa(bq::PlayerCharacterID)"}
@@ -249,15 +249,15 @@
 {"a":"7100014fd4","t":"plate","c":"mgm04::Scene::~Scene()"}
 {"a":"7100014ff8","t":"plate","c":"mgm04::Scene::PrepareLoadArchives()"}
 {"a":"7100015058","t":"plate","c":"mgm04::Scene::SetupGame()"}
-{"a":"71000150c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: mgm04 Scene 설정. 이어서 UpdateMgmWork → MinigameModeFlow.\n---\nmgm04::Scene::SyncedSetupGame()"}
+{"a":"71000150c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: mgm04 Scene 설정. 이어서 UpdateMgmWork → MinigameModeFlow."}
 {"a":"7100015a64","t":"plate","c":"mgm04::Scene::AttachPlayerToBoat(bq::TeamID, bool)"}
-{"a":"7100015c88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.6\n역할: 모드 Work 갱신(UpdateMgmWork).\n선택권: 뒤처진 팀. 동률이면 직전 단독 승리 팀의 반대 팀, 그 밖 Round>1 의 이전 선택팀·초반 기본 0. 선택팀 내 playerindex 는 0/1 교대.\n계산: 결과 code3(양팀 승리)은 양팀 승수 +1.\n---\nmgm04::Scene::UpdateMgmWork()"}
+{"a":"7100015c88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.6\n역할: 모드 Work 갱신(UpdateMgmWork).\n선택권: 뒤처진 팀. 동률이면 직전 단독 승리 팀의 반대 팀, 그 밖 Round>1 의 이전 선택팀·초반 기본 0. 선택팀 내 playerindex 는 0/1 교대.\n계산: 결과 code3(양팀 승리)은 양팀 승수 +1."}
 {"a":"7100015dc8","t":"plate","c":"mgm04::Scene::CleanupGame()"}
-{"a":"7100015f70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5, §10\n역할: 태그 매치 진행 흐름(MinigameModeFlow).\n분기: 양팀 승수<목표 이면 다음 게임, 어느 팀이든 승수>=목표 이면 최종. 양팀 무승리도 계속.\n§10 기대: target3, 승수[3,3] → 종료.\n---\nmgm04::Scene::MinigameModeFlow()"}
-{"a":"7100016190","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §7.1\n역할: 첫 회 흐름(FirstRoundFlow). 태그 목표 안내·업적 0x3f.\n---\nmgm04::Scene::FirstRoundFlow()"}
-{"a":"7100016330","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 결과 흐름 1단(ResultFlow_Cut01). 이어서 ResultFlow_Cut02 → SelectNextMgFlow.\n---\nmgm04::Scene::ResultFlow_Cut01()"}
-{"a":"7100016390","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §5, §7.1\n역할: 결과 흐름 2단(ResultFlow_Cut02). 결과 4패턴 연출.\n분기: 양팀 승수<target 이면 다음 게임, 어느 팀>=target 이면 최종.\n---\nmgm04::Scene::ResultFlow_Cut02()"}
-{"a":"7100016580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 다음 게임 선택 흐름.\n분기: Round<2 또는 RM 이면 룰렛, 그 밖은 선택창.\n---\nmgm04::Scene::SelectNextMgFlow()"}
+{"a":"7100015f70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5, §10\n역할: 태그 매치 진행 흐름(MinigameModeFlow).\n분기: 양팀 승수<목표 이면 다음 게임, 어느 팀이든 승수>=목표 이면 최종. 양팀 무승리도 계속.\n§10 기대: target3, 승수[3,3] → 종료."}
+{"a":"7100016190","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §7.1\n역할: 첫 회 흐름(FirstRoundFlow). 태그 목표 안내·업적 0x3f."}
+{"a":"7100016330","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 결과 흐름 1단(ResultFlow_Cut01). 이어서 ResultFlow_Cut02 → SelectNextMgFlow."}
+{"a":"7100016390","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §5, §7.1\n역할: 결과 흐름 2단(ResultFlow_Cut02). 결과 4패턴 연출.\n분기: 양팀 승수<target 이면 다음 게임, 어느 팀>=target 이면 최종."}
+{"a":"7100016580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 다음 게임 선택 흐름.\n분기: Round<2 또는 RM 이면 룰렛, 그 밖은 선택창."}
 {"a":"71000166f0","t":"plate","c":"mgm04::Scene::ResetWork()"}
 {"a":"71000168a0","t":"plate","c":"mgm04::Scene::FirstRountFlow_Initialize()"}
 {"a":"7100016aa0","t":"plate","c":"bq::MinigameModeScene::AddMessage(char const*)"}
@@ -273,7 +273,7 @@
 {"a":"7100017948","t":"plate","c":"mgm04::Scene::SelectNextMgFlow_Initialize()"}
 {"a":"7100017ae8","t":"plate","c":"mgm04::Scene::FadeIn(bq::WipeModule::WipeType, float)"}
 {"a":"7100017b50","t":"plate","c":"mgm04::Scene::SelectNextMgFlow_AddGuideCharaMessage()"}
-{"a":"7100018060","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 선택창에서 게임 선택·확정.\n흐름: 선택 ID AddHistory 뒤 필요할 때(NeedsClearMgHistory) InitHistory. 해제 뒤 직전 ID 유지 보장은 없음.\n---\nmgm04::Scene::SelectNextMgFlow_SelectAndDecideMg()"}
+{"a":"7100018060","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 선택창에서 게임 선택·확정.\n흐름: 선택 ID AddHistory 뒤 필요할 때(NeedsClearMgHistory) InitHistory. 해제 뒤 직전 ID 유지 보장은 없음."}
 {"a":"71000184d0","t":"plate","c":"mgm04::Scene::GetRankingMyDataFlow() const"}
 {"a":"710001858c","t":"plate","c":"mgm04::Scene::getInstanceTypeinfo() const"}
 {"a":"7100018668","t":"plate","c":"mgm04::Scene::GetSymbol() const"}
@@ -320,7 +320,7 @@
 {"a":"710001a77c","t":"plate","c":"mgm04::Scene::RM_ClearSessionAfter()"}
 {"a":"710001a79c","t":"plate","c":"mgm04::Scene::RM_SyncWonCountBegin()"}
 {"a":"710001a938","t":"plate","c":"mgm04::Scene::RM_SyncWonCountMain()"}
-{"a":"710001aa90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §6.6\n역할: 랜덤 매치 진행 흐름(RM_MinigameModeFlow). 매칭/연승·Entrance10 의 별도 경로.\n분기: 결과/재매칭 → 현재 flow flag 에 따라 continue 또는 Fade·RM HighScoreUpload·Entrance10.\n---\nmgm04::Scene::RM_MinigameModeFlow()"}
+{"a":"710001aa90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §6.6\n역할: 랜덤 매치 진행 흐름(RM_MinigameModeFlow). 매칭/연승·Entrance10 의 별도 경로.\n분기: 결과/재매칭 → 현재 flow flag 에 따라 continue 또는 Fade·RM HighScoreUpload·Entrance10."}
 {"a":"710001ad30","t":"plate","c":"mgm04::Scene::RM_SelectNextMgFlow()"}
 {"a":"710001ae40","t":"plate","c":"mgm04::Scene::RM_FirstStartFlow()"}
 {"a":"710001b01c","t":"plate","c":"mgm04::Scene::RM_ResultFlow_Cut01()"}
@@ -346,9 +346,9 @@
 {"a":"710001cdc8","t":"plate","c":"mgm04::TeamParamMgr::TeamParamMgr()"}
 {"a":"710001ce2c","t":"plate","c":"mgm04::TeamParamMgr::~TeamParamMgr()"}
 {"a":"710001ce4c","t":"plate","c":"mgm04::TeamParamMgr::~TeamParamMgr()"}
-{"a":"710001ce70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.6, §10\n역할: TeamParamMgr 설정(팀 승패·선택권).\n계산: 팀원 중 누구라도 WinLose1 이면 해당 팀 승리. code3 → 양팀 +1, code4 → 둘 다 +0.\n선택권: 뒤처진 팀, 동률이면 직전 단독 승리 팀의 반대, 그 밖 이전 선택팀·초반 0. 선택팀 내 playerindex 0/1 교대.\n---\nmgm04::TeamParamMgr::SyncedSetupGame()"}
+{"a":"710001ce70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.6, §10\n역할: TeamParamMgr 설정(팀 승패·선택권).\n계산: 팀원 중 누구라도 WinLose1 이면 해당 팀 승리. code3 → 양팀 +1, code4 → 둘 다 +0.\n선택권: 뒤처진 팀, 동률이면 직전 단독 승리 팀의 반대, 그 밖 이전 선택팀·초반 0. 선택팀 내 playerindex 0/1 교대."}
 {"a":"710001d1ac","t":"plate","c":"mgm04::TeamParamMgr::GetOperationTeamID() const"}
-{"a":"710001d260","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6\n역할: 팀 결과 code(GetMgResult). 1=A 팀만 승리·2=B 팀만·3=양팀·4=양팀 아님.\n---\nmgm04::TeamParamMgr::GetMgResult() const"}
+{"a":"710001d260","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6\n역할: 팀 결과 code(GetMgResult). 1=A 팀만 승리·2=B 팀만·3=양팀·4=양팀 아님."}
 {"a":"710001d568","t":"plate","c":"mgm04::TeamParamMgr::GetWonCount(bq::TeamID) const"}
 {"a":"710001d598","t":"plate","c":"mgm04::TeamParamMgr::GetSelectedMgTeamID(int, int) const"}
 {"a":"710001d614","t":"plate","c":"mgm04::TeamParamMgr::GetSelectedMgOrderID(bq::TeamID) const"}
@@ -377,22 +377,22 @@
 {"a":"710001e744","t":"plate","c":"mgm04::UILoading::IsEnd()"}
 {"a":"710001e754","t":"plate","c":"mgm04::UIMgr::SyncedSetupGame(int, mgm04::TargetWonCount, bool)"}
 {"a":"710001e864","t":"plate","c":"mgm04::UIMgr::SetSyncedWonCount(bq::TeamID)"}
-{"a":"710001e870","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI 설정. 후보 요청 4 → 최대 5(예비 1).\n---\nmgm04::UIMgRoulette::SyncedSetupGame(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
-{"a":"710001ed04","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI In. 추가 추첨 호출 없음.\n---\nmgm04::UIMgRoulette::In()"}
-{"a":"710001ed50","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI Update(4슬롯 표시·선택).\n난수: 후보 shuffle 뒤 SyncRandRangeF(1.0,1.33) 와 SyncRandRange(하한 0) 를 각각 1회 호출.\n흐름: 선택 index 는 회전 전에 정하고, f32 dt 를 누적해 대기를 0.07 씩 늘리며 표시를 돌린 뒤 후보[index] 를 최종 ID 로 쓴다.\n[미확정] 정수 상한 인자 누락 → 정확한 범위·MT 출력 소비 총수 미확정.\n---\nmgm04::UIMgRoulette::Update(std::function<void ()>)"}
-{"a":"710001f4b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI Decide. 추가 추첨 호출 없음.\n---\nmgm04::UIMgRoulette::Decide()"}
+{"a":"710001e870","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI 설정. 후보 요청 4 → 최대 5(예비 1)."}
+{"a":"710001ed04","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI In. 추가 추첨 호출 없음."}
+{"a":"710001ed50","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI Update(4슬롯 표시·선택).\n난수: 후보 shuffle 뒤 SyncRandRangeF(1.0,1.33) 와 SyncRandRange(하한 0) 를 각각 1회 호출.\n흐름: 선택 index 는 회전 전에 정하고, f32 dt 를 누적해 대기를 0.07 씩 늘리며 표시를 돌린 뒤 후보[index] 를 최종 ID 로 쓴다.\n[미확정] 정수 상한 인자 누락 → 정확한 범위·MT 출력 소비 총수 미확정."}
+{"a":"710001f4b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 UI Decide. 추가 추첨 호출 없음."}
 {"a":"710001f980","t":"plate","c":"bq::mgm::ComUiMinigameModeWindowCommon::SetPaneTextInsertMessage(char const*, char const*, char const*)"}
 {"a":"710001faa0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<char const*>(char const*)"}
 {"a":"710001fc10","t":"plate","c":"mgm04::UIMgRoulette::Out()"}
-{"a":"710001fc64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 룰렛 이력 해제 필요 판정. 후보<5 이면 true.\n§10 기대: 4 → true, 5 → false.\n---\nmgm04::UIMgRoulette::NeedsClearMgHistory() const"}
+{"a":"710001fc64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 룰렛 이력 해제 필요 판정. 후보<5 이면 true.\n§10 기대: 4 → true, 5 → false."}
 {"a":"710001fc78","t":"plate","c":"mgm04::UIMgRoulette::IsEndAnimation() const"}
 {"a":"710001fc88","t":"plate","c":"mgm04::UIMgRoulette::GetDecidedMinigameID() const"}
-{"a":"710001ffa0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 선택창 UI 설정. 요청 3 → 최대 4, 표시 3.\n---\nmgm04::UIMgSelector::SyncedSetupGame(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"710001ffa0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 선택창 UI 설정. 요청 3 → 최대 4, 표시 3."}
 {"a":"7100021e1c","t":"plate","c":"mgm04::UIMgSelector::In()"}
 {"a":"7100021e70","t":"plate","c":"mgm04::UIMgSelector::Update(std::function<void ()>)"}
 {"a":"710002280c","t":"plate","c":"mgm04::UIMgSelector::Decide()"}
 {"a":"7100022c10","t":"plate","c":"mgm04::UIMgSelector::Out()"}
-{"a":"7100022c74","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 선택창 이력 해제 필요 판정. 후보<4 이면 true.\n§10 기대: 3 → true, 4 → false.\n---\nmgm04::UIMgSelector::NeedsClearMgHistory() const"}
+{"a":"7100022c74","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 선택창 이력 해제 필요 판정. 후보<4 이면 true.\n§10 기대: 3 → true, 4 → false."}
 {"a":"7100022c88","t":"plate","c":"mgm04::UIMgSelector::IsEndAnimation() const"}
 {"a":"7100022c98","t":"plate","c":"mgm04::UIMgSelector::GetDecidedMinigameID() const"}
 {"a":"7100022ca0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}

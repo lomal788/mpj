@@ -233,6 +233,7 @@ export class OnlineView {
   }
 
   /** bq::ComUiDialogBox 크기 [판독 FUN_7100208240 @0x7100208240, online.md 9.3 정정 1~7] → 공용 layoutDialogBox(dialog_box.md 9.1) */
+  /** @orig main:7100208240 ref */
   private layoutDialog(l: Lay, n: number): void {
     const inst = this.inst[l];
     layoutDialogBox(inst, n, (path) => this.textBounds(l, path));

@@ -1,4 +1,4 @@
-{"a":"71000036a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §10.1\n역할: DummySymbolLink(linker 함수). 분석 단계 집계에만 포함.\n---\nmgmrs::Scene::DummySymbolLink(bool)"}
+{"a":"71000036a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §10.1\n역할: DummySymbolLink(linker 함수). 분석 단계 집계에만 포함."}
 {"a":"7100003700","t":"plate","c":"mgmrs::Scene::getStaticTypeinfo()"}
 {"a":"71000037dc","t":"plate","c":"mgmrs::Scene::getPropertyList()"}
 {"a":"710000383c","t":"plate","c":"mgmrs::Scene::createInstance()"}
@@ -9,15 +9,15 @@
 {"a":"7100003960","t":"plate","c":"mgmrs::Scene::Params::getPropertyList()"}
 {"a":"71000039c0","t":"plate","c":"mgmrs::Scene::Params::createInstance()"}
 {"a":"71000039e8","t":"plate","c":"mgmrs::Scene::Params::deleteInstance(void*)"}
-{"a":"71000039fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4, §4.3\n역할: mgmrs::Scene 생성자(크기 0x110). +0xe8 fiber 0, +0xf0/+0xf8/+0x100 loading UI 0, +0x108 timeout 30, +0x10c 조작자 CharacterID −1.\n---\nmgmrs::Scene::Scene()"}
+{"a":"71000039fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4, §4.3\n역할: mgmrs::Scene 생성자(크기 0x110). +0xe8 fiber 0, +0xf0/+0xf8/+0x100 loading UI 0, +0x108 timeout 30, +0x10c 조작자 CharacterID −1."}
 {"a":"7100003a44","t":"plate","c":"mgmrs::Scene::~Scene()"}
 {"a":"7100003a8c","t":"plate","c":"mgmrs::Scene::~Scene()"}
 {"a":"7100003ab0","t":"plate","c":"mgmrs::Scene::BeginScene()"}
-{"a":"7100003ab8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 준비(SetupGame). fade 비활성, Entity loading_ui, Parts.lyt 의 sys_tlp_loading_00.bflyt, order 0x9aff; sys_syncWait_dlg·icon normal·in; 조작자 char 를 +0x10c 에 저장.\n---\nmgmrs::Scene::SetupGame()"}
+{"a":"7100003ab8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 준비(SetupGame). fade 비활성, Entity loading_ui, Parts.lyt 의 sys_tlp_loading_00.bflyt, order 0x9aff; sys_syncWait_dlg·icon normal·in; 조작자 char 를 +0x10c 에 저장."}
 {"a":"7100003c80","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUi> nn::bezel::Entity::AddComponent<bq::ComUi, char const (&) [10], char const (&) [25], (void*)0>(char const (&) [10], char const (&) [25])"}
-{"a":"7100003e5c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.3\n역할: SyncedSetupGame — 재구성 진입(mgm01_freeplay §3.3). 게임 snapshot 증거 아님\n\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 동기 준비. RecreateSessionFiber(false, TeamID0, Scene timeout) 생성 → +0xe8.\n---\nmgmrs::Scene::SyncedSetupGame()"}
-{"a":"7100003ec8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 정리(CleanupGame). fiber 삭제; 조작자 현재 CharacterID 와 BaseCharacterID 를 저장한 char 로 복원.\n---\nmgmrs::Scene::CleanupGame()"}
-{"a":"7100003f80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.14.1\n역할: GameFlow(mgm01_freeplay §3.3·4.3·5.4 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 복구 대기(GameFlow). fiber 없으면 반환; StartSync 후 IsCompleted 까지 매 tick Wait.\n분기: fiber+0x40==−1(성공) → UI out, MainModule SetPause/CancelPause(인자 DAT_7100019ad0 상위 s32), RequestReturnScene. UI out 완료는 기다리지 않음.\n분기: 그 외(실패) → SessionFailedProcess 호출 후 계속 Wait.\n---\nmgmrs::Scene::GameFlow()"}
+{"a":"7100003e5c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.3\n역할: SyncedSetupGame — 재구성 진입(mgm01_freeplay §3.3). 게임 snapshot 증거 아님\n\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 동기 준비. RecreateSessionFiber(false, TeamID0, Scene timeout) 생성 → +0xe8."}
+{"a":"7100003ec8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 정리(CleanupGame). fiber 삭제; 조작자 현재 CharacterID 와 BaseCharacterID 를 저장한 char 로 복원."}
+{"a":"7100003f80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.14.1\n역할: GameFlow(mgm01_freeplay §3.3·4.3·5.4 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §5.4\n역할: 복구 대기(GameFlow). fiber 없으면 반환; StartSync 후 IsCompleted 까지 매 tick Wait.\n분기: fiber+0x40==−1(성공) → UI out, MainModule SetPause/CancelPause(인자 DAT_7100019ad0 상위 s32), RequestReturnScene. UI out 완료는 기다리지 않음.\n분기: 그 외(실패) → SessionFailedProcess 호출 후 계속 Wait."}
 {"a":"7100004068","t":"plate","c":"mgmrs::Scene::getInstanceTypeinfo() const"}
 {"a":"7100004144","t":"plate","c":"mgmrs::Scene::GetSymbol() const"}
 {"a":"7100004154","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}

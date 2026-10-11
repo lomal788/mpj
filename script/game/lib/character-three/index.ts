@@ -63,6 +63,7 @@ interface Sampled {
 const SHAPE_KEY = 'bex_limit_transit_shape';
 
 /** 노드 user data(glb extras.userData)의 전이 제한 [판독 FUN_710010aaf0: no_transit {0,0}, limit {0,v} — 둘 다면 limit] */
+/** @orig main:710010aaf0 ref */
 function boneLimit(o: THREE.Object3D): [number, number] {
   const ud = (o.userData?.userData ?? {}) as Record<string, { value?: unknown }>;
   let r: [number, number] = [0, FLT_MAX];

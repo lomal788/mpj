@@ -129,6 +129,7 @@ export class MessageFlow {
   }
 
   /** FUN_7100361170: IsEnd 까지 기다린 뒤 GetChoiceResult */
+  /** @orig main:7100361170 ref */
   *waitEnd(): Flow<number> {
     const w = this.w();
     while (!w.isEnd()) yield;

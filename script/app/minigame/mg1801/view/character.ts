@@ -531,6 +531,7 @@ export class CharacterActor {
    * 모드 2(Vector4 파라미터): 출력 = 모션 값 + (따라간 uv − 모션 값)·섞임비. 그 출력이 다음 프레임 따라가기의 출발(impl+0x100/+0x140).
    * 대상이 없거나 눈 시선이 꺼지면 uv 목표 = t_offset, 따라가기·섞임비 속도는 절반(섞임비는 0 쪽으로).
    */
+  /** @orig main:71001c5a58 ref */
   private applyEyes(info: MotionInfo, frame: number, look: LookState, steps: number): void {
     if (!this.eye) return;
     const matName = this.tpl.info.eyeMaterial ?? 'body_m';

@@ -142,6 +142,7 @@ export const SEC = {
 export const DT = f(1 / 60);
 
 /** 규칙 이름 FUN_71002f462c */
+/** @orig main:71002f462c ref */
 export function ruleName(i: LogicInput): string {
   if (i.isCoin) return 'Coin';
   if (i.isChara) return i.judgeType !== 0 ? 'Chara' : 'CharaRank';
@@ -152,6 +153,7 @@ export function ruleName(i: LogicInput): string {
 }
 
 /** 모드 이름 FUN_71002f4758 */
+/** @orig main:71002f4758 ref */
 export function modeName(i: LogicInput): string {
   if (i.gameRule === 9) return i.boardMode === 2 ? 'Quest' : i.playMode === 6 ? 'BossRush' : 'Normal';
   if (i.listId === 0x77) return 'Battle';
@@ -162,6 +164,7 @@ export function modeName(i: LogicInput): string {
 export const isTeamRule = (gameRule: number): boolean => gameRule - 1 >= 0 && gameRule - 1 < 2;
 
 /** 승·패·무 집계 FUN_71002f0ba0/4840/4a30 */
+/** @orig main:71002f0ba0 ref */
 export function counts(i: LogicInput): { win: number; lose: number; draw: number } {
   let win = 0;
   let lose = 0;
@@ -180,6 +183,7 @@ export function counts(i: LogicInput): { win: number; lose: number; draw: number
 }
 
 /** 패턴 고르기 FUN_71002ee230 */
+/** @orig main:71002ee230 ref */
 export function selectPattern(spec: LogicSpec, i: LogicInput): number {
   const rule = ruleName(i);
   const mode = modeName(i);
@@ -279,6 +283,7 @@ export function cameraName(spec: LogicSpec, row: ListRow, i: LogicInput, camIdx:
 }
 
 /** 텔롭 번호 +0x140 (FUN_71002f1870 [판독 ARM64]) */
+/** @orig main:71002f1870 ref */
 export function telopPlace(spec: LogicSpec, row: ListRow, i: LogicInput, reg: Registered, camIdx: number): string {
   let place = row.Telop_1;
   const nWin = counts(i).win;

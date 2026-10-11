@@ -91,6 +91,7 @@ export class RhythmClock {
    * 프레임 모델은 값이 아니라 "바뀌는 틱"만 원본과 같다(게임은 요청 때 값과 다른지만 본다 — FUN_7100426b8c·26d24):
    * 시작 전 −1, 0 마디부터 1(오프닝 SQ_BGM_RC_MGCMN_OP 의 G13 = 1 [데이터]), 요청한 곡이 접수되면 웹 대리 값 −(2 + 요청 순번)(원본 곡 ID 아님).
    */
+  /** @orig main:7100426b8c ref */
   get g12(): number {
     if (this.obs) return this.obs.globals[12];
     const t = this.masterTick;

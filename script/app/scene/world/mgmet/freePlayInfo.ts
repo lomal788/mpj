@@ -12,6 +12,7 @@ export class FreePlayInfo {
   }
 
   /** Impl::Setup mgmet @0x710006fa9c */
+  /** @orig mgmet:710006fa9c ref */
   setup(nickname: string, played: number): void {
     this.win.setText('x_name_host_00/x_name_00', nickname || 'im_guest00_name');
     this.win.setText('x_mg_00', 'mgmet_rule_ui_fp00');

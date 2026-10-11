@@ -86,6 +86,7 @@ export class Obj {
   }
 
   /** 원본 Obj::Entry(int 미사용, bool guide, int lane) */
+  /** @orig mg1801:7100007bd0 ref */
   entry(guide: boolean, lane: number): void {
     const n = this.cuts;
     this.pieceDx.fill(0);
@@ -145,6 +146,7 @@ export class Obj {
   }
 
   /** 원본 Obj::RecieveHit(lane, judge) */
+  /** @orig mg1801:710000849c ref */
   recieveHit(lane: number, judge: number): void {
     const k = lane - this.lane;
     if (k < 0 || k >= this.cuts) throw new Error(`mg1801: RecieveHit 범위 밖 lane=${lane} obj=${this.id}`);
@@ -160,6 +162,7 @@ export class Obj {
    *   → (elapsed < t4 && 박 바뀜) 'move' → SetTranslation(낙하 전에 계산한 표시 위치) → 회전 → CutObj → UpdateOutlineOnOff(true)
    * 반올림: 하강 분모는 fnmsub(한 번 반올림), 낙하 pos += vel·dt 는 fmul 뒤 fadd(두 번), 회전은 fmul 뒤 fadd(두 번).
    */
+  /** @orig mg1801:7100008a64 ref */
   update(): void {
     if (!this.active) return;
     const w = this.w;
@@ -232,6 +235,7 @@ export class Obj {
    * - 끄기: 보이는 중이면 점유를 풀고 숨긴 뒤 outlineGuide = 0. outlineShown 은 지우지 않는다(원본 그대로).
    *   안 보이는 중이면 아무것도 안 한다 — 그래서 막혀 있던 외곽선은 낙하 중에도 켜기를 다시 시도한다.
    */
+  /** @orig mg1801:7100008e40 ref */
   private updateOutlineOnOff(on: boolean): void {
     if (!this.outlineGuide) return;
     const place = this.w.outlinePlace;
@@ -252,6 +256,7 @@ export class Obj {
   }
 
   /** 원본 Obj::EntrySe — 물에 닿을 때 소리·물보라 */
+  /** @orig mg1801:7100009060 ref */
   private entrySe(): void {
     const n = this.cuts;
     let justCount = 0;
@@ -287,6 +292,7 @@ export class Obj {
   }
 
   /** 원본 Obj::CutObj — JUST 자리에서 조각을 가르고 돌린다 */
+  /** @orig mg1801:71000095f0 ref */
   private cutObj(): void {
     const n = this.cuts;
     const w = this.w;
@@ -329,6 +335,7 @@ export class Obj {
   }
 
   /** 원본 Obj::Stop — +0x170(active)·+0x171(outlineGuide) 를 함께 0 으로(16비트 쓰기), outlineShown 과 점유는 그대로 */
+  /** @orig mg1801:7100009480 ref */
   stop(): void {
     this.active = false;
     this.outlineGuide = false;

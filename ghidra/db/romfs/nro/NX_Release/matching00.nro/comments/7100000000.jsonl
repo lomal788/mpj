@@ -1,33 +1,33 @@
-{"a":"7100003798","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.2·9.4\n역할: 지역 NetworkManager 생성자\n동작: 자기 singleton·NetTransfer(group 0x2102, 인자 1)·listener·동기 수신기 생성\n필드: +0x28 오류 listener, +0x30 세션 listener, +0x38 NetMsgReceiverSync*\n---\nmatching00::NetworkManager::NetworkManager()"}
-{"a":"7100003a64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.2\n역할: 지역 NetworkManager 소멸자\n동작: session listener setter, 세션 잔존 시 SetAllListener 뒤 지역 자원 정리\n주의: Disconnect/LeaveSession/ClearSession 호출 없음\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §8\n역할: matching00::NetworkManager 소멸자. Disconnect/LeaveSession/ClearSession 호출 없음, 세션 잔존 시 SetAllListener\n---\nmatching00::NetworkManager::~NetworkManager()"}
-{"a":"7100003b74","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: CancelSessionEventListener — 전역 setter 호출\n[미확정] 해제 인자\n---\nmatching00::NetworkManager::CancelSessionEventListener()"}
+{"a":"7100003798","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.2·9.4\n역할: 지역 NetworkManager 생성자\n동작: 자기 singleton·NetTransfer(group 0x2102, 인자 1)·listener·동기 수신기 생성\n필드: +0x28 오류 listener, +0x30 세션 listener, +0x38 NetMsgReceiverSync*"}
+{"a":"7100003a64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.2\n역할: 지역 NetworkManager 소멸자\n동작: session listener setter, 세션 잔존 시 SetAllListener 뒤 지역 자원 정리\n주의: Disconnect/LeaveSession/ClearSession 호출 없음\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §8\n역할: matching00::NetworkManager 소멸자. Disconnect/LeaveSession/ClearSession 호출 없음, 세션 잔존 시 SetAllListener"}
+{"a":"7100003b74","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: CancelSessionEventListener — 전역 setter 호출\n[미확정] 해제 인자"}
 {"a":"7100003bac","t":"plate","c":"non-virtual thunk to matching00::NetworkManager::~NetworkManager()"}
 {"a":"7100003bb4","t":"plate","c":"matching00::NetworkManager::~NetworkManager()"}
 {"a":"7100003bd8","t":"plate","c":"non-virtual thunk to matching00::NetworkManager::~NetworkManager()"}
 {"a":"7100003c00","t":"plate","c":"matching00::NetworkManager::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"7100003c0c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.12.2\n역할: IsMyPC — WorkModule::IsLocalPlayer 위임(만 확인)\n---\nmatching00::NetworkManager::IsMyPC(nn::bezel::WeakHandle<bq::PlayerWork>)"}
+{"a":"7100003c0c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.12.2\n역할: IsMyPC — WorkModule::IsLocalPlayer 위임(만 확인)"}
 {"a":"7100003c50","t":"plate","c":"matching00::NetworkManager::IsMyID(bex::PlayerID)"}
 {"a":"7100003c8c","t":"plate","c":"matching00::NetworkManager::IsPadSync()"}
 {"a":"7100003c9c","t":"plate","c":"matching00::NetworkManager::IsProcLeave()"}
 {"a":"7100003cf4","t":"plate","c":"matching00::NetworkManager::IsSessionConnected()"}
 {"a":"7100003d04","t":"plate","c":"matching00::NetworkManager::PlaySession(int)"}
-{"a":"7100003db4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.2\n역할: 명시적 통신 종료. bex::NetworkModule::Disconnect()와 bq::WorkModule::ClearSession() 호출\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §8\n역할: matching00::NetworkManager::Disconnect. NetworkModule::Disconnect 와 WorkModule::ClearSession 호출\n---\nmatching00::NetworkManager::Disconnect(char const*, ...)"}
+{"a":"7100003db4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.2\n역할: 명시적 통신 종료. bex::NetworkModule::Disconnect()와 bq::WorkModule::ClearSession() 호출\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §8\n역할: matching00::NetworkManager::Disconnect. NetworkModule::Disconnect 와 WorkModule::ClearSession 호출"}
 {"a":"7100003e10","t":"plate","c":"matching00::NetworkManager::WaitSync(matching00::NMSG)"}
 {"a":"7100003e6c","t":"plate","c":"matching00::NetworkManager::StartSync(matching00::NMSG)"}
 {"a":"7100003eb4","t":"plate","c":"matching00::NetworkManager::IsEndSync() const"}
 {"a":"7100003ec0","t":"plate","c":"matching00::NetworkManager::WaitPadSync(bool)"}
-{"a":"7100003fe4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: SetErrorListener — 전역 setter 호출\n---\nmatching00::NetworkManager::SetErrorListener()"}
-{"a":"7100004050","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: CancelErrorListener — 전역 setter 호출\n[미확정] 해제 인자\n---\nmatching00::NetworkManager::CancelErrorListener()"}
-{"a":"7100004088","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: SetSessionEventListener — 전역 setter 호출\n---\nmatching00::NetworkManager::SetSessionEventListener()"}
-{"a":"71000040f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.4\n역할: 팀 station 저장\n분기: 메뉴값 4에서 +0x58:u64/+0x60:u16에 host station, +0x68:u64/+0x70:u16에 첫 비로컬 사람 PlayerWork::GetConstantID\n분기: 세션 없음이면 뒤 쌍 Invalid, 연결 중 대상이 없으면 abort\n[미확정] 메뉴값 4 경로 밖의 의미\n---\nmatching00::NetworkManager::StoreTeamStationId()"}
+{"a":"7100003fe4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: SetErrorListener — 전역 setter 호출"}
+{"a":"7100004050","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: CancelErrorListener — 전역 setter 호출\n[미확정] 해제 인자"}
+{"a":"7100004088","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: SetSessionEventListener — 전역 setter 호출"}
+{"a":"71000040f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.4\n역할: 팀 station 저장\n분기: 메뉴값 4에서 +0x58:u64/+0x60:u16에 host station, +0x68:u64/+0x70:u16에 첫 비로컬 사람 PlayerWork::GetConstantID\n분기: 세션 없음이면 뒤 쌍 Invalid, 연결 중 대상이 없으면 abort\n[미확정] 메뉴값 4 경로 밖의 의미"}
 {"a":"7100004270","t":"plate","c":"matching00::NetworkManager::IsCompanionConnected() const"}
 {"a":"7100004370","t":"plate","c":"matching00::NetworkManager::CheckBlockingAccount()"}
-{"a":"7100004578","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.6\n역할: RequestError — 매칭 오류 복귀(online §5.7·8)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §4.8\n역할: 매칭 오류 요청\n표: 이유 → 문구 0 B3, 1 B6, 2 B3, 3 B9, 4 B3, 5 B6 (0x710005d700)\n---\nmatching00::NetworkManager::RequestError(matching00::MatchingErrorReason)"}
+{"a":"7100004578","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.6\n역할: RequestError — 매칭 오류 복귀(online §5.7·8)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §4.8\n역할: 매칭 오류 요청\n표: 이유 → 문구 0 B3, 1 B6, 2 B3, 3 B9, 4 B3, 5 B6 (0x710005d700)"}
 {"a":"7100004720","t":"plate","c":"matching00::NetworkManager::OnReceive(short, void const*, unsigned long, bex::NetworkModule::ConstantId)"}
 {"a":"7100004aa0","t":"plate","c":"non-virtual thunk to matching00::NetworkManager::OnReceive(short, void const*, unsigned long, bex::NetworkModule::ConstantId)"}
-{"a":"7100004ab0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: 나가기\n동작: LeaveSessionSilentlyFiber를 지역 +0x40에 설치(기존 객체 교체), IsCompleted까지 Wait 후 Work ClearSession\n주의: SDK 성공값을 검사하지 않는다\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1·11.2\n역할: matching00::NetworkManager::LeaveSession. silent 객체 IsCompleted 대기 뒤 Work ClearSession/오류로 이어짐(12_online_sync §9.13)\n---\nmatching00::NetworkManager::LeaveSession()"}
-{"a":"7100004b4c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: 해산\n동작: 세션 존재·host·진행 요청 검사 → DissolveSessionSilentlyFiber(false)를 +0x40에 둔다. 완료 후 성공/실패 처리 없음\n---\nmatching00::NetworkManager::DissolveSession()"}
-{"a":"7100004c00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2·9.13.4\n역할: RequestDissolveAndRecreateSession\n흐름: SetupSession 0x7100012780 → 이 함수 → LeaveSession 0x7100004ab0/오류 요청\n분기: 메뉴값 4·저장 station 쌍 조건의 NetTransfer 전송 확인(IsReceivedSend) 대기 최대 30 s, 실패도 오류 경로\n주의: 세션 생성 호출 없음\n---\nmatching00::NetworkManager::RequestDissolveAndRecreateSession()"}
+{"a":"7100004ab0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: 나가기\n동작: LeaveSessionSilentlyFiber를 지역 +0x40에 설치(기존 객체 교체), IsCompleted까지 Wait 후 Work ClearSession\n주의: SDK 성공값을 검사하지 않는다\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1·11.2\n역할: matching00::NetworkManager::LeaveSession. silent 객체 IsCompleted 대기 뒤 Work ClearSession/오류로 이어짐(12_online_sync §9.13)"}
+{"a":"7100004b4c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: 해산\n동작: 세션 존재·host·진행 요청 검사 → DissolveSessionSilentlyFiber(false)를 +0x40에 둔다. 완료 후 성공/실패 처리 없음"}
+{"a":"7100004c00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2·9.13.4\n역할: RequestDissolveAndRecreateSession\n흐름: SetupSession 0x7100012780 → 이 함수 → LeaveSession 0x7100004ab0/오류 요청\n분기: 메뉴값 4·저장 station 쌍 조건의 NetTransfer 전송 확인(IsReceivedSend) 대기 최대 30 s, 실패도 오류 경로\n주의: 세션 생성 호출 없음"}
 {"a":"7100004da0","t":"plate","c":"matching00::NetworkManager::SendNetworkPlayerData()"}
 {"a":"7100005380","t":"plate","c":"matching00::NetworkManager::GetNetworkPlayerData(matching00::NetworkPlayerInfo, matching00::NetworkPlayerData&) const"}
 {"a":"71000054c0","t":"plate","c":"matching00::NetworkManager::GetNetworkPlayerData(matching00::NetworkPlayerInfo) const"}
@@ -104,9 +104,9 @@
 {"a":"7100007954","t":"plate","c":"std::__function::__func<std::__bind<void (matching00::NetMsgReceiverSync::*&)(), matching00::NetMsgReceiverSync*&>, std::allocator<std::__bind<void (matching00::NetMsgReceiverSync::*&)(), matching00::NetMsgReceiverSync*&> >, void ()>::TEMPNAMEPLACEHOLDERVALUE()"}
 {"a":"7100007b30","t":"plate","c":"matching00::GetGameMode(bq::MenuWork::RandomMatchConfig::Mode)"}
 {"a":"7100007c30","t":"plate","c":"matching00::GetUdemaeRank(bq::MenuWork::RandomMatchConfig::Mode)"}
-{"a":"7100007cb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 접속 파이버(matching00·menu00 공통 꼴)\n분기: 저장 플래그(+0x6c) 미설정이면 sys_network_check_dlg00(확인만) → dlg01 \"접속한다/접속하지 않는다\"(않는다 → 끝)\n동작: 로딩 텔롭(sys_tlp_loading_00, sys_network_load_tlp) In → ConnectNpln 끝날 때까지 0.5 s 폴링 → Out. 처음 접속 성공이면 플래그 저장\n분기: 실패 → RequestError(0) = B3\n---\nmatching00::ConnectNplnFiber::Update()"}
+{"a":"7100007cb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 접속 파이버(matching00·menu00 공통 꼴)\n분기: 저장 플래그(+0x6c) 미설정이면 sys_network_check_dlg00(확인만) → dlg01 \"접속한다/접속하지 않는다\"(않는다 → 끝)\n동작: 로딩 텔롭(sys_tlp_loading_00, sys_network_load_tlp) In → ConnectNpln 끝날 때까지 0.5 s 폴링 → Out. 처음 접속 성공이면 플래그 저장\n분기: 실패 → RequestError(0) = B3"}
 {"a":"7100007ff0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiLoadingTelop> nn::bezel::Entity::AddComponent<bq::ComUiLoadingTelop, , (void*)0>()"}
-{"a":"71000081d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §2·5.7\n역할: MatchMakeFiber(MatchMake가 시작하는 매칭 파이버)\n---\nmatching00::MatchMakeFiber::Update()"}
+{"a":"71000081d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §2·5.7\n역할: MatchMakeFiber(MatchMake가 시작하는 매칭 파이버)"}
 {"a":"710000867c","t":"plate","c":"matching00::MatchmakingConfig::Create(bq::MenuWork::RandomMatchConfig::Mode)"}
 {"a":"7100008830","t":"plate","c":"matching00::MatchmakingConfig::GetMatchmakingRequest() const"}
 {"a":"7100008960","t":"plate","c":"nn::npln::matchmaking::MatchmakingRequest::~MatchmakingRequest()"}
@@ -114,10 +114,10 @@
 {"a":"7100008d68","t":"plate","c":"matching00::MatchmakingConfig::GetUserAttribute() const"}
 {"a":"7100008df0","t":"plate","c":"nn::npln::matchmaking::UserDefinition::~UserDefinition()"}
 {"a":"7100008e70","t":"plate","c":"matching00::CreateSoloSessionFiber::Update()"}
-{"a":"7100009280","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.14.2\n역할: 출발 준비 Fiber\n분기: IsConnected/IsSessionConnected가 거짓이면 반환\n동작: 사람/로컬 순서·PlayerID/색/order 준비, GetSessionMember 경계 n과 PlayerID 비교로 PlayerType 설정\n계산: 유효 id≥0의 PadID = id − (m≠0이면 trunc(id/m), 아니면 0)×m (m = controller 최대값)\n호출: WorkModule::PlaySession(1, GetGameMode(MenuWork+0xc)), 오류 복귀 menu00·MenuReturnCode(1,0), CPU/팀/ControllerAssign 준비·Sleep 0.5\n[미확정] 동적 호출·상위 SetupSession 보장. NetTransfer Send/WaitSync/seed/결과 호출은 없음\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.3\n역할: matching00 PlaySessionFiber::Update. WorkModule::PlaySession 호출(12_online_sync §9.14.2)\n---\nmatching00::PlaySessionFiber::Update()"}
+{"a":"7100009280","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.14.2\n역할: 출발 준비 Fiber\n분기: IsConnected/IsSessionConnected가 거짓이면 반환\n동작: 사람/로컬 순서·PlayerID/색/order 준비, GetSessionMember 경계 n과 PlayerID 비교로 PlayerType 설정\n계산: 유효 id≥0의 PadID = id − (m≠0이면 trunc(id/m), 아니면 0)×m (m = controller 최대값)\n호출: WorkModule::PlaySession(1, GetGameMode(MenuWork+0xc)), 오류 복귀 menu00·MenuReturnCode(1,0), CPU/팀/ControllerAssign 준비·Sleep 0.5\n[미확정] 동적 호출·상위 SetupSession 보장. NetTransfer Send/WaitSync/seed/결과 호출은 없음\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.3\n역할: matching00 PlaySessionFiber::Update. WorkModule::PlaySession 호출(12_online_sync §9.14.2)"}
 {"a":"710000c060","t":"plate","c":"matching00::UiManager::GetUiPlayerList()"}
 {"a":"710000c1a0","t":"plate","c":"matching00::RandomComCharacterGenerator matching00::RandomComCharacterGenerator::ExcludeByMode<bex::unordered_set<bq::PlayerCharacterID, std::hash<bq::PlayerCharacterID>, std::equal_to<bq::PlayerCharacterID> > >(bq::MenuWork::RandomMatchConfig::Mode, bex::unordered_set<bq::PlayerCharacterID, std::hash<bq::PlayerCharacterID>, std::equal_to<bq::PlayerCharacterID> >)"}
-{"a":"710000c500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: DissolveAndRecreateSessionFiber Update\n동작: silent Leave 생성·완료 대기 뒤 ClearSession·RequestError\n주의: CreateSession 호출 없음(이름만으로 자동 재생성 판독 안 함)\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1·11.2\n역할: matching00 DissolveAndRecreateSessionFiber::Update. silent 객체 IsCompleted 대기 뒤 Work ClearSession/오류로 이어짐\n---\nmatching00::DissolveAndRecreateSessionFiber::Update()"}
+{"a":"710000c500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: DissolveAndRecreateSessionFiber Update\n동작: silent Leave 생성·완료 대기 뒤 ClearSession·RequestError\n주의: CreateSession 호출 없음(이름만으로 자동 재생성 판독 안 함)\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1·11.2\n역할: matching00 DissolveAndRecreateSessionFiber::Update. silent 객체 IsCompleted 대기 뒤 Work ClearSession/오류로 이어짐"}
 {"a":"710000c5b0","t":"plate","c":"matching00::ConnectNplnFiber::~ConnectNplnFiber()"}
 {"a":"710000c640","t":"plate","c":"matching00::ConnectNplnFiber::~ConnectNplnFiber()"}
 {"a":"710000c6cc","t":"plate","c":"bex::Fiber::getInstanceTypeinfo() const"}
@@ -164,7 +164,7 @@
 {"a":"710000f010","t":"plate","c":"std::pair<std::__hash_iterator<std::__hash_node<bq::PlayerCharacterID, void*>*>, bool> std::__hash_table<bq::PlayerCharacterID, std::hash<bq::PlayerCharacterID>, std::equal_to<bq::PlayerCharacterID>, bex::HeapModule::Allocator_unordered_set<bq::PlayerCharacterID> >::__emplace_unique_key_args<bq::PlayerCharacterID, bq::PlayerCharacterID>(bq::PlayerCharacterID const&, bq::PlayerCharacterID&&)"}
 {"a":"710000f3a0","t":"plate","c":"std::pair<std::__hash_iterator<std::__hash_node<bq::PlayerCharacterID, void*>*>, bool> std::__hash_table<bq::PlayerCharacterID, std::hash<bq::PlayerCharacterID>, std::equal_to<bq::PlayerCharacterID>, bex::HeapModule::Allocator_unordered_set<bq::PlayerCharacterID> >::__emplace_unique_key_args<bq::PlayerCharacterID, bq::PlayerCharacterID&>(bq::PlayerCharacterID const&, bq::PlayerCharacterID&)"}
 {"a":"710000f788","t":"plate","c":"matching00::NetErrorListener::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"710000f7fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.7\n역할: 지역 세션 사건 listener\n동작: 사건 정보 저장. 메시지 0x5f4e4502·사건1에서 Work 쌍 +0x3d08/+0x3d10 또는 지역 쌍 +0x68/+0x70과 일치하면 RequestError(2)\n---\nmatching00::NetSessionListener::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"710000f7fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.7\n역할: 지역 세션 사건 listener\n동작: 사건 정보 저장. 메시지 0x5f4e4502·사건1에서 Work 쌍 +0x3d08/+0x3d10 또는 지역 쌍 +0x68/+0x70과 일치하면 RequestError(2)"}
 {"a":"710000f910","t":"plate","c":"matching00::NetErrorListener::~NetErrorListener()"}
 {"a":"710000f9e0","t":"plate","c":"matching00::NetSessionListener::~NetSessionListener()"}
 {"a":"710000fab0","t":"plate","c":"matching00::Scene::DummySymbolLink(bool)"}
@@ -175,8 +175,8 @@
 {"a":"710000fc88","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
 {"a":"710000fc8c","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
 {"a":"710000fc90","t":"plate","c":"matching00::Scene::Params::getStaticTypeinfo()"}
-{"a":"710000fd6c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/online.md §4.7\n역할: Scene::Params rtti 프로퍼티 목록\n범위: SESSION_CH(+0xc) 0..0x80, MATCHING_TIME(+0x10) 10..120, FAIL_LIMIT(+0x14) 1..5, DEBUG_*·LAUNCH_MINIGAME(+0x8·+0x18~+0x28)\n[미확정] 장면 파라미터 파일이 덮어쓰는지\n---\nmatching00::Scene::Params::getPropertyList()"}
-{"a":"710000ff9c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §4.7\n역할: Scene::Params 기본값 생성\n기본값: SESSION_CH 0, MATCHING_TIME 120(s, 타이머 시작값), FAIL_LIMIT 2\n---\nmatching00::Scene::Params::createInstance()"}
+{"a":"710000fd6c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/online.md §4.7\n역할: Scene::Params rtti 프로퍼티 목록\n범위: SESSION_CH(+0xc) 0..0x80, MATCHING_TIME(+0x10) 10..120, FAIL_LIMIT(+0x14) 1..5, DEBUG_*·LAUNCH_MINIGAME(+0x8·+0x18~+0x28)\n[미확정] 장면 파라미터 파일이 덮어쓰는지"}
+{"a":"710000ff9c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §4.7\n역할: Scene::Params 기본값 생성\n기본값: SESSION_CH 0, MATCHING_TIME 120(s, 타이머 시작값), FAIL_LIMIT 2"}
 {"a":"710000fff0","t":"plate","c":"matching00::Scene::Params::deleteInstance(void*)"}
 {"a":"7100010004","t":"plate","c":"matching00::Scene::Scene()"}
 {"a":"7100010090","t":"plate","c":"matching00::Scene::~Scene()"}
@@ -186,9 +186,9 @@
 {"a":"71000105a8","t":"plate","c":"matching00::Scene::CleanupGame()"}
 {"a":"7100010764","t":"plate","c":"matching00::Scene::StopBgm()"}
 {"a":"71000107b8","t":"plate","c":"matching00::Scene::IsCleanupComplete() const"}
-{"a":"71000107d8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §3\n역할: Scene::GameFlow — 매칭 별도 Scene (online §3 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2\n역할: 매칭 장면 GameFlow\n동작: Play SM_BGM_MATCHING; Sleep 1.0; Net::CancelAllListener; SetErrorListener\n분기: MenuWork+0xc: 0,1 Bd / 2 Mgm02 / 3 Mgm03 / 4 Mgm04(세션 있으면 _Companion) / 5 Mgm05_2 / 6 Mgm05_4 / 7 Ca / 8 Kb\n---\nmatching00::Scene::GameFlow()"}
+{"a":"71000107d8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §3\n역할: Scene::GameFlow — 매칭 별도 Scene (online §3 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2\n역할: 매칭 장면 GameFlow\n동작: Play SM_BGM_MATCHING; Sleep 1.0; Net::CancelAllListener; SetErrorListener\n분기: MenuWork+0xc: 0,1 Bd / 2 Mgm02 / 3 Mgm03 / 4 Mgm04(세션 있으면 _Companion) / 5 Mgm05_2 / 6 Mgm05_4 / 7 Ca / 8 Kb"}
 {"a":"71000109a4","t":"plate","c":"matching00::Scene::PlayBgm()"}
-{"a":"7100010a00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.3\n역할: Matching_Bd — 세션 setup 뒤 장면 교환 요청(online §3.2)\n\n[미확정] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §11 U11\n역할: Scene::Matching_Bd — 매칭 규칙판\n[미확정] 매칭 규칙판 전체(online §11)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2\n역할: 보드 매칭(MenuWork+0xc ∈ {0,1})\n동작: 세션이 남아 있으면 DissolveSession → 끊길 때까지 Wait → ClearSession\n루프: do { !ConnectNpln() → return; !MatchMake() → return; !CheckFail(1) → return } while !IsSessionConnected\n성공(SetupSession(4)): StateTelop.ChangeMessage(2) → ShowPlayerList() → BdRule.Start, SE SQ_SE_MATCHING00_BD_RULE, Sleep 5, WaitSync(7) → 재입장 데이터(호스트 이어받기 허용 = NetworkManager+0x51==0) 저장; WaitSync(0x10) → RequestExchangeScene; SE SQ_SE_MENU01_TRANSITION_WHO_NOBAL_MATCHING\n---\nmatching00::Scene::Matching_Bd()"}
+{"a":"7100010a00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.3\n역할: Matching_Bd — 세션 setup 뒤 장면 교환 요청(online §3.2)\n\n[미확정] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §11 U11\n역할: Scene::Matching_Bd — 매칭 규칙판\n[미확정] 매칭 규칙판 전체(online §11)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2\n역할: 보드 매칭(MenuWork+0xc ∈ {0,1})\n동작: 세션이 남아 있으면 DissolveSession → 끊길 때까지 Wait → ClearSession\n루프: do { !ConnectNpln() → return; !MatchMake() → return; !CheckFail(1) → return } while !IsSessionConnected\n성공(SetupSession(4)): StateTelop.ChangeMessage(2) → ShowPlayerList() → BdRule.Start, SE SQ_SE_MATCHING00_BD_RULE, Sleep 5, WaitSync(7) → 재입장 데이터(호스트 이어받기 허용 = NetworkManager+0x51==0) 저장; WaitSync(0x10) → RequestExchangeScene; SE SQ_SE_MENU01_TRANSITION_WHO_NOBAL_MATCHING"}
 {"a":"7100010bf0","t":"plate","c":"matching00::Scene::Matching_Mgm02()"}
 {"a":"7100010d00","t":"plate","c":"matching00::Scene::Matching_Mgm03()"}
 {"a":"7100010e10","t":"plate","c":"matching00::Scene::Matching_Mgm04_Companion()"}
@@ -199,16 +199,16 @@
 {"a":"7100012030","t":"plate","c":"matching00::Scene::Matching_Kb()"}
 {"a":"7100012164","t":"plate","c":"matching00::Scene::BeginScene()"}
 {"a":"71000121b0","t":"plate","c":"matching00::Scene::SetupSessionConnected()"}
-{"a":"7100012230","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: ConnectNpln — 접속 완료 0.5 s 폴링(online §5.7)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2·5.7\n역할: 매칭 루프의 접속 단계(거짓이면 Matching_Bd 반환). 접속 파이버 본문은 0x7100007cb0\n---\nmatching00::Scene::ConnectNpln()"}
-{"a":"7100012320","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 매칭 대기\n동작: 타이머 In·시작값 MATCHING_TIME, StateTelop Start(\"normal_search\"), 안내 1칸 위치 0x11 mtch00_ctrl_cancel, flag 0x1d On, 미니게임 화면 Start, MatchMakeFiber 시작\n매 프레임: UpdateAbortMatchingByUser(0x710001e734)\n끝: 타이머·화면·안내 Out. 중단이면 AbortNplnMatchmake + CancelMatching(돌아가기), 아니면 Sleep 1 계속\n---\nmatching00::Scene::MatchMake()"}
-{"a":"71000125c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.6\n역할: CheckFail — “그만둔다” → CancelMatching(online §5.7)\n\n[추정] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 매칭 실패 검사 CheckFail(1)\n분기: 세션 있으면 통과. 실패 횟수+1, FAIL_LIMIT(2) 이상이면 CreateSoloSessionFiber → 세션 생기면 통과\n[추정] 혼자 세션은 COM으로 채움\n분기: 아니면 텔롭 Out, sys_error_E \"참가자를 찾지 못했습니다…\" 찾는다/그만둔다(기본 0) → 찾는다면 반복, 그만둔다면 CancelMatching\n---\nmatching00::Scene::CheckFail(int)"}
-{"a":"7100012780","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: SetupSession → RequestDissolveAndRecreateSession 0x7100004c00(online §5.7·8)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: SetupSession(4)\n동작: 텔롭 ChangeMessage(1)(\"매칭 성공!\"), SQ_SE_SYS_ONLIN_PLY_RNDMATCH, 멤버 수 = 참가 수가 될 때까지 0.5 s 폴링(30 s 넘으면 해산·재생성 요청 후 실패), Sleep 3, WaitSync(1), 차단 계정 확인, 플레이어 데이터 교환(WaitSync 2~5), PlaySession\n---\nmatching00::Scene::SetupSession(int)"}
+{"a":"7100012230","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.5\n역할: ConnectNpln — 접속 완료 0.5 s 폴링(online §5.7)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2·5.7\n역할: 매칭 루프의 접속 단계(거짓이면 Matching_Bd 반환). 접속 파이버 본문은 0x7100007cb0"}
+{"a":"7100012320","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 매칭 대기\n동작: 타이머 In·시작값 MATCHING_TIME, StateTelop Start(\"normal_search\"), 안내 1칸 위치 0x11 mtch00_ctrl_cancel, flag 0x1d On, 미니게임 화면 Start, MatchMakeFiber 시작\n매 프레임: UpdateAbortMatchingByUser(0x710001e734)\n끝: 타이머·화면·안내 Out. 중단이면 AbortNplnMatchmake + CancelMatching(돌아가기), 아니면 Sleep 1 계속"}
+{"a":"71000125c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.6\n역할: CheckFail — “그만둔다” → CancelMatching(online §5.7)\n\n[추정] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 매칭 실패 검사 CheckFail(1)\n분기: 세션 있으면 통과. 실패 횟수+1, FAIL_LIMIT(2) 이상이면 CreateSoloSessionFiber → 세션 생기면 통과\n[추정] 혼자 세션은 COM으로 채움\n분기: 아니면 텔롭 Out, sys_error_E \"참가자를 찾지 못했습니다…\" 찾는다/그만둔다(기본 0) → 찾는다면 반복, 그만둔다면 CancelMatching"}
+{"a":"7100012780","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.13.2\n역할: SetupSession → RequestDissolveAndRecreateSession 0x7100004c00(online §5.7·8)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: SetupSession(4)\n동작: 텔롭 ChangeMessage(1)(\"매칭 성공!\"), SQ_SE_SYS_ONLIN_PLY_RNDMATCH, 멤버 수 = 참가 수가 될 때까지 0.5 s 폴링(30 s 넘으면 해산·재생성 요청 후 실패), Sleep 3, WaitSync(1), 차단 계정 확인, 플레이어 데이터 교환(WaitSync 2~5), PlaySession"}
 {"a":"7100012ad0","t":"plate","c":"matching00::UiManager::GetUiStateTelop()"}
-{"a":"7100012c10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §3·9.1\n역할: Scene::ShowPlayerList (online §3.2 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2\n역할: 참가자 목록 표시\n동작: 목록 In, SE SQ_SE_MATCHING00_MBR_LST, Sleep 5, Out 대기, WaitSync(6)\n---\nmatching00::Scene::ShowPlayerList()"}
+{"a":"7100012c10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §3·9.1\n역할: Scene::ShowPlayerList (online §3.2 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §3.2\n역할: 참가자 목록 표시\n동작: 목록 In, SE SQ_SE_MATCHING00_MBR_LST, Sleep 5, Out 대기, WaitSync(6)"}
 {"a":"7100012d20","t":"plate","c":"matching00::Scene::ShowBoardRule()"}
 {"a":"7100012da0","t":"plate","c":"matching00::Scene::MatchMakeCompanion()"}
 {"a":"7100013090","t":"plate","c":"matching00::Scene::RestorePlayerWork() const"}
-{"a":"7100013164","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.6\n역할: CancelMatching — 세션 없을 때 Disconnect(online §5.7)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 매칭 취소\n동작: 세션이 없을 때만 Disconnect 후 대기, 리스너 원복, WaitSync(0x10), 플레이어 Work 복원, 돌아갈 장면(menu01 등) RequestReturnScene\n---\nmatching00::Scene::CancelMatching()"}
+{"a":"7100013164","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §9.6\n역할: CancelMatching — 세션 없을 때 Disconnect(online §5.7)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 매칭 취소\n동작: 세션이 없을 때만 Disconnect 후 대기, 리스너 원복, WaitSync(0x10), 플레이어 Work 복원, 돌아갈 장면(menu01 등) RequestReturnScene"}
 {"a":"7100013300","t":"plate","c":"matching00::UiManager::GetUiTimer()"}
 {"a":"7100013440","t":"plate","c":"matching00::UiManager::GetUiGuide()"}
 {"a":"7100013580","t":"plate","c":"matching00::UiManager::GetUiMinigameScreen()"}
@@ -346,11 +346,11 @@
 {"a":"7100018610","t":"plate","c":"non-virtual thunk to matching00::ComUiBg::~ComUiBg()"}
 {"a":"7100018638","t":"plate","c":"matching00::ComUiMinigameScreen::ComUiMinigameScreen(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
 {"a":"7100018790","t":"plate","c":"matching00::ComUiMinigameScreen::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"71000187cc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1\n역할: matching00 ComUiMinigameScreen::Update. SceneSequence::IsCurrentSceneShutdownComplete 호출\n---\nmatching00::ComUiMinigameScreen::Update()"}
+{"a":"71000187cc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1\n역할: matching00 ComUiMinigameScreen::Update. SceneSequence::IsCurrentSceneShutdownComplete 호출"}
 {"a":"71000188dc","t":"plate","c":"non-virtual thunk to matching00::ComUiMinigameScreen::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"7100018920","t":"plate","c":"matching00::ComUiMinigameScreen::MonitorMinigameFade()"}
 {"a":"7100018ce8","t":"plate","c":"matching00::ComUiMinigameScreen::Reset()"}
-{"a":"7100018d20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1\n역할: matching00 ComUiMinigameScreen::IsFinishedMinigameScene. SceneSequence::IsCurrentSceneShutdownComplete 호출\n---\nmatching00::ComUiMinigameScreen::IsFinishedMinigameScene()"}
+{"a":"7100018d20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §11.1\n역할: matching00 ComUiMinigameScreen::IsFinishedMinigameScene. SceneSequence::IsCurrentSceneShutdownComplete 호출"}
 {"a":"7100018d70","t":"plate","c":"matching00::ComUiMinigameScreen::CleanUp()"}
 {"a":"7100018e7c","t":"plate","c":"matching00::ComUiMinigameScreen::In(bool)"}
 {"a":"7100018ee8","t":"plate","c":"matching00::ComUiMinigameScreen::Out(bool)"}
@@ -501,7 +501,7 @@
 {"a":"710001d040","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiCardViewer, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"710001d048","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiCardViewer, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
 {"a":"710001d0a4","t":"plate","c":"nn::bezel::WeakHandle<matching00::ComUiPlayerInfo> bex::ComponentUtil::SafeCreate<matching00::ComUiPlayerInfo, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
-{"a":"710001d21c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §7\n역할: ComUiStateTelop 생성 — 매칭 텔롭 normal_search/to_search/to_ready/normal_ready (online §7 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §2\n역할: ComUiStateTelop 생성(matching00_tlp_00)\n---\nmatching00::ComUiStateTelop::ComUiStateTelop(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"710001d21c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §7\n역할: ComUiStateTelop 생성 — 매칭 텔롭 normal_search/to_search/to_ready/normal_ready (online §7 재사용)\n\n[판독] 2026-10-11 / md: web/docs/shell/online.md §2\n역할: ComUiStateTelop 생성(matching00_tlp_00)"}
 {"a":"710001d4b0","t":"plate","c":"matching00::ComUiStateTelop::PlayTelopAnim(matching00::ComUiStateTelop::TelopAnim)"}
 {"a":"710001d55c","t":"plate","c":"matching00::ComUiStateTelop::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"710001d630","t":"plate","c":"matching00::ComUiStateTelop::Update()"}
@@ -511,7 +511,7 @@
 {"a":"710001d82c","t":"plate","c":"matching00::ComUiStateTelop::Start()"}
 {"a":"710001d890","t":"plate","c":"matching00::ComUiStateTelop::Finish()"}
 {"a":"710001d8c8","t":"plate","c":"matching00::ComUiStateTelop::IsFinished()"}
-{"a":"710001d8e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7·10\n역할: 매칭 텔롭 문구 전환 [판독: 어셈블리 라벨]\n분기: 0 → x_text_search=mtch00_tlp_wait, \"to_search\"(이미 찾는 중이면 생략); 1 → x_text_ready=mtch00_tlp_loading, \"to_ready\"; 2 → x_text_ready=mtch00_tlp_start, \"normal_ready\"(이미 1이면 생략)\n---\nmatching00::ComUiStateTelop::ChangeMessage(matching00::ComUiStateTelop::MessageType)"}
+{"a":"710001d8e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7·10\n역할: 매칭 텔롭 문구 전환 [판독: 어셈블리 라벨]\n분기: 0 → x_text_search=mtch00_tlp_wait, \"to_search\"(이미 찾는 중이면 생략); 1 → x_text_ready=mtch00_tlp_loading, \"to_ready\"; 2 → x_text_ready=mtch00_tlp_start, \"normal_ready\"(이미 1이면 생략)"}
 {"a":"710001db8c","t":"plate","c":"matching00::ComUiStateTelop::NnDetailBezelGetTypeDesc() const"}
 {"a":"710001db98","t":"plate","c":"matching00::ComUiStateTelop::NnDetailBezelGetThisPtr()"}
 {"a":"710001db9c","t":"plate","c":"matching00::ComUiStateTelop::NnDetailBezelGetThisPtrConst() const"}
@@ -534,7 +534,7 @@
 {"a":"710001e56c","t":"plate","c":"matching00::UiConfirmCancelDialogBox::SetLayoutLayer(nn::bezel::WeakHandle<nn::bezel::GraphicsLayer>)"}
 {"a":"710001e5e0","t":"plate","c":"matching00::UiConfirmCancelDialogBox::GetUi()"}
 {"a":"710001e6f8","t":"plate","c":"matching00::UiConfirmCancelDialogBox::SetPauseLevel(nn::bezel::PauseLevel)"}
-{"a":"710001e734","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 사용자 매칭 중단 입력\n분기: 대화상자 없고 (세션 없음 또는 방장)일 때 0x3000 누름 → 안내 Out, 취소 확인 \"찾는 것을 그만두고 돌아가겠습니까?\" 돌아간다(SQ_SE_SYS_DECI_L)/돌아가지 않는다(기본 1) → 상대에게도 열림 알림\n결과: 0 → 중단, 1 → 닫고 안내 In\n---\nmatching00::UiConfirmCancelDialogBox::UpdateAbortMatchingByUser()"}
+{"a":"710001e734","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/online.md §5.7\n역할: 사용자 매칭 중단 입력\n분기: 대화상자 없고 (세션 없음 또는 방장)일 때 0x3000 누름 → 안내 Out, 취소 확인 \"찾는 것을 그만두고 돌아가겠습니까?\" 돌아간다(SQ_SE_SYS_DECI_L)/돌아가지 않는다(기본 1) → 상대에게도 열림 알림\n결과: 0 → 중단, 1 → 닫고 안내 In"}
 {"a":"710001e980","t":"plate","c":"matching00::UiConfirmCancelDialogBox::Out()"}
 {"a":"710001e9bc","t":"plate","c":"matching00::ComUiConfirmCancelDialogBox::In(bex::PlayerID, bool)"}
 {"a":"710001ec00","t":"plate","c":"matching00::UiConfirmCancelDialogBox::Reset()"}

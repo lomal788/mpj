@@ -371,6 +371,7 @@ export class NpcLook {
   }
 
   /** 눈 시선(FUN_71001c5a58) — 결과는 다음 apply 에서 srt1/srt2 이동으로 들어감(srt1/2 를 읽는 눈에만 보임) */
+  /** @orig main:71001c5a58 ref */
   applyEyes(h: Heading): void {
     this.eyes.forEach((e, i) => {
       if (i > 1) return;

@@ -103,6 +103,7 @@ export class SetPlayerFlow {
   }
 
   /** Start @0x710034a080 (3.2) */
+  /** @orig main:710034a080 ref */
   start(): void {
     this.cancelled = false;
     const free: number[] = [];
@@ -120,6 +121,7 @@ export class SetPlayerFlow {
   }
 
   /** In @0x7100349b70 */
+  /** @orig main:7100349b70 ref */
   private uiIn(skip: boolean): void {
     if (this.uiState === 0 || this.uiState === 1) return;
     this.emit({ k: 'root', tag: skip ? 'normal' : 'in' });
@@ -128,12 +130,14 @@ export class SetPlayerFlow {
   }
 
   /** FUN_71003476a4 (6.1) */
+  /** @orig main:71003476a4 ref */
   setCount(n: number): void {
     this.count = Math.max(Math.min(n, this.arg.max), this.arg.min);
     this.slots.forEach((s, i) => (s.type = this.count < i + 1 ? 1 : 0));
   }
 
   /** FUN_71003454f4 (6.4): row/col = 커서, skip = OK 의 on/off 건너뜀 */
+  /** @orig main:71003454f4 ref */
   private buttons(row: number, col: number, skip: boolean): void {
     for (let k = 2; k <= 4; k++) {
       const guest = isGuest(this.slots[k - 1]);
@@ -180,6 +184,7 @@ export class SetPlayerFlow {
   }
 
   /** 단계 0 인원 main @0x7100346d00 (6.1) */
+  /** @orig main:7100346d00 ref */
   private *numberStep(): Flow {
     this.pool.setPlayers(1, 1);
     this.emit({ k: 'anim', path: CURSOR_NUM, tag: 'cursor' });
@@ -230,6 +235,7 @@ export class SetPlayerFlow {
   }
 
   /** 단계 1 컨트롤러 main @0x7100347ad0 (6.2). 애플릿은 대체 [설계 9.4] */
+  /** @orig main:7100347ad0 ref */
   private *controllerStep(): Flow {
     if (this.count > 1) {
       this.pool.setPlayers(this.count, this.count);
@@ -267,6 +273,7 @@ export class SetPlayerFlow {
   }
 
   /** 단계 2 유저 main @0x7100347eb0 (6.3) */
+  /** @orig main:7100347eb0 ref */
   private *userStep(): Flow {
     this.emit({ k: 'title', mode: 1 });
     this.buttons(this.row, this.col, false);
@@ -339,11 +346,13 @@ export class SetPlayerFlow {
   }
 
   /** FUN_7100348d3c: 고른 버튼 press(그 칸이 있는 N 인원 창 전부) */
+  /** @orig main:7100348d3c ref */
   private press(row: number, col: number): void {
     for (let n = Math.max(row, 2); n <= 4; n++) this.emit({ k: 'anim', path: `${win(n, row)}/x_parts_btn_0${col}`, tag: 'press' });
   }
 
   /** 연동 람다 main @0x710034b100 (6.7) — 유저 선택 애플릿 대체 */
+  /** @orig main:710034b100 ref */
   private *accountFlow(pid: number): Flow {
     this.account = null;
     this.emit({ k: 'account', pid });
@@ -359,6 +368,7 @@ export class SetPlayerFlow {
   }
 
   /** 이름 람다 main @0x710034b340 (6.7) — 소프트웨어 키보드 대체 */
+  /** @orig main:710034b340 ref */
   private *nameFlow(pid: number): Flow {
     const s = this.slots[pid];
     if (s.manageIdx !== -1) return;
@@ -371,6 +381,7 @@ export class SetPlayerFlow {
   }
 
   /** 단계 3 캐릭터 선택 main @0x71003494a0 (6.6). 안쪽은 페이지가 runCharSelect 로 [설계 9.5] */
+  /** @orig main:71003494a0 ref */
   private *charaStep(): Flow {
     this.emit({ k: 'title', mode: 2 });
     this.charResult = null;

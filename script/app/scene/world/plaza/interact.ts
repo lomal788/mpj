@@ -39,6 +39,7 @@ const AREA_STEPS: [number, number][] = [
 ];
 
 /** bq::act::Man::CalcTurnDegY [판독 main @0x71002deb10]: atan2(x, z)° 를 [0, 360) 으로 */
+/** @orig main:71002deb10 ref */
 export function calcTurnDegY(x: number, z: number): number {
   let d = (Math.atan2(x, z) * 180) / Math.PI;
   while (d < 0) d += 360;

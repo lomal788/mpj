@@ -74,6 +74,7 @@ export class ObjectMan {
    * 풀 순서로 처음 걸리는 채소 — 활성이고 레인 범위 안이며 (int)(t1·60) ≤ ef 이고 (int)(tw·60) ≤ (int)(t3·60) − ef
    * (ef = (int)(elapsed·60)). 그 채소 본체 엔티티 위치(이번 프레임 Update 가 넣은 표시 위치)를 돌려준다.
    */
+  /** @orig mg1801:71000047e0 ref */
   getHeadTarget(lane: number): V3 | null {
     const r = this.w.rhythm;
     const t3F = Math.trunc(F(r.beatToSec(0, 3) * 60));

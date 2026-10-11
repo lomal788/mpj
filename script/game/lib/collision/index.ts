@@ -217,6 +217,7 @@ export const IDENTITY: Readonly<Pose> = Object.freeze([0, 0, 0, 0, 0, 0, 1]) as 
 const QUARTER: Pose = [0, 0, 0, 0, 0, QT, QT];
 
 /** 엔진 기하 + 로컬 자세 → SDK 기하 + SDK 로컬 자세(캡슐만 Z축 quarter-turn 을 더한다, 원본 FUN_71006045f0) */
+/** @orig main:71006045f0 ref */
 export function toSdk(g: CollisionGeometry, local: ArrayLike<number>, outPose: number[], out: SdkGeometry = { type: 0, params: [], mesh: 0 }): SdkGeometry {
   for (let i = 0; i < 7; i++) outPose[i] = local[i];
   const p = out.params;
@@ -689,6 +690,7 @@ export class CollisionWorld {
     this.backend.setShapeFilter(s.backend, this.filterOf(s, b));
   }
   /** 일반 자세 동기화(원본 FUN_71006097b4): Static = 자세 교체, Kinematic = 목표(다음 물리 step), Dynamic = 덮어쓰지 않음 */
+  /** @orig main:71006097b4 ref */
   syncPose(body: number, pose: Pose): void {
     const b = this.bodies.get(body);
     if (!b) return;
@@ -697,6 +699,7 @@ export class CollisionWorld {
     this.backend.setBodyPose(b.backend, b.pose, b.motion === 1 ? 'target' : 'set');
   }
   /** Teleport(원본 EN0B → FUN_710060970c): 자세 바로 설정, Dynamic 만 선·각속도 0 */
+  /** @orig main:710060970c ref */
   teleport(body: number, pose: Pose): void {
     const b = this.bodies.get(body);
     if (!b) return;
@@ -704,6 +707,7 @@ export class CollisionWorld {
     this.backend.setBodyPose(b.backend, b.pose, 'set');
   }
   /** 소멸: 모듈 목록 제거 + 세대 무효화(원본 FUN_71006082e0) */
+  /** @orig main:71006082e0 ref */
   removeBody(body: number): void {
     const b = this.bodies.remove(body);
     if (!b) return;
@@ -740,6 +744,7 @@ export class CollisionWorld {
   }
 
   /** SDK hit → CastResult(원본 FUN_710062c3bc). 셰이프를 모르면 false(원본: Collision 없음 → 결과 미기록) */
+  /** @orig main:710062c3bc ref */
   private convert(h: BackendHit, out: CastResult): boolean {
     const sh = this.byBackendShape.get(h.shape);
     const s = sh !== undefined ? this.shapes.get(sh) : null;

@@ -50,21 +50,25 @@ export class World {
   }
 
   /** 원본 FUN_7100427040 한 프레임(app/minigame/kit/rhythm/soundMan.ts RmSoundMan) */
+  /** @orig main:7100427040 ref */
   tickExcellentSe(): void {
     this.soundMan.tickExcellentSe();
   }
 
   /** 마스터 시작(FUN_71004263c8) 때 +0x2C = (60 / BPM) · 0.5 (RmSoundMan) */
+  /** @orig main:71004263c8 ref */
   setExcellentLimit(bpm: number): void {
     this.soundMan.setExcellentLimit(bpm);
   }
 
   /** 원본 RmSoundMan::PlayExcellentSe(-1, true) @0x7100426e38 (app/minigame/kit/rhythm/soundMan.ts) */
+  /** @orig main:7100426e38 ref */
   playExcellentSe(): void {
     this.soundMan.playExcellentSe();
   }
 
   /** 원본 RmStarEffectMan::Start → FUN_710042a6b8 (app/minigame/kit/rhythm/gameWork.ts RmGameWork) */
+  /** @orig main:710042a6b8 ref */
   addScore(playerId: number, points: number): void {
     this.gameWork.addScore(playerId, points);
   }

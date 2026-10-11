@@ -181,6 +181,7 @@ export class RuleConfigView {
   }
 
   /** Impl::SetupBaseBg mgmet @0x71000810c8: null_01 = P + A − C (N < 5), 아니면 (−850, 0) */
+  /** @orig mgmet:71000810c8 ref */
   setupBaseBg(): void {
     const inst = this.win.inst;
     const cfg = this.state.config;

@@ -39,6 +39,7 @@ export interface DialogBoxSize {
 }
 
 /** FUN_7100208240: 버튼 폭 = max(min(520, 최대 글자 + 240), 360), 창 폭 = max(n>0 ? n·w + 200 : 200, clamp(글자 + 200, 1234, 1794)), 창 높이 = clamp(버튼 높이 + 글자 높이 + 200, 426, 954) */
+/** @orig main:7100208240 ref */
 export function dialogBoxSize(n: number, choiceMaxW: number, textW: number, textH: number, btnH: number): DialogBoxSize {
   const S = DIALOG_SIZE;
   const btnW = Math.max(Math.min(S.btnW0, choiceMaxW + S.btnPad), S.btnMin);
@@ -172,6 +173,7 @@ export class DialogBoxState {
   }
 
   /** In(imm) @0x71002093d0: 상태 1(in) 또는 2(즉시), 커서·결과 −1, 선택지 있으면 커서 = 기본, 칸 cursor/normal/disable */
+  /** @orig main:71002093d0 ref */
   open(imm = false): DialogEvent[] {
     const ev: DialogEvent[] = [];
     this.st = imm ? 2 : 1;
@@ -195,6 +197,7 @@ export class DialogBoxState {
   }
 
   /** Out(imm) @0x71002080e4: 상태 1·2 에서만. imm 이면 바로 초기화 */
+  /** @orig main:71002080e4 ref */
   out(imm = false): void {
     if (this.st !== 1 && this.st !== 2) return;
     if (imm) {
@@ -211,6 +214,7 @@ export class DialogBoxState {
   }
 
   /** FUN_710020792c (결과 +0x48 은 남긴다) */
+  /** @orig main:710020792c ref */
   private reset(): void {
     this.type = 0;
     this.reqChoice = -1;
@@ -224,11 +228,13 @@ export class DialogBoxState {
   }
 
   /** RequestChoice @0x710020a5f8: 대기·일반·선택지 있음·범위 안·불가 아님일 때만 예약 */
+  /** @orig main:710020a5f8 ref */
   requestChoice(i: number): void {
     if (this.st === 2 && this.type === 0 && this.count > 0 && i >= 0 && i < this.count && !this.disabled[i]) this.reqChoice = i;
   }
 
   /** RequestDecide @0x710020a638: 선택지 없음 = MES_PROC + 예약(다음 입력에서 닫힘), 있음 = 결과·press·SE 만 */
+  /** @orig main:710020a638 ref */
   requestDecide(): DialogEvent[] {
     if (this.st !== 2 || this.type !== 0) return [];
     if (this.count === 0) {

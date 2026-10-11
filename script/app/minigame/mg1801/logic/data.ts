@@ -41,6 +41,7 @@ export const SE_S_LABEL = [
  * Scene::Params 기본값 [판독: Params::createInstance @0x710000e7e4]. 파일로 덮어쓰지 않는다(docs/minigame/mg1801.md 4.3).
  * cpuMiss 만 설정 패널에서 바꿀 수 있게 연다(원본 편집기 스위치, World 가 덮어쓴다).
  */
+/** @orig mg1801:710000e7e4 ref */
 export const PARAMS = {
   chartNo: 0,
   isLineDraw: false,

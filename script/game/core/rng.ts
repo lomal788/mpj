@@ -23,6 +23,7 @@ export class MT19937 {
   }
 
   /** 원본 @0x710013aa70 — init_genrand, index = 0 */
+  /** @orig main:710013aa70 ref */
   seed(s: number): void {
     const mt = this.mt;
     mt[0] = s >>> 0;
@@ -35,6 +36,7 @@ export class MT19937 {
   }
 
   /** 원본 @0x710013aae0 — 한 칸씩 twist(libc++ 방식, 출력은 표준과 같다) */
+  /** @orig main:710013aae0 ref */
   nextU32(): number {
     const mt = this.mt;
     const i = this.i;
@@ -89,6 +91,7 @@ export class BexRandModule implements RandModule {
   }
 
   /** 원본 @0x710013ab90 → libc++ uniform_int_distribution(0, n−1): 비트 마스크 기각 표본. n < 2 → 0(소비 없음) */
+  /** @orig main:710013ab90 ref */
   randMod(n: number): number {
     n >>>= 0;
     if (n < 2) return 0;

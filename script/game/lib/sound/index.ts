@@ -168,6 +168,7 @@ export function calc3dInto(out: Ambient3d, listeners: readonly Listener3d[], s: 
 }
 
 /** 볼륨·우선순위 [판독 FUN_71005b8858] */
+/** @orig main:71005b8858 ref */
 function volumeAndPriority(d: number, l: Listener3d, s: Sound3dInfo): [number, number] {
   let v = 1;
   if (l.maxVolumeDistance < d) {
@@ -419,18 +420,21 @@ export class SoundRandom {
   }
 
   /** FUN_71005df19c */
+  /** @orig main:71005df19c ref */
   next(): number {
     this.state = (Math.imul(this.state, LCG_A) + LCG_C) >>> 0;
     return this.state >>> 16;
   }
 
   /** random 접두 인자 [판독 FUN_71005c9b10 case 4]: min + ((r + r·(max − min)) >> 16) */
+  /** @orig main:71005c9b10 ref */
   range(min: number, max: number): number {
     const r = this.next() & 0xffff;
     return min + ((r + Math.imul(r, max - min)) >> 16);
   }
 
   /** randvar [판독 FUN_71005c9c80 case 0x86]: ±(u16)((r + r·|n|) >> 16) */
+  /** @orig main:71005c9c80 ref */
   randvar(n: number): number {
     const r = this.next() & 0xffff;
     const a = n >= 0 ? n : (-n << 16) >> 16;
@@ -454,6 +458,7 @@ export class SoundRandom {
   }
 
   /** 오디오 시각 t 까지 지난 사운드 프레임만큼 돌린다(프레임 끝 소비 FUN_71005dd1e0) */
+  /** @orig main:71005dd1e0 ref */
   frame(t: number): void {
     const target = Math.floor((t - this.epoch) / SOUND_FRAME_SEC + 1e-9);
     if (target > this.frames) {

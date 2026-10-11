@@ -15,7 +15,7 @@
 {"a":"7100003f08","t":"plate","c":"mgm05::Scene::~Scene()"}
 {"a":"7100003f2c","t":"plate","c":"mgm05::Scene::PrepareLoadArchives()"}
 {"a":"7100003f8c","t":"plate","c":"mgm05::Scene::SetupGame()"}
-{"a":"7100003ff0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §4.2\n역할: mgm05 Scene 설정(결과 소비).\n분기: local operation player 승리 여부로 ResultWin/ResultLose.\n필드: Scene+0x230 체감 flag, +0x231 현 듀얼 flag, +0x232 다음 듀얼 flag.\n[미확정] Round 가 어떤 성공 누적을 뜻하는지(getter/setter 인자 누락).\n---\nmgm05::Scene::SyncedSetupGame()"}
+{"a":"7100003ff0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §4.2\n역할: mgm05 Scene 설정(결과 소비).\n분기: local operation player 승리 여부로 ResultWin/ResultLose.\n필드: Scene+0x230 체감 flag, +0x231 현 듀얼 flag, +0x232 다음 듀얼 flag.\n[미확정] Round 가 어떤 성공 누적을 뜻하는지(getter/setter 인자 누락)."}
 {"a":"7100004440","t":"plate","c":"mgm05::Scene::InitializeMap()"}
 {"a":"7100006af0","t":"plate","c":"mgm05::Scene::InitializeChara()"}
 {"a":"7100008aa0","t":"plate","c":"mgm05::Scene::InitializeData()"}
@@ -23,39 +23,39 @@
 {"a":"71000091b0","t":"plate","c":"mgm05::Scene::CleanupGame()"}
 {"a":"71000092b0","t":"plate","c":"mgm05::Scene::FinalizeData()"}
 {"a":"7100009340","t":"plate","c":"mgm05::Scene::FinalizeChara()"}
-{"a":"710000956c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 서바이벌 진행 흐름. Scene+0x258 상태 0/1/2 → 도입 / AfterMaching / AfterGame.\n---\nmgm05::Scene::MinigameModeFlow()"}
+{"a":"710000956c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 서바이벌 진행 흐름. Scene+0x258 상태 0/1/2 → 도입 / AfterMaching / AfterGame."}
 {"a":"7100009690","t":"plate","c":"mgm05::Scene::MinigameModeFlow_FlowInit()"}
 {"a":"71000098b0","t":"plate","c":"mgm05::Scene::MinigameModeFlow_Introduction()"}
-{"a":"710000aeb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 매칭 뒤 흐름(Scene+0x258 상태 1).\n---\nmgm05::Scene::MinigameModeFlow_AfterMaching()"}
-{"a":"710000c210","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5\n역할: 게임 뒤 흐름(상태 2).\n분기: 승패 결과 메뉴·CheckMoveMatchingScene 반환으로 재매칭 또는 Entrance11·RequestReturn.\n[미확정] 실력 포인트·서버 처리 완료.\n---\nmgm05::Scene::MinigameModeFlow_AfterGame()"}
+{"a":"710000aeb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 매칭 뒤 흐름(Scene+0x258 상태 1)."}
+{"a":"710000c210","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5\n역할: 게임 뒤 흐름(상태 2).\n분기: 승패 결과 메뉴·CheckMoveMatchingScene 반환으로 재매칭 또는 Entrance11·RequestReturn.\n[미확정] 실력 포인트·서버 처리 완료."}
 {"a":"710000e5dc","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::Entity>::SafeLock() const"}
 {"a":"710000e620","t":"plate","c":"mgm05::Scene::GetArpList(mgm05::Scene::ArpListRange)"}
-{"a":"710000f9cc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5\n역할: 재매칭 이동 판정. 반환으로 재매칭 또는 Entrance11 복귀.\n---\nmgm05::Scene::CheckMoveMatchingScene(bool)"}
-{"a":"710000fb40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §8.2\n역할: 후보 ID 목록(GetMinigameIdList).\n필터: JSON 로드 record 의 ID+8 을 Rule0/3·Available·체감으로 필터. PlayedHistory 는 검사하지 않음.\n[데이터] 명시 26종 = VS4 21 + 듀얼 5.\n---\nmgm05::Scene::GetMinigameIdList(bq::GameRule)"}
+{"a":"710000f9cc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5\n역할: 재매칭 이동 판정. 반환으로 재매칭 또는 Entrance11 복귀."}
+{"a":"710000fb40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §8.2\n역할: 후보 ID 목록(GetMinigameIdList).\n필터: JSON 로드 record 의 ID+8 을 Rule0/3·Available·체감으로 필터. PlayedHistory 는 검사하지 않음.\n[데이터] 명시 26종 = VS4 21 + 듀얼 5."}
 {"a":"710000fdc0","t":"plate","c":"nn::bezel::HandlePtr<bq::mgm::ComMinigameModeActionRequestPerformer> nn::bezel::Entity::SafeGet<bq::mgm::ComMinigameModeActionRequestPerformer>()"}
 {"a":"710000feb0","t":"plate","c":"mgm05::Scene::SetVisiblePlayerChara(bq::mgm::ComMinigameModeActionRequestPerformer*, bool)"}
 {"a":"7100010440","t":"plate","c":"mgm05::Scene::StartFlow()"}
-{"a":"7100010d90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 게임 결정 흐름(DicideMinigameFlow).\n---\nmgm05::Scene::DicideMinigameFlow()"}
+{"a":"7100010d90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 게임 결정 흐름(DicideMinigameFlow)."}
 {"a":"7100011ff0","t":"plate","c":"mgm05::Scene::ResultMinigameFlowCommon()"}
-{"a":"7100012bf0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6\n역할: 승리 결과 흐름. 성공 분기에서 다음 듀얼 flag 를 옮기며 Round%3==2 조건을 사용.\n[미확정] Round 의 뜻.\n---\nmgm05::Scene::ResultMinigameFlowWin()"}
-{"a":"71000141f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §5\n역할: 패배 결과 흐름. Lose RetryMenu 반환 1 은 재도전. 재도전 분기에서 다음 듀얼 flag·Round%3==2 조건.\n[미확정] Round 의 뜻.\n---\nmgm05::Scene::ResultMinigameFlowLose()"}
+{"a":"7100012bf0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6\n역할: 승리 결과 흐름. 성공 분기에서 다음 듀얼 flag 를 옮기며 Round%3==2 조건을 사용.\n[미확정] Round 의 뜻."}
+{"a":"71000141f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §5\n역할: 패배 결과 흐름. Lose RetryMenu 반환 1 은 재도전. 재도전 분기에서 다음 듀얼 flag·Round%3==2 조건.\n[미확정] Round 의 뜻."}
 {"a":"7100014c20","t":"plate","c":"mgm05::Scene::WaitTimeFlow(float)"}
 {"a":"7100014c60","t":"plate","c":"mgm05::Scene::PrepareMessageChangeWithOwnChara(char const*, char const*, char const*, nn::bezel::WeakHandle<nn::bezel::Entity>)"}
 {"a":"7100014d24","t":"plate","c":"mgm05::Scene::AddMessageChangeWithOwnChara(char const*, char const*, char const*)"}
 {"a":"7100014db0","t":"plate","c":"bq::MinigameModeScene::SetInsertLabelMessage(char const*, char const*)"}
-{"a":"7100014fb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 듀얼 룰렛 열기. 유효 후보 5 를 shuffle 한 첫 4개를 슬롯에 넣는다(중복 0, 전체 pool 이력 제외 없음).\n---\nmgm05::Scene::OpenRouletteMgSelectFlow()"}
-{"a":"71000154f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 선택 흐름. 속도/시간용 SyncRandRangeF(1,1.33) 와 당첨 index 용 SyncRandRange 호출.\n[미확정] 상한 인자 누락.\n---\nmgm05::Scene::MgSelectRouletteFlow()"}
+{"a":"7100014fb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 듀얼 룰렛 열기. 유효 후보 5 를 shuffle 한 첫 4개를 슬롯에 넣는다(중복 0, 전체 pool 이력 제외 없음)."}
+{"a":"71000154f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 룰렛 선택 흐름. 속도/시간용 SyncRandRangeF(1,1.33) 와 당첨 index 용 SyncRandRange 호출.\n[미확정] 상한 인자 누락."}
 {"a":"7100015d50","t":"plate","c":"mgm05::Scene::DicideRouletteMgSelectFlow()"}
 {"a":"7100016330","t":"plate","c":"mgm05::Scene::CloseMgSelectFlow()"}
-{"a":"71000165b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: VS4 투표 열기. 서로 다른 3후보를 SyncRandRange 로 만든다.\n---\nmgm05::Scene::OpenVoteMgSelectFlow()"}
-{"a":"7100017bf0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2, §6.6\n역할: 투표 선택 흐름. 15초 동안 네 표를 받는다. CPU 는 선택·0.5~1.0 지연 난수를 별도로 소비.\n필드: +0x234/+0x238/+0x23c 후보 3, +0x240..+0x24c 4표, +0x250 최종 ID.\n---\nmgm05::Scene::MgSelectVoteFlow()"}
-{"a":"7100018690","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 투표 결정. 네 표가 전부 같을 때만 최종 ID 기록, 3:1·2:2 도 룰렛.\n§10 기대: [A,A,A,A] → A 즉시, [A,A,A,B]/[A,A,B,B] → 네 표 룰렛.\n---\nmgm05::Scene::DicideVoteMgSelectFlow()"}
-{"a":"7100018c50","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 투표 → 룰렛 전환. 네 표를 중복 포함 네 슬롯으로 전달.\n[추정] 슬롯 균등 상한 4 라면 VS4 의 게임 확률은 표수/4(상한 인자 누락으로 확정 안 함).\n---\nmgm05::Scene::AdvanceVoteToRouletteMgSelectFlow()"}
+{"a":"71000165b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: VS4 투표 열기. 서로 다른 3후보를 SyncRandRange 로 만든다."}
+{"a":"7100017bf0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2, §6.6\n역할: 투표 선택 흐름. 15초 동안 네 표를 받는다. CPU 는 선택·0.5~1.0 지연 난수를 별도로 소비.\n필드: +0x234/+0x238/+0x23c 후보 3, +0x240..+0x24c 4표, +0x250 최종 ID."}
+{"a":"7100018690","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6, §10\n역할: 투표 결정. 네 표가 전부 같을 때만 최종 ID 기록, 3:1·2:2 도 룰렛.\n§10 기대: [A,A,A,A] → A 즉시, [A,A,A,B]/[A,A,B,B] → 네 표 룰렛."}
+{"a":"7100018c50","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 투표 → 룰렛 전환. 네 표를 중복 포함 네 슬롯으로 전달.\n[추정] 슬롯 균등 상한 4 라면 VS4 의 게임 확률은 표수/4(상한 인자 누락으로 확정 안 함)."}
 {"a":"710001907c","t":"plate","c":"mgm05::Scene::CheckAllWin()"}
 {"a":"71000190d0","t":"plate","c":"mgm05::Scene::ResultMinigameFlowCommon_RopeCut()"}
 {"a":"710001a600","t":"plate","c":"mgm05::Scene::SendPlayReportFlow()"}
 {"a":"710001a748","t":"plate","c":"mgm05::Scene::GetFormatStr(char const*, ...)"}
-{"a":"710001a7d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 승리 연출 패턴(GetWinPattern).\n계산: bit0 = (승자 수 != 1), bit1 = 승자 전원이 character 0x12/0x0d 중 하나.\n참고: 실력 포인트 식이 아니다.\n---\nmgm05::Scene::GetWinPattern()"}
+{"a":"710001a7d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.6\n역할: 승리 연출 패턴(GetWinPattern).\n계산: bit0 = (승자 수 != 1), bit1 = 승자 전원이 character 0x12/0x0d 중 하나.\n참고: 실력 포인트 식이 아니다."}
 {"a":"710001a900","t":"plate","c":"bq::MinigameModeScene::AddMessage(char const*)"}
 {"a":"710001aa30","t":"plate","c":"mgm05::Scene::GetPlayerCharaSize(bq::PlayerCharacterID)"}
 {"a":"710001aa60","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [29], (void*)0>(char const (&) [29])"}
@@ -253,7 +253,7 @@
 {"a":"710002407c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100024090","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100024098","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"71000240a0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.6·10·부록B\n역할: mgm05::UIResult::Setup — 같은 공용 결과 frame\n부수 효과: x_tag, x_parts_00~03·08·09 의 x_result_01/x_daily/x_chal/x_left 숨김\n분기: flag bit0=0 이면 4칸(00~03), 1이면 2칸(08~09) 반복; x_surv_duel visible=bit0\n분기: 입력값==1 인 칸은 /x_text_surv_00 에 mgm05_mgRes_status_win, /x_surv visible=true\n호출: 해당 /x_face_01 의 StatusFace 에 PlayerID 를 virtual+0xb8 로 전달\n[미확정] Setup 의 결과값·flag 호출자, SetAnimeWindow 의 누락 인자\n---\nmgm05::UIResult::Setup(nn::bezel::WeakHandle<nn::bezel::Entity> const&, std::array<bq::GameWinLose, 4ul>, bool)"}
+{"a":"71000240a0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.6·10·부록B\n역할: mgm05::UIResult::Setup — 같은 공용 결과 frame\n부수 효과: x_tag, x_parts_00~03·08·09 의 x_result_01/x_daily/x_chal/x_left 숨김\n분기: flag bit0=0 이면 4칸(00~03), 1이면 2칸(08~09) 반복; x_surv_duel visible=bit0\n분기: 입력값==1 인 칸은 /x_text_surv_00 에 mgm05_mgRes_status_win, /x_surv visible=true\n호출: 해당 /x_face_01 의 StatusFace 에 PlayerID 를 virtual+0xb8 로 전달\n[미확정] Setup 의 결과값·flag 호출자, SetAnimeWindow 의 누락 인자"}
 {"a":"7100024d3c","t":"plate","c":"mgm05::UIResult::In()"}
 {"a":"7100024d8c","t":"plate","c":"mgm05::UIResult::Out()"}
 {"a":"7100024ddc","t":"plate","c":"mgm05::UIResult::IsEndAnimation() const"}

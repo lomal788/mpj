@@ -337,6 +337,7 @@ export class Stage {
   }
 
   /** MapImpl::GetResultPlayerPosRots @0x7100010730 — 결과 모델 뼈 attach_pc%02d 의 위치·회전. PlayerManImpl::ReceiveState(0,6)가 플레이어 i 에 i 번을 준다 */
+  /** @orig mg1801:7100010730 ref */
   resultPlayerTransform(i: number): { pos: THREE.Vector3; rot: THREE.Quaternion } | null {
     const n = this.result?.getObjectByName(`attach_pc${String(i).padStart(2, '0')}`);
     if (!n) return null;

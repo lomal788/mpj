@@ -40,6 +40,7 @@ export function idFromStartPoint(sp: number): number {
 }
 
 /** GetAndResetStartMode mgmet @0x710004a294 의 보정(flag 0x3d·보스 미개방) */
+/** @orig mgmet:710004a294 ref */
 export function adjustStartPoint(sp: number, flag3d: boolean, bossOpen: boolean): number {
   let v = sp;
   if (flag3d) {
@@ -145,6 +146,7 @@ export const BIT = {
 } as const;
 
 /** mgmet::Input::GetInputVec mgmet @0x710007d060: 1 위 2 아래 3 왼 4 오른, 0 없음 */
+/** @orig mgmet:710007d060 ref */
 export function inputVec(trig: number, rep: number): number {
   const tr = trig | rep;
   if (tr & BIT.UP) return 1;

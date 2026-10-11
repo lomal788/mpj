@@ -551,6 +551,7 @@ export class RmUi {
   }
 
   /** FUN_7100436bc8 [판독] */
+  /** @orig main:7100436bc8 ref */
   private gauge(state: RmUiState): void {
     const s = this.score!;
     const total = state.totalPoint;

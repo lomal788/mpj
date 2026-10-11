@@ -21,6 +21,7 @@ interface Slot {
 }
 
 /** 결과 징글 라벨 — FUN_71001e51e0(id, timing, telopType) */
+/** @orig main:71001e51e0 ref */
 export function resultJingleLabel(gameRule: number, timing: number, telopType: number, players: readonly MgPlayer[]): string | null {
   if (gameRule >= 0 && gameRule < 15 && ((1 << gameRule) & 0x28f) !== 0) {
     if (timing !== 1 || telopType === -1) {
@@ -54,6 +55,7 @@ export class MgSound {
   ) {}
 
   /** FUN_71001e4a54(pos, extra) — 0 telop_start, 1 telop_3, 2 scene_start */
+  /** @orig main:71001e4a54 ref */
   bgmAt(pos: number, extra = 0): boolean {
     const r = this.rec;
     if (!r) return false;
@@ -66,6 +68,7 @@ export class MgSound {
   }
 
   /** FUN_71001e4af0 — mg_bgm_label_no_intro(표 104행 모두 빈 값) */
+  /** @orig main:71001e4af0 ref */
   private noIntro(): void {
     const r = this.rec!;
     if (this.bgm || !r.bgmNoIntro) return;
@@ -74,6 +77,7 @@ export class MgSound {
   }
 
   /** FUN_71001e4c9c */
+  /** @orig main:71001e4c9c ref */
   private playBgm(extra: number): void {
     const r = this.rec!;
     const pending = !this.bgm || this.bgm.delay > 0;
@@ -99,6 +103,7 @@ export class MgSound {
   }
 
   /** FUN_71001e4f28(immediate) — MG BGM 정지(stop_offset 있으면 지연) */
+  /** @orig main:71001e4f28 ref */
   stopBgm(immediate: boolean): void {
     const r = this.rec;
     if (this.bgm?.playing && r) {
@@ -112,6 +117,7 @@ export class MgSound {
   }
 
   /** FUN_71001e559c — finish_jingle_label(표 104행 모두 빈 값) */
+  /** @orig main:71001e559c ref */
   finishJingle(): void {
     const r = this.rec;
     if (!r || !r.finishJingle) return;
@@ -145,6 +151,7 @@ export class MgSound {
   }
 
   /** FUN_71001e597c — 오프닝 건너뛰기(단계 4) */
+  /** @orig main:71001e597c ref */
   openingSkip(): void {
     this.emit({ k: 'se', label: 'SQ_SE_SYS_SKIP' });
     this.skipped = true;
@@ -162,6 +169,7 @@ export class MgSound {
   }
 
   /** FUN_71001e4308 — 매 걸음 지연 재생 갱신 */
+  /** @orig main:71001e4308 ref */
   update(dt: number): void {
     const b = this.bgm;
     if (b && !b.playing && b.delay > 0) {

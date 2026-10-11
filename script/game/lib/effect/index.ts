@@ -510,6 +510,7 @@ export function keyTabWeb(type: number, constant: readonly number[], keys: reado
 }
 
 /** 고정값은 첫 슬롯, 1~7키 채널의 남은 슬롯은 마지막 xyz 와 '마지막 time + 슬롯 번호' [판독 §6.3 FUN_71007491a0] */
+/** @orig main:71007491a0 ref */
 export function keyTabOrig(type: number, constant: readonly number[], keys: readonly Key[], alpha: boolean): KeyTab {
   const v = new Float64Array(MAX_KEYS * 4);
   const fixed = type === 0 || keys.length === 0;

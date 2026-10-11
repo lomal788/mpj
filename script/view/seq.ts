@@ -748,6 +748,7 @@ export class SeqEngine {
    * (마스터 countTrack 의 G12·G14, BGM 의 G13·G10 핸드셰이크)이 프레임 순서대로 보인다 [판독 FUN_71005cdd50].
    * 한 프레임 안 소리 사이 순서(플레이어 목록 순서)는 [추정: 재생 시작 순서].
    */
+  /** @orig main:71005cdd50 ref */
   advanceAll(until: number): void {
     for (;;) {
       let next: SeqSound | null = null;

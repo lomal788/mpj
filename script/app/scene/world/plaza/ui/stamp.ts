@@ -146,6 +146,7 @@ export class StampCtrl {
   }
 
   /** In(imm) [판독 FUN_71003577e0]: imm 이 아니면 안내 "in", 목록은 그대로 */
+  /** @orig main:71003577e0 ref */
   in(imm = false): void {
     if (imm) {
       this.list.out(true);
@@ -156,6 +157,7 @@ export class StampCtrl {
   }
 
   /** Out(imm) [판독 FUN_7100357d50] */
+  /** @orig main:7100357d50 ref */
   out(imm = false): void {
     this.list.out(imm);
     this.guide.out(imm);
@@ -186,12 +188,14 @@ export class StampCtrl {
   }
 
   /** 목록 In(FUN_710035d31c) */
+  /** @orig main:710035d31c ref */
   openList(): void {
     this.list.in(false);
     this.refreshList(false);
   }
 
   /** 한 프레임 입력(trig·hold = 이 사람). canSend = 말풍선 없음/끝(FUN_7100357510). 보낼 스탬프 ID 또는 −1 */
+  /** @orig main:7100357510 ref */
   input(trig: number, hold: number, canSend: boolean, ev: StampEvent[]): number {
     if (this.st < 0) return -1;
     const rep = trig | this.reps.next(hold, trig);
@@ -225,6 +229,7 @@ export class StampCtrl {
   }
 
   /** 목록 입력 [판독 FUN_710035c9b4]: 좌우 = 칸(페이지 안 넘김), 위아래 = 페이지(넘김), A = press + 보내기, B = 닫기(1인 목록, §8) */
+  /** @orig main:710035c9b4 ref */
   private listInput(trig: number, rep: number, canSend: boolean, ev: StampEvent[]): number {
     const n = this.items.length;
     const per = this.perPage;

@@ -242,6 +242,7 @@ export class SaveCore {
 }
 
 /** 원본 SaveRequestFiber(menu00 @0x71000923c0): 요청 → 처리 중이 아닐 때까지 한 프레임씩 yield */
+/** @orig menu00:71000923c0 ref */
 export function* saveRequestFiber(save: { request(): void; isProcessing(): boolean }): Generator<void, void, unknown> {
   save.request();
   while (save.isProcessing()) yield;

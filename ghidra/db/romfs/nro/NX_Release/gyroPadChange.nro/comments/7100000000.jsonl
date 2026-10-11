@@ -13,11 +13,11 @@
 {"a":"71000039dc","t":"plate","c":"gyroPadChange::Scene::~Scene()"}
 {"a":"7100003b18","t":"plate","c":"gyroPadChange::Scene::~Scene()"}
 {"a":"7100003b3c","t":"plate","c":"gyroPadChange::Scene::BeginScene()"}
-{"a":"7100003b70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/controller_support.md §5\n역할: Scene::SetupGame\n필드: 기존 렌더 레이어 clear 값을 보관하고 설정, 장면 표시 준비\n---\ngyroPadChange::Scene::SetupGame()"}
-{"a":"7100003c50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/controller_support.md §5\n역할: Scene::SyncedSetupGame\n분기: GameWork 파라미터·현재 게임의 GyroType 등에 따라 공용 안내 타입 결정\n호출: ComUiControllerGuide 생성·In\n---\ngyroPadChange::Scene::SyncedSetupGame()"}
+{"a":"7100003b70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/controller_support.md §5\n역할: Scene::SetupGame\n필드: 기존 렌더 레이어 clear 값을 보관하고 설정, 장면 표시 준비"}
+{"a":"7100003c50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/controller_support.md §5\n역할: Scene::SyncedSetupGame\n분기: GameWork 파라미터·현재 게임의 GyroType 등에 따라 공용 안내 타입 결정\n호출: ComUiControllerGuide 생성·In"}
 {"a":"7100003f20","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiControllerGuide> nn::bezel::Entity::AddComponent<bq::ComUiControllerGuide, bq::ComUiControllerGuide::UiControllerGuideType&, (void*)0>(bq::ComUiControllerGuide::UiControllerGuideType&)"}
 {"a":"71000040fc","t":"plate","c":"gyroPadChange::Scene::CleanupGame()"}
-{"a":"7100004100","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/controller_support.md §5\n역할: Scene::GameFlow\n분기: 페이드인 완료 대기 → 3초 대기 → 게임/설명 장면 호출 또는 호출자 복귀\n[미확정] RequestCallScene/RequestReturnScene 의 일부 문자열 인자가 C 에서 사라져 목적지 미확정\n비고: 3초를 등록 타임아웃으로 해석하지 않음; L+R 대기 없음\n---\ngyroPadChange::Scene::GameFlow()"}
+{"a":"7100004100","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/controller_support.md §5\n역할: Scene::GameFlow\n분기: 페이드인 완료 대기 → 3초 대기 → 게임/설명 장면 호출 또는 호출자 복귀\n[미확정] RequestCallScene/RequestReturnScene 의 일부 문자열 인자가 C 에서 사라져 목적지 미확정\n비고: 3초를 등록 타임아웃으로 해석하지 않음; L+R 대기 없음"}
 {"a":"710000422c","t":"plate","c":"gyroPadChange::Scene::getInstanceTypeinfo() const"}
 {"a":"7100004308","t":"plate","c":"gyroPadChange::Scene::GetSymbol() const"}
 {"a":"7100004318","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}

@@ -97,6 +97,7 @@ export class RmGameWork {
   ) {}
 
   /** 원본 RmStarEffectMan::Start → FUN_710042a6b8: score = clamp(score + points, 0, 999) */
+  /** @orig main:710042a6b8 ref */
   addScore(playerId: number, points: number): void {
     this.scores[playerId] = Math.max(0, Math.min(999, this.scores[playerId] + points));
   }

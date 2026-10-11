@@ -61,15 +61,15 @@
 {"a":"71000072b4","t":"plate","c":"mgm03::Scene::SetupGame()"}
 {"a":"71000073c0","t":"plate","c":"mgm03::Scene::InitializeMap()"}
 {"a":"7100007860","t":"plate","c":"mgm03::Scene::InitializeChara()"}
-{"a":"7100008960","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6\n역할: mgm03 Scene 설정(결과 rank 계산).\n분기: Rule0 은 GameRank 를 읽되 unsigned>2 이면 3.\n분기: 그 밖은 승자 WinLose==1 이면 0, 비승자는 승자 수, 승자 0명이면 모두 3.\n[미확정] 팀/스타 지급의 최종 Data writer.\n---\nmgm03::Scene::SyncedSetupGame()"}
+{"a":"7100008960","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6\n역할: mgm03 Scene 설정(결과 rank 계산).\n분기: Rule0 은 GameRank 를 읽되 unsigned>2 이면 3.\n분기: 그 밖은 승자 WinLose==1 이면 0, 비승자는 승자 수, 승자 0명이면 모두 3.\n[미확정] 팀/스타 지급의 최종 Data writer."}
 {"a":"7100008fa0","t":"plate","c":"mgm03::Scene::CleanupGame()"}
 {"a":"7100009070","t":"plate","c":"mgm03::Scene::FinalizeChara()"}
-{"a":"7100009780","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 데일리 트라이얼 진행 흐름(MinigameModeFlow).\n흐름: StartFlow / ResultMinigameFlow → DicideMinigameFlow.\n분기: Round>=MaxRound 의 결과 분기에서 flag0x1a·Entrance9·RequestReturn.\n[미확정] MaxRound/SetRound 값 인자가 C 에서 빠짐.\n---\nmgm03::Scene::MinigameModeFlow()"}
+{"a":"7100009780","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 데일리 트라이얼 진행 흐름(MinigameModeFlow).\n흐름: StartFlow / ResultMinigameFlow → DicideMinigameFlow.\n분기: Round>=MaxRound 의 결과 분기에서 flag0x1a·Entrance9·RequestReturn.\n[미확정] MaxRound/SetRound 값 인자가 C 에서 빠짐."}
 {"a":"7100009a80","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::Entity>::SafeLock() const"}
 {"a":"7100009ad0","t":"plate","c":"nn::bezel::HandlePtr<bq::mgm::ComMinigameModeActionRequestPerformer> nn::bezel::Entity::SafeGet<bq::mgm::ComMinigameModeActionRequestPerformer>()"}
-{"a":"7100009bc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §7.1\n역할: 시작 흐름(StartFlow). 팩 이름·안내·바람 단계 소리.\n---\nmgm03::Scene::StartFlow()"}
-{"a":"710000a440","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.1, §6.6\n역할: 게임 결정(DicideMinigameFlow).\n계산: 팩 ID 슬롯 +0x5c+Round×4 를 선택(팩의 mg1/mg2/mg3 고정 순서).\n난수: SyncRand 호출 0.\n---\nmgm03::Scene::DicideMinigameFlow()"}
-{"a":"710000b3a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 결과 흐름(ResultMinigameFlow). 매 판 결과 → 마지막엔 항구 복귀(Round>=MaxRound 분기).\n---\nmgm03::Scene::ResultMinigameFlow()"}
+{"a":"7100009bc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §7.1\n역할: 시작 흐름(StartFlow). 팩 이름·안내·바람 단계 소리."}
+{"a":"710000a440","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.1, §6.6\n역할: 게임 결정(DicideMinigameFlow).\n계산: 팩 ID 슬롯 +0x5c+Round×4 를 선택(팩의 mg1/mg2/mg3 고정 순서).\n난수: SyncRand 호출 0."}
+{"a":"710000b3a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 결과 흐름(ResultMinigameFlow). 매 판 결과 → 마지막엔 항구 복귀(Round>=MaxRound 분기)."}
 {"a":"710000c780","t":"plate","c":"mgm03::Scene::GetArpList(mgm03::Scene::ArpListRange)"}
 {"a":"710000e1b0","t":"plate","c":"mgm03::Scene::SetVisiblePlayerChara(bq::mgm::ComMinigameModeActionRequestPerformer*, bool)"}
 {"a":"710000e580","t":"plate","c":"mgm03::Scene::PlayPlayerMoveAnimeWithTransition0(bq::mgm::ComMinigameModeActionRequestPerformer*, char const**, char const*, char const**, char const*)"}
@@ -221,13 +221,13 @@
 {"a":"7100018e88","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HudWidgetBase, false, nn::bezel::IBasis>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100018e9c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HudWidgetBase, false, nn::bezel::IBasis>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100018ea4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HudWidgetBase, false, nn::bezel::IBasis>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100018eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.6·10·부록B\n역할: FindHud<UiControlStatusName>(mgm03)\n분기: FindPane 대상 pane 와 HudWidgetBase::GetRootPane 를 비교\n필드: layout+0xa8..+0xb0 의 2-pointer 항목을 순회\n출력: 타입이 맞으면 세대 포함 WeakHandle, 없으면 0. pane 이름만으로 임의 control 을 반환하지 않음\n---\nnn::bezel::WeakHandle<bq::UiControlStatusName> nn::bezel::ComGuiLayout::FindHud<bq::UiControlStatusName>(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100018eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.6·10·부록B\n역할: FindHud<UiControlStatusName>(mgm03)\n분기: FindPane 대상 pane 와 HudWidgetBase::GetRootPane 를 비교\n필드: layout+0xa8..+0xb0 의 2-pointer 항목을 순회\n출력: 타입이 맞으면 세대 포함 WeakHandle, 없으면 0. pane 이름만으로 임의 control 을 반환하지 않음"}
 {"a":"7100018fbc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100019010","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::GetBaseTypeDesc()"}
 {"a":"710001901c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100019030","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100019038","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::UiControlStatusName, false, bex::UiControl>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100019040","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.6·부록B\n역할: mgm03::UIResult::Setup — 공용 결과 frame 조립\n호출: ComUiMinigameModeWindowCommon 생성, mgm00_base_mgresult_00.bflyt 를 SetupStart→SetupFinish\n부수 효과: x_tag·x_surv_duel 숨김, x_parts_00~03 의 x_chal/x_surv/x_right 숨김; 4플레이어 칸 반복\n필드: 칸 x_parts_0{i}/x_text_00, /x_result_00, /x_face_01. Text0 에 im_rank0 접두 삽입 문자열 연결\n필드: reader 는 Round-1 의 0xc-byte record +8/+9/+0xa/+0xb 를 읽고 +4==0 갈래도 사용\n[미확정] rank/스타 writer 의미와 빠진 label 인자\n---\nmgm03::UIResult::Setup(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100019040","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.6·부록B\n역할: mgm03::UIResult::Setup — 공용 결과 frame 조립\n호출: ComUiMinigameModeWindowCommon 생성, mgm00_base_mgresult_00.bflyt 를 SetupStart→SetupFinish\n부수 효과: x_tag·x_surv_duel 숨김, x_parts_00~03 의 x_chal/x_surv/x_right 숨김; 4플레이어 칸 반복\n필드: 칸 x_parts_0{i}/x_text_00, /x_result_00, /x_face_01. Text0 에 im_rank0 접두 삽입 문자열 연결\n필드: reader 는 Round-1 의 0xc-byte record +8/+9/+0xa/+0xb 를 읽고 +4==0 갈래도 사용\n[미확정] rank/스타 writer 의미와 빠진 label 인자"}
 {"a":"710001ad5c","t":"plate","c":"mgm03::UIResult::In()"}
 {"a":"710001adac","t":"plate","c":"mgm03::UIResult::Hide()"}
 {"a":"710001ae00","t":"plate","c":"mgm03::UIResult::UpdateScore()"}

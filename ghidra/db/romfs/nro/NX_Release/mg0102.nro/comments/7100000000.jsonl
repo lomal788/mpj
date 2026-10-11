@@ -1,25 +1,25 @@
 {"a":"7100003830","t":"plate","c":"mg0102::CameraMgr::CameraMgr()"}
-{"a":"7100003860","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::Create — Camera00~03 을 GraphicsLayer 0~3 에 연결.\n웹: 카메라 배열 index = GraphicsLayer ID.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): Camera00~03→layer0~3; 시작 focus0 → opening 균등 4분할 → 종료 focus0.\n주의: 문서 §7.2 는 mg0102 0x7100003860/0x7100004ec0/0x7100005500 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 카메라00~03 생성, GraphicsLayer0~3 연결\n투영: fov 0.34906584 rad(20도), aspect 1.777, near 0.1, far 10000\n---\nmg0102::CameraMgr::Create()"}
+{"a":"7100003860","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::Create — Camera00~03 을 GraphicsLayer 0~3 에 연결.\n웹: 카메라 배열 index = GraphicsLayer ID.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): Camera00~03→layer0~3; 시작 focus0 → opening 균등 4분할 → 종료 focus0.\n주의: 문서 §7.2 는 mg0102 0x7100003860/0x7100004ec0/0x7100005500 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 카메라00~03 생성, GraphicsLayer0~3 연결\n투영: fov 0.34906584 rad(20도), aspect 1.777, near 0.1, far 10000"}
 {"a":"7100003e90","t":"plate","c":"nn::bezel::WeakHandle<bq::ComSplitScreen> nn::bezel::Entity::AddComponent<bq::ComSplitScreen, , (void*)0>()"}
 {"a":"7100004070","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > wl::format<int>(char const*, int const&)"}
 {"a":"7100004210","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
 {"a":"71000043f0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > wl::mg::File<>(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)"}
 {"a":"7100004540","t":"plate","c":"mg0102::CameraMgr::~CameraMgr()"}
-{"a":"71000046d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0102::CameraMgr::InitParam — 초기 분할 설정.\n호출: BL @0x71000047d0 → SplitTo(2,2,0,0) = 화면0 전체(균등 4분할 아님).\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 카메라 초기 파라미터. SplitTo(2,2,0,0) 화면0 전체\n---\nmg0102::CameraMgr::InitParam()"}
+{"a":"71000046d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0102::CameraMgr::InitParam — 초기 분할 설정.\n호출: BL @0x71000047d0 → SplitTo(2,2,0,0) = 화면0 전체(균등 4분할 아님).\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 카메라 초기 파라미터. SplitTo(2,2,0,0) 화면0 전체"}
 {"a":"71000047d0","t":"eol","c":"SplitTo(열2,행2,focus0,0초): 화면0 전체"}
-{"a":"71000049c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0102::CameraMgr::SetInitState — 초기 상태 분할 설정.\n호출: B @0x7100004ba0 (꼬리 호출) → SplitTo(2,2,0,0) = 화면0 전체.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 초기 상태. SplitTo(2,2,0,0) 화면0 전체\n---\nmg0102::CameraMgr::SetInitState()"}
+{"a":"71000049c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0102::CameraMgr::SetInitState — 초기 상태 분할 설정.\n호출: B @0x7100004ba0 (꼬리 호출) → SplitTo(2,2,0,0) = 화면0 전체.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 초기 상태. SplitTo(2,2,0,0) 화면0 전체"}
 {"a":"7100004ba0","t":"eol","c":"SplitTo(열2,행2,focus0,0초): 화면0 전체"}
 {"a":"7100004bc0","t":"plate","c":"mg0102::CameraMgr::StartOpeningCameraAnime()"}
 {"a":"7100004cc0","t":"plate","c":"mg0102::CameraMgr::IsOpeningCameraAnimeDone()"}
 {"a":"7100004db0","t":"plate","c":"mg0102::CameraMgr::ClearCameraAnime()"}
-{"a":"7100004ec0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::StartOpeningTransition(bool skip) — 오프닝 전환 후 균등 4분할.\n호출: SplitTo(2,2,−1, skip?0:1) — skip 이면 즉시, 아니면 1초.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): Camera00~03→layer0~3; 시작 focus0 → opening 균등 4분할 → 종료 focus0.\n주의: 문서 §7.2 는 mg0102 0x7100003860/0x7100004ec0/0x7100005500 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: StartOpeningTransition(bool skip). SplitTo(2,2,−1,skip?0:1) 균등 4분할 전환(스킵 즉시, 아니면 1초)\n---\nmg0102::CameraMgr::StartOpeningTransition(bool)"}
+{"a":"7100004ec0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::StartOpeningTransition(bool skip) — 오프닝 전환 후 균등 4분할.\n호출: SplitTo(2,2,−1, skip?0:1) — skip 이면 즉시, 아니면 1초.\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): Camera00~03→layer0~3; 시작 focus0 → opening 균등 4분할 → 종료 focus0.\n주의: 문서 §7.2 는 mg0102 0x7100003860/0x7100004ec0/0x7100005500 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: StartOpeningTransition(bool skip). SplitTo(2,2,−1,skip?0:1) 균등 4분할 전환(스킵 즉시, 아니면 1초)"}
 {"a":"71000050d0","t":"eol","c":"SplitTo(2,2,focus−1,skip?0:1): 균등 4분할"}
-{"a":"71000050f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::StartCloseTransition(bool skip) — 닫기 전환, 화면0 전체로.\n호출: SplitTo(2,2,0, skip?0:1).\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: StartCloseTransition(bool skip). SplitTo(2,2,0,skip?0:1) 화면0 전체 복귀\n---\nmg0102::CameraMgr::StartCloseTransition(bool)"}
+{"a":"71000050f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::StartCloseTransition(bool skip) — 닫기 전환, 화면0 전체로.\n호출: SplitTo(2,2,0, skip?0:1).\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: StartCloseTransition(bool skip). SplitTo(2,2,0,skip?0:1) 화면0 전체 복귀"}
 {"a":"7100005300","t":"eol","c":"SplitTo(2,2,focus0,skip?0:1): 화면0 전체 복귀"}
 {"a":"7100005320","t":"plate","c":"mg0102::CameraMgr::IsOpeningTransitionDone()"}
-{"a":"7100005500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::SetFinishCamera — 결과 카메라, 화면0 전체.\n호출: SplitTo(2,2,0,0).\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): Camera00~03→layer0~3; 시작 focus0 → opening 균등 4분할 → 종료 focus0.\n주의: 문서 §7.2 는 mg0102 0x7100003860/0x7100004ec0/0x7100005500 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 카메라. SplitTo(2,2,0,0) 화면0 전체\n---\nmg0102::CameraMgr::SetFinishCamera()"}
+{"a":"7100005500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1·§9.6\n역할: mg0102::CameraMgr::SetFinishCamera — 결과 카메라, 화면0 전체.\n호출: SplitTo(2,2,0,0).\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): Camera00~03→layer0~3; 시작 focus0 → opening 균등 4분할 → 종료 focus0.\n주의: 문서 §7.2 는 mg0102 0x7100003860/0x7100004ec0/0x7100005500 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 카메라. SplitTo(2,2,0,0) 화면0 전체"}
 {"a":"710000573c","t":"plate","c":"mg0102::CameraMgr::SetPlayerCameraPos2(int, nn::util::MatrixRowMajor4x3f)"}
-{"a":"7100005898","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 플레이어 추적 카메라. 기저 B0/B1/B2·위치 p에 대해\neye = p + B0·Scene[0x328] + B1·Scene[0x338] + B2·Scene[0x33c]\ntarget = p + B0·Scene[0x328] + B1·Scene[0x32c] + B2·Scene[0x330]\nup = normalize(p)\n---\nmg0102::CameraMgr::SetPlayerCameraPos(int, nn::util::MatrixRowMajor4x3f)"}
+{"a":"7100005898","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 플레이어 추적 카메라. 기저 B0/B1/B2·위치 p에 대해\neye = p + B0·Scene[0x328] + B1·Scene[0x338] + B2·Scene[0x33c]\ntarget = p + B0·Scene[0x328] + B1·Scene[0x32c] + B2·Scene[0x330]\nup = normalize(p)"}
 {"a":"71000058f0","t":"pre","c":"~0x71000059c4: eye/target/up 세 인자 계산(AArch64 확인)"}
 {"a":"71000059e0","t":"plate","c":"mg0102::CameraMgr::GetComCamera(int)"}
 {"a":"7100005b38","t":"plate","c":"mg0102::CameraMgr::SetPlayerCameraRotation(int, nn::util::Quaternion)"}
@@ -178,12 +178,12 @@
 {"a":"71000134c0","t":"plate","c":"mg0102::GameMgr::GameMgr()"}
 {"a":"7100013670","t":"plate","c":"mg0102::GameMgr::~GameMgr()"}
 {"a":"7100014620","t":"plate","c":"mg0102::GameMgr::~GameMgr()"}
-{"a":"7100014644","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: 빈 함수\n---\nmg0102::GameMgr::TickUpdate_Mgr()"}
-{"a":"7100014650","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: GameMgr 파이버 Update. UpdateHorogramRotate·준비 모션 완료 검사 후 Fiber::Wait()\nGameMgr는 우선순위 0 bex::Fiber. 고유 이동·득점은 본편 훅에서 갱신\n---\nmg0102::GameMgr::Update()"}
-{"a":"71000146b0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4·11\n역할: 깃발 표시 상태. 획득 시 상태11→표시 갱신에서 14→get 모션 완료 후 99\n캐릭터 ID별 mg0102_hologram_pcNN·hologram_base_pcNN_emi·hologram_ray_pcNN·holo_ray_under_pcNN 텍스처 선택, 보이스·FX_GET·상태 점수·남은 개수 텍스트 갱신\n카메라 가시성 최적화는 visible/Activate만 제어하며 소유권·거리 판정 조건이 아님\n[미확정] 홀로그램 가시성 마스크 수치(§11)\n---\nmg0102::GameMgr::UpdateHorogramRotate()"}
+{"a":"7100014644","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: 빈 함수"}
+{"a":"7100014650","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: GameMgr 파이버 Update. UpdateHorogramRotate·준비 모션 완료 검사 후 Fiber::Wait()\nGameMgr는 우선순위 0 bex::Fiber. 고유 이동·득점은 본편 훅에서 갱신"}
+{"a":"71000146b0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4·11\n역할: 깃발 표시 상태. 획득 시 상태11→표시 갱신에서 14→get 모션 완료 후 99\n캐릭터 ID별 mg0102_hologram_pcNN·hologram_base_pcNN_emi·hologram_ray_pcNN·holo_ray_under_pcNN 텍스처 선택, 보이스·FX_GET·상태 점수·남은 개수 텍스트 갱신\n카메라 가시성 최적화는 visible/Activate만 제어하며 소유권·거리 판정 조건이 아님\n[미확정] 홀로그램 가시성 마스크 수치(§11)"}
 {"a":"7100014d40","t":"plate","c":"mg0102::GameMgr::UpdatePlayerAnime()"}
-{"a":"7100014d9c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: SetupGame 훅(준비)\n---\nmg0102::GameMgr::SetupGame_Mgr()"}
-{"a":"7100014dd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1·4.2\n역할: SyncedSetupGame 훅. CSV 값을 double로 읽어 f32에 저장, 플레이어·깃발·카메라 초기화\n초기값: 점수 0, 순위 3, 깃발 소유자 −1, 남은 개수 60, 본편 시간 0\n§4.2 CSV 소비: flags[0..4]→+0x10..0x20(60, 9, 3, 0.5, 3), arrow[0..3]→+0x24..0x30(45초, (0,2.4,0)), player[0..6]→+0x34..0x4c(2, 6, 0.1, 0.8, 6.2831852, 19.1986214444444, 0.5), pc0..3[0]→+0x50..0x5c(4.5,1.5,−1.5,−4.5)\n---\nmg0102::GameMgr::SyncedSetupGame_Mgr()"}
+{"a":"7100014d9c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: SetupGame 훅(준비)"}
+{"a":"7100014dd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1·4.2\n역할: SyncedSetupGame 훅. CSV 값을 double로 읽어 f32에 저장, 플레이어·깃발·카메라 초기화\n초기값: 점수 0, 순위 3, 깃발 소유자 −1, 남은 개수 60, 본편 시간 0\n§4.2 CSV 소비: flags[0..4]→+0x10..0x20(60, 9, 3, 0.5, 3), arrow[0..3]→+0x24..0x30(45초, (0,2.4,0)), player[0..6]→+0x34..0x4c(2, 6, 0.1, 0.8, 6.2831852, 19.1986214444444, 0.5), pc0..3[0]→+0x50..0x5c(4.5,1.5,−1.5,−4.5)"}
 {"a":"710001a580","t":"plate","c":"wl::CsvLabel::CsvLabel<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > >(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)"}
 {"a":"710001bf00","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*, (void*)0>(char const*&&)"}
 {"a":"710001c0e0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUi> nn::bezel::Entity::AddComponent<bq::ComUi, char const (&) [21], char const (&) [27], (void*)0>(char const (&) [21], char const (&) [27])"}
@@ -196,37 +196,37 @@
 {"a":"710001c450","t":"plate","c":"wl::mg::CreateTexture(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)"}
 {"a":"710001c530","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > wl::format<unsigned int>(char const*, unsigned int const&)"}
 {"a":"710001c6d0","t":"plate","c":"mg0102::GameMgr::Hologram_InitSoundActor(int)"}
-{"a":"710001c7f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.3·11\n역할: 깃발 배치. 후보마다 기본 행렬0·근접 대체 행렬1~3·대응 표시 행렬. 판정 구면 반지름 15, 표시 위치 15.3\n띠 i=0..7(설정9−2), 띠별 후보 수 F(i+2)=1,2,3,5,8,13,21,34. 방위각 띠마다 π/2 진행 + 2πj/F(i+2). 극각 β=(i/7+0.1sinφ)·π/2, 남쪽 β+π, 북쪽 β\nrandInitType=1: 남쪽 i<7 후보 다음 북쪽 i≥3 후보. 다른 값이면 순서가 섞인 분기 + 슬롯마다 j=SyncRandMod(전체 후보 수) 교환(Fisher–Yates 아님)\n선택: 3개 묶음 사용 수<3, 출력 수<60−3, 기본 후보 y<5이면 대체1·2·3 출력, 그 외 기본0. 60개면 멈춤\n난수: 선택 후보마다 SyncRandMod(36)·10 한 번 = 깃발 로컬 회전각 0~350도(같은 3개 묶음은 같은 각). 기본 설정도 생략 안 함\n상수: 대체 후보 생성에 0.017453292·0.030229991 rad\n[미확정] NEON 전개에서 대체1~3의 1도/1.732도 축 합성·행렬 곱 순서 전체(§11)\n---\nmg0102::GameMgr::InitHologramTransform()"}
+{"a":"710001c7f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.3·11\n역할: 깃발 배치. 후보마다 기본 행렬0·근접 대체 행렬1~3·대응 표시 행렬. 판정 구면 반지름 15, 표시 위치 15.3\n띠 i=0..7(설정9−2), 띠별 후보 수 F(i+2)=1,2,3,5,8,13,21,34. 방위각 띠마다 π/2 진행 + 2πj/F(i+2). 극각 β=(i/7+0.1sinφ)·π/2, 남쪽 β+π, 북쪽 β\nrandInitType=1: 남쪽 i<7 후보 다음 북쪽 i≥3 후보. 다른 값이면 순서가 섞인 분기 + 슬롯마다 j=SyncRandMod(전체 후보 수) 교환(Fisher–Yates 아님)\n선택: 3개 묶음 사용 수<3, 출력 수<60−3, 기본 후보 y<5이면 대체1·2·3 출력, 그 외 기본0. 60개면 멈춤\n난수: 선택 후보마다 SyncRandMod(36)·10 한 번 = 깃발 로컬 회전각 0~350도(같은 3개 묶음은 같은 각). 기본 설정도 생략 안 함\n상수: 대체 후보 생성에 0.017453292·0.030229991 rad\n[미확정] NEON 전개에서 대체1~3의 1도/1.732도 축 합성·행렬 곱 순서 전체(§11)"}
 {"a":"7100020a28","t":"pre","c":"w1=전체 후보 수: 슬롯마다 j=SyncRandMod(전체 후보 수)로 교환(범위가 줄지 않는 섞기)"}
 {"a":"7100020a94","t":"pre","c":"~0x7100020aac: 선택 후보마다 SyncRandMod(36)·10 = 깃발 로컬 회전각(0~350도)"}
 {"a":"71000229a0","t":"plate","c":"mg0102::GameMgr::UpdatePlayerCamera(int)"}
 {"a":"7100022a14","t":"plate","c":"mg0102::GameMgr::DrawPlayerPoint(int)"}
 {"a":"7100022a48","t":"plate","c":"mg0102::GameMgr::DrawHologramNum()"}
 {"a":"7100022a50","t":"plate","c":"mg0102::GameMgr::CleanupGame_Mgr()"}
-{"a":"7100022a54","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 일반 플레이에서 오프닝 상태10·카메라 애니 시작\n---\nmg0102::GameMgr::OnGameInit_Mgr()"}
-{"a":"7100022a9c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 설명 화면 초기화. 상태99·스킵 끝 상태 설정\n---\nmg0102::GameMgr::OnGameInstInit_Mgr()"}
-{"a":"7100022ae0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 오프닝 스킵. 카메라 애니 제거, 네 추적 카메라·방향 캐시·준비 모션 설정, 상태99\n---\nmg0102::GameMgr::OnGameOpeningSkip_Mgr()"}
+{"a":"7100022a54","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 일반 플레이에서 오프닝 상태10·카메라 애니 시작"}
+{"a":"7100022a9c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 설명 화면 초기화. 상태99·스킵 끝 상태 설정"}
+{"a":"7100022ae0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 오프닝 스킵. 카메라 애니 제거, 네 추적 카메라·방향 캐시·준비 모션 설정, 상태99"}
 {"a":"7100022fb0","t":"plate","c":"mg0102::GameMgr::OnGameFirstFade_Mgr()"}
-{"a":"7100022fc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 오프닝 상태기계. 기본 상태10→13에서 준비 모션·오프닝 카메라 완료 대기→14 카메라 좌표를 플레이어 기준으로 환산→15 각 추적 카메라·깃발 방향 갱신→16 분할 전환 완료\n상태11·12의 대기/회전 코드도 있지만 기본 상태10은 13으로 직접 감\n§7 상태14: 애니 끝 eye/target을 회전해 Scene 계수(+0x328..)에 다시 씀\n---\nmg0102::GameMgr::OnGameOpening_Mgr()"}
-{"a":"7100023dd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: OnGameStartBefore 훅. 플레이어 표시·카메라를 갱신하되 UpdatePlayer(p,true)로 이동 입력을 막음. 상태 UI 표시\n---\nmg0102::GameMgr::OnGameStartBefore_Mgr()"}
+{"a":"7100022fc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 오프닝 상태기계. 기본 상태10→13에서 준비 모션·오프닝 카메라 완료 대기→14 카메라 좌표를 플레이어 기준으로 환산→15 각 추적 카메라·깃발 방향 갱신→16 분할 전환 완료\n상태11·12의 대기/회전 코드도 있지만 기본 상태10은 13으로 직접 감\n§7 상태14: 애니 끝 eye/target을 회전해 Scene 계수(+0x328..)에 다시 씀"}
+{"a":"7100023dd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: OnGameStartBefore 훅. 플레이어 표시·카메라를 갱신하되 UpdatePlayer(p,true)로 이동 입력을 막음. 상태 UI 표시"}
 {"a":"7100023f70","t":"plate","c":"mg0102::GameMgr::DispStatus()"}
-{"a":"71000240b8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: OnGameStart 훅. 플레이어 표시·카메라를 갱신하되 UpdatePlayer(p,true)로 이동 입력을 막음. 상태 UI 표시\n---\nmg0102::GameMgr::OnGameStart_Mgr()"}
-{"a":"7100024240","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: OnGameStartAfter 훅. 플레이어 표시·카메라를 갱신하되 UpdatePlayer(p,true)로 이동 입력을 막음. 상태 UI 표시\n---\nmg0102::GameMgr::OnGameStartAfter_Mgr()"}
-{"a":"71000244f8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.2·5\n역할: 본편 한 프레임. 남은 깃발 0이면 true\n1: GameMgr+0x610 += GetDeltaTime()\n2: p=0,1,2,3 순서로 UpdatePlayer(p,false)→UpdatePlayerHitCheckHologram(p)→행렬 취득·카메라 갱신→UpdatePlayerArrow(p)\n3: 한 번이라도 획득했으면 4명 순위 재계산·상태 UI 갱신. UpdateArrowDisp()로 화살표 표시·CPU 탐색 범위 전환\n4: 설명 화면이면 남은 개수<1을 반환. 일반 플레이도 기본은 같은 조건, finishType>0은 지정 승자 조합으로 점수를 덮어쓰고 즉시 종료하는 개발용 경로(설명 화면은 우회)\n순서 주의: 모든 플레이어 이동 뒤 일괄 판정이 아님. CPU는 가까운 깃발·방향 캐시를 자기 UpdatePlayerArrow보다 먼저 소비\n---\nmg0102::GameMgr::OnGameMain_Mgr()"}
-{"a":"7100024b90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4·10\n역할: 깃발 획득. 깃발 ID 오름차순으로 owner<0만 검사\n조건: distance(playerPos, flagMatrix.translation) < 0.5+0.5이면 첫 깃발 owner=p, score[p]++, remain-- 후 즉시 반환\n한 플레이어·한 프레임 최대 1개. 동시 접촉은 낮은 슬롯 우선. 거리=1은 획득 없음\n---\nmg0102::GameMgr::UpdatePlayerHitCheckHologram(int)"}
-{"a":"71000255a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: rank[p] = count(score[q] > score[p])(0 시작, 최대 3). 동점에 슬롯 번호·획득 시각 보조 기준 없음\n---\nmg0102::GameMgr::CalcPlayerRank(int)"}
-{"a":"7100025670","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 종료 훅. 플레이어 종료 모션, 화살표 숨김, +0x621=1, UI 퇴장, 최종 순위 MGMgr::SetPlayerRank(p,rank,1)\n---\nmg0102::GameMgr::OnGameEnd_Mgr()"}
+{"a":"71000240b8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: OnGameStart 훅. 플레이어 표시·카메라를 갱신하되 UpdatePlayer(p,true)로 이동 입력을 막음. 상태 UI 표시"}
+{"a":"7100024240","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: OnGameStartAfter 훅. 플레이어 표시·카메라를 갱신하되 UpdatePlayer(p,true)로 이동 입력을 막음. 상태 UI 표시"}
+{"a":"71000244f8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.2·5\n역할: 본편 한 프레임. 남은 깃발 0이면 true\n1: GameMgr+0x610 += GetDeltaTime()\n2: p=0,1,2,3 순서로 UpdatePlayer(p,false)→UpdatePlayerHitCheckHologram(p)→행렬 취득·카메라 갱신→UpdatePlayerArrow(p)\n3: 한 번이라도 획득했으면 4명 순위 재계산·상태 UI 갱신. UpdateArrowDisp()로 화살표 표시·CPU 탐색 범위 전환\n4: 설명 화면이면 남은 개수<1을 반환. 일반 플레이도 기본은 같은 조건, finishType>0은 지정 승자 조합으로 점수를 덮어쓰고 즉시 종료하는 개발용 경로(설명 화면은 우회)\n순서 주의: 모든 플레이어 이동 뒤 일괄 판정이 아님. CPU는 가까운 깃발·방향 캐시를 자기 UpdatePlayerArrow보다 먼저 소비"}
+{"a":"7100024b90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4·10\n역할: 깃발 획득. 깃발 ID 오름차순으로 owner<0만 검사\n조건: distance(playerPos, flagMatrix.translation) < 0.5+0.5이면 첫 깃발 owner=p, score[p]++, remain-- 후 즉시 반환\n한 플레이어·한 프레임 최대 1개. 동시 접촉은 낮은 슬롯 우선. 거리=1은 획득 없음"}
+{"a":"71000255a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: rank[p] = count(score[q] > score[p])(0 시작, 최대 3). 동점에 슬롯 번호·획득 시각 보조 기준 없음"}
+{"a":"7100025670","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 종료 훅. 플레이어 종료 모션, 화살표 숨김, +0x621=1, UI 퇴장, 최종 순위 MGMgr::SetPlayerRank(p,rank,1)"}
 {"a":"7100025a2c","t":"plate","c":"mg0102::GameMgr::ChangeRankStatus(int, bq::GameRank)"}
-{"a":"7100025a80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 카운터 증가 후 true. 종료 텔롭·2초 대기는 공통 흐름\n---\nmg0102::GameMgr::OnGameFinish_Mgr()"}
-{"a":"7100025aa0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 점수·승패 확정, 승자 목록·고유 결과 무대/카메라 설정\n승패: 전원 점수<1이면 모두 rank3·WinLose2(draw), 아니면 rank0은 WinLose1(win), 나머지 WinLose0(lose). 양의 점수 4명 동점은 공동 승리\n---\nmg0102::GameMgr::OnEndingInit_Mgr(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"7100025a80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 카운터 증가 후 true. 종료 텔롭·2초 대기는 공통 흐름"}
+{"a":"7100025aa0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 점수·승패 확정, 승자 목록·고유 결과 무대/카메라 설정\n승패: 전원 점수<1이면 모두 rank3·WinLose2(draw), 아니면 rank0은 WinLose1(win), 나머지 WinLose0(lose). 양의 점수 4명 동점은 공동 승리"}
 {"a":"7100026fa0","t":"plate","c":"mg0102::GameMgr::Func_ResultSetup()"}
-{"a":"7100027270","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 흐름. mg0102_Result_SetupCamera·SetupPos·텔롭/모션을 순서대로 호출\n---\nmg0102::GameMgr::Func_ResultFlow()"}
+{"a":"7100027270","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 흐름. mg0102_Result_SetupCamera·SetupPos·텔롭/모션을 순서대로 호출"}
 {"a":"71000282f0","t":"plate","c":"mg0102::GameMgr::GetWinW(bq::PlayerCharacterID)"}
 {"a":"7100028360","t":"plate","c":"mg0102::GameMgr::GetLoseW(bq::PlayerCharacterID)"}
 {"a":"71000283a0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID&, bq::MatterType, (void*)0>(bex::PlayerID&, bq::MatterType&&)"}
 {"a":"7100028580","t":"plate","c":"mg0102::GameMgr::DisappearPointStatus()"}
-{"a":"71000286b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 카메라 설정. 카메라 키 result_cam_draw, result_cam_win1/2/3/4, result_cam_duel\n---\nmg0102::GameMgr::mg0102_Result_SetupCamera()"}
-{"a":"7100028a10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치 설정\n---\nmg0102::GameMgr::mg0102_Result_SetupPos()"}
+{"a":"71000286b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 카메라 설정. 카메라 키 result_cam_draw, result_cam_win1/2/3/4, result_cam_duel"}
+{"a":"7100028a10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치 설정"}
 {"a":"7100029090","t":"plate","c":"mg0102::GameMgr::mg0102_Result_SetPlayerHead()"}
 {"a":"7100029220","t":"plate","c":"mg0102::GameMgr::mg0102_Result_SetupTelop()"}
 {"a":"71000294f0","t":"plate","c":"mg0102::GameMgr::mg0102_Result_SetCameraAnim()"}
@@ -240,27 +240,27 @@
 {"a":"710002a000","t":"plate","c":"mg0102::mg0102ComMGResultCamera::IsCameraMotionFinished() const"}
 {"a":"710002a0d0","t":"plate","c":"mg0102::mg0102ComMGResultCamera::CameraAnimFrame() const"}
 {"a":"710002a1a0","t":"plate","c":"mg0102::GameMgr::mg0102_Result_SetPlayerPos()"}
-{"a":"710002aa90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Draw). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용\n---\nmg0102::GameMgr::mg0102_Result_SetPlayerPos_Draw()"}
-{"a":"710002abc4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win1). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용\n---\nmg0102::GameMgr::mg0102_Result_SetPlayerPos_Win1()"}
-{"a":"710002ad58","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win2). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용\n---\nmg0102::GameMgr::mg0102_Result_SetPlayerPos_Win2()"}
-{"a":"710002afa4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win3). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용\n---\nmg0102::GameMgr::mg0102_Result_SetPlayerPos_Win3()"}
-{"a":"710002b1bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win4). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용\n---\nmg0102::GameMgr::mg0102_Result_SetPlayerPos_Win4()"}
-{"a":"710002b2f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.3·11\n역할: 판정 행렬을 +0x508에 저장한 뒤 표시 모델 설정\n설명 화면 외에서 판정 y<−12.5면 대응 표시 행렬로 모델을 바꾸는 경로(판정 행렬은 안 바꿈)\n[미확정] 두 행렬 대조 미완(§11)\n---\nmg0102::GameMgr::InitHologramTransformSub(nn::util::MatrixRowMajor4x3f, int, int, nn::util::MatrixRowMajor4x3f)"}
+{"a":"710002aa90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Draw). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용"}
+{"a":"710002abc4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win1). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용"}
+{"a":"710002ad58","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win2). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용"}
+{"a":"710002afa4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win3). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용"}
+{"a":"710002b1bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 결과 배치(Win4). 결과 모델의 본 위치·회전과 캐릭터 모션 폭(ResultWinMotionSize/W·ResultDrawLoseMotionW)을 사용"}
+{"a":"710002b2f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.3·11\n역할: 판정 행렬을 +0x508에 저장한 뒤 표시 모델 설정\n설명 화면 외에서 판정 y<−12.5면 대응 표시 행렬로 모델을 바꾸는 경로(판정 행렬은 안 바꿈)\n[미확정] 두 행렬 대조 미완(§11)"}
 {"a":"710002c384","t":"plate","c":"mg0102::GameMgr::GetHologramPosition(int)"}
 {"a":"710002c398","t":"plate","c":"mg0102::GameMgr::GetDOT(nn::util::Vector3f, nn::util::Vector3f)"}
 {"a":"710002c424","t":"plate","c":"mg0102::GameMgr::CalcIBLBlendRate(nn::util::Vector3f)"}
 {"a":"710002c490","t":"plate","c":"mg0102::GameMgr::Hologram_GetSoundActor(int)"}
 {"a":"710002c5b0","t":"plate","c":"mg0102::GameMgr::ChangeStatus(int, int)"}
-{"a":"710002c720","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4\n역할: 남은 개수를 1~3자리 문자열로 만듦\n---\nmg0102::GameMgr::DrawLayoutNum(int)"}
-{"a":"710002c970","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 결과 텔롭. 승자 0명→종류8, 1명→7, 2~4명→5. 공동 승자를 한 명으로 축약하지 않음\n---\nmg0102::GameMgr::SetResultTelop()"}
+{"a":"710002c720","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4\n역할: 남은 개수를 1~3자리 문자열로 만듦"}
+{"a":"710002c970","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 결과 텔롭. 승자 0명→종류8, 1명→7, 2~4명→5. 공동 승자를 한 명으로 축약하지 않음"}
 {"a":"710002ccd0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> nn::bezel::Entity::AddComponent<bq::ComUiMGTelop, bq::ComUiMGTelop::UiMGTelopType, (void*)0>(bq::ComUiMGTelop::UiMGTelopType&&)"}
 {"a":"710002ceb0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> nn::bezel::Entity::AddComponent<bq::ComUiMGTelop, bq::ComUiMGTelop::UiMGTelopType, bq::PlayerList&, (void*)0>(bq::ComUiMGTelop::UiMGTelopType&&, bq::PlayerList&)"}
-{"a":"710002d08c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 텔롭 종류 반환. 표 0x7100068694(7,5,5)로 SetResultTelop과 같은 구분\n---\nmg0102::GameMgr::mg0102_Result_GetTelopType()"}
+{"a":"710002d08c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §5\n역할: 텔롭 종류 반환. 표 0x7100068694(7,5,5)로 SetResultTelop과 같은 구분"}
 {"a":"710002d0c0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> nn::bezel::Entity::AddComponent<bq::ComUiMGTelop, bq::ComUiMGTelop::UiMGTelopType&, bq::PlayerList&, (void*)0>(bq::ComUiMGTelop::UiMGTelopType&, bq::PlayerList&)"}
 {"a":"710002d2a0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> nn::bezel::Entity::AddComponent<bq::ComUiMGTelop, bq::ComUiMGTelop::UiMGTelopType&, (void*)0>(bq::ComUiMGTelop::UiMGTelopType&)"}
 {"a":"710002d47c","t":"plate","c":"mg0102::GameMgr::IsHologramCameraIn(int)"}
 {"a":"710002d480","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiStatus> nn::bezel::Entity::AddComponent<bq::ComUiStatus, bq::ComUiStatus::UiStatusType, bq::ComUiStatus::UiStatusMatchType, bq::ComUiStatus::UiStatusPlaceType, (void*)0>(bq::ComUiStatus::UiStatusType&&, bq::ComUiStatus::UiStatusMatchType&&, bq::ComUiStatus::UiStatusPlaceType&&)"}
-{"a":"710002d65c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §11\n[미확정] 홀로그램 카메라 가시성 판정. 마스크 수치 미정리(§11 다음 근거로만 언급)\n---\nmg0102::GameMgr::IsHologramCameraIn01(int)"}
+{"a":"710002d65c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0102.md §11\n[미확정] 홀로그램 카메라 가시성 판정. 마스크 수치 미정리(§11 다음 근거로만 언급)"}
 {"a":"710002db84","t":"plate","c":"mg0102::GameMgr::GetCameraHoloDOT(int, int)"}
 {"a":"710002dc44","t":"plate","c":"mg0102::GameMgr::GetHologramMatrix(int)"}
 {"a":"710002dc5c","t":"plate","c":"mg0102::GameMgr::GetRank(int)"}
@@ -385,13 +385,13 @@
 {"a":"7100033590","t":"plate","c":"nn::bezel::HandleSource<nn::bezel::Component>::Reset(nn::bezel::Component*)"}
 {"a":"7100033758","t":"plate","c":"mg0102::Players::Players()"}
 {"a":"71000339b0","t":"plate","c":"mg0102::Players::~Players()"}
-{"a":"7100033c30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1·6.5\n역할: Players 초기화. PlayerWork/ComMatter와 표시 모션·Heading 생성, CPU 레벨별 값 읽기\nCPU 표(GetComLevel 0..3): range 2.5/4/6/8.5, turn_sec 11/10/9/8, arrow_sec 45/30/15/0 → Players +0x310/+0x330/+0x350 +4p\n---\nmg0102::Players::InitSub()"}
+{"a":"7100033c30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1·6.5\n역할: Players 초기화. PlayerWork/ComMatter와 표시 모션·Heading 생성, CPU 레벨별 값 읽기\nCPU 표(GetComLevel 0..3): range 2.5/4/6/8.5, turn_sec 11/10/9/8, arrow_sec 45/30/15/0 → Players +0x310/+0x330/+0x350 +4p"}
 {"a":"7100034f50","t":"plate","c":"int wl::CsvLabel::At<int>(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&, int) const"}
-{"a":"7100035040","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §4\n역할: mg0102::Players::GetPlayerID(index) — 화면/카메라 index 의 플레이어 ID 를 InputModule 입력 조회에 넘긴다.\n주의: 화면0=pad0 고정, CPU 자리 제거 시 원본과 달라진다.\n---\nmg0102::Players::GetPlayerID(int) const"}
+{"a":"7100035040","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §4\n역할: mg0102::Players::GetPlayerID(index) — 화면/카메라 index 의 플레이어 ID 를 InputModule 입력 조회에 넘긴다.\n주의: 화면0=pad0 고정, CPU 자리 제거 시 원본과 달라진다."}
 {"a":"7100035090","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID&, bq::MatterCreateArg&, (void*)0>(bex::PlayerID&, bq::MatterCreateArg&)"}
 {"a":"7100035270","t":"plate","c":"mg0102::Players::GetSoundActor(int)"}
-{"a":"7100035390","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1·6.1\n역할: 구면 행렬과 초기 배치. 초기 행렬은 단위 기저와 p=(0,15,0), 월드 Z축 중심으로 슬롯별 초기 거리(pc0..3: 4.5,1.5,−1.5,−4.5)만큼 UpdatePlayerRoll\n---\nmg0102::Players::InitParam(mg0102::GameMgr*)"}
-{"a":"7100035924","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1\n역할: 월드 Z축 중심 표면 회전. 초기 배치에서 슬롯별 초기 거리만큼 호출\n---\nmg0102::Players::UpdatePlayerRoll(int, nn::util::Vector3f, float)"}
+{"a":"7100035390","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1·6.1\n역할: 구면 행렬과 초기 배치. 초기 행렬은 단위 기저와 p=(0,15,0), 월드 Z축 중심으로 슬롯별 초기 거리(pc0..3: 4.5,1.5,−1.5,−4.5)만큼 UpdatePlayerRoll"}
+{"a":"7100035924","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1\n역할: 월드 Z축 중심 표면 회전. 초기 배치에서 슬롯별 초기 거리만큼 호출"}
 {"a":"7100035bf4","t":"plate","c":"mg0102::Players::GetComLv(int) const"}
 {"a":"7100035c44","t":"plate","c":"mg0102::Players::Update()"}
 {"a":"7100035c48","t":"plate","c":"mg0102::Players::GetCharaID(int) const"}
@@ -407,34 +407,34 @@
 {"a":"71000364a0","t":"plate","c":"mg0102::Players::PlayMotion(int, char const*)"}
 {"a":"7100036668","t":"plate","c":"mg0102::Players::GetFrameWarmUp(int)"}
 {"a":"7100036674","t":"plate","c":"mg0102::Players::GetMtx(int)"}
-{"a":"7100036688","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 현재 행렬 반환·완료 true만. 보간 코드 아님\n---\nmg0102::Players::GetCameraMtx(int, int, bool*)"}
-{"a":"71000366a4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.5\n역할: CPU 타이머만 0으로(상태는 그대로)\n---\nmg0102::Players::PlayerComThinkReset(int)"}
+{"a":"7100036688","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §7\n역할: 현재 행렬 반환·완료 true만. 보간 코드 아님"}
+{"a":"71000366a4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.5\n역할: CPU 타이머만 0으로(상태는 그대로)"}
 {"a":"71000366b0","t":"plate","c":"mg0102::Players::UpdatePlayerFinish(int)"}
-{"a":"710003683c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2·5\n역할: 플레이어 이동(UpdatePlayer(p,lock)). 두 번째 인자 true면 이동 입력을 막음(§5)\n이동 직후 인라인 밀어냄: 자기 위치를 한 번 저장, 다른 슬롯을 번호순 검사, 현 길이 d<2·0.5=1인 첫 상대만 처리\n보정 h=(1−d)/2로 자신을 상대에게서 밀고 상대도 저장한 자기 위치에서 반대로 민 뒤 루프 종료. d=1은 보정 없음\n---\nmg0102::Players::UpdatePlayer(int, bool)"}
+{"a":"710003683c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2·5\n역할: 플레이어 이동(UpdatePlayer(p,lock)). 두 번째 인자 true면 이동 입력을 막음(§5)\n이동 직후 인라인 밀어냄: 자기 위치를 한 번 저장, 다른 슬롯을 번호순 검사, 현 길이 d<2·0.5=1인 첫 상대만 처리\n보정 h=(1−d)/2로 자신을 상대에게서 밀고 상대도 저장한 자기 위치에서 반대로 민 뒤 루프 종료. d=1은 보정 없음"}
 {"a":"7100036c14","t":"plate","c":"mg0102::Players::SetBlendRate(int, float)"}
-{"a":"7100036c20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.5\n역할: CPU 입력. 입력 강도 1, 로컬 회전축 (cosα,0,−sinα)로 항상 달림\n상태0: 캐시된 가까운 깃발 거리≤range면 입력각을 목표각 쪽으로 호출당 10도, 타이머0. 아니면 dt 누적, turn_sec 이상이면 turnTarget=wrap(α+π/2), 상태10\n상태10: 깃발이 range 안이면 목표각 추적·타이머0·상태0, 아니면 turnTarget에 호출당 10도 접근, 도달하면 상태0\n상태1: 방향 유지. 최대 5초 또는 획득 위치까지 거리가 저장 기준보다 증가하면 상태0, 감소/동일이면 기준 갱신\n각 접근은 dt 없는 호출 단위(0.17453292 rad)\n---\nmg0102::Players::UpdatePlayerCom(int)"}
-{"a":"7100036ec0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1\n§6.1 공통(근거 4함수 묶음): 스틱 (sx,sy), m²=sx²+sy², 입력 yaw=atan2(sx,−sy), 로컬 회전축 a=(−sy,0,−sx)\n입력: 원본 GetHold 방향 비트가 스틱을 덮어씀. 우선순위 bit11(위)→bit8(왼쪽)→bit9(오른쪽)→bit10(아래), 기본 축 ±1·대각 축 ±0.7, 이동 강도 1. bex 엔진 비트\nA/B·자이로는 고유 이동에서 읽지 않음\n---\nmg0102::Players::UpdatePlayerPad(int)"}
-{"a":"71000370c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2\n역할: UpdatePlayer의 인라인 밀어냄 판정과 동일 형태\n---\nmg0102::Players::UpdatePlayerHit(int)"}
-{"a":"7100037228","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2\n역할: 상대 위치를 자기 행렬 로컬 좌표로 변환, XZ 접선 성분의 φ=atan2(localX,localZ)로 회전축 (−cosφ,0,sinφ)과 보정 거리 h를 UpdatePlayerMove2에 전달\n현 길이 침투량을 곧바로 표면 회전 거리로 사용. 완전 동위치는 atan2(0,0) 경로에 의존\n---\nmg0102::Players::UpdatePlayerHitReplace(int, nn::util::Vector3f, float)"}
-{"a":"71000376c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2\n역할: HitReplace가 준 회전축·거리 h로 표면 이동(밀어냄 적용)\n---\nmg0102::Players::UpdatePlayerMove2(int, nn::util::Vector3f, float)"}
-{"a":"7100037c50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1·10\n§6.1 공통(근거 4함수 묶음): 스틱 (sx,sy), m²=sx²+sy², 입력 yaw=atan2(sx,−sy), 로컬 회전축 a=(−sy,0,−sx)\n분기: m²≤0.1 정지·idle; 0.1<m²<0.8 걷기 거리 2dt; m²≥0.8 달리기 거리 6dt(스틱 길이 연속 비례 아님)\n회전: 월드축 normalize(B0·ax+B1·ay+B2·az), 각 ((s·180)/47.12389)·0.017453292(=s/15). 세 기저와 위치를 같은 axis-angle quaternion으로 회전\n중력 적분·지상 이동·낙하 판정 없음\n---\nmg0102::Players::UpdatePlayerMove(int, float, float, nn::util::Vector3f)"}
+{"a":"7100036c20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.5\n역할: CPU 입력. 입력 강도 1, 로컬 회전축 (cosα,0,−sinα)로 항상 달림\n상태0: 캐시된 가까운 깃발 거리≤range면 입력각을 목표각 쪽으로 호출당 10도, 타이머0. 아니면 dt 누적, turn_sec 이상이면 turnTarget=wrap(α+π/2), 상태10\n상태10: 깃발이 range 안이면 목표각 추적·타이머0·상태0, 아니면 turnTarget에 호출당 10도 접근, 도달하면 상태0\n상태1: 방향 유지. 최대 5초 또는 획득 위치까지 거리가 저장 기준보다 증가하면 상태0, 감소/동일이면 기준 갱신\n각 접근은 dt 없는 호출 단위(0.17453292 rad)"}
+{"a":"7100036ec0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1\n§6.1 공통(근거 4함수 묶음): 스틱 (sx,sy), m²=sx²+sy², 입력 yaw=atan2(sx,−sy), 로컬 회전축 a=(−sy,0,−sx)\n입력: 원본 GetHold 방향 비트가 스틱을 덮어씀. 우선순위 bit11(위)→bit8(왼쪽)→bit9(오른쪽)→bit10(아래), 기본 축 ±1·대각 축 ±0.7, 이동 강도 1. bex 엔진 비트\nA/B·자이로는 고유 이동에서 읽지 않음"}
+{"a":"71000370c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2\n역할: UpdatePlayer의 인라인 밀어냄 판정과 동일 형태"}
+{"a":"7100037228","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2\n역할: 상대 위치를 자기 행렬 로컬 좌표로 변환, XZ 접선 성분의 φ=atan2(localX,localZ)로 회전축 (−cosφ,0,sinφ)과 보정 거리 h를 UpdatePlayerMove2에 전달\n현 길이 침투량을 곧바로 표면 회전 거리로 사용. 완전 동위치는 atan2(0,0) 경로에 의존"}
+{"a":"71000376c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.2\n역할: HitReplace가 준 회전축·거리 h로 표면 이동(밀어냄 적용)"}
+{"a":"7100037c50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1·10\n§6.1 공통(근거 4함수 묶음): 스틱 (sx,sy), m²=sx²+sy², 입력 yaw=atan2(sx,−sy), 로컬 회전축 a=(−sy,0,−sx)\n분기: m²≤0.1 정지·idle; 0.1<m²<0.8 걷기 거리 2dt; m²≥0.8 달리기 거리 6dt(스틱 길이 연속 비례 아님)\n회전: 월드축 normalize(B0·ax+B1·ay+B2·az), 각 ((s·180)/47.12389)·0.017453292(=s/15). 세 기저와 위치를 같은 axis-angle quaternion으로 회전\n중력 적분·지상 이동·낙하 판정 없음"}
 {"a":"71000385d8","t":"plate","c":"mg0102::Players::SetTurn(int, float)"}
-{"a":"71000385f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1\n§6.1 공통(근거 4함수 묶음): 스틱 (sx,sy), m²=sx²+sy², 입력 yaw=atan2(sx,−sy), 로컬 회전축 a=(−sy,0,−sx)\n표시 yaw: 차이를 [−π,π)로 감싸 상한만큼 접근(걷기 6.2831852dt, 달리기 19.198621dt). 이동 방향을 제한하지 않음\n---\nmg0102::Players::UpdatePlayerTurn(int, float, int)"}
+{"a":"71000385f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.1\n§6.1 공통(근거 4함수 묶음): 스틱 (sx,sy), m²=sx²+sy², 입력 yaw=atan2(sx,−sy), 로컬 회전축 a=(−sy,0,−sx)\n표시 yaw: 차이를 [−π,π)로 감싸 상한만큼 접근(걷기 6.2831852dt, 달리기 19.198621dt). 이동 방향을 제한하지 않음"}
 {"a":"7100038760","t":"plate","c":"mg0102::Players::ResultPlayerMove3(int, float, float, bool)"}
 {"a":"71000393d0","t":"plate","c":"mg0102::Players::UpdateDemoCameraRoll(int, nn::util::Vector3f, float)"}
 {"a":"71000396a0","t":"plate","c":"mg0102::Players::EndPlayerAll(nn::bezel::HandlePtr<nn::bezel::ComCamera>)"}
 {"a":"710003a980","t":"plate","c":"mg0102::Players::EndPlayerInit()"}
 {"a":"710003adb4","t":"plate","c":"mg0102::Players::EndPlayerAnimeStart()"}
 {"a":"710003b148","t":"plate","c":"mg0102::Players::EndPlayerAnimeUpdate()"}
-{"a":"710003b150","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4\n역할: 가장 가까운 다른 플레이어와 미획득 깃발을 현 길이로 검색(비교 <, 같은 거리면 먼저 읽은 ID 유지)\n목표를 자기 접선 좌표로 투영해 CPU 입력각·화살표각 계산, 표시각은 호출당 10도 이내 접근\n화살표 위치: 로컬 (0,2.4,0)을 구면 기저에 적용. 가려진 깃발도 대상, 지형 경로 탐색 없음\n쓰는 필드: Players +0x400/+0x410, +0x424/+0x434(깃발 ID/거리), +0x444/+0x454(플레이어 ID/거리)\n---\nmg0102::Players::UpdatePlayerArrow(int)"}
-{"a":"710003bbb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4·6.5\n역할: 본편 경과≥45초이고 종료 전이면 네 화살표 표시·모션 재생\nCPU: playTime ≥ 45+arrow_sec[level]이면 range=9999(현재 프레임 CPU 처리 뒤 전환, 다음 자기 이동에서 소비)\n---\nmg0102::Players::UpdateArrowDisp()"}
+{"a":"710003b150","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4\n역할: 가장 가까운 다른 플레이어와 미획득 깃발을 현 길이로 검색(비교 <, 같은 거리면 먼저 읽은 ID 유지)\n목표를 자기 접선 좌표로 투영해 CPU 입력각·화살표각 계산, 표시각은 호출당 10도 이내 접근\n화살표 위치: 로컬 (0,2.4,0)을 구면 기저에 적용. 가려진 깃발도 대상, 지형 경로 탐색 없음\n쓰는 필드: Players +0x400/+0x410, +0x424/+0x434(깃발 ID/거리), +0x444/+0x454(플레이어 ID/거리)"}
+{"a":"710003bbb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.4·6.5\n역할: 본편 경과≥45초이고 종료 전이면 네 화살표 표시·모션 재생\nCPU: playTime ≥ 45+arrow_sec[level]이면 range=9999(현재 프레임 CPU 처리 뒤 전환, 다음 자기 이동에서 소비)"}
 {"a":"710003bed0","t":"plate","c":"mg0102::Players::ArrowDispOff()"}
-{"a":"710003c208","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.5\n역할: 획득 깃발 위치·획득 시 접촉 거리 저장(+0x3b0/+0x3f0), CPU 상태1·타이머0\n---\nmg0102::Players::SetPointPos(int, nn::util::Vector3f, float)"}
+{"a":"710003c208","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §6.5\n역할: 획득 깃발 위치·획득 시 접촉 거리 저장(+0x3b0/+0x3f0), CPU 상태1·타이머0"}
 {"a":"710003c2a0","t":"plate","c":"mg0102::Players::EndPlayerWarmUpAnimeChk(int)"}
 {"a":"710003c4f0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&, bq::MatterCreateArg&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&, bq::MatterCreateArg&)"}
 {"a":"710003c680","t":"plate","c":"mg0102::Scene::Params::getStaticTypeinfo()"}
 {"a":"710003c75c","t":"plate","c":"mg0102::Scene::Params::getPropertyList()"}
-{"a":"710003c878","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §4.2\n역할: Scene::Params 기본값. finishType(+0x58)=0, randInitType(+0x5c)=1, pcLOD(+0x60)=1, pcLightMode(+0x64)=1, 깃발 표시 최적화 +0x44=1\n---\nmg0102::Scene::Params::createInstance()"}
+{"a":"710003c878","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §4.2\n역할: Scene::Params 기본값. finishType(+0x58)=0, randInitType(+0x5c)=1, pcLOD(+0x60)=1, pcLightMode(+0x64)=1, 깃발 표시 최적화 +0x44=1"}
 {"a":"710003c920","t":"plate","c":"mg0102::Scene::Params::deleteInstance(void*)"}
 {"a":"710003c934","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
 {"a":"710003c938","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
@@ -443,10 +443,10 @@
 {"a":"710003ca60","t":"plate","c":"mg0102::Scene::getPropertyList()"}
 {"a":"710003cac0","t":"plate","c":"mg0102::Scene::createInstance()"}
 {"a":"710003caec","t":"plate","c":"mg0102::Scene::deleteInstance(void*)"}
-{"a":"710003cb18","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: Scene : bq::MinigameScene 생성자. GameMgr를 소유(Scene+0x358)하고 훅을 _Mgr 함수로 전달\n---\nmg0102::Scene::Scene()"}
+{"a":"710003cb18","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: Scene : bq::MinigameScene 생성자. GameMgr를 소유(Scene+0x358)하고 훅을 _Mgr 함수로 전달"}
 {"a":"710003cbc4","t":"plate","c":"mg0102::Scene::~Scene()"}
 {"a":"710003cc18","t":"plate","c":"mg0102::Scene::~Scene()"}
-{"a":"710003cc3c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: 빈 함수\n---\nmg0102::Scene::TickUpdate()"}
+{"a":"710003cc3c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0102.md §3.1\n역할: 빈 함수"}
 {"a":"710003cc40","t":"plate","c":"mg0102::Scene::SetupGameImpl()"}
 {"a":"710003ccb4","t":"plate","c":"mg0102::Scene::SyncedSetupGameImpl()"}
 {"a":"710003ccbc","t":"plate","c":"mg0102::Scene::CleanupGameImpl()"}

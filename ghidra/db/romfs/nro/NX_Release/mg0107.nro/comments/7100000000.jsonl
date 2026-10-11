@@ -50,18 +50,18 @@
 {"a":"7100004868","t":"plate","c":"mg0107::ComAI::~ComAI()"}
 {"a":"710000488c","t":"plate","c":"non-virtual thunk to mg0107::ComAI::~ComAI()"}
 {"a":"71000048b4","t":"plate","c":"mg0107::ComAI::DestroyComponentImpl()"}
-{"a":"7100004900","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §4.1·8.3\n역할: mg0107 ComAI::Setup. ComAI+0x50 Pad, +0x70 jumpHold timer. 회피 전략은 NRO 소유\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Setup — 레벨 선택\nGetComLevel 1 → Normal 표, 2 → Hard, 3 → Master, 그 밖(0) → Easy\n시작 행동 = Weak\n---\nmg0107::ComAI::Setup(nn::bezel::WeakHandle<actor::ComActorPad>)"}
+{"a":"7100004900","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §4.1·8.3\n역할: mg0107 ComAI::Setup. ComAI+0x50 Pad, +0x70 jumpHold timer. 회피 전략은 NRO 소유\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Setup — 레벨 선택\nGetComLevel 1 → Normal 표, 2 → Hard, 3 → Master, 그 밖(0) → Easy\n시작 행동 = Weak"}
 {"a":"7100004a54","t":"plate","c":"mg0107::ComAI::OnGameMainEazy()"}
 {"a":"7100004c10","t":"plate","c":"mg0107::ComAI::OnGameMainNormal()"}
 {"a":"7100004dac","t":"plate","c":"mg0107::ComAI::OnGameMainHard()"}
 {"a":"7100004f48","t":"plate","c":"mg0107::ComAI::OnGameMainMaster()"}
-{"a":"71000050e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §6.6\n역할: mg0107 ComAI::Weak. jumpHold .2 s 전략\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Weak\naiState 0: SyncRandRange(0,1) 은 폭 1이라 항상 0, 난수 소비 없음 → 곧바로 2 (대기 분기 1~3초는 죽은 코드)\naiState 2 StartRandomMove: x ≥ -4.5 면 -1, x ≤ 4.5 면 +1 범위로 SyncRandRangeF(x범위)·SyncRandRangeF(z범위)(z ≤ 3.5 → -1, z ≥ -3.5 → +1) 방향 스틱, moveTimer = SyncRandRangeF(1,3), aiState 4\naiState 4: 타이머 감소, 점프 중 아니면 OnRandomJump(25): SyncRandRange(0,25)==0 이면 점프 버튼(유지 0.2초)\n자기 칸 낙하 중 + cancelTimer < 0 이면 새 무작위 이동(cancelTimer = SyncRandRangeF(1,2)); moveTimer < 0 이면 리셋\n---\nmg0107::ComAI::Weak()"}
+{"a":"71000050e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §6.6\n역할: mg0107 ComAI::Weak. jumpHold .2 s 전략\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Weak\naiState 0: SyncRandRange(0,1) 은 폭 1이라 항상 0, 난수 소비 없음 → 곧바로 2 (대기 분기 1~3초는 죽은 코드)\naiState 2 StartRandomMove: x ≥ -4.5 면 -1, x ≤ 4.5 면 +1 범위로 SyncRandRangeF(x범위)·SyncRandRangeF(z범위)(z ≤ 3.5 → -1, z ≥ -3.5 → +1) 방향 스틱, moveTimer = SyncRandRangeF(1,3), aiState 4\naiState 4: 타이머 감소, 점프 중 아니면 OnRandomJump(25): SyncRandRange(0,25)==0 이면 점프 버튼(유지 0.2초)\n자기 칸 낙하 중 + cancelTimer < 0 이면 새 무작위 이동(cancelTimer = SyncRandRangeF(1,2)); moveTimer < 0 이면 리셋"}
 {"a":"71000052bc","t":"plate","c":"mg0107::ComAI::OnGameMain()"}
 {"a":"71000053b4","t":"plate","c":"mg0107::ComAI::OnGameEnd()"}
 {"a":"7100005400","t":"plate","c":"mg0107::ComAI::OnReset()"}
-{"a":"71000054c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Strong\n자기 칸 낙하 중이면 상하좌우 칸(GetUDLRFieldIdx) 중 낙하 없음·높이 차 < 2.0 인 가장 가까운 칸으로 스틱, 앞이 막히면 점프\n반응 지연 SyncRandRangeF(0.2, 0.4)\n낙하가 없으면 SyncRandRangeF(-1,1) ×2 로 작은 무작위 이동\n[미확정] 세부 분기 일부 미판독\n---\nmg0107::ComAI::Strong()"}
+{"a":"71000054c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Strong\n자기 칸 낙하 중이면 상하좌우 칸(GetUDLRFieldIdx) 중 낙하 없음·높이 차 < 2.0 인 가장 가까운 칸으로 스틱, 앞이 막히면 점프\n반응 지연 SyncRandRangeF(0.2, 0.4)\n낙하가 없으면 SyncRandRangeF(-1,1) ×2 로 작은 무작위 이동\n[미확정] 세부 분기 일부 미판독"}
 {"a":"7100005e18","t":"plate","c":"mg0107::ComAI::IsFrontSandwitch()"}
-{"a":"7100005f1c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Normal\n대기 분기는 죽은 코드(Weak 와 같음)\n판(-8 ≤ x ≤ 8, -4 ≤ z ≤ 4) 안: 자기 칸 낙하 중이거나 IsSadwitchOnTopToPosForMaster 면 StartTargetMove(옆 칸), 아니면 스틱 방향 1.5 앞 점이 샌드위치 AABB 안이면 점프\n판 밖: 무작위 이동\n[미확정] StartTargetMove 세부\n---\nmg0107::ComAI::Normal()"}
+{"a":"7100005f1c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.7\n역할: ComAI::Normal\n대기 분기는 죽은 코드(Weak 와 같음)\n판(-8 ≤ x ≤ 8, -4 ≤ z ≤ 4) 안: 자기 칸 낙하 중이거나 IsSadwitchOnTopToPosForMaster 면 StartTargetMove(옆 칸), 아니면 스틱 방향 1.5 앞 점이 샌드위치 AABB 안이면 점프\n판 밖: 무작위 이동\n[미확정] StartTargetMove 세부"}
 {"a":"71000061d0","t":"plate","c":"mg0107::ComAI::OnWait()"}
 {"a":"7100006244","t":"plate","c":"mg0107::ComAI::UpdateMoveCounter()"}
 {"a":"7100006270","t":"plate","c":"mg0107::ComAI::IsMoveCounterEnd()"}
@@ -101,25 +101,25 @@
 {"a":"7100006f7c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
 {"a":"7100006f84","t":"plate","c":"mg0107::GameManager::GameManager()"}
 {"a":"7100006fa8","t":"plate","c":"mg0107::GameManager::~GameManager()"}
-{"a":"710000702c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: GameManager::SetupGame (Scene::SyncedSetupGame 에서 호출)\n순서: PlayerManager → GameObjectManager → RankManager → UIManager 생성 후 Setup\n쓰는 필드: GameManager+0x24 = 1.0 (오프닝 대기)\n---\nmg0107::GameManager::SetupGame()"}
+{"a":"710000702c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: GameManager::SetupGame (Scene::SyncedSetupGame 에서 호출)\n순서: PlayerManager → GameObjectManager → RankManager → UIManager 생성 후 Setup\n쓰는 필드: GameManager+0x24 = 1.0 (오프닝 대기)"}
 {"a":"7100007160","t":"plate","c":"mg0107::GameManager::Destroy()"}
 {"a":"71000071fc","t":"plate","c":"mg0107::GameManager::OnGameInstInit()"}
 {"a":"7100007228","t":"plate","c":"mg0107::GameManager::OnGameOpeningInit()"}
 {"a":"710000722c","t":"plate","c":"mg0107::GameManager::OnGameStartBefore()"}
-{"a":"7100007234","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.3\n역할: GameManager::OnGameOpening — 하위 단계 상태기계\n0: 1.0초 → 오프닝 샌드위치 바라보기\n1: 오프닝 시작(+0x24 = 1.1)\n2: 1.1초 → 놀람 모션(+0x24 = 0.9)\n3: 0.9초 → idle·카메라 이동(+0x24 = 1.5)\n4: 1.5초\n5: 스킵 처리·UI In\n대기는 GetDeltaTime 을 뺀다(실측 프레임 시간)\n---\nmg0107::GameManager::OnGameOpening()"}
+{"a":"7100007234","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.3\n역할: GameManager::OnGameOpening — 하위 단계 상태기계\n0: 1.0초 → 오프닝 샌드위치 바라보기\n1: 오프닝 시작(+0x24 = 1.1)\n2: 1.1초 → 놀람 모션(+0x24 = 0.9)\n3: 0.9초 → idle·카메라 이동(+0x24 = 1.5)\n4: 1.5초\n5: 스킵 처리·UI In\n대기는 GetDeltaTime 을 뺀다(실측 프레임 시간)"}
 {"a":"71000073f0","t":"plate","c":"mg0107::GameManager::OnGameOpeningSkip()"}
 {"a":"7100007430","t":"plate","c":"mg0107::GameManager::OnGameStart()"}
 {"a":"7100007438","t":"plate","c":"mg0107::GameManager::OnGameStartAfter()"}
-{"a":"7100007460","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.4\n역할: GameManager::OnGameMain (매 프레임)\n순서: addSandwitch() → gameObjectManager.update()(낙하→카메라→벽) → playerManager.update(false)(Player 0..3, ComAI 포함 → 순위 표시) → uiManager.update()(빈 함수)\n종료: ui.isEndTimer()(엔드리스는 항상 거짓) / activeCount==0 / (activeCount==1 && !endless)\n끝이면 GameObjectManager::GameMainEnd, 1 반환\n---\nmg0107::GameManager::OnGameMain()"}
-{"a":"71000074e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.2\n역할: GameManager::AddSandwitch (매 프레임, OnGameMain 첫 줄)\ntimer(GameManager+0x20, 처음 0) = f32(timer - dt)\ntimer < 0 이면 n = GetAddSandCount; gameObjectManager.addSandwitch(n, t); timer = Interval[phase(t)] (남은 음수 버림)\n첫 OnGameMain 프레임에 바로 떨어진다\n---\nmg0107::GameManager::AddSandwitch()"}
+{"a":"7100007460","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.4\n역할: GameManager::OnGameMain (매 프레임)\n순서: addSandwitch() → gameObjectManager.update()(낙하→카메라→벽) → playerManager.update(false)(Player 0..3, ComAI 포함 → 순위 표시) → uiManager.update()(빈 함수)\n종료: ui.isEndTimer()(엔드리스는 항상 거짓) / activeCount==0 / (activeCount==1 && !endless)\n끝이면 GameObjectManager::GameMainEnd, 1 반환"}
+{"a":"71000074e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.2\n역할: GameManager::AddSandwitch (매 프레임, OnGameMain 첫 줄)\ntimer(GameManager+0x20, 처음 0) = f32(timer - dt)\ntimer < 0 이면 n = GetAddSandCount; gameObjectManager.addSandwitch(n, t); timer = Interval[phase(t)] (남은 음수 버림)\n첫 OnGameMain 프레임에 바로 떨어진다"}
 {"a":"7100007664","t":"plate","c":"mg0107::GameManager::IsGameMainEnd()"}
-{"a":"71000076d4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.3\n역할: GameManager::OnGameEnd — 플레이어 갱신 1회(AI 없이), 조작 끔, 타이머 멈춤, 엔드리스면 살아남은 사람 기록\n---\nmg0107::GameManager::OnGameEnd()"}
+{"a":"71000076d4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.3\n역할: GameManager::OnGameEnd — 플레이어 갱신 1회(AI 없이), 조작 끔, 타이머 멈춤, 엔드리스면 살아남은 사람 기록"}
 {"a":"7100007930","t":"plate","c":"mg0107::GameManager::OnGameFinish()"}
 {"a":"710000793c","t":"plate","c":"mg0107::GameManager::OnGameEndingBefore()"}
 {"a":"7100007974","t":"plate","c":"mg0107::GameManager::OnGameEnding()"}
 {"a":"7100007978","t":"plate","c":"mg0107::GameManager::IsGameEndingEnd()"}
-{"a":"7100007980","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.2·6.2\n역할: GameManager::GetAddSandCount — 단계별 묶음 개수\nSyncRandRange(min, max + 1) — 양끝 포함\n표: 보통 @0x71000417f1 [0,0,16,16,32,32,53], 엔드리스 @0x71000417f8 [32,32,16,16,0,0,53] (분기 오프셋/4)\n원본 특이점: 개수 표가 보통/엔드리스 반대 순서(엔드리스 단계 0·1 → Count02, 4·5 → Count00)\n---\nmg0107::GameManager::GetAddSandCount()"}
-{"a":"7100007b20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.2\n역할: GameManager::GetCurrentPhase(t = GetCurrentTime())\nbands = [(51,60),(41,51),(31,41),(21,31),(11,21),(0,11)] 모두 열린 구간\ni 번째 구간 lo < t < hi 이면 보통 i, 엔드리스 5-i\n그 외(t ≥ 60, t ≤ 0, 경계값과 정확히 같음) 6\n---\nmg0107::GameManager::GetCurrentPhase()"}
+{"a":"7100007980","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.2·6.2\n역할: GameManager::GetAddSandCount — 단계별 묶음 개수\nSyncRandRange(min, max + 1) — 양끝 포함\n표: 보통 @0x71000417f1 [0,0,16,16,32,32,53], 엔드리스 @0x71000417f8 [32,32,16,16,0,0,53] (분기 오프셋/4)\n원본 특이점: 개수 표가 보통/엔드리스 반대 순서(엔드리스 단계 0·1 → Count02, 4·5 → Count00)"}
+{"a":"7100007b20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.2\n역할: GameManager::GetCurrentPhase(t = GetCurrentTime())\nbands = [(51,60),(41,51),(31,41),(21,31),(11,21),(0,11)] 모두 열린 구간\ni 번째 구간 lo < t < hi 이면 보통 i, 엔드리스 5-i\n그 외(t ≥ 60, t ≤ 0, 경계값과 정확히 같음) 6"}
 {"a":"7100007d1c","t":"plate","c":"mg0107::GameManager::GetFieldEntity()"}
 {"a":"7100007d38","t":"plate","c":"mg0107::GameManager::GetPlayerEntity(int)"}
 {"a":"7100007df0","t":"plate","c":"mg0107::GameObjectManager::GameObjectManager()"}
@@ -135,12 +135,12 @@
 {"a":"7100008e00","t":"plate","c":"mg0107::Field::StartEnvStartMove()"}
 {"a":"7100008f84","t":"plate","c":"mg0107::GameObjectManager::OnOpening()"}
 {"a":"7100008f8c","t":"plate","c":"mg0107::GameObjectManager::OnSkipOpening()"}
-{"a":"7100008fdc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 최저 칸 높이 변경 때 카메라 y 를 1초 선형 보간.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.9\n역할: GameObjectManager::Update — 샌드위치 낙하 → 카메라 → 벽\ncamera.SetLookatHeight(lowestUnitHeight): 값이 바뀌면 1.0초 선형 보간(Interpolation 형 0)으로 카메라 y = 기준 + 최저 칸 높이\nField::UpdateWallPosition(lowest): 벽 엔티티 3개 중 가장 낮은 것을 위로 옮김\n[미확정] 벽 이동 세부 미판독\n---\nmg0107::GameObjectManager::Update()"}
+{"a":"7100008fdc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 최저 칸 높이 변경 때 카메라 y 를 1초 선형 보간.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.9\n역할: GameObjectManager::Update — 샌드위치 낙하 → 카메라 → 벽\ncamera.SetLookatHeight(lowestUnitHeight): 값이 바뀌면 1.0초 선형 보간(Interpolation 형 0)으로 카메라 y = 기준 + 최저 칸 높이\nField::UpdateWallPosition(lowest): 벽 엔티티 3개 중 가장 낮은 것을 위로 옮김\n[미확정] 벽 이동 세부 미판독"}
 {"a":"7100009094","t":"plate","c":"mg0107::Field::Update(nn::util::Vector3f)"}
 {"a":"7100009098","t":"plate","c":"mg0107::GameObjectManager::GameMainEnd()"}
 {"a":"71000090a0","t":"plate","c":"mg0107::GameObjectManager::Destroy()"}
 {"a":"710000918c","t":"plate","c":"mg0107::Field::Destroy()"}
-{"a":"71000091f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3\n역할: GameObjectManager::AddSandwitch(n, t)\nfor k<n: addSandwitchOnField(t, k)\nnextIndex > 72 이면 i < nextIndex-72 중 visible 인 objects[i] 를 disable(SetDisableSandwitch)\n끝에 batchUnits 비움(ClearCurrentSandwitchAddUnitNum)\n---\nmg0107::GameObjectManager::AddSandwitch(int, float const&)"}
+{"a":"71000091f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3\n역할: GameObjectManager::AddSandwitch(n, t)\nfor k<n: addSandwitchOnField(t, k)\nnextIndex > 72 이면 i < nextIndex-72 중 visible 인 objects[i] 를 disable(SetDisableSandwitch)\n끝에 batchUnits 비움(ClearCurrentSandwitchAddUnitNum)"}
 {"a":"71000092a0","t":"plate","c":"mg0107::GameObjectManager::InvisibleSandwitch()"}
 {"a":"710000930c","t":"plate","c":"mg0107::GameObjectManager::SandwitchDisableAll()"}
 {"a":"7100009314","t":"plate","c":"mg0107::GameObjectManager::GetOpSandwitchEntity()"}
@@ -172,19 +172,19 @@
 {"a":"710000b630","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
 {"a":"710000b638","t":"plate","c":"mg0107::Mg0107_Param::Mg0107_Param()"}
 {"a":"710000b63c","t":"plate","c":"mg0107::Mg0107_Param::~Mg0107_Param()"}
-{"a":"710000b640","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2·4.1\n역할: Mg0107_Param::Setup — mg0107_info.json 로더\n분기: Params.ParamEnable(+0x0F) 가 0 이면 Params 0x50~0xA4 를 json 값으로 덮어쓴다(기본 0 → 덮어씀), 1 이면 json 무시\njson 에 Phase06 속도·간격과 Count03 이 없어 코드 기본값이 남는다\n실효값: SandFallSpeedPhase 1.0,1.5,2.5,3.5,4.0,5.0,6.5 / Interval 1.5,1.5,1.0,1.0,0.5,0.5,0.85 / Count (2,3)(2,3)(2,2)(4,4)\n---\nmg0107::Mg0107_Param::Setup()"}
+{"a":"710000b640","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2·4.1\n역할: Mg0107_Param::Setup — mg0107_info.json 로더\n분기: Params.ParamEnable(+0x0F) 가 0 이면 Params 0x50~0xA4 를 json 값으로 덮어쓴다(기본 0 → 덮어씀), 1 이면 json 무시\njson 에 Phase06 속도·간격과 Count03 이 없어 코드 기본값이 남는다\n실효값: SandFallSpeedPhase 1.0,1.5,2.5,3.5,4.0,5.0,6.5 / Interval 1.5,1.5,1.0,1.0,0.5,0.5,0.85 / Count (2,3)(2,3)(2,2)(4,4)"}
 {"a":"710000b890","t":"plate","c":"mg0107::Mg0107_Param::Load()"}
 {"a":"710000bb50","t":"plate","c":"mg0107::ComPlayer::ComPlayer(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID)"}
 {"a":"710000bbc0","t":"plate","c":"mg0107::ComPlayer::~ComPlayer()"}
 {"a":"710000bc90","t":"plate","c":"non-virtual thunk to mg0107::ComPlayer::~ComPlayer()"}
 {"a":"710000bc98","t":"plate","c":"mg0107::ComPlayer::~ComPlayer()"}
 {"a":"710000bcbc","t":"plate","c":"non-virtual thunk to mg0107::ComPlayer::~ComPlayer()"}
-{"a":"710000bcf0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0107 ComPlayer::DamageCheck. 깔림 판정, x±8/z±4 clamp는 게임\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.5\n역할: ComPlayer::DamageCheck — 깔림 판정\ndead(+0x28) 면 반환; actor.jumpStatus != 0 이면 setAction('Idle')\nunder = GetUnderSandwitchPositionY(pos); pos.y - under > 0.6 이면 무사(반환)\n탈락: pad overlay off; setAction('Idle'); dead = 1; FX VO_KS_CRUSH_DMG·FX_PC_EXIT_SAND00·VB_MG0107_COMP\ncollisionLayerTest on; model.setVisible(false); actor.inputControl off\nrank.addDeadTime(id, GetCurrentTime()); 엔드리스면 ui.setEndressTimeStump(id, false); UIManager+0x80 = 1\n[미확정] PlayerDontDieEnable 이 이 경로를 막는지\n---\nmg0107::ComPlayer::DamageCheck()"}
+{"a":"710000bcf0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0107 ComPlayer::DamageCheck. 깔림 판정, x±8/z±4 clamp는 게임\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.5\n역할: ComPlayer::DamageCheck — 깔림 판정\ndead(+0x28) 면 반환; actor.jumpStatus != 0 이면 setAction('Idle')\nunder = GetUnderSandwitchPositionY(pos); pos.y - under > 0.6 이면 무사(반환)\n탈락: pad overlay off; setAction('Idle'); dead = 1; FX VO_KS_CRUSH_DMG·FX_PC_EXIT_SAND00·VB_MG0107_COMP\ncollisionLayerTest on; model.setVisible(false); actor.inputControl off\nrank.addDeadTime(id, GetCurrentTime()); 엔드리스면 ui.setEndressTimeStump(id, false); UIManager+0x80 = 1\n[미확정] PlayerDontDieEnable 이 이 경로를 막는지"}
 {"a":"710000c32c","t":"plate","c":"mg0107::ComPlayer::DestroyComponentImpl()"}
 {"a":"710000c36c","t":"plate","c":"mg0107::Player::Player()"}
 {"a":"710000c3ac","t":"plate","c":"mg0107::Player::~Player()"}
 {"a":"710000c3b0","t":"plate","c":"mg0107::Player::~Player()"}
-{"a":"710000c3e0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/17_actor.md §4.1·5.3·8.4·11.3\n역할: mg0107 Player::Setup. 액션 8개를 지우고 GroundedCheck를 끈다. Player+0x50 Actor, +0x6c 직전 jumpStatus\n[미확정] component 설치→controller(CCT) 생성 연결(R27)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2·4.2·6.6\n역할: Player::Setup\n엔티티 Player<n>, ComMatter(타입 2), ComPlayer, ComActor 설정\nComActor: 액션 8개 지움, Idle 호출, 입력 제어 끔, SetLeverMove(1), 착지 판정 끔(SetGroundedCheckEnabled(false))\n모션: mg_idle00·co_win00b·op_surprise(co_surprise00)\n피격: 반지름 0.2 구 히트 셰이프, ComAI 추가\n상수: 시작 위치 표(함수 static) (x,z) = (-3.5,-3.5),(3.5,-3.5),(-3.5,3.5),(3.5,3.5)\n[미확정] 칸 배정 순서(SetupPosition 미판독)\n---\nmg0107::Player::Setup(int const&, bex::PlayerID)"}
+{"a":"710000c3e0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/17_actor.md §4.1·5.3·8.4·11.3\n역할: mg0107 Player::Setup. 액션 8개를 지우고 GroundedCheck를 끈다. Player+0x50 Actor, +0x6c 직전 jumpStatus\n[미확정] component 설치→controller(CCT) 생성 연결(R27)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2·4.2·6.6\n역할: Player::Setup\n엔티티 Player<n>, ComMatter(타입 2), ComPlayer, ComActor 설정\nComActor: 액션 8개 지움, Idle 호출, 입력 제어 끔, SetLeverMove(1), 착지 판정 끔(SetGroundedCheckEnabled(false))\n모션: mg_idle00·co_win00b·op_surprise(co_surprise00)\n피격: 반지름 0.2 구 히트 셰이프, ComAI 추가\n상수: 시작 위치 표(함수 static) (x,z) = (-3.5,-3.5),(3.5,-3.5),(-3.5,3.5),(3.5,3.5)\n[미확정] 칸 배정 순서(SetupPosition 미판독)"}
 {"a":"710000cf10","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
 {"a":"710000d080","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID const&, bq::MatterType, (void*)0>(bex::PlayerID const&, bq::MatterType&&)"}
 {"a":"710000d260","t":"plate","c":"nn::bezel::WeakHandle<mg0107::ComPlayer> nn::bezel::Entity::AddComponent<mg0107::ComPlayer, bex::PlayerID const&, (void*)0>(bex::PlayerID const&)"}
@@ -199,7 +199,7 @@
 {"a":"710000dd60","t":"plate","c":"mg0107::Player::ClampArea()"}
 {"a":"710000de58","t":"plate","c":"mg0107::Player::StartOpSurprise()"}
 {"a":"710000debc","t":"plate","c":"mg0107::Player::StartActionIdle()"}
-{"a":"710000df04","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §5.2\n역할: Player::OnGameMain (매 프레임)\n탈락이면 아무것도 안 함; COM 이면 ComAI::OnGameMain(사람은 오버레이 끔)\n위치 클램프 x ∈ [-8, 8], z ∈ [-4, 4]\n점프 상태 0→1 이면 발밑 샌드위치 jump 모션, 2→0 이면 착지 처리\n---\nmg0107::Player::OnGameMain(bool)"}
+{"a":"710000df04","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §5.2\n역할: Player::OnGameMain (매 프레임)\n탈락이면 아무것도 안 함; COM 이면 ComAI::OnGameMain(사람은 오버레이 끔)\n위치 클램프 x ∈ [-8, 8], z ∈ [-4, 4]\n점프 상태 0→1 이면 발밑 샌드위치 jump 모션, 2→0 이면 착지 처리"}
 {"a":"710000e140","t":"plate","c":"mg0107::Player::OnGameEnd()"}
 {"a":"710000e190","t":"plate","c":"mg0107::Player::SetPlayerControlFlag(bool)"}
 {"a":"710000e1d0","t":"plate","c":"mg0107::Player::SetGravityFlag(bool)"}
@@ -271,8 +271,8 @@
 {"a":"7100010b1c","t":"plate","c":"mg0107::RankManager::~RankManager()"}
 {"a":"7100010be0","t":"plate","c":"mg0107::RankManager::~RankManager()"}
 {"a":"7100010c04","t":"plate","c":"mg0107::RankManager::Setup()"}
-{"a":"7100010ea0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.8\n역할: RankManager::AddDeadTime(id, t)\nentry(id).deadTime 이 초기값(보통 -1, 엔드리스 100000) 이 아니면 반환\ndeadTime = trunc(f32(t*100 + 0.01)); deadCount(+0x28)++\n---\nmg0107::RankManager::AddDeadTime(bex::PlayerID, float)"}
-{"a":"7100010fa4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.8\n역할: RankManager::SetupResult (보통 모드)\ndeadTime 오름차순 정렬(살아남음 -1 이 맨 앞)\nrank[0]=0, 이후 앞 사람과 deadTime 같으면 같은 순위, 다르면 지금까지 사람 수(경쟁 순위)\n네 명 deadTime 모두 같으면 rank=3 전원, true 반환\n---\nmg0107::RankManager::SetupResult()"}
+{"a":"7100010ea0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.8\n역할: RankManager::AddDeadTime(id, t)\nentry(id).deadTime 이 초기값(보통 -1, 엔드리스 100000) 이 아니면 반환\ndeadTime = trunc(f32(t*100 + 0.01)); deadCount(+0x28)++"}
+{"a":"7100010fa4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.8\n역할: RankManager::SetupResult (보통 모드)\ndeadTime 오름차순 정렬(살아남음 -1 이 맨 앞)\nrank[0]=0, 이후 앞 사람과 deadTime 같으면 같은 순위, 다르면 지금까지 사람 수(경쟁 순위)\n네 명 deadTime 모두 같으면 rank=3 전원, true 반환"}
 {"a":"71000112c4","t":"plate","c":"mg0107::RankManager::SetupResultForEndress()"}
 {"a":"71000115dc","t":"plate","c":"mg0107::RankManager::GetRank(bex::PlayerID)"}
 {"a":"7100011630","t":"plate","c":"mg0107::RankManager::GetDeadAfterRank(bex::PlayerID)"}
@@ -281,16 +281,16 @@
 {"a":"7100011c10","t":"plate","c":"mg0107::SandwitchManager::~SandwitchManager()"}
 {"a":"7100011c88","t":"plate","c":"std::array<std::unique_ptr<mg0107::SandwitchFieldUnit, std::default_delete<mg0107::SandwitchFieldUnit> >, 18ul>::~array()"}
 {"a":"7100011dcc","t":"plate","c":"mg0107::SandwitchManager::~SandwitchManager()"}
-{"a":"7100011df0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: SandwitchManager::Setup — 칸 18개({count 0, height 0.0, index}), 샌드위치 풀 216개\n종류: 0번은 종류 3(sand25, 오프닝용), 1~215번은 SyncRandRange(0,4) 를 차례로(동기 난수 215회)\n---\nmg0107::SandwitchManager::Setup()"}
-{"a":"7100011f40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.4\n역할: SandwitchObject::Setup(type)\n쓰는 필드: +0x10 size (3.0, 두께, 3.0, 0), +0x14 두께 1.0/1.5/2.0/2.5(DAT_71000416e0), +0x20 halfSize (1.5, 반두께, 1.5, 0)(DAT_7100041700), +0x30 엔티티 mg0107_sandwitch, +0x8C type\nSetup 뒤 엔티티 Deactivate\n---\nmg0107::SandwitchObject::Setup(mg0107::def::SandwitchType)"}
-{"a":"71000122d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0107 SandwitchManager::Update. 샌드위치는 보간 낙하→static 발판\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.4\n역할: SandwitchManager::Update — 풀 0..215 순서로 낙하 갱신\n!fall.isEnd() 이면 fall.time = min(f32(time + dt), duration); y = from + (to-from)*s*s (s = time/duration); entity.y = y (x,z 그대로)\n그 뒤 isEnd 면 endFall(true)\n낙하는 PhysX 시뮬레이션이 아니라 보간으로 y 를 직접 넣는다\n8: 새 샌드위치는 추가된 프레임에 바로 한 번 떨어진다\n---\nmg0107::SandwitchManager::Update()"}
+{"a":"7100011df0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: SandwitchManager::Setup — 칸 18개({count 0, height 0.0, index}), 샌드위치 풀 216개\n종류: 0번은 종류 3(sand25, 오프닝용), 1~215번은 SyncRandRange(0,4) 를 차례로(동기 난수 215회)"}
+{"a":"7100011f40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.4\n역할: SandwitchObject::Setup(type)\n쓰는 필드: +0x10 size (3.0, 두께, 3.0, 0), +0x14 두께 1.0/1.5/2.0/2.5(DAT_71000416e0), +0x20 halfSize (1.5, 반두께, 1.5, 0)(DAT_7100041700), +0x30 엔티티 mg0107_sandwitch, +0x8C type\nSetup 뒤 엔티티 Deactivate"}
+{"a":"71000122d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0107 SandwitchManager::Update. 샌드위치는 보간 낙하→static 발판\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.4\n역할: SandwitchManager::Update — 풀 0..215 순서로 낙하 갱신\n!fall.isEnd() 이면 fall.time = min(f32(time + dt), duration); y = from + (to-from)*s*s (s = time/duration); entity.y = y (x,z 그대로)\n그 뒤 isEnd 면 endFall(true)\n낙하는 PhysX 시뮬레이션이 아니라 보간으로 y 를 직접 넣는다\n8: 새 샌드위치는 추가된 프레임에 바로 한 번 떨어진다"}
 {"a":"7100012494","t":"plate","c":"mg0107::SandwitchObject::Update()"}
 {"a":"7100012564","t":"plate","c":"mg0107::SandwitchObject::IsMoving()"}
 {"a":"7100012590","t":"plate","c":"mg0107::SandwitchManager::Destroy()"}
 {"a":"7100012704","t":"plate","c":"mg0107::SandwitchManager::GetFieldPosition(int const&)"}
 {"a":"7100012728","t":"plate","c":"mg0107::SandwitchManager::GetUnit(int const&)"}
 {"a":"7100012738","t":"plate","c":"mg0107::SandwitchManager::AddSandwitchOnFieldForOpening()"}
-{"a":"71000127fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.4·5.1·6.4\n역할: SandwitchObject::StartFall\n동작: 칸(+0x80) 저장·Activate·위치 (칸 x, 칸 높이 + 15, 칸 z)\n낙하 보간: fall = {from: y0, to: pos.y, time 0, duration f32(15/speed), type 1}\ndecal 모션 속도 = speed/7.5 + 0.05 (정확히 1이면 1)\n히트 박스(actor::ComActorCollision 공격 판정): 반크기 (1.4, 반두께, 1.4), 중심 (0, 반두께, 0), 공격 콜백 등록\n소리: SQ_SE_MG0107_SAND_FAL (2D)\n+0x84 = 1 [미확정 뜻]\n---\nmg0107::SandwitchObject::StartFall(nn::util::Vector3f const&, float const&, int const&, bool const&)"}
+{"a":"71000127fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.4·5.1·6.4\n역할: SandwitchObject::StartFall\n동작: 칸(+0x80) 저장·Activate·위치 (칸 x, 칸 높이 + 15, 칸 z)\n낙하 보간: fall = {from: y0, to: pos.y, time 0, duration f32(15/speed), type 1}\ndecal 모션 속도 = speed/7.5 + 0.05 (정확히 1이면 1)\n히트 박스(actor::ComActorCollision 공격 판정): 반크기 (1.4, 반두께, 1.4), 중심 (0, 반두께, 0), 공격 콜백 등록\n소리: SQ_SE_MG0107_SAND_FAL (2D)\n+0x84 = 1 [미확정 뜻]"}
 {"a":"7100012b40","t":"plate","c":"mg0107::SandwitchManager::SkipOpeningSandwitchMove()"}
 {"a":"7100012c20","t":"plate","c":"mg0107::SandwitchObject::SkipFall()"}
 {"a":"7100012e04","t":"plate","c":"mg0107::SandwitchManager::GetLowestUnitHeight()"}
@@ -299,16 +299,16 @@
 {"a":"7100013020","t":"plate","c":"mg0107::SandwitchManager::GetUnitHeight(nn::util::Vector3f const&)"}
 {"a":"7100013050","t":"plate","c":"mg0107::SandwitchManager::GetUnitNumFromPos(nn::util::Vector3f)"}
 {"a":"71000134c0","t":"plate","c":"mg0107::SandwitchManager::GetLowestUnitNum()"}
-{"a":"7100013780","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3\n역할: SandwitchManager::GetRandomUnitNum (randomUnit)\nH = max(0, max_k units[k].height)\ncand = k∈0..17 중 batchUnits 에 없고 낙하 중 아니고 units[k].height + 2.4 < H\ncand 비면 cand = 낙하 중 아닌 모든 k (batchUnits 무시)\nreturn cand[SyncRandRange(0, len)] (비어 있으면 Abort)\nfallingOnto(k) = objects 216개 중 unit==k 이고 fall 미종료가 있는가\n---\nmg0107::SandwitchManager::GetRandomUnitNum()"}
+{"a":"7100013780","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3\n역할: SandwitchManager::GetRandomUnitNum (randomUnit)\nH = max(0, max_k units[k].height)\ncand = k∈0..17 중 batchUnits 에 없고 낙하 중 아니고 units[k].height + 2.4 < H\ncand 비면 cand = 낙하 중 아닌 모든 k (batchUnits 무시)\nreturn cand[SyncRandRange(0, len)] (비어 있으면 Abort)\nfallingOnto(k) = objects 216개 중 unit==k 이고 fall 미종료가 있는가"}
 {"a":"7100013bf0","t":"plate","c":"mg0107::SandwitchManager::IsSandwitchOnTop(int)"}
-{"a":"7100013c60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3·8\n역할: SandwitchManager::GetHighestPlayerUnitNum (targetPlayerUnit) — 이름과 달리 무작위 플레이어 칸\nr = randomUnit() 먼저 호출(난수 소비)\nP = 플레이어 위치 중 y > 0 || |y| < 1.1920929e-7; 비면 r 반환\nu = unitOf(P[SyncRandRange(0, len)])\nunits[u].height > min(10000, min_k height) + 3.5 이면 u = GetLowestUnitNum()(자체 난수 1회)\nunitOf(p) = cx±1.5, cz±1.5 열린 범위에 든 첫 칸, 없으면 0\n[미확정] GetLowestUnitNum 같은 높이 여럿일 때 SyncRandRange 세부\n[미확정] 탈락자 엔티티 위치가 후보 조건을 만족하는지\n---\nmg0107::SandwitchManager::GetHighestPlayerUnitNum()"}
-{"a":"7100014280","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3\n역할: SandwitchManager::AddSandwitchOnField(t, k)\nu = randomUnit() 항상 먼저\nk==0 이면 h = targetPlayerUnit(); fallingOnto(h) 가 아니면 u = h\nobj = objects[nextIndex]; 보이게; startFall(pos=(PosTable[u].x, units[u].height, PosTable[u].z), speed(t), u, playSe=true)\nunits[u].count++; units[u].height = f32(height + obj.thickness)\nnextIndex++; batchUnits[k] = u; 엔드리스이고 nextIndex==216 이면 0\n칸 높이는 숨김과 무관하게 줄지 않는다\n---\nmg0107::SandwitchManager::AddSandwitchOnField(float const&, int)"}
+{"a":"7100013c60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3·8\n역할: SandwitchManager::GetHighestPlayerUnitNum (targetPlayerUnit) — 이름과 달리 무작위 플레이어 칸\nr = randomUnit() 먼저 호출(난수 소비)\nP = 플레이어 위치 중 y > 0 || |y| < 1.1920929e-7; 비면 r 반환\nu = unitOf(P[SyncRandRange(0, len)])\nunits[u].height > min(10000, min_k height) + 3.5 이면 u = GetLowestUnitNum()(자체 난수 1회)\nunitOf(p) = cx±1.5, cz±1.5 열린 범위에 든 첫 칸, 없으면 0\n[미확정] GetLowestUnitNum 같은 높이 여럿일 때 SyncRandRange 세부\n[미확정] 탈락자 엔티티 위치가 후보 조건을 만족하는지"}
+{"a":"7100014280","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.3\n역할: SandwitchManager::AddSandwitchOnField(t, k)\nu = randomUnit() 항상 먼저\nk==0 이면 h = targetPlayerUnit(); fallingOnto(h) 가 아니면 u = h\nobj = objects[nextIndex]; 보이게; startFall(pos=(PosTable[u].x, units[u].height, PosTable[u].z), speed(t), u, playSe=true)\nunits[u].count++; units[u].height = f32(height + obj.thickness)\nnextIndex++; batchUnits[k] = u; 엔드리스이고 nextIndex==216 이면 0\n칸 높이는 숨김과 무관하게 줄지 않는다"}
 {"a":"7100014410","t":"plate","c":"mg0107::SandwitchObject::VisibleModelCompornent()"}
-{"a":"7100014654","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.2\n역할: SandwitchManager::GetCurrentSpeed\nspeed(t) = SandFallSpeedBase + SandFallSpeedPhase[phase(t)] (GetCurrentPhase 와 같은 경계 규칙)\n실효 단계별 속도 5.5/6.0/7.0/8.0/8.5/9.5/11.0\n---\nmg0107::SandwitchManager::GetCurrentSpeed(float const&)"}
+{"a":"7100014654","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.2\n역할: SandwitchManager::GetCurrentSpeed\nspeed(t) = SandFallSpeedBase + SandFallSpeedPhase[phase(t)] (GetCurrentPhase 와 같은 경계 규칙)\n실효 단계별 속도 5.5/6.0/7.0/8.0/8.5/9.5/11.0"}
 {"a":"7100014898","t":"plate","c":"mg0107::SandwitchManager::ClearCurrentSandwitchAddUnitNum()"}
 {"a":"71000148b0","t":"plate","c":"mg0107::SandwitchManager::PlayJumpAnim(nn::util::Vector3f)"}
 {"a":"71000149bc","t":"plate","c":"mg0107::SandwitchObject::PlayJumpAnim()"}
-{"a":"71000149f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.5\n역할: SandwitchManager::GetUnderSandwitchPositionY (underTopY)\n0..nextIndex-1 샌드위치(낙하 중 포함) 중 unitOf(s.pos)==unitOf(p) && s.y < p.y\nd = |p - s.pos| (4성분, NEON 합), bestD 초기 100000, 가장 작은 d 선택\n반환 best ? best.y + best.thickness : 0\n---\nmg0107::SandwitchManager::GetUnderSandwitchPositionY(nn::util::Vector3f)"}
+{"a":"71000149f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.5\n역할: SandwitchManager::GetUnderSandwitchPositionY (underTopY)\n0..nextIndex-1 샌드위치(낙하 중 포함) 중 unitOf(s.pos)==unitOf(p) && s.y < p.y\nd = |p - s.pos| (4성분, NEON 합), bestD 초기 100000, 가장 작은 d 선택\n반환 best ? best.y + best.thickness : 0"}
 {"a":"7100014b38","t":"plate","c":"mg0107::SandwitchManager::IsActiveSandwitch(int)"}
 {"a":"7100014b50","t":"plate","c":"mg0107::SandwitchObject::IsVisibleModel()"}
 {"a":"7100014c68","t":"plate","c":"mg0107::SandwitchManager::SetDisableSandwitch(int)"}
@@ -330,11 +330,11 @@
 {"a":"7100015710","t":"plate","c":"mg0107::SandwitchObject::GetPhysicsAttribute()"}
 {"a":"710001574c","t":"plate","c":"mg0107::SandwitchObject::SetFirstPhysicsAttribute(int)"}
 {"a":"7100015754","t":"plate","c":"mg0107::SandwitchObject::SandwitchObject()"}
-{"a":"71000157a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.4·11\n역할: SandwitchObject::SetupRigidbody — 생성 때 PhysX 강체\n상자 반크기 (1.5, 10, 1.5), 로컬 위치 (0, 10, 0) → 바닥부터 위로 20 높이 기둥\n재질 마찰 0.5/0.5, 반발 0.9 (mgD RigidBodyCreateArg 배치)\n[미확정] 운동 종류(+0xB4 쓰기 기준 레지스터 미확인)\n[추정] 용도: 떨어지는 동안 위에 올라타지 못하게 하는 벽\n---\nmg0107::SandwitchObject::SetupRigidbody()"}
+{"a":"71000157a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.4·11\n역할: SandwitchObject::SetupRigidbody — 생성 때 PhysX 강체\n상자 반크기 (1.5, 10, 1.5), 로컬 위치 (0, 10, 0) → 바닥부터 위로 20 높이 기둥\n재질 마찰 0.5/0.5, 반발 0.9 (mgD RigidBodyCreateArg 배치)\n[미확정] 운동 종류(+0xB4 쓰기 기준 레지스터 미확인)\n[추정] 용도: 떨어지는 동안 위에 올라타지 못하게 하는 벽"}
 {"a":"7100015ae0","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComRigidBody> nn::bezel::Entity::AddComponent<nn::bezel::ComRigidBody, nn::bezel::HandlePtr<nn::bezel::RigidBody>, (void*)0>(nn::bezel::HandlePtr<nn::bezel::RigidBody>&&)"}
-{"a":"7100015cd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.4\n역할: SandwitchObject::SetupRigidbodyFalled — 착지 뒤 상자 반크기 = halfSize(1.5, 반두께, 1.5) 정적 강체(발판)\n---\nmg0107::SandwitchObject::SetupRigidbodyFalled()"}
+{"a":"7100015cd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.4\n역할: SandwitchObject::SetupRigidbodyFalled — 착지 뒤 상자 반크기 = halfSize(1.5, 반두께, 1.5) 정적 강체(발판)"}
 {"a":"7100016050","t":"plate","c":"mg0107::SandwitchObject::SetPhysicsAttribute()"}
-{"a":"7100016090","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §5.1\n역할: SandwitchObject::EndFall(true) — 착지: 데칼 그림자, landing 모션, 착지 강체(SetupRigidbodyFalled), 소리 페이드\n[미확정] 세부 미판독\n---\nmg0107::SandwitchObject::EndFall(bool)"}
+{"a":"7100016090","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §5.1\n역할: SandwitchObject::EndFall(true) — 착지: 데칼 그림자, landing 모션, 착지 강체(SetupRigidbodyFalled), 소리 페이드\n[미확정] 세부 미판독"}
 {"a":"7100016324","t":"plate","c":"mg0107::SandwitchObject::EnableActive()"}
 {"a":"7100016360","t":"plate","c":"mg0107::SandwitchObject::PlayDecalAnim(float const&)"}
 {"a":"71000163a0","t":"plate","c":"nn::bezel::WeakHandle<actor::ComActorCollision> nn::bezel::Entity::AddComponent<actor::ComActorCollision, , (void*)0>()"}
@@ -390,13 +390,13 @@
 {"a":"7100017ae0","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
 {"a":"7100017ae4","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
 {"a":"7100017ae8","t":"plate","c":"mg0107::Scene::Params::getStaticTypeinfo()"}
-{"a":"7100017bc4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.1\n역할: Scene::Params::getPropertyList\nCOM 전환 시각을 0x20, 0x2C, 0x38, 0x44(세 칸의 가운데)로 등록하지만 코드는 0x1C 부터 세 칸씩 읽는다\n---\nmg0107::Scene::Params::getPropertyList()"}
-{"a":"71000183fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.1\n역할: Scene::Params::createInstance — 코드 기본값(0xB0 B)\nGameTime 60; bool 0x0C~0x10 = 0; +0x14 = 1; ForceAILevel 0\nCOM 전환 (a,b,c): 쉬움 (58,50,10), 보통 (58,40,20), 어려움 (58,20,40), 마스터 (58,10,50); +0x4C 1.0\nSandFallHeight 15.0, SpeedBase 4.5, SpeedPhase 1.0,1.5,2.5,4.5,6.0,6.5,6.5\nIntervalPhase 1.5,1.0,1.0,1.0,0.85,0.85,0.85; Count Min/Max (2,3)(3,3)(4,4)(4,4)\n---\nmg0107::Scene::Params::createInstance()"}
+{"a":"7100017bc4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.1\n역할: Scene::Params::getPropertyList\nCOM 전환 시각을 0x20, 0x2C, 0x38, 0x44(세 칸의 가운데)로 등록하지만 코드는 0x1C 부터 세 칸씩 읽는다"}
+{"a":"71000183fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.1\n역할: Scene::Params::createInstance — 코드 기본값(0xB0 B)\nGameTime 60; bool 0x0C~0x10 = 0; +0x14 = 1; ForceAILevel 0\nCOM 전환 (a,b,c): 쉬움 (58,50,10), 보통 (58,40,20), 어려움 (58,20,40), 마스터 (58,10,50); +0x4C 1.0\nSandFallHeight 15.0, SpeedBase 4.5, SpeedPhase 1.0,1.5,2.5,4.5,6.0,6.5,6.5\nIntervalPhase 1.5,1.0,1.0,1.0,0.85,0.85,0.85; Count Min/Max (2,3)(3,3)(4,4)(4,4)"}
 {"a":"7100018514","t":"plate","c":"mg0107::Scene::Params::deleteInstance(void*)"}
-{"a":"7100018528","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: mg0107::Scene 생성자 — GameManager(Scene+0x310)·Mg0107_Param(Scene+0x318) 생성\n3.1: 훅을 GameManager 로 넘긴다. 정적 Scene::_scene\n---\nmg0107::Scene::Scene()"}
+{"a":"7100018528","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: mg0107::Scene 생성자 — GameManager(Scene+0x310)·Mg0107_Param(Scene+0x318) 생성\n3.1: 훅을 GameManager 로 넘긴다. 정적 Scene::_scene"}
 {"a":"71000185fc","t":"plate","c":"mg0107::Scene::~Scene()"}
 {"a":"710001869c","t":"plate","c":"mg0107::Scene::~Scene()"}
-{"a":"71000186c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: Scene::SetupGame — Mg0107_Param::Setup(0x710000b640) 호출\n---\nmg0107::Scene::SetupGame()"}
+{"a":"71000186c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: Scene::SetupGame — Mg0107_Param::Setup(0x710000b640) 호출"}
 {"a":"71000186c8","t":"plate","c":"mg0107::Scene::SyncedSetupGame()"}
 {"a":"71000186d0","t":"plate","c":"mg0107::Scene::CleanupGame()"}
 {"a":"71000186d8","t":"plate","c":"mg0107::Scene::OnGameInit()"}
@@ -412,7 +412,7 @@
 {"a":"71000187a0","t":"plate","c":"mg0107::Scene::OnGameFinish()"}
 {"a":"71000187bc","t":"plate","c":"mg0107::Scene::OnGameFinishAfter()"}
 {"a":"71000187c4","t":"plate","c":"mg0107::Scene::OnGameEndingFade()"}
-{"a":"71000187d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.8\n역할: Scene::OnEndingInit — 순위·승패 기록\n각 플레이어 SetMinigameRank(rank); WinLose = allSame ? 2 : (rank == 0 ? 1 : 0)\n[추정] WinLose 2 = 무승부\n---\nmg0107::Scene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"71000187d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §6.8\n역할: Scene::OnEndingInit — 순위·승패 기록\n각 플레이어 SetMinigameRank(rank); WinLose = allSame ? 2 : (rank == 0 ? 1 : 0)\n[추정] WinLose 2 = 무승부"}
 {"a":"7100018e18","t":"plate","c":"mg0107::Scene::OnGameEndingChangeCut()"}
 {"a":"7100018e20","t":"plate","c":"mg0107::Scene::OnGameEndingBefore()"}
 {"a":"7100018e28","t":"plate","c":"mg0107::Scene::OnGameEnding()"}
@@ -442,7 +442,7 @@
 {"a":"710001977c","t":"plate","c":"mg0107::UIManager::UIManager()"}
 {"a":"71000197dc","t":"plate","c":"mg0107::UIManager::~UIManager()"}
 {"a":"71000197ec","t":"plate","c":"mg0107::UIManager::~UIManager()"}
-{"a":"7100019810","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: UIManager::Setup\n분기 보통: ComUiStatus(0x10,0,2) + ComUiTimer(0)·SetTimer(Params.GameTime)\n분기 엔드리스: ComUiStatus(1,0,2)(점수 숨김 4명) + ComUiCountUpTimer\n---\nmg0107::UIManager::Setup()"}
+{"a":"7100019810","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §3.2\n역할: UIManager::Setup\n분기 보통: ComUiStatus(0x10,0,2) + ComUiTimer(0)·SetTimer(Params.GameTime)\n분기 엔드리스: ComUiStatus(1,0,2)(점수 숨김 4명) + ComUiCountUpTimer"}
 {"a":"7100019bd0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiStatus> nn::bezel::Entity::AddComponent<bq::ComUiStatus, bq::ComUiStatus::UiStatusType, bq::ComUiStatus::UiStatusMatchType, bq::ComUiStatus::UiStatusPlaceType, (void*)0>(bq::ComUiStatus::UiStatusType&&, bq::ComUiStatus::UiStatusMatchType&&, bq::ComUiStatus::UiStatusPlaceType&&)"}
 {"a":"7100019db0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiCountUpTimer> nn::bezel::Entity::AddComponent<bq::ComUiCountUpTimer, , (void*)0>()"}
 {"a":"7100019f90","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiTimer> nn::bezel::Entity::AddComponent<bq::ComUiTimer, bq::ComUiTimer::UiTimerType, (void*)0>(bq::ComUiTimer::UiTimerType&&)"}
@@ -492,7 +492,7 @@
 {"a":"710001b208","t":"plate","c":"mg0107::Interpolation::Acc(float, float, float)"}
 {"a":"710001b218","t":"plate","c":"mg0107::Interpolation::Dec(float, float, float)"}
 {"a":"710001b234","t":"plate","c":"mg0107::Interpolation::Hermite(float, float, float)"}
-{"a":"710001b27c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.5·6.4\n역할: Interpolation::Update\ntime += GetDeltaTime, duration 에서 멈춤(min)\ntype 0 선형, 1 가속(s²), 2 감속(1-(1-s)²), 3 Hermite(가중 0·0·0); s = time/duration\nIsEnd = duration <= time\n---\nmg0107::Interpolation::Update()"}
+{"a":"710001b27c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0107.md §4.5·6.4\n역할: Interpolation::Update\ntime += GetDeltaTime, duration 에서 멈춤(min)\ntype 0 선형, 1 가속(s²), 2 감속(1-(1-s)²), 3 Hermite(가중 0·0·0); s = time/duration\nIsEnd = duration <= time"}
 {"a":"710001b3a0","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_mg0107()"}
 {"a":"710001b3b0","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_mg0107()"}
 {"a":"710001b3c0","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_sharedPCH()"}

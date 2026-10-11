@@ -1,4 +1,4 @@
-{"a":"71000036f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.7\n역할: ComAi 생성자(playerIndex, comLevel)\n초기값: level=1(곧 OnRoundStart에서 comLevel), state=0 …\n---\nmg0119::ComAi::ComAi(nn::bezel::HandlePtr<nn::bezel::Entity> const&, int, bq::ComLevel)"}
+{"a":"71000036f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.7\n역할: ComAi 생성자(playerIndex, comLevel)\n초기값: level=1(곧 OnRoundStart에서 comLevel), state=0 …"}
 {"a":"71000037b0","t":"plate","c":"mg0119::ComAi::~ComAi()"}
 {"a":"71000038e0","t":"plate","c":"non-virtual thunk to mg0119::ComAi::~ComAi()"}
 {"a":"71000038e8","t":"plate","c":"mg0119::ComAi::~ComAi()"}
@@ -8,7 +8,7 @@
 {"a":"7100003ee4","t":"plate","c":"mg0119::ComAi::OnFixUpdate()"}
 {"a":"710000400c","t":"plate","c":"mg0119::ComAi::GetR() const"}
 {"a":"7100004030","t":"plate","c":"non-virtual thunk to mg0119::ComAi::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"7100004038","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.7\n역할: ComAi::GetQuaternion. PID 출력 → 판 회전\n계산: pid=AiParam[level].Pid; vz=I·integral.z+P·e.z+D·deriv.z, vx=I·integral.x+P·e.x+D·deriv.x\n계산: A=clamp(vz, ±MaxAngle), B=−clamp(vx, ±MaxAngle) (라디안 그대로) → return qx(A)*qz(B) (mg1002 6.1과 같은 조립)\n필드: ComAi+0x90 e, +0xB0 integral, +0xC0 deriv, +0x68 level\n예: 오차 1 m → 0.5 rad → 17°로 클램프. x 오차 0.3 m → −8.59°\n---\nmg0119::ComAi::GetQuaternion() const"}
+{"a":"7100004038","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.7\n역할: ComAi::GetQuaternion. PID 출력 → 판 회전\n계산: pid=AiParam[level].Pid; vz=I·integral.z+P·e.z+D·deriv.z, vx=I·integral.x+P·e.x+D·deriv.x\n계산: A=clamp(vz, ±MaxAngle), B=−clamp(vx, ±MaxAngle) (라디안 그대로) → return qx(A)*qz(B) (mg1002 6.1과 같은 조립)\n필드: ComAi+0x90 e, +0xB0 integral, +0xC0 deriv, +0x68 level\n예: 오차 1 m → 0.5 rad → 17°로 클램프. x 오차 0.3 m → −8.59°"}
 {"a":"7100004390","t":"plate","c":"mg0119::ComAi::IsTriggerRespawn() const"}
 {"a":"71000043f0","t":"plate","c":"mg0119::ComAi::IsTriggerShake() const"}
 {"a":"7100004408","t":"plate","c":"mg0119::ComAi::OnRoundStart()"}
@@ -33,8 +33,8 @@
 {"a":"7100004c10","t":"plate","c":"non-virtual thunk to mg0119::ComAi::NnDetailBezelGetThisPtrConst() const"}
 {"a":"7100004c18","t":"plate","c":"mg0119::ComAi::ControlStateDefault::~ControlStateDefault()"}
 {"a":"7100004c7c","t":"plate","c":"mg0119::ComAi::ControlStateDefault::~ControlStateDefault()"}
-{"a":"7100004cc8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateDefault::GetControlTarget\n계산: MapPathRoute::CalcPosition(min(진행도, 0.9999))을 맵 충돌 루트 회전의 역으로 맵 로컬로 바꾸고 y=0\n분기: 진행도 < 0.25/길이(처음 0.25 m)이면 공 생성 위치에서 선형 보간\n---\nmg0119::ComAi::ControlStateDefault::GetControlTarget()"}
-{"a":"7100004ea4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateDefault::TickUpdateImpl\n분기: 상태 0.5 s 뒤 PID 켬. 매 프레임 공 속력·dt 기록(+0x40 deque)\n분기: 3 s가 지나면 창을 밀며 이동거리/3 < 0.1(+0x74)이면 Trapped 상태로 전환\n---\nmg0119::ComAi::ControlStateDefault::TickUpdateImpl(float, bool)"}
+{"a":"7100004cc8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateDefault::GetControlTarget\n계산: MapPathRoute::CalcPosition(min(진행도, 0.9999))을 맵 충돌 루트 회전의 역으로 맵 로컬로 바꾸고 y=0\n분기: 진행도 < 0.25/길이(처음 0.25 m)이면 공 생성 위치에서 선형 보간"}
+{"a":"7100004ea4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateDefault::TickUpdateImpl\n분기: 상태 0.5 s 뒤 PID 켬. 매 프레임 공 속력·dt 기록(+0x40 deque)\n분기: 3 s가 지나면 창을 밀며 이동거리/3 < 0.1(+0x74)이면 Trapped 상태로 전환"}
 {"a":"71000050b4","t":"plate","c":"mg0119::ComAi::ControlStateDefault::TickFixUpdateImpl(float, bool)"}
 {"a":"71000050dc","t":"plate","c":"mg0119::ComAi::ControlState::~ControlState()"}
 {"a":"71000050e0","t":"plate","c":"mg0119::ComAi::ControlState::TickUpdateImpl(float, bool)"}
@@ -49,7 +49,7 @@
 {"a":"71000051f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100005200","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100005208","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100005338","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateDefault::Initialize (공이 나올 때/상태 첫 Tick)\n1. lv=AiParam[level]\n2. 경로 i: u=SyncRandModF(r0+r1+r2), u<r0→0, <r0+r1→1, <합→2\n3. SyncRandF()<MissRate이면 실패 경로(GetMapPathMissRoute), 아니면 정상 경로(GetMapPathClearRoute)\n4. speed=(BallSpeed−Var)+SyncRandModF(2·Var), duration=길이/speed, +0x3C=0.25/길이\n난수: SyncRandModF 1 + SyncRandF 1 + (실패면 SyncRandMod 1) + SyncRandModF 1\n---\nmg0119::ComAi::ControlStateDefault::Initialize()"}
+{"a":"7100005338","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateDefault::Initialize (공이 나올 때/상태 첫 Tick)\n1. lv=AiParam[level]\n2. 경로 i: u=SyncRandModF(r0+r1+r2), u<r0→0, <r0+r1→1, <합→2\n3. SyncRandF()<MissRate이면 실패 경로(GetMapPathMissRoute), 아니면 정상 경로(GetMapPathClearRoute)\n4. speed=(BallSpeed−Var)+SyncRandModF(2·Var), duration=길이/speed, +0x3C=0.25/길이\n난수: SyncRandModF 1 + SyncRandF 1 + (실패면 SyncRandMod 1) + SyncRandModF 1"}
 {"a":"7100005540","t":"plate","c":"mg0119::MapCollision::GetBallSpeed() const"}
 {"a":"7100005624","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
 {"a":"710000565c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::GetBaseTypeDesc()"}
@@ -75,7 +75,7 @@
 {"a":"71000060a0","t":"plate","c":"mg0119::ComAi::ControlState* std::__invoke_void_return_wrapper<mg0119::ComAi::ControlState*, false>::__call<mg0119::ComAi::ChangeControlState<mg0119::ComAi::ControlStateTrapped>(mg0119::ComAi::ControlPayload&)::{lambda()#1}&>(mg0119::ComAi::ChangeControlState<mg0119::ComAi::ControlStateTrapped>(mg0119::ComAi::ControlPayload&)::{lambda()#1}&)"}
 {"a":"710000619c","t":"plate","c":"mg0119::ComAi::ControlState::~ControlState()"}
 {"a":"71000061bc","t":"plate","c":"mg0119::ComAi::ControlStateTrapped::~ControlStateTrapped()"}
-{"a":"71000061c0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateTrapped::GetControlTarget\n계산: ballPos + normalize(ballPos) × speed (디스어셈블 판독)\n[추정] speed 값의 뜻(계수 +0x18, §11)\n---\nmg0119::ComAi::ControlStateTrapped::GetControlTarget()"}
+{"a":"71000061c0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: ControlStateTrapped::GetControlTarget\n계산: ballPos + normalize(ballPos) × speed (디스어셈블 판독)\n[추정] speed 값의 뜻(계수 +0x18, §11)"}
 {"a":"71000063a0","t":"plate","c":"mg0119::AiInput::NnDetailBezelGetTypeDesc() const"}
 {"a":"71000063ac","t":"plate","c":"mg0119::AiInput::NnDetailBezelGetThisPtr()"}
 {"a":"71000063b0","t":"plate","c":"mg0119::AiInput::NnDetailBezelGetThisPtrConst() const"}
@@ -85,7 +85,7 @@
 {"a":"7100006568","t":"plate","c":"mg0119::AiInput::IsTriggerRespawn() const"}
 {"a":"71000065e4","t":"plate","c":"mg0119::AiInput::IsTriggerShake() const"}
 {"a":"7100006630","t":"plate","c":"mg0119::AiInput::Calibrate()"}
-{"a":"7100006644","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: AiInput::Update\n계산: q = slerp(q, ComAi::GetQuaternion(), AiRotateCoef 0.5) 매 프레임. AiInput::GetQuaternion이 이 q를 돌려줌\n필드: AiInput+0x10 ComAi, +0x30 부드럽게 만든 q\n---\nmg0119::AiInput::Update()"}
+{"a":"7100006644","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: AiInput::Update\n계산: q = slerp(q, ComAi::GetQuaternion(), AiRotateCoef 0.5) 매 프레임. AiInput::GetQuaternion이 이 q를 돌려줌\n필드: AiInput+0x10 ComAi, +0x30 부드럽게 만든 q"}
 {"a":"7100006ab0","t":"plate","c":"mg0119::BaseInput::NnDetailBezelGetTypeDesc() const"}
 {"a":"7100006abc","t":"plate","c":"mg0119::BaseInput::NnDetailBezelGetThisPtr()"}
 {"a":"7100006ac0","t":"plate","c":"mg0119::BaseInput::NnDetailBezelGetThisPtrConst() const"}
@@ -136,14 +136,14 @@
 {"a":"7100007e20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100007e34","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100007e3c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100007e44","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 ComBallCollision 생성자. soundActor는 bex::sound::ComActor(이동 actor와 다른 namespace)\n\n[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.5\n역할: ComBallCollision 생성자\n강체 인자: mg1002 4.5와 같음(마찰 1.0/1.0, 반발 1e-4, 질량 1, 동적, 스윕 CCD, 월드 중력 끔), 반지름만 0.12\n초기값: +0x28 playerIndex=−1, +0x60 gravityDir=−UnitY, +0x70 contactKinds=0, +0x71=0, +0x72 airborne=1, +0x73 physicsEnabled=1, +0x74/+0x78=0, +0x7C=0, +0xB0=0, +0xC0 단위 q, +0xD0=0\n[추정] +0x7D noVibration은 CPU면 1(writer 미추적)\n---\nmg0119::ComBallCollision::ComBallCollision(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100007e44","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 ComBallCollision 생성자. soundActor는 bex::sound::ComActor(이동 actor와 다른 namespace)\n\n[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.5\n역할: ComBallCollision 생성자\n강체 인자: mg1002 4.5와 같음(마찰 1.0/1.0, 반발 1e-4, 질량 1, 동적, 스윕 CCD, 월드 중력 끔), 반지름만 0.12\n초기값: +0x28 playerIndex=−1, +0x60 gravityDir=−UnitY, +0x70 contactKinds=0, +0x71=0, +0x72 airborne=1, +0x73 physicsEnabled=1, +0x74/+0x78=0, +0x7C=0, +0xB0=0, +0xC0 단위 q, +0xD0=0\n[추정] +0x7D noVibration은 CPU면 1(writer 미추적)"}
 {"a":"7100008090","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComRigidBody> nn::bezel::Entity::AddComponent<nn::bezel::ComRigidBody, nn::bezel::RigidBodyCreateArg&, (void*)0>(nn::bezel::RigidBodyCreateArg&)"}
-{"a":"7100008280","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 ComBallCollision::ReceiveMessageImpl. soundActor는 bex::sound::ComActor\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.3\n역할: ComBallCollision::ReceiveMessageImpl\n0x5f454e00 TickUpdate: physicsEnabled면 applyForce(gravityDir*9.8*GravityScale). playerIndex>=0·stage!=−1이면 wide=(0xE7>>stage)&1, X=wide?3.75:2.65, Z=wide?2.0:2.65, |x|>=X 또는 |z|>=Z면 mapModel.disableAttachmentBall()\n0x5f454e08 물리 뒤: onTransform(+0x50) 호출, kind=contactKinds&1?1:&2?2:&4?4:0 → SetAngularDamping(1 Fairway,2 Bunker,4 Green,0 → 0.05). 접지면 minY=10,maxY=−10. 회전 차이 누적 30 rad 넘고 contactKinds&5==0이면 구름 SE(벙커 BAL_BNKR_ROL, 아니면 BAL_GRN_ROL), 누적=fmod(누적,30). minY/maxY 갱신, UpdateRollingVibration, prevKinds=contactKinds\n0x5f503100 Entered: contactKinds|=tagBit(bunker2,green4,fairway1,tree8). airborne이면 airborne=(normal·UnitY<0.7071). fellHigh=(maxY−minY>0.12). tree면 playHitEffect·SQ_SE_MG0119_BAL_HIT_HRDL·진동. fellHigh && (bit==2 || ((bit==1||bit==4) && (prevKinds&5)==0))면 착지 SE(BAL_BNKR_LND/BAL_GRN_LND)\n0x5f503101 Left: contactKinds&=~tagBit, airborne=(contactKinds==0)\n0x5f503102 Stay: airborne이면 airborne=(normal·UnitY<0.7071), fellHigh 갱신\n주의: tree(8)는 감쇠 switch에 없음. 나무·이름 없는 _col만 닿으면 0.05. 우선순위 페어웨이>벙커>그린\n---\nmg0119::ComBallCollision::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"7100008c88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.4\n역할: IsOutsideStage. 6.3과 같은 경계(wide 3.75/2.0, 그 외 2.65/2.65) 판정\n호출자 미추적\n---\nmg0119::ComBallCollision::IsOutsideStage() const"}
+{"a":"7100008280","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 ComBallCollision::ReceiveMessageImpl. soundActor는 bex::sound::ComActor\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.3\n역할: ComBallCollision::ReceiveMessageImpl\n0x5f454e00 TickUpdate: physicsEnabled면 applyForce(gravityDir*9.8*GravityScale). playerIndex>=0·stage!=−1이면 wide=(0xE7>>stage)&1, X=wide?3.75:2.65, Z=wide?2.0:2.65, |x|>=X 또는 |z|>=Z면 mapModel.disableAttachmentBall()\n0x5f454e08 물리 뒤: onTransform(+0x50) 호출, kind=contactKinds&1?1:&2?2:&4?4:0 → SetAngularDamping(1 Fairway,2 Bunker,4 Green,0 → 0.05). 접지면 minY=10,maxY=−10. 회전 차이 누적 30 rad 넘고 contactKinds&5==0이면 구름 SE(벙커 BAL_BNKR_ROL, 아니면 BAL_GRN_ROL), 누적=fmod(누적,30). minY/maxY 갱신, UpdateRollingVibration, prevKinds=contactKinds\n0x5f503100 Entered: contactKinds|=tagBit(bunker2,green4,fairway1,tree8). airborne이면 airborne=(normal·UnitY<0.7071). fellHigh=(maxY−minY>0.12). tree면 playHitEffect·SQ_SE_MG0119_BAL_HIT_HRDL·진동. fellHigh && (bit==2 || ((bit==1||bit==4) && (prevKinds&5)==0))면 착지 SE(BAL_BNKR_LND/BAL_GRN_LND)\n0x5f503101 Left: contactKinds&=~tagBit, airborne=(contactKinds==0)\n0x5f503102 Stay: airborne이면 airborne=(normal·UnitY<0.7071), fellHigh 갱신\n주의: tree(8)는 감쇠 switch에 없음. 나무·이름 없는 _col만 닿으면 0.05. 우선순위 페어웨이>벙커>그린"}
+{"a":"7100008c88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.4\n역할: IsOutsideStage. 6.3과 같은 경계(wide 3.75/2.0, 그 외 2.65/2.65) 판정\n호출자 미추적"}
 {"a":"7100008d50","t":"plate","c":"mg0119::ComBallCollision::GetCollisionObjectKind(nn::bezel::WeakHandle<nn::bezel::Entity>) const"}
 {"a":"7100008e50","t":"plate","c":"mg0119::ComBallCollision::SetAngularDamping(mg0119::CollisionObjectKind)"}
 {"a":"7100008fc8","t":"plate","c":"nn::bezel::WeakHandle<bex::sound::ComActor>::SafeLock() const"}
-{"a":"7100009010","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.3\n역할: UpdateRollingVibration\n분기: 땅에 있고 |v|²>0.0625(속력>0.25)이면 동작, 지형(1,2,4)이 바뀔 때만 새로 재생(+0xD0 마지막 지형), 그 밖에는 Stop\n계산: gain=((speed−0.25)/1.75)·0.8+0.2 (위쪽 클램프 없음)\n---\nmg0119::ComBallCollision::UpdateRollingVibration()"}
+{"a":"7100009010","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.3\n역할: UpdateRollingVibration\n분기: 땅에 있고 |v|²>0.0625(속력>0.25)이면 동작, 지형(1,2,4)이 바뀔 때만 새로 재생(+0xD0 마지막 지형), 그 밖에는 Stop\n계산: gain=((speed−0.25)/1.75)·0.8+0.2 (위쪽 클램프 없음)"}
 {"a":"710000929c","t":"plate","c":"non-virtual thunk to mg0119::ComBallCollision::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"71000092a4","t":"plate","c":"mg0119::ComBallCollision::Spawn(nn::util::Vector3f)"}
 {"a":"7100009318","t":"plate","c":"mg0119::ComBallCollision::NnDetailBezelGetTypeDesc() const"}
@@ -190,15 +190,15 @@
 {"a":"710000a434","t":"plate","c":"std::bad_function_call::~bad_function_call()"}
 {"a":"710000a458","t":"plate","c":"mg0119::ComController::ComController(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::HandlePtr<mg0119::BaseInput>)"}
 {"a":"710000a4d8","t":"plate","c":"mg0119::ComController::Calibrate()"}
-{"a":"710000a514","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: ComController::GetQuaternion\n계산: slerp(q, target, Params.RotateCoef) (기본 1.0 → 목표값). CPU는 AiInput q 위에 한 번 더 걸림\n---\nmg0119::ComController::GetQuaternion()"}
+{"a":"710000a514","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: ComController::GetQuaternion\n계산: slerp(q, target, Params.RotateCoef) (기본 1.0 → 목표값). CPU는 AiInput q 위에 한 번 더 걸림"}
 {"a":"710000a980","t":"plate","c":"mg0119::ComController::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"710000a9c8","t":"plate","c":"non-virtual thunk to mg0119::ComController::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"710000aa10","t":"plate","c":"mg0119::ControllerManager::Initialize()"}
-{"a":"710000abc4","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/19_motion_input.md §3·11\n역할: ControllerManager::CreateInput.\n동작: 먼저 Entity 에 ComActorSixAxisSensor 를 추가하고, handle 이 유효하면 SixAxisSensorInput ctor(0x710000b21c)를 호출, 실패하면 Abort.\n[미확정] M04: 이 함수만으로 Player component 배열 위치·flag clear 전후는 확정되지 않음.\n---\nmg0119::ControllerManager::CreateInput(nn::bezel::HandlePtr<nn::bezel::Entity>, bex::PlayerID) const"}
+{"a":"710000abc4","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/19_motion_input.md §3·11\n역할: ControllerManager::CreateInput.\n동작: 먼저 Entity 에 ComActorSixAxisSensor 를 추가하고, handle 이 유효하면 SixAxisSensorInput ctor(0x710000b21c)를 호출, 실패하면 Abort.\n[미확정] M04: 이 함수만으로 Player component 배열 위치·flag clear 전후는 확정되지 않음."}
 {"a":"710000ac80","t":"plate","c":"nn::bezel::WeakHandle<mg0119::ComController> nn::bezel::Entity::AddComponent<mg0119::ComController, nn::bezel::HandlePtr<mg0119::BaseInput>&, (void*)0>(nn::bezel::HandlePtr<mg0119::BaseInput>&)"}
 {"a":"710000ae60","t":"plate","c":"nn::bezel::WeakHandle<mg0119::ComController> nn::bezel::Entity::AddComponent<mg0119::ComController, nn::bezel::HandlePtr<mg0119::AiInput>&, (void*)0>(nn::bezel::HandlePtr<mg0119::AiInput>&)"}
 {"a":"710000b040","t":"plate","c":"nn::bezel::WeakHandle<actor::ComActorSixAxisSensor> nn::bezel::Entity::AddComponent<actor::ComActorSixAxisSensor, , (void*)0>()"}
-{"a":"710000b21c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5·10\n역할: mg0119 SixAxisSensorInput 생성자. 흔들기는 같은 pipeline에 임계 .25/Sum 2.5\n\n[판독] 2026-10-11 / md: web/docs/engine/19_motion_input.md §5·6.2\n역할: SixAxisSensorInput ctor(점프 입력, [판독: 어셈블리]).\n설정: Converter Buffer 200, 옵션 RemoveGravity/RotateInPosture/InverseAcc = 1/1/1; WaveDetector acc y, movement 0.25, Sum emitter test 2.5.\ncallback: flag +0x2C 를 세우고, Update 에서 clear.\n계산 예: y-mask value=|y|, 0.5 크기 5개 연속 같은 방향 → sum 2.5 도달(value 는 length(mask(v))).\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.2\n역할: SixAxisSensorInput 생성자. ComActorSixAxisSensor에 변환기·파형 검출기 생성\n변환기: 버퍼 200, SetRotateInPosture(1), SetRemoveGravity(1), SetInverseAcceleration(1). 프레임당 최신 샘플 1개\n검출기: 대상 종류 0=가속도, 축 마스크 2=y만, 임계=MoveThreshold 0.25(0이면 −1 → 기본 0.1), 합 이벤트 TestSum 2.5(파형당 한 번 콜백)\n콜백: +0x2C=1. Update가 프레임마다 0으로 지움, IsTriggerShake가 +0x2C 반환\n---\nmg0119::SixAxisSensorInput::SixAxisSensorInput(nn::bezel::HandlePtr<actor::ComActorSixAxisSensor>, bex::PlayerID)"}
+{"a":"710000b21c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5·10\n역할: mg0119 SixAxisSensorInput 생성자. 흔들기는 같은 pipeline에 임계 .25/Sum 2.5\n\n[판독] 2026-10-11 / md: web/docs/engine/19_motion_input.md §5·6.2\n역할: SixAxisSensorInput ctor(점프 입력, [판독: 어셈블리]).\n설정: Converter Buffer 200, 옵션 RemoveGravity/RotateInPosture/InverseAcc = 1/1/1; WaveDetector acc y, movement 0.25, Sum emitter test 2.5.\ncallback: flag +0x2C 를 세우고, Update 에서 clear.\n계산 예: y-mask value=|y|, 0.5 크기 5개 연속 같은 방향 → sum 2.5 도달(value 는 length(mask(v))).\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.2\n역할: SixAxisSensorInput 생성자. ComActorSixAxisSensor에 변환기·파형 검출기 생성\n변환기: 버퍼 200, SetRotateInPosture(1), SetRemoveGravity(1), SetInverseAcceleration(1). 프레임당 최신 샘플 1개\n검출기: 대상 종류 0=가속도, 축 마스크 2=y만, 임계=MoveThreshold 0.25(0이면 −1 → 기본 0.1), 합 이벤트 TestSum 2.5(파형당 한 번 콜백)\n콜백: +0x2C=1. Update가 프레임마다 0으로 지움, IsTriggerShake가 +0x2C 반환"}
 {"a":"710000b2ec","t":"pre","c":"변환기 인자 mov w1,#0xc8 (버퍼 200) ~ 0x710000b314 mov w1,#0x1 ×3 (RotateInPosture/RemoveGravity/InverseAcceleration)"}
 {"a":"710000b314","t":"eol","c":"변환기 인자 설정 끝 (mov w1,#0x1)"}
 {"a":"710000b44c","t":"plate","c":"mg0119::ComController::NnDetailBezelGetTypeDesc() const"}
@@ -216,7 +216,7 @@
 {"a":"710000b65c","t":"plate","c":"non-virtual thunk to mg0119::ComController::~ComController()"}
 {"a":"710000b664","t":"plate","c":"non-virtual thunk to mg0119::ComController::~ComController()"}
 {"a":"710000b690","t":"plate","c":"mg0119::SixAxisSensorInput::~SixAxisSensorInput()"}
-{"a":"710000b760","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/19_motion_input.md §6.2\n역할: SixAxisSensorInput::GetQuaternion 기울기 계산.\n계산: calib×posture → X(−π/2)·상대자세·X(+π/2) → X/Z Euler.\n[미확정] M10: native trig 근사와 JS trig 경계 오차.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: SixAxisSensorInput::GetQuaternion. mg1002와 같은 식(mg1002.md 6.1), 디컴파일이 주소·심볼 빼고 동일\n---\nmg0119::SixAxisSensorInput::GetQuaternion() const"}
+{"a":"710000b760","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/19_motion_input.md §6.2\n역할: SixAxisSensorInput::GetQuaternion 기울기 계산.\n계산: calib×posture → X(−π/2)·상대자세·X(+π/2) → X/Z Euler.\n[미확정] M10: native trig 근사와 JS trig 경계 오차.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: SixAxisSensorInput::GetQuaternion. mg1002와 같은 식(mg1002.md 6.1), 디컴파일이 주소·심볼 빼고 동일"}
 {"a":"710000cae8","t":"plate","c":"mg0119::SixAxisSensorInput::IsTriggerRespawn() const"}
 {"a":"710000cb24","t":"plate","c":"mg0119::SixAxisSensorInput::IsTriggerShake() const"}
 {"a":"710000cb2c","t":"plate","c":"mg0119::SixAxisSensorInput::Calibrate()"}
@@ -243,21 +243,21 @@
 {"a":"710000d240","t":"plate","c":"mg0119::UiManager::UiManager()"}
 {"a":"710000d3a0","t":"plate","c":"mg0119::GameManager::~GameManager()"}
 {"a":"710000d4b0","t":"plate","c":"mg0119::GameManager::~GameManager()"}
-{"a":"710000d4e0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.2\n역할: GameManager::Initialize\n1. 참가자 4명 PlayerWork 핸들을 GameManager+0x48+0x18·p에 복사\n2. PhysicsModule::SetCollisionLayerBitMask(6..9, 1)\n[추정] 플레이어별 코스를 레이어로 나누는 설정\n3. 스테이지: +0xA8 = StageRound1==−1이면 SyncRandRange(1,4), +0xAC = SyncRandRange(4,7), +0xB0 = SyncRandRange(7,10)\n4. ControllerManager/MapManager/UiManager/ScreenManager 초기화\n5. 환경 엔티티 env_sky, light, joycon-light(EnvFilePath 0x1a, +0x28=0xF0), backgrounds\n6. 레이어 0~3마다 env, cloud, sky, wind 생성, 시작 프레임 (int)SyncRandModF(FrameMax) 3회 → 동기 난수 12회\n7. 파이버 GameManager_PostUpdate(우선순위 1): 매 프레임 PostCupInUpdate\n---\nmg0119::GameManager::Initialize()"}
+{"a":"710000d4e0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.2\n역할: GameManager::Initialize\n1. 참가자 4명 PlayerWork 핸들을 GameManager+0x48+0x18·p에 복사\n2. PhysicsModule::SetCollisionLayerBitMask(6..9, 1)\n[추정] 플레이어별 코스를 레이어로 나누는 설정\n3. 스테이지: +0xA8 = StageRound1==−1이면 SyncRandRange(1,4), +0xAC = SyncRandRange(4,7), +0xB0 = SyncRandRange(7,10)\n4. ControllerManager/MapManager/UiManager/ScreenManager 초기화\n5. 환경 엔티티 env_sky, light, joycon-light(EnvFilePath 0x1a, +0x28=0xF0), backgrounds\n6. 레이어 0~3마다 env, cloud, sky, wind 생성, 시작 프레임 (int)SyncRandModF(FrameMax) 3회 → 동기 난수 12회\n7. 파이버 GameManager_PostUpdate(우선순위 1): 매 프레임 PostCupInUpdate"}
 {"a":"710000e2f0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [34], (void*)0>(char const (&) [34])"}
 {"a":"710000e4d0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [36], (void*)0>(char const (&) [36])"}
 {"a":"710000e6b0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*, (void*)0>(char const*&&)"}
 {"a":"710000ebb0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [30], (void*)0>(char const (&) [30])"}
 {"a":"710000ed90","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [32], (void*)0>(char const (&) [32])"}
 {"a":"710000ef70","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [35], (void*)0>(char const (&) [35])"}
-{"a":"710000f14c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: GameOpening\n1. MapManager::SetupOpening(시작 코스 Map 하나)\n2. 0.25 s 뒤 SpawnBallWithEffect\n3. 0.25 s 뒤 Sleep(3.0, 데모 람다 @0x71000175c8)\n4. 0.5 s 뒤 ChangeMap(라운드1 스테이지, 0) → WaitUntil(교체 끝)\n5. SplitScreenLayerList::SplitTo(2,2,0.5) → WaitUntil(분할 끝) → 0.5 s\n---\nmg0119::GameManager::GameOpening(mg0119::SequenceContext&)"}
+{"a":"710000f14c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: GameOpening\n1. MapManager::SetupOpening(시작 코스 Map 하나)\n2. 0.25 s 뒤 SpawnBallWithEffect\n3. 0.25 s 뒤 Sleep(3.0, 데모 람다 @0x71000175c8)\n4. 0.5 s 뒤 ChangeMap(라운드1 스테이지, 0) → WaitUntil(교체 끝)\n5. SplitScreenLayerList::SplitTo(2,2,0.5) → WaitUntil(분할 끝) → 0.5 s"}
 {"a":"710000f39c","t":"plate","c":"mg0119::GameManager::GetStageId(int) const"}
-{"a":"710000f3d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: GameOpeningSkip. 모든 맵 이펙트 정지 → ChangeMap(라운드1, 1)(즉시) → SplitTo(2,2,0.0)\n---\nmg0119::GameManager::GameOpeningSkip(mg0119::SequenceContext&)"}
-{"a":"710000f4a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: GameMain\n의사코드: waitUntil(ctx==(0,2)); for round 0..2 { this+0xB4 +1; showRoundTelop; waitUntil(isFinishedRoundTelop); roundStart(); waitUntil(람다 @0x7100018648: roundUpdate(); isTimeUp()||allCupIn()); wait(1); roundOver(); } updateWinLose(); ctx=(1,0)\n---\nmg0119::GameManager::GameMain(mg0119::SequenceContext&)"}
+{"a":"710000f3d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: GameOpeningSkip. 모든 맵 이펙트 정지 → ChangeMap(라운드1, 1)(즉시) → SplitTo(2,2,0.0)"}
+{"a":"710000f4a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: GameMain\n의사코드: waitUntil(ctx==(0,2)); for round 0..2 { this+0xB4 +1; showRoundTelop; waitUntil(isFinishedRoundTelop); roundStart(); waitUntil(람다 @0x7100018648: roundUpdate(); isTimeUp()||allCupIn()); wait(1); roundOver(); } updateWinLose(); ctx=(1,0)"}
 {"a":"710000f6c0","t":"plate","c":"mg0119::UiManager::ShowRoundTelop(int)"}
-{"a":"710000f798","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RoundStart\n플레이어 p: PlayerType==1(CPU)이고 AiManager 슬롯 p가 없으면 AiManager::Register(p, ComLevel). ComController를 지우고 AiInput으로 다시 만듦\nControllerManager::SetInputEnabled(true), UiManager::RoundStart(남은 순위 [0,1,2,3], 점수 표시 초기화, SetTimer(TimeLimit=30)+Start)\nAiManager::RoundStart(ComAi::OnRoundStart: 상태0, 레벨=기본 레벨)\n플레이어 상태 +0xB8..+0xC4 = 0. 사람만 Joy-Con 모형 FadeIn. MGSound::TryStartWhistle(1)\n---\nmg0119::GameManager::RoundStart()"}
-{"a":"710000fcd8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RoundOver\n1. 입력 끔, 타이머 정지, AiManager::RoundOver(ComAi 상태3)\n2. 전원 컵 인이 아니면 Joy-Con 모형 상태=2. 상태1 플레이어는 DeactiveBallWithExitEffect+DeactiveBall → 0.25 s\n3. +0xB4>2이면 ShowRanks\n4. 0.5 s 뒤 맵 4개 잠금(+0xF8=1) → 0.25 s → HideTimer → WaitUntil(점수 UI 4개 끝) → HideAllScores\n5. 남은 라운드면 ChangeMap(stage[+0xB4], 0)(pos_course_out/pos_course_in) → WaitUntil(교체 끝), WaitUntil(타이머 애니 끝)\n---\nmg0119::GameManager::RoundOver()"}
-{"a":"71000100c0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: UpdateWinLose\nUiManager::GetRanks: 점수 내림차순, 동점 같은 순위 → MGMgr::SetPlayerRank, SetPlayerWinLose(rank==0)\n분기: 전원 1위 동점이면 GetRanks가 모두 순위3으로 바꾸고 4명 모두 SetPlayerWinLose(p, 2)\n[추정] 2의 뜻은 무승부\n---\nmg0119::GameManager::UpdateWinLose() const"}
+{"a":"710000f798","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RoundStart\n플레이어 p: PlayerType==1(CPU)이고 AiManager 슬롯 p가 없으면 AiManager::Register(p, ComLevel). ComController를 지우고 AiInput으로 다시 만듦\nControllerManager::SetInputEnabled(true), UiManager::RoundStart(남은 순위 [0,1,2,3], 점수 표시 초기화, SetTimer(TimeLimit=30)+Start)\nAiManager::RoundStart(ComAi::OnRoundStart: 상태0, 레벨=기본 레벨)\n플레이어 상태 +0xB8..+0xC4 = 0. 사람만 Joy-Con 모형 FadeIn. MGSound::TryStartWhistle(1)"}
+{"a":"710000fcd8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RoundOver\n1. 입력 끔, 타이머 정지, AiManager::RoundOver(ComAi 상태3)\n2. 전원 컵 인이 아니면 Joy-Con 모형 상태=2. 상태1 플레이어는 DeactiveBallWithExitEffect+DeactiveBall → 0.25 s\n3. +0xB4>2이면 ShowRanks\n4. 0.5 s 뒤 맵 4개 잠금(+0xF8=1) → 0.25 s → HideTimer → WaitUntil(점수 UI 4개 끝) → HideAllScores\n5. 남은 라운드면 ChangeMap(stage[+0xB4], 0)(pos_course_out/pos_course_in) → WaitUntil(교체 끝), WaitUntil(타이머 애니 끝)"}
+{"a":"71000100c0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: UpdateWinLose\nUiManager::GetRanks: 점수 내림차순, 동점 같은 순위 → MGMgr::SetPlayerRank, SetPlayerWinLose(rank==0)\n분기: 전원 1위 동점이면 GetRanks가 모두 순위3으로 바꾸고 4명 모두 SetPlayerWinLose(p, 2)\n[추정] 2의 뜻은 무승부"}
 {"a":"7100010210","t":"plate","c":"mg0119::GameManager::SetupEnding(nn::bezel::WeakHandle<bq::MGResult>)"}
 {"a":"7100010ee0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID const&, bq::MatterType, (void*)0>(bex::PlayerID const&, bq::MatterType&&)"}
 {"a":"71000110c0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [38], (void*)0>(char const (&) [38])"}
@@ -268,9 +268,9 @@
 {"a":"7100011a30","t":"plate","c":"mg0119::ControllerManager::SetInputEnabled(bool)"}
 {"a":"7100011d00","t":"plate","c":"mg0119::AiManager::RoundStart()"}
 {"a":"7100012098","t":"plate","c":"mg0119::JoyConModel::FadeIn()"}
-{"a":"7100012150","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RoundUpdate (매 프레임, p=0..3)\n(가) state[p]==1: ball y<−1.0(맵 로컬)이면 requestRetry·voice SAD·ai.onBallDropped; 아니면 isBallCupIn이면 controller +0x50=false, ai.onBallCupIn, ui.addScore, scoreDirty=1, voice JOY_HIGH, cupTimer=0, playCupInEffect, noVib 아니면 vibrate, state=2\n(나) Joy-Con 모형 종류 갱신(PadType)\n(다) 사람 전원 컵 인이면 AiManager::RequireAllComMaster()\n(라) state1: map.setRotation(controller.getQuaternion()), enabled && isTriggerShake && applyImpulseForce면 voice JUMP. state0: enabled && isTriggerRespawn이면 calibrate, spawnBallWithEffect, locked=0, playDecisionSound, joycon state=2, voice READY, state=1, ai.onBallSpawned\n---\nmg0119::GameManager::RoundUpdate()"}
-{"a":"710001268c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RequestRetry. 잠금=1, 낙하 SE, 진동, (사람이면) Joy-Con 모형 FadeIn, state=0\n---\nmg0119::GameManager::RequestRetry(int)"}
-{"a":"71000127a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §7\n역할: GameManager::PlayVoice. SQ_VOI_PC%02d_ + READY/JUMP/SAD/JOY_HIGH, Play2D 팬 홀수 플레이어 +0.5, 짝수 −0.5\n---\nmg0119::GameManager::PlayVoice(int, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100012150","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RoundUpdate (매 프레임, p=0..3)\n(가) state[p]==1: ball y<−1.0(맵 로컬)이면 requestRetry·voice SAD·ai.onBallDropped; 아니면 isBallCupIn이면 controller +0x50=false, ai.onBallCupIn, ui.addScore, scoreDirty=1, voice JOY_HIGH, cupTimer=0, playCupInEffect, noVib 아니면 vibrate, state=2\n(나) Joy-Con 모형 종류 갱신(PadType)\n(다) 사람 전원 컵 인이면 AiManager::RequireAllComMaster()\n(라) state1: map.setRotation(controller.getQuaternion()), enabled && isTriggerShake && applyImpulseForce면 voice JUMP. state0: enabled && isTriggerRespawn이면 calibrate, spawnBallWithEffect, locked=0, playDecisionSound, joycon state=2, voice READY, state=1, ai.onBallSpawned"}
+{"a":"710001268c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: RequestRetry. 잠금=1, 낙하 SE, 진동, (사람이면) Joy-Con 모형 FadeIn, state=0"}
+{"a":"71000127a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §7\n역할: GameManager::PlayVoice. SQ_VOI_PC%02d_ + READY/JUMP/SAD/JOY_HIGH, Play2D 팬 홀수 플레이어 +0.5, 짝수 −0.5"}
 {"a":"7100012c80","t":"plate","c":"mg0119::AiManager::OnBallDropped(int)"}
 {"a":"7100012da0","t":"plate","c":"mg0119::ControllerManager::GetController(int)"}
 {"a":"7100012ec0","t":"plate","c":"mg0119::AiManager::OnBallCupIn(int)"}
@@ -284,7 +284,7 @@
 {"a":"7100013d30","t":"plate","c":"mg0119::UiManager::ShowRanks()"}
 {"a":"7100013e60","t":"plate","c":"mg0119::UiManager::HideTimer()"}
 {"a":"7100013f50","t":"plate","c":"mg0119::UiManager::HideAllScores()"}
-{"a":"71000142a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §5·6.6\n역할: PostCupInUpdate (GameManager_PostUpdate 파이버)\n분기: 시간 끝이 아니고 4명 전원 컵 인도 아닐 때 컵 인 플레이어마다 cupTimer>0.5면 맵 잠금+DeactiveBall, 아니면 cupTimer+=GetDeltaTime()\n---\nmg0119::GameManager::PostCupInUpdate()"}
+{"a":"71000142a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §5·6.6\n역할: PostCupInUpdate (GameManager_PostUpdate 파이버)\n분기: 시간 끝이 아니고 4명 전원 컵 인도 아닐 때 컵 인 플레이어마다 cupTimer>0.5면 맵 잠금+DeactiveBall, 아니면 cupTimer+=GetDeltaTime()"}
 {"a":"71000144a8","t":"plate","c":"mg0119::GameManager::IsRoundOver() const"}
 {"a":"7100014530","t":"plate","c":"mg0119::UiManager::IsTimeUp() const"}
 {"a":"7100014600","t":"plate","c":"mg0119::UiManager::~UiManager()"}
@@ -411,24 +411,24 @@
 {"a":"710001b6e0","t":"plate","c":"nn::bezel::WeakHandle<mg0119::ComBallCollision> nn::bezel::Entity::AddComponent<mg0119::ComBallCollision, , (void*)0>()"}
 {"a":"710001b8c0","t":"plate","c":"mg0119::MapCollision::SetBallCollisionCallBack(std::function<void (nn::util::Vector3f, nn::util::Quaternion)>)"}
 {"a":"710001bae0","t":"plate","c":"mg0119::MapCollision::SpawnBall()"}
-{"a":"710001bb30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.4\n역할: MapCollision::GetBallSpawnPosition = attach_fx00 + 0.12 y\n---\nmg0119::MapCollision::GetBallSpawnPosition() const"}
+{"a":"710001bb30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.4\n역할: MapCollision::GetBallSpawnPosition = attach_fx00 + 0.12 y"}
 {"a":"710001bc90","t":"plate","c":"mg0119::MapCollision::SetBallPhysicsEnable(bool)"}
 {"a":"710001bd70","t":"plate","c":"mg0119::MapCollision::SetGravityDirection(nn::util::Quaternion)"}
-{"a":"710001bfe0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 MapCollision::ApplyImpulseForce. 흔들기 jump는 rigidBody impulse(JumpCalculator와 다름)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.2\n역할: MapCollision::ApplyImpulseForce → ComBallCollision::ApplyImpulseForce @0x710001c100\n---\nmg0119::MapCollision::ApplyImpulseForce()"}
-{"a":"710001c100","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 ComBallCollision::ApplyImpulseForce. 흔들기 jump는 rigidBody impulse\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.2\n역할: ComBallCollision::ApplyImpulseForce\n의사코드: if (!physicsEnabled || airborne) return false; airborne=true; rigidBody.applyImpulse(UnitY*Params.ImpulseForce) (Δv 5.0, 맵 로컬 +Y); return true\n---\nmg0119::ComBallCollision::ApplyImpulseForce(nn::util::Vector3f)"}
-{"a":"710001c224","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.4\n역할: IsBallCupIn. |ballPos − attach_fx01|² < 0.1 (3D 거리 < 0.3162 m)\n---\nmg0119::MapCollision::IsBallCupIn() const"}
-{"a":"710001c290","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.4\n역할: MapCollision::GetCupPosition = attach_fx01 (뼈 이름은 디스어셈블 확인)\n---\nmg0119::MapCollision::GetCupPosition() const"}
+{"a":"710001bfe0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 MapCollision::ApplyImpulseForce. 흔들기 jump는 rigidBody impulse(JumpCalculator와 다름)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.2\n역할: MapCollision::ApplyImpulseForce → ComBallCollision::ApplyImpulseForce @0x710001c100"}
+{"a":"710001c100","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0119 ComBallCollision::ApplyImpulseForce. 흔들기 jump는 rigidBody impulse\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.2\n역할: ComBallCollision::ApplyImpulseForce\n의사코드: if (!physicsEnabled || airborne) return false; airborne=true; rigidBody.applyImpulse(UnitY*Params.ImpulseForce) (Δv 5.0, 맵 로컬 +Y); return true"}
+{"a":"710001c224","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.4\n역할: IsBallCupIn. |ballPos − attach_fx01|² < 0.1 (3D 거리 < 0.3162 m)"}
+{"a":"710001c290","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.4\n역할: MapCollision::GetCupPosition = attach_fx01 (뼈 이름은 디스어셈블 확인)"}
 {"a":"710001c3c8","t":"plate","c":"mg0119::MapCollision::GetBallPosition() const"}
-{"a":"710001c3e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: GetMapPathClearRoute. pathK에서 SearchRoute(\"start\" → \"end\")\n---\nmg0119::MapCollision::GetMapPathClearRoute(int) const"}
-{"a":"710001c4f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: GetMapPathMissRoute. n=노드 수−2, n>0이면 \"miss\"+(SyncRandMod(n)+1)까지의 경로, 아니면 정상 경로\n---\nmg0119::MapCollision::GetMapPathMissRoute(int) const"}
-{"a":"710001c728","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0119.md §5\n역할: Map::SpawnBall. 엔티티 활성화, 시각 어태치먼트 켬, ComBallCollision::Spawn(위치) → SetTranslation+Teleport+진동\n[미확정] 속도 0 초기화는 이 함수에 보이지 않음(Teleport 동작)\n---\nmg0119::Map::SpawnBall()"}
+{"a":"710001c3e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: GetMapPathClearRoute. pathK에서 SearchRoute(\"start\" → \"end\")"}
+{"a":"710001c4f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.8\n역할: GetMapPathMissRoute. n=노드 수−2, n>0이면 \"miss\"+(SyncRandMod(n)+1)까지의 경로, 아니면 정상 경로"}
+{"a":"710001c728","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0119.md §5\n역할: Map::SpawnBall. 엔티티 활성화, 시각 어태치먼트 켬, ComBallCollision::Spawn(위치) → SetTranslation+Teleport+진동\n[미확정] 속도 0 초기화는 이 함수에 보이지 않음(Teleport 동작)"}
 {"a":"710001c788","t":"plate","c":"mg0119::Map::SpawnBallWithEffect()"}
 {"a":"710001c960","t":"plate","c":"mg0119::MapModel::SetBallVisibile(bool)"}
 {"a":"710001ca40","t":"plate","c":"mg0119::MapModel::PlaySmokeEffectOnAppearing()"}
 {"a":"710001cb30","t":"plate","c":"mg0119::Map::DeactiveBall()"}
 {"a":"710001cb58","t":"plate","c":"mg0119::Map::DeactiveBallWithExitEffect()"}
 {"a":"710001cb90","t":"plate","c":"mg0119::MapModel::PlayBallSmokeEffectOnDisappearing()"}
-{"a":"710001cd60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: Map::SetRotation(q). 잠금(+0xF8)이면 무시. 아니면 q를 +0x40에 저장, 시각 루트 회전, SetGravityDirection(q), Joy-Con 모형 회전 갱신\n---\nmg0119::Map::SetRotation(nn::util::Quaternion)"}
+{"a":"710001cd60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.1\n역할: Map::SetRotation(q). 잠금(+0xF8)이면 무시. 아니면 q를 +0x40에 저장, 시각 루트 회전, SetGravityDirection(q), Joy-Con 모형 회전 갱신"}
 {"a":"710001ce84","t":"plate","c":"mg0119::Map::PostUpdate()"}
 {"a":"710001d42c","t":"plate","c":"mg0119::MapManager::MapManager()"}
 {"a":"710001d670","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [42], (void*)0>(char const (&) [42])"}
@@ -558,13 +558,13 @@
 {"a":"7100024170","t":"plate","c":"rtti::Struct::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
 {"a":"7100024174","t":"plate","c":"rtti::Struct::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
 {"a":"7100024178","t":"plate","c":"mg0119::Scene::AiParam_t::getStaticTypeinfo()"}
-{"a":"7100024254","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.2\n역할: AiParam_t::getPropertyList. PathSelectRatio[3], BallSpeed, BallSpeedVariance, MissRate, Pid(P,I,D) 속성\n범위: PidParam_t P 0..1, I·D 0..0.5, 단계 0.001\n---\nmg0119::Scene::AiParam_t::getPropertyList()"}
+{"a":"7100024254","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.2\n역할: AiParam_t::getPropertyList. PathSelectRatio[3], BallSpeed, BallSpeedVariance, MissRate, Pid(P,I,D) 속성\n범위: PidParam_t P 0..1, I·D 0..0.5, 단계 0.001"}
 {"a":"71000243f8","t":"plate","c":"mg0119::Scene::AiParam_t::createInstance()"}
 {"a":"710002443c","t":"plate","c":"mg0119::Scene::AiParam_t::deleteInstance(void*)"}
 {"a":"7100024448","t":"plate","c":"mg0119::Scene::AiParam_t::GetPidParam() const"}
 {"a":"7100024450","t":"plate","c":"mg0119::Scene::Params::getStaticTypeinfo()"}
-{"a":"710002452c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.1\n역할: Params::getPropertyList. 4.1 표의 속성·편집 범위\n0x29/0x38/0x48 bool 1은 GUI 그룹 머리 항목(MapParams, StageParams, AiConfigGroup), 속성 플래그 0x400000/0x40000000\n---\nmg0119::Scene::Params::getPropertyList()"}
-{"a":"7100024c88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.1·4.2\n역할: Params::createInstance. 기본값\n기본값: TimeLimit 30, MaxAngleDeg 17.0, GyroRate 0.5, MoveThreshold 0.25, TestSum 2.5, ImpulseForce 5.0, GravityScale 3.0, RotateCoef 1.0, DampingGreen/Fairway 10.0, DampingBunker 50.0, StageRound1~3 −1, AiRotateCoef 0.5, StickCoef 0.5, Debug 1\nAiParam Easy/Normal/Hard/Master: PathSelectRatio (1,0,0)/(4,5,0)/(0,5,4)/(0,0,1), BallSpeed 0.9/1.0/1.2/1.8, Var 0.1/0.1/0.5/0.5, MissRate 0.7/0.45/0/0, P 0.5, I 0.05/0.025/0.01/0.005, D 0.05\n---\nmg0119::Scene::Params::createInstance()"}
+{"a":"710002452c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.1\n역할: Params::getPropertyList. 4.1 표의 속성·편집 범위\n0x29/0x38/0x48 bool 1은 GUI 그룹 머리 항목(MapParams, StageParams, AiConfigGroup), 속성 플래그 0x400000/0x40000000"}
+{"a":"7100024c88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §4.1·4.2\n역할: Params::createInstance. 기본값\n기본값: TimeLimit 30, MaxAngleDeg 17.0, GyroRate 0.5, MoveThreshold 0.25, TestSum 2.5, ImpulseForce 5.0, GravityScale 3.0, RotateCoef 1.0, DampingGreen/Fairway 10.0, DampingBunker 50.0, StageRound1~3 −1, AiRotateCoef 0.5, StickCoef 0.5, Debug 1\nAiParam Easy/Normal/Hard/Master: PathSelectRatio (1,0,0)/(4,5,0)/(0,5,4)/(0,0,1), BallSpeed 0.9/1.0/1.2/1.8, Var 0.1/0.1/0.5/0.5, MissRate 0.7/0.45/0/0, P 0.5, I 0.05/0.025/0.01/0.005, D 0.05"}
 {"a":"7100024e20","t":"plate","c":"mg0119::Scene::Params::deleteInstance(void*)"}
 {"a":"7100024e34","t":"plate","c":"mg0119::Scene::Params::GetAiParamEasy() const"}
 {"a":"7100024e3c","t":"plate","c":"mg0119::Scene::Params::GetAiParamNormal() const"}
@@ -576,17 +576,17 @@
 {"a":"7100024f88","t":"plate","c":"mg0119::Scene::SetupGame()"}
 {"a":"7100025054","t":"plate","c":"mg0119::Scene::SyncedSetupGame()"}
 {"a":"71000251a4","t":"plate","c":"mg0119::Scene::CleanupGame()"}
-{"a":"71000251f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: Scene::OnGameInit. Initialize → LaunchSequence(bq::flag::Check(0) ? 1 : 0) (0 GameOpening, 1 GameOpeningSkip)\n---\nmg0119::Scene::OnGameInit()"}
+{"a":"71000251f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: Scene::OnGameInit. Initialize → LaunchSequence(bq::flag::Check(0) ? 1 : 0) (0 GameOpening, 1 GameOpeningSkip)"}
 {"a":"7100025240","t":"plate","c":"mg0119::Sequencer::LaunchSequence(mg0119::Sequencer::Phase)"}
 {"a":"7100025358","t":"plate","c":"mg0119::Scene::OnGameOpening()"}
-{"a":"7100025364","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: Scene::OnGameOpeningSkip. Launch(1)\n---\nmg0119::Scene::OnGameOpeningSkip()"}
+{"a":"7100025364","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: Scene::OnGameOpeningSkip. Launch(1)"}
 {"a":"7100025394","t":"plate","c":"mg0119::Scene::OnGameStartBefore()"}
 {"a":"71000253b4","t":"plate","c":"mg0119::Scene::OnGameStart()"}
 {"a":"71000253c8","t":"plate","c":"mg0119::Scene::OnGameStartAfter()"}
 {"a":"71000253dc","t":"plate","c":"mg0119::Scene::OnGameMain()"}
 {"a":"71000253f4","t":"plate","c":"mg0119::Scene::OnGameFinish()"}
 {"a":"7100025408","t":"plate","c":"mg0119::Scene::OnGameFinishAfter()"}
-{"a":"7100025420","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: Scene::OnEndingInit. GameManager::SetupEnding(결과 장면 배치, 문서 범위 밖) 호출\n---\nmg0119::Scene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"7100025420","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §3.3\n역할: Scene::OnEndingInit. GameManager::SetupEnding(결과 장면 배치, 문서 범위 밖) 호출"}
 {"a":"7100025458","t":"plate","c":"mg0119::Scene::getInstanceTypeinfo() const"}
 {"a":"7100025534","t":"plate","c":"mg0119::Scene::GetSymbol() const"}
 {"a":"7100025544","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}
@@ -640,7 +640,7 @@
 {"a":"7100027440","t":"plate","c":"mg0119::UiManager::StartTimer()"}
 {"a":"7100027550","t":"plate","c":"mg0119::UiManager::GetRanks()"}
 {"a":"7100027d68","t":"plate","c":"mg0119::UiManager::PostUpdate()"}
-{"a":"7100027e00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.5\n역할: UiManager::UpdateScore (PostUpdate)\n의사코드: hits=이번 프레임 컵 인(AddScore 순서). hits>=2면 for k=len..2: swap(hits[k−1], hits[SyncRandMod(k)]). idx=4−remaining.length. for p of hits: score[p]+=POINTS[idx]; shown[p]=POINTS[idx]; idx++ (POINTS=[5,3,2,1]). remaining에서 hits 제거, hits 비움\n---\nmg0119::UiManager::UpdateScore()"}
+{"a":"7100027e00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0119.md §6.5\n역할: UiManager::UpdateScore (PostUpdate)\n의사코드: hits=이번 프레임 컵 인(AddScore 순서). hits>=2면 for k=len..2: swap(hits[k−1], hits[SyncRandMod(k)]). idx=4−remaining.length. for p of hits: score[p]+=POINTS[idx]; shown[p]=POINTS[idx]; idx++ (POINTS=[5,3,2,1]). remaining에서 hits 제거, hits 비움"}
 {"a":"7100028100","t":"plate","c":"mg0119::UiManager::ShowScoreImpl(int, int)"}
 {"a":"71000282d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
 {"a":"71000282ec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::GetBaseTypeDesc()"}

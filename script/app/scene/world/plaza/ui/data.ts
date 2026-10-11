@@ -46,6 +46,7 @@ export function stampTexture(s: StampDef, chara: number): string {
 }
 
 /** 목록 항목: 가진 것 또는 해금 그룹 −1(저장 데이터 없음 → 해금 그룹 −1 만) [판독 FUN_710035ae30, UnlockGroup 대응 추정] */
+/** @orig main:710035ae30 ref */
 export function listStamps(stamps: readonly StampDef[], owned: (id: number) => boolean = () => false): number[] {
   return stamps.filter((s) => owned(s.id) || s.unlock === -1).map((s) => s.id);
 }

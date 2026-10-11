@@ -67,6 +67,7 @@ export class CardViewer {
   }
 
   /** AddCardData(카드, false): id 없음이면 넣지 않고, 같은 id 면 덮어쓴다 [판독 @0x7100338070] */
+  /** @orig main:7100338070 ref */
   add(c: CardData): void {
     if (!c.id) return;
     const i = this.cards.findIndex((x) => x.id === c.id);
@@ -75,6 +76,7 @@ export class CardViewer {
   }
 
   /** Start(i) [판독 @0x7100337f90] */
+  /** @orig main:7100337f90 ref */
   start(i = 0): void {
     if (this.cards.length === 0) return;
     this.index = i >= 0 && i < this.cards.length ? i : 0;
@@ -104,6 +106,7 @@ export class CardViewer {
   }
 
   /** ComUiCard::SetCardData [판독 @0x7100336ba4·FUN_7100336ca0·FUN_71003371d0·SetDesign] */
+  /** @orig main:7100336ba4 ref */
   setCardData(c: CardData): void {
     const rank = this.extra.ranks.includes(`sys_icon_rank_${pad2(c.rank)}^q`) ? `sys_icon_rank_${pad2(c.rank)}^q` : 'sys_icon_rank_00^q';
     this.inst.setTexture('x_parts_status/x_parts_rank/x_icon_rank', 0, rank);

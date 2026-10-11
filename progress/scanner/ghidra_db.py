@@ -9,7 +9,7 @@
 - 구조체·타입: 설명의 status·system 태그 우선, 없으면 필드 유무·경로 패턴
 - 규칙 위반: 정의 안 된 태그, 축당 2개 이상, 상태 태그인데 plate 주석 없음·형식 다름, 코드 표시가 없는 함수를 가리킴
 - 의존: thunk 이름(외부 접두어 제거)으로 다른 영역 함수를 찾아 모듈별 의존 함수의 분석률
-- 웹 구현: 코드의 `<orig_marker> <모듈>:<주소> full|partial|approx`
+- 웹 구현: 코드의 `<orig_marker> <모듈>:<주소> full|partial|approx|ref`
 - 문서: plate 주석 첫 줄의 문서 참조(tags 파일 plate.doc), 첫 줄 형식은 plate.head
 """
 from collections import Counter, defaultdict
@@ -25,15 +25,15 @@ from common import APP, ROOT, read_json
 
 DEFAULT_NAME = re.compile(r"^(thunk_)?(FUN|LAB|SUB)_[0-9a-fA-F]+$")
 TEMPLATE = re.compile(r"<[^<>]*>")
-LEVEL = {"full": "complete", "partial": "partial", "approx": "candidate"}
-RANK = {"complete": 3, "partial": 2, "candidate": 1, "none": 0}
+LEVEL = {"full": "complete", "partial": "partial", "approx": "candidate", "ref": "pending"}
+RANK = {"complete": 4, "partial": 3, "candidate": 2, "pending": 1, "none": 0}
 STATE = {"complete": "complete", "partial": "partial", "recheck": "pending"}
 EXCLUDED = "excluded"
 HOW = {"tag": "태그", "name": "이름", "calls": "호출 추정", "address": "주소 추정", "none": "근거 없음"}
 
 LABELS = {
     "analysis": {"complete": "분석 완료", "partial": "부분 분석", "pending": "재확인", "none": "미분석"},
-    "implementation": {"complete": "full", "partial": "partial", "candidate": "approx", "none": "포팅 표시 없음"},
+    "implementation": {"complete": "full", "partial": "partial", "candidate": "approx", "pending": "ref(수준 미정)", "none": "포팅 표시 없음"},
     "verification": {"verified": "원본 비교 검증", "tested": "자동 테스트 통과", "none": "미검증"},
 }
 
@@ -103,7 +103,7 @@ def area_of(module, cfg):
 
 def orig_marks(cfg):
     marker = cfg.get("orig_marker", "@orig")
-    rx = re.compile(re.escape(marker) + r"\s+([A-Za-z0-9_.-]+):(?:0x)?([0-9a-fA-F]+)\s+(full|partial|approx)\b")
+    rx = re.compile(re.escape(marker) + r"\s+([A-Za-z0-9_.-]+):(?:0x)?([0-9a-fA-F]+)\s+(full|partial|approx|ref)\b")
     marks = defaultdict(list)
     for c in cfg["code"]:
         for dirpath, dirs, files in os.walk(ROOT / c):
@@ -528,7 +528,7 @@ def build(cfg=None):
         ["이름 있음", named.get("orig", 0) + named.get("u", 0), f"원본 심볼 {named.get('orig', 0):,} · 사용자 {named.get('u', 0):,} · FUN_ {named.get('none', 0):,} · {pct(named.get('orig', 0) + named.get('u', 0), st['functions'])}", False],
         ["시스템 분류", len(sys_recs) - how.get("none", 0), f"태그 {how.get('tag', 0):,} · 이름 {how.get('name', 0):,} · 주소 추정 {how.get('address', 0):,} · 호출 추정 {how.get('calls', 0):,} · 미분류 {how.get('none', 0):,}", False],
         ["모듈 간 의존", len(all_deps), f"의존 함수 분석 완료 {dep_done:,} ({pct(dep_done, len(all_deps))}) · thunk 매칭 {sum(dep_hit.values()):,}/{sum(dep_total.values()):,}", False],
-        ["웹 구현", ia.get("complete", 0), f"full · partial {ia.get('partial', 0):,} · approx {ia.get('candidate', 0):,} · {pct(ia.get('complete', 0), st['functions'])}", True],
+        ["웹 구현", ia.get("complete", 0), f"full · partial {ia.get('partial', 0):,} · approx {ia.get('candidate', 0):,} · ref {ia.get('pending', 0):,} · {pct(ia.get('complete', 0), st['functions'])}", True],
         ["규칙 위반", viol, f"프로그램 {len(programs)}개 · 목록은 아래 '미확정' 탭", False],
     ]
     for f in functions:

@@ -105,6 +105,7 @@ export class RuleConfigState {
   }
 
   /** Impl::SetupMgm mgmet @0x710007d974 */
+  /** @orig mgmet:710007d974 ref */
   setupMgm(cfg: RuleConfigInfo): void {
     this.config = { ...cfg };
     this.active = true;
@@ -158,6 +159,7 @@ export class RuleConfigState {
   }
 
   /** Impl::PlayMove mgmet @0x7100080260 */
+  /** @orig mgmet:7100080260 ref */
   private playMove(col: number, imm: boolean, confirm: boolean, forward: boolean): void {
     this.emit({ t: 'anim', col, anim: 'on', imm });
     for (let c = 0; c <= COL.PLAY; c++) if (c !== col && this.visible[c] && !this.viewOnly[c]) this.emit({ t: 'anim', col: c, anim: 'off', imm });

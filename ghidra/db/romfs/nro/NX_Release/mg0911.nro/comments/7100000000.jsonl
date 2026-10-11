@@ -1,17 +1,17 @@
 {"a":"7100003ca0","t":"plate","c":"mg0911::BallBase::BallBase(nn::bezel::WeakHandle<mg0911::GameMgr> const&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int)"}
 {"a":"7100003f00","t":"plate","c":"mg0911::BallBase::Initialize()"}
-{"a":"7100004028","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2·8\n역할: 공 강체 설정\n값: GameParam F0~5 = 공 질량 1, 반발 0, 동/정마찰 0/0, 선/각 감쇠 0/0\n§8: 공 재질은 코드가 반발 0·마찰 0으로 덮어씀(apx 재질 동.5/정.5/반발.9)\n[미확정] bezel이 공 재질의 combine 모드를 무엇으로 두는지\n---\nmg0911::BallBase::RigidBodyConfig()"}
+{"a":"7100004028","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2·8\n역할: 공 강체 설정\n값: GameParam F0~5 = 공 질량 1, 반발 0, 동/정마찰 0/0, 선/각 감쇠 0/0\n§8: 공 재질은 코드가 반발 0·마찰 0으로 덮어씀(apx 재질 동.5/정.5/반발.9)\n[미확정] bezel이 공 재질의 combine 모드를 무엇으로 두는지"}
 {"a":"7100004280","t":"plate","c":"nn::bezel::WeakHandle<mg0911::Ball_ColMessageReceive> nn::bezel::Entity::AddComponent<mg0911::Ball_ColMessageReceive, , (void*)0>()"}
 {"a":"710000445c","t":"plate","c":"mg0911::Ball_ColMessageReceive::SetBall(mg0911::BallBase*)"}
 {"a":"7100004464","t":"plate","c":"mg0911::BallBase::SetInitPosition(nn::util::Vector3f const&)"}
 {"a":"7100004478","t":"plate","c":"mg0911::BallBase::SetFallPosition(nn::util::Vector3f const&)"}
 {"a":"7100004490","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComRigidBody> nn::bezel::Entity::AddComponent<nn::bezel::ComRigidBody, nn::bezel::RigidBodyCreateArg&, (void*)0>(nn::bezel::RigidBodyCreateArg&)"}
 {"a":"7100004678","t":"plate","c":"mg0911::BallBase::ScoreAddForGameParam(mg0911::eGameParam_Config_I, nn::util::Vector3f const&, nn::util::Vector3f const&)"}
-{"a":"7100004704","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.3·6.2·6.5\n역할: 플리퍼 튕김 임펄스(CollisionEntered/Stay에서 플리퍼 태그일 때 매 프레임)\n의사코드: dir=(sin(eulerY),0,cos(eulerY)); tip=pivot+dir*F19(0.12); hitDist=|(tip−contact).xz|; if flipper.isRepelled() && timer.finished(): F = id>=3 ? F21(0) : F20(0.15); k = clamp(hitDist/F, 0.1, 1.0) (서브는 x/0=inf→1); rb.applyImpulse(dir*F17(17)*k); timer.reset(0.05); playHitSe()\n쿨다운: 0.05 s\n쓰는 필드: +0x60c 플리퍼 팁~접촉점 XZ 거리(COM GetHitFlipperDistance가 읽음)\n---\nmg0911::BallBase::FlipperRepelled(mg0911::ePinballObjectID, nn::util::Vector3f const&, nn::util::Vector3f const&, nn::util::Vector3f const&)"}
+{"a":"7100004704","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.3·6.2·6.5\n역할: 플리퍼 튕김 임펄스(CollisionEntered/Stay에서 플리퍼 태그일 때 매 프레임)\n의사코드: dir=(sin(eulerY),0,cos(eulerY)); tip=pivot+dir*F19(0.12); hitDist=|(tip−contact).xz|; if flipper.isRepelled() && timer.finished(): F = id>=3 ? F21(0) : F20(0.15); k = clamp(hitDist/F, 0.1, 1.0) (서브는 x/0=inf→1); rb.applyImpulse(dir*F17(17)*k); timer.reset(0.05); playHitSe()\n쿨다운: 0.05 s\n쓰는 필드: +0x60c 플리퍼 팁~접촉점 XZ 거리(COM GetHitFlipperDistance가 읽음)"}
 {"a":"7100004a18","t":"plate","c":"mg0911::BallBase::PlayHitSe(nn::util::Vector3f const&)"}
 {"a":"7100004c6c","t":"plate","c":"mg0911::BallBase::HitBumper(nn::util::Vector3f const&, mg0911::ePinballObjectID)"}
 {"a":"7100004eb4","t":"plate","c":"mg0911::BallBase::GetSoundLocalVariableToBallSpeed() const"}
-{"a":"7100004f50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.4·6.5\n역할: 슬링샷 반응\n분기: 튕김 구간(SlingShotFlipComponent Range00/01 사이)이 아니면 SE만. 구간 안이고 |v| ≥ F11(1)이면 반응\n계산: 각도 = atan2(n.x, n.z) ± 15°·pct(−1..1, 좌 −/우 +); v *= 0.2; applyImpulse((sin,0,cos)·F38(10))\n부수: 슬링샷 모션, 점수 I6(3)\n---\nmg0911::BallBase::HitSlingshot(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::util::Vector3f const&, nn::util::Vector3f const&)"}
+{"a":"7100004f50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.4·6.5\n역할: 슬링샷 반응\n분기: 튕김 구간(SlingShotFlipComponent Range00/01 사이)이 아니면 SE만. 구간 안이고 |v| ≥ F11(1)이면 반응\n계산: 각도 = atan2(n.x, n.z) ± 15°·pct(−1..1, 좌 −/우 +); v *= 0.2; applyImpulse((sin,0,cos)·F38(10))\n부수: 슬링샷 모션, 점수 I6(3)"}
 {"a":"71000054dc","t":"plate","c":"mg0911::BallBase::HitRedGate()"}
 {"a":"7100005520","t":"plate","c":"mg0911::BallBase::HitCurveGate(mg0911::ePinballObjectID)"}
 {"a":"710000556c","t":"plate","c":"mg0911::BallBase::HitStarSwitch()"}
@@ -51,8 +51,8 @@
 {"a":"7100006b90","t":"plate","c":"mg0911::BallBase::GetSlipThroughCylinderCollision()"}
 {"a":"7100006cc4","t":"plate","c":"mg0911::BallBase::ObjectVisible()"}
 {"a":"7100006cc8","t":"plate","c":"mg0911::BallBase::TickPostPhysics()"}
-{"a":"7100006cd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2·4.3·6.2\n역할: 플리퍼 침투 보정. PinballTable::TickPostPhysics가 물리 뒤 공마다 vt+0x108로 호출\n조건: |v| ≥ 7이고 메인 플리퍼 1·2가 올라가는 중\n동작: 플리퍼 OBB(반폭 0.45, 0.3, 0.1)와 공 구가 겹치면 공을 −tilt 방향으로 밀어낸 위치로 PhysX 밖에서 순간이동\n특이점: z 성분에 원본 abs가 그대로 있음(정리하지 않음)\n읽는 필드: +0x4a0 tilt, +0x62f 침투 보정 1프레임 건너뜀(세터 없음, 항상 0)\n---\nmg0911::BallBase::CountermeasurePenetrationFlipper()"}
-{"a":"71000070e8","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.3·6.8\n역할: 공 이동 상태 매 프레임 갱신\n힘: ApplyForce(up·F9·dt + tilt·F10·dt), F9=−2000(테이블 법선 쪽 누르기), F10=500(경사 아래)\nApplyForce = PxRigidBody::addForce(eFORCE) → Δv ≈ (F9·up+F10·tilt)·dt·dt_sim(게임 dt와 물리 dt가 겹쳐 곱해짐). 고정 60에서 한 프레임 힘 (0,−33.33,−8.33)[재구현 계산]\ntilt=normalize(0,−sin10°,cos10°)≈(0,−0.1710,0.9853), up=cross(tilt,UnitX)≈(0,0.9853,0.1711)\n읽는 필드: +0x4a0 tilt, +0x4b0 up, +0x518 appear, +0x5b0 fallPos, +0x62a onStage. 쓰는 필드: +0x5e0 vel(직전 선속도), +0x62d=0(v.z>0일 때)\nGetDeltaTime은 실측 프레임 시간(최대 0.05 s)이라 힘 크기가 흔들림\n[미확정] PhysX 월드 중력 값\n---\nmg0911::BallBase::MoveUpdate()"}
+{"a":"7100006cd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2·4.3·6.2\n역할: 플리퍼 침투 보정. PinballTable::TickPostPhysics가 물리 뒤 공마다 vt+0x108로 호출\n조건: |v| ≥ 7이고 메인 플리퍼 1·2가 올라가는 중\n동작: 플리퍼 OBB(반폭 0.45, 0.3, 0.1)와 공 구가 겹치면 공을 −tilt 방향으로 밀어낸 위치로 PhysX 밖에서 순간이동\n특이점: z 성분에 원본 abs가 그대로 있음(정리하지 않음)\n읽는 필드: +0x4a0 tilt, +0x62f 침투 보정 1프레임 건너뜀(세터 없음, 항상 0)"}
+{"a":"71000070e8","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.3·6.8\n역할: 공 이동 상태 매 프레임 갱신\n힘: ApplyForce(up·F9·dt + tilt·F10·dt), F9=−2000(테이블 법선 쪽 누르기), F10=500(경사 아래)\nApplyForce = PxRigidBody::addForce(eFORCE) → Δv ≈ (F9·up+F10·tilt)·dt·dt_sim(게임 dt와 물리 dt가 겹쳐 곱해짐). 고정 60에서 한 프레임 힘 (0,−33.33,−8.33)[재구현 계산]\ntilt=normalize(0,−sin10°,cos10°)≈(0,−0.1710,0.9853), up=cross(tilt,UnitX)≈(0,0.9853,0.1711)\n읽는 필드: +0x4a0 tilt, +0x4b0 up, +0x518 appear, +0x5b0 fallPos, +0x62a onStage. 쓰는 필드: +0x5e0 vel(직전 선속도), +0x62d=0(v.z>0일 때)\nGetDeltaTime은 실측 프레임 시간(최대 0.05 s)이라 힘 크기가 흔들림\n[미확정] PhysX 월드 중력 값"}
 {"a":"710000727c","t":"plate","c":"mg0911::BallBase::CheckFall()"}
 {"a":"7100007304","t":"plate","c":"mg0911::BallBase::RollSeUpdate()"}
 {"a":"7100007498","t":"plate","c":"mg0911::BallBase::MapPathMove()"}
@@ -65,14 +65,14 @@
 {"a":"7100007a20","t":"plate","c":"mg0911::Ball_ColMessageReceive::CurveGatePass(mg0911::ePinballObjectID)"}
 {"a":"7100007a70","t":"plate","c":"mg0911::Ball_ColMessageReceive::ReceiveMessageImpl(nn::bezel::Message const&)"}
 {"a":"7100007abc","t":"plate","c":"non-virtual thunk to mg0911::Ball_ColMessageReceive::ReceiveMessageImpl(nn::bezel::Message const&)"}
-{"a":"7100007b10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0911 Ball_ColMessageReceive::CollisionEntered. spinner/panel/lamp sensor는 기하 센서(SixAxisSensor와 무관)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.4·6.5\n역할: 공 충돌 시작 처리. 상대 엔티티 태그를 독립 if로 차례 검사\nSlingShotLeft/Right: HitSlingshot\nBumper: 점수 I5(3), n=normalize(pos−contact), applyImpulse((n.x,0,n.z)·F37(10)) + SQ_SE_MG0911_BAL_HIT_BUMPER01\nStarSwitch: 점수 I3(5), 반사 r = v̂ − 2(v̂·n̂)n̂, y=0, 크기 보정 없이 임펄스, 스위치 모션\nFlipper*/SubFlipper*: FlipperRepelled, +0x629=1, +0x630=id, 맞음 SE\nSilverCurve: 상태=SilverCurveEnter(엣지 점 0.3 m 안이면 루프 SE …RED_CRV_ROL_LOP)\nWall/PlungerSlope/Curve: landed이고 |v̂·dir| > 0.1이면 SQ_SE_MG0911_BAL_HIT_CMN만\n---\nmg0911::Ball_ColMessageReceive::CollisionEntered(nn::bezel::Message const&)"}
+{"a":"7100007b10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.5\n역할: mg0911 Ball_ColMessageReceive::CollisionEntered. spinner/panel/lamp sensor는 기하 센서(SixAxisSensor와 무관)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.4·6.5\n역할: 공 충돌 시작 처리. 상대 엔티티 태그를 독립 if로 차례 검사\nSlingShotLeft/Right: HitSlingshot\nBumper: 점수 I5(3), n=normalize(pos−contact), applyImpulse((n.x,0,n.z)·F37(10)) + SQ_SE_MG0911_BAL_HIT_BUMPER01\nStarSwitch: 점수 I3(5), 반사 r = v̂ − 2(v̂·n̂)n̂, y=0, 크기 보정 없이 임펄스, 스위치 모션\nFlipper*/SubFlipper*: FlipperRepelled, +0x629=1, +0x630=id, 맞음 SE\nSilverCurve: 상태=SilverCurveEnter(엣지 점 0.3 m 안이면 루프 SE …RED_CRV_ROL_LOP)\nWall/PlungerSlope/Curve: landed이고 |v̂·dir| > 0.1이면 SQ_SE_MG0911_BAL_HIT_CMN만"}
 {"a":"7100009e80","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > wl::format<int>(char const*, int const&)"}
 {"a":"710000a01c","t":"plate","c":"mg0911::Ball_ColMessageReceive::CollisionLeft(nn::bezel::Message const&)"}
 {"a":"710000a20c","t":"plate","c":"mg0911::Ball_ColMessageReceive::CollisionStay(nn::bezel::Message const&)"}
 {"a":"710000c0e4","t":"plate","c":"mg0911::Ball_ColMessageReceive::DestroyComponentImpl()"}
 {"a":"710000c124","t":"plate","c":"mg0911::MainBall::MainBall(nn::bezel::WeakHandle<mg0911::GameMgr> const&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int)"}
 {"a":"710000c2fc","t":"plate","c":"mg0911::MainBall::Initialize()"}
-{"a":"710000c300","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.3\n역할: 메인 볼 발사. 호출자 Plunger::Control(p = clamp(acc/F22, 0, 1))\n의사코드: k = F7 + p*(F8−F7) (0.25~1); t = {...tilt, y:0}; rb.setLinearVelocity(0); rb.applyImpulse(−t*F6(28)*k) (위쪽 −Z); playHitSe(Zero); voice('SQ_VOI_PC%02d_ACTION_HIGH')\n---\nmg0911::MainBall::Shot(float)"}
+{"a":"710000c300","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.3\n역할: 메인 볼 발사. 호출자 Plunger::Control(p = clamp(acc/F22, 0, 1))\n의사코드: k = F7 + p*(F8−F7) (0.25~1); t = {...tilt, y:0}; rb.setLinearVelocity(0); rb.applyImpulse(−t*F6(28)*k) (위쪽 −Z); playHitSe(Zero); voice('SQ_VOI_PC%02d_ACTION_HIGH')"}
 {"a":"710000c4c8","t":"plate","c":"mg0911::MainBall::StartPut(float)"}
 {"a":"710000c574","t":"plate","c":"mg0911::MainBall::ReplenishmentWaitUpdate()"}
 {"a":"710000c724","t":"plate","c":"mg0911::MainBall::PinballPlayStart()"}
@@ -794,10 +794,10 @@
 {"a":"7100032eb0","t":"plate","c":"nn::bezel::HandleSource<mg0911::GameMgr>::Reset(mg0911::GameMgr*)"}
 {"a":"7100033020","t":"plate","c":"mg0911::GameMgr::~GameMgr()"}
 {"a":"7100033218","t":"plate","c":"mg0911::GameMgr::~GameMgr()"}
-{"a":"7100033240","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1·4.5\n역할: GameMgr 초기화. Scene::SyncedSetupGameImpl이 호출\n§4.5(이 함수 디스어셈블 판독): PhysicsModule::DisableCollisionBetween 18쌍 (6,7)(6,8)(6,9)(6,11)(6,12)(6,13)(7,8)(7,9)(7,10)(7,12)(7,13)(8,9)(8,10)(8,11)(8,13)(9,10)(9,11)(9,12)\n레이어: 공=6+p, 플레이어별 오브젝트=10+p, 공용 오브젝트=2. 공은 자기 10+p와 공용·고정 레이어하고만 부딪침\n[미확정] §3.1은 18쌍 설정을 SetUpGame 설명 뒤 '이어서'로 적어 위치 표현이 §4.5와 다름\n---\nmg0911::GameMgr::Initialize(nn::bezel::WeakHandle<wl::IMinigameScene> const&, std::weak_ptr<mg0911::SceneParam> const&)"}
+{"a":"7100033240","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1·4.5\n역할: GameMgr 초기화. Scene::SyncedSetupGameImpl이 호출\n§4.5(이 함수 디스어셈블 판독): PhysicsModule::DisableCollisionBetween 18쌍 (6,7)(6,8)(6,9)(6,11)(6,12)(6,13)(7,8)(7,9)(7,10)(7,12)(7,13)(8,9)(8,10)(8,11)(8,13)(9,10)(9,11)(9,12)\n레이어: 공=6+p, 플레이어별 오브젝트=10+p, 공용 오브젝트=2. 공은 자기 10+p와 공용·고정 레이어하고만 부딪침\n[미확정] §3.1은 18쌍 설정을 SetUpGame 설명 뒤 '이어서'로 적어 위치 표현이 §4.5와 다름"}
 {"a":"710003351c","t":"plate","c":"mg0911::GameMgr::ObserverResister(wl::ISimpleObserver*)"}
 {"a":"710003354c","t":"plate","c":"mg0911::GameMgr::CreateEntity(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
-{"a":"71000335b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: 게임 준비(PhysX/게임 객체 생성)\n\n[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1·6.9\n역할: 게임 구성\n순서: GameParam→CharaDemoFrameParam→MapMgr→CameraMgr→NpcMgr→PlayerMgr→UIMgr 생성, 각 vt+0x18(Initialize) 호출\n분기: bq::flag::Check(0)이면 +0x84=8. 아니면 어드밴티지 플레이어가 있으면 바로 반환. 둘 다 아니면 +0x88=4\n§6.9: +0x84는 오프닝 상태(8=끝), +0x88은 어드밴티지 상태(어드밴티지 없으면 4=끝)\n[미확정] bq::flag::Check(0) 뜻(§3.1은 +0x84/+0x88 값 뜻을 미확정으로 적음)\n---\nmg0911::GameMgr::SetUpGame()"}
+{"a":"71000335b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: 게임 준비(PhysX/게임 객체 생성)\n\n[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1·6.9\n역할: 게임 구성\n순서: GameParam→CharaDemoFrameParam→MapMgr→CameraMgr→NpcMgr→PlayerMgr→UIMgr 생성, 각 vt+0x18(Initialize) 호출\n분기: bq::flag::Check(0)이면 +0x84=8. 아니면 어드밴티지 플레이어가 있으면 바로 반환. 둘 다 아니면 +0x88=4\n§6.9: +0x84는 오프닝 상태(8=끝), +0x88은 어드밴티지 상태(어드밴티지 없으면 4=끝)\n[미확정] bq::flag::Check(0) 뜻(§3.1은 +0x84/+0x88 값 뜻을 미확정으로 적음)"}
 {"a":"710003398c","t":"plate","c":"mg0911::GameMgr::GetScene() const"}
 {"a":"71000339a0","t":"plate","c":"mg0911::GameMgr::SetMesseggeListenerCallback(int, std::function<void ()>)"}
 {"a":"7100033a60","t":"plate","c":"mg0911::GameMgr::MessageListenerExit(std::weak_ptr<wl::MessageListener::IListener>)"}
@@ -819,7 +819,7 @@
 {"a":"7100034610","t":"plate","c":"mg0911::GameMgr::AdvantageDemo_ExplanationBoardFinishWait()"}
 {"a":"71000346e0","t":"plate","c":"mg0911::GameMgr::AdvantageDemo_RouletteWaluigi()"}
 {"a":"7100034730","t":"plate","c":"mg0911::GameMgr::AdvantageDemo_RouletteWaluigiFinish()"}
-{"a":"71000347b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2·6.9\n역할: 게임 끝 판정 = UIMgr::IsFinishedTimer. OnGameMainImpl이 반환값으로 사용\n---\nmg0911::GameMgr::IsGameEnd() const"}
+{"a":"71000347b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2·6.9\n역할: 게임 끝 판정 = UIMgr::IsFinishedTimer. OnGameMainImpl이 반환값으로 사용"}
 {"a":"71000347b8","t":"plate","c":"mg0911::GameMgr::Notify(int, wl::ISimpleObserver::IValue*)"}
 {"a":"71000347f0","t":"plate","c":"mg0911::GameMgr::GetPlayerMgr() const"}
 {"a":"71000347f8","t":"plate","c":"mg0911::GameMgr::GetUIMgr() const"}
@@ -947,9 +947,9 @@
 {"a":"710003bed4","t":"plate","c":"std::__function::__func<std::__bind<void (mg0911::Npc_Gesso::*)() noexcept, mg0911::Npc_Gesso*>, std::allocator<std::__bind<void (mg0911::Npc_Gesso::*)() noexcept, mg0911::Npc_Gesso*> >, void ()>::destroy_deallocate()"}
 {"a":"710003bed8","t":"plate","c":"std::__function::__func<std::__bind<void (mg0911::Npc_Gesso::*)() noexcept, mg0911::Npc_Gesso*>, std::allocator<std::__bind<void (mg0911::Npc_Gesso::*)() noexcept, mg0911::Npc_Gesso*> >, void ()>::TEMPNAMEPLACEHOLDERVALUE()"}
 {"a":"710003c280","t":"plate","c":"mg0911::GameParam::GameParam(std::weak_ptr<mg0911::SceneParam> const&)"}
-{"a":"710003c2c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2\n역할: mg0911_config.csv 읽기\n동작: 각 행은 '값, 형식' 2칸. FLOAT 행은 float 벡터(GameParam+0x00), INT 행은 int 벡터(+0x18)에 나온 순서대로 쌓음(인덱스는 CSV 행 번호가 아님)\n결과: F 77개, I 11개(I = 10,10,5,5,3,3,3,10,10,2,5)\n---\nmg0911::GameParam::Initialize()"}
-{"a":"710003ca1c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2\n역할: int 벡터(GameParam+0x18)의 i번째 값 반환(CSV 행 번호 아님)\n---\nmg0911::GameParam::GetCsvParamI(mg0911::eGameParam_Config_I) const"}
-{"a":"710003ca48","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2\n역할: float 벡터(GameParam+0x00)의 i번째 값 반환(CSV 행 번호 아님)\n---\nmg0911::GameParam::GetCsvParamF(mg0911::eGameParam_Config_F) const"}
+{"a":"710003c2c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2\n역할: mg0911_config.csv 읽기\n동작: 각 행은 '값, 형식' 2칸. FLOAT 행은 float 벡터(GameParam+0x00), INT 행은 int 벡터(+0x18)에 나온 순서대로 쌓음(인덱스는 CSV 행 번호가 아님)\n결과: F 77개, I 11개(I = 10,10,5,5,3,3,3,10,10,2,5)"}
+{"a":"710003ca1c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2\n역할: int 벡터(GameParam+0x18)의 i번째 값 반환(CSV 행 번호 아님)"}
+{"a":"710003ca48","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.2\n역할: float 벡터(GameParam+0x00)의 i번째 값 반환(CSV 행 번호 아님)"}
 {"a":"710003ca74","t":"plate","c":"mg0911::GameParam::GetMinScore() const"}
 {"a":"710003ca7c","t":"plate","c":"mg0911::GameParam::GetMaxScore() const"}
 {"a":"710003ca90","t":"plate","c":"mg0911::ProbabilityParam::Initialize()"}
@@ -971,16 +971,16 @@
 {"a":"71000406f8","t":"plate","c":"mg0911::Flipper::Flipper(nn::bezel::WeakHandle<mg0911::GameMgr> const&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int, int)"}
 {"a":"7100040910","t":"plate","c":"mg0911::Flipper::~Flipper()"}
 {"a":"71000409d0","t":"plate","c":"mg0911::Flipper::~Flipper()"}
-{"a":"71000409f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.2\n역할: 플리퍼 초기화\n충돌체: map/mg0911_flipper%02d_col.nbmap → RIGID_DYNAMIC trimesh(60삼각형), 질량 1000, 밀도 1000, CCD, 레이어 10+p. 훅에 붙어 회전을 따라감\n---\nmg0911::Flipper::Initialize()"}
+{"a":"71000409f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.2\n역할: 플리퍼 초기화\n충돌체: map/mg0911_flipper%02d_col.nbmap → RIGID_DYNAMIC trimesh(60삼각형), 질량 1000, 밀도 1000, CCD, 레이어 10+p. 훅에 붙어 회전을 따라감"}
 {"a":"7100041e80","t":"plate","c":"mg0911::Flipper::GetCollisionEntityTagName() const"}
 {"a":"7100041f58","t":"plate","c":"mg0911::Flipper::IsSubFlipper() const"}
 {"a":"7100041f68","t":"plate","c":"mg0911::PinballTable::GetStageVerticalTiltDirection() const"}
 {"a":"7100041fd4","t":"plate","c":"mg0911::PinballMgr::GetAttachEntityBoneTransform(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >) const"}
 {"a":"71000421c8","t":"plate","c":"mg0911::Flipper::CreateMirrorBallLightMapTexture()"}
 {"a":"710004269c","t":"plate","c":"mg0911::Flipper::Notify(int, wl::ISimpleObserver::IValue*)"}
-{"a":"71000426a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.2·10\n역할: 플리퍼 각도 갱신\n의사코드: angle = clamp(angle + (pressed?+1:−1)*F16(500)*dt, 0, F15(45)) (f32, 도); rising = pressed && 0<angle<F15 (IsRepelled, +0x59c); hook.rotation = hook.rotation ⊗ quatAxis(UnitY, ±deg2rad(angle−prevAngle)) (오른쪽=번호 홀수는 부호 반대); prevAngle = angle\n재구현 계산: dt 1/60이면 프레임당 8.333°, 누른 뒤 6번째 프레임에 45°\n---\nmg0911::Flipper::Rotate(bool, bool)"}
+{"a":"71000426a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.2·10\n역할: 플리퍼 각도 갱신\n의사코드: angle = clamp(angle + (pressed?+1:−1)*F16(500)*dt, 0, F15(45)) (f32, 도); rising = pressed && 0<angle<F15 (IsRepelled, +0x59c); hook.rotation = hook.rotation ⊗ quatAxis(UnitY, ±deg2rad(angle−prevAngle)) (오른쪽=번호 홀수는 부호 반대); prevAngle = angle\n재구현 계산: dt 1/60이면 프레임당 8.333°, 누른 뒤 6번째 프레임에 45°"}
 {"a":"710004295c","t":"plate","c":"mg0911::Flipper::IsLeftFlipper() const"}
-{"a":"710004296c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.2\n역할: 플리퍼 SE\n분기: angle ≥ F15이고 !upPlayed면 SQ_SE_MG0911_FLIPPER_L_UP/R_UP, 사람이면 진동, upPlayed=true; angle < F15면 upPlayed=false. angle ≤ 0이고 !downPlayed면 …_L_DWN/R_DWN, downPlayed=true; angle > 0이면 downPlayed=false\n---\nmg0911::Flipper::SoundUpdate(bool)"}
+{"a":"710004296c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.2\n역할: 플리퍼 SE\n분기: angle ≥ F15이고 !upPlayed면 SQ_SE_MG0911_FLIPPER_L_UP/R_UP, 사람이면 진동, upPlayed=true; angle < F15면 upPlayed=false. angle ≤ 0이고 !downPlayed면 …_L_DWN/R_DWN, downPlayed=true; angle > 0이면 downPlayed=false"}
 {"a":"7100042b78","t":"plate","c":"mg0911::Flipper::IsRepelled()"}
 {"a":"7100042b80","t":"plate","c":"mg0911::Flipper::ObjectVisible()"}
 {"a":"7100042ba8","t":"plate","c":"mg0911::Flipper::ObjectInVisible()"}
@@ -1475,7 +1475,7 @@
 {"a":"71000634e4","t":"plate","c":"mg0911::Player::GetCharacterNo() const"}
 {"a":"7100063520","t":"plate","c":"mg0911::Player::SetGameRank(bq::GameRank)"}
 {"a":"7100063528","t":"plate","c":"mg0911::Player::GetGameRank() const"}
-{"a":"7100063530","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: 점수 가산\n계산: score = clamp(score + scoreMul*pts, 0, 99999). 잠금 시 무시\n주의: 서버/host 권한 분기 없음\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.4·6.4\n역할: 점수 가산\n의사코드: if (lock) return; score = clamp(score + scoreMul*pts, 0, 99999); ui.addScore(); ui.scoreIn(...)\n필드: +0x3f4 score, +0x3fc scoreMul(ctor 1, Notify 0x35→I9=2, Notify 0x3c→1), +0x403 점수 잠금\n---\nmg0911::Player::AddScore(int, nn::util::Vector3f const&, nn::util::Vector3f const&)"}
+{"a":"7100063530","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: 점수 가산\n계산: score = clamp(score + scoreMul*pts, 0, 99999). 잠금 시 무시\n주의: 서버/host 권한 분기 없음\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.4·6.4\n역할: 점수 가산\n의사코드: if (lock) return; score = clamp(score + scoreMul*pts, 0, 99999); ui.addScore(); ui.scoreIn(...)\n필드: +0x3f4 score, +0x3fc scoreMul(ctor 1, Notify 0x35→I9=2, Notify 0x3c→1), +0x403 점수 잠금"}
 {"a":"71000635f0","t":"plate","c":"mg0911::Player::SetScore(int)"}
 {"a":"71000635f8","t":"plate","c":"mg0911::Player::GetScore() const"}
 {"a":"7100063600","t":"plate","c":"mg0911::Player::SetAdvantage(bool)"}
@@ -1489,7 +1489,7 @@
 {"a":"71000639f8","t":"plate","c":"mg0911::Player::ExActionSurprise(actor::ActionContext const&)"}
 {"a":"7100063ba4","t":"plate","c":"mg0911::Player::ExActionMgIdle(actor::ActionContext const&)"}
 {"a":"7100063d00","t":"plate","c":"mg0911::Player::ExActionFightingPose(actor::ActionContext const&)"}
-{"a":"7100063d7c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4·11.3\n역할: mg0911 Player::GameMainUpdate. Pad hold mask 0x58/0xa1이 flipper 제어, CPU도 overlay 사용\n[미확정] raw right-stick plunger 축(R31)\n\n[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2·6.1\n역할: 입력을 플리퍼·플런저에 전달\n의사코드: if (isCom) comControl(); hold = pad.getHold(); left=(hold&0x58)!=0; right=(hold&0xa1)!=0; flipper[1],[3].rotate(left,true); flipper[2],[4].rotate(right,true); sy = stickRight.y; p = sy<=0 ? min(−sy,1) : 0; if (p>=0.99) p=1; plunger.control(p); flipperVoiceControl()\n필드: +0x3b8 ComActorPad\n[추정] 비트 0x58=비트 3·4·6(Y/L/ZL), 0xa1=비트 0·5·7(A/R/ZR)\n[미확정] 스틱 판독 줄은 min(x,y) 형태로 보여 정확한 축 미확정\n[미확정] 이 함수를 누가 어느 순서로 부르는지, Run/PostUpdate와의 상대 순서\n---\nmg0911::Player::GameMainUpdate()"}
+{"a":"7100063d7c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4·11.3\n역할: mg0911 Player::GameMainUpdate. Pad hold mask 0x58/0xa1이 flipper 제어, CPU도 overlay 사용\n[미확정] raw right-stick plunger 축(R31)\n\n[미확정] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2·6.1\n역할: 입력을 플리퍼·플런저에 전달\n의사코드: if (isCom) comControl(); hold = pad.getHold(); left=(hold&0x58)!=0; right=(hold&0xa1)!=0; flipper[1],[3].rotate(left,true); flipper[2],[4].rotate(right,true); sy = stickRight.y; p = sy<=0 ? min(−sy,1) : 0; if (p>=0.99) p=1; plunger.control(p); flipperVoiceControl()\n필드: +0x3b8 ComActorPad\n[추정] 비트 0x58=비트 3·4·6(Y/L/ZL), 0xa1=비트 0·5·7(A/R/ZR)\n[미확정] 스틱 판독 줄은 min(x,y) 형태로 보여 정확한 축 미확정\n[미확정] 이 함수를 누가 어느 순서로 부르는지, Run/PostUpdate와의 상대 순서"}
 {"a":"7100063f4c","t":"plate","c":"mg0911::Player::ComControl()"}
 {"a":"710006418c","t":"plate","c":"mg0911::Player::FlipperVoiceControl()"}
 {"a":"7100064378","t":"plate","c":"mg0911::Player::ComPlungerPull()"}
@@ -1543,8 +1543,8 @@
 {"a":"71000667ec","t":"plate","c":"std::__function::__func<std::__bind<void (mg0911::Player::*)() noexcept, mg0911::Player*>, std::allocator<std::__bind<void (mg0911::Player::*)() noexcept, mg0911::Player*> >, void ()>::destroy_deallocate()"}
 {"a":"71000667f0","t":"plate","c":"std::__function::__func<std::__bind<void (mg0911::Player::*)() noexcept, mg0911::Player*>, std::allocator<std::__bind<void (mg0911::Player::*)() noexcept, mg0911::Player*> >, void ()>::TEMPNAMEPLACEHOLDERVALUE()"}
 {"a":"7100067bb8","t":"plate","c":"mg0911::Scene::Params::getStaticTypeinfo()"}
-{"a":"7100067c94","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.1\n역할: Scene::Params 속성 목록\n속성: +0x08 timelimit int 1~300, +0x0C slotstoptimesec float 1~60 단계 0.1\n---\nmg0911::Scene::Params::getPropertyList()"}
-{"a":"7100067d8c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.1\n역할: Scene::Params 생성\n기본값: timelimit 180, slotstoptimesec 10.0\n---\nmg0911::Scene::Params::createInstance()"}
+{"a":"7100067c94","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.1\n역할: Scene::Params 속성 목록\n속성: +0x08 timelimit int 1~300, +0x0C slotstoptimesec float 1~60 단계 0.1"}
+{"a":"7100067d8c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §4.1\n역할: Scene::Params 생성\n기본값: timelimit 180, slotstoptimesec 10.0"}
 {"a":"7100067dbc","t":"plate","c":"mg0911::Scene::Params::deleteInstance(void*)"}
 {"a":"7100067dd0","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
 {"a":"7100067dd4","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
@@ -1554,13 +1554,13 @@
 {"a":"7100068044","t":"plate","c":"mg0911::Scene::getPropertyList()"}
 {"a":"71000680a4","t":"plate","c":"mg0911::Scene::createInstance()"}
 {"a":"71000680e4","t":"plate","c":"mg0911::Scene::deleteInstance(void*)"}
-{"a":"7100068110","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n감사 근거(§5.2 스크립트·GC): mg0911 Scene\n[미확정] Lua 자산·실행 진입·바인딩·설정 인자\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1\n역할: Scene 생성자. NPC 0x21·0x6B와 플레이어 캐릭터 5(WALUIGI)를 미리 싣는다\n---\nmg0911::Scene::Scene()"}
+{"a":"7100068110","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n감사 근거(§5.2 스크립트·GC): mg0911 Scene\n[미확정] Lua 자산·실행 진입·바인딩·설정 인자\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1\n역할: Scene 생성자. NPC 0x21·0x6B와 플레이어 캐릭터 5(WALUIGI)를 미리 싣는다"}
 {"a":"7100068230","t":"plate","c":"nn::bezel::HandleSource<wl::IMinigameScene>::Reset(wl::IMinigameScene*)"}
 {"a":"71000683a0","t":"plate","c":"nn::bezel::HandleSource<wl::IMinigameScene>::~HandleSource()"}
 {"a":"71000684c0","t":"plate","c":"wl::IMinigameScene::~IMinigameScene()"}
 {"a":"71000684fc","t":"plate","c":"mg0911::Scene::SetupGameImpl()"}
-{"a":"7100068500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: SyncedSetupGameImpl → GameMgr::SetUpGame(0x71000335b0). 동기 준비 뒤 PhysX/게임 객체 생성\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1\n역할: Params(timelimit, slotstoptimesec)를 SceneParam에 복사한 뒤 GameMgr::Initialize 호출\n---\nmg0911::Scene::SyncedSetupGameImpl()"}
-{"a":"71000686a0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n감사 근거(§5.2 스크립트·GC): CleanupGameImpl\n[미확정] Lua 자산·바인딩·GC 인자\n---\nmg0911::Scene::CleanupGameImpl()"}
+{"a":"7100068500","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: SyncedSetupGameImpl → GameMgr::SetUpGame(0x71000335b0). 동기 준비 뒤 PhysX/게임 객체 생성\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.1\n역할: Params(timelimit, slotstoptimesec)를 SceneParam에 복사한 뒤 GameMgr::Initialize 호출"}
+{"a":"71000686a0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n감사 근거(§5.2 스크립트·GC): CleanupGameImpl\n[미확정] Lua 자산·바인딩·GC 인자"}
 {"a":"7100068754","t":"plate","c":"mg0911::Scene::OnGameInitImpl()"}
 {"a":"710006875c","t":"plate","c":"mg0911::Scene::OnCharaGameDemoStartImpl()"}
 {"a":"7100068764","t":"plate","c":"mg0911::Scene::OnCharaGameDemoImpl()"}
@@ -1578,7 +1578,7 @@
 {"a":"71000687dc","t":"plate","c":"mg0911::Scene::OnGameMainImpl()"}
 {"a":"71000687e4","t":"plate","c":"mg0911::Scene::OnGameEndImpl()"}
 {"a":"71000687ec","t":"plate","c":"mg0911::Scene::OnGameFinishImpl()"}
-{"a":"7100068800","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: OnEndingInitImpl → CreateResultBuilder → Setup_DefaultEndingResult\n---\nmg0911::Scene::OnEndingInitImpl(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"7100068800","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: OnEndingInitImpl → CreateResultBuilder → Setup_DefaultEndingResult"}
 {"a":"7100068920","t":"plate","c":"mg0911::Scene::OnGameEndingBeforeImpl()"}
 {"a":"7100068928","t":"plate","c":"mg0911::Scene::OnGameEndingImpl()"}
 {"a":"7100068930","t":"plate","c":"mg0911::Scene::OnGameEndingAfterImpl()"}

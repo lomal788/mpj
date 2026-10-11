@@ -30,14 +30,14 @@
 {"a":"7100003e3c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
 {"a":"7100003e50","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
 {"a":"7100003e58","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
-{"a":"7100003e60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: CoinMgr 설정(4인 직전 rank·이번 지급·징수·누적 입력).\n필드: CoinMgr+0x30 = 전원이 징수 요구량을 냈는지.\n---\nmgm02::CoinMgr::SyncedSetupGame(mgm02::MgType)"}
-{"a":"7100003f50","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: 회차 유형별 rank 코인 지급량(GetRankCoinCount).\n일반: rank −1 이면 0, rank0..3 이면 Params.RankCoinCount(rank)(기본 10/3/2/0).\n보너스: 기본 rank 코인 × BonusMgCoinCountCoef(기본 2).\n배틀: rank0 이 한 명이라도 있으면 trunc(L × GetDistributedCoinCountRatio(rank, 동순위 수)/100), L=징수 합. rank0 이 없으면 본인 levied 반환.\n§10 기대: rank0 인원 0 → 각자 levied 반환.\n[미확정] rank0 비율 DAT @0x710004e3c0 내용.\n---\nmgm02::CoinMgr::GetRankCoinCount(mgm02::MgType, int) const"}
-{"a":"71000042d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: 배틀 잔여 코인 보정(AdjustBattleMgCoinCount).\n계산: R = L − sum(지급) > 0 이면 rank0 부터 동순위 인원 k 에게 1씩 지급. f32(R)/k < 1 이면 중단하므로 잔여가 남을 수 있다. rank3 뒤는 3 반복. RNG 없음.\n§10 기대: R1·현재 rank 동점 2명 → 1/2<1 이므로 둘 다 +0, R1 남음.\n---\nmgm02::CoinMgr::AdjustBattleMgCoinCount()"}
-{"a":"710000484c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: 배틀 징수(LevyCoin).\n계산: 각 p 에 levied[p]=min(total[p],levy), total[p]=max(total[p]−levy,0). 기본 levy 10(BattleMgLeviedCoinCount).\n§10 기대: total[4,10,13,0], levy10 → levied[4,10,10,0], 잔액[0,0,3,0], L24.\n---\nmgm02::CoinMgr::LevyCoin()"}
-{"a":"7100004948","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 징수 합계 L = sum(levied[0..3]).\n---\nmgm02::CoinMgr::GetTotalLeviedCoinCount() const"}
-{"a":"7100004960","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 지급자 존재 검사(ExistsGotCoinPlayer). 네 지급 중 양수가 있는지.\n호출자: 지급자가 없으면 Scene::ResultFlow 가 5초 대기 경로를 탄다.\n---\nmgm02::CoinMgr::ExistsGotCoinPlayer() const"}
-{"a":"7100004980","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 보너스 획득 코인(GetBonusMgGotCoinCount) = raw MGGotCoinCount × BonusMgCoinCountCoef(기본 2).\n참고: rank 지급 경로(기본 rank 코인×coef)와 두 입력을 같은 raw 값으로 합치지 않는다.\n---\nmgm02::CoinMgr::GetBonusMgGotCoinCount(int) const"}
-{"a":"71000049c0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 배틀 배분율(GetDistributedCoinCountRatio(rank, 동순위 인원)).\n상수: rank2 인원1 → 10%, 2 → 5%, 그 밖 0. rank1 인원 1/2/3 → 20/15/10%. rank0 은 DAT @0x710004e3c0 표.\n[미확정] rank0 표 내용.\n---\nmgm02::CoinMgr::GetDistributedCoinCountRatio(std::vector<bq::GameRank, std::allocator<bq::GameRank> >, int) const"}
+{"a":"7100003e60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: CoinMgr 설정(4인 직전 rank·이번 지급·징수·누적 입력).\n필드: CoinMgr+0x30 = 전원이 징수 요구량을 냈는지."}
+{"a":"7100003f50","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: 회차 유형별 rank 코인 지급량(GetRankCoinCount).\n일반: rank −1 이면 0, rank0..3 이면 Params.RankCoinCount(rank)(기본 10/3/2/0).\n보너스: 기본 rank 코인 × BonusMgCoinCountCoef(기본 2).\n배틀: rank0 이 한 명이라도 있으면 trunc(L × GetDistributedCoinCountRatio(rank, 동순위 수)/100), L=징수 합. rank0 이 없으면 본인 levied 반환.\n§10 기대: rank0 인원 0 → 각자 levied 반환.\n[미확정] rank0 비율 DAT @0x710004e3c0 내용."}
+{"a":"71000042d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: 배틀 잔여 코인 보정(AdjustBattleMgCoinCount).\n계산: R = L − sum(지급) > 0 이면 rank0 부터 동순위 인원 k 에게 1씩 지급. f32(R)/k < 1 이면 중단하므로 잔여가 남을 수 있다. rank3 뒤는 3 반복. RNG 없음.\n§10 기대: R1·현재 rank 동점 2명 → 1/2<1 이므로 둘 다 +0, R1 남음."}
+{"a":"710000484c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: 배틀 징수(LevyCoin).\n계산: 각 p 에 levied[p]=min(total[p],levy), total[p]=max(total[p]−levy,0). 기본 levy 10(BattleMgLeviedCoinCount).\n§10 기대: total[4,10,13,0], levy10 → levied[4,10,10,0], 잔액[0,0,3,0], L24."}
+{"a":"7100004948","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 징수 합계 L = sum(levied[0..3])."}
+{"a":"7100004960","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 지급자 존재 검사(ExistsGotCoinPlayer). 네 지급 중 양수가 있는지.\n호출자: 지급자가 없으면 Scene::ResultFlow 가 5초 대기 경로를 탄다."}
+{"a":"7100004980","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 보너스 획득 코인(GetBonusMgGotCoinCount) = raw MGGotCoinCount × BonusMgCoinCountCoef(기본 2).\n참고: rank 지급 경로(기본 rank 코인×coef)와 두 입력을 같은 raw 값으로 합치지 않는다."}
+{"a":"71000049c0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 배틀 배분율(GetDistributedCoinCountRatio(rank, 동순위 인원)).\n상수: rank2 인원1 → 10%, 2 → 5%, 그 밖 0. rank1 인원 1/2/3 → 20/15/10%. rank0 은 DAT @0x710004e3c0 표.\n[미확정] rank0 표 내용."}
 {"a":"7100004cd0","t":"plate","c":"mgm02::ComMapCoinMover::ComMapCoinMover(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
 {"a":"7100004fac","t":"plate","c":"mgm02::ComMapCoinMover::Start(mgm02::ComMapCoinMover::Type, nn::util::Vector3f const&, nn::util::Vector3f const&, float, std::function<void ()> const&, std::function<void ()> const&)"}
 {"a":"71000051d4","t":"plate","c":"mgm02::ComMapCoinMover::ProcessStartMove()"}
@@ -205,11 +205,11 @@
 {"a":"710000eb2c","t":"plate","c":"mgm02::MapTreasureBoxMgr::PlayFadeOutAnimation(int)"}
 {"a":"710000eb60","t":"plate","c":"mgm02::MapTreasureBoxMgr::IsFinishedDropAnimation(int) const"}
 {"a":"710000ecac","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [41]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [41])"}
-{"a":"710000ee3c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §5\n역할: MgMgr 설정.\n흐름: 후보 소진 시 Clear → SetTarget → 선택 → AddPlayed. 회차 유형은 다음 Round 의 Params 를 읽는다.\n참고: Clear 뒤 직전 게임 제외는 이 흐름에 없다.\n---\nmgm02::MgMgr::SyncedSetupGame(int)"}
-{"a":"710000ef94","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 추첨 후보 목록 재구성(SetTargetMgIds). Scene::LotteryNextMg 가 이력 Clear 뒤 호출해 재추첨한다.\n---\nmgm02::MgMgr::SetTargetMgIds()"}
-{"a":"710000efe0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 회차 유형(GetMgType). 1=Normal·2=Bonus·3=Battle.\n유형은 같은 Chara 후보 집합에서 연출·코인 계산만 바꾸며 GameRule 을 바꾸지 않는다.\n---\nmgm02::MgMgr::GetMgType(int) const"}
-{"a":"710000f030","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §6.1\n역할: MgMgr 다음 게임 추첨(LotteryNextMg).\n분기: 후보가 비었으면 결과 −1.\n난수: 선택마다 SyncRandRange 하한 0. 별도 weight 없음.\n[미확정] SyncRandRange 상한 인자가 C 에서 빠짐.\n[추정] 후보 수 상한의 균등 추첨.\n---\nmgm02::MgMgr::LotteryNextMg()"}
-{"a":"710000f0b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §8.2\n역할: 추첨 후보 ID 목록(GetTargetMgIds). vector 시작/끝의 ID 배열.\n필터: 152 ID 를 순서대로 검사해 Available·GameRule7(Chara)·(flag6 또는 !UseGyro)·!Mgm02IsPlayedMgId 를 모두 만족한 ID.\n[데이터] GameRule=Chara 10종, Gyro!=-1 1종 → 체감 off 면 9종. 게임별 weight 읽기 없음.\n---\nmgm02::MgMgr::GetTargetMgIds() const"}
+{"a":"710000ee3c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §5\n역할: MgMgr 설정.\n흐름: 후보 소진 시 Clear → SetTarget → 선택 → AddPlayed. 회차 유형은 다음 Round 의 Params 를 읽는다.\n참고: Clear 뒤 직전 게임 제외는 이 흐름에 없다."}
+{"a":"710000ef94","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 추첨 후보 목록 재구성(SetTargetMgIds). Scene::LotteryNextMg 가 이력 Clear 뒤 호출해 재추첨한다."}
+{"a":"710000efe0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 회차 유형(GetMgType). 1=Normal·2=Bonus·3=Battle.\n유형은 같은 Chara 후보 집합에서 연출·코인 계산만 바꾸며 GameRule 을 바꾸지 않는다."}
+{"a":"710000f030","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §6.1\n역할: MgMgr 다음 게임 추첨(LotteryNextMg).\n분기: 후보가 비었으면 결과 −1.\n난수: 선택마다 SyncRandRange 하한 0. 별도 weight 없음.\n[미확정] SyncRandRange 상한 인자가 C 에서 빠짐.\n[추정] 후보 수 상한의 균등 추첨."}
+{"a":"710000f0b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §8.2\n역할: 추첨 후보 ID 목록(GetTargetMgIds). vector 시작/끝의 ID 배열.\n필터: 152 ID 를 순서대로 검사해 Available·GameRule7(Chara)·(flag6 또는 !UseGyro)·!Mgm02IsPlayedMgId 를 모두 만족한 ID.\n[데이터] GameRule=Chara 10종, Gyro!=-1 1종 → 체감 off 면 9종. 게임별 weight 읽기 없음."}
 {"a":"710000f2a0","t":"plate","c":"mgm02::NpcGuideChara::SyncedSetupGame(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
 {"a":"710000f730","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID, (void*)0>(bq::NonPlayerCharacterID&&)"}
 {"a":"710000f910","t":"plate","c":"nn::bezel::WeakHandle<mgm02::ComMotionQueue> nn::bezel::Entity::AddComponent<mgm02::ComMotionQueue, , (void*)0>()"}
@@ -246,7 +246,7 @@
 {"a":"7100011c34","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID const&)"}
 {"a":"7100011db4","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::PlayerCharacterID const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::PlayerCharacterID const&)"}
 {"a":"7100011f34","t":"plate","c":"mgm02::ParamMgr::~ParamMgr()"}
-{"a":"7100011f48","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: ParamMgr 설정. SyncedSetupGame 이 Scene Params 참조를 받는다.\n[미확정] 실제 asset override loader 경로는 미식별.\n---\nmgm02::ParamMgr::SyncedSetupGame(mgm02::Scene::Params*)"}
+{"a":"7100011f48","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: ParamMgr 설정. SyncedSetupGame 이 Scene Params 참조를 받는다.\n[미확정] 실제 asset override loader 경로는 미식별."}
 {"a":"7100011f50","t":"plate","c":"mgm02::Player::SyncedSetupGame(nn::bezel::WeakHandle<nn::bezel::Entity> const&, int)"}
 {"a":"7100012680","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID const&, bq::MatterType, (void*)0>(bex::PlayerID const&, bq::MatterType&&)"}
 {"a":"7100012860","t":"plate","c":"mgm02::Player::Attach(nn::bezel::HandlePtr<nn::bezel::ISocket> const&)"}
@@ -267,7 +267,7 @@
 {"a":"7100013164","t":"plate","c":"mgm02::PlayerMgr::PlayGotCoinDirection(int)"}
 {"a":"7100013194","t":"plate","c":"mgm02::PlayerMgr::PlayLeviedCoinDirection(int)"}
 {"a":"71000131c4","t":"plate","c":"mgm02::PlayerMgr::Teleport()"}
-{"a":"7100013200","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: RankMgr 설정(총코인 rank).\n계산: coin 내림차순, 값이 감소할 때 rank+1 인 dense rank. 같은 값은 같은 rank. 전원 0 인 초기 RankMgr 는 3.\n§10 기대: [100,100,90,80] → [0,0,1,2].\n[미확정] 안정 표시 순서.\n---\nmgm02::RankMgr::SyncedSetupGame(std::array<int, 4ul> const&)"}
+{"a":"7100013200","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §10\n역할: RankMgr 설정(총코인 rank).\n계산: coin 내림차순, 값이 감소할 때 rank+1 인 dense rank. 같은 값은 같은 rank. 전원 0 인 초기 RankMgr 는 3.\n§10 기대: [100,100,90,80] → [0,0,1,2].\n[미확정] 안정 표시 순서."}
 {"a":"71000139a0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 총코인 dense rank 계산 경로의 일부(RankMgr::SyncedSetupGame 과 함께 판독).\n[미확정] 이 함수 단독의 역할 구분은 문서에 없음."}
 {"a":"71000146c0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 총코인 dense rank 계산 경로의 일부(RankMgr::SyncedSetupGame 과 함께 판독).\n[미확정] 이 함수 단독의 역할 구분은 문서에 없음."}
 {"a":"7100015810","t":"plate","c":"mgm02::Scene::DummySymbolLink(bool)"}
@@ -288,21 +288,21 @@
 {"a":"7100015f38","t":"plate","c":"mgm02::Scene::~Scene()"}
 {"a":"7100015f5c","t":"plate","c":"mgm02::Scene::PrepareLoadArchives()"}
 {"a":"7100015f94","t":"plate","c":"mgm02::Scene::SetupGame()"}
-{"a":"7100016008","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §3.6\n역할: mgm02 Scene 설정(한 판 결과 소비).\n순서: 직전 회차 유형으로 CoinMgr 지급 → 누적 → RankMgr → SetMgResult → 다음 LotteryNextMg.\n분기: Round0 은 결과 추가 0.\n호출: SyncedSetupGame → MinigameModeFlow.\n[미확정] Work setter 값 인자 누락.\n---\nmgm02::Scene::SyncedSetupGame()"}
-{"a":"7100017008","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §C.2\n역할: 최대 회차(GetMaxRound). tableKind0/1/2 를 DAT @0x710005036c 최대회차 표에서 읽는다.\n[미확정] 표 내용.\n---\nmgm02::Scene::GetMaxRound() const"}
-{"a":"710001704c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.4\n역할: 최종 결과 기록(SetMgResult).\n분기: 최종 전원 rank3(초기 RankMgr 값)이면 전원 0 으로 보정.\n---\nmgm02::Scene::SetMgResult()"}
-{"a":"7100017408","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §5, §6.4\n역할: Scene 다음 게임 추첨(LotteryNextMg).\n분기: MgMgr 결과 −1(후보 없음)이면 이력 Clear → 재구성 → 재추첨, 여전히 −1 이면 Abort.\n분기: Round==GetMaxRound 이면 다음 추첨을 생략.\n참고: Clear 뒤 직전 ID 제외는 확인되지 않음.\n---\nmgm02::Scene::LotteryNextMg()"}
+{"a":"7100016008","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §3.6\n역할: mgm02 Scene 설정(한 판 결과 소비).\n순서: 직전 회차 유형으로 CoinMgr 지급 → 누적 → RankMgr → SetMgResult → 다음 LotteryNextMg.\n분기: Round0 은 결과 추가 0.\n호출: SyncedSetupGame → MinigameModeFlow.\n[미확정] Work setter 값 인자 누락."}
+{"a":"7100017008","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4, §C.2\n역할: 최대 회차(GetMaxRound). tableKind0/1/2 를 DAT @0x710005036c 최대회차 표에서 읽는다.\n[미확정] 표 내용."}
+{"a":"710001704c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.6, §6.4\n역할: 최종 결과 기록(SetMgResult).\n분기: 최종 전원 rank3(초기 RankMgr 값)이면 전원 0 으로 보정."}
+{"a":"7100017408","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §5, §6.4\n역할: Scene 다음 게임 추첨(LotteryNextMg).\n분기: MgMgr 결과 −1(후보 없음)이면 이력 Clear → 재구성 → 재추첨, 여전히 −1 이면 Abort.\n분기: Round==GetMaxRound 이면 다음 추첨을 생략.\n참고: Clear 뒤 직전 ID 제외는 확인되지 않음."}
 {"a":"7100017508","t":"plate","c":"mgm02::Scene::CleanupGame()"}
-{"a":"7100017728","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §6.4\n역할: 챌린지 미니게임 배틀 진행 흐름(MinigameModeFlow).\n분기: Round0 → FirstRoundFlow(첫 선택). 0<Round<max → ResultFlow 후 DecideMgFlow → StepToMinigameScene. Round==max → ResultFlow → ReturnToEntranceScene. Round>max 는 Sleep(-1).\n참고: Bonus/Battle 은 추가 게임 회수가 아니라 5/7/10 회 안에 포함.\n[미확정] SetRound 호출 인자가 C 에서 빠짐.\n---\nmgm02::Scene::MinigameModeFlow()"}
-{"a":"71000178f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §7.1\n역할: Round0 첫 안내 흐름(FirstRoundFlow). 첫 안내에서 업적 0x41.\n---\nmgm02::Scene::FirstRoundFlow()"}
-{"a":"7100017b20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §4.2\n역할: 게임 결정 흐름(DecideMgFlow). 회차 유형 1=Normal·2=Bonus·3=Battle 로 분기.\n---\nmgm02::Scene::DecideMgFlow()"}
-{"a":"7100018030","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5\n역할: 한 판 장면으로 전환(StepToMinigameScene).\n[미확정] SetRound 인자가 C 에서 빠짐.\n---\nmgm02::Scene::StepToMinigameScene()"}
-{"a":"7100018300","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §6.4, §7.1\n역할: 결과 흐름(ResultFlow). coin chest·move 대기 연출.\n분기: CoinMgr::ExistsGotCoinPlayer 가 false(지급자 없음)이면 5초 대기 경로.\n---\nmgm02::Scene::ResultFlow()"}
-{"a":"7100018740","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 최종 복귀(ReturnToEntranceScene). Round==max 의 ResultFlow 뒤 호출.\n---\nmgm02::Scene::ReturnToEntranceScene()"}
+{"a":"7100017728","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §6.4\n역할: 챌린지 미니게임 배틀 진행 흐름(MinigameModeFlow).\n분기: Round0 → FirstRoundFlow(첫 선택). 0<Round<max → ResultFlow 후 DecideMgFlow → StepToMinigameScene. Round==max → ResultFlow → ReturnToEntranceScene. Round>max 는 Sleep(-1).\n참고: Bonus/Battle 은 추가 게임 회수가 아니라 5/7/10 회 안에 포함.\n[미확정] SetRound 호출 인자가 C 에서 빠짐."}
+{"a":"71000178f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §7.1\n역할: Round0 첫 안내 흐름(FirstRoundFlow). 첫 안내에서 업적 0x41."}
+{"a":"7100017b20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §4.2\n역할: 게임 결정 흐름(DecideMgFlow). 회차 유형 1=Normal·2=Bonus·3=Battle 로 분기."}
+{"a":"7100018030","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §5\n역할: 한 판 장면으로 전환(StepToMinigameScene).\n[미확정] SetRound 인자가 C 에서 빠짐."}
+{"a":"7100018300","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1, §6.4, §7.1\n역할: 결과 흐름(ResultFlow). coin chest·move 대기 연출.\n분기: CoinMgr::ExistsGotCoinPlayer 가 false(지급자 없음)이면 5초 대기 경로."}
+{"a":"7100018740","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §3.1\n역할: 최종 복귀(ReturnToEntranceScene). Round==max 의 ResultFlow 뒤 호출."}
 {"a":"71000187c0","t":"plate","c":"mgm02::Scene::FiberWaitTimeSec(float)"}
-{"a":"7100018800","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §7.1\n역할: Bonus 게임 결정 연출. 1.2 대기.\n---\nmgm02::Scene::DecideMgFlow_BonusMg()"}
-{"a":"7100018920","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §7.1\n역할: Battle 게임 결정 연출. 징수/가진 코인 감소 표시.\n---\nmgm02::Scene::DecideMgFlow_BattleMg()"}
-{"a":"7100018cc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §5.1\n역할: mgm02::Scene::UpdateHighScore. 보상/하이스코어 근거(mgm_modes §6.4)\n\n[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 하이스코어 갱신(UpdateHighScore).\n분기: 로컬 operation player 저장 +4/+8/+0xc 를 tableKind 0/1/2 로 고르고 현재 최장 연속이 더 클 때 SaveRequest. RM 은 별도.\n[미확정] 저장 완료는 실행 확인 없음.\n---\nmgm02::Scene::UpdateHighScore()"}
+{"a":"7100018800","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §7.1\n역할: Bonus 게임 결정 연출. 1.2 대기."}
+{"a":"7100018920","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §7.1\n역할: Battle 게임 결정 연출. 징수/가진 코인 감소 표시."}
+{"a":"7100018cc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §5.1\n역할: mgm02::Scene::UpdateHighScore. 보상/하이스코어 근거(mgm_modes §6.4)\n\n[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §6.4\n역할: 하이스코어 갱신(UpdateHighScore).\n분기: 로컬 operation player 저장 +4/+8/+0xc 를 tableKind 0/1/2 로 고르고 현재 최장 연속이 더 클 때 SaveRequest. RM 은 별도.\n[미확정] 저장 완료는 실행 확인 없음."}
 {"a":"7100018e34","t":"plate","c":"mgm02::Scene::getInstanceTypeinfo() const"}
 {"a":"7100018f10","t":"plate","c":"mgm02::Scene::GetSymbol() const"}
 {"a":"7100018f20","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}
@@ -335,19 +335,19 @@
 {"a":"710001a54c","t":"plate","c":"mgm02::SceneParamsDirection::~SceneParamsDirection()"}
 {"a":"710001a720","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableFiveRound::getStaticTypeinfo()"}
 {"a":"710001a7fc","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableFiveRound::getPropertyList()"}
-{"a":"710001a954","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGameMgTypeTableFiveRound 기본 생성.\n상수: 회차 유형 기본 [1,2,1,3,2] (1=Normal·2=Bonus·3=Battle).\n[미확정] asset override.\n---\nmgm02::SceneParamsGameMgTypeTableFiveRound::createInstance()"}
+{"a":"710001a954","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGameMgTypeTableFiveRound 기본 생성.\n상수: 회차 유형 기본 [1,2,1,3,2] (1=Normal·2=Bonus·3=Battle).\n[미확정] asset override."}
 {"a":"710001a988","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableFiveRound::deleteInstance(void*)"}
 {"a":"710001a994","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableSevenRound::getStaticTypeinfo()"}
 {"a":"710001aa70","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableSevenRound::getPropertyList()"}
-{"a":"710001ac20","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGameMgTypeTableSevenRound 기본 생성.\n상수: 회차 유형 기본 [1,1,2,1,3,1,2] (1=Normal·2=Bonus·3=Battle).\n[미확정] asset override.\n---\nmgm02::SceneParamsGameMgTypeTableSevenRound::createInstance()"}
+{"a":"710001ac20","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGameMgTypeTableSevenRound 기본 생성.\n상수: 회차 유형 기본 [1,1,2,1,3,1,2] (1=Normal·2=Bonus·3=Battle).\n[미확정] asset override."}
 {"a":"710001ac5c","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableSevenRound::deleteInstance(void*)"}
 {"a":"710001ac68","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableTenRound::getStaticTypeinfo()"}
 {"a":"710001ad44","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableTenRound::getPropertyList()"}
-{"a":"710001af80","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGameMgTypeTableTenRound 기본 생성.\n상수: 회차 유형 기본 [1,1,2,1,2,1,3,1,1,2] (1=Normal·2=Bonus·3=Battle).\n[미확정] asset override.\n---\nmgm02::SceneParamsGameMgTypeTableTenRound::createInstance()"}
+{"a":"710001af80","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGameMgTypeTableTenRound 기본 생성.\n상수: 회차 유형 기본 [1,1,2,1,2,1,3,1,1,2] (1=Normal·2=Bonus·3=Battle).\n[미확정] asset override."}
 {"a":"710001afc0","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableTenRound::deleteInstance(void*)"}
 {"a":"710001afcc","t":"plate","c":"mgm02::SceneParamsGame::getStaticTypeinfo()"}
-{"a":"710001b0a8","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §2.3\n역할: SceneParamsGame 프로퍼티 목록. mg_type_table_five_round/seven_round/ten_round·rank_coin_count·bonus_mg_coin_count_coef·battle_mg_levied_coin_count.\n[미확정] extracted JSON 에서 override 필드를 찾지 못했으나 부재는 증명하지 않음.\n---\nmgm02::SceneParamsGame::getPropertyList()"}
-{"a":"710001b33c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGame 기본 생성.\n상수: +0x08/+0x0c/+0x10/+0x14 순위 코인 10/3/2/0, +0x18 Bonus 계수 2, +0x1c Battle 징수 10.\n[미확정] asset override.\n---\nmgm02::SceneParamsGame::createInstance()"}
+{"a":"710001b0a8","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §2.3\n역할: SceneParamsGame 프로퍼티 목록. mg_type_table_five_round/seven_round/ten_round·rank_coin_count·bonus_mg_coin_count_coef·battle_mg_levied_coin_count.\n[미확정] extracted JSON 에서 override 필드를 찾지 못했으나 부재는 증명하지 않음."}
+{"a":"710001b33c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: SceneParamsGame 기본 생성.\n상수: +0x08/+0x0c/+0x10/+0x14 순위 코인 10/3/2/0, +0x18 Bonus 계수 2, +0x1c Battle 징수 10.\n[미확정] asset override."}
 {"a":"710001b3b8","t":"plate","c":"mgm02::SceneParamsGame::deleteInstance(void*)"}
 {"a":"710001b3cc","t":"plate","c":"mgm02::SceneParamsGame::Getmg_type_table_five_round() const"}
 {"a":"710001b3d4","t":"plate","c":"mgm02::SceneParamsGame::Getmg_type_table_seven_round() const"}
@@ -355,10 +355,10 @@
 {"a":"710001b3e4","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableFiveRound::MgType(int) const"}
 {"a":"710001b438","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableSevenRound::MgType(int) const"}
 {"a":"710001b4a4","t":"plate","c":"mgm02::SceneParamsGameMgTypeTableTenRound::MgType(int) const"}
-{"a":"710001b534","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2, §6.4\n역할: rank 별 코인(RankCoinCount(rank)). +0x08/+0x0c/+0x10/+0x14 의 값(기본 10/3/2/0).\n---\nmgm02::SceneParamsGame::RankCoinCount(bq::GameRank) const"}
-{"a":"710001b580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2, §6.4\n역할: 회차 유형 조회(MgType). 5/7/10 회 기본 표에서 회차 유형(1/2/3)을 읽는다.\n---\nmgm02::SceneParamsGame::MgType(bq::MinigameModeWork::MGM02_MGTABLE_KIND, int) const"}
-{"a":"710001b710","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: BonusMgCoinCountCoef getter. SceneParamsGame+0x18 반환(기본 2).\n---\nmgm02::SceneParamsGame::BonusMgCoinCountCoef() const"}
-{"a":"710001b718","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: BattleMgLeviedCoinCount getter. SceneParamsGame+0x1c 반환(기본 10).\n---\nmgm02::SceneParamsGame::BattleMgLeviedCoinCount() const"}
+{"a":"710001b534","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2, §6.4\n역할: rank 별 코인(RankCoinCount(rank)). +0x08/+0x0c/+0x10/+0x14 의 값(기본 10/3/2/0)."}
+{"a":"710001b580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2, §6.4\n역할: 회차 유형 조회(MgType). 5/7/10 회 기본 표에서 회차 유형(1/2/3)을 읽는다."}
+{"a":"710001b710","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: BonusMgCoinCountCoef getter. SceneParamsGame+0x18 반환(기본 2)."}
+{"a":"710001b718","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.2\n역할: BattleMgLeviedCoinCount getter. SceneParamsGame+0x1c 반환(기본 10)."}
 {"a":"710001b720","t":"plate","c":"mgm02::SceneParamsGame::~SceneParamsGame()"}
 {"a":"710001b724","t":"plate","c":"mgm02::SceneParamsGame::~SceneParamsGame()"}
 {"a":"710001bb1c","t":"plate","c":"mgm02::SceneSound::SyncedSetupGame(std::function<void (int)> const&, std::function<void (bex::sound::FadeTimePreset)> const&, std::vector<int, std::allocator<int> > const&)"}

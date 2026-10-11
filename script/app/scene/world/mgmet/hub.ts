@@ -144,6 +144,7 @@ export class MgmetHub {
   }
 
   /** MinigameModeFlow mgmet @0x7100049ed0 */
+  /** @orig mgmet:7100049ed0 ref */
   private *main(): Flow<MgmetResult> {
     this.setupSyncBefore();
     this.seq = 0;
@@ -197,6 +198,7 @@ export class MgmetHub {
   }
 
   /** Initialize mgmet @0x710004a164 + GetAndResetStartMode */
+  /** @orig mgmet:710004a164 ref */
   private initialize(): void {
     const w = this.o.work;
     const sp = adjustStartPoint(w.entranceStartPoint, w.flags.has(0x3d), this.bossOpen);
@@ -224,6 +226,7 @@ export class MgmetHub {
   }
 
   /** StartEventFlow mgmet @0x710004cd60: 첫/재방문 인사 → 줌 → ID 2, 상태 5 */
+  /** @orig mgmet:710004cd60 ref */
   private *startEventFlow(): Flow {
     this.phase = '인사';
     this.o.sound.playBgm(1);
@@ -237,6 +240,7 @@ export class MgmetHub {
   }
 
   /** ModeSelectStart mgmet @0x710004d270 (+ InitMGMWork) */
+  /** @orig mgmet:710004d270 ref */
   private *modeSelectStart(): Flow {
     this.phase = '선택 준비(상태 5)';
     const w = this.o.work;
@@ -252,6 +256,7 @@ export class MgmetHub {
   }
 
   /** ShowGuideMessageFrontOfMode mgmet @0x7100059e40 */
+  /** @orig mgmet:7100059e40 ref */
   private *showGuide(id: number): Flow {
     const m = this.o.msg;
     m.setManualClose(true);
@@ -272,6 +277,7 @@ export class MgmetHub {
   }
 
   /** ModeSelectCameraIdle mgmet @0x710004d6d0 */
+  /** @orig mgmet:710004d6d0 ref */
   private *modeSelectCameraIdle(): Flow {
     this.phase = '액티비티 선택(상태 7)';
     const t = this.title;
@@ -346,6 +352,7 @@ export class MgmetHub {
   }
 
   /** ConfirmReturnSceneFlow mgmet @0x7100059fa0: 메시지 창 선택지 2지(예 DECI_L / 아니요 CANCEL), 기본 1, B 취소 → 결과 0 만 true (dialog_box.md 6.3) */
+  /** @orig mgmet:7100059fa0 ref */
   private *confirmReturnSceneFlow(): Flow<boolean> {
     this.o.guides.back.out();
     this.title.actOut();
@@ -377,6 +384,7 @@ export class MgmetHub {
   }
 
   /** ModeStartFlow mgmet @0x710004dfd8 */
+  /** @orig mgmet:710004dfd8 ref */
   private *modeStartFlow(): Flow<MgmetResult | null> {
     if (this.selected === FREEPLAY_ID) {
       yield* this.freeplayMainFlow();
@@ -389,6 +397,7 @@ export class MgmetHub {
   }
 
   /** FreeplayMainFlow mgmet @0x710005ddd0 */
+  /** @orig mgmet:710005ddd0 ref */
   private *freeplayMainFlow(): Flow {
     this.phase = '프리 플레이 준비';
     yield* waitUntil(() => this.sig.modeZoomDone());
@@ -404,6 +413,7 @@ export class MgmetHub {
   }
 
   /** FirstHowToPlayFlow mgmet @0x710005a75c: flag 8 이면 0, 아니면 Setup(kind, true) → Update → Destroy → 저장 → 1 */
+  /** @orig mgmet:710005a75c ref */
   private *firstHowToPlayFlow(kind: number): Flow<number> {
     if (this.firstHowtoSeen) return 0;
     const h = this.o.howto;
@@ -426,6 +436,7 @@ export class MgmetHub {
   }
 
   /** HowToPlayFlow mgmet @0x710005a47c: Setup(kind, false), 결과 bit0 && flag 없음 → 저장 */
+  /** @orig mgmet:710005a47c ref */
   private *howToPlayFlow(kind: number): Flow {
     const h = this.o.howto;
     if (!h) {
@@ -439,6 +450,7 @@ export class MgmetHub {
   }
 
   /** Mgm01SetRuleFlow mgmet @0x710005e090: Update 1 → 결과 1, 3 → 결과 2, 2 → 설명 후 다시 In */
+  /** @orig mgmet:710005e090 ref */
   private *mgm01SetRuleFlow(): Flow<number> {
     this.phase = '규칙 설정';
     const rule = this.rule;
@@ -471,6 +483,7 @@ export class MgmetHub {
   private lastUpdate: 1 | 3 = 3;
 
   /** FreeplayAfterFlow mgmet @0x710005df20 */
+  /** @orig mgmet:710005df20 ref */
   private *freeplayAfterFlow(r: number): Flow {
     if (r === 1) {
       this.phase = '출발';
@@ -493,6 +506,7 @@ export class MgmetHub {
   }
 
   /** FreeplayReturnFlow mgmet @0x710005e250: 0.3 s → 플레이어 idle && NPC 준비 → 상태 5 */
+  /** @orig mgmet:710005e250 ref */
   private *freeplayReturnFlow(): Flow {
     this.phase = 'mgm01 복귀';
     yield* waitTime(0.3, () => DT);

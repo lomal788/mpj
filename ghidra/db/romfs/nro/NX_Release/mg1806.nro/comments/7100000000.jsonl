@@ -1,0 +1,1319 @@
+{"a":"7100003830","t":"plate","c":"mg1806::Mg1806CameraManager::Mg1806CameraManager()"}
+{"a":"7100003950","t":"plate","c":"mg1806::Mg1806CameraManager::~Mg1806CameraManager()"}
+{"a":"71000039b4","t":"plate","c":"mg1806::Mg1806CameraManager::~Mg1806CameraManager()"}
+{"a":"71000039d8","t":"plate","c":"mg1806::Mg1806CameraManager::SetState(mg1806::Mg1806ObjectBase::STATE)"}
+{"a":"71000039e0","t":"plate","c":"mg1806::Mg1806CameraManager::IsFinished() const"}
+{"a":"71000039f0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::IsFinished() const"}
+{"a":"7100003ae0","t":"plate","c":"mg1806::Mg1806CameraManager::GetPosition() const"}
+{"a":"7100003af0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::GetPosition() const"}
+{"a":"7100003c20","t":"plate","c":"mg1806::Mg1806CameraManager::SetTurn(int)"}
+{"a":"7100003c30","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetTurn(int)"}
+{"a":"7100003e68","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.9\n역할: Mg1806CameraManager::ZoomIn\n처리: zoomed 가 아니면 zoomed=1, ['zoomIn','zoomInLeft','zoomInRight','zoomIn8'][camType] 재생 (이름 표 @0x710003ba60)\n---\nmg1806::Mg1806CameraManager::ZoomIn()"}
+{"a":"7100003ea4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.9\n역할: Mg1806CameraManager::ZoomOut\n처리: zoomed 이면 zoomed=0, ['zoomOut','zoomOutLeft','zoomOutRight','zoomOut8'][camType] 재생 (이름 표 @0x710003ba70)\n---\nmg1806::Mg1806CameraManager::ZoomOut()"}
+{"a":"7100003edc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.9\n역할: Mg1806CameraManager::LastZoom(b)\n처리: b 참 → camType = 3(zoomIn8/zoomOut8). 거짓 → zoomed = 0, camType = 0\n---\nmg1806::Mg1806CameraManager::LastZoom(bool)"}
+{"a":"7100003efc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.9\n역할: Mg1806CameraManager::SetCameraType(t) — camType 설정\n호출자: ReadyChart(P 단계 시작): 참가자 1·2만 → 1(왼쪽), 3·4만 → 2(오른쪽), 그 밖 0\n---\nmg1806::Mg1806CameraManager::SetCameraType(mg1806::CHART_CAMERA)"}
+{"a":"7100003f08","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.9\n역할: Mg1806CameraManager::ResetZoom — 처음 한 번만 리셋\n처리: once 가 아니면 camType = 0, zoomed = 0, once = 1\n결과: M 단계 줌인은 직전 P 단계의 camType 을 그대로 씀\n---\nmg1806::Mg1806CameraManager::ResetZoom()"}
+{"a":"7100003f30","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::~Impl()"}
+{"a":"7100004058","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::~Impl()"}
+{"a":"7100004080","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::Setup()"}
+{"a":"7100004278","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::PostSetup()"}
+{"a":"710000427c","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::Initialize()"}
+{"a":"7100004280","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartOpeningDemo()"}
+{"a":"7100004284","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::SkipOpeningDemo()"}
+{"a":"7100004288","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartTelop()"}
+{"a":"710000428c","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartGame()"}
+{"a":"7100004290","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartRound()"}
+{"a":"7100004294","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::StartPlayer()"}
+{"a":"71000042a4","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::EndPlayer()"}
+{"a":"71000042a8","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::EndRound()"}
+{"a":"71000042ac","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartFinish()"}
+{"a":"71000042b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): game·좌우/8명 zoom 9/10/19f·result/captureNormal/Long.\n주의: 문서 §7.2 는 mg1806 0x71000049b0/0x71000110d0/0x71000042b0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.3\n역할: Mg1806CameraManager::Impl::StartCapture — 상태 11(StartCapture) 처리\n분기: 롱 모드(RmGameWork 모드 1)이면 카메라 모션 captureLong(cam10_long), 아니면 captureNormal(cam10_cap)\n부수 효과: 결과·캡처 때 레이아웃 끄기(LayoutOff), DOF 켜기(SetDofEnable) — 문서는 결과·캡처 공통으로 적음\n---\nmg1806::Mg1806CameraManager::Impl::StartCapture()"}
+{"a":"710000435c","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::StartResult()"}
+{"a":"71000043f0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::Update()"}
+{"a":"7100004774","t":"plate","c":"non-virtual thunk to mg1806::Mg1806CameraManager::Impl::~Impl()"}
+{"a":"710000477c","t":"plate","c":"non-virtual thunk to mg1806::Mg1806CameraManager::Impl::~Impl()"}
+{"a":"71000047a4","t":"plate","c":"bex::Fiber::getInstanceTypeinfo() const"}
+{"a":"71000047a8","t":"plate","c":"bex::Fiber::StartUpdate()"}
+{"a":"71000047ac","t":"plate","c":"non-virtual thunk to mg1806::Mg1806CameraManager::Impl::Update()"}
+{"a":"71000047b4","t":"plate","c":"bex::Fiber::Destroy()"}
+{"a":"71000047e0","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::~Mg1806ObjectBaseImpl()"}
+{"a":"71000047e4","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::~Mg1806ObjectBaseImpl()"}
+{"a":"71000047e8","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::Setup()"}
+{"a":"71000047ec","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartPlayer()"}
+{"a":"71000047f0","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartCapture()"}
+{"a":"71000047f4","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::StartResult()"}
+{"a":"71000047f8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.3·7.3\n역할: Mg1806CameraManager::Impl::SetupEnv — Params.envMode(0x4C) 읽음\n[데이터] 환경 모델(CreateModel::d 표): env/envResult → env/env_ed, post/postResult → post/post_ed, dirlight/dirlightResult → dir_light/dir_light_ed\n---\nmg1806::Mg1806CameraManager::Impl::SetupEnv()"}
+{"a":"71000049b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): game·좌우/8명 zoom 9/10/19f·result/captureNormal/Long.\n주의: 문서 §7.2 는 mg1806 0x71000049b0/0x71000110d0/0x71000042b0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.3\n역할: Mg1806CameraManager::Impl::SetupCamera — 카메라 엔티티와 모션 준비\n생성: 엔티티 camera 에 ComMatter(1) → ComCamera, 기본 GraphicsLayer 카메라\n모션: 이름 → mg/mg1806/env/mg1806_<파일>.fsnb, 시작 모션 game\n모션 표: game=cam00(정적), zoomIn/zoomOut=cam01/cam02(10f), zoomIn8/zoomOut8=cam03/cam04(19f), zoomInLeft/zoomOutLeft=cam05/cam06(9f), zoomInRight/zoomOutRight=cam07/cam08(9f), result=cam10, captureNormal=cam10_cap, captureLong=cam10_long\n[데이터] fsnb 값: game (0,8.079,24.523)→(0,1.024,-2.607) fovy 20°, zoom8 계열 fovy 20°↔15.19°, captureLong fovy 15°\n---\nmg1806::Mg1806CameraManager::Impl::SetupCamera()"}
+{"a":"7100004eb0","t":"plate","c":"nn::bezel::WeakHandle<ca::ui::CaComUiBase> nn::bezel::Entity::AddComponent<ca::ui::CaComUiBase, char const (&) [21], char const (&) [22], (void*)0>(char const (&) [21], char const (&) [22])"}
+{"a":"71000050a0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
+{"a":"710000527c","t":"plate","c":"mg1806::Mg1806ANIM::GetFile(char const*) const"}
+{"a":"7100005520","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::PlayCamera(char const*, bool)"}
+{"a":"71000056d8","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType&&)"}
+{"a":"710000585c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000587c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100005888","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000589c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000058a4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000058ac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000058c0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::GetBaseTypeDesc()"}
+{"a":"71000058c8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000058d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000058d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100005980","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000598c","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtr()"}
+{"a":"7100005990","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100005994","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000059a8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::GetBaseTypeDesc()"}
+{"a":"71000059b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000059b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000059c0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000059c8","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
+{"a":"7100005b60","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::insert(unsigned long, char const*, unsigned long)"}
+{"a":"7100005e00","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100005e20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100005e2c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100005e40","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100005e48","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100005e50","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiBase, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100005e70","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiBase, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100005e7c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiBase, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100005e90","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiBase, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100005e98","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiBase, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100005ea0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetupPractice()"}
+{"a":"7100005f60","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::LayoutOff()"}
+{"a":"7100006070","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetDofEnable(bool)"}
+{"a":"7100006148","t":"plate","c":"bex::gfx::GraphicsLayerExtension* nn::bezel::GraphicsLayer::TryGetExtension<bex::gfx::GraphicsLayerExtension>()"}
+{"a":"7100006268","t":"plate","c":"nn::bezel::detail::ScopedTypeId<nn::bezel::IGraphicsLayerExtension, 32>::~ScopedTypeId()"}
+{"a":"710000627c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IGraphicsLayerExtension, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100006290","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IGraphicsLayerExtension, false>::GetBaseTypeDesc()"}
+{"a":"7100006298","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IGraphicsLayerExtension, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000062a0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IGraphicsLayerExtension, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000062a8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IGraphicsLayerExtension, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000062b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::GraphicsLayerExtension, false, nn::bezel::IGraphicsLayerExtension>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000062d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::GraphicsLayerExtension, false, nn::bezel::IGraphicsLayerExtension>::GetBaseTypeDesc()"}
+{"a":"71000062dc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::GraphicsLayerExtension, false, nn::bezel::IGraphicsLayerExtension>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000062f0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::GraphicsLayerExtension, false, nn::bezel::IGraphicsLayerExtension>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000062f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::GraphicsLayerExtension, false, nn::bezel::IGraphicsLayerExtension>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100006300","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100006320","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000632c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100006340","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100006348","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100006350","t":"plate","c":"mg1806::CommonEffect::CommonEffect()"}
+{"a":"71000063fc","t":"plate","c":"mg1806::CommonEffect::~CommonEffect()"}
+{"a":"710000645c","t":"plate","c":"mg1806::CommonEffect::~CommonEffect()"}
+{"a":"7100006480","t":"plate","c":"mg1806::CommonEffect::Create(char const*)"}
+{"a":"7100006500","t":"plate","c":"mg1806::CommonEffect::SetHookAttr(int)"}
+{"a":"710000650c","t":"plate","c":"mg1806::CommonEffect::Start(nn::bezel::WeakHandle<nn::bezel::Entity>, char const*)"}
+{"a":"71000065c4","t":"plate","c":"mg1806::CommonEffect::Start()"}
+{"a":"7100006650","t":"plate","c":"mg1806::CommonEffect::Start(nn::util::Vector3f const&)"}
+{"a":"71000066fc","t":"plate","c":"mg1806::CommonEffect::Start(nn::util::Vector3f const&, nn::util::Vector3f const&, float)"}
+{"a":"71000067e0","t":"plate","c":"mg1806::CommonEffect::LockHook(nn::bezel::WeakHandle<nn::bezel::Entity>, char const*)"}
+{"a":"7100006830","t":"plate","c":"mg1806::CommonEffect::Stop(bool)"}
+{"a":"7100006838","t":"plate","c":"mg1806::CommonEffect::Impl::Stop(bool)"}
+{"a":"7100006930","t":"plate","c":"mg1806::CommonEffect::End()"}
+{"a":"7100006944","t":"plate","c":"mg1806::CommonEffect::SetPosition(nn::util::Vector3f const&)"}
+{"a":"710000697c","t":"plate","c":"mg1806::CommonEffect::SetScale(nn::util::Vector3f const&)"}
+{"a":"71000069b4","t":"plate","c":"mg1806::CommonEffect::SetVisible(bool)"}
+{"a":"71000069f8","t":"plate","c":"mg1806::CommonEffect::IsStart() const"}
+{"a":"7100006a04","t":"plate","c":"mg1806::CommonEffect::ForceCalculate(float)"}
+{"a":"7100006a3c","t":"plate","c":"mg1806::CommonEffect::Update()"}
+{"a":"7100006b04","t":"plate","c":"mg1806::CommonEffect::Impl::~Impl()"}
+{"a":"7100006b38","t":"plate","c":"mg1806::CommonEffect::Impl::~Impl()"}
+{"a":"7100006b6c","t":"plate","c":"mg1806::CommonEffect::Impl::Remove()"}
+{"a":"7100006c20","t":"plate","c":"mg1806::CommonEffect::Impl::Hook(nn::bezel::WeakHandle<nn::bezel::Entity>, char const*)"}
+{"a":"7100006df4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100006e14","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100006e20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100006e34","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100006e3c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100006e44","t":"plate","c":"mg1806::Mg1806InfoManager::Mg1806InfoManager()"}
+{"a":"7100006ef8","t":"plate","c":"mg1806::Mg1806InfoManager::~Mg1806InfoManager()"}
+{"a":"7100006f3c","t":"plate","c":"mg1806::Mg1806InfoManager::~Mg1806InfoManager()"}
+{"a":"7100006f60","t":"plate","c":"mg1806::Mg1806InfoManager::Setup()"}
+{"a":"7100006f68","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.4·5.2\n역할: Mg1806InfoManager::SetBeatCount(r) — 마지막 Entry 줄을 Impl+0x10 에\n---\nmg1806::Mg1806InfoManager::SetBeatCount(int)"}
+{"a":"7100006f74","t":"plate","c":"mg1806::Mg1806InfoManager::GetBeatCount() const"}
+{"a":"7100006f80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.2·4.4\n역할: Mg1806InfoManager::GetMaxScore — Impl+0x18 maxScore. RmSyncedSetupGame 이 SetStarTotalScore 에 씀\n---\nmg1806::Mg1806InfoManager::GetMaxScore() const"}
+{"a":"7100006f8c","t":"plate","c":"mg1806::Mg1806InfoManager::GetScore() const"}
+{"a":"7100006f98","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.4·6.4·6.6\n역할: Mg1806InfoManager::AddScore(pts) — Impl+0x1C score += pts (카레 색 전용, RmGameWork 점수와 따로)\n---\nmg1806::Mg1806InfoManager::AddScore(int)"}
+{"a":"7100006fac","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2·7.4\n역할: Mg1806InfoManager::GetScoreRate — 카레 색용 득점률\n식: score(Impl+0x1C) / maxScore(Impl+0x18), f32\n호출자: StageManager::Impl::SetColorCurry(7.4)\n---\nmg1806::Mg1806InfoManager::GetScoreRate() const"}
+{"a":"7100006fc4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4·4.4\n역할: Mg1806InfoManager::SetMainFrame — Impl+0x14 MainFrame. Scene::OnRmGameMain 이 Scene+0x378 로 부름\n---\nmg1806::Mg1806InfoManager::SetMainFrame(int)"}
+{"a":"7100006fd0","t":"plate","c":"mg1806::Mg1806InfoManager::GetMainFrame() const"}
+{"a":"7100006fdc","t":"plate","c":"mg1806::Mg1806InfoManager::GetComMode() const"}
+{"a":"7100006ff0","t":"plate","c":"mg1806::Mg1806InfoManager::GetMainBeatType() const"}
+{"a":"710000700c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2\n역할: Mg1806InfoManager::GetBeatToSec(n) — 8분음표 n 개의 초\n식: main ca::rm::snd::GetBeatToSec(mainBeatType=1, n)\n---\nmg1806::Mg1806InfoManager::GetBeatToSec(int) const"}
+{"a":"710000703c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2·6.3\n역할: Mg1806InfoManager::GetBeatToFrame(n)\n식: (int)(GetBeatToSec(n)·60) — BPM 120 에서 n=1 → 15\n사용: PLAYER::Ready 판정 창 t0 = GetBeatToFrame(1), ReadyChart 줌 카운트다운\n---\nmg1806::Mg1806InfoManager::GetBeatToFrame(int) const"}
+{"a":"7100007068","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2\n역할: Mg1806InfoManager::CalcMotionSpeed(len, n) — 모션 길이 len 을 8분 n 개에 맞추는 속도\n식: (len/60) / GetBeatToSec(n)\n---\nmg1806::Mg1806InfoManager::CalcMotionSpeed(int, float) const"}
+{"a":"71000070b8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2\n역할: Mg1806InfoManager::GetAnimSpeed — 모든 캐릭터·무대 모션 속도\n식: BPM / 120 (BPM = RmGameWork::GetBpm(), 기본 120, 리듬 쿠킹 롱 후반 180)\n---\nmg1806::Mg1806InfoManager::GetAnimSpeed() const"}
+{"a":"71000070ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2\n역할: Mg1806InfoManager::GetBeatRatio(n) — 8분 n 개 주기 안 위상\n식: fmod(time, sec(n)) / sec(n), time = InfoManager.Impl+0x40(경과 시간), sec = GetBeatToSec\n---\nmg1806::Mg1806InfoManager::GetBeatRatio(int) const"}
+{"a":"7100007140","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.4·5.2\n역할: Mg1806InfoManager::GetChartInfo(r) — vector<CHART_INFO> 에서 줄 r 의 첫 항목\n출력: 없으면 row = -1 인 항목\n호출자: Sequence::Impl::OnRmRecieveBeatEntry(줄 r), ReadyChart(줄 r+1)\n---\nmg1806::Mg1806InfoManager::GetChartInfo(int) const"}
+{"a":"71000071f4","t":"plate","c":"mg1806::SyncWork::Start(float, int)"}
+{"a":"71000072f0","t":"plate","c":"mg1806::SyncWork::GetFrame()"}
+{"a":"71000073f0","t":"plate","c":"mg1806::SyncWork::GetFrameBG() const"}
+{"a":"7100007470","t":"plate","c":"mg1806::Mg1806InfoManager::Impl::~Impl()"}
+{"a":"71000074f0","t":"plate","c":"mg1806::Mg1806InfoManager::Impl::~Impl()"}
+{"a":"7100007580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.2\n역할: Mg1806InfoManager::Impl::Update — 매 프레임 경과 시간 누적\n식: Impl+0x40 time += dt (생성부터 누적)\n---\nmg1806::Mg1806InfoManager::Impl::Update()"}
+{"a":"71000075b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.4·5.1\n역할: Mg1806InfoManager::Impl::SetupChartInfo — 채보를 CHART_INFO 벡터(Impl+0x48)로 해석\n채보 열: 1P = 단계 코드, 2P = 포즈 코드, 3P = 참가자 문자열, 4P = 사용자 정의 카운트(*), OBJ1~4 미사용\n줄마다: 임시 CHART_INFO 를 새로 초기화(row=-1, phase=-1, action=8 …)\nW_PHASE: temp 비움, isTop=1, row=i, phase=2, main 에 추가, inPhase=false\nM_PHASE: temp 비움(이전 M 항목 버림), CheckTop → TOP 표 (a,b,c) → isTop=1, topType, phase=0, len=a, step=b, count=c, ring=[0,b,2b,…,(c-1)b,a]. row=i, 3P 열을 참가자로 기억. counter=0, step=b\n[미확정] 4P 열에 '*' 가 있으면 '*' 줄 위치로 ring 을 다시 만든다(세부 미기록, 실채보 없음)\nP_PHASE: temp 항목 중 action[p] <= 4 인 레인 p 를 temp[0].join[p]=1 → main 에 M 항목 원본 추가 → 같은 상대 줄(row + (i - temp[0].row)), phase=1 로 복사한 P 항목 추가. inPhase=false\n그 밖 줄: inPhase 가 아니면 무시. counter==0(카운트 경계 줄)이면 SetAction(ci, 2P 열, 참가자), row=i, temp 에 추가. counter = (counter+1 >= step) ? 0 : counter+1. inPhase=true\n끝: 마지막 (isTop && phase==1) 항목의 isLast=1, CalcMaxCount(), SetPersonalPlayNum()\n결과: 카운트 경계 줄마다 항목 하나(포즈 없어도 action 전부 8). P 단계 길이는 1P 열 P_PHASE 위치가 정함\n---\nmg1806::Mg1806InfoManager::Impl::SetupChartInfo()"}
+{"a":"7100007a50","t":"pre","c":"2P 포즈는 카운트 경계 줄(M 줄에서 b 줄 간격)에서만 읽음. 경계 아닌 줄의 포즈는 버려짐"}
+{"a":"71000084a0","t":"plate","c":"std::__wrap_iter<mg1806::CHART_INFO*> std::vector<mg1806::CHART_INFO, bex::HeapModule::Allocator_vector<mg1806::CHART_INFO> >::insert<std::__wrap_iter<mg1806::CHART_INFO*>, 0>(std::__wrap_iter<mg1806::CHART_INFO const*>, std::__wrap_iter<mg1806::CHART_INFO*>, std::__wrap_iter<mg1806::CHART_INFO*>)"}
+{"a":"7100008ab4","t":"plate","c":"mg1806::CHART_INFO::~CHART_INFO()"}
+{"a":"7100008ac0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.1\n역할: CHART_INFO::SetAction(ci, pose, players) — 레인별 action[4](+0x4C) 설정\n분기: CheckAction(pose) == 8 이면 4칸 모두 8\n그 밖: players 문자열에 \"1\"·\"2\"·\"3\"·\"4\" 가 들어 있는 레인만 그 포즈, 나머지 8\n주의: 디컴파일은 레인 2·3 조건이 뒤집혀 보이지만 디스어셈블리 기준 모두 '포함' 검사\n---\nmg1806::CHART_INFO::SetAction(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)"}
+{"a":"7100008e70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.1\n역할: Mg1806InfoManager::Impl::CalcMaxCount — 최대 점수·포즈 수\n처리: 항목을 앞에서부터 보며 isTop 항목의 phase 를 현재 단계로 기억\n가산: 현재 단계가 P 인 항목의 레인마다 action != 8 이면 maxScore(+0x18) += 2, 레인 최대(+0x20..) += 2, 포즈 수(+0x30..) += 1\n참고: SWING(7)도 센다(실채보 없음). chart00 136, chart01 160, chart00s/06s 56\n---\nmg1806::Mg1806InfoManager::Impl::CalcMaxCount()"}
+{"a":"7100008f80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.1\n역할: Mg1806InfoManager::Impl::SetPersonalPlayNum\n처리: GetPlayerList 순서 p 의 PlayerID 로 RmUiStatusMan::SetPersonalPlayNum(id, 포즈 수[p](Impl+0x30+4p))\n---\nmg1806::Mg1806InfoManager::Impl::SetPersonalPlayNum()"}
+{"a":"7100009100","t":"plate","c":"mg1806::CHART_INFO::~CHART_INFO()"}
+{"a":"7100009110","t":"plate","c":"void std::vector<mg1806::CHART_INFO, bex::HeapModule::Allocator_vector<mg1806::CHART_INFO> >::__push_back_slow_path<mg1806::CHART_INFO const&>(mg1806::CHART_INFO const&)"}
+{"a":"7100009300","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.1\n역할: CHART_INFO::CheckTop — 1P 열 단계 코드 접미사 → TOP_TYPE\n값: 0 _S, 1 _L, 2 _SH, 3 _LH, 4 _SL, 5 _LL, 없으면 -1\n검사 순서: _SH, _LH, _SL, _LL, _S, _L (find 부분 문자열). M_PHASE_SL 은 _SL 에 먼저 걸림\n연결: TOP 표 CHART_INFO::SetTop::DATA @0x710003ba80\n---\nmg1806::CHART_INFO::CheckTop(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&) const"}
+{"a":"71000095e8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.1\n역할: CHART_INFO::CheckAction — 2P 열 포즈 문자열 → ACTION_TYPE\n표: @0x7100042930 — POSE_00~POSE_04 → 0~4, SWING → 7, 그 밖·빈칸 → 8\n---\nmg1806::CHART_INFO::CheckAction(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&) const"}
+{"a":"7100009760","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1\n역할: Mg1806ObjectBaseImpl::SetState(n) — 상태 번호를 가상 함수로 연결\n표: 점프표 @0x710003bac8 — 0 Setup, 1 PostSetup, 2 Initialize, 3 StartOpeningDemo, 4 SkipOpeningDemo, 5 StartGame, 6 StartTelop, 7 StartPlayer, 8 EndPlayer, 9 EndRound, 10 StartFinish, 11 StartCapture, 12 StartResult\n---\nmg1806::Mg1806ObjectBaseImpl::SetState(mg1806::Mg1806ObjectBase::STATE)"}
+{"a":"7100009788","t":"plate","c":"mg1806::Mg1806PlayerManager::Mg1806PlayerManager()"}
+{"a":"7100009810","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Impl()"}
+{"a":"71000098dc","t":"plate","c":"mg1806::Mg1806PlayerManager::~Mg1806PlayerManager()"}
+{"a":"7100009940","t":"plate","c":"mg1806::Mg1806PlayerManager::~Mg1806PlayerManager()"}
+{"a":"7100009964","t":"plate","c":"mg1806::Mg1806PlayerManager::SetState(mg1806::Mg1806ObjectBase::STATE)"}
+{"a":"710000996c","t":"plate","c":"mg1806::Mg1806PlayerManager::GetPlayerID(int) const"}
+{"a":"7100009984","t":"plate","c":"mg1806::Mg1806PlayerManager::StartIdle()"}
+{"a":"710000998c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::StartIdle()"}
+{"a":"7100009b24","t":"plate","c":"mg1806::Mg1806PlayerManager::Practice(bool)"}
+{"a":"7100009b2c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Practice(bool)"}
+{"a":"7100009d08","t":"plate","c":"mg1806::Mg1806PlayerManager::PracticePlayer(bool)"}
+{"a":"7100009d28","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2\n역할: Mg1806PlayerManager::ActionMentor(a) — 멘토 모션 + 성공 연출(a=6 은 idle 준비)\n---\nmg1806::Mg1806PlayerManager::ActionMentor(mg1806::ACTION_TYPE)"}
+{"a":"7100009d58","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2\n역할: Mg1806PlayerManager::Ready(ci) — 각 PLAYER.Ready(ci.action[PLAYER.lane])\n---\nmg1806::Mg1806PlayerManager::Ready(mg1806::CHART_INFO)"}
+{"a":"7100009df0","t":"plate","c":"mg1806::Mg1806PlayerManager::Active(mg1806::CHART_INFO, bool)"}
+{"a":"7100009e54","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2·5.4\n역할: Mg1806PlayerManager::Impl::Active(ci, on)\non 참(P 단계 시작 한 줄 전): ci.join 레인만 active(+0x29)=1, 그 PLAYER+0x60(쿨다운) 0, 판정 카운터 리셋\non 거짓(M 단계 시작): 4명 active=0, idle\n---\nmg1806::Mg1806PlayerManager::Impl::Active(mg1806::CHART_INFO, bool)"}
+{"a":"7100009fdc","t":"plate","c":"mg1806::Mg1806PlayerManager::Idle(bool)"}
+{"a":"710000a028","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2·5.4\n역할: Mg1806PlayerManager::Last — 마지막 P 단계 끝\n처리: 5명 active=0, action(+0x4C)=8, idle\n---\nmg1806::Mg1806PlayerManager::Last()"}
+{"a":"710000a094","t":"plate","c":"mg1806::Mg1806PlayerManager::SpotLightSE(bool)"}
+{"a":"710000a09c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::SpotLightSE(bool)"}
+{"a":"710000a1e0","t":"plate","c":"mg1806::Mg1806PlayerManager::GetOffsetZ(bq::PlayerCharacterID) const"}
+{"a":"710000a1f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.5\n역할: Mg1806PlayerManager::Impl::PLAYER::PLAYER — PLAYER(0x2B0 B) 생성자, ca::mg::MGActorPlayer 파생\n쓰는 필드: +0x70 이펙트 배율 (1,1,1), +0x110 practiceLocked = 1\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::PLAYER()"}
+{"a":"710000a38c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::~Impl()"}
+{"a":"710000a414","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::~Impl()"}
+{"a":"710000a4a4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.5·5.4\n역할: Mg1806PlayerManager::Impl::Setup — 상태 0, PLAYER×5 생성\n처리: 플레이어 4명 PLAYER::CreateModel(+모션 AddAnim, 병 bottle00, 향신료 이펙트), 멘토 CreateModelChara(Scene+0x490) + pose00 이펙트 4개\n쓰는 필드: +0x28 exists=1, +0x2C playerId(0..3, 멘토 4), +0x30 characterId, +0x34 isCom = (PlayerType == 1), +0x38 lane(1P..4P 순서, 멘토 4)\n배치: PLAYER i = PlayerManager::Impl + 0x20 + i·0x2B0 (i=0..3 플레이어, 4 멘토)\n---\nmg1806::Mg1806PlayerManager::Impl::Setup()"}
+{"a":"710000a790","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: Mg1806PlayerManager::Impl::PostSetup — 상태 1\n처리: 무대 훅 attach_1p~4p, 멘토 attach_5p(크기 = 훅 크기, PlayerManager::Impl+0xD20/+0xD28 에 복사)\n---\nmg1806::Mg1806PlayerManager::Impl::PostSetup()"}
+{"a":"710000a8d4","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Initialize()"}
+{"a":"710000a8d8","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::StartOpeningDemo()"}
+{"a":"710000a8dc","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::SkipOpeningDemo()"}
+{"a":"710000a8e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: Mg1806PlayerManager::Impl::StartTelop — 상태 6(TopStart)\n처리: 4명 idle, Practice(false) → 연습 끝\n---\nmg1806::Mg1806PlayerManager::Impl::StartTelop()"}
+{"a":"710000a924","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::StartGame()"}
+{"a":"710000a928","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: Mg1806PlayerManager::Impl::StartPlayer — 상태 7(PracticeStart)\n처리: 5명 practice(+0x100)=1, practiceLocked(+0x110)=1, 연습 카운터 0. 멘토는 active=0\n---\nmg1806::Mg1806PlayerManager::Impl::StartPlayer()"}
+{"a":"710000a9ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: Mg1806PlayerManager::Impl::EndPlayer — 상태 8(ChartEnd): 4명 active=0\n---\nmg1806::Mg1806PlayerManager::Impl::EndPlayer()"}
+{"a":"710000aa00","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::EndRound()"}
+{"a":"710000aa04","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::StartFinish()"}
+{"a":"710000aa08","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: Mg1806PlayerManager::Impl::StartCapture — 상태 11\n처리: 1회(PlayerManager::Impl+0xD90 플래그) 5명 PLAYER::Result()\n---\nmg1806::Mg1806PlayerManager::Impl::StartCapture()"}
+{"a":"710000aa64","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: Mg1806PlayerManager::Impl::StartResult — 상태 12\n처리: 1회(PlayerManager::Impl+0xD90 플래그) 5명 PLAYER::Result()\n---\nmg1806::Mg1806PlayerManager::Impl::StartResult()"}
+{"a":"710000aac0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/19_motion_input.md §6.3·10\n역할: Mg1806PlayerManager::Impl::Update. 0x710000af68–0x710000afd8 구간이 사람 휘두름 입력([판독: 어셈블리], 직접 GetAcc).\n분기: 4성분 m>=2.5 && prev<2.5; cooldown .125초; prev 는 timer 종료 때만 갱신; ready=0 이면 cooldown 만.\n기대값: 2.5 상승은 통과.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.1·6.2·6.4·6.5·6.8\n역할: Mg1806PlayerManager::Impl::Update — PLAYER 0~4 매 프레임: 판정 트래커 tick → 입력/CPU 판정 → 연습 → 향신료 이펙트\n6.2 트래커 tick(열린 트래커마다): counter++; counter==fastStart → comPress=(comCheck==0); ==t0 → (comCheck==1); ==slowStart → (comCheck==2); counter>=end → open=0, comPress=(comCheck==-1), NONE. counter<fastStart NONE, <justStart FAST(0), <slowStart JUST(1), 그 밖 SLOW(2). 두 트래커 결과는 JUST > FAST > SLOW > NONE 우선\n6.5 CPU 경로: active && action != 8 && (트래커A.comPress || 트래커B.comPress) 이면 사람과 같은 판정(r==NONE 이면 미스 모션). 쿨다운·ready 는 보지 않음. comPlan(+0x54)은 읽지 않음\n6.1 입력(사람, 연습 아님, PlayerID != 4, active): DownTimer(cooldown +0x60) 참일 때 GetAcc(playerId) (x,y,z,w) 크기 m = sqrt(x²+y²+z²+w²); prev=prevAcc(+0x5C); prevAcc=m; m >= Params.acc(2.5) && prev < acc 이면 cooldown = 0.125(0x3E000000), ready(+0x2A) 이면 휘두름 판정\n6.1: prevAcc 는 쿨다운이 끝난 프레임에만 갱신. 버튼 입력 경로 없음(isButtonPlay 미사용)\n6.4 휘두름 판정: action==8 또는 r==NONE → 연습 아니면 motionAction=5, missI 재생, ready 유지하고 끝. 그 밖: motionAction=action; action>=6 idle, ==5 miss, 0~4 → PlayerSucessEffect(r), 포즈 모션 pose0NI(rhy_spice_pose0Nb, 블렌드 shiftTime, 속도 BPM/120), spiceTimer=0, spiceMotion=이름, spiceCheck=r, spiceArmed=active\n6.4 이어서: 텔롭 {FAST:0, JUST:2, SLOW:1} → ShowTimingTelop(playerId, telop, pos+(0,-0.35,0), 0); Play2D(JUST ? SQ_SE_MG1806_POSE_JUST : SQ_SE_MG1806_POSE_SUCCESS, pan=PAN[lane]); pts = JUST 2 / 그 밖 1 → RmStarEffectMan::Start(pos, GetBeatToSec(0,1), playerId, pts), InfoManager::AddScore(pts); 진동 VB_MG1806_JUST / VB_MG1806_SUCCESS; ready=0\n6.4 향신료 이펙트(끝 부분): spiceMotion 이 있으면 spiceTimer += dt, >= shiftTime(0.05 s)이면 spiceArmed 일 때 이펙트 켜고 이름 지움. JUST: SPICE_EFFECT+0x00 spice_stay00*(attach_ef) + +0x80 spice_stay_wave00*(attach_ef01_Np). FAST·SLOW: +0x40 spice_stay01* + +0xC0 spice_stay_wave01. 계열마다 4슬롯 0→1→2→3→0(PLAYER+0x230/+0x234)\n6.8 연습(사람만, practiceLocked=0): 6.1 과 같은 상승 에지. practiceType 0 이면 포즈 01 모션을 8분 동안 보여 주고 idle(상태 +0x114 0↔1, 타이머 GetBeatToSec(1)). 판정·점수 없음. CPU(isCom)는 연습 경로 건너뜀\n6.8 멘토: 연습 중 GetBeatState(1)(+0x108 lastBeat8)가 바뀔 때마다 PracticeMentor(k), k(+0x104)++\nidle: +0x118 idleFrame += BPM/120 매 프레임\n[추정] 3.5 파이버 순서(Player 가 장면 흐름보다 먼저)는 원본 실행 미확인 — 판정 창 프레임 계산이 여기에 기댐\n---\nmg1806::Mg1806PlayerManager::Impl::Update()"}
+{"a":"710000add4","t":"eol","c":"6.2 판정 트래커 tick 구간(aac0~add4) 끝"}
+{"a":"710000ae50","t":"pre","c":"6.5 CPU 경로 시작: active && action!=8 && (A.comPress||B.comPress) → 판정 (쿨다운·ready 안 봄)"}
+{"a":"710000ae78","t":"eol","c":"6.5 CPU 경로 끝"}
+{"a":"710000af68","t":"pre","c":"6.1 입력: DownTimer(cooldown) → |acc| 상승 에지(>= acc && prev < acc) → cooldown=0.125"}
+{"a":"710000afd8","t":"eol","c":"cbz ready: ready==0 이면 쿨다운만 걸리고 판정·모션 없음"}
+{"a":"710000afdc","t":"pre","c":"6.4 휘두름 판정 시작(~0x710000bc1c)"}
+{"a":"710000bc1c","t":"eol","c":"6.4 휘두름 판정 끝"}
+{"a":"710000bd20","t":"pre","c":"6.4 향신료 이펙트: spiceTimer += dt, >= shiftTime 이면 spiceArmed 일 때 이펙트 켬"}
+{"a":"710000c964","t":"plate","c":"non-virtual thunk to mg1806::Mg1806PlayerManager::Impl::~Impl()"}
+{"a":"710000c9e0","t":"plate","c":"non-virtual thunk to mg1806::Mg1806PlayerManager::Impl::~Impl()"}
+{"a":"710000c9e8","t":"plate","c":"non-virtual thunk to mg1806::Mg1806PlayerManager::Impl::Update()"}
+{"a":"710000c9f0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::~PLAYER()"}
+{"a":"710000ca78","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::~SPICE_EFFECT()"}
+{"a":"710000cb1c","t":"plate","c":"std::array<mg1806::CommonEffect, 4ul>::~array()"}
+{"a":"710000cb54","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::~PLAYER()"}
+{"a":"710000cb78","t":"plate","c":"ca::mg::MGActorPlayer::getInstanceTypeinfo() const"}
+{"a":"710000cb7c","t":"plate","c":"ca::mg::MGModel::SetScale(float)"}
+{"a":"710000cbb8","t":"plate","c":"ca::mg::MGModel::OnReceiveMessage(nn::bezel::Message const&)"}
+{"a":"710000cbd0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::SPICE_EFFECT()"}
+{"a":"710000cd8c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::CreateModel(bex::PlayerID)"}
+{"a":"710000ce60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.5·7.2\n역할: PLAYER::CreateBottle — 병 모델 mg1806_bottle00 (+0x40), 훅 attach_R_hand(멘토 attach_L_hand), 향신료 이펙트 SPICE_EFFECT(+0x130) 준비\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::CreateBottle()"}
+{"a":"710000cf90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.1\n역할: PLAYER::AddAnim — 생성 때 모션 키 표 PLAYER::AddAnim::anim 채움\n표: idle→idle00, miss→miss00a, missI→miss00b, pose00I→pose00b … pose04I→pose04b. 실제 파일 \"rhy_spice_\" + 값\n[데이터] 모션 길이: pose0Nb 30f 루프, miss00b 50f 루프, idle00 30f 루프\n참고: miss00a·pose0Na·shake00~04 는 아카이브에 있지만 mg1806 코드가 재생하지 않음\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::AddAnim(bool)"}
+{"a":"710000d408","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.6\n역할: PLAYER::SPICE_EFFECT::Create — 향신료 이펙트 생성\n[데이터] 파일 표 file00/01 = 레인별 [spice_stay00_1p, spice_stay00, spice_stay00, spice_stay00_4p, spice_stay00_5p] (01 도 같은 꼴)\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::Create(bex::PlayerID, int)"}
+{"a":"710000d5d4","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::CreateModelChara(bq::PlayerCharacterID)"}
+{"a":"710000d6e0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::StageHook(char const*, bool)"}
+{"a":"710000d814","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.5\n역할: PLAYER::Idle — idle 모션, 프레임 = fmod(idleFrame(+0x118), 길이)\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::Idle()"}
+{"a":"710000d91c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.4\n역할: PLAYER::Result — 결과 훅 attach_Np_ed 로 옮기고 병 숨김, 향신료 이펙트 정리, 모션 기본 재생\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::Result()"}
+{"a":"710000d9c8","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::AllClear()"}
+{"a":"710000da5c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Anim(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)"}
+{"a":"710000db40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.8\n역할: PLAYER::PracticeMentor(k) — 연습 중 멘토 시범\n표: MENTOR_POSE @0x710003bb88 = [8,8,1,8,4,8,6]. practiceType(Params+0x50) 0 이면 k=4 의 4 를 8 로 바꿈\nk 0,1,3,4,5: 없음(practiceType 0 기준)\nk 2: 카메라 SetTurn(0), 데모 스포트 켜기, 멘토 위치 SQ_SE_MG1806_LIGHT, SQ_SE_MG1806_WHISTLE, 멘토 Anim(JUST, 1) = 포즈 01 + 성공 연출\nk 6: 멘토 연습 끝, 데모 스포트 끄기, 카메라 SetTurn(1), 플레이어 연습 스포트 켜기, 4명 practiceLocked(+0x110)=0, 4명 위치 SQ_SE_MG1806_LIGHT\n[미확정] practiceType != 0 일 때 k=4(포즈 4)의 동작은 문서에 없음\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::PracticeMentor()"}
+{"a":"710000dd98","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Swing(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)"}
+{"a":"710000de3c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.1·6.4·6.6\n역할: PLAYER::TimingTelop — 판정 텔롭·점수 처리(6.4 의사코드의 텔롭~점수 부분)\n표: 텔롭 변환 @0x710003bbd4 = [0,2,1] (CHECK FAST→0, JUST→2, SLOW→1, RmUiTelopMan::TIMING_TYPE)\n호출: ShowTimingTelop(playerId, telop, pos + (0,-0.35,0) @0x710003bb40, 0)\n점수: JUST 2, FAST·SLOW 1 → RmStarEffectMan::Start(…, points)\n진동: 표 @0x710003bbe0 = [1,0,1] → PLAYER::Telop::vb = [VB_MG1806_JUST, VB_MG1806_SUCCESS]\n[미확정] 6.4 의사코드 중 어느 줄까지가 이 함수인지 문서가 나누지 않음\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::TimingTelop(ca::rm::RmUiTelopMan::TIMING_TYPE)"}
+{"a":"710000df4c","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SucessEffect(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)"}
+{"a":"710000e028","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::AnimModeSkipAndSpice(mg1806::CHECK_TYPE, char const*)"}
+{"a":"710000e0d4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.4\n역할: PLAYER::PlayerSucessEffect(r) — 판정 성공 공용 이펙트\n처리: ShowCommonEffect(r==JUST ? 0 : 1, pos + (0,1,0)) — JUST → mg1800_success01, FAST·SLOW → mg1800_success00\n분기: JUST 면 PlayExcellentSe(-1, true) (SQ_SE_RC_JUST → 프리셋 mg1806 이 SQ_SE_MG1806_JUST_SOUND 로 치환)\n읽는 필드: +0x70 이펙트 배율\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::PlayerSucessEffect(mg1806::CHECK_TYPE)"}
+{"a":"710000e180","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::__assign_external(char const*, unsigned long)"}
+{"a":"710000e2e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/19_motion_input.md §6.3\n역할: PLAYER::Ready([판독: 어셈블리]).\n동작: 기본 JUST·sync 0; mode 4 이상에서 선택 난수. comPlan 과 실제 tracker.comCheck 는 구분.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.5·6.3·6.5\n역할: PLAYER::Ready(action) — 판정할 줄 R 의 한 줄 전(NextEntry) 판정 창 트래커 열기 + CPU 계획\n쓰는 필드: +0x2A ready=1, +0x4C action=인자, 트래커(+0x260 / +0x284, +0x2A8 로 교대) open=1, counter=0\n식: t0 = GetBeatToFrame(1)(BPM120 15), fastStart = t0-(hitWide+justFront), justStart = fastStart+hitWide, slowStart = justStart+justWide, end = slowStart+hitWide (Params 기본 hitWide 4, justFront 4, justWide 10 → 7/11/21/25)\nCPU comPlan(+0x54, 읽는 곳 없음): comMode 0 → 1, 1 → -1, 2 → 0, 3 → 2, 4·5 → HIT[SyncRandRange(0, mode==4 ? 3 : 4)] (HIT=[1,0,2,-1] @0x710003bba4), 6 → f=SyncRandF(): f<0.1 ? 0 : f<0.2 ? 2 : 1. 점프표 @0x710003bb70\nCPU comCheck(트래커+0x1C): comMode < 4 ? d[comMode] (d=[1,-1,0,2] @0x710003bbb4) : HIT[SyncRandRange(0, mode==4 ? 3 : 4)] (HIT=[1,0,2,-1] @0x710003bbc4)\n결과: 기본 comMode 0 → comCheck 1 → CPU 는 counter==t0 에 눌러 항상 JUST, 동기 난수 없음. comMode 4~6 은 Ready 마다 동기 난수 소비. comMode 6 도 실제로는 HIT 균등\n참고: 사람·CPU 모두, 참가하지 않는 레인(active=0)에도 불림(효과 없음). P 단계 모든 카운트 줄(action 8 포함)과 시작 줄에 불림\n---\nmg1806::Mg1806PlayerManager::Impl::PLAYER::Ready(mg1806::ACTION_TYPE)"}
+{"a":"710000e510","t":"plate","c":"mg1806::Scene::DummySymbolLink(bool)"}
+{"a":"710000e558","t":"plate","c":"mg1806::Scene::getStaticTypeinfo()"}
+{"a":"710000e634","t":"plate","c":"mg1806::Scene::getPropertyList()"}
+{"a":"710000e694","t":"plate","c":"mg1806::Scene::createInstance()"}
+{"a":"710000e6c0","t":"plate","c":"mg1806::Scene::deleteInstance(void*)"}
+{"a":"710000e6d4","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"710000e6d8","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"710000e6dc","t":"plate","c":"mg1806::Scene::Params::getStaticTypeinfo()"}
+{"a":"710000e7b8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.3\n역할: mg1806::Scene::Params::getPropertyList — 디버그 속성 목록\n속성: zoomMode(0x08) acc(0x10, 1.5~3.0) comMode(0x14) chartNo(0x18) isBPM(0x1C) BPM(0x20, 60~240) isMentorEffect(0x24) isDebugView/isChartView/isViewBeat/IsLog/isTimingView(0x25~0x29) shiftTime(0x2C, 0.02~0.2) justWide(0x30, 0~10) justFront(0x34, 0~10) hitWide(0x38, 0~10) debugStar(0x3C) isButtonPlay(0x40) isZoomType(0x41) zoomFrame(0x44, 6~15) lastZoomFrame(0x48, 6~15) envMode(0x4C) isOffsetZ(0x54) isPracticeZoom(0x55) mentor(0x58)\n[데이터] 열거형 comMode: 0 ALL Just, 1 ALL Miss, 2 ALL Fast, 3 ALL Slow, 4 ALL Hit, 5 Random(Just/NonJust/Miss), 6 Random(Just 80%) / mentor: Default·Waluigi·Luigi·Yoshi·Catherine·Wario\n참고: practiceType(0x50)은 GUI 없음. mgA_params.py 는 열거형 0x08·0x14·0x18·0x3C·0x4C·0x58, bool 0x27·0x41 을 빠뜨림\n---\nmg1806::Scene::Params::getPropertyList()"}
+{"a":"710000ece4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §4.3\n역할: mg1806::Scene::Params::createInstance — Params(0x60 B) 기본값\n기본값: zoomMode 1, acc 2.5, comMode 0, chartNo -1, isBPM 0, BPM 120, isMentorEffect 1, 디버그 bool 0, shiftTime 0.05, justWide 10, justFront 4, hitWide 4, debugStar -1, isButtonPlay 0, isZoomType 1, zoomFrame 6, lastZoomFrame 12, envMode 1, practiceType 0, isOffsetZ 1, isPracticeZoom 0, mentor -1\n---\nmg1806::Scene::Params::createInstance()"}
+{"a":"710000ed74","t":"plate","c":"mg1806::Scene::Params::deleteInstance(void*)"}
+{"a":"710000ed88","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.2\n역할: mg1806::Scene::Scene — 생성자\n처리: RmMgSceneBase 생성자(Fixed60 강제 등, mg1801 3.2 와 같음)\n쓰는 필드: Scene+0x490 = 5(WALUIGI)\n호출: SetMentorCharacterID → LoadScenePlayerCharacter(멘토 ID), LoadSceneNonPlayerCharacter(5)(HEYHO, npc002)\n---\nmg1806::Scene::Scene()"}
+{"a":"710000ee60","t":"plate","c":"nn::bezel::HandleSource<bq::SceneBase>::Reset(bq::SceneBase*)"}
+{"a":"710000efd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.3\n역할: mg1806::Scene::SetMentorCharacterID — 멘토 캐릭터 결정\n처리: 4명의 PlayerWork::GetCharacterID() 를 모음. 후보 WALUIGI(5) → LUIGI(1) → YOSHI(6) → CATHERINE(11) → WARIO(4) 순서로 4명 중 없는 첫 캐릭터를 Scene+0x490 에\n분기: 다섯 모두 있으면 초기값 5 유지\n참고: Params.mentor(+0x58)는 읽지 않음. 멘토 성공 SE 는 캐릭터와 상관없이 SQ_SE_MG1806_POSE_JUST_WALUIGE\n---\nmg1806::Scene::SetMentorCharacterID()"}
+{"a":"710000f490","t":"plate","c":"mg1806::Scene::~Scene()"}
+{"a":"710000f57c","t":"plate","c":"mg1806::Scene::~Scene()"}
+{"a":"710000f5a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.2\n역할: mg1806::Scene::RmSyncedSetupGame (vtable +0x2A0)\n호출: RmPracticeArrowMan::SetScale(0..3, 상수 벡터) — 연습 화살표 크기\n[미확정] SetScale 상수 벡터 값(GOT @0x7100044280 대상) 미판독\n호출: SetupRhythm → SetNextChartDataOffset(1) → Mg1806Sequence 생성·Setup → InfoManager::Setup(SetupChartInfo) → RmUiStatusMan::SetStarTotalScore(InfoManager::GetMaxScore())\n참고: BeforeOneBeat 를 부르지 않음 → 줄 0 = 단계 6 시작(TopStart, 마디 B+1 1박)\n---\nmg1806::Scene::RmSyncedSetupGame()"}
+{"a":"710000f614","t":"eol","c":"mov w1,#1 → SetNextChartDataOffset(1): 줄 r 배분 때 줄 r+1 을 OnRmRecieveBeatNextEntry 로 미리 줌"}
+{"a":"710000f690","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.2\n역할: mg1806::Scene::SetupRhythm\n호출 순서: SetGameBgmName(\"SQ_BGM_MG1806_A\"), SetMainBeatType(1)(한 줄 = 8분음표), SetMainBgmName(\"SM_BGM_BDCN001_TEST_JMP\")(저장만), SetGameBgmFinName(\"SQ_BGM_MG1806_A_MG_ENDING\"), GetChartJson → RmChartDataMan::ReadChartData, SetStatusType(2)\n---\nmg1806::Scene::SetupRhythm()"}
+{"a":"710000f780","t":"plate","c":"mg1806::Scene::RmCleanupGame()"}
+{"a":"710000f7a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::OnRmGameStartAfter (vtable +0x2B0) — 리듬 공용 훅\n처리: Sequence → 상태 5(StartGame) 방송(1회). 1 반환\n---\nmg1806::Scene::OnRmGameStartAfter()"}
+{"a":"710000f7a8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::TrigRmGameMainBgmPracticeStart (vtable +0x2C0) — 리듬 공용 훅\n처리: Sequence → 리믹스(모드 3): 줌 플래그 지움·LastZoom(false). 그 밖: IsInstActive() 거짓이면 상태 7(연습 시작, 1회)\n---\nmg1806::Scene::TrigRmGameMainBgmPracticeStart()"}
+{"a":"710000f7b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::TrigRmGameMainBgmTopStart (vtable +0x2D8) — 리듬 공용 훅\n처리: Sequence → 상태 6. 리믹스가 아니면 LastZoom(false)\n---\nmg1806::Scene::TrigRmGameMainBgmTopStart()"}
+{"a":"710000f7b8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::OnRmGameMain (vtable +0x2E0)\n처리: InfoManager::SetMainFrame(Scene+0x378) 후 0 반환\n결과: OnGameMain 꼬리 반환값은 늘 0, 끝은 단계 10 이 직접 1 을 돌려줘서 남(02_rhythm 7.1)\n---\nmg1806::Scene::OnRmGameMain()"}
+{"a":"710000f7c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::TrigRmGameResultCaptureSetting (vtable +0x318) — 리듬 공용 훅\n처리: Sequence → 상태 11(캡처)\n---\nmg1806::Scene::TrigRmGameResultCaptureSetting()"}
+{"a":"710000f7d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::TrigRmGameEndingSetting (vtable +0x300) — 리듬 공용 훅\n처리: Sequence → 상태 12(결과)\n---\nmg1806::Scene::TrigRmGameEndingSetting()"}
+{"a":"710000f7d8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::OnRmRecieveBeatEntry (vtable +0x328)\n처리: Sequence::Impl::OnRmRecieveBeatEntry(줄 r) 호출, Scene+0x478(Entry 횟수)++\n참고: Scene+0x478 은 늘리기만 하고 읽는 곳 없음(game_only 전수 검색)\n---\nmg1806::Scene::OnRmRecieveBeatEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"710000f808","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::OnRmRecieveBeatEntryLock (vtable +0x330) — 빈 함수(ret)\n---\nmg1806::Scene::OnRmRecieveBeatEntryLock(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"710000f80c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::OnRmRecieveBeatNextEntry (vtable +0x338) — 리듬 공용 훅\n처리: Sequence::Impl::ReadyChart 로 넘김(한 줄 앞서 준비)\n---\nmg1806::Scene::OnRmRecieveBeatNextEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"710000f814","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.4\n역할: mg1806::Scene::TrigRmGameMainChartEnd (vtable +0x2E8) — 리듬 공용 훅\n처리: Sequence → 상태 8\n---\nmg1806::Scene::TrigRmGameMainChartEnd()"}
+{"a":"710000f81c","t":"plate","c":"mg1806::Scene::GetZoomMode() const"}
+{"a":"710000f83c","t":"plate","c":"mg1806::Scene::IsZoomType() const"}
+{"a":"710000f85c","t":"plate","c":"mg1806::Scene::IsButtonPlay() const"}
+{"a":"710000f87c","t":"plate","c":"mg1806::Scene::GetAcc() const"}
+{"a":"710000f89c","t":"plate","c":"mg1806::Scene::GetComMode() const"}
+{"a":"710000f8bc","t":"plate","c":"mg1806::Scene::GetChartNo() const"}
+{"a":"710000f8dc","t":"plate","c":"mg1806::Scene::IsBPM() const"}
+{"a":"710000f8fc","t":"plate","c":"mg1806::Scene::GetBPM() const"}
+{"a":"710000f91c","t":"plate","c":"mg1806::Scene::GetJustWide() const"}
+{"a":"710000f93c","t":"plate","c":"mg1806::Scene::GetJustFrontFrame() const"}
+{"a":"710000f95c","t":"plate","c":"mg1806::Scene::GetHitWide() const"}
+{"a":"710000f97c","t":"plate","c":"mg1806::Scene::IsViewBeat() const"}
+{"a":"710000f99c","t":"plate","c":"mg1806::Scene::IsLog() const"}
+{"a":"710000f9bc","t":"plate","c":"mg1806::Scene::IsChartView() const"}
+{"a":"710000f9dc","t":"plate","c":"mg1806::Scene::GetPracticeType() const"}
+{"a":"710000f9fc","t":"plate","c":"mg1806::Scene::IsPracticeZoom() const"}
+{"a":"710000fa1c","t":"plate","c":"mg1806::Scene::IsOffsetZ() const"}
+{"a":"710000fa3c","t":"plate","c":"mg1806::Scene::GetZoomFrame() const"}
+{"a":"710000fa5c","t":"plate","c":"mg1806::Scene::GetLastZoomFrame() const"}
+{"a":"710000fa7c","t":"plate","c":"mg1806::Scene::GetEnvMode() const"}
+{"a":"710000fa9c","t":"plate","c":"mg1806::Scene::GetDebugStar() const"}
+{"a":"710000fad8","t":"plate","c":"mg1806::Scene::GetShiftTime() const"}
+{"a":"710000faf8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.2\n역할: mg1806::Scene::GetChartJson — 채보 파일 경로\n식: \"mg/mg1806/data/mg1806_rm_chart\" + 번호 + \".json\", 번호 표 @0x7100042e60 = 00 01 02 03 04 00s 01s 02s 03s 04s 05s 06s\n분기(RmGameWork+0x20): 0 노멀 / 1 롱 → 표[0] chart00, 2 하드 → 표[1] chart01, 3 리믹스 → 표[GetRemixChartNo()+5] (번호 0 chart00s, 6 chart06s)\n참고: IsChartDataFree·Params.chartNo 를 보지 않음. 01s~05s 파일은 아카이브에 없음\n---\nmg1806::Scene::GetChartJson() const"}
+{"a":"710000fd3c","t":"plate","c":"mg1806::Scene::getInstanceTypeinfo() const"}
+{"a":"710000fe18","t":"plate","c":"mg1806::Scene::GetSymbol() const"}
+{"a":"710000fe28","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}
+{"a":"710000fe30","t":"plate","c":"bex::SceneBase::GetHandle() const"}
+{"a":"710000fe4c","t":"plate","c":"bex::GameScene::OnCleanupProcessing()"}
+{"a":"710000fe50","t":"plate","c":"bex::NetworkGameScene::OnSyncEnd()"}
+{"a":"710000fe54","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameSequenceBefore()"}
+{"a":"710000fe58","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameSequenceAfter()"}
+{"a":"710000fe5c","t":"plate","c":"bq::MinigameScene::OnThreeMinTimerEnd()"}
+{"a":"710000fe60","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoStart()"}
+{"a":"710000fe68","t":"plate","c":"bq::MinigameScene::OnCharaGameDemo()"}
+{"a":"710000fe70","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoSkipStart()"}
+{"a":"710000fe74","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoSkipEnd()"}
+{"a":"710000fe78","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoEnd()"}
+{"a":"710000fe80","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameInstInit()"}
+{"a":"710000fe88","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameFirstFade()"}
+{"a":"710000fe90","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameOpening()"}
+{"a":"710000fe98","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameOpeningSkip()"}
+{"a":"710000fea0","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameStartBefore()"}
+{"a":"710000fea8","t":"plate","c":"bq::MinigameScene::OnGameStartTelopBefore()"}
+{"a":"710000feb0","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameStart()"}
+{"a":"710000feb8","t":"plate","c":"bq::MinigameScene::OnGameFinishAfter()"}
+{"a":"710000fec0","t":"plate","c":"bq::MinigameScene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"710000fec8","t":"plate","c":"bq::MinigameScene::OnGameEndingFade()"}
+{"a":"710000fed0","t":"plate","c":"bq::MinigameScene::OnGameEndingChangeCut()"}
+{"a":"710000fed8","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameEndingAfter()"}
+{"a":"710000fee0","t":"plate","c":"ca::rm::RmMgSceneBase::OnGameEndingSkip()"}
+{"a":"710000fee8","t":"plate","c":"ca::rm::RmMgSceneBase::TrigRmGameWipeFadeOutStart()"}
+{"a":"710000feec","t":"plate","c":"ca::rm::RmMgSceneBase::TrigRmGameMainBgmPracticeFinish()"}
+{"a":"710000fef0","t":"plate","c":"ca::rm::RmMgSceneBase::TrigRmGameMainBgmIntroStart()"}
+{"a":"710000fef4","t":"plate","c":"ca::rm::RmMgSceneBase::OnRmGameEnd()"}
+{"a":"710000fefc","t":"plate","c":"ca::rm::RmMgSceneBase::OnRmGameFinish()"}
+{"a":"710000ff04","t":"plate","c":"ca::rm::RmMgSceneBase::OnRmGameExit()"}
+{"a":"710000ff0c","t":"plate","c":"mg1806::Scene::Params::~Params()"}
+{"a":"710000ff10","t":"plate","c":"mg1806::Scene::Params::getInstanceTypeinfo() const"}
+{"a":"710000ffec","t":"plate","c":"mg1806::Scene::Params::GetSymbol() const"}
+{"a":"710000fffc","t":"plate","c":"rtti::Class::~Class()"}
+{"a":"7100010540","t":"plate","c":"mg1806::Mg1806Sequence::Mg1806Sequence()"}
+{"a":"7100010644","t":"plate","c":"mg1806::Mg1806Sequence::~Mg1806Sequence()"}
+{"a":"71000106a8","t":"plate","c":"mg1806::Mg1806Sequence::~Mg1806Sequence()"}
+{"a":"71000106cc","t":"plate","c":"mg1806::Mg1806Sequence::Setup()"}
+{"a":"71000106e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1\n역할: Mg1806Sequence::Impl::Setup — 매니저 생성·상태 방송\n처리: Info(+0x10) → Stage(+0x18) → Camera(+0x20) → Player(+0x28) 순서로 생성, Stage·Camera·Player 를 ObjectBase 목록(+0x38)에 넣음\n방송: SetState(0)(Setup), SetState(1)(PostSetup)\n[추정] 매니저 Impl 들은 bex::Fiber(0,false), 생성 순서 Sequence::Impl → Info → Stage → Camera → Player(3.5)\n---\nmg1806::Mg1806Sequence::Impl::Setup()"}
+{"a":"7100010b10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::OnRmGameStartAfter — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 상태 5(StartGame) 방송, 1회(CheckOne(+0x60)). 1 반환\n---\nmg1806::Mg1806Sequence::OnRmGameStartAfter()"}
+{"a":"7100010b80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::TrigRmGameMainBgmPracticeStart — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 리믹스(모드 3): 줌 플래그 지움·LastZoom(false). 그 밖: IsInstActive() 가 거짓이면 상태 7(StartPlayer, 연습 시작) 방송, 1회\n---\nmg1806::Mg1806Sequence::TrigRmGameMainBgmPracticeStart()"}
+{"a":"7100010c30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::TrigRmGameMainBgmTopStart — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 상태 6(StartTelop) 방송. 리믹스가 아니면 LastZoom(false)\n---\nmg1806::Mg1806Sequence::TrigRmGameMainBgmTopStart()"}
+{"a":"7100010cbc","t":"plate","c":"mg1806::Mg1806Sequence::OnRmGameMain(int)"}
+{"a":"7100010ce0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::TrigRmGameMainChartEnd — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 상태 8(EndPlayer) 방송\n---\nmg1806::Mg1806Sequence::TrigRmGameMainChartEnd()"}
+{"a":"7100010d30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::GameFinish — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 상태 8(EndPlayer) 방송\n---\nmg1806::Mg1806Sequence::GameFinish()"}
+{"a":"7100010d80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::TrigRmGameResultCaptureSetting — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 상태 11(StartCapture) 방송\n---\nmg1806::Mg1806Sequence::TrigRmGameResultCaptureSetting()"}
+{"a":"7100010de0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1·3.4\n역할: Mg1806Sequence::TrigRmGameEndingSetting — Scene 훅을 받아 ObjectBase 목록(Stage·Camera·Player)에 상태 방송\n처리: 상태 12(StartResult) 방송\n---\nmg1806::Mg1806Sequence::TrigRmGameEndingSetting()"}
+{"a":"7100010e2c","t":"plate","c":"mg1806::Mg1806Sequence::OnRmRecieveBeatEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100010e34","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2\n역할: Mg1806Sequence::Impl::OnRmRecieveBeatEntry(r) — 줄 r 배분 때 단계 처리\n분기: stopped(+0x5D)이면 반환\n처리: info.SetBeatCount(r); ci = info.GetChartInfo(r)\nci.row >= 0 && ci.isTop: cur(+0x70..) = ci 사본, curPhase(+0xC8) = ci.phase, InitPhaseCommon(); curPhase==1 → stage.ChangeSpotLightColor(0), curPhase==0 → stage.SetSpotLightColor(r)\nci.row >= 0 && curPhase==0(멘토 단계): a = 1P 열부터 action < 5 인 첫 포즈; 없으면 isTop 아닐 때 ring 으로, isTop 이면 a=6(idle 준비) → playerMan.ActionMentor(a)\nring: curPhase <= 1 이면 k = CountRing(); k >= 0 이면 ControlRing(k, false)\n---\nmg1806::Mg1806Sequence::Impl::OnRmRecieveBeatEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100010f9c","t":"plate","c":"mg1806::Mg1806Sequence::OnRmRecieveBeatNextEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100010fa4","t":"plate","c":"mg1806::Mg1806Sequence::Impl::~Impl()"}
+{"a":"71000110a4","t":"plate","c":"mg1806::Mg1806Sequence::Impl::~Impl()"}
+{"a":"71000110d0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): game·좌우/8명 zoom 9/10/19f·result/captureNormal/Long.\n주의: 문서 §7.2 는 mg1806 0x71000049b0/0x71000110d0/0x71000042b0 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.9\n역할: Mg1806Sequence::Impl::Update — 줌 카운트다운(Params.zoomMode == 1 일 때 매 프레임)\n처리: zoomCountdown(+0x64) > 0 && --zoomCountdown == 0 이면\n  zoomIn(+0x61): camera.ResetZoom(); zoomIn=0; camera.ZoomIn() — M 단계 시작 6프레임 전\n  zoomOut(+0x62): zoomOut=0; camera.ZoomOut() — P 단계 시작 6프레임 전\n---\nmg1806::Mg1806Sequence::Impl::Update()"}
+{"a":"7100011154","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2\n역할: Mg1806Sequence::Impl::InitPhaseCommon — 단계 시작 줄 공통 처리\nW(2): 직전이 P(+0x5F afterP)였으면 플레이어 스포트 끄기, 카레 색 갱신 1회(SetColorCurry), 플레이어 idle. 모든 스포트 끄기, 멘토 ActionMentor(6)\nM(0): 직전이 P 였으면 위와 같은 정리. 카운트 리셋, 카메라·무대 SetTurn(0)(멘토 쪽), PlayerMan.Active(cur, false)(모두 입력 끔·idle), 멘토 스포트 SE SQ_SE_MG1806_LIGHT, 단계 스포트·예고 스포트 켜기\nP(1): 카운트 리셋, 카메라·무대 SetTurn(1)(플레이어 쪽), 플레이어 4명 위치에서 SQ_SE_MG1806_LIGHT, 단계 스포트(플레이어), 예고 스포트 끄기\n---\nmg1806::Mg1806Sequence::Impl::InitPhaseCommon()"}
+{"a":"710001132c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2\n주소 메모: 문서는 @0x710000132c 로 적었으나(오타) db CountRing = 0x710001132c\n역할: Mg1806Sequence::Impl::CountRing — 단계 안 카운트와 휘슬, 카운트 번호 반환\n처리: cur.ring[idx(+0x54)] == counter(+0x58) 이면 idx++; counter++\ncounter < cur.len: cur.count > 4 && idx > 4 이면 stage.ChangeSpotLightColor(1), idx -= 4 (8카운트 단계 후반). idx = min(idx, 4). lastIdx[curPhase != 0](+0xD0 M / +0xD4 P) != idx 이면 갱신하고 Sound.Play(SQ_SE_MG1806_WHISTLE). idx 반환\ncounter >= cur.len: lastP(+0x5E) && curPhase == 1 이면 playerMan.Last(), 스포트 모두 끔, stopped(+0x5D)=1, endMark(+0x5C) 0 이면 1 로 하고 stage.SetColorCurry(). -1 반환\n참고: lastIdx 는 단계마다 리셋되지 않지만 카운트가 1부터 다시 시작해 매 카운트 휘슬\n---\nmg1806::Mg1806Sequence::Impl::CountRing()"}
+{"a":"7100011468","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2\n역할: Mg1806Sequence::Impl::ControlRing(k, …) — 스포트라이트 링 표시(SetModeSpotLight)만 바꿈(시각 전용)\n[미확정] SetModeSpotLight·SPOT_LIGHT 세부(링 색·프레임) 미판독\n---\nmg1806::Mg1806Sequence::Impl::ControlRing(int, bool)"}
+{"a":"7100011564","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §5.2·6.9\n역할: Mg1806Sequence::Impl::ReadyChart(r+1) — OnRmRecieveBeatNextEntry, 한 줄 앞서 준비\n처리: ci = info.GetChartInfo(r+1); row < 0 이면 반환\nci.isTop: zoomCountdown(+0x64) = GetBeatToFrame(1) - Params.zoomFrame(15-6=9); topType SL/LL 이면 camera.LastZoom(true), zoomCountdown = GetBeatToFrame(1) - Params.lastZoomFrame(15-12=3); zoomCountdown = max(·,1); nextPhase(+0xCC) = ci.phase\n  phase 1: zoomIn(+0x61)=0, zoomOut(+0x62)=1; SL/LL 아니고 Params.isZoomType 이면 camera.SetCameraType(join=[1,1,0,0] ? 1 : join=[0,0,1,1] ? 2 : 0); endMark(+0x5C)=0, afterP(+0x5F)=1, lastP(+0x5E)=ci.isLast; playerMan.Active(ci, true)\n  phase 0: zoomIn=1, zoomOut=0\nnextPhase == 1 이면 playerMan.Ready(ci) — 각 PLAYER.Ready(ci.action[PLAYER.lane])\n---\nmg1806::Mg1806Sequence::Impl::ReadyChart(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100011768","t":"plate","c":"mg1806::Mg1806StageManager::Mg1806StageManager()"}
+{"a":"71000117f0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::Impl()"}
+{"a":"7100011974","t":"plate","c":"mg1806::Mg1806StageManager::~Mg1806StageManager()"}
+{"a":"71000119d8","t":"plate","c":"mg1806::Mg1806StageManager::~Mg1806StageManager()"}
+{"a":"71000119fc","t":"plate","c":"mg1806::Mg1806StageManager::SetState(mg1806::Mg1806ObjectBase::STATE)"}
+{"a":"7100011a04","t":"plate","c":"mg1806::Mg1806StageManager::HookStage(char const*, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100011a10","t":"plate","c":"mg1806::Mg1806StageManager::GetHookModel()"}
+{"a":"7100011a1c","t":"plate","c":"mg1806::Mg1806StageManager::GetPositionHookStage(char const*) const"}
+{"a":"7100011a6c","t":"plate","c":"mg1806::Mg1806StageManager::GetScaleHookStage(char const*) const"}
+{"a":"7100011acc","t":"plate","c":"mg1806::Mg1806StageManager::SetColorCurry()"}
+{"a":"7100011ad4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.4\n역할: Mg1806StageManager::Impl::SetColorCurry — 카레 색 목표·성공 이펙트\n식: rate = info.GetScoreRate(); rate > lastRate 이면 colorTarget = min(rate, 1), rate·5 >= 1.5 → success00 startOnce(30%), >= 3.0 → success01(60%), >= 4.0 → success02(80%). lastRate = rate\n호출자: InitPhaseCommon(P 다음 M/W 시작 1회), CountRing(마지막 P 단계 끝 1회)\n참고: 이펙트 이름 표 CreateStage::file @0x7100046190\n---\nmg1806::Mg1806StageManager::Impl::SetColorCurry()"}
+{"a":"7100011b9c","t":"plate","c":"mg1806::Mg1806StageManager::SetModeSpotLight(bex::PlayerID, int, mg1806::CHART_PATTERN)"}
+{"a":"7100011bd4","t":"plate","c":"mg1806::Mg1806StageManager::OmenSpotLightOn(mg1806::CHART_INFO const&)"}
+{"a":"7100011bdc","t":"plate","c":"mg1806::Mg1806StageManager::Impl::OmenSpotLightOn(mg1806::CHART_INFO const&)"}
+{"a":"7100011e64","t":"plate","c":"mg1806::Mg1806StageManager::PhaseSpotLightOn(mg1806::CHART_INFO const&, mg1806::CHART_PHASE)"}
+{"a":"7100011e6c","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PhaseSpotLightOn(mg1806::CHART_INFO const&, mg1806::CHART_PHASE)"}
+{"a":"7100011fb4","t":"plate","c":"mg1806::Mg1806StageManager::MentorSpotLightOff()"}
+{"a":"7100011ff8","t":"plate","c":"mg1806::Mg1806StageManager::PlayerSpotLightOff()"}
+{"a":"7100012000","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PlayerSpotLightOff()"}
+{"a":"71000120b0","t":"plate","c":"mg1806::Mg1806StageManager::OmenSpotLightOff()"}
+{"a":"71000120b8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::OmenSpotLightOff()"}
+{"a":"71000121a8","t":"plate","c":"mg1806::Mg1806StageManager::PhaseSpotLightOff()"}
+{"a":"71000121b0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PhaseSpotLightOff()"}
+{"a":"710001224c","t":"plate","c":"mg1806::Mg1806StageManager::DemoSpot(bool)"}
+{"a":"7100012264","t":"plate","c":"mg1806::Mg1806StageManager::SetSpotLightColor(int)"}
+{"a":"7100012270","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetSpotLightColor(int)"}
+{"a":"7100012484","t":"plate","c":"mg1806::Mg1806StageManager::ChangeSpotLightColor(int)"}
+{"a":"710001248c","t":"plate","c":"mg1806::Mg1806StageManager::Impl::ChangeSpotLightColor(int)"}
+{"a":"7100012564","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.2\n역할: Mg1806StageManager::SetTurn(0/1) — 무대 회전\n처리: 무대 모션 프레임 0→30(0) / 30→60(1) 을 BPM/120 속도로\n---\nmg1806::Mg1806StageManager::SetTurn(int)"}
+{"a":"7100012594","t":"plate","c":"mg1806::Mg1806StageManager::SetPracticePlayerSpotLight(bool)"}
+{"a":"710001259c","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetPracticePlayerSpotLight(bool)"}
+{"a":"7100012630","t":"plate","c":"std::array<mg1806::Mg1806StageManager::Impl::SPOT_LIGHT, 5ul>::array()"}
+{"a":"71000127b0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::~Impl()"}
+{"a":"7100012a88","t":"plate","c":"mg1806::Mg1806StageManager::Impl::~Impl()"}
+{"a":"7100012aac","t":"plate","c":"mg1806::Mg1806StageManager::Impl::Setup()"}
+{"a":"7100012ab0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PostSetup()"}
+{"a":"7100012b28","t":"plate","c":"mg1806::Mg1806StageManager::Impl::StartTelop()"}
+{"a":"7100012b84","t":"plate","c":"mg1806::Mg1806StageManager::Impl::EndPlayer()"}
+{"a":"7100012bc4","t":"plate","c":"mg1806::Mg1806StageManager::Impl::StartCapture()"}
+{"a":"7100012bc8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::StartResult()"}
+{"a":"7100012bd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.4\n역할: Mg1806StageManager::Impl::Update — 매 프레임\n카레 색: shown = min(shown + 0.01, colorTarget); pot.SetFrame(shown · 색 모션 길이)\n---\nmg1806::Mg1806StageManager::Impl::Update()"}
+{"a":"7100012ee8","t":"plate","c":"non-virtual thunk to mg1806::Mg1806StageManager::Impl::~Impl()"}
+{"a":"7100012ef0","t":"plate","c":"non-virtual thunk to mg1806::Mg1806StageManager::Impl::~Impl()"}
+{"a":"7100012f18","t":"plate","c":"non-virtual thunk to mg1806::Mg1806StageManager::Impl::Update()"}
+{"a":"7100012f20","t":"plate","c":"mg1806::SyncWork::~SyncWork()"}
+{"a":"7100012f24","t":"plate","c":"mg1806::SyncWork::~SyncWork()"}
+{"a":"7100012f28","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::~SPOT_LIGHT()"}
+{"a":"7100012f84","t":"plate","c":"std::array<mg1806::Mg1806StageManager::Impl::SPOT_LIGHT, 5ul>::~array()"}
+{"a":"71000130c0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::Create()"}
+{"a":"7100013170","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreatePot()"}
+{"a":"7100013490","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.4\n역할: Mg1806StageManager::Impl::CreateStage — 이름 표 CreateStage::file @0x7100046190 에 success00~02 이펙트 이름\n---\nmg1806::Mg1806StageManager::Impl::CreateStage()"}
+{"a":"7100013608","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateSpotLight()"}
+{"a":"71000136b4","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateHeyho()"}
+{"a":"71000138f4","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateBG()"}
+{"a":"7100013a5c","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Create(int)"}
+{"a":"7100013e5c","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT_OMEN::Create(int)"}
+{"a":"71000141c4","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HEYHO::Create(int)"}
+{"a":"71000142c8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HEYHO::SetColor()"}
+{"a":"7100014344","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HEYHO::Play(char const*, bool)"}
+{"a":"7100014418","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HookSpotLight()"}
+{"a":"7100014658","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Hook(ca::mg::MGModel*)"}
+{"a":"7100014724","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetupResult()"}
+{"a":"7100014884","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.7\n역할: Mg1806StageManager::Impl::ResultModel — 결과 카레 모델\n분기(GetStarAchieveJudge()): 3 → mg1806_ed_obj00 + ed_steam00, 2 → ed_obj01 + ed_steam01, 1 → ed_obj02 + ed_steam02, 0 → ed_obj03(김 없음)\n처리: ResultCurry 엔티티, 모션 mg1806_ed_obj00.fmab. 이펙트 ForceCalculate(300) 로 미리 진행. 무대·배경(stage00, bg00, ed_bg00, ed_stage00)을 숨기고 결과용으로 바꿈\n---\nmg1806::Mg1806StageManager::Impl::ResultModel()"}
+{"a":"71000149d8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::SetModeSpotLight(int, int)"}
+{"a":"7100014bb0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::ChangeSpotLightColor(int, nn::bezel::HandlePtr<nn::bezel::Texture>, nn::bezel::HandlePtr<nn::bezel::Texture>)"}
+{"a":"7100014dd0","t":"plate","c":"mg1806::util::SetScene(mg1806::Scene*)"}
+{"a":"7100014de0","t":"plate","c":"mg1806::util::GetScene()"}
+{"a":"7100014df0","t":"plate","c":"mg1806::util::CreateSceneEntity(char const*)"}
+{"a":"7100014e40","t":"plate","c":"mg1806::util::CreateMGModel(char const*, char const*)"}
+{"a":"7100014ea0","t":"plate","c":"mg1806::util::CreateMGCommonModel(char const*, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100014fa0","t":"plate","c":"mg1806::util::GetModelFileName(char const*)"}
+{"a":"7100014fb0","t":"plate","c":"mg1806::util::CreateMGModelNum(char const*, char const*, int)"}
+{"a":"7100015060","t":"plate","c":"mg1806::util::GetNumName(char const*, int)"}
+{"a":"7100015240","t":"plate","c":"mg1806::util::CreateNPCModel(char const*, bq::NonPlayerCharacterID)"}
+{"a":"7100015340","t":"plate","c":"mg1806::util::CreateNPCModelNum(char const*, bq::NonPlayerCharacterID, int)"}
+{"a":"71000153b0","t":"plate","c":"mg1806::util::CreatePCModel(char const*, bq::PlayerCharacterID)"}
+{"a":"71000154b0","t":"plate","c":"mg1806::util::CreatePCModelNum(char const*, bq::PlayerCharacterID, int)"}
+{"a":"7100015520","t":"plate","c":"mg1806::util::CreateMGEnvModel(char const*, char const*)"}
+{"a":"7100015580","t":"plate","c":"mg1806::util::GetEnvModelFileName(char const*)"}
+{"a":"7100015590","t":"plate","c":"mg1806::util::CreateMap(char const*, char const*)"}
+{"a":"7100015670","t":"plate","c":"mg1806::util::GetMapFileName(char const*)"}
+{"a":"71000158a0","t":"plate","c":"mg1806::util::TargetRot(float&, float, float)"}
+{"a":"71000158f0","t":"plate","c":"mg1806::util::TextureFileName(char const*, int)"}
+{"a":"7100015c30","t":"plate","c":"mg1806::util::GetModelFileNameSub(char const*, char const*)"}
+{"a":"7100015f20","t":"plate","c":"mg1806::util::GetDT()"}
+{"a":"7100015f30","t":"plate","c":"mg1806::util::GetDTCalc(float, float)"}
+{"a":"7100015f40","t":"plate","c":"mg1806::util::GetDTDiv(float)"}
+{"a":"7100015f70","t":"plate","c":"mg1806::util::GetPlayerIDName(bex::PlayerID)"}
+{"a":"7100016030","t":"plate","c":"mg1806::util::CreatePlayerMarkEntityName(bool, bex::PlayerID, char const*)"}
+{"a":"71000162c0","t":"plate","c":"mg1806::util::CheckOne(bool&)"}
+{"a":"71000162f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.1\n역할: util::DownTimer(timer) — 초 단위 감소 타이머\n처리: timer -= dt, 0 이하로 떨어지면(또는 이미 0이면) 참, 0 으로 고정\n사용: PLAYER+0x60 휘두름 쿨다운\n---\nmg1806::util::DownTimer(float&)"}
+{"a":"7100016330","t":"plate","c":"mg1806::util::AddRotate(float, float)"}
+{"a":"7100016380","t":"plate","c":"mg1806::util::CreateEffect(char const*)"}
+{"a":"71000165e8","t":"plate","c":"mg1806::Mg1806PositionZ::Mg1806PositionZ()"}
+{"a":"7100016680","t":"plate","c":"mg1806::Mg1806PositionZ::~Mg1806PositionZ()"}
+{"a":"71000166e0","t":"plate","c":"mg1806::Mg1806PositionZ::~Mg1806PositionZ()"}
+{"a":"7100016704","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §7.2\n역할: Mg1806PositionZ::GetOffsetZ — mg1806_z.json 캐릭터별 Z 보정(Params.isOffsetZ 기본 1 일 때 적용)\n[데이터] Peach 0.3, Daisy 0.3, Rosetta 0.7, DK 0.4, Koopa 0.2, 나머지 0\n[미확정] 적용 축·부호 미추적\n---\nmg1806::Mg1806PositionZ::GetOffsetZ(bq::PlayerCharacterID) const"}
+{"a":"7100016720","t":"plate","c":"mg1806::Mg1806PositionZ::Impl::LoadJson()"}
+{"a":"7100016b10","t":"plate","c":"mg1806::Mg1806PositionZ::Impl::~Impl()"}
+{"a":"7100016b38","t":"plate","c":"mg1806::Mg1806PositionZ::Impl::~Impl()"}
+{"a":"7100016f70","t":"plate","c":"rtti::Struct::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"7100016f74","t":"plate","c":"rtti::Struct::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"7100017150","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_mg1806()"}
+{"a":"7100017160","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_mg1806()"}
+{"a":"7100017170","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_sharedPCH()"}
+{"a":"7100017180","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_sharedPCH()"}
+{"a":"71000171c0","t":"plate","c":"nn::ro::ProtectRelro(void const*, void const*, void const*, void const*, void const*)"}
+{"a":"7100017200","t":"plate","c":"operator new(unsigned long, unsigned long, bex::HeapModule::HeapID)"}
+{"a":"7100017210","t":"plate","c":"bex::Fiber::Fiber(int, bool)"}
+{"a":"7100017220","t":"plate","c":"nn::diag::detail::AbortImpl()"}
+{"a":"7100017240","t":"plate","c":"std::terminate()"}
+{"a":"7100017250","t":"plate","c":"mg1806::Mg1806CameraManager::~Mg1806CameraManager()"}
+{"a":"7100017260","t":"plate","c":"operator delete(void*)"}
+{"a":"7100017270","t":"plate","c":"mg1806::Mg1806ObjectBaseImpl::SetState(mg1806::Mg1806ObjectBase::STATE)"}
+{"a":"7100017280","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::IsFinished() const"}
+{"a":"7100017290","t":"plate","c":"actor::ComActorMotion::IsFinished() const"}
+{"a":"71000172a0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::GetPosition() const"}
+{"a":"71000172b0","t":"plate","c":"nn::bezel::ComCamera::GetCamera() const"}
+{"a":"71000172c0","t":"plate","c":"mg1806::Mg1806CameraManager::SetTurn(int)"}
+{"a":"71000172d0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetTurn(int)"}
+{"a":"71000172e0","t":"plate","c":"ca::mg::MGModel::Play(int, char const*, bool)"}
+{"a":"71000172f0","t":"plate","c":"ca::mg::MGModel::SetFrame(int, float)"}
+{"a":"7100017300","t":"plate","c":"mg1806::Mg1806InfoManager::GetAnimSpeed() const"}
+{"a":"7100017310","t":"plate","c":"ca::mg::MGModel::SetSpeed(int, float)"}
+{"a":"7100017320","t":"plate","c":"ca::ui::CaComUiBase::SetVisible(bool)"}
+{"a":"7100017330","t":"plate","c":"ca::ui::CaComUiBase::PlayAnimation(char const*)"}
+{"a":"7100017340","t":"plate","c":"mg1806::Mg1806CameraManager::ZoomIn()"}
+{"a":"7100017350","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::PlayCamera(char const*, bool)"}
+{"a":"7100017360","t":"plate","c":"mg1806::Mg1806CameraManager::ZoomOut()"}
+{"a":"7100017370","t":"plate","c":"mg1806::Mg1806CameraManager::LastZoom(bool)"}
+{"a":"7100017380","t":"plate","c":"mg1806::Mg1806CameraManager::SetCameraType(mg1806::CHART_CAMERA)"}
+{"a":"7100017390","t":"plate","c":"mg1806::Mg1806CameraManager::ResetZoom()"}
+{"a":"71000173a0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::~Impl()"}
+{"a":"71000173b0","t":"plate","c":"bex::Fiber::~Fiber()"}
+{"a":"71000173c0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetupEnv()"}
+{"a":"71000173d0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetupCamera()"}
+{"a":"71000173e0","t":"plate","c":"mg1806::util::GetScene()"}
+{"a":"71000173f0","t":"plate","c":"mg1806::Scene::GetEnvMode() const"}
+{"a":"7100017400","t":"plate","c":"mg1806::util::CreateSceneEntity(char const*)"}
+{"a":"7100017410","t":"plate","c":"nn::bezel::WeakHandle<ca::ui::CaComUiBase> nn::bezel::Entity::AddComponent<ca::ui::CaComUiBase, char const (&) [21], char const (&) [22], (void*)0>(char const (&) [21], char const (&) [22])"}
+{"a":"7100017420","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetupPractice()"}
+{"a":"7100017430","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::LayoutOff()"}
+{"a":"7100017440","t":"plate","c":"ca::mg::MGModel::SetVisible(bool)"}
+{"a":"7100017450","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetDofEnable(bool)"}
+{"a":"7100017460","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::Update()"}
+{"a":"7100017470","t":"plate","c":"bex::Fiber::Wait()"}
+{"a":"7100017480","t":"plate","c":"mg1806::Scene::IsPracticeZoom() const"}
+{"a":"7100017490","t":"plate","c":"actor::ComActorMotion::Play(nn::bezel::StringViewHashPair const&)"}
+{"a":"71000174a0","t":"plate","c":"actor::ComActorMotion::SetFrame(float)"}
+{"a":"71000174b0","t":"plate","c":"ca::mg::MGModel::GetFrame(int) const"}
+{"a":"71000174c0","t":"plate","c":"bex::Fiber::getStaticTypeinfo()"}
+{"a":"71000174d0","t":"plate","c":"bex::HeapModule::Free(void*)"}
+{"a":"71000174e0","t":"plate","c":"mg1806::util::CreateMGEnvModel(char const*, char const*)"}
+{"a":"71000174f0","t":"plate","c":"ca::mg::MGModel::SetupMotion(int)"}
+{"a":"7100017500","t":"plate","c":"ca::mg::MGModel::AddMotion(char const*, char const*, actor::AnimatinType, bool, bool)"}
+{"a":"7100017510","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
+{"a":"7100017520","t":"plate","c":"bq::ComMatter::GetMotion()"}
+{"a":"7100017540","t":"plate","c":"bex::HeapModule::Alloc(bex::HeapModule::HeapID, unsigned long, int, char const*, int, char const*, char const*)"}
+{"a":"7100017560","t":"plate","c":"mg1806::Mg1806ANIM::GetFile(char const*) const"}
+{"a":"7100017570","t":"plate","c":"actor::ComActorMotion::AddAnimation(nn::bezel::StringViewHashPair const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool, actor::AnimatinType, bool, bool)"}
+{"a":"7100017580","t":"plate","c":"bq::ComMatter::GetCamera()"}
+{"a":"7100017590","t":"plate","c":"nn::bezel::GraphicsCoreModule::GetDefaultGraphicsLayer()"}
+{"a":"71000175a0","t":"plate","c":"nn::bezel::GraphicsLayer::SetCamera(nn::bezel::WeakHandle<nn::bezel::Camera> const&)"}
+{"a":"71000175b0","t":"plate","c":"ca::ui::CaComUiBase::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*, char const*)"}
+{"a":"71000175c0","t":"plate","c":"nn::bezel::Entity::_internalCheckComponentValidity(nn::bezel::HandlePtr<nn::bezel::Component> const&)"}
+{"a":"71000175d0","t":"plate","c":"nn::bezel::Entity::AddComponentImpl(nn::bezel::HandlePtr<nn::bezel::Component> const&)"}
+{"a":"71000175e0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType&&)"}
+{"a":"71000175f0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::insert(unsigned long, char const*, unsigned long)"}
+{"a":"7100017600","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
+{"a":"7100017610","t":"plate","c":"actor::ComActorMotion::GetFrameMax() const"}
+{"a":"7100017620","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType, bool)"}
+{"a":"7100017670","t":"plate","c":"std::logic_error::logic_error(char const*)"}
+{"a":"7100017680","t":"plate","c":"mg1806::Scene::GetPracticeType() const"}
+{"a":"7100017690","t":"plate","c":"mg1806::Scene::GetZoomFrame() const"}
+{"a":"71000176a0","t":"plate","c":"mg1806::Mg1806InfoManager::GetBeatToFrame(int) const"}
+{"a":"71000176b0","t":"plate","c":"bex::gfx::RendererModule::GetScene(bex::gfx::RendererModule::SceneType) const"}
+{"a":"71000176c0","t":"plate","c":"bex::gfx::Scene::GetGraphicsLayer(int)"}
+{"a":"71000176d0","t":"plate","c":"bex::gfx::GraphicsLayerExtension* nn::bezel::GraphicsLayer::TryGetExtension<bex::gfx::GraphicsLayerExtension>()"}
+{"a":"71000176e0","t":"plate","c":"bex::gfx::ComPosteffect::SetDofEnable(bool)"}
+{"a":"71000176f0","t":"plate","c":"nn::bezel::detail::TypeIdGenerator::Allocate(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100017700","t":"plate","c":"nn::bezel::detail::TypeIdGenerator::Deallocate(nn::bezel::detail::TypeDesc const*, int)"}
+{"a":"7100017710","t":"plate","c":"mg1806::Mg1806CameraManager::Mg1806CameraManager()"}
+{"a":"7100017720","t":"plate","c":"mg1806::CommonEffect::~CommonEffect()"}
+{"a":"7100017730","t":"plate","c":"mg1806::CommonEffect::Create(char const*)"}
+{"a":"7100017740","t":"plate","c":"mg1806::util::CreateEffect(char const*)"}
+{"a":"7100017750","t":"plate","c":"bex::Effect::SetVisible(bool)"}
+{"a":"7100017760","t":"plate","c":"mg1806::CommonEffect::SetHookAttr(int)"}
+{"a":"7100017770","t":"plate","c":"mg1806::CommonEffect::Start(nn::bezel::WeakHandle<nn::bezel::Entity>, char const*)"}
+{"a":"7100017780","t":"plate","c":"mg1806::CommonEffect::Impl::Hook(nn::bezel::WeakHandle<nn::bezel::Entity>, char const*)"}
+{"a":"7100017790","t":"plate","c":"bex::Effect::Start(bool)"}
+{"a":"71000177a0","t":"plate","c":"mg1806::CommonEffect::Start()"}
+{"a":"71000177b0","t":"plate","c":"bex::Effect::SetPosition(nn::util::Vector3f const&)"}
+{"a":"71000177c0","t":"plate","c":"mg1806::CommonEffect::LockHook(nn::bezel::WeakHandle<nn::bezel::Entity>, char const*)"}
+{"a":"71000177d0","t":"plate","c":"mg1806::CommonEffect::Stop(bool)"}
+{"a":"71000177e0","t":"plate","c":"mg1806::CommonEffect::Impl::Stop(bool)"}
+{"a":"71000177f0","t":"plate","c":"bex::Effect::Stop(bool)"}
+{"a":"7100017800","t":"plate","c":"bex::Effect::Detach()"}
+{"a":"7100017810","t":"plate","c":"bex::Effect::SetAttachAttr(int)"}
+{"a":"7100017820","t":"plate","c":"mg1806::CommonEffect::End()"}
+{"a":"7100017830","t":"plate","c":"mg1806::CommonEffect::Impl::Remove()"}
+{"a":"7100017840","t":"plate","c":"bex::Effect::SetScale(nn::util::Vector3f const&)"}
+{"a":"7100017850","t":"plate","c":"mg1806::CommonEffect::IsStart() const"}
+{"a":"7100017860","t":"plate","c":"mg1806::CommonEffect::ForceCalculate(float)"}
+{"a":"7100017870","t":"plate","c":"bex::Effect::ForceCalculate(float)"}
+{"a":"7100017880","t":"plate","c":"mg1806::CommonEffect::Update()"}
+{"a":"7100017890","t":"plate","c":"mg1806::util::GetDT()"}
+{"a":"71000178a0","t":"plate","c":"bex::Effect::Attach(nn::bezel::WeakHandle<nn::bezel::ComModel> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, int)"}
+{"a":"71000178b0","t":"plate","c":"mg1806::CommonEffect::CommonEffect()"}
+{"a":"71000178c0","t":"plate","c":"mg1806::Mg1806InfoManager::~Mg1806InfoManager()"}
+{"a":"71000178d0","t":"plate","c":"mg1806::Mg1806InfoManager::Setup()"}
+{"a":"71000178e0","t":"plate","c":"mg1806::Mg1806InfoManager::Impl::SetupChartInfo()"}
+{"a":"71000178f0","t":"plate","c":"mg1806::Mg1806InfoManager::SetBeatCount(int)"}
+{"a":"7100017900","t":"plate","c":"mg1806::Mg1806InfoManager::GetMaxScore() const"}
+{"a":"7100017910","t":"plate","c":"mg1806::Mg1806InfoManager::AddScore(int)"}
+{"a":"7100017920","t":"plate","c":"mg1806::Mg1806InfoManager::GetScoreRate() const"}
+{"a":"7100017930","t":"plate","c":"mg1806::Mg1806InfoManager::SetMainFrame(int)"}
+{"a":"7100017940","t":"plate","c":"mg1806::Scene::GetComMode() const"}
+{"a":"7100017950","t":"plate","c":"ca::rm::RmMgSceneBase::GetMainBeatType() const"}
+{"a":"7100017960","t":"plate","c":"mg1806::Mg1806InfoManager::GetBeatToSec(int) const"}
+{"a":"7100017970","t":"plate","c":"ca::rm::snd::GetBeatToSec(ca::rm::BEAT_TYPE, int, ca::rm::BGM_TYPE)"}
+{"a":"7100017980","t":"plate","c":"ca::rm::snd::GetBeatToFrame(ca::rm::BEAT_TYPE, int)"}
+{"a":"7100017990","t":"plate","c":"ca::rm::RmGameWork::GetBpm() const"}
+{"a":"71000179b0","t":"plate","c":"mg1806::Mg1806InfoManager::GetChartInfo(int) const"}
+{"a":"71000179c0","t":"plate","c":"mg1806::SyncWork::Start(float, int)"}
+{"a":"71000179d0","t":"plate","c":"mg1806::util::GetDTCalc(float, float)"}
+{"a":"71000179f0","t":"plate","c":"mg1806::SyncWork::GetFrameBG() const"}
+{"a":"7100017a00","t":"plate","c":"ca::rm::RmChartDataMan::GetDataSize()"}
+{"a":"7100017a10","t":"plate","c":"ca::rm::RmChartDataMan::GetItemStr(int, int)"}
+{"a":"7100017a30","t":"plate","c":"void std::vector<mg1806::CHART_INFO, bex::HeapModule::Allocator_vector<mg1806::CHART_INFO> >::__push_back_slow_path<mg1806::CHART_INFO const&>(mg1806::CHART_INFO const&)"}
+{"a":"7100017a40","t":"plate","c":"std::__wrap_iter<mg1806::CHART_INFO*> std::vector<mg1806::CHART_INFO, bex::HeapModule::Allocator_vector<mg1806::CHART_INFO> >::insert<std::__wrap_iter<mg1806::CHART_INFO*>, 0>(std::__wrap_iter<mg1806::CHART_INFO const*>, std::__wrap_iter<mg1806::CHART_INFO*>, std::__wrap_iter<mg1806::CHART_INFO*>)"}
+{"a":"7100017a50","t":"plate","c":"mg1806::CHART_INFO::SetAction(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)"}
+{"a":"7100017a60","t":"plate","c":"mg1806::CHART_INFO::CheckTop(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&) const"}
+{"a":"7100017a70","t":"plate","c":"mg1806::Mg1806InfoManager::Impl::CalcMaxCount()"}
+{"a":"7100017a80","t":"plate","c":"mg1806::Mg1806InfoManager::Impl::SetPersonalPlayNum()"}
+{"a":"7100017aa0","t":"plate","c":"mg1806::CHART_INFO::CheckAction(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&) const"}
+{"a":"7100017ab0","t":"plate","c":"bq::WorkModule::GetPlayers()"}
+{"a":"7100017ac0","t":"plate","c":"bq::PlayerWorkHolder::GetPlayerList(bq::PlayerListSortBy) const"}
+{"a":"7100017ad0","t":"plate","c":"bq::PlayerWork::GetPlayerID() const"}
+{"a":"7100017ae0","t":"plate","c":"ca::rm::RmUiStatusMan::SetPersonalPlayNum(bex::PlayerID, int)"}
+{"a":"7100017af0","t":"plate","c":"mg1806::Mg1806InfoManager::Mg1806InfoManager()"}
+{"a":"7100017b00","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Impl()"}
+{"a":"7100017b10","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::PLAYER()"}
+{"a":"7100017b20","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::~PLAYER()"}
+{"a":"7100017b30","t":"plate","c":"mg1806::Mg1806PlayerManager::~Mg1806PlayerManager()"}
+{"a":"7100017b40","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::StartIdle()"}
+{"a":"7100017b50","t":"plate","c":"ca::mg::MGModel::Play(int, char const*, float, nn::bezel::AnimationTransitionType, bool)"}
+{"a":"7100017b60","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Practice(bool)"}
+{"a":"7100017b70","t":"plate","c":"mg1806::Mg1806StageManager::SetPracticePlayerSpotLight(bool)"}
+{"a":"7100017b80","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Idle()"}
+{"a":"7100017b90","t":"plate","c":"mg1806::Mg1806PlayerManager::ActionMentor(mg1806::ACTION_TYPE)"}
+{"a":"7100017ba0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Anim(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)"}
+{"a":"7100017bb0","t":"plate","c":"mg1806::Mg1806PlayerManager::Ready(mg1806::CHART_INFO)"}
+{"a":"7100017bc0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Ready(mg1806::ACTION_TYPE)"}
+{"a":"7100017bd0","t":"plate","c":"mg1806::Mg1806PlayerManager::Active(mg1806::CHART_INFO, bool)"}
+{"a":"7100017be0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Active(mg1806::CHART_INFO, bool)"}
+{"a":"7100017bf0","t":"plate","c":"mg1806::Mg1806PlayerManager::Idle(bool)"}
+{"a":"7100017c00","t":"plate","c":"mg1806::Mg1806PlayerManager::Last()"}
+{"a":"7100017c10","t":"plate","c":"mg1806::Mg1806PlayerManager::SpotLightSE(bool)"}
+{"a":"7100017c20","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::SpotLightSE(bool)"}
+{"a":"7100017c30","t":"plate","c":"bex::sound::SoundModule::Play3D(char const*, nn::util::Vector3f const&, float)"}
+{"a":"7100017c40","t":"plate","c":"mg1806::Mg1806PositionZ::GetOffsetZ(bq::PlayerCharacterID) const"}
+{"a":"7100017c50","t":"plate","c":"ca::mg::MGActorPlayer::MGActorPlayer()"}
+{"a":"7100017c60","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::SPICE_EFFECT()"}
+{"a":"7100017c70","t":"plate","c":"std::array<mg1806::CommonEffect, 4ul>::~array()"}
+{"a":"7100017c80","t":"plate","c":"ca::mg::MGActorPlayer::~MGActorPlayer()"}
+{"a":"7100017c90","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::~Impl()"}
+{"a":"7100017ca0","t":"plate","c":"mg1806::Mg1806PositionZ::Mg1806PositionZ()"}
+{"a":"7100017cb0","t":"plate","c":"bq::PlayerWork::GetCharacterID() const"}
+{"a":"7100017cc0","t":"plate","c":"bq::PlayerWork::GetPlayerType() const"}
+{"a":"7100017cd0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::CreateModel(bex::PlayerID)"}
+{"a":"7100017ce0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::CreateBottle()"}
+{"a":"7100017cf0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::CreateModelChara(bq::PlayerCharacterID)"}
+{"a":"7100017d00","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::StageHook(char const*, bool)"}
+{"a":"7100017d10","t":"plate","c":"mg1806::Mg1806StageManager::GetPositionHookStage(char const*) const"}
+{"a":"7100017d20","t":"plate","c":"ca::mg::MGModel::GetEntity() const"}
+{"a":"7100017d30","t":"plate","c":"mg1806::Mg1806StageManager::HookStage(char const*, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100017d40","t":"plate","c":"ca::mg::MGModel::SetAttachMode(bool, bool, bool)"}
+{"a":"7100017d50","t":"plate","c":"mg1806::Mg1806StageManager::GetScaleHookStage(char const*) const"}
+{"a":"7100017d60","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Result()"}
+{"a":"7100017d70","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::Update()"}
+{"a":"7100017d80","t":"plate","c":"ca::rm::snd::GetBeatState(ca::rm::BEAT_TYPE, ca::rm::BGM_TYPE)"}
+{"a":"7100017d90","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::PracticeMentor()"}
+{"a":"7100017da0","t":"plate","c":"ca::mg::MGModel::IsCurrentMotion(int, char const*) const"}
+{"a":"7100017db0","t":"plate","c":"ca::mg::MGModel::ClearStack(int)"}
+{"a":"7100017dc0","t":"plate","c":"ca::mg::MGModel::Stack(int, char const*, float, nn::bezel::AnimationTransitionType)"}
+{"a":"7100017dd0","t":"plate","c":"mg1806::util::DownTimer(float&)"}
+{"a":"7100017de0","t":"plate","c":"bex::InputModule::GetAcc(bex::PlayerID)"}
+{"a":"7100017df0","t":"plate","c":"mg1806::Scene::GetAcc() const"}
+{"a":"7100017e00","t":"plate","c":"ca::mg::MGModel::GetFrameLength(char const*) const"}
+{"a":"7100017e10","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::PlayerSucessEffect(mg1806::CHECK_TYPE)"}
+{"a":"7100017e20","t":"plate","c":"mg1806::Scene::GetShiftTime() const"}
+{"a":"7100017e30","t":"plate","c":"mg1806::Mg1806StageManager::GetHookModel()"}
+{"a":"7100017e40","t":"plate","c":"ca::rm::RmUiTelopMan::ShowTimingTelop(bex::PlayerID, ca::rm::RmUiTelopMan::TIMING_TYPE, nn::util::Vector3f const&, float)"}
+{"a":"7100017e50","t":"plate","c":"bex::sound::SoundModule::Play2D(char const*, float, float)"}
+{"a":"7100017e60","t":"plate","c":"ca::rm::RmStarEffectMan::Start(nn::util::Vector3f const&, float, int, int)"}
+{"a":"7100017e70","t":"plate","c":"ca::mg::MGModel::GetFxTrigger()"}
+{"a":"7100017e80","t":"plate","c":"bex::ComFxTrigger::Play(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100017e90","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::__assign_external(char const*, unsigned long)"}
+{"a":"7100017ea0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::TimingTelop(ca::rm::RmUiTelopMan::TIMING_TYPE)"}
+{"a":"7100017eb0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Swing(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)"}
+{"a":"7100017ec0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::~SPICE_EFFECT()"}
+{"a":"7100017ed0","t":"plate","c":"ca::mg::MGActorPlayer::getStaticTypeinfo()"}
+{"a":"7100017ee0","t":"plate","c":"mg1806::util::GetPlayerIDName(bex::PlayerID)"}
+{"a":"7100017ef0","t":"plate","c":"ca::mg::MGActorPlayer::Create(int, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100017f00","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::AddAnim(bool)"}
+{"a":"7100017f10","t":"plate","c":"mg1806::util::GetNumName(char const*, int)"}
+{"a":"7100017f20","t":"plate","c":"mg1806::util::CreateMGModel(char const*, char const*)"}
+{"a":"7100017f30","t":"plate","c":"ca::mg::MGModel::Hook(char const*, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100017f40","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::Create(bex::PlayerID, int)"}
+{"a":"7100017f50","t":"plate","c":"ca::mg::MGActorPlayer::EnableControl(bool)"}
+{"a":"7100017f60","t":"plate","c":"ca::mg::MGModel::SetPlayParam(char const*, bool, float, nn::bezel::AnimationTransitionType)"}
+{"a":"7100017f70","t":"plate","c":"ca::rm::RmGameWork::SetPlayerEntity(int, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100017f80","t":"plate","c":"ca::mg::MGActorPlayer::Create(int, bq::PlayerCharacterID, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100017f90","t":"plate","c":"ca::rm::RmPracticeArrowMan::SetTranslation(int, nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"7100017fa0","t":"plate","c":"mg1806::Scene::IsOffsetZ() const"}
+{"a":"7100017fb0","t":"plate","c":"ca::mg::MGModel::SetAttachOffsetTranslation(nn::util::Vector3f const&)"}
+{"a":"7100017fc0","t":"plate","c":"ca::mg::MGModel::Detach()"}
+{"a":"7100017fd0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::AllClear()"}
+{"a":"7100017fe0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SucessEffect(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)"}
+{"a":"7100017ff0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::AnimModeSkipAndSpice(mg1806::CHECK_TYPE, char const*)"}
+{"a":"7100018000","t":"plate","c":"mg1806::Mg1806StageManager::DemoSpot(bool)"}
+{"a":"7100018010","t":"plate","c":"bex::sound::SoundModule::Play(char const*, float, char const*)"}
+{"a":"7100018020","t":"plate","c":"ca::rm::util::ShowCommonEffect(ca::rm::util::CMN_EFFECT_ID, nn::util::Vector3f const&)"}
+{"a":"7100018030","t":"plate","c":"ca::rm::RmSoundMan::PlayExcellentSe(int, bool)"}
+{"a":"7100018040","t":"plate","c":"bex::RandModule::SyncRandRange(unsigned int, unsigned int)"}
+{"a":"7100018050","t":"plate","c":"bex::RandModule::SyncRandF()"}
+{"a":"7100018060","t":"plate","c":"mg1806::Scene::GetHitWide() const"}
+{"a":"7100018070","t":"plate","c":"mg1806::Scene::GetJustFrontFrame() const"}
+{"a":"7100018080","t":"plate","c":"mg1806::Scene::GetJustWide() const"}
+{"a":"7100018090","t":"plate","c":"mg1806::Mg1806PlayerManager::Mg1806PlayerManager()"}
+{"a":"71000180a0","t":"plate","c":"operator new(unsigned long)"}
+{"a":"71000180b0","t":"plate","c":"mg1806::Scene::Scene()"}
+{"a":"71000180c0","t":"plate","c":"ca::rm::RmMgSceneBase::getStaticTypeinfo()"}
+{"a":"71000180d0","t":"plate","c":"rtti::Typeinfo::Typeinfo(rtti::Typeinfo*, char const*, char const*, rtti::Property const* (*)(), void* (*)(), void (*)(void*), unsigned int, unsigned int, void (*)(void*, rtti::Property const&, rtti::PropertyList&), bool (*)(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int))"}
+{"a":"71000180e0","t":"plate","c":"rtti::Property::Property()"}
+{"a":"71000180f0","t":"plate","c":"rtti::Typeinfo::checkGuiPropDefault(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"7100018100","t":"plate","c":"rtti::Typeinfo::createGuiPropDefault(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"7100018110","t":"plate","c":"bex::SceneParamBase::getStaticTypeinfo()"}
+{"a":"7100018120","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Type const&)"}
+{"a":"7100018130","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Value const*, unsigned int, unsigned char)"}
+{"a":"7100018140","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Type const&, int, int, int)"}
+{"a":"7100018150","t":"plate","c":"ca::rm::RmMgSceneBase::RmMgSceneBase()"}
+{"a":"7100018160","t":"plate","c":"mg1806::util::SetScene(mg1806::Scene*)"}
+{"a":"7100018170","t":"plate","c":"nn::bezel::HandleSource<bq::SceneBase>::Reset(bq::SceneBase*)"}
+{"a":"7100018180","t":"plate","c":"ca::util::SetupSceneHandle(nn::bezel::WeakHandle<bq::SceneBase>, bool)"}
+{"a":"7100018190","t":"plate","c":"mg1806::Scene::SetMentorCharacterID()"}
+{"a":"71000181a0","t":"plate","c":"bq::CharacterDataModule::LoadScenePlayerCharacter(bq::PlayerCharacterID, bool, bool)"}
+{"a":"71000181b0","t":"plate","c":"bq::CharacterDataModule::LoadSceneNonPlayerCharacter(bq::NonPlayerCharacterID, bool, bool)"}
+{"a":"71000181c0","t":"plate","c":"nn::os::WaitLightEvent(nn::os::LightEventType*)"}
+{"a":"71000181d0","t":"plate","c":"nn::os::SignalLightEvent(nn::os::LightEventType*)"}
+{"a":"71000181e0","t":"plate","c":"nn::bezel::detail::RcArena::Reserve()"}
+{"a":"71000181f0","t":"plate","c":"ca::rm::RmMgSceneBase::~RmMgSceneBase()"}
+{"a":"7100018200","t":"plate","c":"mg1806::Scene::~Scene()"}
+{"a":"7100018210","t":"plate","c":"ca::rm::RmPracticeArrowMan::SetScale(int, nn::util::Vector3f const&)"}
+{"a":"7100018220","t":"plate","c":"mg1806::Scene::SetupRhythm()"}
+{"a":"7100018230","t":"plate","c":"ca::rm::RmMgSceneBase::SetNextChartDataOffset(int)"}
+{"a":"7100018240","t":"plate","c":"mg1806::Mg1806Sequence::Mg1806Sequence()"}
+{"a":"7100018250","t":"plate","c":"mg1806::Mg1806Sequence::Setup()"}
+{"a":"7100018260","t":"plate","c":"ca::rm::RmUiStatusMan::SetStarTotalScore(int)"}
+{"a":"7100018270","t":"plate","c":"ca::rm::RmMgSceneBase::SetGameBgmName(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100018280","t":"plate","c":"ca::rm::RmMgSceneBase::SetMainBeatType(ca::rm::BEAT_TYPE)"}
+{"a":"7100018290","t":"plate","c":"ca::rm::RmMgSceneBase::SetMainBgmName(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000182a0","t":"plate","c":"ca::rm::RmMgSceneBase::SetGameBgmFinName(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000182b0","t":"plate","c":"mg1806::Scene::GetChartJson() const"}
+{"a":"71000182c0","t":"plate","c":"ca::rm::RmChartDataMan::ReadChartData(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000182d0","t":"plate","c":"ca::rm::RmUiStatusMan::SetStatusType(ca::rm::RmUiStatusMan::STATUS_TYPE)"}
+{"a":"71000182e0","t":"plate","c":"mg1806::Mg1806Sequence::OnRmGameStartAfter()"}
+{"a":"71000182f0","t":"plate","c":"mg1806::Mg1806Sequence::TrigRmGameMainBgmPracticeStart()"}
+{"a":"7100018300","t":"plate","c":"mg1806::Mg1806Sequence::TrigRmGameMainBgmTopStart()"}
+{"a":"7100018310","t":"plate","c":"mg1806::Mg1806Sequence::OnRmGameMain(int)"}
+{"a":"7100018320","t":"plate","c":"mg1806::Mg1806Sequence::TrigRmGameResultCaptureSetting()"}
+{"a":"7100018330","t":"plate","c":"mg1806::Mg1806Sequence::TrigRmGameEndingSetting()"}
+{"a":"7100018340","t":"plate","c":"mg1806::Mg1806Sequence::OnRmRecieveBeatEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100018350","t":"plate","c":"mg1806::Mg1806Sequence::OnRmRecieveBeatNextEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100018360","t":"plate","c":"mg1806::Mg1806Sequence::TrigRmGameMainChartEnd()"}
+{"a":"7100018370","t":"plate","c":"mg1806::Scene::GetZoomMode() const"}
+{"a":"7100018380","t":"plate","c":"mg1806::Scene::IsZoomType() const"}
+{"a":"7100018390","t":"plate","c":"mg1806::Scene::GetLastZoomFrame() const"}
+{"a":"71000183a0","t":"plate","c":"ca::rm::RmGameWork::GetRemixChartNo() const"}
+{"a":"71000183b0","t":"plate","c":"mg1806::Mg1806Sequence::~Mg1806Sequence()"}
+{"a":"71000183c0","t":"plate","c":"mg1806::Mg1806Sequence::Impl::Setup()"}
+{"a":"71000183d0","t":"plate","c":"mg1806::Mg1806StageManager::Mg1806StageManager()"}
+{"a":"71000183e0","t":"plate","c":"mg1806::util::CheckOne(bool&)"}
+{"a":"71000183f0","t":"plate","c":"ca::rm::RmGameWork::IsInstActive()"}
+{"a":"7100018400","t":"plate","c":"mg1806::Mg1806Sequence::Impl::OnRmRecieveBeatEntry(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100018410","t":"plate","c":"mg1806::Mg1806Sequence::Impl::InitPhaseCommon()"}
+{"a":"7100018420","t":"plate","c":"mg1806::Mg1806StageManager::SetSpotLightColor(int)"}
+{"a":"7100018430","t":"plate","c":"mg1806::Mg1806StageManager::ChangeSpotLightColor(int)"}
+{"a":"7100018440","t":"plate","c":"mg1806::Mg1806Sequence::Impl::CountRing()"}
+{"a":"7100018450","t":"plate","c":"mg1806::Mg1806Sequence::Impl::ControlRing(int, bool)"}
+{"a":"7100018460","t":"plate","c":"mg1806::Mg1806Sequence::Impl::ReadyChart(ca::rm::RmMgSceneBase::Data const&)"}
+{"a":"7100018470","t":"plate","c":"mg1806::Mg1806Sequence::Impl::~Impl()"}
+{"a":"7100018480","t":"plate","c":"mg1806::Mg1806StageManager::PlayerSpotLightOff()"}
+{"a":"7100018490","t":"plate","c":"mg1806::Mg1806StageManager::SetColorCurry()"}
+{"a":"71000184a0","t":"plate","c":"mg1806::Mg1806StageManager::SetTurn(int)"}
+{"a":"71000184b0","t":"plate","c":"mg1806::Mg1806StageManager::PhaseSpotLightOn(mg1806::CHART_INFO const&, mg1806::CHART_PHASE)"}
+{"a":"71000184c0","t":"plate","c":"mg1806::Mg1806StageManager::OmenSpotLightOn(mg1806::CHART_INFO const&)"}
+{"a":"71000184d0","t":"plate","c":"mg1806::Mg1806StageManager::MentorSpotLightOff()"}
+{"a":"71000184e0","t":"plate","c":"mg1806::Mg1806StageManager::OmenSpotLightOff()"}
+{"a":"71000184f0","t":"plate","c":"mg1806::Mg1806StageManager::PhaseSpotLightOff()"}
+{"a":"7100018500","t":"plate","c":"mg1806::Mg1806StageManager::SetModeSpotLight(bex::PlayerID, int, mg1806::CHART_PATTERN)"}
+{"a":"7100018510","t":"plate","c":"mg1806::Mg1806StageManager::Impl::Impl()"}
+{"a":"7100018520","t":"plate","c":"std::array<mg1806::Mg1806StageManager::Impl::SPOT_LIGHT, 5ul>::array()"}
+{"a":"7100018530","t":"plate","c":"mg1806::Mg1806StageManager::~Mg1806StageManager()"}
+{"a":"7100018540","t":"plate","c":"ca::mg::MGModel::GetBoneWorldPosition(nn::util::basic_string_view<char, std::char_traits<char> > const&) const"}
+{"a":"7100018550","t":"plate","c":"ca::mg::MGModel::GetBoneWorldMatrix(nn::util::basic_string_view<char, std::char_traits<char> > const&) const"}
+{"a":"7100018560","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetColorCurry()"}
+{"a":"7100018570","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::SetModeSpotLight(int, int)"}
+{"a":"7100018580","t":"plate","c":"mg1806::Mg1806StageManager::Impl::OmenSpotLightOn(mg1806::CHART_INFO const&)"}
+{"a":"7100018590","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PhaseSpotLightOn(mg1806::CHART_INFO const&, mg1806::CHART_PHASE)"}
+{"a":"71000185a0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PlayerSpotLightOff()"}
+{"a":"71000185b0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::OmenSpotLightOff()"}
+{"a":"71000185c0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::PhaseSpotLightOff()"}
+{"a":"71000185d0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetSpotLightColor(int)"}
+{"a":"71000185e0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::ChangeSpotLightColor(int)"}
+{"a":"71000185f0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::ChangeSpotLightColor(int, nn::bezel::HandlePtr<nn::bezel::Texture>, nn::bezel::HandlePtr<nn::bezel::Texture>)"}
+{"a":"7100018600","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetPracticePlayerSpotLight(bool)"}
+{"a":"7100018610","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::~SPOT_LIGHT()"}
+{"a":"7100018620","t":"plate","c":"mg1806::Mg1806StageManager::Impl::~Impl()"}
+{"a":"7100018630","t":"plate","c":"std::array<mg1806::Mg1806StageManager::Impl::SPOT_LIGHT, 5ul>::~array()"}
+{"a":"7100018640","t":"plate","c":"mg1806::Mg1806StageManager::Impl::Create()"}
+{"a":"7100018650","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HookSpotLight()"}
+{"a":"7100018660","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HEYHO::Play(char const*, bool)"}
+{"a":"7100018670","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SetupResult()"}
+{"a":"7100018680","t":"plate","c":"mg1806::Mg1806StageManager::Impl::Update()"}
+{"a":"7100018690","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreatePot()"}
+{"a":"71000186a0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateStage()"}
+{"a":"71000186b0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateSpotLight()"}
+{"a":"71000186c0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT_OMEN::Create(int)"}
+{"a":"71000186d0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateHeyho()"}
+{"a":"71000186e0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateBG()"}
+{"a":"71000186f0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Create(int)"}
+{"a":"7100018700","t":"plate","c":"nn::bezel::GraphicsCoreModule::CreateTexture(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100018710","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HEYHO::Create(int)"}
+{"a":"7100018720","t":"plate","c":"ca::mg::MGModel::GetFrameLength(int) const"}
+{"a":"7100018730","t":"plate","c":"mg1806::util::CreateNPCModelNum(char const*, bq::NonPlayerCharacterID, int)"}
+{"a":"7100018740","t":"plate","c":"mg1806::Mg1806StageManager::Impl::HEYHO::SetColor()"}
+{"a":"7100018750","t":"plate","c":"ca::mg::MGModel::GetMaterial(char const*)"}
+{"a":"7100018760","t":"plate","c":"nn::bezel::MaterialHandle::SafeLock() const"}
+{"a":"7100018770","t":"plate","c":"nn::bezel::MaterialHandle::~MaterialHandle()"}
+{"a":"7100018780","t":"plate","c":"nn::bezel::Material::FindParam(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100018790","t":"plate","c":"nn::bezel::MaterialParam::GetVector4() const"}
+{"a":"71000187a0","t":"plate","c":"nn::bezel::MaterialParam::SetVector4(nn::util::Vector4f const&)"}
+{"a":"71000187b0","t":"plate","c":"bex::ComFxTrigger::StopAllPlayingFxTrigger()"}
+{"a":"71000187c0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Hook(ca::mg::MGModel*)"}
+{"a":"71000187d0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::ResultModel()"}
+{"a":"71000187e0","t":"plate","c":"ca::rm::RmUiStatusMan::GetStarAchieveJudge()"}
+{"a":"71000187f0","t":"plate","c":"ca::mg::MGModel::SetTexture(nn::util::basic_string_view<char, std::char_traits<char> > const&, int, nn::bezel::HandlePtr<nn::bezel::Texture> const&)"}
+{"a":"7100018800","t":"plate","c":"bq::SceneBase::CreateSceneEntity(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100018810","t":"plate","c":"mg1806::util::GetModelFileNameSub(char const*, char const*)"}
+{"a":"7100018820","t":"plate","c":"mg1806::util::CreateMGCommonModel(char const*, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100018830","t":"plate","c":"ca::mg::MGModel::MGModel()"}
+{"a":"7100018840","t":"plate","c":"ca::mg::MGModel::RegisterEntity(nn::bezel::HandlePtr<nn::bezel::Entity>)"}
+{"a":"7100018850","t":"plate","c":"ca::mg::MGModel::Create(char const*)"}
+{"a":"7100018860","t":"plate","c":"mg1806::util::CreateNPCModel(char const*, bq::NonPlayerCharacterID)"}
+{"a":"7100018870","t":"plate","c":"ca::mg::MGModel::CreateNPC(bq::NonPlayerCharacterID, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100018880","t":"plate","c":"mg1806::util::CreatePCModel(char const*, bq::PlayerCharacterID)"}
+{"a":"7100018890","t":"plate","c":"ca::mg::MGModel::CreatePC(bq::PlayerCharacterID, bq::MatterType, nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"71000188a0","t":"plate","c":"mg1806::util::GetMapFileName(char const*)"}
+{"a":"71000188b0","t":"plate","c":"actor::Util::LoadNbmap(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool)"}
+{"a":"71000188c0","t":"plate","c":"bex::MainModule::GetDeltaTime()"}
+{"a":"71000188e0","t":"plate","c":"bex::Effect::Create(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000188f0","t":"plate","c":"mg1806::Mg1806PositionZ::Impl::LoadJson()"}
+{"a":"7100018900","t":"plate","c":"mg1806::Mg1806PositionZ::~Mg1806PositionZ()"}
+{"a":"7100018910","t":"plate","c":"nn::bezel::JsonReader::JsonReader()"}
+{"a":"7100018920","t":"plate","c":"bq::DataBaseJsonReader::ParseFromAsset(char const*, bool)"}
+{"a":"7100018930","t":"plate","c":"nn::bezel::JsonReader::BeginArray(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100018940","t":"plate","c":"nn::bezel::JsonReader::GetArraySize() const"}
+{"a":"7100018960","t":"plate","c":"nn::bezel::JsonReader::EndArray()"}
+{"a":"7100018970","t":"plate","c":"bq::DataBaseJsonReader::DeserializeRTTI_(int, void*, rtti::Typeinfo const&)"}
+{"a":"7100018980","t":"plate","c":"rtti::Typeinfo::getRootTypeinfo()"}
+{"a":"7100018990","t":"plate","c":"bq::DataBaseJsonReader::~DataBaseJsonReader()"}
+{"a":"710003ba20","t":"plate","c":"typeinfo name for std::length_error"}
+{"a":"710003ba31","t":"plate","c":"typeinfo name for std::logic_error"}
+{"a":"710003ba41","t":"plate","c":"typeinfo name for std::exception"}
+{"a":"710003ba4e","t":"plate","c":"typeinfo name for std::out_of_range"}
+{"a":"710003ba80","t":"plate","c":"mg1806::CHART_INFO::SetTop(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)::DATA"}
+{"a":"710003bac8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.1\nMg1806ObjectBaseImpl::SetState 점프표: 상태 0~12 → Setup, PostSetup, Initialize, StartOpeningDemo, SkipOpeningDemo, StartGame, StartTelop, StartPlayer, EndPlayer, EndRound, StartFinish, StartCapture, StartResult"}
+{"a":"710003bb70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1806.md §6.5\nPLAYER::Ready comMode 점프표(comPlan 분기, comMode 0~6)"}
+{"a":"710003bb78","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::PlaySE(nn::util::Vector3f const&, ca::rm::RmUiTelopMan::TIMING_TYPE)::PAN"}
+{"a":"710003bb88","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::PracticeMentor()::MENTOR_POSE"}
+{"a":"710003bba4","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SetCom()::HIT"}
+{"a":"710003bbb4","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::GetCheckCom() const::d"}
+{"a":"710003bbc4","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::GetCheckCom() const::HIT"}
+{"a":"710003bbf8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Update()::endFrameData"}
+{"a":"710003bc0c","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::SetModeSpotLight(int, int)::startFrameData"}
+{"a":"71000424b0","t":"plate","c":"vtable for mg1806::Mg1806CameraManager"}
+{"a":"71000424d8","t":"plate","c":"vtable for mg1806::Mg1806CameraManager::Impl"}
+{"a":"71000425b0","t":"plate","c":"vtable for mg1806::Mg1806ObjectBaseImpl"}
+{"a":"7100042640","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100042670","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::g_TypeDesc"}
+{"a":"71000426a0","t":"plate","c":"typeinfo for std::exception"}
+{"a":"71000426b0","t":"plate","c":"typeinfo for std::logic_error"}
+{"a":"71000426c8","t":"plate","c":"typeinfo for std::length_error"}
+{"a":"71000426e0","t":"plate","c":"vtable for nn::bezel::StringViewHashPair"}
+{"a":"7100042708","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::g_TypeDesc"}
+{"a":"7100042738","t":"plate","c":"typeinfo for std::out_of_range"}
+{"a":"7100042750","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100042780","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiBase, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"71000427b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IGraphicsLayerExtension, false>::g_TypeDesc"}
+{"a":"71000427e0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::GraphicsLayerExtension, false, nn::bezel::IGraphicsLayerExtension>::g_TypeDesc"}
+{"a":"7100042810","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100042840","t":"plate","c":"vtable for mg1806::CommonEffect"}
+{"a":"7100042860","t":"plate","c":"vtable for mg1806::CommonEffect::Impl"}
+{"a":"7100042880","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"71000428b0","t":"plate","c":"vtable for mg1806::Mg1806InfoManager"}
+{"a":"71000428d0","t":"plate","c":"vtable for mg1806::Mg1806InfoManager::Impl"}
+{"a":"7100042910","t":"plate","c":"vtable for mg1806::CHART_INFO"}
+{"a":"7100042930","t":"plate","c":"mg1806::CHART_INFO::CheckAction(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&) const::DAT"}
+{"a":"7100042990","t":"plate","c":"vtable for mg1806::Mg1806PlayerManager"}
+{"a":"71000429b8","t":"plate","c":"vtable for mg1806::Mg1806PlayerManager::Impl"}
+{"a":"7100042a90","t":"plate","c":"vtable for mg1806::Mg1806PlayerManager::Impl::PLAYER"}
+{"a":"7100042b10","t":"plate","c":"vtable for mg1806::Scene"}
+{"a":"7100042f28","t":"plate","c":"vtable for mg1806::Scene::Params"}
+{"a":"7100042f58","t":"plate","c":"vtable for mg1806::Mg1806Sequence"}
+{"a":"7100042f78","t":"plate","c":"vtable for mg1806::Mg1806Sequence::Impl"}
+{"a":"7100042fb8","t":"plate","c":"vtable for mg1806::Mg1806StageManager"}
+{"a":"7100042fe0","t":"plate","c":"vtable for mg1806::Mg1806StageManager::Impl"}
+{"a":"71000430b8","t":"plate","c":"vtable for mg1806::SyncWork"}
+{"a":"7100043398","t":"plate","c":"vtable for mg1806::Mg1806PositionZ"}
+{"a":"71000433b8","t":"plate","c":"vtable for mg1806::Mg1806PositionZ::Impl"}
+{"a":"7100044280","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg1806.md §3.2·11.2\nGOT 항목: RmPracticeArrowMan::SetScale(0..3, 상수 벡터) 의 상수 벡터 대상. 값 미판독"}
+{"a":"7100046008","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::CreateModel(int)::d"}
+{"a":"7100046070","t":"plate","c":"mg1806::CHART_INFO::SetAction(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > const&)::PLAYER"}
+{"a":"7100046090","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::Create(bex::PlayerID, int)::file00"}
+{"a":"71000460b8","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::Create(bex::PlayerID, int)::file01"}
+{"a":"71000460e0","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::StartHook()::bone"}
+{"a":"7100046100","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Result()::bone"}
+{"a":"7100046120","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Telop(mg1806::CHECK_TYPE)::vb"}
+{"a":"7100046130","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::Anim(mg1806::CHECK_TYPE, mg1806::ACTION_TYPE)::play"}
+{"a":"7100046158","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::SPICE_EFFECT::Start(bool, nn::bezel::WeakHandle<nn::bezel::Entity>)::hook"}
+{"a":"7100046180","t":"plate","c":"mg1806::Scene::Symbol"}
+{"a":"7100046188","t":"plate","c":"mg1806::Scene::Params::Symbol"}
+{"a":"7100046190","t":"plate","c":"mg1806::Mg1806StageManager::Impl::CreateStage()::file"}
+{"a":"71000461a8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Create(int)::NUM"}
+{"a":"71000461f8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Create(int)::FILE"}
+{"a":"7100046228","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT_OMEN::Create(int)::NUM"}
+{"a":"7100046268","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT_OMEN::Create(int)::file"}
+{"a":"7100046278","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::Hook(ca::mg::MGModel*)::HOOK"}
+{"a":"71000462a0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT_OMEN::Hook(ca::mg::MGModel*)::HOOK"}
+{"a":"71000462c0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::ResultModel()::file"}
+{"a":"71000462e0","t":"plate","c":"mg1806::Mg1806StageManager::Impl::ResultModel()::efile"}
+{"a":"71000462f8","t":"plate","c":"mg1806::Mg1806StageManager::Impl::SPOT_LIGHT::ChangeSpotLightColor(int, nn::bezel::HandlePtr<nn::bezel::Texture>, nn::bezel::HandlePtr<nn::bezel::Texture>)::mat"}
+{"a":"7100046470","t":"plate","c":"nn::bezel::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046478","t":"plate","c":"guard variable for nn::bezel::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046480","t":"plate","c":"nn::bezel::ComParticleFx2Emitter::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046488","t":"plate","c":"guard variable for nn::bezel::ComParticleFx2Emitter::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046490","t":"plate","c":"nn::bezel::NetworkNplnModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046498","t":"plate","c":"guard variable for nn::bezel::NetworkNplnModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464a0","t":"plate","c":"bex::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464a8","t":"plate","c":"guard variable for bex::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464b0","t":"plate","c":"nn::bezel::ComAttachment::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000464b8","t":"plate","c":"guard variable for nn::bezel::ComAttachment::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000464c0","t":"plate","c":"nn::bezel::ComHitCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000464c8","t":"plate","c":"guard variable for nn::bezel::ComHitCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000464d0","t":"plate","c":"nn::bezel::AudioModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464d8","t":"plate","c":"guard variable for nn::bezel::AudioModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464e0","t":"plate","c":"bex::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464e8","t":"plate","c":"guard variable for bex::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464f0","t":"plate","c":"bex::SaveModule::s_DetailModuleEntryInvoker"}
+{"a":"71000464f8","t":"plate","c":"guard variable for bex::SaveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046500","t":"plate","c":"bq::ObjectList::s_DetailModuleEntryInvoker"}
+{"a":"7100046508","t":"plate","c":"guard variable for bq::ObjectList::s_DetailModuleEntryInvoker"}
+{"a":"7100046510","t":"plate","c":"nn::bezel::CoreSystem::s_DetailModuleEntryInvoker"}
+{"a":"7100046518","t":"plate","c":"guard variable for nn::bezel::CoreSystem::s_DetailModuleEntryInvoker"}
+{"a":"7100046520","t":"plate","c":"bex::HeapModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046528","t":"plate","c":"guard variable for bex::HeapModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046530","t":"plate","c":"nn::bezel::AccountModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046538","t":"plate","c":"guard variable for nn::bezel::AccountModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046540","t":"plate","c":"nn::bezel::AnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046548","t":"plate","c":"guard variable for nn::bezel::AnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046550","t":"plate","c":"nn::bezel::AssetModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046558","t":"plate","c":"guard variable for nn::bezel::AssetModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046560","t":"plate","c":"nn::bezel::ClassicMapModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046568","t":"plate","c":"guard variable for nn::bezel::ClassicMapModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046570","t":"plate","c":"nn::bezel::ComCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046578","t":"plate","c":"guard variable for nn::bezel::ComCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046580","t":"plate","c":"nn::bezel::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046588","t":"plate","c":"guard variable for nn::bezel::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046590","t":"plate","c":"nn::bezel::ComModelInstance::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046598","t":"plate","c":"guard variable for nn::bezel::ComModelInstance::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000465a0","t":"plate","c":"nn::bezel::ComTransform2d::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000465a8","t":"plate","c":"guard variable for nn::bezel::ComTransform2d::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000465b0","t":"plate","c":"nn::bezel::DefaultViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465b8","t":"plate","c":"guard variable for nn::bezel::DefaultViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465c0","t":"plate","c":"nn::bezel::DevConnectionModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465c8","t":"plate","c":"guard variable for nn::bezel::DevConnectionModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465d0","t":"plate","c":"nn::bezel::DevConnectorForToolsModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465d8","t":"plate","c":"guard variable for nn::bezel::DevConnectorForToolsModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465e0","t":"plate","c":"nn::bezel::DevHtcsModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465e8","t":"plate","c":"guard variable for nn::bezel::DevHtcsModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465f0","t":"plate","c":"nn::bezel::DevInterfaceModule::s_DetailModuleEntryInvoker"}
+{"a":"71000465f8","t":"plate","c":"guard variable for nn::bezel::DevInterfaceModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046600","t":"plate","c":"nn::bezel::DevIpcModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046608","t":"plate","c":"guard variable for nn::bezel::DevIpcModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046610","t":"plate","c":"nn::bezel::DevPrimitiveRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046618","t":"plate","c":"guard variable for nn::bezel::DevPrimitiveRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046620","t":"plate","c":"nn::bezel::DevVideoRecorderModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046628","t":"plate","c":"guard variable for nn::bezel::DevVideoRecorderModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046630","t":"plate","c":"nn::bezel::EntityDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046638","t":"plate","c":"guard variable for nn::bezel::EntityDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046640","t":"plate","c":"nn::bezel::EntityModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046648","t":"plate","c":"guard variable for nn::bezel::EntityModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046650","t":"plate","c":"nn::bezel::ErrorViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046658","t":"plate","c":"guard variable for nn::bezel::ErrorViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046660","t":"plate","c":"nn::bezel::FileModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046668","t":"plate","c":"guard variable for nn::bezel::FileModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046670","t":"plate","c":"nn::bezel::FontModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046678","t":"plate","c":"guard variable for nn::bezel::FontModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046680","t":"plate","c":"nn::bezel::GraphicsCoreModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046688","t":"plate","c":"guard variable for nn::bezel::GraphicsCoreModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046690","t":"plate","c":"nn::bezel::GuiLayoutModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046698","t":"plate","c":"guard variable for nn::bezel::GuiLayoutModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466a0","t":"plate","c":"nn::bezel::HidModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466a8","t":"plate","c":"guard variable for nn::bezel::HidModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466b0","t":"plate","c":"nn::bezel::ImguiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466b8","t":"plate","c":"guard variable for nn::bezel::ImguiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466c0","t":"plate","c":"nn::bezel::JsonModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466c8","t":"plate","c":"guard variable for nn::bezel::JsonModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466d0","t":"plate","c":"nn::bezel::LineRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466d8","t":"plate","c":"guard variable for nn::bezel::LineRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466e0","t":"plate","c":"nn::bezel::LocalizeMessageModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466e8","t":"plate","c":"guard variable for nn::bezel::LocalizeMessageModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466f0","t":"plate","c":"nn::bezel::MemoryModule::s_DetailModuleEntryInvoker"}
+{"a":"71000466f8","t":"plate","c":"guard variable for nn::bezel::MemoryModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046700","t":"plate","c":"nn::bezel::ModelModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046708","t":"plate","c":"guard variable for nn::bezel::ModelModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046710","t":"plate","c":"nn::bezel::MovieModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046718","t":"plate","c":"guard variable for nn::bezel::MovieModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046720","t":"plate","c":"nn::bezel::MyPageAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046728","t":"plate","c":"guard variable for nn::bezel::MyPageAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046730","t":"plate","c":"nn::bezel::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046738","t":"plate","c":"guard variable for nn::bezel::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046740","t":"plate","c":"nn::bezel::NetworkUtilModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046748","t":"plate","c":"guard variable for nn::bezel::NetworkUtilModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046750","t":"plate","c":"nn::bezel::ParticleFx2Module::s_DetailModuleEntryInvoker"}
+{"a":"7100046758","t":"plate","c":"guard variable for nn::bezel::ParticleFx2Module::s_DetailModuleEntryInvoker"}
+{"a":"7100046760","t":"plate","c":"nn::bezel::PerfDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046768","t":"plate","c":"guard variable for nn::bezel::PerfDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046770","t":"plate","c":"nn::bezel::PerfModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046778","t":"plate","c":"guard variable for nn::bezel::PerfModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046780","t":"plate","c":"nn::bezel::PhysicsModelModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046788","t":"plate","c":"guard variable for nn::bezel::PhysicsModelModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046790","t":"plate","c":"nn::bezel::PrefabModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046798","t":"plate","c":"guard variable for nn::bezel::PrefabModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467a0","t":"plate","c":"nn::bezel::ProfanityFilterModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467a8","t":"plate","c":"guard variable for nn::bezel::ProfanityFilterModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467b0","t":"plate","c":"nn::bezel::RenderPipelineModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467b8","t":"plate","c":"guard variable for nn::bezel::RenderPipelineModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467c0","t":"plate","c":"nn::bezel::RttsAssetModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467c8","t":"plate","c":"guard variable for nn::bezel::RttsAssetModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467d0","t":"plate","c":"nn::bezel::RttsModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467d8","t":"plate","c":"guard variable for nn::bezel::RttsModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467e0","t":"plate","c":"nn::bezel::SaveDataModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467e8","t":"plate","c":"guard variable for nn::bezel::SaveDataModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467f0","t":"plate","c":"nn::bezel::ScriptModule::s_DetailModuleEntryInvoker"}
+{"a":"71000467f8","t":"plate","c":"guard variable for nn::bezel::ScriptModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046800","t":"plate","c":"nn::bezel::SoftwareKeyboardModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046808","t":"plate","c":"guard variable for nn::bezel::SoftwareKeyboardModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046810","t":"plate","c":"nn::bezel::WebAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046818","t":"plate","c":"guard variable for nn::bezel::WebAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046820","t":"plate","c":"bex::BexAnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046828","t":"plate","c":"guard variable for bex::BexAnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046830","t":"plate","c":"bex::ComAutomaticTeleport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046838","t":"plate","c":"guard variable for bex::ComAutomaticTeleport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046840","t":"plate","c":"bex::ComEffect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046848","t":"plate","c":"guard variable for bex::ComEffect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046850","t":"plate","c":"bex::ComFiber::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046858","t":"plate","c":"guard variable for bex::ComFiber::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046860","t":"plate","c":"bex::ComFiberLite::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046868","t":"plate","c":"guard variable for bex::ComFiberLite::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046870","t":"plate","c":"bex::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046878","t":"plate","c":"guard variable for bex::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046880","t":"plate","c":"bex::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046888","t":"plate","c":"guard variable for bex::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046890","t":"plate","c":"bex::ComHeading::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046898","t":"plate","c":"guard variable for bex::ComHeading::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000468a0","t":"plate","c":"bex::DllModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468a8","t":"plate","c":"guard variable for bex::DllModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468b0","t":"plate","c":"bex::EffectModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468b8","t":"plate","c":"guard variable for bex::EffectModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468c0","t":"plate","c":"bex::FiberModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468c8","t":"plate","c":"guard variable for bex::FiberModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468d0","t":"plate","c":"bex::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468d8","t":"plate","c":"guard variable for bex::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468e0","t":"plate","c":"bex::InputModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468e8","t":"plate","c":"guard variable for bex::InputModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468f0","t":"plate","c":"bex::MainModule::s_DetailModuleEntryInvoker"}
+{"a":"71000468f8","t":"plate","c":"guard variable for bex::MainModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046900","t":"plate","c":"bex::PrimitiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046908","t":"plate","c":"guard variable for bex::PrimitiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046910","t":"plate","c":"bex::RandModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046918","t":"plate","c":"guard variable for bex::RandModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046920","t":"plate","c":"bex::SceneModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046928","t":"plate","c":"guard variable for bex::SceneModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046930","t":"plate","c":"bex::ToolModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046938","t":"plate","c":"guard variable for bex::ToolModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046940","t":"plate","c":"bex::UiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046948","t":"plate","c":"guard variable for bex::UiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046950","t":"plate","c":"bex::VibrationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046958","t":"plate","c":"guard variable for bex::VibrationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046960","t":"plate","c":"bex::gfx::RendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046968","t":"plate","c":"guard variable for bex::gfx::RendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046970","t":"plate","c":"bex::sound::ComActor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046978","t":"plate","c":"guard variable for bex::sound::ComActor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046980","t":"plate","c":"bex::sound::SoundModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046988","t":"plate","c":"guard variable for bex::sound::SoundModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046990","t":"plate","c":"actor::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046998","t":"plate","c":"guard variable for actor::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"71000469a0","t":"plate","c":"actor::ComActorSixAxisSensor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469a8","t":"plate","c":"guard variable for actor::ComActorSixAxisSensor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469b0","t":"plate","c":"actor::ComInvincibleExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469b8","t":"plate","c":"guard variable for actor::ComInvincibleExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469c0","t":"plate","c":"actor::ComStarExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469c8","t":"plate","c":"guard variable for actor::ComStarExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469d0","t":"plate","c":"actor::ComWetExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469d8","t":"plate","c":"guard variable for actor::ComWetExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000469e0","t":"plate","c":"actor::RandomModule::s_DetailModuleEntryInvoker"}
+{"a":"71000469e8","t":"plate","c":"guard variable for actor::RandomModule::s_DetailModuleEntryInvoker"}
+{"a":"71000469f0","t":"plate","c":"bq::AccountMgrModule::s_DetailModuleEntryInvoker"}
+{"a":"71000469f8","t":"plate","c":"guard variable for bq::AccountMgrModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a00","t":"plate","c":"bq::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a08","t":"plate","c":"guard variable for bq::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a10","t":"plate","c":"bq::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a18","t":"plate","c":"guard variable for bq::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a20","t":"plate","c":"bq::CharacterDataModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a28","t":"plate","c":"guard variable for bq::CharacterDataModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046a30","t":"plate","c":"bq::ComChainsOfWanwan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a38","t":"plate","c":"guard variable for bq::ComChainsOfWanwan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a40","t":"plate","c":"bq::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a48","t":"plate","c":"guard variable for bq::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a50","t":"plate","c":"bq::ComModelInstanceCulling::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a58","t":"plate","c":"guard variable for bq::ComModelInstanceCulling::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a60","t":"plate","c":"bq::ComSplitScreen::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a68","t":"plate","c":"guard variable for bq::ComSplitScreen::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a70","t":"plate","c":"bq::ComUiCountUpTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a78","t":"plate","c":"guard variable for bq::ComUiCountUpTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a80","t":"plate","c":"bq::ComUiCourseRecord::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a88","t":"plate","c":"guard variable for bq::ComUiCourseRecord::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a90","t":"plate","c":"bq::ComUiDialogBox::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046a98","t":"plate","c":"guard variable for bq::ComUiDialogBox::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046aa0","t":"plate","c":"bq::ComUiError::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046aa8","t":"plate","c":"guard variable for bq::ComUiError::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ab0","t":"plate","c":"bq::ComUiGenericTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ab8","t":"plate","c":"guard variable for bq::ComUiGenericTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ac0","t":"plate","c":"bq::ComUiGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ac8","t":"plate","c":"guard variable for bq::ComUiGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ad0","t":"plate","c":"bq::ComUiGuide00::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ad8","t":"plate","c":"guard variable for bq::ComUiGuide00::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ae0","t":"plate","c":"bq::ComUiGuideBottomRight::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ae8","t":"plate","c":"guard variable for bq::ComUiGuideBottomRight::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046af0","t":"plate","c":"bq::ComUiGuideFixPlace::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046af8","t":"plate","c":"guard variable for bq::ComUiGuideFixPlace::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b00","t":"plate","c":"bq::ComUiGuideSkip::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b08","t":"plate","c":"guard variable for bq::ComUiGuideSkip::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b10","t":"plate","c":"bq::ComUiMGTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b18","t":"plate","c":"guard variable for bq::ComUiMGTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b20","t":"plate","c":"bq::ComUiMessageWindow::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b28","t":"plate","c":"guard variable for bq::ComUiMessageWindow::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b30","t":"plate","c":"bq::ComUiNameStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b38","t":"plate","c":"guard variable for bq::ComUiNameStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b40","t":"plate","c":"bq::ComUiPersonalTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b48","t":"plate","c":"guard variable for bq::ComUiPersonalTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b50","t":"plate","c":"bq::ComUiPopGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b58","t":"plate","c":"guard variable for bq::ComUiPopGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b60","t":"plate","c":"bq::ComUiRank::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b68","t":"plate","c":"guard variable for bq::ComUiRank::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b70","t":"plate","c":"bq::ComUiReentryTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b78","t":"plate","c":"guard variable for bq::ComUiReentryTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b80","t":"plate","c":"bq::ComUiScore::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b88","t":"plate","c":"guard variable for bq::ComUiScore::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b90","t":"plate","c":"bq::ComUiSpeed::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046b98","t":"plate","c":"guard variable for bq::ComUiSpeed::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ba0","t":"plate","c":"bq::ComUiStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ba8","t":"plate","c":"guard variable for bq::ComUiStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046bb0","t":"plate","c":"bq::ComUiTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046bb8","t":"plate","c":"guard variable for bq::ComUiTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046bc0","t":"plate","c":"bq::ComUiUnlock::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046bc8","t":"plate","c":"guard variable for bq::ComUiUnlock::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046bd0","t":"plate","c":"bq::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046bd8","t":"plate","c":"guard variable for bq::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046be0","t":"plate","c":"bq::GraphicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046be8","t":"plate","c":"guard variable for bq::GraphicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046bf0","t":"plate","c":"bq::MGSystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046bf8","t":"plate","c":"guard variable for bq::MGSystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c00","t":"plate","c":"bq::PlayReportModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c08","t":"plate","c":"guard variable for bq::PlayReportModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c10","t":"plate","c":"bq::SystemCallBackModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c18","t":"plate","c":"guard variable for bq::SystemCallBackModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c20","t":"plate","c":"bq::SystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c28","t":"plate","c":"guard variable for bq::SystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c30","t":"plate","c":"bq::UiSharedTextureModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c38","t":"plate","c":"guard variable for bq::UiSharedTextureModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c40","t":"plate","c":"bq::WipeModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c48","t":"plate","c":"guard variable for bq::WipeModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c50","t":"plate","c":"bq::WorkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c58","t":"plate","c":"guard variable for bq::WorkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c60","t":"plate","c":"bq::reward::RewardModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c68","t":"plate","c":"guard variable for bq::reward::RewardModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c70","t":"plate","c":"bq::achievement::AchievementModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c78","t":"plate","c":"guard variable for bq::achievement::AchievementModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c80","t":"plate","c":"bq::save::SaveDataMgr::s_DetailModuleEntryInvoker"}
+{"a":"7100046c88","t":"plate","c":"guard variable for bq::save::SaveDataMgr::s_DetailModuleEntryInvoker"}
+{"a":"7100046c90","t":"plate","c":"bq::flag::GameFlagModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046c98","t":"plate","c":"guard variable for bq::flag::GameFlagModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046ca0","t":"plate","c":"nn::bezel::ComGuiLayout::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ca8","t":"plate","c":"guard variable for nn::bezel::ComGuiLayout::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046cb0","t":"plate","c":"nn::bezel::ComModel::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046cb8","t":"plate","c":"guard variable for nn::bezel::ComModel::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046cc0","t":"plate","c":"nn::bezel::PhysicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046cc8","t":"plate","c":"guard variable for nn::bezel::PhysicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100046cd0","t":"plate","c":"nn::bezel::ComCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046cd8","t":"plate","c":"guard variable for nn::bezel::ComCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ce0","t":"plate","c":"nn::bezel::ComRigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046ce8","t":"plate","c":"guard variable for nn::bezel::ComRigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046cf0","t":"plate","c":"nn::bezel::ComAnimator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046cf8","t":"plate","c":"guard variable for nn::bezel::ComAnimator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d00","t":"plate","c":"nn::bezel::ComScript::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d08","t":"plate","c":"guard variable for nn::bezel::ComScript::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d10","t":"plate","c":"bq::MGResult::ComMGResultCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d18","t":"plate","c":"guard variable for bq::MGResult::ComMGResultCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d20","t":"plate","c":"bq::MGResult::ComMGResultDice::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d28","t":"plate","c":"guard variable for bq::MGResult::ComMGResultDice::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d30","t":"plate","c":"ca::rm::RmBeatPadVibrationMan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d38","t":"plate","c":"guard variable for ca::rm::RmBeatPadVibrationMan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d40","t":"plate","c":"ca::ui::CaComUiPerfectTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d48","t":"plate","c":"guard variable for ca::ui::CaComUiPerfectTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d50","t":"plate","c":"ca::ui::CaComUiVisible::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d58","t":"plate","c":"guard variable for ca::ui::CaComUiVisible::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d60","t":"plate","c":"ca::ui::CaComUiMessWinSelectSupport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d68","t":"plate","c":"guard variable for ca::ui::CaComUiMessWinSelectSupport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d70","t":"plate","c":"ca::ui::CaComUiSelect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d78","t":"plate","c":"guard variable for ca::ui::CaComUiSelect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d80","t":"plate","c":"ca::ui::CaComUiSelectPickUp::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d88","t":"plate","c":"guard variable for ca::ui::CaComUiSelectPickUp::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d90","t":"plate","c":"ca::ui::CaComUiScroll::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046d98","t":"plate","c":"guard variable for ca::ui::CaComUiScroll::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046da0","t":"plate","c":"ca::rm::RmUiCntWipeRemixMan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046da8","t":"plate","c":"guard variable for ca::rm::RmUiCntWipeRemixMan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100046db0","t":"plate","c":"mg1806::Mg1806CameraManager::Impl::SetupCamera()::anim"}
+{"a":"7100046e70","t":"plate","c":"guard variable for mg1806::Mg1806CameraManager::Impl::SetupCamera()::anim"}
+{"a":"7100046e78","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmGameWork>::m_InstancePtr"}
+{"a":"7100046e80","t":"plate","c":"bq::SingletonTemplate<mg1806::Mg1806InfoManager>::m_InstancePtr"}
+{"a":"7100046e88","t":"plate","c":"bex::gfx::GraphicsLayerExtension::NnBezelDetailStaticGetTypeId()::s_BezelDetailScopedTypeId"}
+{"a":"7100046e90","t":"plate","c":"guard variable for bex::gfx::GraphicsLayerExtension::NnBezelDetailStaticGetTypeId()::s_BezelDetailScopedTypeId"}
+{"a":"7100046e98","t":"plate","c":"bq::SingletonTemplate<mg1806::Mg1806CameraManager>::m_InstancePtr"}
+{"a":"7100046ea0","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmChartDataMan>::m_InstancePtr"}
+{"a":"7100046ea8","t":"plate","c":"bq::SingletonTemplate<bq::WorkModule>::m_InstancePtr"}
+{"a":"7100046eb0","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmUiStatusMan>::m_InstancePtr"}
+{"a":"7100046eb8","t":"plate","c":"mg1806::Mg1806PlayerManager::Impl::PLAYER::AddAnim(bool)::anim"}
+{"a":"7100046f38","t":"plate","c":"guard variable for mg1806::Mg1806PlayerManager::Impl::PLAYER::AddAnim(bool)::anim"}
+{"a":"7100046f40","t":"plate","c":"bq::SingletonTemplate<mg1806::Mg1806StageManager>::m_InstancePtr"}
+{"a":"7100046f48","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmPracticeArrowMan>::m_InstancePtr"}
+{"a":"7100046f50","t":"plate","c":"bq::SingletonTemplate<mg1806::Mg1806PlayerManager>::m_InstancePtr"}
+{"a":"7100046f58","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmUiTelopMan>::m_InstancePtr"}
+{"a":"7100046f60","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmStarEffectMan>::m_InstancePtr"}
+{"a":"7100046f68","t":"plate","c":"bq::SingletonTemplate<ca::rm::RmSoundMan>::m_InstancePtr"}
+{"a":"7100046f70","t":"plate","c":"mg1806::Scene::__ghsalwaysimport_g_Dummy_"}
+{"a":"7100046f71","t":"plate","c":"mg1806::Scene::Params::__ghsalwaysimport_g_Dummy_"}
+{"a":"7100048170","t":"plate","c":"bq::SingletonTemplate<bq::CharacterDataModule>::m_InstancePtr"}
+{"a":"7100048678","t":"plate","c":"bq::SingletonTemplate<mg1806::Mg1806Sequence>::m_InstancePtr"}
+{"a":"7100049868","t":"plate","c":"nn::bezel::detail::autogen::s_Initializer_mg1806"}
+{"a":"710004986c","t":"plate","c":"nn::bezel::detail::autogen::s_Initializer_sharedPCH"}
+{"a":"710004c000","t":"plate","c":"nn::bezel::FxTriggerModule::s_IsMainModule"}
+{"a":"710004e000","t":"plate","c":"nn::bezel::NetworkNplnModule::s_IsMainModule"}
+{"a":"710004f000","t":"plate","c":"bex::ArchiveModule::s_IsMainModule"}
+{"a":"7100050000","t":"plate","c":"nn::bezel::AudioModule::s_IsMainModule"}
+{"a":"7100051000","t":"plate","c":"bex::NetworkModule::s_IsMainModule"}
+{"a":"7100052000","t":"plate","c":"bex::SaveModule::s_IsMainModule"}
+{"a":"7100053000","t":"plate","c":"bq::ObjectList::s_IsMainModule"}
+{"a":"7100054000","t":"plate","c":"nn::bezel::CoreSystem::s_IsMainModule"}
+{"a":"7100055000","t":"plate","c":"bex::HeapModule::s_IsMainModule"}
+{"a":"7100056000","t":"plate","c":"nn::bezel::AccountModule::s_IsMainModule"}
+{"a":"7100057000","t":"plate","c":"nn::bezel::AnimationModule::s_IsMainModule"}
+{"a":"7100058000","t":"plate","c":"nn::bezel::AssetModule::s_IsMainModule"}
+{"a":"7100059000","t":"plate","c":"nn::bezel::ClassicMapModule::s_IsMainModule"}
+{"a":"710005a000","t":"plate","c":"nn::bezel::DefaultViewerModule::s_IsMainModule"}
+{"a":"710005b000","t":"plate","c":"nn::bezel::DevConnectionModule::s_IsMainModule"}
+{"a":"710005c000","t":"plate","c":"nn::bezel::DevConnectorForToolsModule::s_IsMainModule"}
+{"a":"710005d000","t":"plate","c":"nn::bezel::DevHtcsModule::s_IsMainModule"}
+{"a":"710005e000","t":"plate","c":"nn::bezel::DevInterfaceModule::s_IsMainModule"}
+{"a":"710005f000","t":"plate","c":"nn::bezel::DevIpcModule::s_IsMainModule"}
+{"a":"7100060000","t":"plate","c":"nn::bezel::DevPrimitiveRendererModule::s_IsMainModule"}
+{"a":"7100061000","t":"plate","c":"nn::bezel::DevVideoRecorderModule::s_IsMainModule"}
+{"a":"7100062000","t":"plate","c":"nn::bezel::EntityDevUiModule::s_IsMainModule"}
+{"a":"7100063000","t":"plate","c":"nn::bezel::EntityModule::s_IsMainModule"}
+{"a":"7100064000","t":"plate","c":"nn::bezel::ErrorViewerModule::s_IsMainModule"}
+{"a":"7100065000","t":"plate","c":"nn::bezel::FileModule::s_IsMainModule"}
+{"a":"7100066000","t":"plate","c":"nn::bezel::FontModule::s_IsMainModule"}
+{"a":"7100067000","t":"plate","c":"nn::bezel::GraphicsCoreModule::s_IsMainModule"}
+{"a":"7100068000","t":"plate","c":"nn::bezel::GuiLayoutModule::s_IsMainModule"}
+{"a":"7100069000","t":"plate","c":"nn::bezel::HidModule::s_IsMainModule"}
+{"a":"710006a000","t":"plate","c":"nn::bezel::ImguiModule::s_IsMainModule"}
+{"a":"710006b000","t":"plate","c":"nn::bezel::JsonModule::s_IsMainModule"}
+{"a":"710006c000","t":"plate","c":"nn::bezel::LineRendererModule::s_IsMainModule"}
+{"a":"710006d000","t":"plate","c":"nn::bezel::LocalizeMessageModule::s_IsMainModule"}
+{"a":"710006e000","t":"plate","c":"nn::bezel::MemoryModule::s_IsMainModule"}
+{"a":"710006f000","t":"plate","c":"nn::bezel::ModelModule::s_IsMainModule"}
+{"a":"7100070000","t":"plate","c":"nn::bezel::MovieModule::s_IsMainModule"}
+{"a":"7100071000","t":"plate","c":"nn::bezel::MyPageAppletModule::s_IsMainModule"}
+{"a":"7100072000","t":"plate","c":"nn::bezel::NetworkModule::s_IsMainModule"}
+{"a":"7100073000","t":"plate","c":"nn::bezel::NetworkUtilModule::s_IsMainModule"}
+{"a":"7100074000","t":"plate","c":"nn::bezel::ParticleFx2Module::s_IsMainModule"}
+{"a":"7100075000","t":"plate","c":"nn::bezel::PerfDevUiModule::s_IsMainModule"}
+{"a":"7100076000","t":"plate","c":"nn::bezel::PerfModule::s_IsMainModule"}
+{"a":"7100077000","t":"plate","c":"nn::bezel::PhysicsModelModule::s_IsMainModule"}
+{"a":"7100078000","t":"plate","c":"nn::bezel::PrefabModule::s_IsMainModule"}
+{"a":"7100079000","t":"plate","c":"nn::bezel::ProfanityFilterModule::s_IsMainModule"}
+{"a":"710007a000","t":"plate","c":"nn::bezel::RenderPipelineModule::s_IsMainModule"}
+{"a":"710007b000","t":"plate","c":"nn::bezel::RttsAssetModule::s_IsMainModule"}
+{"a":"710007c000","t":"plate","c":"nn::bezel::RttsModule::s_IsMainModule"}
+{"a":"710007d000","t":"plate","c":"nn::bezel::SaveDataModule::s_IsMainModule"}
+{"a":"710007e000","t":"plate","c":"nn::bezel::ScriptModule::s_IsMainModule"}
+{"a":"710007f000","t":"plate","c":"nn::bezel::SoftwareKeyboardModule::s_IsMainModule"}
+{"a":"7100080000","t":"plate","c":"nn::bezel::WebAppletModule::s_IsMainModule"}
+{"a":"7100081000","t":"plate","c":"bex::BexAnimationModule::s_IsMainModule"}
+{"a":"7100082000","t":"plate","c":"bex::DllModule::s_IsMainModule"}
+{"a":"7100083000","t":"plate","c":"bex::EffectModule::s_IsMainModule"}
+{"a":"7100084000","t":"plate","c":"bex::FiberModule::s_IsMainModule"}
+{"a":"7100085000","t":"plate","c":"bex::FxTriggerModule::s_IsMainModule"}
+{"a":"7100086000","t":"plate","c":"bex::InputModule::s_IsMainModule"}
+{"a":"7100087000","t":"plate","c":"bex::MainModule::s_IsMainModule"}
+{"a":"7100088000","t":"plate","c":"bex::PrimitiveModule::s_IsMainModule"}
+{"a":"7100089000","t":"plate","c":"bex::RandModule::s_IsMainModule"}
+{"a":"710008a000","t":"plate","c":"bex::SceneModule::s_IsMainModule"}
+{"a":"710008b000","t":"plate","c":"bex::ToolModule::s_IsMainModule"}
+{"a":"710008c000","t":"plate","c":"bex::UiModule::s_IsMainModule"}
+{"a":"710008d000","t":"plate","c":"bex::VibrationModule::s_IsMainModule"}
+{"a":"710008e000","t":"plate","c":"bex::gfx::RendererModule::s_IsMainModule"}
+{"a":"710008f000","t":"plate","c":"bex::sound::SoundModule::s_IsMainModule"}
+{"a":"7100090000","t":"plate","c":"actor::ActorModule::s_IsMainModule"}
+{"a":"7100091000","t":"plate","c":"actor::RandomModule::s_IsMainModule"}
+{"a":"7100092000","t":"plate","c":"bq::AccountMgrModule::s_IsMainModule"}
+{"a":"7100093000","t":"plate","c":"bq::ActorModule::s_IsMainModule"}
+{"a":"7100094000","t":"plate","c":"bq::ArchiveModule::s_IsMainModule"}
+{"a":"7100095000","t":"plate","c":"bq::CharacterDataModule::s_IsMainModule"}
+{"a":"7100096000","t":"plate","c":"bq::FxTriggerModule::s_IsMainModule"}
+{"a":"7100097000","t":"plate","c":"bq::GraphicsModule::s_IsMainModule"}
+{"a":"7100098000","t":"plate","c":"bq::MGSystemModule::s_IsMainModule"}
+{"a":"7100099000","t":"plate","c":"bq::PlayReportModule::s_IsMainModule"}
+{"a":"710009a000","t":"plate","c":"bq::SystemCallBackModule::s_IsMainModule"}
+{"a":"710009b000","t":"plate","c":"bq::SystemModule::s_IsMainModule"}
+{"a":"710009c000","t":"plate","c":"bq::UiSharedTextureModule::s_IsMainModule"}
+{"a":"710009d000","t":"plate","c":"bq::WipeModule::s_IsMainModule"}
+{"a":"710009e000","t":"plate","c":"bq::WorkModule::s_IsMainModule"}
+{"a":"710009f000","t":"plate","c":"bq::reward::RewardModule::s_IsMainModule"}
+{"a":"71000a0000","t":"plate","c":"bq::achievement::AchievementModule::s_IsMainModule"}
+{"a":"71000a1000","t":"plate","c":"bq::save::SaveDataMgr::s_IsMainModule"}
+{"a":"71000a2000","t":"plate","c":"bq::flag::GameFlagModule::s_IsMainModule"}
+{"a":"71000a3000","t":"plate","c":"nn::bezel::PhysicsModule::s_IsMainModule"}
+{"a":"71000ab000","t":"plate","c":"nn::util::Vector3f::ConstantZero"}
+{"a":"71000c2000","t":"plate","c":"nn::bezel::GraphicsCoreModule::g_Module"}
+{"a":"71000cb000","t":"plate","c":"std::length_error::~length_error()"}
+{"a":"71000d0000","t":"plate","c":"vtable for std::length_error"}
+{"a":"71000d0000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000d1000","t":"plate","c":"std::out_of_range::~out_of_range()"}
+{"a":"71000d2000","t":"plate","c":"vtable for std::out_of_range"}
+{"a":"71000d2000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000d3000","t":"plate","c":"bex::gfx::RendererModule::g_Module"}
+{"a":"71000d9000","t":"plate","c":"vtable for __cxxabiv1::__class_type_info"}
+{"a":"71000d9000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000da000","t":"plate","c":"vtable for __cxxabiv1::__si_class_type_info"}
+{"a":"71000da000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000e4000","t":"plate","c":"nn::util::Vector3f::ConstantOne"}
+{"a":"71000f5000","t":"plate","c":"bex::sound::SoundModule::g_Module"}

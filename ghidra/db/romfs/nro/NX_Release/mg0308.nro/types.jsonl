@@ -1,0 +1,114 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/RendererModule/LayerVisibleId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/RendererModule/SceneType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComMatter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComSplitScreen","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUi","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus/UiStatusMatchType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus/UiStatusPlaceType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus/UiStatusType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiTimer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiTimer/UiTimerType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/GameRank","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/GameWinLose","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MatterType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MinigameScene","k":"struct","size":776,"pack":"off","align":"default","f":[{"o":528,"l":4,"t":"/int","n":"minigameId","c":"GameWork::GetMinigameID, 없으면 −1"},{"o":532,"l":4,"t":"/int","n":"flowStage","c":"MinigameFlow 단계(−1 → 초기화 1, 데모면 0)"},{"o":536,"l":2,"t":"/ushort","n":"flowSubState","c":"단계 안 하위 상태 0·1·2·99"},{"o":540,"l":4,"t":"/float","n":"waitSec","c":"종료 텔롭 뒤 대기 초(단계 11) / 재시작 카운터(단계 18)"},{"o":564,"l":4,"t":"/int","n":"startTelopType","c":"TelopType −1..4, 기본 0"},{"o":568,"l":4,"t":"/int","n":"finishTelopType","c":"기본 2"},{"o":576,"l":8,"t":"/pointer","n":"startTelop","c":"FUN_71002e44ac \"TelopUI\""},{"o":584,"l":8,"t":"/pointer","n":"startTelopUser","c":"IUserStartFinish*(종류 3·4)"},{"o":592,"l":8,"t":"/pointer","n":"finishTelop"},{"o":600,"l":8,"t":"/pointer","n":"finishTelopUser","c":"IUserStartFinish*"},{"o":608,"l":8,"t":"/pointer","n":"winDrawTelop","c":"CreateWinTelop/CreateDrawTelop"},{"o":616,"l":1,"t":"/byte","n":"openingSkipAllowed","c":"MGSetting OpeningSkip"},{"o":617,"l":1,"t":"/byte","n":"gameOpeningSkipEnable","c":"SetGameOpeningSkipEnable, 기본 1"},{"o":618,"l":1,"t":"/byte","n":"endOpeningSkipWait","c":"단계 4 에서 참이면 스킵 대기 하위상태 끝. writer 미확정"},{"o":619,"l":1,"t":"/byte","n":"openingSkipped","c":"IsOpeningSkip 반환"},{"o":624,"l":8,"t":"/pointer","n":"openingSkipUi","c":"\"Scene_OpeningSkipUI\" + ComUiGuideSkip"},{"o":632,"l":1,"t":"/byte","n":"endingChangeCut","c":"MGSetting EndingChangeCut"},{"o":640,"l":8,"t":"/pointer","n":"endTimer","c":"\"Scene_SystemMnigameEndTimerUI\" + ComUiTimer"},{"o":648,"l":8,"t":"/pointer","n":"statusFace","c":"\"Scene_StatusFaceUI\" + ComUiStatus"},{"o":656,"l":1,"t":"/byte","n":"isInst","c":"flag 0 = 조작 설명 화면 안 실행(P)"},{"o":660,"l":4,"t":"/int","n":"instRetryCount","c":"단계 18 에서 +1"},{"o":664,"l":8,"t":"/pointer","n":"mgResult","c":"MGResult*"},{"o":672,"l":4,"t":"/int","n":"endingStep","c":"엔딩 하위 단계 0~5"},{"o":680,"l":8,"t":"/pointer","n":"charaDemo","c":"캐릭터 데모 객체"},{"o":760,"l":1,"t":"/byte","n":"demoSkipped"},{"o":761,"l":1,"t":"/byte","n":"demoOwnWipe","c":"데모 쪽이 와이프를 직접 처리"},{"o":762,"l":1,"t":"/byte","n":"demoFadeIn","c":"데모 시작 때 페이드인, 기본 1"},{"o":764,"l":4,"t":"/int","n":"demoSubState","c":"캐릭터 데모 하위 상태 0~3"},{"o":768,"l":8,"t":"/pointer","n":"retryMenu","c":"UiRetryMenu*(PlayMode 1·9)"}],"desc":"SYNC_FROM main:/Demangler/bq/MinigameScene\n[판독] 2026-10-11 / md: web/docs/shell/minigame_scene.md §4.1\n크기 모름(마지막 필드 끝까지). 0x210 앞은 SceneBase"}
+{"p":"/Demangler/bq/MinigameScene/TelopType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/PlayerCharacterID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/PlayerListSortBy","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/WipeModule/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/AbstractController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/CpuController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/CpuSoloController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/CpuTrioController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/Enviroment","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/Enviroment/TeamData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/InterpolationType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/ModelEx","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/ModelMan","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/ModelMan/PoolData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/ModelMan/PoolSetData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/ModelMan/PoolType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/MoldAnimator","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/MoldAnimator/State","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/MoldId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/MoldManager","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/PlayerSoloController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/PlayerTrioController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/Question","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/QuestionBoardViewer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/QuestionBoardViewer/DoughData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/QuestionBoardViewer/MoveType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/QuestionBoardViewer/PosId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/QuestionProperty","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/QuizDirector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/QuizDirector/TeamData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/Scene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0308/TeamId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0308/VectorInterpolate","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/CreateEntityParams","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/GuiLayoutCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Quaternion","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector3f","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Value","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/sb/Layout","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/sb/ModelBase","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::CpuSoloController*,std::shared_ptr<mg0308::AbstractController>::__shared_ptr_default_delete<mg0308::AbstractController,mg0308::CpuSoloController>,std::allocator<mg0308::CpuSoloController>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::CpuTrioController*,std::shared_ptr<mg0308::AbstractController>::__shared_ptr_default_delete<mg0308::AbstractController,mg0308::CpuTrioController>,std::allocator<mg0308::CpuTrioController>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::ModelEx*,std::shared_ptr<mg0308::ModelEx>::__shared_ptr_default_delete<mg0308::ModelEx,mg0308::ModelEx>,std::allocator<mg0308::ModelEx>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::ModelMan*,std::shared_ptr<mg0308::ModelMan>::__shared_ptr_default_delete<mg0308::ModelMan,mg0308::ModelMan>,std::allocator<mg0308::ModelMan>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::MoldManager*,std::shared_ptr<mg0308::MoldManager>::__shared_ptr_default_delete<mg0308::MoldManager,mg0308::MoldManager>,std::allocator<mg0308::MoldManager>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::MoldManager::MoldData*,std::shared_ptr<mg0308::MoldManager::MoldData>::__shared_ptr_default_delete<mg0308::MoldManager::MoldData,mg0308::MoldManager::MoldData>,std::allocator<mg0308::MoldManager::MoldData>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::PlayerSoloController*,std::shared_ptr<mg0308::AbstractController>::__shared_ptr_default_delete<mg0308::AbstractController,mg0308::PlayerSoloController>,std::allocator<mg0308::PlayerSoloController>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::PlayerTrioController*,std::shared_ptr<mg0308::AbstractController>::__shared_ptr_default_delete<mg0308::AbstractController,mg0308::PlayerTrioController>,std::allocator<mg0308::PlayerTrioController>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0308::Question*,std::shared_ptr<mg0308::Question>::__shared_ptr_default_delete<mg0308::Question,mg0308::Question>,std::allocator<mg0308::Question>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<sb::ModelBase*,std::shared_ptr<sb::ModelBase>::__shared_ptr_default_delete<sb::ModelBase,sb::ModelBase>,std::allocator<sb::ModelBase>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_weak_count","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_array_new_length","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/shared_ptr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/type_info","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/unique_ptr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/weak_ptr","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/ComGuiLayout","k":"struct","size":416,"pack":"off","align":"default","f":[{"o":304,"l":4,"t":"/int","n":"renderPassId","c":"SetRenderPassId 저장값. 생성 시 −1 뒤 config+0x24 복사"},{"o":328,"l":8,"t":"/undefined8","n":"renderTargetRef_148","c":"SetRenderTarget의 RT 참조"},{"o":336,"l":8,"t":"/undefined8","n":"renderTargetRef_150","c":"SetRenderTarget의 RT 참조"},{"o":352,"l":64,"t":"/byte[64]","n":"uiProjection","c":"UI 투영 저장(+0x160..0x19f), RT 크기로 구성"}],"desc":"SYNC_FROM main:/nn/bezel/ComGuiLayout\n[판독] 2026-10-11 / md: web/docs/engine/render_unify.md §3.3·4·7.2\n+0x134: callback 통지 gate(FUN_710079f570, 길이 미기재). pass ID 증거 아님.\n+0x48/+0x50/+0x58: FUN_710079e96c가 extension weak handle pointer/node/generation 저장(대상 객체가 layout인지 문서에 명시되지 않아 필드로 넣지 않음).\n[미확정] renderPassId −1 sentinel 의미·pre-post/post/TopMost 대응."}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/std/vector<mg0308::ModelMan::PoolData,bex::HeapModule::Allocator_vector<mg0308::ModelMan::PoolData>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0308::ModelMan::PoolSetData,bex::HeapModule::Allocator_vector<mg0308::ModelMan::PoolSetData>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0308::MoldId,bex::HeapModule::Allocator_vector<mg0308::MoldId>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0308::QuestionProperty,bex::HeapModule::Allocator_vector<mg0308::QuestionProperty>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0308::AbstractController>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0308::AbstractController>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0308::Question>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0308::Question>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::unique_ptr<mg0308::ModelEx,std::default_delete<mg0308::ModelEx>>,std::allocator<std::unique_ptr<mg0308::ModelEx,std::default_delete<mg0308::ModelEx>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::unique_ptr<mg0308::QuestionBoardViewer::DoughData,std::default_delete<mg0308::QuestionBoardViewer::DoughData>>,bex::HeapModule::Allocator_vector<std::unique_ptr<mg0308::QuestionBoardViewer::DoughData,std::default_delete<mg0308::QuestionBoardViewer::DoughData>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::unique_ptr<sb::ModelBase,std::default_delete<sb::ModelBase>>,std::allocator<std::unique_ptr<sb::ModelBase,std::default_delete<sb::ModelBase>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

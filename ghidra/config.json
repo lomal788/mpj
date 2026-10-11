@@ -1,0 +1,22 @@
+{
+  "note": "web/ghidra 도구 공용 설정. 상대 경로는 이 파일 위치 기준.",
+  "ghidra": "../../tools/ghidra_12.1.4_PUBLIC",
+  "jdk": "C:/Program Files/Java/jdk-21",
+  "project": "../../ghidra_work/mpj/mpj.gpr",
+  "db": "db",
+  "tags": "db/tags.json",
+  "baseline": "../../ghidra_work/baseline",
+  "backup": "../../ghidra_work/backup",
+  "mcp_jar": "../../tools/mcp/ghidra-mcp/target/GhidraMCP-7.0.0.jar",
+  "mcp_port": 8089,
+  "link_target": "/exefs/main.nso",
+  "programs": {
+    "main": "/exefs/main.nso",
+    "*": "/romfs/nro/NX_Release/{module}.nro"
+  },
+  "system_modules": [
+    "main"
+  ],
+  "new_type_category": "/mpj",
+  "sync_marker": "SYNC_FROM"
+}

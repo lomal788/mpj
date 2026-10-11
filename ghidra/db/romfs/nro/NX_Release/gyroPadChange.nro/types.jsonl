@@ -1,0 +1,47 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetTransfer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkModule/ConstantId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkModule/MessageId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/GraphicsLayerExtension","k":"struct","size":712,"pack":"off","align":"default","f":[{"o":64,"l":8,"t":"/undefined8","n":"captureHandle_40","c":"capture 요청 handle(FUN_710005dfa8 저장)"},{"o":72,"l":8,"t":"/undefined8","n":"captureHandle_48","c":"capture 요청 handle"},{"o":80,"l":8,"t":"/undefined8","n":"captureHandle_50","c":"capture 요청 handle"},{"o":88,"l":4,"t":"/undefined4","n":"captureFlags","c":"capture flags"},{"o":664,"l":8,"t":"/undefined8","n":"colorRtWeak_298","c":"color RT weak handle(generation 검사)"},{"o":672,"l":8,"t":"/undefined8","n":"colorRtWeak_2a0","c":"color RT weak handle"},{"o":680,"l":8,"t":"/undefined8","n":"colorRtWeak_2a8","c":"color RT weak handle"},{"o":688,"l":8,"t":"/undefined8","n":"depthRtWeak_2b0","c":"depth RT weak handle(generation 검사)"},{"o":696,"l":8,"t":"/undefined8","n":"depthRtWeak_2b8","c":"depth RT weak handle"},{"o":704,"l":8,"t":"/undefined8","n":"depthRtWeak_2c0","c":"depth RT weak handle"}],"desc":"SYNC_FROM main:/Demangler/bex/gfx/GraphicsLayerExtension\n[판독] 2026-10-11 / md: web/docs/engine/render_unify.md §3.3·4\n+0x5c = flags&1(길이 미기재, 필드로 넣지 않음).\n+0x248: 0x5f0 Layer buffer(slot 1/2/9 binding, 포인터/내장 여부 미기재).\n+0x2c8/+0x2e0: 대체 color/depth RT 쌍 시작(내부 배치 미기재). 대체 color pointer 유효 시 임포스터가 대체 쌍 선택.\n세 슬롯의 pointer/node/generation 순서는 이 문서에 명시되지 않음."}
+{"p":"/Demangler/bex/gfx/RendererModule/SceneType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComUiControllerGuide","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiControllerGuide/UiControllerGuideType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MinigameID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/NetTransfer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/NetTransferSceneBegin","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/SceneBase","k":"struct","size":229,"pack":"off","align":"default","f":[{"o":16,"l":4,"t":"/uint","n":"pauseLevel","c":"bex::SceneBase, 기본 5"},{"o":56,"l":4,"t":"/int","n":"mainStep","c":"UpdateMain 단계"},{"o":60,"l":4,"t":"/int","n":"loadedStep","c":"OnLoaded 단계"},{"o":64,"l":24,"t":"/byte[24]","n":"flowFiber","c":"핸들 {ptr, node, gen}"},{"o":88,"l":4,"t":"/undefined4","n":"sceneKind","c":"아카이브 로드 분기"},{"o":96,"l":24,"t":"/byte[24]","n":"sceneRoot","c":"SceneRoot 엔티티 핸들"},{"o":192,"l":4,"t":"/int","n":"request","c":"−1 없음, 0 Exchange, 1 Call, 2 Return, 3 Reboot"},{"o":225,"l":1,"t":"/byte","n":"flowFiberFlag"},{"o":226,"l":1,"t":"/byte","n":"sessionEntry"},{"o":227,"l":1,"t":"/byte","n":"useFade","c":"UpdateMain 단계 2 FadeIn·단계 4 FadeOut 사용 여부. SetFadeEnable(false)로 끔"},{"o":228,"l":1,"t":"/byte","n":"firstBegin"}],"desc":"SYNC_FROM main:/Demangler/bq/SceneBase\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.10·5.2\n생성 @0x71002c9bd4. 크기 모름(마지막 필드 끝까지)\n\n[판독] 2026-10-11 / md: web/docs/engine/15_transition.md §1\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §4.1\n+0x50 weak handle gen(크기 미기재), +0xc8 std::string requestName(크기 미기재)은 필드로 넣지 않음. +0x38/+0x3c 의 크기는 인접 offset 기준"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/WipeModule/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/FLAG","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/gyroPadChange/Scene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/gyroPadChange/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/HandlePtr\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/ScopedTypeId<nn::bezel::IGraphicsLayerExtension,32>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/gfx/ClearColorValue","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/basic_string","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/GraphicsLayer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/std/vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::HeapModule::Allocator_vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

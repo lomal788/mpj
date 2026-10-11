@@ -1,0 +1,175 @@
+{"a":"7100508c10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.3\n역할: listener 설정. 컨트롤러·센서 각각 최대 8, touch 최대 16으로 제한"}
+{"a":"7100508d0c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.1\n역할: 송수신 flags → 채널 mask 변환"}
+{"a":"7100508db0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.1\n역할: sync listener +0x38 — 송신 불가 시 수집\n분기: 활성화(listener+0x7c)·버튼 수집 허용 때 로컬 hold를 slot별 8 B accumulator에 OR\n주의: 스틱·SixAxis에도 같은 누적 보존을 적용한다는 근거 없음"}
+{"a":"7100508ed0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.1\n역할: sync listener +0x40 — 컨트롤러 입력 송신 직렬화(0x7101022d30에 채널 번호 전달)\n채널0: slot stride 5 B: +0 hold:u32, +4 GameController+0x10 하위 바이트(down/up 개별 전송 없음)\n채널1: slot stride 8 B: L/R 스틱 X/Y i16 네 개(0/2/4/6), q=clamp(trunc(x*32767),-32768,32767)\n채널2: 터치 헤더 선두 u64, count:i32(설정 touch count로 제한). 채널3: 터치 항목 stride 0x18(+8 id:i32, +0xc~+0x14 u16)\n채널4: slot당 SixAxis 항목 수 u8. 채널5: SixAxis 샘플 stride 0x50(앞 0x24 = float3 세 개, +0x48 flags bit0)\nflags low4: bit0 버튼, bit1 스틱, bit2 터치, bit3 SixAxis — 켜진 종류는 새 HID 수집 생략\n동작: accumulator와 현재 hold를 합쳐 내보낸 뒤 accumulator를 비운다\n주의: 실제 복사 길이는 시작 시 등록한 u16 size[channel]. stride를 패킷 길이로 해석하지 않는다\n[미확정] 터치 u16 값의 HID 의미, SixAxis 물리량·행렬 필드명, flags의 게임별 선택"}
+{"a":"7100509760","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.1·4.2\n역할: sync listener +0x48 — 컨트롤러 입력 수신(0x71010233e0)\n동작: 수신값을 0x710050b6cc에 넘겨 동기 GameController에 적용\n분기: 읽기 실패 0x2c09는 별도 취급. flags 비트별 이전 데이터 보존 분기, 이전 캐시 재적용 분기가 있다\n[미확정] 동기 프록시 down/up 생성식"}
+{"a":"7100509d30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1·3.1\n역할: sync listener vtable(0x71019f9190) +0x78 — station/slot으로 동기 GameController 프록시 조회"}
+{"a":"710050b6cc","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.1\n역할: 수신 컨트롤러 값을 동기 GameController에 적용\n[미확정] down/up 생성식·하위 HID 구현"}
+{"a":"710050c400","t":"plate","c":"std::__murmur2_or_cityhash<unsigned long, 64ul>::TEMPNAMEPLACEHOLDERVALUE(void const*, unsigned long)"}
+{"a":"710050d260","t":"plate","c":"nn::bezel::NetworkModule::IsErrorHandling() const"}
+{"a":"710050d268","t":"plate","c":"nn::bezel::NetworkModule::SetErrorAutoDisplayEnabled(bool)"}
+{"a":"710050d2b8","t":"plate","c":"nn::bezel::NetworkModule::EnsureNetworkServiceAccountIdTokenAsync(nn::account::UserHandle const&, nn::bezel::WeakHandle<nn::bezel::IMessageListener> const&)"}
+{"a":"710050d3c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1\n역할: 모니터 갱신 0x7100111470의 동기 프록시 조회 경로 단계(0x710050d3c0 → 0x710050debc → 0x710050e858 → listener vt+0x78)"}
+{"a":"710050d41c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.2\n역할: SDK ready 조회(사용자 레코드 공급 조건)"}
+{"a":"710050d434","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.2\n역할: 사용자 레코드를 SDK slot 버퍼에 공급(0x710050e89c 위임)"}
+{"a":"710050d464","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.2\n역할: 수신 성공 station의 사용자 레코드 버퍼 얻기(0x710050e8ec 위임)"}
+{"a":"710050d510","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1·2.2\n역할: SDK start. 로컬 slot mask와 사용자 레코드를 미리 공급한 뒤 호출된다\n호출: 0x710050e9dc → Pia 0x7101024760"}
+{"a":"710050debc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1\n역할: 모니터 갱신 0x7100111470의 동기 프록시 조회 경로 단계(0x710050d3c0 → 0x710050debc → 0x710050e858 → listener vt+0x78)"}
+{"a":"710050e0e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.3\n역할: Pia 설정. config +0x20=0x20(Lmax 32)을 기록"}
+{"a":"710050e140","t":"pre","c":"Pia config +0x20=0x20 기록(~0x710050e144) → Lmax 32"}
+{"a":"710050e858","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1\n역할: 모니터 갱신 0x7100111470의 동기 프록시 조회 경로 단계(0x710050d3c0 → 0x710050debc → 0x710050e858 → listener vt+0x78)"}
+{"a":"710050e89c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.2\n역할: 사용자 레코드 slot 버퍼 공급 내부"}
+{"a":"710050e8ec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.2\n역할: 수신 사용자 레코드 버퍼 얻기 내부"}
+{"a":"710050e9dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1·3.3\n역할: SDK start 내부. StartSync packed/delay 제안을 Pia 0x7101024760에 넘긴다"}
+{"a":"710050ebf8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §4.2\n역할: SDK stop(→ Pia 0x7101024b74)"}
+{"a":"710050ede4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.3\n역할: 진행 중 delay 제안 설정. 최대 32로 제한한 제안을 +0x8d, pending을 +0x8c에 둔다"}
+{"a":"710050f0d4","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1·3.3·7\n역할: SDK 진행(매 갱신)\n분기: Result 0x4c2c이면 ready(Bezel sync +0x2b)를 끄고 stall count(+0x44, bex +0x120c로 관측)를 늘린다. +0x2a = 이번 갱신 진행 불가 flag\n호출: 입력 수신 0x710050f260 → 송신 0x710050f750\n[미확정] +0x2a/+0xa8을 소비하는 CoreSystem timing callback·씬/파이버 전체 정지 연결"}
+{"a":"710050f260","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1·4.2\n역할: SDK 입력 수신\n분기: station의 현재 프레임 수신 실패 시 해당 station의 활성 사용자 채널 버퍼를 zero 처리\n주의: 이것을 예측 입력/CPU 전환으로 명명할 근거 없음"}
+{"a":"710050f750","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §2.1·3.1·3.2·3.3\n역할: SDK 입력 송신\n분기: ready일 때만 listener 송신과 사용자 채널(8~15, 최대 8 로컬 slot) 입력을 Pia에 공급. 송신 불가 중에는 listener +0x38(0x7100508db0)을 호출\n호출: delay 제안 채널16 공급 0x7101023984 → 0x7101022d30(channel 16)"}
+{"a":"710051277c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §4.2\n역할: 채널 읽기 0x2c09 외 Pia 오류의 오류 경로"}
+{"a":"7100519b48","t":"plate","c":"nn::bezel::LineRendererModule::CreateLineRenderer(nn::bezel::LineRendererCreateArg const&)"}
+{"a":"710051bb40","t":"plate","c":"nn::bezel::LineRenderer::Begin()"}
+{"a":"710051bc10","t":"plate","c":"nn::bezel::LineRenderer::AddVertex(nn::util::Vector3f const&)"}
+{"a":"710051bfd0","t":"plate","c":"nn::bezel::LineRenderer::End(bool)"}
+{"a":"710051c860","t":"plate","c":"nn::bezel::LineRenderer::SetColor(nn::util::Color4f const&)"}
+{"a":"710051c978","t":"plate","c":"nn::bezel::LineRenderer::SetWidth(float)"}
+{"a":"710051c9b8","t":"plate","c":"nn::bezel::LineRenderer::SetLineCap(nn::bezel::LineCap)"}
+{"a":"710051c9d0","t":"plate","c":"nn::bezel::LineRenderer::SetLineJoin(nn::bezel::LineJoin)"}
+{"a":"710051ca88","t":"plate","c":"nn::bezel::LineRenderer::SetDrawPriority(int)"}
+{"a":"710051caa0","t":"plate","c":"nn::bezel::LineRenderer::SetRenderTarget(nn::bezel::HandlePtr<nn::bezel::IRenderTarget> const&)"}
+{"a":"7100520ccc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ITexture, false, nn::bezel::IBasis>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100520cec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ITexture, false, nn::bezel::IBasis>::GetBaseTypeDesc()"}
+{"a":"7100520cf8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ITexture, false, nn::bezel::IBasis>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100520d0c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ITexture, false, nn::bezel::IBasis>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100520d14","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ITexture, false, nn::bezel::IBasis>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100522990","t":"plate","c":"nn::bezel::MyPageAppletModule::StartFriendInvitationAsync(nn::account::Uid&, int, nn::friends::FriendInvitationGameModeDescription const&, void const*, unsigned long, nn::bezel::WeakHandle<nn::bezel::IMessageListener> const&)"}
+{"a":"710052c124","t":"plate","c":"nn::bezel::ClassicMapModule::CreateMap(nn::bezel::CreateEntityParams const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"710052c2e4","t":"plate","c":"nn::bezel::ClassicMapModule::CreateMap(nn::util::basic_string_view<char, std::char_traits<char> >, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"710052d080","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComRigidBody> nn::bezel::Entity::AddComponent<nn::bezel::ComRigidBody, nn::bezel::HandlePtr<nn::bezel::RigidBody>, (void*)0>(nn::bezel::HandlePtr<nn::bezel::RigidBody>&&)"}
+{"a":"710052e834","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710052e86c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::GetBaseTypeDesc()"}
+{"a":"710052e878","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710052e88c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710052e894","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComRigidBody, false, nn::bezel::ComCollision>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710052e904","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComTriggerVolume, false, nn::bezel::ComCollision>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710052e93c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComTriggerVolume, false, nn::bezel::ComCollision>::GetBaseTypeDesc()"}
+{"a":"710052e948","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComTriggerVolume, false, nn::bezel::ComCollision>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710052e95c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComTriggerVolume, false, nn::bezel::ComCollision>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710052e964","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComTriggerVolume, false, nn::bezel::ComCollision>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710052e96c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComMapPath, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710052e98c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComMapPath, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710052e998","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComMapPath, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710052e9ac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComMapPath, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710052e9b4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComMapPath, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710052ea10","t":"plate","c":"nn::bezel::MapPathNode::~MapPathNode()"}
+{"a":"710052f168","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §5.6\n역할: 경로 curve 보간 (flag bit0 = Bezier / 0 = 선형)."}
+{"a":"7100530440","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §5.6\n역할: nbmap type8 경로(curve) 생성.\n데이터: curve stride 0x34 = {p0[3], p3[3], handle0[3], handle3[3], flags}; flag bit0=1 이면 제어점 p0+handle0, p3+handle3 인 cubic Bezier, 0 이면 선형\ntype8: +8 node descriptor 배열, +0x10 u16 노드 수; descriptor stride 0x18 = {nodeEntity*, links*, u16 linkCount}; link = {curveDescriptorArray*, f32 length/cost, u16 endNodeIndex, u16 curveCount}; curve descriptor stride 0x18 = {curve*, f32 tStart/tEnd/length}"}
+{"a":"7100530ac4","t":"plate","c":"nn::bezel::ComMapPath::GetNode(int) const"}
+{"a":"7100530c60","t":"plate","c":"nn::bezel::ComMapPath::FindNodeIndex(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"7100530d30","t":"plate","c":"nn::bezel::ComMapPath::FindNearestNode(nn::util::Vector3f const&) const"}
+{"a":"7100530fe0","t":"plate","c":"nn::bezel::ComMapPath::SearchRoute(nn::bezel::MapPathRoute*, int, int) const"}
+{"a":"7100531c8c","t":"plate","c":"nn::bezel::MapPathLink::~MapPathLink()"}
+{"a":"7100531d54","t":"plate","c":"nn::bezel::MapPathLink::GetEndNode() const"}
+{"a":"7100531d8c","t":"plate","c":"nn::bezel::MapPathNode::GetIndex() const"}
+{"a":"7100531dc0","t":"plate","c":"nn::bezel::MapPathLink::GetLength() const"}
+{"a":"7100531e78","t":"plate","c":"nn::bezel::MapPath::FindMapPath(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100531f58","t":"plate","c":"nn::bezel::MapPath::IsValid() const"}
+{"a":"7100532860","t":"plate","c":"nn::bezel::MapPath::GetNode(int) const"}
+{"a":"71005329e0","t":"plate","c":"nn::bezel::MapPath::GetNodeCount() const"}
+{"a":"7100532b20","t":"plate","c":"nn::bezel::MapPath::SearchRoute(nn::bezel::MapPathRoute*, nn::util::basic_string_view<char, std::char_traits<char> >, nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"7100532c90","t":"plate","c":"nn::bezel::ComMapPath::SearchRoute(nn::bezel::MapPathRoute*, nn::util::basic_string_view<char, std::char_traits<char> >, nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"7100532e50","t":"plate","c":"nn::bezel::MapPath::SearchRoute(nn::bezel::MapPathRoute*, int, int) const"}
+{"a":"7100532fe4","t":"plate","c":"nn::bezel::MapPathNode::GetName() const"}
+{"a":"7100533048","t":"plate","c":"nn::bezel::MapPathNode::GetPosition() const"}
+{"a":"710053310c","t":"plate","c":"nn::bezel::MapPathLink::GetStartNode() const"}
+{"a":"7100533150","t":"plate","c":"nn::bezel::MapPathLink::CalcPosition(nn::util::Vector3f*, float) const"}
+{"a":"710053323c","t":"plate","c":"nn::bezel::MapPathLink::CalcPositionAndTangent(nn::util::Vector3f*, nn::util::Vector3f*, float) const"}
+{"a":"7100533270","t":"plate","c":"nn::bezel::MapPathRoute::Shutdown()"}
+{"a":"71005332f0","t":"plate","c":"nn::bezel::MapPathRoute::GetLength() const"}
+{"a":"7100533358","t":"plate","c":"nn::bezel::MapPathRoute::CalcPosition(nn::util::Vector3f*, float) const"}
+{"a":"7100533380","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §5.6\n역할: MapPathRoute. 경로 위의 위치 계산.\n계산: t 를 0~1 로 clamp → 전체 길이×t → 링크 누적 길이로 링크 선택; 링크 안에서는 저장한 curve 길이 비율로 나누고 tStart/tEnd 를 적용 (단순 곡선 parameter 균등 분할과 다름)"}
+{"a":"7100533508","t":"plate","c":"nn::bezel::MapPath::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100533514","t":"plate","c":"nn::bezel::MapPath::NnDetailBezelGetThisPtr()"}
+{"a":"7100533518","t":"plate","c":"nn::bezel::MapPath::NnDetailBezelGetThisPtrConst() const"}
+{"a":"710053351c","t":"plate","c":"nn::bezel::MapPath::~MapPath()"}
+{"a":"7100533520","t":"plate","c":"nn::bezel::MapPath::~MapPath()"}
+{"a":"7100533524","t":"plate","c":"nn::bezel::MapPathNode::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100533530","t":"plate","c":"nn::bezel::MapPathNode::NnDetailBezelGetThisPtr()"}
+{"a":"7100533534","t":"plate","c":"nn::bezel::MapPathNode::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100533538","t":"plate","c":"nn::bezel::MapPathNode::~MapPathNode()"}
+{"a":"710053353c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathNode, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100533550","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathNode, true>::GetBaseTypeDesc()"}
+{"a":"7100533558","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathNode, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100533560","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathNode, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100533568","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathNode, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100533570","t":"plate","c":"nn::bezel::MapPathLink::NnDetailBezelGetTypeDesc() const"}
+{"a":"710053357c","t":"plate","c":"nn::bezel::MapPathLink::NnDetailBezelGetThisPtr()"}
+{"a":"7100533580","t":"plate","c":"nn::bezel::MapPathLink::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100533584","t":"plate","c":"nn::bezel::MapPathLink::~MapPathLink()"}
+{"a":"7100533588","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathLink, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710053359c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathLink, true>::GetBaseTypeDesc()"}
+{"a":"71005335a4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathLink, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71005335ac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathLink, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71005335b4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathLink, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710053372c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPath, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100533740","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPath, true>::GetBaseTypeDesc()"}
+{"a":"7100533748","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPath, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100533750","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPath, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100533758","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPath, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100535594","t":"plate","c":"nn::bezel::MapPathRoute::NnDetailBezelGetTypeDesc() const"}
+{"a":"71005355a0","t":"plate","c":"nn::bezel::MapPathRoute::NnDetailBezelGetThisPtr()"}
+{"a":"71005355a4","t":"plate","c":"nn::bezel::MapPathRoute::NnDetailBezelGetThisPtrConst() const"}
+{"a":"71005355b0","t":"plate","c":"nn::bezel::MapPathRoute::~MapPathRoute()"}
+{"a":"7100535620","t":"plate","c":"nn::bezel::MapPathRoute::~MapPathRoute()"}
+{"a":"710053568c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71005356a0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::GetBaseTypeDesc()"}
+{"a":"71005356a8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71005356b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71005356b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MapPathRoute, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100540cb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n역할: ScriptModule GC setter\n---\nnn::bezel::ScriptModule::_internalSetScriptBackgroundGarbageCollectionEnabled(bool)"}
+{"a":"7100540cb8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.2\n역할: ScriptModule GC getter\n---\nnn::bezel::ScriptModule::_internalIsScriptBackgroundGarbageCollectionEnabled() const"}
+{"a":"71005683bc","t":"plate","c":"nn::bezel::DevInterfaceModule::DeactivateDevSystem(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71005683c0","t":"plate","c":"nn::bezel::DevInterfaceModule::IsDevSystemActive(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"710056845c","t":"plate","c":"nn::bezel::DevInterfaceModule::SetDevWindowVisible(nn::util::basic_string_view<char, std::char_traits<char> >, bool)"}
+{"a":"7100570180","t":"plate","c":"nn::bezel::RenderPipelineModule::RequestScreenCaptureBuffer(nn::bezel::RenderPipelineModule::RequestScreenCaptureBufferArg const&)"}
+{"a":"71005b8858","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/04_sound.md §6.7\n역할: 3D 볼륨·우선순위(nn::atk Sound3DCalculator 로 보임)\n식: d = 액터–리스너 거리; d ≤ maxVolumeDistance(리스너+0x64) 이면 vol = 1\n식: 곡선 1(로그) vol = decayRatio ^ ((d − maxVolDist) / unitDistance(리스너+0x68)); 곡선 2(선형) vol = max(0, 1 − (1 − decayRatio)·(d − maxVolDist)/unitDistance)\n식: 우선순위 감소 = −(int)((1 − vol) × maxPriorityReduction(관리자+0x40))\n[미확정] 엔진 표준 경로의 다른 호출(vtable 경유)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1801.md §7.2\n역할: 3D 사운드 계산(감쇠·팬, FUN_71005b8ab8 과 함께). 볼륨은 리스너들의 최댓값, 팬은 출력 리스너가 하나일 때만\n결과(mg1801): 물보라 볼륨 1, 판정음 팬 가운데"}
+{"a":"71005b8918","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §6.7\n역할: 3D 팬·span → FUN_71005b8ab8"}
+{"a":"71005b898c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §6.7\n역할: 3D 도플러 피치 — 음속(관리자+0x48) 0 이면 1.0, dopplerFactor/32 사용"}
+{"a":"71005b8a80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §6.7\n역할: 3D 필터 — d > maxVolDist 이면 min(maxBiquad(+0x74), (d − maxVolDist)/unitDistance × unitBiquad(+0x70))"}
+{"a":"71005b8ab8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §6.7·9.4\n역할: 3D 팬·span 계산\n식: 리스너 행렬로 액터 위치 변환, θ = atan2(x, −z); 스피커 각 앞 30°(π/6)·뒤 120°(2π/3) 경계로 구간 선형 팬\n분기: interiorSize(리스너+0x60) 안쪽은 거리 비례 축소; 팬 범위 관리자+0x44\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg1801.md §7.2\n역할: 3D 사운드 계산(감쇠·팬, FUN_71005b8858 과 함께)"}
+{"a":"71005b92b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1801.md §7.2\n역할: 3D 사운드 관리자 설정. panRange 0.9, maxPriorityReduction 32"}
+{"a":"71005b95d8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §4.1·6.7\n역할: 3D 파라미터 기본값 — decayRatio 0.5, decayCurve 1, doppler 0"}
+{"a":"71005c3840","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §13.11.3\n역할: 사용자 파라미터 색인 표 {31,30,29,28} — 그룹 비트 = 색인 2(사용자 파라미터 비트 29 칸)\n\n[판독] 2026-10-11 / md: web/docs/shell/mgm_common.md §6.9\n역할: 사용자 파라미터 색인. 표 @0x71015d2af0 = {31,30,29,28} → 색인 2 = 사용자 파라미터 비트 29."}
+{"a":"71005c77a0","t":"plate","c":"[판독: 어셈블리] 2026-10-11 / md: web/docs/shell/plaza_guide.md §5.1\n역할: 오디오 렌더러 갱신 제출 → nn::audio::RequestUpdateAudioRenderer(@0x710144b840). API 호출 자체는 청취 시작 확인 아님"}
+{"a":"71005c9b10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §13.10\n역할: 시퀀스 명령 인자 읽기 — case 4(random 접두): s16 min, s16 max → min + ((r & 0xffff) + (r & 0xffff)·(max − min)) >> 16"}
+{"a":"71005c9c80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §13.10\n역할: 시퀀스 명령 실행 — case 0x86(randvar): n = |값|, ((r & 0xffff) + (r & 0xffff)·n) >> 16, 값이 음수면 부호 반전"}
+{"a":"71005cdd50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1801.md §11.2\n역할: 사운드 스레드 틱 처리. 5 ms 프레임 예산(0x50000) 안에서 틱을 누적 처리 → G14 변화는 5 ms 단위\n[미확정] 출력 버퍼 지연 보정 코드는 못 찾음"}
+{"a":"71005cdef0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1801.md §11.2\n역할: 시퀀서 트랙 처리. 트랙 순서 0..15"}
+{"a":"71005dd1e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §13.10\n역할: 사운드 프레임 갱신 — 모든 갱신 뒤 FUN_71005df19c() 를 한 번 부른다(값 버림, 프레임마다 LCG 한 칸)"}
+{"a":"71005dd7a0","t":"plate","c":"[판독: 어셈블리] 2026-10-11 / md: web/docs/shell/plaza_guide.md §5.1\n역할: 사운드 처리 루프 — FUN_71005c77a0 → nn::audio::RequestUpdateAudioRenderer 호출\n[미확정] FX 이벤트에서 이 제출까지 정확한 갱신 위상·첫 음원 반영"}
+{"a":"71005dd9bc","t":"eol","c":"→ FUN_71005c77a0 (RequestUpdateAudioRenderer 제출)"}
+{"a":"71005de6ec","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/04_sound.md §13.10\n역할: FUN_71005de7f0 를 함수 포인터로 등록\n[미확정] 쓰는 곳"}
+{"a":"71005de7f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §13.10\n역할: 실수 난수 (r & 0xffff) / 65535.0"}
+{"a":"71005df19c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/04_sound.md §13.10\n역할: 시퀀스 엔진 전역 LCG\n식: DAT_7101adbc08 = DAT_7101adbc08 * 0x19660D + 0x3C6EF35F; return DAT_7101adbc08 >> 16\n초기값: 0x12345678 (@0x7101adbc08)"}
+{"a":"71005e5f90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1801.md §7.2\n역할: 볼륨 체인. 시퀀스는 사운드 volume/127 을 선형으로 곱하고, 스트림도 같은 값과 트랙 볼륨을 선형으로 곱한다"}
+{"a":"71005ef504","t":"plate","c":"nn::bezel::ComFxTrigger::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"71005efcd0","t":"plate","c":"nn::bezel::ComFxTrigger::DestroyAllPlayingFxTrigger()"}
+{"a":"71005efe5c","t":"plate","c":"nn::bezel::ComFxTrigger::AttachFxTrigger(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71005f0080","t":"plate","c":"nn::bezel::ComFxTrigger::SetBool(nn::util::basic_string_view<char, std::char_traits<char> >, bool)"}
+{"a":"71005f00a4","t":"plate","c":"nn::bezel::ComFxTrigger::SetListener(nn::bezel::WeakHandle<nn::bezel::IMessageListener> const&)"}
+{"a":"71005f0cec","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5\n역할: nn::bezel::ComFxTrigger::Play\n호출: @0x7101112b40 (트리거 탐색·실행)\n호출자: bex::ComFxTrigger::Play @0x710010d224\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §5.1\n역할: 게임 진동 FTRG 대상\n\n[판독] 2026-10-11 / md: web/docs/shell/plaza_guide.md §5.1\n역할: nn::bezel::ComFxTrigger::Play — 재생 항목을 manager+0x188 목록에 등록(→ FUN_7101112940, 항목 생성 FUN_71011167e0)\n---\nnn::bezel::ComFxTrigger::Play(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71005f0f9c","t":"plate","c":"nn::bezel::ComFxTrigger::Stop(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71005f10cc","t":"plate","c":"nn::bezel::ComFxTrigger::StopAllPlayingFxTrigger()"}
+{"a":"71005f10dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5,7.8\n역할: 애니 노드 변경 리스너\n동작: 이전 이벤트 플레이어를 해제하고 새 노드의 자원 경로와 시작 프레임으로 등록(@0x71005f8830 → @0x710111347c)\n§7.8 forceRestart 의 노드 교체는 새 최초 평가를 만든다. 같은 노드 SetFrame 경로는 이 리스너를 부르지 않는다\n근거 C: analysis/decomp/character_ftrg_c_missing.c"}
+{"a":"71005f1d6c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComProperty, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71005f1d8c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComProperty, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71005f1d98","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComProperty, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71005f1dac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComProperty, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71005f1db4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComProperty, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71005f3ccc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5,7.8\n역할: 노드 진행 수집 — 현재 프레임을 읽고 wrap·루프 카운터 갱신\n분기: abs(f−old) ≤ 1.1920929e−7 이면 wrap=0\n분기: 그 밖에는 speed 와 (f−old) 의 부호 비트 XOR 으로 wrap 판정, 루프 카운터를 더한다\n분기: speed 부호 비트 1 이면 @0x710111c2a8, 아니면 @0x710111c298\n§7.8 speed=0 이면 이벤트를 끄는 검사가 없다. 수동 프레임 변경도 조회된 프레임 차로 검사\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §7\n역할: FTRG·발소리 근거 주소. 슬롯 문맥·키 통과·발소리 ground 선택은 공용 입력/캐릭터 계약을 따른다\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §7.3\n역할: 모션 이벤트(FTRG key) 수집. speed=0 억제 gate 가 없다."}
+{"a":"71005f7d80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5\n역할: 통과형 이벤트 판정 콜백 — 실행 횟수를 반환(양수만 실행, 반환 횟수만큼 콜백 호출, 건너뛴 루프를 한 번으로 축약하지 않음)\n입력: 이전 프레임 p, 현재 f, 이벤트 프레임 e, 이전 루프 P, 현재 루프 C, 최초 플래그\n방향 enum: 0=양쪽, 1=정방향, 2=역방향. 허용 방향만 평가\n정방향 wrap 없음: p<e≤f, 또는 최초이고 e=f. 초기 p=f=0 이면 프레임 0 포함, 시작 프레임 5 면 그 이전 이벤트 소급 없음\n역방향 wrap 없음: f<e≤p (최초 e=f 예외 없음)\n루프: 이벤트 +0x14 = 루프 인덱스 K, +0x18 = u16 모드 M. 정방향 M0=K부터 반복, M1=K 한 루프, M2=K까지. M0·P≥K 일반 통과 수 = C−P+[e≤f]−[e≤p], 최초 equality 는 별도\n역방향 wrap: M/K 분기 미사용. p<f 이면 P−C−1+[e≤p 또는 f<e], 그 밖에는 P−C+[f<e≤p]\n관측: mg1801 swing 트랙 K=0, M=1"}
+{"a":"71005f7d9c","t":"pre","c":"역방향 wrap: 정수 load/sub 로 부호 확인(~0x71005f7dc4)"}
+{"a":"71005f7dc4","t":"eol","c":"역방향 wrap 부호 확인 구간 끝"}
+{"a":"71005f7e1c","t":"eol","c":"역방향 wrap 정수 load/sub 부호 확인"}
+{"a":"71005f7f84","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5\n역할: FxModule 이벤트 평가 시작\n호출 체인: @0x7101111800 → @0x710111b850/@0x710111bc10 → 콜백 @0x71005f7d80 → @0x7101112940"}
+{"a":"71005f8830","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.5\n역할: 새 노드 자원 경로·시작 프레임으로 이벤트 플레이어 등록\n호출자: @0x71005f10dc, 호출: @0x710111347c"}

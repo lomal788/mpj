@@ -1,0 +1,1782 @@
+{"a":"71000035b0","t":"plate","c":"mg1407::Mg1407BallManager::Mg1407BallManager()"}
+{"a":"7100003650","t":"plate","c":"mg1407::Mg1407BallManager::Impl::Impl()"}
+{"a":"7100003910","t":"plate","c":"mg1407::Mg1407BallManager::~Mg1407BallManager()"}
+{"a":"7100003974","t":"plate","c":"mg1407::Mg1407BallManager::~Mg1407BallManager()"}
+{"a":"7100003998","t":"plate","c":"mg1407::Mg1407BallManager::Setup()"}
+{"a":"710000399c","t":"plate","c":"mg1407::Mg1407BallManager::PostSetup()"}
+{"a":"71000039a0","t":"plate","c":"mg1407::Mg1407BallManager::Initialize()"}
+{"a":"71000039a4","t":"plate","c":"mg1407::Mg1407BallManager::StartOpeningDemo()"}
+{"a":"71000039a8","t":"plate","c":"mg1407::Mg1407BallManager::SkipOpeningDemo()"}
+{"a":"71000039ac","t":"plate","c":"mg1407::Mg1407BallManager::StartGame()"}
+{"a":"71000039b0","t":"plate","c":"mg1407::Mg1407BallManager::StartFinish()"}
+{"a":"71000039b4","t":"plate","c":"mg1407::Mg1407BallManager::CreateBall(mg1407::BALL_TYPE, mg1407::BALL_SIZE, int, bool)"}
+{"a":"71000039c0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::CreateBall(mg1407::BALL_TYPE, mg1407::BALL_SIZE, int, bool)"}
+{"a":"7100003c64","t":"plate","c":"mg1407::Mg1407BallManager::ShootBall()"}
+{"a":"7100003c70","t":"plate","c":"mg1407::Mg1407BallManager::Impl::ShootBall()"}
+{"a":"7100003da0","t":"plate","c":"mg1407::Mg1407BallManager::ReceiveBall(ca::kb::SerialNumber, int, mg1407::RECEIVE_TYPE, bool)"}
+{"a":"7100003e50","t":"plate","c":"mg1407::Mg1407BallManager::SetTouchLogLocal(ca::kb::SerialNumber, int)"}
+{"a":"7100003ec0","t":"plate","c":"mg1407::Mg1407BallManager::IsTouchLogActive() const"}
+{"a":"7100003ef8","t":"plate","c":"mg1407::Mg1407BallManager::SetReceiveBallJustRate(ca::kb::SerialNumber, int, float, bool)"}
+{"a":"7100003f10","t":"plate","c":"mg1407::Mg1407BallManager::Impl::SetReceiveBallJustRate(ca::kb::SerialNumber, int, float, bool)"}
+{"a":"7100004050","t":"plate","c":"mg1407::Mg1407BallManager::FixOutRequest(ca::kb::SerialNumber, int)"}
+{"a":"7100004130","t":"plate","c":"mg1407::Mg1407BallManager::BallGoalRequest(ca::kb::SerialNumber, nn::util::Vector3f const&)"}
+{"a":"71000041c0","t":"plate","c":"mg1407::Mg1407BallManager::BoundOutBall(ca::kb::SerialNumber)"}
+{"a":"7100004250","t":"plate","c":"mg1407::Mg1407BallManager::BoundOutBallAll()"}
+{"a":"71000042b0","t":"plate","c":"mg1407::Mg1407BallManager::IsBallHit(bex::PlayerID, nn::util::Vector3f const&, nn::util::Vector3f&, float&)"}
+{"a":"71000042e0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::IsBallHit(bex::PlayerID, nn::util::Vector3f const&, nn::util::Vector3f&, float&)"}
+{"a":"7100004540","t":"plate","c":"mg1407::Mg1407BallManager::IsBallTargetNear(nn::util::Vector3f const&, nn::util::Vector3f&, int, float, bool)"}
+{"a":"7100004620","t":"plate","c":"mg1407::Mg1407BallManager::GetPosition(ca::kb::SerialNumber)"}
+{"a":"7100004680","t":"plate","c":"mg1407::Mg1407BallManager::GetTargetPosition(ca::kb::SerialNumber)"}
+{"a":"71000046e0","t":"plate","c":"mg1407::Mg1407BallManager::IsFall(ca::kb::SerialNumber)"}
+{"a":"7100004730","t":"plate","c":"mg1407::Mg1407BallManager::GetRadius(ca::kb::SerialNumber)"}
+{"a":"71000047a0","t":"plate","c":"mg1407::Mg1407BallManager::GetTargetLine(ca::kb::SerialNumber)"}
+{"a":"7100004800","t":"plate","c":"mg1407::Mg1407BallManager::GetBallNum()"}
+{"a":"7100004840","t":"plate","c":"mg1407::Mg1407BallManager::GetLineTargetBall(int)"}
+{"a":"710000488c","t":"plate","c":"mg1407::Mg1407BallManager::GetNextBall(int)"}
+{"a":"71000048a0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::GetNextBall(int)"}
+{"a":"7100004ae8","t":"plate","c":"mg1407::Mg1407BallManager::GetIndexBall(int)"}
+{"a":"7100004b00","t":"plate","c":"mg1407::Mg1407BallManager::GetRoundLastBall()"}
+{"a":"7100004bd0","t":"plate","c":"mg1407::Mg1407BallManager::GetRoundFinalBall()"}
+{"a":"7100004c20","t":"plate","c":"mg1407::Mg1407BallManager::IsFinalBall(ca::kb::SerialNumber)"}
+{"a":"7100004c90","t":"plate","c":"mg1407::Mg1407BallManager::GetRouteInfo(ca::kb::SerialNumber, int)"}
+{"a":"7100004cf0","t":"plate","c":"mg1407::Mg1407BallManager::PlayJustEffect(ca::kb::SerialNumber)"}
+{"a":"7100004d30","t":"plate","c":"mg1407::Mg1407BallManager::GetBallSize(ca::kb::SerialNumber)"}
+{"a":"7100004d80","t":"plate","c":"mg1407::Mg1407BallManager::GetGroundMarkerPosition(ca::kb::SerialNumber)"}
+{"a":"7100004ddc","t":"plate","c":"mg1407::Mg1407BallManager::GetNextTargetPosition(int, int, bool)"}
+{"a":"7100004ed0","t":"plate","c":"mg1407::Mg1407BallManager::GetNearRate(ca::kb::SerialNumber, nn::util::Vector3f const&)"}
+{"a":"7100005014","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::PreStartTelop()"}
+{"a":"7100005018","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::StartEndingDemo()"}
+{"a":"7100005020","t":"plate","c":"mg1407::Mg1407BallManager::Impl::~Impl()"}
+{"a":"71000051bc","t":"plate","c":"mg1407::Mg1407BallManager::Impl::~Impl()"}
+{"a":"71000051e0","t":"plate","c":"bex::Fiber::getInstanceTypeinfo() const"}
+{"a":"71000051e4","t":"plate","c":"bex::Fiber::StartUpdate()"}
+{"a":"71000051f0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::Update()"}
+{"a":"7100005240","t":"plate","c":"bex::Fiber::Destroy()"}
+{"a":"7100005300","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>::~__func()"}
+{"a":"7100005304","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>::__clone() const"}
+{"a":"710000533c","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>::__clone(std::__function::__base<void (ca::kb::RPCArgumentsRecvPack&)>*) const"}
+{"a":"7100005358","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>::destroy()"}
+{"a":"710000535c","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>::destroy_deallocate()"}
+{"a":"7100005360","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>::TEMPNAMEPLACEHOLDERVALUE(ca::kb::RPCArgumentsRecvPack&)"}
+{"a":"71000053d0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::SetTouchLogPoint(ca::kb::SerialNumber, bool, int, nn::util::Vector3f const&)"}
+{"a":"710000553c","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>::~__func()"}
+{"a":"7100005540","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>::__clone() const"}
+{"a":"7100005578","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>::__clone(std::__function::__base<void (ca::kb::RPCArgumentsRecvPack&)>*) const"}
+{"a":"7100005594","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>::destroy()"}
+{"a":"7100005598","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>::destroy_deallocate()"}
+{"a":"710000559c","t":"plate","c":"std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>::TEMPNAMEPLACEHOLDERVALUE(ca::kb::RPCArgumentsRecvPack&)"}
+{"a":"71000055b0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::BallTouchReport(ca::kb::RPCArgumentsRecvPack&)"}
+{"a":"710000577c","t":"plate","c":"std::array<mg1407::Mg1407BallManager::Impl::PlayerData, 8ul>::~array()"}
+{"a":"7100005820","t":"plate","c":"mg1407::Mg1407Ball::Update()"}
+{"a":"7100005f60","t":"plate","c":"mg1407::Mg1407BallManager::Impl::ObserveTouchLog()"}
+{"a":"7100006550","t":"plate","c":"mg1407::Mg1407Ball::Receive(int, bool)"}
+{"a":"7100006cb0","t":"plate","c":"mg1407::Mg1407Ball::MapCollision()"}
+{"a":"7100006f00","t":"plate","c":"mg1407::GetAssetPath(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100007040","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
+{"a":"71000071ec","t":"plate","c":"mg1407::Mg1407BallManager::Impl::PointReport(ca::kb::SerialNumber, int, nn::util::Vector3f)"}
+{"a":"71000072dc","t":"plate","c":"mg1407::Mg1407Ball::~Mg1407Ball()"}
+{"a":"7100007334","t":"plate","c":"mg1407::Mg1407Ball::~Mg1407Ball()"}
+{"a":"7100007394","t":"plate","c":"mg1407::Mg1407Ball::SetPosition(nn::util::Vector3f const&)"}
+{"a":"71000073d8","t":"plate","c":"mg1407::Mg1407Ball::Create(mg1407::BALL_TYPE, mg1407::BALL_SIZE)"}
+{"a":"71000079c0","t":"plate","c":"std::__wrap_iter<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > >*> std::vector<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > >, bex::HeapModule::Allocator_vector<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > > > >::emplace<ca::kb::SerialNumber, mg1407::Mg1407Ball*>(std::__wrap_iter<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > > const*>, ca::kb::SerialNumber&&, mg1407::Mg1407Ball*&&)"}
+{"a":"7100007cb0","t":"plate","c":"void std::__split_buffer<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > >, bex::HeapModule::Allocator_vector<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > > >&>::emplace_back<ca::kb::SerialNumber, mg1407::Mg1407Ball*>(ca::kb::SerialNumber&&, mg1407::Mg1407Ball*&&)"}
+{"a":"7100007f80","t":"plate","c":"std::__wrap_iter<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog>*> std::vector<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog>, bex::HeapModule::Allocator_vector<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog> > >::emplace<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog>(std::__wrap_iter<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog> const*>, ca::kb::SerialNumber&&, mg1407::Mg1407BallManager::Impl::TouchLog&&)"}
+{"a":"7100008330","t":"plate","c":"mg1407::Mg1407Ball::Shoot(nn::util::Vector3f)"}
+{"a":"7100008b00","t":"plate","c":"mg1407::GetQuatFromDegRot(nn::util::Vector3f const&)"}
+{"a":"7100008d90","t":"plate","c":"mg1407::Mg1407Ball::SetReceiveBallJustRate(int, float, bool)"}
+{"a":"710000922c","t":"plate","c":"mg1407::Mg1407Ball::BoundOut(nn::util::Vector3f)"}
+{"a":"710000958c","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::insert(unsigned long, char const*, unsigned long)"}
+{"a":"7100009844","t":"plate","c":"mg1407::Mg1407Ball::PlayJustEffect()"}
+{"a":"7100009d68","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::__assign_external(char const*, unsigned long)"}
+{"a":"7100009ec8","t":"plate","c":"mg1407::Mg1407CameraManager::Mg1407CameraManager()"}
+{"a":"7100009f9c","t":"plate","c":"mg1407::Mg1407CameraManager::~Mg1407CameraManager()"}
+{"a":"710000a000","t":"plate","c":"mg1407::Mg1407CameraManager::~Mg1407CameraManager()"}
+{"a":"710000a024","t":"plate","c":"mg1407::Mg1407CameraManager::Setup()"}
+{"a":"710000a030","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::Setup()"}
+{"a":"710000a40c","t":"plate","c":"mg1407::Mg1407CameraManager::Initialize()"}
+{"a":"710000a41c","t":"plate","c":"mg1407::Mg1407CameraManager::StartOpeningDemo()"}
+{"a":"710000a430","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::StartOpeningDemo()"}
+{"a":"710000a56c","t":"plate","c":"mg1407::Mg1407CameraManager::SkipOpeningDemo()"}
+{"a":"710000a570","t":"plate","c":"mg1407::Mg1407CameraManager::PreStartTelop()"}
+{"a":"710000a580","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::PreStartTelop()"}
+{"a":"710000a6c8","t":"plate","c":"mg1407::Mg1407CameraManager::StartGame()"}
+{"a":"710000a708","t":"plate","c":"mg1407::Mg1407CameraManager::StartEndingDemo()"}
+{"a":"710000a710","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::StartEndingDemo()"}
+{"a":"710000a84c","t":"plate","c":"mg1407::Mg1407CameraManager::IsFinishedAnim()"}
+{"a":"710000a860","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::IsFinishedAnim()"}
+{"a":"710000a950","t":"plate","c":"mg1407::Mg1407CameraManager::ResetCamera()"}
+{"a":"710000a9ac","t":"plate","c":"mg1407::Mg1407CameraManager::GetCameraAnimationFrame()"}
+{"a":"710000a9c0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::GetCameraAnimationFrame()"}
+{"a":"710000aab0","t":"plate","c":"mg1407::Mg1407CameraManager::GetCamera()"}
+{"a":"710000aac0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::GetCamera()"}
+{"a":"710000aba8","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::PostSetup()"}
+{"a":"710000abac","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::StartFinish()"}
+{"a":"710000abb0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::~Impl()"}
+{"a":"710000acb0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::~Impl()"}
+{"a":"710000adb0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::Update()"}
+{"a":"710000ae4c","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::on_game_proc()"}
+{"a":"710000b04c","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::SlerpPos(nn::util::Vector3f const&, nn::util::Vector3f const&, float)"}
+{"a":"710000b4f0","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComCamera> nn::bezel::Entity::AddComponent<nn::bezel::ComCamera, , (void*)0>()"}
+{"a":"710000b6e0","t":"plate","c":"nn::bezel::WeakHandle<actor::ComActorMotion> nn::bezel::Entity::AddComponent<actor::ComActorMotion, , (void*)0>()"}
+{"a":"710000b8bc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b8dc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000b8e8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b8fc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000b904","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000b90c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b920","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::GetBaseTypeDesc()"}
+{"a":"710000b928","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b930","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000b938","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000b940","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b960","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000b96c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b980","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000b988","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000b990","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000b99c","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtr()"}
+{"a":"710000b9a0","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtrConst() const"}
+{"a":"710000b9a4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b9b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::GetBaseTypeDesc()"}
+{"a":"710000b9c0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000b9c8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000b9d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000b9d8","t":"plate","c":"mg1407::Mg1407AudienceData::getStaticTypeinfo()"}
+{"a":"710000bab4","t":"plate","c":"mg1407::Mg1407AudienceData::getPropertyList()"}
+{"a":"710000bbcc","t":"plate","c":"mg1407::Mg1407AudienceData::createInstance()"}
+{"a":"710000bbe8","t":"plate","c":"mg1407::Mg1407AudienceData::deleteInstance(void*)"}
+{"a":"710000bbf4","t":"plate","c":"rtti::Struct::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"710000bbf8","t":"plate","c":"rtti::Struct::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"710000bbfc","t":"plate","c":"mg1407::Mg1407AudienceInstanceData::getStaticTypeinfo()"}
+{"a":"710000bcd8","t":"plate","c":"mg1407::Mg1407AudienceInstanceData::getPropertyList()"}
+{"a":"710000bda0","t":"plate","c":"mg1407::Mg1407AudienceInstanceData::createInstance()"}
+{"a":"710000bdbc","t":"plate","c":"mg1407::Mg1407AudienceInstanceData::deleteInstance(void*)"}
+{"a":"710000bdc8","t":"plate","c":"mg1407::Mg1407NpcData::getStaticTypeinfo()"}
+{"a":"710000bea4","t":"plate","c":"mg1407::Mg1407NpcData::getPropertyList()"}
+{"a":"710000c0a4","t":"plate","c":"mg1407::Mg1407NpcData::createInstance()"}
+{"a":"710000c0c8","t":"plate","c":"mg1407::Mg1407NpcData::deleteInstance(void*)"}
+{"a":"710000c0d4","t":"plate","c":"mg1407::Mg1407Param::Mg1407Param()"}
+{"a":"710000c16c","t":"plate","c":"mg1407::Mg1407Param::~Mg1407Param()"}
+{"a":"710000c1b0","t":"plate","c":"mg1407::Mg1407Param::~Mg1407Param()"}
+{"a":"710000c1d4","t":"plate","c":"mg1407::Mg1407Param::LoadData()"}
+{"a":"710000c1e0","t":"plate","c":"mg1407::Mg1407Param::Impl::LoadData()"}
+{"a":"710000c570","t":"plate","c":"mg1407::Mg1407Param::GetAudienceTypeIndex(int)"}
+{"a":"710000c578","t":"plate","c":"mg1407::Mg1407Param::GetAudienceInstanceNum()"}
+{"a":"710000c58c","t":"plate","c":"mg1407::Mg1407Param::GetAudienceInstanceHookNo(int)"}
+{"a":"710000c5b8","t":"plate","c":"mg1407::Mg1407Param::GetAudienceInstanceTypeIndex(int)"}
+{"a":"710000c5e4","t":"plate","c":"mg1407::Mg1407Param::GetMoveAudienceTypeIndex(int)"}
+{"a":"710000c5ec","t":"plate","c":"mg1407::Mg1407Param::GetResultHideAudienceTypeIndex(int)"}
+{"a":"710000c600","t":"plate","c":"mg1407::Mg1407Param::GetNpcColor(bq::NonPlayerCharacterID, mg1407::enNpcColor)"}
+{"a":"710000c684","t":"plate","c":"mg1407::Mg1407Param::Impl::~Impl()"}
+{"a":"710000c6d8","t":"plate","c":"mg1407::Mg1407Param::Impl::~Impl()"}
+{"a":"710000c730","t":"plate","c":"bool bq::DataBaseJsonReader::DeserializeRTTI<mg1407::Mg1407AudienceInstanceData>(char const*, bex::vector<mg1407::Mg1407AudienceInstanceData>&)"}
+{"a":"710000c8f0","t":"plate","c":"bool bq::DataBaseJsonReader::DeserializeRTTI<mg1407::Mg1407NpcData>(char const*, bex::vector<mg1407::Mg1407NpcData>&)"}
+{"a":"710000d0f0","t":"plate","c":"mg1407::Mg1407LayoutManager::Mg1407LayoutManager()"}
+{"a":"710000d1a8","t":"plate","c":"mg1407::Mg1407LayoutManager::~Mg1407LayoutManager()"}
+{"a":"710000d1ec","t":"plate","c":"mg1407::Mg1407LayoutManager::~Mg1407LayoutManager()"}
+{"a":"710000d210","t":"plate","c":"mg1407::Mg1407LayoutManager::Setup()"}
+{"a":"710000d220","t":"plate","c":"mg1407::Mg1407LayoutManager::ShowTimer()"}
+{"a":"710000d264","t":"plate","c":"mg1407::Mg1407LayoutManager::StartTimer()"}
+{"a":"710000d290","t":"plate","c":"mg1407::Mg1407LayoutManager::SetTime(float)"}
+{"a":"710000d2cc","t":"plate","c":"mg1407::Mg1407LayoutManager::RemainSecond()"}
+{"a":"710000d2f8","t":"plate","c":"mg1407::Mg1407LayoutManager::HideTimer()"}
+{"a":"710000d328","t":"plate","c":"mg1407::Mg1407LayoutManager::IsEndTimer()"}
+{"a":"710000d370","t":"plate","c":"mg1407::Mg1407LayoutManager::ShowRoundTelop(int)"}
+{"a":"710000d380","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::ShowRoundTelop(int)"}
+{"a":"710000d4a4","t":"plate","c":"mg1407::Mg1407LayoutManager::ShowPointLayout(int, nn::util::Vector3f const&)"}
+{"a":"710000d4e8","t":"plate","c":"mg1407::Mg1407LayoutManager::ShowTotalPointLayout(int)"}
+{"a":"710000d4fc","t":"plate","c":"mg1407::Mg1407LayoutManager::HideTotalPointLayout()"}
+{"a":"710000d508","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::Initialize()"}
+{"a":"710000d50c","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::StartOpeningDemo()"}
+{"a":"710000d510","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::SkipOpeningDemo()"}
+{"a":"710000d514","t":"plate","c":"mg1407::Mg1407SequenceObjectBase::StartGame()"}
+{"a":"710000d520","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::~Impl()"}
+{"a":"710000d668","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::~Impl()"}
+{"a":"710000d690","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::Update()"}
+{"a":"710000d790","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::Setup()"}
+{"a":"710000dad0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiTimer> nn::bezel::Entity::AddComponent<bq::ComUiTimer, bq::ComUiTimer::UiTimerType, (void*)0>(bq::ComUiTimer::UiTimerType&&)"}
+{"a":"710000dcb0","t":"plate","c":"mg1407::Mg1407PointLayoutManager::Setup()"}
+{"a":"710000ddb0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> nn::bezel::Entity::AddComponent<bq::ComUiMGTelop, bq::ComUiMGTelop::UiMGTelopType, (void*)0>(bq::ComUiMGTelop::UiMGTelopType&&)"}
+{"a":"710000df8c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiTimer> bex::ComponentUtil::SafeCreate<bq::ComUiTimer, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiTimer::UiTimerType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiTimer::UiTimerType&&)"}
+{"a":"710000e10c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000e12c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000e138","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000e14c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000e154","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000e160","t":"plate","c":"mg1407::Mg1407PointLayout::Setup()"}
+{"a":"710000e270","t":"plate","c":"mg1407::Mg1407PointLayout::~Mg1407PointLayout()"}
+{"a":"710000e300","t":"plate","c":"mg1407::Mg1407PointLayout::~Mg1407PointLayout()"}
+{"a":"710000e390","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiScore> nn::bezel::Entity::AddComponent<bq::ComUiScore, bq::ComUiScore::UiScoreType, (void*)0>(bq::ComUiScore::UiScoreType&&)"}
+{"a":"710000e56c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiScore> bex::ComponentUtil::SafeCreate<bq::ComUiScore, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiScore::UiScoreType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiScore::UiScoreType&&)"}
+{"a":"710000e6ec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiScore, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000e70c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiScore, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000e718","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiScore, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000e72c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiScore, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000e734","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiScore, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000e740","t":"plate","c":"void std::vector<std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> >, bex::HeapModule::Allocator_vector<std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> > > >::__push_back_slow_path<std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> > >(std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> >&&)"}
+{"a":"710000e898","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> bex::ComponentUtil::SafeCreate<bq::ComUiMGTelop, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiMGTelop::UiMGTelopType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiMGTelop::UiMGTelopType&&)"}
+{"a":"710000ea18","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiMGTelop, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000ea38","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiMGTelop, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000ea44","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiMGTelop, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000ea58","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiMGTelop, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000ea60","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiMGTelop, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000ea70","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::GetComTimer()"}
+{"a":"710000eb80","t":"plate","c":"mg1407::Mg1407PointLayout::Show(int, nn::util::Vector3f const&)"}
+{"a":"710000ed80","t":"plate","c":"mg1407::Mg1407MapManager::Mg1407MapManager()"}
+{"a":"710000ee38","t":"plate","c":"mg1407::Mg1407MapManager::~Mg1407MapManager()"}
+{"a":"710000ee9c","t":"plate","c":"mg1407::Mg1407MapManager::~Mg1407MapManager()"}
+{"a":"710000eec0","t":"plate","c":"mg1407::Mg1407MapManager::Setup()"}
+{"a":"710000eec8","t":"plate","c":"mg1407::Mg1407MapManager::PostSetup()"}
+{"a":"710000eecc","t":"plate","c":"mg1407::Mg1407MapManager::Initialize()"}
+{"a":"710000eed0","t":"plate","c":"mg1407::Mg1407MapManager::StartOpeningDemo()"}
+{"a":"710000eed8","t":"plate","c":"mg1407::Mg1407MapManager::Impl::StartOpeningDemo()"}
+{"a":"710000f2ac","t":"plate","c":"mg1407::Mg1407MapManager::SkipOpeningDemo()"}
+{"a":"710000f2b0","t":"plate","c":"mg1407::Mg1407MapManager::PreStartTelop()"}
+{"a":"710000f2c0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::PreStartTelop()"}
+{"a":"710000f74c","t":"plate","c":"mg1407::Mg1407MapManager::StartGame()"}
+{"a":"710000f750","t":"plate","c":"mg1407::Mg1407MapManager::StartFinish()"}
+{"a":"710000f754","t":"plate","c":"mg1407::Mg1407MapManager::StartEndingDemo()"}
+{"a":"710000f760","t":"plate","c":"mg1407::Mg1407MapManager::Impl::StartEndingDemo()"}
+{"a":"71000105d4","t":"plate","c":"mg1407::Mg1407MapManager::RoundStart(int)"}
+{"a":"7100010624","t":"plate","c":"mg1407::Mg1407MapManager::StartServePickup()"}
+{"a":"7100010684","t":"plate","c":"mg1407::Mg1407MapManager::StartServerServe(bool)"}
+{"a":"7100010758","t":"plate","c":"mg1407::Mg1407MapManager::GetLineTransform(int)"}
+{"a":"710001076c","t":"plate","c":"mg1407::Mg1407MapManager::GetMoveTransform(int)"}
+{"a":"7100010774","t":"plate","c":"mg1407::Mg1407MapManager::Impl::GetMoveTransform(int)"}
+{"a":"710001095c","t":"plate","c":"mg1407::Mg1407MapManager::StartLineMove(int)"}
+{"a":"7100010964","t":"plate","c":"mg1407::Mg1407MapManager::Impl::StartLineMove(int)"}
+{"a":"7100010b1c","t":"plate","c":"mg1407::Mg1407MapManager::IsEndLineMove(int)"}
+{"a":"7100010b30","t":"plate","c":"mg1407::Mg1407MapManager::Impl::IsEndLineMove(int)"}
+{"a":"7100010de0","t":"plate","c":"mg1407::Mg1407MapManager::ResetLineMove()"}
+{"a":"7100010df0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::ResetLineMove()"}
+{"a":"71000110fc","t":"plate","c":"mg1407::Mg1407MapManager::GetServerTransform()"}
+{"a":"71000111a8","t":"plate","c":"mg1407::Mg1407MapManager::GetServerHandTransform()"}
+{"a":"7100011238","t":"plate","c":"mg1407::Mg1407MapManager::IsServerIdle()"}
+{"a":"7100011250","t":"plate","c":"mg1407::Mg1407MapManager::Impl::~Impl()"}
+{"a":"71000113f8","t":"plate","c":"mg1407::Mg1407MapManager::Impl::~Impl()"}
+{"a":"7100011420","t":"plate","c":"mg1407::Mg1407MapManager::Impl::Update()"}
+{"a":"7100011448","t":"plate","c":"mg1407::Mg1407Server::Update()"}
+{"a":"71000118f0","t":"plate","c":"mg1407::Mg1407Server::PlayMotion(mg1407::Mg1407Server::enMotionId, float)"}
+{"a":"7100011a80","t":"plate","c":"actor::MotionArg::AnimationName(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100011bb0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::Create()"}
+{"a":"7100012b34","t":"plate","c":"mg1407::Mg1407MapManager::Impl::AddMapMotion(nn::bezel::UniqueHandlePtr<nn::bezel::Entity>&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100012e00","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
+{"a":"7100012f64","t":"plate","c":"mg1407::Mg1407Transform::~Mg1407Transform()"}
+{"a":"7100012f68","t":"plate","c":"mg1407::Mg1407MapManager::Impl::GetNodeEntity(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"71000130a0","t":"plate","c":"mg1407::Mg1407Server::CreateServer()"}
+{"a":"71000136b8","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"710001373c","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"71000137c8","t":"plate","c":"virtual thunk to std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"7100013854","t":"plate","c":"virtual thunk to std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"71000138e8","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_stringbuf()"}
+{"a":"7100013928","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_stringbuf()"}
+{"a":"7100013970","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::seekoff(long long, std::ios_base::seekdir, unsigned int)"}
+{"a":"7100013a9c","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::underflow()"}
+{"a":"7100013aec","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::pbackfail(int)"}
+{"a":"7100013b58","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::overflow(int)"}
+{"a":"7100013d3c","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::push_back(char)"}
+{"a":"7100013e70","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(unsigned long, char)"}
+{"a":"7100014010","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::str() const"}
+{"a":"7100014254","t":"plate","c":"mg1407::Mg1407Transform::~Mg1407Transform()"}
+{"a":"7100014260","t":"plate","c":"void std::vector<mg1407::Mg1407Transform, bex::HeapModule::Allocator_vector<mg1407::Mg1407Transform> >::__push_back_slow_path<mg1407::Mg1407Transform const&>(mg1407::Mg1407Transform const&)"}
+{"a":"7100014424","t":"plate","c":"mg1407::Mg1407Server::~Mg1407Server()"}
+{"a":"710001449c","t":"plate","c":"mg1407::Mg1407Server::~Mg1407Server()"}
+{"a":"710001451c","t":"plate","c":"mg1407::Mg1407Server::SetTransform(mg1407::Mg1407Transform const&)"}
+{"a":"7100015480","t":"plate","c":"mg1407::GetQuatFromRadRot(nn::util::Vector3f const&)"}
+{"a":"71000156d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000156f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100015704","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100015718","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100015720","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100015730","t":"plate","c":"mg1407::Mg1407Signboard::~Mg1407Signboard()"}
+{"a":"71000157fc","t":"plate","c":"mg1407::Mg1407Signboard::~Mg1407Signboard()"}
+{"a":"7100015820","t":"plate","c":"mg1407::Mg1407Signboard::Create()"}
+{"a":"7100016770","t":"plate","c":"mg1407::Mg1407Signboard::GetInstanceData()"}
+{"a":"7100016ca0","t":"plate","c":"void std::vector<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bex::HeapModule::Allocator_vector<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > > >::__push_back_slow_path<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > >(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >&&)"}
+{"a":"7100016e30","t":"plate","c":"mg1407::Mg1407Signboard::StartOpeningDemo()"}
+{"a":"71000170b0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::PlayMapMotion(nn::bezel::UniqueHandlePtr<nn::bezel::Entity>&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, float)"}
+{"a":"71000173b0","t":"plate","c":"mg1407::Mg1407Signboard::GetMotionSlot(mg1407::Mg1407Signboard::enMotionSlot)"}
+{"a":"7100017500","t":"plate","c":"mg1407::Mg1407Signboard::RoundStart(int)"}
+{"a":"71000176f4","t":"plate","c":"mg1407::Mg1407MapManager::Impl::GetNameIndex(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"71000178a4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000178c4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71000178d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000178e4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000178ec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100017900","t":"plate","c":"mg1407::CreateModel(char const*, char const*)"}
+{"a":"71000179b0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*&, (void*)0>(char const*&)"}
+{"a":"7100017b90","t":"plate","c":"mg1407::AddModelMotion(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, char const*)"}
+{"a":"7100017dd0","t":"plate","c":"mg1407::AddModelMotion(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, char const*, char const*)"}
+{"a":"7100018030","t":"plate","c":"mg1407::CreatePcModel(char const*, bex::PlayerID)"}
+{"a":"71000180f0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID&, bq::MatterType, (void*)0>(bex::PlayerID&, bq::MatterType&&)"}
+{"a":"71000182d0","t":"plate","c":"mg1407::CreateNpcModel(char const*, bq::NonPlayerCharacterID)"}
+{"a":"7100018380","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID&, (void*)0>(bq::NonPlayerCharacterID&)"}
+{"a":"7100018560","t":"plate","c":"mg1407::AddNpcMotion(nn::bezel::HandlePtr<nn::bezel::Entity>, bq::NonPlayerCharacterID, char const*, char const*, bool)"}
+{"a":"7100018800","t":"plate","c":"mg1407::GetNodePosition(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&)"}
+{"a":"7100018870","t":"plate","c":"mg1407::GetNodeMatrix(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::MatrixRowMajor4x3f&)"}
+{"a":"71000189b0","t":"plate","c":"mg1407::GetNodeRotation(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&)"}
+{"a":"71000189f0","t":"plate","c":"mg1407::GetNodeTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&, nn::util::Vector3f&)"}
+{"a":"7100019a70","t":"plate","c":"mg1407::GetNodeTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&, nn::util::Quaternion&)"}
+{"a":"7100019c30","t":"plate","c":"mg1407::GetNodeWorldTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&, nn::util::Quaternion&)"}
+{"a":"7100019df0","t":"plate","c":"mg1407::GetNodeWorldMatrix(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::MatrixRowMajor4x3f&)"}
+{"a":"7100019f30","t":"plate","c":"mg1407::GetNodeTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, mg1407::Mg1407Transform&)"}
+{"a":"710001a0f0","t":"plate","c":"mg1407::GetNodeWorldTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, mg1407::Mg1407Transform&)"}
+{"a":"710001a2b0","t":"plate","c":"mg1407::GetNodeTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&, nn::util::Quaternion&, nn::util::Vector3f&)"}
+{"a":"710001a510","t":"plate","c":"mg1407::GetBoneIndex(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*)"}
+{"a":"710001a650","t":"plate","c":"mg1407::IsNodeValid(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*)"}
+{"a":"710001a7b0","t":"plate","c":"mg1407::SetNodePosition(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f const&)"}
+{"a":"710001ab90","t":"plate","c":"mg1407::SetNodeRotation(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f const&)"}
+{"a":"710001afb0","t":"plate","c":"mg1407::SetNodeTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"710001b2e0","t":"plate","c":"mg1407::AttachModel(nn::bezel::HandlePtr<nn::bezel::Entity>, nn::bezel::WeakHandle<nn::bezel::Entity>, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bool, bool, bool)"}
+{"a":"710001b600","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComAttachment> nn::bezel::Entity::AddComponent<nn::bezel::ComAttachment, , (void*)0>()"}
+{"a":"710001b7f0","t":"plate","c":"mg1407::SetBoneVisible(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, bool)"}
+{"a":"710001b968","t":"plate","c":"mg1407::Mg1407Model::Mg1407Model()"}
+{"a":"710001b9f8","t":"plate","c":"mg1407::Mg1407Model::~Mg1407Model()"}
+{"a":"710001ba58","t":"plate","c":"mg1407::Mg1407Model::~Mg1407Model()"}
+{"a":"710001ba7c","t":"plate","c":"mg1407::Mg1407Model::GetEntity()"}
+{"a":"710001ba9c","t":"plate","c":"mg1407::Mg1407Model::GetComMatter()"}
+{"a":"710001bab0","t":"plate","c":"mg1407::Mg1407Model::Impl::GetComMatter()"}
+{"a":"710001bbbc","t":"plate","c":"mg1407::Mg1407Model::GetComModel()"}
+{"a":"710001bbd0","t":"plate","c":"mg1407::Mg1407Model::Impl::GetComModel()"}
+{"a":"710001bd70","t":"plate","c":"mg1407::Mg1407Model::GetComActorMotion()"}
+{"a":"710001bdd0","t":"plate","c":"mg1407::Mg1407Model::CreateModel(char const*, char const*)"}
+{"a":"710001be44","t":"plate","c":"mg1407::Mg1407Model::CreateInstanceModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int)"}
+{"a":"710001c010","t":"plate","c":"mg1407::Mg1407Model::Impl::CreateInstanceModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int)"}
+{"a":"710001c140","t":"plate","c":"mg1407::Mg1407Model::CreateModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"710001c1e0","t":"plate","c":"mg1407::Mg1407Model::CreatePcModel(char const*, bex::PlayerID)"}
+{"a":"710001c270","t":"plate","c":"mg1407::Mg1407Model::CreateNpcModel(char const*, bq::NonPlayerCharacterID)"}
+{"a":"710001c2e4","t":"plate","c":"mg1407::Mg1407Model::CreateInstanceNpcModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bq::NonPlayerCharacterID, int)"}
+{"a":"710001c3f0","t":"plate","c":"mg1407::Mg1407Model::Impl::CreateInstanceNpcModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bq::NonPlayerCharacterID, int)"}
+{"a":"710001c4f8","t":"plate","c":"mg1407::Mg1407Model::AddModelMotion(char const*)"}
+{"a":"710001c500","t":"plate","c":"mg1407::Mg1407Model::Impl::AddModelMotion(char const*)"}
+{"a":"710001c6b0","t":"plate","c":"mg1407::Mg1407Model::AddNpcMotion(bq::NonPlayerCharacterID, char const*, bool)"}
+{"a":"710001c6c0","t":"plate","c":"mg1407::Mg1407Model::Impl::AddNpcMotion(bq::NonPlayerCharacterID, char const*, bool)"}
+{"a":"710001c880","t":"plate","c":"mg1407::Mg1407Model::PlayMotion(unsigned long)"}
+{"a":"710001c890","t":"plate","c":"mg1407::Mg1407Model::Impl::PlayMotion(unsigned long)"}
+{"a":"710001c9f8","t":"plate","c":"mg1407::Mg1407Model::SetMotionFrame(float)"}
+{"a":"710001ca00","t":"plate","c":"mg1407::Mg1407Model::Impl::SetMotionFrame(float)"}
+{"a":"710001ca88","t":"plate","c":"mg1407::Mg1407Model::GetMotionFrame()"}
+{"a":"710001cae8","t":"plate","c":"mg1407::Mg1407Model::SetMotionSpeed(float)"}
+{"a":"710001caf0","t":"plate","c":"mg1407::Mg1407Model::Impl::SetMotionSpeed(float)"}
+{"a":"710001cb78","t":"plate","c":"mg1407::Mg1407Model::GetMotionSpeed()"}
+{"a":"710001cbd8","t":"plate","c":"mg1407::Mg1407Model::SetMotionPause(bool)"}
+{"a":"710001cbe0","t":"plate","c":"mg1407::Mg1407Model::Impl::SetMotionPause(bool)"}
+{"a":"710001cc68","t":"plate","c":"mg1407::Mg1407Model::IsMotionFinished()"}
+{"a":"710001cccc","t":"plate","c":"mg1407::Mg1407Model::IsThisPlaying(unsigned long)"}
+{"a":"710001cce0","t":"plate","c":"mg1407::Mg1407Model::Impl::IsThisPlaying(unsigned long)"}
+{"a":"710001ce4c","t":"plate","c":"mg1407::Mg1407Model::GetMotionName(unsigned long)"}
+{"a":"710001ce54","t":"plate","c":"mg1407::Mg1407Model::Impl::GetMotionName(unsigned long)"}
+{"a":"710001cf20","t":"plate","c":"mg1407::Mg1407Model::SetPosition(nn::util::Vector3f const&)"}
+{"a":"710001cf60","t":"plate","c":"mg1407::Mg1407Model::GetPosition() const"}
+{"a":"710001cf74","t":"plate","c":"mg1407::Mg1407Model::SetRotation(nn::util::Quaternion const&)"}
+{"a":"710001cfb4","t":"plate","c":"mg1407::Mg1407Model::GetRotation()"}
+{"a":"710001cfc8","t":"plate","c":"mg1407::Mg1407Model::SetScale(nn::util::Vector3f const&)"}
+{"a":"710001d008","t":"plate","c":"mg1407::Mg1407Model::GetScale()"}
+{"a":"710001d01c","t":"plate","c":"mg1407::Mg1407Model::SetVisible(bool)"}
+{"a":"710001d0a8","t":"plate","c":"mg1407::Mg1407Model::IsVisible()"}
+{"a":"710001d124","t":"plate","c":"mg1407::Mg1407Model::SetBoneVisible(char const*, bool)"}
+{"a":"710001d12c","t":"plate","c":"mg1407::Mg1407Model::Impl::SetBoneVisible(char const*, bool)"}
+{"a":"710001d1f4","t":"plate","c":"mg1407::Mg1407Model::GetNodePosition(char const*, nn::util::Vector3f&)"}
+{"a":"710001d294","t":"plate","c":"mg1407::Mg1407Model::GetNodeTransform(char const*, nn::util::Vector3f&, nn::util::Vector3f&)"}
+{"a":"710001d304","t":"plate","c":"mg1407::Mg1407Model::GetNodeTransform(char const*, nn::util::Vector3f&, nn::util::Quaternion&)"}
+{"a":"710001d4ec","t":"plate","c":"mg1407::Mg1407Model::GetNodeTransform(char const*, nn::util::Vector3f&, nn::util::Quaternion&, nn::util::Vector3f&)"}
+{"a":"710001d4f4","t":"plate","c":"mg1407::Mg1407Model::Impl::GetNodeTransform(char const*, nn::util::Vector3f&, nn::util::Quaternion&, nn::util::Vector3f&)"}
+{"a":"710001d778","t":"plate","c":"mg1407::Mg1407Model::GetNodeTransform(char const*, mg1407::Mg1407Transform&)"}
+{"a":"710001d95c","t":"plate","c":"mg1407::Mg1407Model::GetNodeMatrix(char const*, nn::util::MatrixRowMajor4x3f&)"}
+{"a":"710001d9cc","t":"plate","c":"mg1407::Mg1407Model::GetNodeWorldTransform(char const*, mg1407::Mg1407Transform&)"}
+{"a":"710001dbb0","t":"plate","c":"mg1407::Mg1407Model::GetNodeWorldMatrix(char const*, nn::util::MatrixRowMajor4x3f&)"}
+{"a":"710001dc20","t":"plate","c":"mg1407::Mg1407Model::SetNodePosition(char const*, nn::util::Vector3f const&)"}
+{"a":"710001dc90","t":"plate","c":"mg1407::Mg1407Model::SetNodeRotation(char const*, nn::util::Vector3f const&)"}
+{"a":"710001dd00","t":"plate","c":"mg1407::Mg1407Model::AttachModel(nn::bezel::WeakHandle<nn::bezel::Entity>, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bool, bool, bool)"}
+{"a":"710001de1c","t":"plate","c":"mg1407::Mg1407Model::Impl::AttachModel(nn::bezel::WeakHandle<nn::bezel::Entity>, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bool, bool, bool)"}
+{"a":"710001e080","t":"plate","c":"mg1407::Mg1407Model::Impl::~Impl()"}
+{"a":"710001e110","t":"plate","c":"mg1407::Mg1407Model::Impl::~Impl()"}
+{"a":"710001e198","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710001e1b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710001e1c4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710001e1d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710001e1e0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710001e1f0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, nn::bezel::ModelCreateArg&, (void*)0>(nn::bezel::ModelCreateArg&)"}
+{"a":"710001e3cc","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::ModelCreateArg&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::ModelCreateArg&)"}
+{"a":"710001e550","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&, (void*)0>(bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&)"}
+{"a":"710001e72c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&)"}
+{"a":"710001e8d0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<unsigned long>(unsigned long)"}
+{"a":"710001ea34","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&)"}
+{"a":"710001ebc8","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&, bq::MatterType&&)"}
+{"a":"710001ed58","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&)"}
+{"a":"710001eed8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710001eef8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710001ef04","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710001ef18","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710001ef20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710001ef28","t":"plate","c":"mg1407::Mg1407AudienceManager::Mg1407AudienceManager()"}
+{"a":"710001efcc","t":"plate","c":"mg1407::Mg1407AudienceManager::~Mg1407AudienceManager()"}
+{"a":"710001f030","t":"plate","c":"mg1407::Mg1407AudienceManager::~Mg1407AudienceManager()"}
+{"a":"710001f054","t":"plate","c":"mg1407::Mg1407AudienceManager::Setup()"}
+{"a":"710001f060","t":"plate","c":"mg1407::Mg1407AudienceManager::StartOpeningDemo()"}
+{"a":"710001f0a0","t":"plate","c":"mg1407::Mg1407AudienceManager::PreStartTelop()"}
+{"a":"710001f0f0","t":"plate","c":"mg1407::Mg1407AudienceManager::StartEndingDemo()"}
+{"a":"710001f130","t":"plate","c":"mg1407::Mg1407AudienceManager::StartJoyMotion(bool, float)"}
+{"a":"710001f190","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::~Impl()"}
+{"a":"710001f230","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::~Impl()"}
+{"a":"710001f2e0","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::Update()"}
+{"a":"710001f424","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartIdleMotion()"}
+{"a":"710001f4c0","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::Create()"}
+{"a":"710001f660","t":"plate","c":"mg1407::Mg1407AudienceInstance::CreateAudienceModel(int, bq::NonPlayerCharacterID, float, bool)"}
+{"a":"7100020068","t":"plate","c":"mg1407::Mg1407AudienceInstance::~Mg1407AudienceInstance()"}
+{"a":"71000200dc","t":"plate","c":"mg1407::Mg1407AudienceInstance::~Mg1407AudienceInstance()"}
+{"a":"7100020160","t":"plate","c":"mg1407::Mg1407AudienceInstance::GetInstanceData()"}
+{"a":"7100020658","t":"plate","c":"mg1407::Mg1407AudienceInstance::SetNpcColor(mg1407::enNpcColor)"}
+{"a":"7100020780","t":"plate","c":"void std::vector<std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> >, bex::HeapModule::Allocator_vector<std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> > > >::__push_back_slow_path<std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> > >(std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> >&&)"}
+{"a":"71000208e0","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartOpeningMotion()"}
+{"a":"7100020af0","t":"plate","c":"mg1407::Mg1407AudienceInstance::PreStartTelop()"}
+{"a":"7100020ce0","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartEndingDemo()"}
+{"a":"71000212c4","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartJoyMotion(bool, float)"}
+{"a":"71000214d0","t":"plate","c":"mg1407::Mg1407PlayerManager::Mg1407PlayerManager()"}
+{"a":"7100021588","t":"plate","c":"mg1407::Mg1407PlayerManager::~Mg1407PlayerManager()"}
+{"a":"71000215ec","t":"plate","c":"mg1407::Mg1407PlayerManager::~Mg1407PlayerManager()"}
+{"a":"7100021610","t":"plate","c":"mg1407::Mg1407PlayerManager::Setup()"}
+{"a":"7100021620","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::Setup()"}
+{"a":"7100021950","t":"plate","c":"mg1407::Mg1407PlayerManager::PostSetup()"}
+{"a":"7100021990","t":"plate","c":"mg1407::Mg1407PlayerManager::Initialize()"}
+{"a":"71000219cc","t":"plate","c":"mg1407::Mg1407PlayerManager::GetPlayerNum()"}
+{"a":"71000219d8","t":"plate","c":"mg1407::Mg1407PlayerManager::GetPlayerPosition(unsigned long)"}
+{"a":"7100021a00","t":"plate","c":"mg1407::Mg1407PlayerManager::GetLinePlayerPosition(int)"}
+{"a":"7100021a90","t":"plate","c":"mg1407::Mg1407PlayerManager::GetLinePlayerID(int)"}
+{"a":"7100021ad4","t":"plate","c":"mg1407::Mg1407PlayerManager::GetLineIndex(unsigned long)"}
+{"a":"7100021af0","t":"plate","c":"mg1407::Mg1407PlayerManager::StartOpeningDemo()"}
+{"a":"7100021b2c","t":"plate","c":"mg1407::Mg1407PlayerManager::SkipOpeningDemo()"}
+{"a":"7100021b30","t":"plate","c":"mg1407::Mg1407PlayerManager::PreStartTelop()"}
+{"a":"7100021b6c","t":"plate","c":"mg1407::Mg1407PlayerManager::StartGame()"}
+{"a":"7100021b80","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::StartGame()"}
+{"a":"7100021c60","t":"plate","c":"mg1407::Mg1407PlayerManager::StartFinish()"}
+{"a":"7100021ca0","t":"plate","c":"mg1407::Mg1407PlayerManager::StartEndingDemo()"}
+{"a":"7100021ce0","t":"plate","c":"mg1407::Mg1407PlayerManager::StartRound()"}
+{"a":"7100021d30","t":"plate","c":"mg1407::Mg1407PlayerManager::EndRound()"}
+{"a":"7100021d80","t":"plate","c":"mg1407::Mg1407PlayerManager::StartInputAll()"}
+{"a":"7100021dc0","t":"plate","c":"mg1407::Mg1407PlayerManager::StopInputAll()"}
+{"a":"7100021e00","t":"plate","c":"mg1407::Mg1407PlayerManager::GetPlayerCharacterID(unsigned long)"}
+{"a":"7100021e20","t":"plate","c":"mg1407::Mg1407PlayerManager::IsCom(bex::PlayerID)"}
+{"a":"7100021e54","t":"plate","c":"mg1407::Mg1407PlayerManager::ChangeLine(int)"}
+{"a":"7100021e5c","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::ChangeLine(int)"}
+{"a":"7100022118","t":"plate","c":"mg1407::Mg1407PlayerManager::PlayAppealMotion()"}
+{"a":"7100022120","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::PlayAppealMotion()"}
+{"a":"7100022230","t":"plate","c":"mg1407::Mg1407PlayerManager::EndAppealMotion()"}
+{"a":"710002228c","t":"plate","c":"mg1407::Mg1407PlayerManager::GetResultPosition(bex::PlayerID)"}
+{"a":"71000222b8","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::GetResultPosition(bex::PlayerID)"}
+{"a":"7100022370","t":"plate","c":"mg1407::Mg1407PlayerManager::DispIcon()"}
+{"a":"71000223b0","t":"plate","c":"mg1407::Mg1407PlayerManager::HideIcon(bool)"}
+{"a":"7100022400","t":"plate","c":"mg1407::Mg1407PlayerManager::SetFxTriggerEnum(bex::PlayerID, mg1407::BALL_SIZE)"}
+{"a":"7100022440","t":"plate","c":"mg1407::Mg1407PlayerManager::SetBallOutVibration(bex::PlayerID)"}
+{"a":"7100022480","t":"plate","c":"mg1407::Mg1407PlayerManager::SetMissRound(bex::PlayerID, int, ca::kb::SerialNumber)"}
+{"a":"71000224c0","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::~Impl()"}
+{"a":"71000225c4","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::~Impl()"}
+{"a":"71000225f0","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::Update()"}
+{"a":"7100022f3c","t":"plate","c":"mg1407::Mg1407Player::on_game_proc()"}
+{"a":"7100023280","t":"plate","c":"mg1407::Mg1407Player::PlayMotion(mg1407::Mg1407Player::MOT_ID, float, float)"}
+{"a":"71000233ec","t":"plate","c":"mg1407::Mg1407Player::UpdateCom()"}
+{"a":"7100023ac0","t":"plate","c":"mg1407::Mg1407Player::CollisionBall()"}
+{"a":"7100024a50","t":"plate","c":"mg1407::Mg1407Player::IsDiving()"}
+{"a":"7100024b48","t":"plate","c":"mg1407::Mg1407Player::GetActorPad()"}
+{"a":"7100024bf0","t":"plate","c":"mg1407::Mg1407Player::IsCom()"}
+{"a":"7100024d50","t":"plate","c":"mg1407::Mg1407Player::StartDive(nn::util::Vector3f const&)"}
+{"a":"71000250ac","t":"plate","c":"mg1407::Mg1407Player::ReceiveExec()"}
+{"a":"7100025300","t":"plate","c":"mg1407::Mg1407Player::SetFxTriggerEnum(mg1407::BALL_SIZE)"}
+{"a":"71000254b0","t":"plate","c":"mg1407::GetQuatFromRadRot(float const&, float const&, float const&)"}
+{"a":"710002570c","t":"plate","c":"mg1407::Mg1407Player::StopInput(bool)"}
+{"a":"71000258ac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg1407::Mg1407Player::ComDiveParam, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000258cc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg1407::Mg1407Player::ComDiveParam, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71000258d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg1407::Mg1407Player::ComDiveParam, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000258ec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg1407::Mg1407Player::ComDiveParam, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000258f4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg1407::Mg1407Player::ComDiveParam, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100025900","t":"plate","c":"mg1407::GetQuatFromDegRot(float const&, float const&, float const&)"}
+{"a":"7100025b80","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::SetupLine()"}
+{"a":"7100026300","t":"plate","c":"mg1407::Mg1407Player::Mg1407Player(bex::PlayerID, int, bq::PlayerCharacterID)"}
+{"a":"7100026600","t":"plate","c":"mg1407::Mg1407Player::Setup()"}
+{"a":"7100026f20","t":"plate","c":"long std::uniform_int_distribution<long>::TEMPNAMEPLACEHOLDERVALUE(ca::kb::MiniRand&, std::uniform_int_distribution<long>::param_type const&)"}
+{"a":"7100027200","t":"plate","c":"void std::vector<std::vector<int, std::allocator<int> >, bex::HeapModule::Allocator_vector<std::vector<int, std::allocator<int> > > >::__push_back_slow_path<std::vector<int, std::allocator<int> > const&>(std::vector<int, std::allocator<int> > const&)"}
+{"a":"7100027510","t":"plate","c":"nn::bezel::WeakHandle<ca::ui::CaComUiUserName> nn::bezel::Entity::AddComponent<ca::ui::CaComUiUserName, , (void*)0>()"}
+{"a":"7100027700","t":"plate","c":"mg1407::Mg1407Player::~Mg1407Player()"}
+{"a":"7100027820","t":"plate","c":"mg1407::Mg1407Player::~Mg1407Player()"}
+{"a":"7100027844","t":"plate","c":"mg1407::Mg1407Player::SetPosition(nn::util::Vector3f const&)"}
+{"a":"710002784c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiUserName, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710002786c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiUserName, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100027878","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiUserName, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710002788c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiUserName, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100027894","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiUserName, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100027a70","t":"plate","c":"nn::bezel::WeakHandle<mg1407::Mg1407Player::ComDiveParam> nn::bezel::Entity::AddComponent<mg1407::Mg1407Player::ComDiveParam, mg1407::Mg1407Player*, (void*)0>(mg1407::Mg1407Player*&&)"}
+{"a":"7100027c4c","t":"plate","c":"std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>::~__func()"}
+{"a":"7100027c50","t":"plate","c":"std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>::__clone() const"}
+{"a":"7100027c88","t":"plate","c":"std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>::__clone(std::__function::__base<actor::ActionStatus (actor::ActionContext const&)>*) const"}
+{"a":"7100027ca4","t":"plate","c":"std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>::destroy()"}
+{"a":"7100027ca8","t":"plate","c":"std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>::destroy_deallocate()"}
+{"a":"7100027cac","t":"plate","c":"std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>::TEMPNAMEPLACEHOLDERVALUE(actor::ActionContext const&)"}
+{"a":"7100027cbc","t":"plate","c":"nn::bezel::WeakHandle<mg1407::Mg1407Player::ComDiveParam> bex::ComponentUtil::SafeCreate<mg1407::Mg1407Player::ComDiveParam, nn::bezel::HandlePtr<nn::bezel::Entity> const&, mg1407::Mg1407Player*>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, mg1407::Mg1407Player*&&)"}
+{"a":"7100027e9c","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100027ea8","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::NnDetailBezelGetThisPtr()"}
+{"a":"7100027eac","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100027eb0","t":"plate","c":"nn::bezel::Component::~Component()"}
+{"a":"7100027f80","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::~ComDiveParam()"}
+{"a":"7100028050","t":"plate","c":"bq::ComponentTemplate<mg1407::Mg1407Player::ComDiveParam, nn::bezel::Component>::DestroyComponentImpl()"}
+{"a":"7100028090","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"71000280a0","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::_internalGetComponentNameHashImpl() const"}
+{"a":"71000280b4","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"71000280bc","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"71000281b4","t":"plate","c":"non-virtual thunk to mg1407::Mg1407Player::ComDiveParam::NnDetailBezelGetTypeDesc() const"}
+{"a":"71000281c0","t":"plate","c":"non-virtual thunk to mg1407::Mg1407Player::ComDiveParam::NnDetailBezelGetThisPtr()"}
+{"a":"71000281c8","t":"plate","c":"non-virtual thunk to mg1407::Mg1407Player::ComDiveParam::NnDetailBezelGetThisPtrConst() const"}
+{"a":"71000281d0","t":"plate","c":"non-virtual thunk to mg1407::Mg1407Player::ComDiveParam::~ComDiveParam()"}
+{"a":"71000282a0","t":"plate","c":"non-virtual thunk to mg1407::Mg1407Player::ComDiveParam::~ComDiveParam()"}
+{"a":"7100028370","t":"plate","c":"non-virtual thunk to mg1407::Mg1407Player::ComDiveParam::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100028380","t":"plate","c":"nn::bezel::HandleSource<nn::bezel::Component>::Reset(nn::bezel::Component*)"}
+{"a":"71000284e8","t":"plate","c":"mg1407::Mg1407Player::StartInput(bool)"}
+{"a":"7100028790","t":"plate","c":"void std::vector<std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> >, bex::HeapModule::Allocator_vector<std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> > > >::__push_back_slow_path<std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> > >(std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> >&&)"}
+{"a":"71000288e8","t":"plate","c":"mg1407::Mg1407Player::PostSetup()"}
+{"a":"7100028bfc","t":"plate","c":"mg1407::Mg1407Player::SetLinePosition()"}
+{"a":"7100028d2c","t":"plate","c":"mg1407::Mg1407Player::Initialize()"}
+{"a":"7100028dd4","t":"plate","c":"mg1407::Mg1407Player::StartOpeningDemo()"}
+{"a":"7100028ec0","t":"plate","c":"mg1407::Mg1407Player::PreStartTelop()"}
+{"a":"7100028f5c","t":"plate","c":"mg1407::Mg1407Player::StartFinish()"}
+{"a":"7100029094","t":"plate","c":"mg1407::Mg1407Player::StartEndingDemo()"}
+{"a":"71000291a0","t":"plate","c":"mg1407::Mg1407Player::DispUserName()"}
+{"a":"7100029290","t":"plate","c":"mg1407::Mg1407Player::HideUserName(bool)"}
+{"a":"71000294c0","t":"plate","c":"mg1407::Mg1407Player::SetBallOutVibration()"}
+{"a":"7100029610","t":"plate","c":"mg1407::Mg1407Player::SetMissRound(int, ca::kb::SerialNumber)"}
+{"a":"710002975c","t":"plate","c":"mg1407::Scene::DummySymbolLink(bool)"}
+{"a":"71000297a4","t":"plate","c":"mg1407::Scene::getStaticTypeinfo()"}
+{"a":"7100029880","t":"plate","c":"mg1407::Scene::getPropertyList()"}
+{"a":"71000298e0","t":"plate","c":"mg1407::Scene::createInstance()"}
+{"a":"710002990c","t":"plate","c":"mg1407::Scene::deleteInstance(void*)"}
+{"a":"7100029920","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"7100029924","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"7100029928","t":"plate","c":"mg1407::Scene::Params::getStaticTypeinfo()"}
+{"a":"7100029a04","t":"plate","c":"mg1407::Scene::Params::getPropertyList()"}
+{"a":"710002aa64","t":"plate","c":"mg1407::Scene::Params::createInstance()"}
+{"a":"710002ac8c","t":"plate","c":"mg1407::Scene::Params::deleteInstance(void*)"}
+{"a":"710002aca0","t":"plate","c":"mg1407::Scene::Scene()"}
+{"a":"710002ad20","t":"plate","c":"mg1407::Scene::~Scene()"}
+{"a":"710002ad74","t":"plate","c":"mg1407::Scene::~Scene()"}
+{"a":"710002ad98","t":"plate","c":"mg1407::Scene::DoSetupGame()"}
+{"a":"710002adf4","t":"plate","c":"mg1407::Scene::DoGameCleanup()"}
+{"a":"710002ae14","t":"plate","c":"mg1407::Scene::DoGameInit()"}
+{"a":"710002ae54","t":"plate","c":"mg1407::Scene::DoGameInstInit(bool)"}
+{"a":"710002ae84","t":"plate","c":"mg1407::Scene::DoGameOpening()"}
+{"a":"710002aec0","t":"plate","c":"mg1407::Scene::DoGameOpeningSkip()"}
+{"a":"710002aef4","t":"plate","c":"mg1407::Scene::DoGameStartBefore()"}
+{"a":"710002af28","t":"plate","c":"mg1407::Scene::DoGameStart()"}
+{"a":"710002af40","t":"plate","c":"mg1407::Scene::DoGameStartAfter()"}
+{"a":"710002af74","t":"plate","c":"mg1407::Scene::DoGameMain()"}
+{"a":"710002af88","t":"plate","c":"mg1407::Scene::DoGameEnd()"}
+{"a":"710002afbc","t":"plate","c":"mg1407::Scene::DoGameFinish()"}
+{"a":"710002afc4","t":"plate","c":"mg1407::Scene::DoGameEnding()"}
+{"a":"710002b060","t":"plate","c":"mg1407::Scene::DisableOpeningSkip()"}
+{"a":"710002b078","t":"plate","c":"mg1407::Scene::GetScene()"}
+{"a":"710002b088","t":"plate","c":"mg1407::Scene::IsDbpRelayRule()"}
+{"a":"710002b0e4","t":"plate","c":"mg1407::Scene::IsDbpRelayFixedRoute()"}
+{"a":"710002b10c","t":"plate","c":"mg1407::Scene::GetDbpRelayReceiveMoveSpeed()"}
+{"a":"710002b12c","t":"plate","c":"mg1407::Scene::GetDbpRoundNum()"}
+{"a":"710002b14c","t":"plate","c":"mg1407::Scene::GetDbpCameraMove()"}
+{"a":"710002b16c","t":"plate","c":"mg1407::Scene::IsDbpEffectSizeAdjust()"}
+{"a":"710002b18c","t":"plate","c":"mg1407::Scene::IsDbpComMiss()"}
+{"a":"710002b1ac","t":"plate","c":"mg1407::Scene::GetDbpReceiveAcceptTime()"}
+{"a":"710002b1cc","t":"plate","c":"mg1407::Scene::GetDbpBallReceiveHeight(mg1407::BALL_SIZE)"}
+{"a":"710002b23c","t":"plate","c":"mg1407::Scene::GetDbpHeadClampMaxY()"}
+{"a":"710002b25c","t":"plate","c":"mg1407::Scene::GetDbpHeadClampMinZ()"}
+{"a":"710002b27c","t":"plate","c":"mg1407::Scene::GetDbpHeadClampMaxZ()"}
+{"a":"710002b29c","t":"plate","c":"mg1407::Scene::GetDbpReceiveTurnTiming()"}
+{"a":"710002b2bc","t":"plate","c":"mg1407::Scene::GetDbpSizeDelay(mg1407::BALL_SIZE, mg1407::BALL_SIZE)"}
+{"a":"710002b3f0","t":"plate","c":"mg1407::Scene::GetDbpPostBallSize(mg1407::BALL_SIZE)"}
+{"a":"710002b460","t":"plate","c":"mg1407::Scene::GetDbpSuccessMove()"}
+{"a":"710002b480","t":"plate","c":"mg1407::Scene::GetDbpJustEffectType(bool)"}
+{"a":"710002b4bc","t":"plate","c":"mg1407::Scene::GetDbpRoundBallNum(int)"}
+{"a":"710002b524","t":"plate","c":"mg1407::Scene::GetDbpConsecutiveMin(mg1407::BALL_SIZE)"}
+{"a":"710002b5a0","t":"plate","c":"mg1407::Scene::GetDbpConsecutiveMax(mg1407::BALL_SIZE)"}
+{"a":"710002b61c","t":"plate","c":"mg1407::Scene::GetDbpShootBallSpan(int)"}
+{"a":"710002b684","t":"plate","c":"mg1407::Scene::GetDbpBallSpeed(mg1407::BALL_SIZE)"}
+{"a":"710002b6f4","t":"plate","c":"mg1407::Scene::GetDbpBallServeHeight(mg1407::BALL_SIZE)"}
+{"a":"710002b764","t":"plate","c":"mg1407::Scene::GetDbpBallFluctuationHigh(mg1407::BALL_SIZE)"}
+{"a":"710002b7d4","t":"plate","c":"mg1407::Scene::GetDbpBallFluctuationLow(mg1407::BALL_SIZE)"}
+{"a":"710002b840","t":"plate","c":"mg1407::Scene::GetDbpPostBallDelay(mg1407::BALL_SIZE)"}
+{"a":"710002b8ac","t":"plate","c":"mg1407::Scene::GetDbpBallBlur()"}
+{"a":"710002b8cc","t":"plate","c":"mg1407::Scene::GetDbpFanShapeRate(bool)"}
+{"a":"710002b908","t":"plate","c":"mg1407::Scene::GetDbpPreSpecialBallWait()"}
+{"a":"710002b928","t":"plate","c":"mg1407::Scene::GetDbpPostSpecialBallWait()"}
+{"a":"710002b948","t":"plate","c":"mg1407::Scene::GetDbpReceiveWait()"}
+{"a":"710002b968","t":"plate","c":"mg1407::Scene::GetDbpSpecialBallSize()"}
+{"a":"710002b988","t":"plate","c":"mg1407::Scene::GetDbpSpecialBallNum(int)"}
+{"a":"710002b9f0","t":"plate","c":"mg1407::Scene::GetDbpGameTime()"}
+{"a":"710002ba14","t":"plate","c":"mg1407::Scene::GetDbpMapType()"}
+{"a":"710002ba34","t":"plate","c":"mg1407::Scene::GetDbpReceiveToContinueNum()"}
+{"a":"710002ba54","t":"plate","c":"mg1407::Scene::GetDbpStartBallNum()"}
+{"a":"710002ba74","t":"plate","c":"mg1407::Scene::IsDbpReceiveDirToCorrect()"}
+{"a":"710002ba94","t":"plate","c":"mg1407::Scene::GetDbpBallShootSpan()"}
+{"a":"710002bab4","t":"plate","c":"mg1407::Scene::GetDbpBallBoundDampingRate()"}
+{"a":"710002bad4","t":"plate","c":"mg1407::Scene::GetDbpBallLinearDampingRate()"}
+{"a":"710002baf4","t":"plate","c":"mg1407::Scene::GetDbpBallFallSpeedRate()"}
+{"a":"710002bb14","t":"plate","c":"mg1407::Scene::GetDbpBallOutVanishTimeSec()"}
+{"a":"710002bb34","t":"plate","c":"mg1407::Scene::IsDbpBallOutTouchEnable()"}
+{"a":"710002bb54","t":"plate","c":"mg1407::Scene::GetDbpBallSizeRate(mg1407::BALL_TYPE)"}
+{"a":"710002bbc4","t":"plate","c":"mg1407::Scene::GetDbpCannonRotateTime()"}
+{"a":"710002bbe4","t":"plate","c":"mg1407::Scene::GetDbpCannonRotateSpeedRate()"}
+{"a":"710002bc04","t":"plate","c":"mg1407::Scene::GetDbpCannonShootSpeedMin()"}
+{"a":"710002bc24","t":"plate","c":"mg1407::Scene::GetDbpCannonShootSpeedMax()"}
+{"a":"710002bc44","t":"plate","c":"mg1407::Scene::GetDbpCameraTargetOffset()"}
+{"a":"710002bcc0","t":"plate","c":"mg1407::Scene::GetDbpBallBoundForce()"}
+{"a":"710002bce0","t":"plate","c":"mg1407::Scene::GetDbpPlayerReceiveForce(int)"}
+{"a":"710002bd80","t":"plate","c":"mg1407::Scene::GetDbpPlayerBallHitAddRadius()"}
+{"a":"710002bda0","t":"plate","c":"mg1407::Scene::getInstanceTypeinfo() const"}
+{"a":"710002be7c","t":"plate","c":"mg1407::Scene::GetSymbol() const"}
+{"a":"710002be8c","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}
+{"a":"710002be94","t":"plate","c":"bex::SceneBase::GetHandle() const"}
+{"a":"710002beb0","t":"plate","c":"bex::GameScene::OnCleanupProcessing()"}
+{"a":"710002beb4","t":"plate","c":"bex::NetworkGameScene::OnSyncEnd()"}
+{"a":"710002beb8","t":"plate","c":"bq::MinigameScene::OnThreeMinTimerEnd()"}
+{"a":"710002bebc","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoStart()"}
+{"a":"710002bec4","t":"plate","c":"bq::MinigameScene::OnCharaGameDemo()"}
+{"a":"710002becc","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoSkipStart()"}
+{"a":"710002bed0","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoSkipEnd()"}
+{"a":"710002bed4","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoEnd()"}
+{"a":"710002bedc","t":"plate","c":"bq::MinigameScene::OnGameStartTelopBefore()"}
+{"a":"710002bee4","t":"plate","c":"bq::MinigameScene::OnGameFinishAfter()"}
+{"a":"710002beec","t":"plate","c":"bq::MinigameScene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"710002bef4","t":"plate","c":"bq::MinigameScene::OnGameEndingFade()"}
+{"a":"710002befc","t":"plate","c":"bq::MinigameScene::OnGameEndingChangeCut()"}
+{"a":"710002bf04","t":"plate","c":"ca::kbm::MinigameScene::PreSetupGame()"}
+{"a":"710002bf08","t":"plate","c":"ca::kbm::MinigameScene::DoTickAdjustmentComplete()"}
+{"a":"710002bf0c","t":"plate","c":"ca::kbm::MinigameScene::DoGameEndingBefore()"}
+{"a":"710002bf14","t":"plate","c":"ca::kbm::MinigameScene::DoGameEndingAfter()"}
+{"a":"710002bf1c","t":"plate","c":"ca::kbm::MinigameScene::DoGameEndingSkip()"}
+{"a":"710002bf24","t":"plate","c":"ca::kbm::MinigameScene::DoGameLastFade()"}
+{"a":"710002bf2c","t":"plate","c":"ca::kbm::MinigameScene::DoGameExit()"}
+{"a":"710002bf34","t":"plate","c":"mg1407::Scene::Params::~Params()"}
+{"a":"710002bf38","t":"plate","c":"mg1407::Scene::Params::getInstanceTypeinfo() const"}
+{"a":"710002c014","t":"plate","c":"mg1407::Scene::Params::GetSymbol() const"}
+{"a":"710002c024","t":"plate","c":"rtti::Class::~Class()"}
+{"a":"710002c5f8","t":"plate","c":"mg1407::Mg1407Sequence::Mg1407Sequence()"}
+{"a":"710002c6ec","t":"plate","c":"mg1407::Mg1407Sequence::~Mg1407Sequence()"}
+{"a":"710002c750","t":"plate","c":"mg1407::Mg1407Sequence::~Mg1407Sequence()"}
+{"a":"710002c774","t":"plate","c":"mg1407::Mg1407Sequence::Setup()"}
+{"a":"710002c780","t":"plate","c":"mg1407::Mg1407Sequence::Impl::Setup()"}
+{"a":"710002d0c0","t":"plate","c":"mg1407::Mg1407Sequence::Initialize()"}
+{"a":"710002d158","t":"plate","c":"mg1407::Mg1407Sequence::DoGameOpening()"}
+{"a":"710002d160","t":"plate","c":"mg1407::Mg1407Sequence::InstInit()"}
+{"a":"710002d1f4","t":"plate","c":"mg1407::Mg1407Sequence::DoGameInstInit()"}
+{"a":"710002d200","t":"plate","c":"mg1407::Mg1407Sequence::StartOpeningDemo()"}
+{"a":"710002d260","t":"plate","c":"mg1407::Mg1407Sequence::SkipOpeningDemo()"}
+{"a":"710002d2f4","t":"plate","c":"mg1407::Mg1407Sequence::PreStartTelop()"}
+{"a":"710002d2f8","t":"plate","c":"mg1407::Mg1407Sequence::StartGame()"}
+{"a":"710002d300","t":"plate","c":"mg1407::Mg1407Sequence::Impl::StartGame()"}
+{"a":"710002d460","t":"plate","c":"mg1407::Mg1407Sequence::StartFinish()"}
+{"a":"710002d4f4","t":"plate","c":"mg1407::Mg1407Sequence::StartEndingDemo()"}
+{"a":"710002d508","t":"plate","c":"mg1407::Mg1407Sequence::IsSequenceEnd() const"}
+{"a":"710002d514","t":"plate","c":"mg1407::Mg1407Sequence::AddScore(int)"}
+{"a":"710002d5a4","t":"plate","c":"mg1407::Mg1407Sequence::IsRoundShotAll()"}
+{"a":"710002d5ec","t":"plate","c":"mg1407::Mg1407Sequence::GetRound()"}
+{"a":"710002d5f8","t":"plate","c":"mg1407::Mg1407Sequence::GetNextBallType()"}
+{"a":"710002d61c","t":"plate","c":"mg1407::Mg1407Sequence::GetNextBallSize()"}
+{"a":"710002d640","t":"plate","c":"mg1407::Mg1407Sequence::GetNextBallLandPosition()"}
+{"a":"710002d694","t":"plate","c":"mg1407::Mg1407Sequence::GetScore()"}
+{"a":"710002d6a0","t":"plate","c":"mg1407::Mg1407Sequence::GetRank()"}
+{"a":"710002d6c0","t":"plate","c":"mg1407::Mg1407Sequence::Impl::~Impl()"}
+{"a":"710002d8b4","t":"plate","c":"mg1407::Mg1407Sequence::Impl::~Impl()"}
+{"a":"710002d8e0","t":"plate","c":"mg1407::Mg1407Sequence::Impl::Update()"}
+{"a":"710002d960","t":"plate","c":"mg1407::Mg1407Sequence::Impl::on_opening_demo()"}
+{"a":"710002db00","t":"plate","c":"mg1407::Mg1407Sequence::Impl::on_game()"}
+{"a":"710002df50","t":"plate","c":"mg1407::Mg1407Sequence::Impl::on_ending_demo()"}
+{"a":"710002e290","t":"plate","c":"mg1407::Mg1407EventManager::Start()"}
+{"a":"710002e874","t":"plate","c":"mg1407::Mg1407EventManager::Shot()"}
+{"a":"710002e950","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgScoreRank, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710002e970","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgScoreRank, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710002e97c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgScoreRank, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710002e990","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgScoreRank, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710002e998","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgScoreRank, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710002e9a0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgResult, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710002e9c0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgResult, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710002e9cc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgResult, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710002e9e0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgResult, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710002e9e8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgResult, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710002e9f0","t":"plate","c":"nn::bezel::WeakHandle<ca::kb::ui::UiMgResult> nn::bezel::Entity::AddComponent<ca::kb::ui::UiMgResult, bq::MinigameID, (void*)0>(bq::MinigameID&&)"}
+{"a":"710002ebd0","t":"plate","c":"nn::bezel::WeakHandle<ca::kb::ui::UiMgScoreRank> nn::bezel::Entity::AddComponent<ca::kb::ui::UiMgScoreRank, bq::MinigameID, (void*)0>(bq::MinigameID&&)"}
+{"a":"710002edbc","t":"plate","c":"mg1407::Mg1407EventManager::~Mg1407EventManager()"}
+{"a":"710002edfc","t":"plate","c":"mg1407::Mg1407EventManager::~Mg1407EventManager()"}
+{"a":"710002ee50","t":"plate","c":"mg1407::Mg1407EventManager::Update()"}
+{"a":"710002ef60","t":"plate","c":"mg1407::Mg1407EventManager::Initialize()"}
+{"a":"710002f4a0","t":"plate","c":"mg1407::GetDirFromRotRad(nn::util::Vector3f const&)"}
+{"a":"710002f680","t":"plate","c":"mg1407::GetDirFromRotDeg(nn::util::Vector3f const&)"}
+{"a":"710002f880","t":"plate","c":"mg1407::GetRotDegFromDir(nn::util::Vector3f const&)"}
+{"a":"710002f8e0","t":"plate","c":"mg1407::GetRotRadFromDir(nn::util::Vector3f const&)"}
+{"a":"710002f930","t":"plate","c":"mg1407::GetCamPosFromTagDir(nn::util::Vector3f, nn::util::Vector3f, float)"}
+{"a":"710002fb30","t":"plate","c":"mg1407::GetAreaNo(nn::util::Vector3f const&)"}
+{"a":"710002fbb0","t":"plate","c":"mg1407::GetAreaCenterPos(int)"}
+{"a":"710002fc10","t":"plate","c":"mg1407::GetAreaCenterPos(nn::util::Vector3f const&)"}
+{"a":"710002fcd0","t":"plate","c":"mg1407::GetAreaGoalPos(int)"}
+{"a":"710002fd30","t":"plate","c":"mg1407::GetAreaGoalPos(nn::util::Vector3f const&)"}
+{"a":"710002fdf0","t":"plate","c":"mg1407::IsAreaGoalOpen(int)"}
+{"a":"710002ff00","t":"plate","c":"mg1407::IsAreaGoalOpen(nn::util::Vector3f const&)"}
+{"a":"7100030070","t":"plate","c":"mg1407::IsAreaPartitionOpen(int, int)"}
+{"a":"7100030220","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_mg1407()"}
+{"a":"7100030230","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_mg1407()"}
+{"a":"7100030240","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_sharedPCH()"}
+{"a":"7100030250","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_sharedPCH()"}
+{"a":"7100030290","t":"plate","c":"nn::ro::ProtectRelro(void const*, void const*, void const*, void const*, void const*)"}
+{"a":"71000302d0","t":"plate","c":"operator new(unsigned long, unsigned long, bex::HeapModule::HeapID)"}
+{"a":"71000302e0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::Impl()"}
+{"a":"71000302f0","t":"plate","c":"nn::diag::detail::AbortImpl()"}
+{"a":"7100030310","t":"plate","c":"std::terminate()"}
+{"a":"7100030320","t":"plate","c":"bex::Fiber::Fiber(int, bool)"}
+{"a":"7100030340","t":"plate","c":"mg1407::Scene::GetScene()"}
+{"a":"7100030350","t":"plate","c":"mg1407::Scene::GetDbpRoundNum()"}
+{"a":"7100030360","t":"plate","c":"bex::HeapModule::Alloc(bex::HeapModule::HeapID, unsigned long, int, char const*, int, char const*, char const*)"}
+{"a":"7100030370","t":"plate","c":"bex::HeapModule::Free(void*)"}
+{"a":"7100030380","t":"plate","c":"ca::kb::NAP()"}
+{"a":"7100030390","t":"plate","c":"mg1407::Mg1407BallManager::~Mg1407BallManager()"}
+{"a":"71000303a0","t":"plate","c":"operator delete(void*)"}
+{"a":"71000303b0","t":"plate","c":"mg1407::Mg1407BallManager::CreateBall(mg1407::BALL_TYPE, mg1407::BALL_SIZE, int, bool)"}
+{"a":"71000303c0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::CreateBall(mg1407::BALL_TYPE, mg1407::BALL_SIZE, int, bool)"}
+{"a":"71000303d0","t":"plate","c":"ca::kb::WorkArea::Get()"}
+{"a":"71000303e0","t":"plate","c":"ca::kb::WorkArea::PublishIndependentSerialNumber(char const*, int, int)"}
+{"a":"71000303f0","t":"plate","c":"mg1407::Mg1407Model::Mg1407Model()"}
+{"a":"7100030400","t":"plate","c":"mg1407::Mg1407Ball::Create(mg1407::BALL_TYPE, mg1407::BALL_SIZE)"}
+{"a":"7100030410","t":"plate","c":"std::__wrap_iter<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > >*> std::vector<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > >, bex::HeapModule::Allocator_vector<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > > > >::emplace<ca::kb::SerialNumber, mg1407::Mg1407Ball*>(std::__wrap_iter<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > > const*>, ca::kb::SerialNumber&&, mg1407::Mg1407Ball*&&)"}
+{"a":"7100030420","t":"plate","c":"std::__wrap_iter<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog>*> std::vector<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog>, bex::HeapModule::Allocator_vector<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog> > >::emplace<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog>(std::__wrap_iter<std::pair<ca::kb::SerialNumber, mg1407::Mg1407BallManager::Impl::TouchLog> const*>, ca::kb::SerialNumber&&, mg1407::Mg1407BallManager::Impl::TouchLog&&)"}
+{"a":"7100030430","t":"plate","c":"mg1407::Mg1407BallManager::ShootBall()"}
+{"a":"7100030440","t":"plate","c":"mg1407::Mg1407BallManager::Impl::ShootBall()"}
+{"a":"7100030450","t":"plate","c":"mg1407::Mg1407MapManager::GetServerHandTransform()"}
+{"a":"7100030460","t":"plate","c":"mg1407::Mg1407Ball::Shoot(nn::util::Vector3f)"}
+{"a":"7100030470","t":"plate","c":"mg1407::Mg1407BallManager::ReceiveBall(ca::kb::SerialNumber, int, mg1407::RECEIVE_TYPE, bool)"}
+{"a":"7100030480","t":"plate","c":"mg1407::Mg1407Ball::Receive(int, bool)"}
+{"a":"7100030490","t":"plate","c":"mg1407::Mg1407BallManager::IsTouchLogActive() const"}
+{"a":"71000304a0","t":"plate","c":"mg1407::Mg1407BallManager::SetReceiveBallJustRate(ca::kb::SerialNumber, int, float, bool)"}
+{"a":"71000304b0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::SetReceiveBallJustRate(ca::kb::SerialNumber, int, float, bool)"}
+{"a":"71000304c0","t":"plate","c":"ca::kb::WorkArea::GetLocalLeadPlayerID() const"}
+{"a":"71000304d0","t":"plate","c":"mg1407::Mg1407PlayerManager::GetLinePlayerID(int)"}
+{"a":"71000304e0","t":"plate","c":"mg1407::Mg1407Model::SetVisible(bool)"}
+{"a":"71000304f0","t":"plate","c":"mg1407::Mg1407Ball::SetReceiveBallJustRate(int, float, bool)"}
+{"a":"7100030500","t":"plate","c":"mg1407::Mg1407BallManager::FixOutRequest(ca::kb::SerialNumber, int)"}
+{"a":"7100030510","t":"plate","c":"mg1407::Mg1407BallManager::Impl::SetTouchLogPoint(ca::kb::SerialNumber, bool, int, nn::util::Vector3f const&)"}
+{"a":"7100030520","t":"plate","c":"mg1407::Mg1407Model::GetPosition() const"}
+{"a":"7100030530","t":"plate","c":"mg1407::Mg1407Ball::BoundOut(nn::util::Vector3f)"}
+{"a":"7100030540","t":"plate","c":"mg1407::Mg1407BallManager::IsBallHit(bex::PlayerID, nn::util::Vector3f const&, nn::util::Vector3f&, float&)"}
+{"a":"7100030550","t":"plate","c":"mg1407::Mg1407BallManager::Impl::IsBallHit(bex::PlayerID, nn::util::Vector3f const&, nn::util::Vector3f&, float&)"}
+{"a":"7100030560","t":"plate","c":"ca::kb::GetActorSynchroMan()"}
+{"a":"7100030570","t":"plate","c":"mg1407::Scene::GetDbpPlayerBallHitAddRadius()"}
+{"a":"7100030580","t":"plate","c":"mg1407::Scene::GetDbpBallReceiveHeight(mg1407::BALL_SIZE)"}
+{"a":"7100030590","t":"plate","c":"mg1407::Mg1407BallManager::IsBallTargetNear(nn::util::Vector3f const&, nn::util::Vector3f&, int, float, bool)"}
+{"a":"71000305a0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::GetNextBall(int)"}
+{"a":"71000305b0","t":"plate","c":"mg1407::Mg1407BallManager::GetPosition(ca::kb::SerialNumber)"}
+{"a":"71000305c0","t":"plate","c":"mg1407::Mg1407BallManager::GetTargetPosition(ca::kb::SerialNumber)"}
+{"a":"71000305d0","t":"plate","c":"mg1407::Mg1407BallManager::IsFall(ca::kb::SerialNumber)"}
+{"a":"71000305e0","t":"plate","c":"mg1407::Mg1407BallManager::GetRadius(ca::kb::SerialNumber)"}
+{"a":"71000305f0","t":"plate","c":"mg1407::Mg1407BallManager::GetTargetLine(ca::kb::SerialNumber)"}
+{"a":"7100030600","t":"plate","c":"mg1407::Mg1407BallManager::GetBallNum()"}
+{"a":"7100030610","t":"plate","c":"mg1407::Mg1407BallManager::GetLineTargetBall(int)"}
+{"a":"7100030620","t":"plate","c":"mg1407::Mg1407BallManager::GetNextBall(int)"}
+{"a":"7100030630","t":"plate","c":"mg1407::Mg1407BallManager::GetIndexBall(int)"}
+{"a":"7100030640","t":"plate","c":"mg1407::Mg1407BallManager::GetRoundLastBall()"}
+{"a":"7100030650","t":"plate","c":"mg1407::Mg1407Sequence::IsRoundShotAll()"}
+{"a":"7100030660","t":"plate","c":"mg1407::Mg1407BallManager::GetRoundFinalBall()"}
+{"a":"7100030670","t":"plate","c":"mg1407::Mg1407BallManager::IsFinalBall(ca::kb::SerialNumber)"}
+{"a":"7100030680","t":"plate","c":"mg1407::Mg1407BallManager::GetRouteInfo(ca::kb::SerialNumber, int)"}
+{"a":"7100030690","t":"plate","c":"mg1407::Mg1407BallManager::PlayJustEffect(ca::kb::SerialNumber)"}
+{"a":"71000306a0","t":"plate","c":"mg1407::Mg1407Ball::PlayJustEffect()"}
+{"a":"71000306b0","t":"plate","c":"mg1407::Mg1407BallManager::GetBallSize(ca::kb::SerialNumber)"}
+{"a":"71000306c0","t":"plate","c":"mg1407::Mg1407BallManager::GetGroundMarkerPosition(ca::kb::SerialNumber)"}
+{"a":"71000306d0","t":"plate","c":"mg1407::Mg1407BallManager::GetNextTargetPosition(int, int, bool)"}
+{"a":"71000306e0","t":"plate","c":"mg1407::Mg1407MapManager::GetLineTransform(int)"}
+{"a":"71000306f0","t":"plate","c":"mg1407::Scene::GetDbpFanShapeRate(bool)"}
+{"a":"7100030700","t":"plate","c":"mg1407::Mg1407BallManager::Impl::~Impl()"}
+{"a":"7100030710","t":"plate","c":"std::array<mg1407::Mg1407BallManager::Impl::PlayerData, 8ul>::~array()"}
+{"a":"7100030720","t":"plate","c":"bex::Fiber::~Fiber()"}
+{"a":"7100030730","t":"plate","c":"bex::Fiber::getStaticTypeinfo()"}
+{"a":"7100030740","t":"plate","c":"mg1407::Mg1407BallManager::Impl::ObserveTouchLog()"}
+{"a":"7100030750","t":"plate","c":"bex::Fiber::Wait()"}
+{"a":"7100030760","t":"plate","c":"mg1407::Mg1407Ball::Update()"}
+{"a":"71000307b0","t":"plate","c":"std::logic_error::logic_error(char const*)"}
+{"a":"71000307c0","t":"plate","c":"operator new(unsigned long)"}
+{"a":"71000307d0","t":"plate","c":"ca::kb::RPCArgDeserializeHelper_Struct(ca::kb::RPCArgumentsRecvPack&, void const*, unsigned long)"}
+{"a":"71000307e0","t":"plate","c":"ca::kb::RPCArgDeserialize(ca::kb::RPCArgumentsRecvPack&, int*)"}
+{"a":"71000307f0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::BallTouchReport(ca::kb::RPCArgumentsRecvPack&)"}
+{"a":"7100030800","t":"plate","c":"ca::kb::RPCArgDeserialize(ca::kb::RPCArgumentsRecvPack&, bool*)"}
+{"a":"7100030820","t":"plate","c":"mg1407::Mg1407Model::GetRotation()"}
+{"a":"7100030830","t":"plate","c":"mg1407::Mg1407Model::SetRotation(nn::util::Quaternion const&)"}
+{"a":"7100030840","t":"plate","c":"mg1407::Mg1407Ball::MapCollision()"}
+{"a":"7100030850","t":"plate","c":"mg1407::Mg1407PlayerManager::IsCom(bex::PlayerID)"}
+{"a":"7100030860","t":"plate","c":"ca::kb::RPCArgumentsSendPack::Reset(unsigned int, unsigned short)"}
+{"a":"7100030870","t":"plate","c":"ca::kb::RPCArgSerializeHelper_Struct(ca::kb::RPCArgumentsSendPack&, void const*, unsigned long)"}
+{"a":"7100030880","t":"plate","c":"ca::kb::RPCArgSerialize(ca::kb::RPCArgumentsSendPack&, int)"}
+{"a":"7100030890","t":"plate","c":"ca::kb::RPCArgSerialize(ca::kb::RPCArgumentsSendPack&, bool)"}
+{"a":"71000308a0","t":"plate","c":"ca::kb::RPCSerializeSend(ca::kb::enRPCSendStyle, ca::kb::RPCArgumentsSendPack&)"}
+{"a":"71000308b0","t":"plate","c":"ca::kb::WorkArea::GetRecommendLocalControl(bex::PlayerID) const"}
+{"a":"71000308c0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::PointReport(ca::kb::SerialNumber, int, nn::util::Vector3f)"}
+{"a":"71000308d0","t":"plate","c":"mg1407::Mg1407LayoutManager::ShowPointLayout(int, nn::util::Vector3f const&)"}
+{"a":"71000308e0","t":"plate","c":"bex::sound::SoundModule::Play(char const*, float, char const*)"}
+{"a":"71000308f0","t":"plate","c":"mg1407::Mg1407Sequence::AddScore(int)"}
+{"a":"7100030910","t":"plate","c":"mg1407::GetAssetPath(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100030920","t":"plate","c":"mg1407::Scene::GetDbpBallFluctuationHigh(mg1407::BALL_SIZE)"}
+{"a":"7100030930","t":"plate","c":"mg1407::Scene::GetDbpBallFluctuationLow(mg1407::BALL_SIZE)"}
+{"a":"7100030940","t":"plate","c":"mg1407::Scene::GetDbpBallSpeed(mg1407::BALL_SIZE)"}
+{"a":"7100030960","t":"plate","c":"bex::Effect::Create(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100030970","t":"plate","c":"bex::Effect::SetPosition(nn::util::Vector3f const&)"}
+{"a":"7100030980","t":"plate","c":"bex::Effect::SetSelfDestroyEnabled(bool)"}
+{"a":"7100030990","t":"plate","c":"bex::Effect::Start(bool)"}
+{"a":"71000309a0","t":"plate","c":"bex::sound::SoundModule::Play3D(char const*, nn::util::Vector3f const&, float)"}
+{"a":"71000309b0","t":"plate","c":"nn::bezel::PhysicsModule::CastRay(nn::bezel::CastResult*, nn::bezel::CastRayArg const&) const"}
+{"a":"71000309c0","t":"plate","c":"nn::bezel::HashedString::EqualTo(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71000309d0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
+{"a":"71000309f0","t":"plate","c":"mg1407::Mg1407Model::~Mg1407Model()"}
+{"a":"7100030a00","t":"plate","c":"mg1407::Mg1407Model::SetPosition(nn::util::Vector3f const&)"}
+{"a":"7100030a10","t":"plate","c":"mg1407::Mg1407Model::CreateModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100030a20","t":"plate","c":"mg1407::Scene::GetDbpBallSizeRate(mg1407::BALL_TYPE)"}
+{"a":"7100030a30","t":"plate","c":"mg1407::Mg1407Model::Mg1407Model()"}
+{"a":"7100030a40","t":"plate","c":"void std::__split_buffer<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > >, bex::HeapModule::Allocator_vector<ca::kb::OrdPair<ca::kb::SerialNumber, std::unique_ptr<mg1407::Mg1407Ball, std::default_delete<mg1407::Mg1407Ball> > > >&>::emplace_back<ca::kb::SerialNumber, mg1407::Mg1407Ball*>(ca::kb::SerialNumber&&, mg1407::Mg1407Ball*&&)"}
+{"a":"7100030a50","t":"plate","c":"mg1407::GetQuatFromDegRot(nn::util::Vector3f const&)"}
+{"a":"7100030a60","t":"plate","c":"mg1407::Mg1407Model::SetScale(nn::util::Vector3f const&)"}
+{"a":"7100030a70","t":"plate","c":"mg1407::Scene::GetDbpBallServeHeight(mg1407::BALL_SIZE)"}
+{"a":"7100030a80","t":"plate","c":"mg1407::Mg1407Model::GetEntity()"}
+{"a":"7100030a90","t":"plate","c":"bex::Effect::Attach(nn::bezel::WeakHandle<nn::bezel::Entity> const&, int)"}
+{"a":"7100030aa0","t":"plate","c":"ca::kb::WorkArea::GetRandomSeedChannel(unsigned int)"}
+{"a":"7100030ab0","t":"plate","c":"mg1407::Scene::GetDbpSuccessMove()"}
+{"a":"7100030ac0","t":"plate","c":"bex::RandModule::RandRangeF(float, float)"}
+{"a":"7100030ad0","t":"plate","c":"ca::kb::MiniRand::RandMod(unsigned int)"}
+{"a":"7100030ae0","t":"plate","c":"mg1407::Mg1407PlayerManager::GetLinePlayerPosition(int)"}
+{"a":"7100030af0","t":"plate","c":"ca::kb::MiniRand::RandRangeF(float, float)"}
+{"a":"7100030b00","t":"plate","c":"mg1407::Scene::GetDbpBallBlur()"}
+{"a":"7100030b10","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::insert(unsigned long, char const*, unsigned long)"}
+{"a":"7100030b20","t":"plate","c":"bex::Effect::Stop(bool)"}
+{"a":"7100030b30","t":"plate","c":"mg1407::Mg1407PlayerManager::SetBallOutVibration(bex::PlayerID)"}
+{"a":"7100030b40","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::__assign_external(char const*, unsigned long)"}
+{"a":"7100030b50","t":"plate","c":"mg1407::Mg1407BallManager::Mg1407BallManager()"}
+{"a":"7100030b60","t":"plate","c":"mg1407::Mg1407CameraManager::~Mg1407CameraManager()"}
+{"a":"7100030b70","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::Setup()"}
+{"a":"7100030b80","t":"plate","c":"bq::SceneBase::CreateSceneEntity(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100030b90","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComCamera> nn::bezel::Entity::AddComponent<nn::bezel::ComCamera, , (void*)0>()"}
+{"a":"7100030ba0","t":"plate","c":"nn::bezel::ComCamera::GetCamera() const"}
+{"a":"7100030bb0","t":"plate","c":"nn::bezel::WeakHandle<actor::ComActorMotion> nn::bezel::Entity::AddComponent<actor::ComActorMotion, , (void*)0>()"}
+{"a":"7100030bc0","t":"plate","c":"actor::ComActorMotion::AddAnimation(nn::bezel::StringViewHashPair const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool, actor::AnimatinType, bool, bool)"}
+{"a":"7100030bd0","t":"plate","c":"nn::bezel::GraphicsCoreModule::GetDefaultGraphicsLayer()"}
+{"a":"7100030be0","t":"plate","c":"nn::bezel::GraphicsLayer::SetCamera(nn::bezel::WeakHandle<nn::bezel::Camera> const&)"}
+{"a":"7100030bf0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::StartOpeningDemo()"}
+{"a":"7100030c00","t":"plate","c":"actor::ComActorMotion::Play(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100030c10","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::PreStartTelop()"}
+{"a":"7100030c20","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::StartEndingDemo()"}
+{"a":"7100030c30","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::IsFinishedAnim()"}
+{"a":"7100030c40","t":"plate","c":"actor::ComActorMotion::IsFinished() const"}
+{"a":"7100030c50","t":"plate","c":"mg1407::Mg1407CameraManager::ResetCamera()"}
+{"a":"7100030c60","t":"plate","c":"nn::bezel::Camera::SetProjectionPerspectiveFovy(float, float, float)"}
+{"a":"7100030c70","t":"plate","c":"nn::bezel::Camera::SetViewMatrix(nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"7100030c80","t":"plate","c":"mg1407::Mg1407CameraManager::GetCameraAnimationFrame()"}
+{"a":"7100030c90","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::GetCameraAnimationFrame()"}
+{"a":"7100030ca0","t":"plate","c":"actor::ComActorMotion::GetFrame() const"}
+{"a":"7100030cb0","t":"plate","c":"mg1407::Mg1407CameraManager::GetCamera()"}
+{"a":"7100030cc0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::GetCamera()"}
+{"a":"7100030cd0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::on_game_proc()"}
+{"a":"7100030ce0","t":"plate","c":"mg1407::Scene::GetDbpCameraMove()"}
+{"a":"7100030cf0","t":"plate","c":"mg1407::Mg1407CameraManager::Impl::SlerpPos(nn::util::Vector3f const&, nn::util::Vector3f const&, float)"}
+{"a":"7100030d00","t":"plate","c":"nn::bezel::Camera::SetPosition(nn::util::Vector3f const&)"}
+{"a":"7100030d20","t":"plate","c":"nn::bezel::ComCamera::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100030d30","t":"plate","c":"nn::bezel::Entity::_internalCheckComponentValidity(nn::bezel::HandlePtr<nn::bezel::Component> const&)"}
+{"a":"7100030d40","t":"plate","c":"nn::bezel::Entity::AddComponentImpl(nn::bezel::HandlePtr<nn::bezel::Component> const&)"}
+{"a":"7100030d50","t":"plate","c":"actor::ComActorMotion::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100030d60","t":"plate","c":"mg1407::Mg1407CameraManager::Mg1407CameraManager()"}
+{"a":"7100030d70","t":"plate","c":"rtti::Typeinfo::getRootTypeinfo()"}
+{"a":"7100030d80","t":"plate","c":"rtti::Typeinfo::Typeinfo(rtti::Typeinfo*, char const*, char const*, rtti::Property const* (*)(), void* (*)(), void (*)(void*), unsigned int, unsigned int, void (*)(void*, rtti::Property const&, rtti::PropertyList&), bool (*)(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int))"}
+{"a":"7100030d90","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Type const&)"}
+{"a":"7100030da0","t":"plate","c":"rtti::Property::Property()"}
+{"a":"7100030db0","t":"plate","c":"rtti::Typeinfo::checkGuiPropDefault(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"7100030dc0","t":"plate","c":"rtti::Typeinfo::createGuiPropDefault(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"7100030dd0","t":"plate","c":"mg1407::Mg1407Param::~Mg1407Param()"}
+{"a":"7100030de0","t":"plate","c":"mg1407::Mg1407Param::LoadData()"}
+{"a":"7100030df0","t":"plate","c":"mg1407::Mg1407Param::Impl::LoadData()"}
+{"a":"7100030e00","t":"plate","c":"nn::bezel::JsonReader::JsonReader()"}
+{"a":"7100030e10","t":"plate","c":"bq::DataBaseJsonReader::ParseFromAsset(char const*, bool)"}
+{"a":"7100030e20","t":"plate","c":"bq::DataBaseJsonReader::~DataBaseJsonReader()"}
+{"a":"7100030e30","t":"plate","c":"bool bq::DataBaseJsonReader::DeserializeRTTI<mg1407::Mg1407AudienceInstanceData>(char const*, bex::vector<mg1407::Mg1407AudienceInstanceData>&)"}
+{"a":"7100030e40","t":"plate","c":"bool bq::DataBaseJsonReader::DeserializeRTTI<mg1407::Mg1407NpcData>(char const*, bex::vector<mg1407::Mg1407NpcData>&)"}
+{"a":"7100030e50","t":"plate","c":"mg1407::Mg1407Param::GetAudienceInstanceNum()"}
+{"a":"7100030e60","t":"plate","c":"mg1407::Mg1407Param::GetAudienceInstanceHookNo(int)"}
+{"a":"7100030e70","t":"plate","c":"mg1407::Mg1407Param::GetAudienceInstanceTypeIndex(int)"}
+{"a":"7100030e80","t":"plate","c":"mg1407::Mg1407Param::GetNpcColor(bq::NonPlayerCharacterID, mg1407::enNpcColor)"}
+{"a":"7100030e90","t":"plate","c":"nn::bezel::JsonReader::BeginArray(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100030ea0","t":"plate","c":"nn::bezel::JsonReader::GetArraySize() const"}
+{"a":"7100030eb0","t":"plate","c":"nn::bezel::JsonReader::EndArray()"}
+{"a":"7100030ec0","t":"plate","c":"bq::DataBaseJsonReader::DeserializeRTTI_(int, void*, rtti::Typeinfo const&)"}
+{"a":"7100030ed0","t":"plate","c":"mg1407::Mg1407Param::Mg1407Param()"}
+{"a":"7100030ee0","t":"plate","c":"mg1407::Mg1407LayoutManager::~Mg1407LayoutManager()"}
+{"a":"7100030ef0","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::GetComTimer()"}
+{"a":"7100030f00","t":"plate","c":"bq::ComUiTimer::In(bool)"}
+{"a":"7100030f10","t":"plate","c":"bq::ComUiTimer::StartTimer()"}
+{"a":"7100030f20","t":"plate","c":"mg1407::Mg1407LayoutManager::SetTime(float)"}
+{"a":"7100030f30","t":"plate","c":"bq::ComUiTimer::SetTimer(float)"}
+{"a":"7100030f40","t":"plate","c":"bq::ComUiTimer::RemainSecond() const"}
+{"a":"7100030f50","t":"plate","c":"bq::ComUiTimer::Out(bool)"}
+{"a":"7100030f60","t":"plate","c":"bq::ComUiTimer::IsEndTimer() const"}
+{"a":"7100030f70","t":"plate","c":"mg1407::Mg1407LayoutManager::ShowRoundTelop(int)"}
+{"a":"7100030f80","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::ShowRoundTelop(int)"}
+{"a":"7100030f90","t":"plate","c":"bq::ComUiMGTelop::Start(int)"}
+{"a":"7100030fa0","t":"plate","c":"mg1407::Mg1407PointLayout::Show(int, nn::util::Vector3f const&)"}
+{"a":"7100030fb0","t":"plate","c":"mg1407::Mg1407LayoutManager::HideTotalPointLayout()"}
+{"a":"7100030fc0","t":"plate","c":"mg1407::Mg1407LayoutManager::Impl::~Impl()"}
+{"a":"7100030fd0","t":"plate","c":"bq::ComUiScore::IsFinished() const"}
+{"a":"7100030fe0","t":"plate","c":"bex::util::LytPosFrom3DPos(nn::util::Vector3f*, nn::util::Vector3f const&, nn::bezel::WeakHandle<nn::bezel::GraphicsLayer>)"}
+{"a":"7100030ff0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiTimer> nn::bezel::Entity::AddComponent<bq::ComUiTimer, bq::ComUiTimer::UiTimerType, (void*)0>(bq::ComUiTimer::UiTimerType&&)"}
+{"a":"7100031000","t":"plate","c":"mg1407::Mg1407PointLayoutManager::Setup()"}
+{"a":"7100031010","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> nn::bezel::Entity::AddComponent<bq::ComUiMGTelop, bq::ComUiMGTelop::UiMGTelopType, (void*)0>(bq::ComUiMGTelop::UiMGTelopType&&)"}
+{"a":"7100031020","t":"plate","c":"bq::ComUiMGTelop::SetRoundMax(int)"}
+{"a":"7100031030","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiTimer> bex::ComponentUtil::SafeCreate<bq::ComUiTimer, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiTimer::UiTimerType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiTimer::UiTimerType&&)"}
+{"a":"7100031040","t":"plate","c":"mg1407::Mg1407PointLayout::Setup()"}
+{"a":"7100031050","t":"plate","c":"void std::vector<std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> >, bex::HeapModule::Allocator_vector<std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> > > >::__push_back_slow_path<std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> > >(std::unique_ptr<mg1407::Mg1407PointLayout, std::default_delete<mg1407::Mg1407PointLayout> >&&)"}
+{"a":"7100031060","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiMGTelop> bex::ComponentUtil::SafeCreate<bq::ComUiMGTelop, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiMGTelop::UiMGTelopType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiMGTelop::UiMGTelopType&&)"}
+{"a":"7100031070","t":"plate","c":"bq::ComUiTimer::ComUiTimer(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiTimer::UiTimerType)"}
+{"a":"7100031080","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiScore> nn::bezel::Entity::AddComponent<bq::ComUiScore, bq::ComUiScore::UiScoreType, (void*)0>(bq::ComUiScore::UiScoreType&&)"}
+{"a":"7100031090","t":"plate","c":"bq::ComUiScore::SetOneshot(float)"}
+{"a":"71000310a0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComUiScore> bex::ComponentUtil::SafeCreate<bq::ComUiScore, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiScore::UiScoreType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiScore::UiScoreType&&)"}
+{"a":"71000310b0","t":"plate","c":"bq::ComUiScore::ComUiScore(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiScore::UiScoreType)"}
+{"a":"71000310c0","t":"plate","c":"bq::ComUiMGTelop::ComUiMGTelop(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::ComUiMGTelop::UiMGTelopType)"}
+{"a":"71000310d0","t":"plate","c":"bq::ComUiScore::In(bool)"}
+{"a":"71000310e0","t":"plate","c":"bq::ComUiScore::SetScore(int, bool)"}
+{"a":"71000310f0","t":"plate","c":"bq::ComUiScore::SetPlayerID(bex::PlayerID)"}
+{"a":"7100031100","t":"plate","c":"mg1407::Mg1407LayoutManager::Mg1407LayoutManager()"}
+{"a":"7100031110","t":"plate","c":"mg1407::Mg1407MapManager::~Mg1407MapManager()"}
+{"a":"7100031120","t":"plate","c":"mg1407::Mg1407MapManager::Impl::Create()"}
+{"a":"7100031130","t":"plate","c":"mg1407::Mg1407MapManager::Impl::StartOpeningDemo()"}
+{"a":"7100031140","t":"plate","c":"mg1407::Mg1407Signboard::StartOpeningDemo()"}
+{"a":"7100031150","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
+{"a":"7100031160","t":"plate","c":"mg1407::Mg1407MapManager::Impl::PlayMapMotion(nn::bezel::UniqueHandlePtr<nn::bezel::Entity>&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, float)"}
+{"a":"7100031170","t":"plate","c":"mg1407::Mg1407Model::PlayMotion(unsigned long)"}
+{"a":"7100031180","t":"plate","c":"mg1407::Mg1407MapManager::Impl::PreStartTelop()"}
+{"a":"7100031190","t":"plate","c":"mg1407::Mg1407Model::GetComModel()"}
+{"a":"71000311a0","t":"plate","c":"mg1407::Mg1407Signboard::RoundStart(int)"}
+{"a":"71000311b0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::StartEndingDemo()"}
+{"a":"71000311c0","t":"plate","c":"mg1407::Mg1407Model::AddModelMotion(char const*)"}
+{"a":"71000311d0","t":"plate","c":"actor::Util::LoadNbmap(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool)"}
+{"a":"71000311e0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::GetNodeEntity(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"71000311f0","t":"plate","c":"nn::bezel::ComModel::SetVisible(bool)"}
+{"a":"7100031200","t":"plate","c":"mg1407::Mg1407MapManager::Impl::GetNameIndex(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100031210","t":"plate","c":"mg1407::Mg1407MapManager::Impl::AddMapMotion(nn::bezel::UniqueHandlePtr<nn::bezel::Entity>&, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >)"}
+{"a":"7100031220","t":"plate","c":"mg1407::Mg1407MapManager::RoundStart(int)"}
+{"a":"7100031230","t":"plate","c":"mg1407::Mg1407MapManager::StartServePickup()"}
+{"a":"7100031240","t":"plate","c":"ca::kb::ut::TickAlarm::SetCurrentLater(int)"}
+{"a":"7100031250","t":"plate","c":"mg1407::Mg1407Server::PlayMotion(mg1407::Mg1407Server::enMotionId, float)"}
+{"a":"7100031260","t":"plate","c":"mg1407::Mg1407MapManager::StartServerServe(bool)"}
+{"a":"7100031270","t":"plate","c":"mg1407::Mg1407Sequence::GetNextBallLandPosition()"}
+{"a":"7100031290","t":"plate","c":"mg1407::GetQuatFromRadRot(nn::util::Vector3f const&)"}
+{"a":"71000312a0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::GetMoveTransform(int)"}
+{"a":"71000312b0","t":"plate","c":"mg1407::GetNodeWorldTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, mg1407::Mg1407Transform&)"}
+{"a":"71000312c0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::StartLineMove(int)"}
+{"a":"71000312d0","t":"plate","c":"mg1407::Mg1407MapManager::Impl::IsEndLineMove(int)"}
+{"a":"71000312e0","t":"plate","c":"nn::bezel::Entity::FindChildren(nn::bezel::EntityState, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71000312f0","t":"plate","c":"mg1407::Mg1407MapManager::ResetLineMove()"}
+{"a":"7100031300","t":"plate","c":"mg1407::Mg1407MapManager::Impl::ResetLineMove()"}
+{"a":"7100031310","t":"plate","c":"actor::ComActorMotion::SetFrame(float)"}
+{"a":"7100031320","t":"plate","c":"actor::ComActorMotion::SetPauseEnabled(bool)"}
+{"a":"7100031330","t":"plate","c":"nn::bezel::Entity::GetTranslation() const"}
+{"a":"7100031340","t":"plate","c":"mg1407::Mg1407Model::GetNodeWorldTransform(char const*, mg1407::Mg1407Transform&)"}
+{"a":"7100031350","t":"plate","c":"mg1407::Mg1407MapManager::IsServerIdle()"}
+{"a":"7100031360","t":"plate","c":"mg1407::Mg1407MapManager::Impl::~Impl()"}
+{"a":"7100031370","t":"plate","c":"mg1407::Mg1407Server::Update()"}
+{"a":"7100031380","t":"plate","c":"mg1407::Mg1407Model::IsMotionFinished()"}
+{"a":"7100031390","t":"plate","c":"ca::kb::ut::TickAlarm::IsEnd() const"}
+{"a":"71000313a0","t":"plate","c":"mg1407::Mg1407Sequence::GetNextBallSize()"}
+{"a":"71000313b0","t":"plate","c":"mg1407::Mg1407Sequence::GetNextBallType()"}
+{"a":"71000313c0","t":"plate","c":"bex::Effect::Attach(nn::bezel::WeakHandle<nn::bezel::ComModel> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, int)"}
+{"a":"71000313d0","t":"plate","c":"ca::kb::ut::TickAlarm::GetDiffTick() const"}
+{"a":"71000313e0","t":"plate","c":"mg1407::Mg1407Model::GetMotionName(unsigned long)"}
+{"a":"71000313f0","t":"plate","c":"actor::MotionArg::AnimationName(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100031400","t":"plate","c":"mg1407::Mg1407Model::GetComActorMotion()"}
+{"a":"7100031410","t":"plate","c":"actor::ComActorMotion::Play(actor::MotionArg const&)"}
+{"a":"7100031420","t":"plate","c":"void std::vector<mg1407::Mg1407Transform, bex::HeapModule::Allocator_vector<mg1407::Mg1407Transform> >::__push_back_slow_path<mg1407::Mg1407Transform const&>(mg1407::Mg1407Transform const&)"}
+{"a":"7100031430","t":"plate","c":"mg1407::Mg1407Server::CreateServer()"}
+{"a":"7100031440","t":"plate","c":"mg1407::Mg1407Signboard::Create()"}
+{"a":"7100031450","t":"plate","c":"mg1407::AddModelMotion(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, char const*)"}
+{"a":"7100031460","t":"plate","c":"std::ios_base::init(void*)"}
+{"a":"7100031470","t":"plate","c":"std::streambuf::streambuf()"}
+{"a":"7100031480","t":"plate","c":"std::ostream::TEMPNAMEPLACEHOLDERVALUE(int)"}
+{"a":"7100031490","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::str() const"}
+{"a":"71000314a0","t":"plate","c":"std::streambuf::~streambuf()"}
+{"a":"71000314b0","t":"plate","c":"std::ostream::~ostream()"}
+{"a":"71000314c0","t":"plate","c":"std::ios::~ios()"}
+{"a":"71000314d0","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"71000314e0","t":"plate","c":"mg1407::Mg1407Model::CreateNpcModel(char const*, bq::NonPlayerCharacterID)"}
+{"a":"71000314f0","t":"plate","c":"mg1407::Mg1407Model::AddNpcMotion(bq::NonPlayerCharacterID, char const*, bool)"}
+{"a":"7100031500","t":"plate","c":"mg1407::Mg1407Model::AttachModel(nn::bezel::WeakHandle<nn::bezel::Entity>, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bool, bool, bool)"}
+{"a":"7100031510","t":"plate","c":"nn::bezel::ComModel::FindMaterial(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"7100031520","t":"plate","c":"nn::bezel::MaterialHandle::MaterialHandle()"}
+{"a":"7100031530","t":"plate","c":"nn::bezel::MaterialHandle::Reset(nn::bezel::Material*)"}
+{"a":"7100031540","t":"plate","c":"nn::bezel::MaterialHandle::SafeLock() const"}
+{"a":"7100031550","t":"plate","c":"nn::bezel::MaterialHandle::~MaterialHandle()"}
+{"a":"7100031560","t":"plate","c":"nn::bezel::Material::FindParam(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100031570","t":"plate","c":"nn::bezel::MaterialParam::GetVector4() const"}
+{"a":"7100031580","t":"plate","c":"nn::bezel::MaterialParam::SetVector4(nn::util::Vector4f const&)"}
+{"a":"7100031590","t":"plate","c":"mg1407::Mg1407Server::SetTransform(mg1407::Mg1407Transform const&)"}
+{"a":"71000315a0","t":"plate","c":"bex::gfx::ComModelBuffer::SetForceLodLevel(int)"}
+{"a":"71000315b0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::push_back(char)"}
+{"a":"71000315c0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(unsigned long, char)"}
+{"a":"71000315e0","t":"plate","c":"mg1407::Mg1407Signboard::~Mg1407Signboard()"}
+{"a":"71000315f0","t":"plate","c":"mg1407::Mg1407Signboard::GetInstanceData()"}
+{"a":"7100031600","t":"plate","c":"mg1407::Mg1407Model::CreateInstanceModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int)"}
+{"a":"7100031610","t":"plate","c":"void std::vector<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bex::HeapModule::Allocator_vector<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > > >::__push_back_slow_path<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > >(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >&&)"}
+{"a":"7100031620","t":"plate","c":"actor::ComActorMotion::AddAnimationSlot(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100031630","t":"plate","c":"nn::bezel::ComModel::AllocInstance()"}
+{"a":"7100031650","t":"plate","c":"nn::bezel::ComModel::SetupInstancing(int, bool)"}
+{"a":"7100031660","t":"plate","c":"mg1407::Mg1407Signboard::GetMotionSlot(mg1407::Mg1407Signboard::enMotionSlot)"}
+{"a":"7100031670","t":"plate","c":"actor::ActorAnimationSlot::Play(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100031680","t":"plate","c":"actor::ComActorMotion::SetSpeed(float)"}
+{"a":"7100031690","t":"plate","c":"actor::ComActorMotion::GetAnimationSlot(nn::bezel::StringViewHashPair const&)"}
+{"a":"71000316a0","t":"plate","c":"mg1407::Mg1407MapManager::Mg1407MapManager()"}
+{"a":"71000316b0","t":"plate","c":"mg1407::CreateModel(char const*, char const*)"}
+{"a":"71000316c0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*&, (void*)0>(char const*&)"}
+{"a":"71000316d0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&)"}
+{"a":"71000316e0","t":"plate","c":"nn::bezel::Entity::HasCastableComponentImpl(nn::bezel::detail::TypeDesc const*) const"}
+{"a":"71000316f0","t":"plate","c":"actor::ComActorMotion::SetPrefix(char const*)"}
+{"a":"7100031700","t":"plate","c":"mg1407::CreatePcModel(char const*, bex::PlayerID)"}
+{"a":"7100031710","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID&, bq::MatterType, (void*)0>(bex::PlayerID&, bq::MatterType&&)"}
+{"a":"7100031720","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&, bq::MatterType&&)"}
+{"a":"7100031730","t":"plate","c":"mg1407::CreateNpcModel(char const*, bq::NonPlayerCharacterID)"}
+{"a":"7100031740","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID&, (void*)0>(bq::NonPlayerCharacterID&)"}
+{"a":"7100031750","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&)"}
+{"a":"7100031760","t":"plate","c":"mg1407::AddNpcMotion(nn::bezel::HandlePtr<nn::bezel::Entity>, bq::NonPlayerCharacterID, char const*, char const*, bool)"}
+{"a":"7100031770","t":"plate","c":"bq::CharacterDataPath::CharacterDataPath(bq::NonPlayerCharacterID)"}
+{"a":"7100031780","t":"plate","c":"bq::CharacterDataPath::GetAnimationPrefix() const"}
+{"a":"7100031790","t":"plate","c":"mg1407::GetNodeMatrix(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::MatrixRowMajor4x3f&)"}
+{"a":"71000317a0","t":"plate","c":"mg1407::GetBoneIndex(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*)"}
+{"a":"71000317b0","t":"plate","c":"nn::bezel::SkeletonPose::CalculateLocalTransform(int) const"}
+{"a":"71000317c0","t":"plate","c":"mg1407::GetNodeTransform(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f&, nn::util::Vector3f&)"}
+{"a":"71000317d0","t":"plate","c":"mg1407::GetNodeWorldMatrix(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::MatrixRowMajor4x3f&)"}
+{"a":"71000317e0","t":"plate","c":"nn::bezel::SkeletonPose::CalculateWorldTransform(int)"}
+{"a":"71000317f0","t":"plate","c":"nn::bezel::SkeletonPose::FindBoneIndex(char const*) const"}
+{"a":"7100031800","t":"plate","c":"mg1407::SetNodePosition(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f const&)"}
+{"a":"7100031810","t":"plate","c":"nn::bezel::SkeletonPose::Calculate()"}
+{"a":"7100031820","t":"plate","c":"nn::bezel::SkeletonPose::CalculateForce()"}
+{"a":"7100031830","t":"plate","c":"nn::bezel::SkeletonPose::SetLocalMtxRt(int, nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"7100031840","t":"plate","c":"mg1407::SetNodeRotation(nn::bezel::HandlePtr<nn::bezel::Entity>, char const*, nn::util::Vector3f const&)"}
+{"a":"7100031850","t":"plate","c":"nn::bezel::ComModel::GetBoneSocket(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100031860","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComAttachment> nn::bezel::Entity::AddComponent<nn::bezel::ComAttachment, , (void*)0>()"}
+{"a":"7100031870","t":"plate","c":"nn::bezel::ComAttachment::SetTarget(nn::bezel::WeakHandle<nn::bezel::ISocket> const&)"}
+{"a":"7100031880","t":"plate","c":"nn::bezel::ComAttachment::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100031890","t":"plate","c":"nn::bezel::ComModel::FindBoneIndex(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71000318a0","t":"plate","c":"nn::bezel::ComModel::SetBoneVisible(int, bool)"}
+{"a":"71000318b0","t":"plate","c":"mg1407::Mg1407Model::~Mg1407Model()"}
+{"a":"71000318c0","t":"plate","c":"mg1407::Mg1407Model::GetComMatter()"}
+{"a":"71000318d0","t":"plate","c":"mg1407::Mg1407Model::Impl::GetComMatter()"}
+{"a":"71000318e0","t":"plate","c":"mg1407::Mg1407Model::Impl::GetComModel()"}
+{"a":"71000318f0","t":"plate","c":"bq::ComMatter::GetModel()"}
+{"a":"7100031900","t":"plate","c":"bq::ComMatter::GetMotion()"}
+{"a":"7100031910","t":"plate","c":"mg1407::Mg1407Model::Impl::CreateInstanceModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, int)"}
+{"a":"7100031920","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, nn::bezel::ModelCreateArg&, (void*)0>(nn::bezel::ModelCreateArg&)"}
+{"a":"7100031930","t":"plate","c":"mg1407::Mg1407Model::CreatePcModel(char const*, bex::PlayerID)"}
+{"a":"7100031940","t":"plate","c":"mg1407::Mg1407Model::CreateInstanceNpcModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bq::NonPlayerCharacterID, int)"}
+{"a":"7100031950","t":"plate","c":"mg1407::Mg1407Model::Impl::CreateInstanceNpcModel(std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bq::NonPlayerCharacterID, int)"}
+{"a":"7100031960","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&, (void*)0>(bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&)"}
+{"a":"7100031970","t":"plate","c":"mg1407::Mg1407Model::Impl::AddModelMotion(char const*)"}
+{"a":"7100031980","t":"plate","c":"mg1407::Mg1407Model::Impl::GetMotionName(unsigned long)"}
+{"a":"7100031990","t":"plate","c":"mg1407::Mg1407Model::Impl::AddNpcMotion(bq::NonPlayerCharacterID, char const*, bool)"}
+{"a":"71000319a0","t":"plate","c":"mg1407::Mg1407Model::Impl::PlayMotion(unsigned long)"}
+{"a":"71000319b0","t":"plate","c":"mg1407::Mg1407Model::SetMotionFrame(float)"}
+{"a":"71000319c0","t":"plate","c":"mg1407::Mg1407Model::Impl::SetMotionFrame(float)"}
+{"a":"71000319d0","t":"plate","c":"mg1407::Mg1407Model::Impl::SetMotionSpeed(float)"}
+{"a":"71000319e0","t":"plate","c":"actor::ComActorMotion::GetSpeed() const"}
+{"a":"71000319f0","t":"plate","c":"mg1407::Mg1407Model::Impl::SetMotionPause(bool)"}
+{"a":"7100031a00","t":"plate","c":"mg1407::Mg1407Model::Impl::IsThisPlaying(unsigned long)"}
+{"a":"7100031a10","t":"plate","c":"actor::ComActorMotion::IsThisPlaying(nn::bezel::StringViewHashPair const&) const"}
+{"a":"7100031a20","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<unsigned long>(unsigned long)"}
+{"a":"7100031a30","t":"plate","c":"nn::bezel::Entity::SetTranslation(nn::util::Vector3f const&)"}
+{"a":"7100031a40","t":"plate","c":"nn::bezel::Entity::SetRotation(nn::util::Quaternion const&)"}
+{"a":"7100031a50","t":"plate","c":"nn::bezel::Entity::CalculateRotation()"}
+{"a":"7100031a60","t":"plate","c":"nn::bezel::Entity::SetScale(nn::util::Vector3f const&)"}
+{"a":"7100031a70","t":"plate","c":"nn::bezel::Entity::GetScale() const"}
+{"a":"7100031a80","t":"plate","c":"mg1407::Mg1407Model::Impl::SetBoneVisible(char const*, bool)"}
+{"a":"7100031a90","t":"plate","c":"mg1407::Mg1407Model::GetNodePosition(char const*, nn::util::Vector3f&)"}
+{"a":"7100031aa0","t":"plate","c":"mg1407::Mg1407Model::Impl::GetNodeTransform(char const*, nn::util::Vector3f&, nn::util::Quaternion&, nn::util::Vector3f&)"}
+{"a":"7100031ab0","t":"plate","c":"mg1407::Mg1407Model::Impl::AttachModel(nn::bezel::WeakHandle<nn::bezel::Entity>, std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >, bool, bool, bool)"}
+{"a":"7100031ac0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::ModelCreateArg&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::ModelCreateArg&)"}
+{"a":"7100031ad0","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::ModelCreateArg const&, bool)"}
+{"a":"7100031ae0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&, nn::bezel::ModelCreateArg&)"}
+{"a":"7100031af0","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID, nn::bezel::ModelCreateArg&)"}
+{"a":"7100031b00","t":"plate","c":"std::ostream::TEMPNAMEPLACEHOLDERVALUE(unsigned long)"}
+{"a":"7100031b10","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool)"}
+{"a":"7100031b20","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, bq::MatterType)"}
+{"a":"7100031b30","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID)"}
+{"a":"7100031b40","t":"plate","c":"mg1407::Mg1407AudienceManager::~Mg1407AudienceManager()"}
+{"a":"7100031b50","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::Create()"}
+{"a":"7100031b60","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartOpeningMotion()"}
+{"a":"7100031b70","t":"plate","c":"mg1407::Mg1407AudienceInstance::PreStartTelop()"}
+{"a":"7100031b80","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartIdleMotion()"}
+{"a":"7100031b90","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartEndingDemo()"}
+{"a":"7100031ba0","t":"plate","c":"mg1407::Mg1407AudienceManager::StartJoyMotion(bool, float)"}
+{"a":"7100031bb0","t":"plate","c":"mg1407::Mg1407AudienceInstance::StartJoyMotion(bool, float)"}
+{"a":"7100031bc0","t":"plate","c":"actor::ComActorMotion::GetFrameMax() const"}
+{"a":"7100031bd0","t":"plate","c":"bex::RandModule::RandModF(float)"}
+{"a":"7100031be0","t":"plate","c":"mg1407::Mg1407AudienceInstance::CreateAudienceModel(int, bq::NonPlayerCharacterID, float, bool)"}
+{"a":"7100031bf0","t":"plate","c":"void std::vector<std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> >, bex::HeapModule::Allocator_vector<std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> > > >::__push_back_slow_path<std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> > >(std::unique_ptr<mg1407::Mg1407AudienceInstance, std::default_delete<mg1407::Mg1407AudienceInstance> >&&)"}
+{"a":"7100031c10","t":"plate","c":"mg1407::Mg1407AudienceInstance::GetInstanceData()"}
+{"a":"7100031c20","t":"plate","c":"mg1407::Mg1407AudienceInstance::SetNpcColor(mg1407::enNpcColor)"}
+{"a":"7100031c30","t":"plate","c":"bq::ComMatter::AddHeading()"}
+{"a":"7100031c40","t":"plate","c":"bex::ComHeading::SetTargetLookAtDirection(nn::util::Vector3f const&)"}
+{"a":"7100031c50","t":"plate","c":"mg1407::GetRotRadFromDir(nn::util::Vector3f const&)"}
+{"a":"7100031c60","t":"plate","c":"mg1407::Mg1407AudienceManager::Mg1407AudienceManager()"}
+{"a":"7100031c70","t":"plate","c":"mg1407::Mg1407PlayerManager::~Mg1407PlayerManager()"}
+{"a":"7100031c80","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::Setup()"}
+{"a":"7100031c90","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::SetupLine()"}
+{"a":"7100031ca0","t":"plate","c":"bq::WorkModule::GetPlayers()"}
+{"a":"7100031cb0","t":"plate","c":"bq::PlayerWorkHolder::GetPlayerList(bq::PlayerListSortBy) const"}
+{"a":"7100031cc0","t":"plate","c":"bq::PlayerWork::GetPlayerID() const"}
+{"a":"7100031cd0","t":"plate","c":"bq::PlayerWork::GetCharacterID() const"}
+{"a":"7100031ce0","t":"plate","c":"mg1407::Mg1407Player::Mg1407Player(bex::PlayerID, int, bq::PlayerCharacterID)"}
+{"a":"7100031cf0","t":"plate","c":"mg1407::Mg1407Player::Setup()"}
+{"a":"7100031d00","t":"plate","c":"void std::vector<std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> >, bex::HeapModule::Allocator_vector<std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> > > >::__push_back_slow_path<std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> > >(std::unique_ptr<mg1407::Mg1407Player, std::default_delete<mg1407::Mg1407Player> >&&)"}
+{"a":"7100031d10","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::ChangeLine(int)"}
+{"a":"7100031d20","t":"plate","c":"mg1407::Mg1407Player::PostSetup()"}
+{"a":"7100031d30","t":"plate","c":"mg1407::Mg1407Player::Initialize()"}
+{"a":"7100031d40","t":"plate","c":"mg1407::Mg1407Player::StartOpeningDemo()"}
+{"a":"7100031d50","t":"plate","c":"mg1407::Mg1407Player::PreStartTelop()"}
+{"a":"7100031d60","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::StartGame()"}
+{"a":"7100031d70","t":"plate","c":"actor::ComActor::CallAction(actor::ActorHashedString const&, bool)"}
+{"a":"7100031d80","t":"plate","c":"mg1407::Mg1407Player::StartFinish()"}
+{"a":"7100031d90","t":"plate","c":"mg1407::Mg1407Player::StartEndingDemo()"}
+{"a":"7100031da0","t":"plate","c":"mg1407::Mg1407PlayerManager::StartRound()"}
+{"a":"7100031db0","t":"plate","c":"mg1407::Mg1407Player::StartInput(bool)"}
+{"a":"7100031dc0","t":"plate","c":"mg1407::Mg1407PlayerManager::EndRound()"}
+{"a":"7100031dd0","t":"plate","c":"mg1407::Mg1407Player::StopInput(bool)"}
+{"a":"7100031de0","t":"plate","c":"mg1407::Mg1407PlayerManager::StopInputAll()"}
+{"a":"7100031df0","t":"plate","c":"mg1407::Mg1407Player::IsCom()"}
+{"a":"7100031e00","t":"plate","c":"mg1407::Mg1407PlayerManager::ChangeLine(int)"}
+{"a":"7100031e10","t":"plate","c":"mg1407::Mg1407Player::SetLinePosition()"}
+{"a":"7100031e20","t":"plate","c":"mg1407::Mg1407PlayerManager::PlayAppealMotion()"}
+{"a":"7100031e30","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::PlayAppealMotion()"}
+{"a":"7100031e40","t":"plate","c":"ca::kb::WorkArea::GetRecommendControlFixedIndex(bex::PlayerID) const"}
+{"a":"7100031e50","t":"plate","c":"mg1407::Mg1407Player::PlayMotion(mg1407::Mg1407Player::MOT_ID, float, float)"}
+{"a":"7100031e60","t":"plate","c":"mg1407::Mg1407Player::DispUserName()"}
+{"a":"7100031e70","t":"plate","c":"mg1407::Mg1407PlayerManager::EndAppealMotion()"}
+{"a":"7100031e80","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::GetResultPosition(bex::PlayerID)"}
+{"a":"7100031e90","t":"plate","c":"mg1407::Mg1407PlayerManager::DispIcon()"}
+{"a":"7100031ea0","t":"plate","c":"mg1407::Mg1407PlayerManager::HideIcon(bool)"}
+{"a":"7100031eb0","t":"plate","c":"mg1407::Mg1407Player::HideUserName(bool)"}
+{"a":"7100031ec0","t":"plate","c":"mg1407::Mg1407Player::SetFxTriggerEnum(mg1407::BALL_SIZE)"}
+{"a":"7100031ed0","t":"plate","c":"mg1407::Mg1407Player::SetBallOutVibration()"}
+{"a":"7100031ee0","t":"plate","c":"mg1407::Mg1407PlayerManager::SetMissRound(bex::PlayerID, int, ca::kb::SerialNumber)"}
+{"a":"7100031ef0","t":"plate","c":"mg1407::Mg1407Player::SetMissRound(int, ca::kb::SerialNumber)"}
+{"a":"7100031f00","t":"plate","c":"mg1407::Mg1407PlayerManager::Impl::~Impl()"}
+{"a":"7100031f10","t":"plate","c":"actor::ComActor::SetPosition(nn::util::Vector3f const&)"}
+{"a":"7100031f20","t":"plate","c":"mg1407::Mg1407Player::on_game_proc()"}
+{"a":"7100031f30","t":"plate","c":"mg1407::Mg1407Player::UpdateCom()"}
+{"a":"7100031f40","t":"plate","c":"mg1407::Mg1407Player::CollisionBall()"}
+{"a":"7100031f50","t":"plate","c":"actor::ComActor::GetPosition() const"}
+{"a":"7100031f60","t":"plate","c":"mg1407::Mg1407Player::IsDiving()"}
+{"a":"7100031f70","t":"plate","c":"bex::ComHeading::SetTargetNone()"}
+{"a":"7100031f80","t":"plate","c":"mg1407::Scene::GetDbpHeadClampMaxY()"}
+{"a":"7100031f90","t":"plate","c":"mg1407::Scene::GetDbpHeadClampMinZ()"}
+{"a":"7100031fa0","t":"plate","c":"mg1407::Scene::GetDbpHeadClampMaxZ()"}
+{"a":"7100031fb0","t":"plate","c":"bex::ComHeading::SetTargetLookAtPosition(nn::util::Vector3f const&)"}
+{"a":"7100031fc0","t":"plate","c":"actor::ComActor::GetPad()"}
+{"a":"7100031fd0","t":"plate","c":"actor::ComActorPad::GetOverlayTrigger() const"}
+{"a":"7100031fe0","t":"plate","c":"actor::ComActorPad::SetOverlayTrigger(unsigned int)"}
+{"a":"7100031ff0","t":"plate","c":"actor::ComActorPad::GetOverlayStick() const"}
+{"a":"7100032000","t":"plate","c":"actor::ComActorPad::SetOverlayStick(nn::util::Vector3f const&)"}
+{"a":"7100032010","t":"plate","c":"actor::ComActor::IsInputControlEnabled() const"}
+{"a":"7100032020","t":"plate","c":"mg1407::Mg1407Sequence::GetRound()"}
+{"a":"7100032030","t":"plate","c":"mg1407::Mg1407Player::GetActorPad()"}
+{"a":"7100032040","t":"plate","c":"actor::ComActorPad::GetTrigger() const"}
+{"a":"7100032050","t":"plate","c":"mg1407::Mg1407Player::StartDive(nn::util::Vector3f const&)"}
+{"a":"7100032060","t":"plate","c":"mg1407::Scene::GetDbpJustEffectType(bool)"}
+{"a":"7100032070","t":"plate","c":"mg1407::Scene::IsDbpEffectSizeAdjust()"}
+{"a":"7100032080","t":"plate","c":"bex::Effect::SetScale(nn::util::Vector3f const&)"}
+{"a":"7100032090","t":"plate","c":"mg1407::Mg1407Player::ReceiveExec()"}
+{"a":"71000320a0","t":"plate","c":"bq::ComMatter::SafeGetFxTrigger()"}
+{"a":"71000320b0","t":"plate","c":"bex::ComFxTrigger::Play(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000320c0","t":"plate","c":"mg1407::Scene::GetDbpReceiveTurnTiming()"}
+{"a":"71000320d0","t":"plate","c":"mg1407::GetQuatFromRadRot(float const&, float const&, float const&)"}
+{"a":"71000320e0","t":"plate","c":"actor::ComActor::SetRotation(nn::util::Quaternion const&)"}
+{"a":"71000320f0","t":"plate","c":"nn::bezel::Entity::Teleport()"}
+{"a":"7100032100","t":"plate","c":"bex::RandModule::RandMod(unsigned int)"}
+{"a":"7100032110","t":"plate","c":"bq::PlayerWorkHolder::FindFromPlayerID(bex::PlayerID) const"}
+{"a":"7100032120","t":"plate","c":"bq::PlayerWork::GetPlayerType() const"}
+{"a":"7100032130","t":"plate","c":"actor::ComActorPad::SetOverlayEnabled(bool)"}
+{"a":"7100032140","t":"plate","c":"mg1407::Scene::GetDbpRelayReceiveMoveSpeed()"}
+{"a":"7100032150","t":"plate","c":"mg1407::Scene::GetDbpReceiveWait()"}
+{"a":"7100032160","t":"plate","c":"mg1407::Scene::GetDbpReceiveAcceptTime()"}
+{"a":"7100032170","t":"plate","c":"actor::Velocity::ResetValue()"}
+{"a":"7100032180","t":"plate","c":"mg1407::GetQuatFromDegRot(float const&, float const&, float const&)"}
+{"a":"7100032190","t":"plate","c":"bex::ComFxTrigger::SetEnum(nn::util::basic_string_view<char, std::char_traits<char> > const&, nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000321a0","t":"plate","c":"actor::ComActor::SetInputControlEnabled(bool)"}
+{"a":"71000321b0","t":"plate","c":"actor::ComActorPad::SetOverlayHold(unsigned int)"}
+{"a":"71000321c0","t":"plate","c":"long std::uniform_int_distribution<long>::TEMPNAMEPLACEHOLDERVALUE(ca::kb::MiniRand&, std::uniform_int_distribution<long>::param_type const&)"}
+{"a":"71000321d0","t":"plate","c":"void std::vector<std::vector<int, std::allocator<int> >, bex::HeapModule::Allocator_vector<std::vector<int, std::allocator<int> > > >::__push_back_slow_path<std::vector<int, std::allocator<int> > const&>(std::vector<int, std::allocator<int> > const&)"}
+{"a":"71000321e0","t":"plate","c":"nn::bezel::WeakHandle<ca::ui::CaComUiUserName> nn::bezel::Entity::AddComponent<ca::ui::CaComUiUserName, , (void*)0>()"}
+{"a":"71000321f0","t":"plate","c":"ca::ui::CaComUiUserName::SetPlayer(bex::PlayerID, bool)"}
+{"a":"7100032200","t":"plate","c":"ca::ui::CaComUiUserName::AttachPlayer(ca::ui::CaComUiUserName::ATTACH_TYPE, nn::bezel::HandlePtr<nn::bezel::Entity> const&, float)"}
+{"a":"7100032210","t":"plate","c":"bq::ComMatter::GetActor()"}
+{"a":"7100032220","t":"plate","c":"actor::ComActor::ExistAction(actor::ActorHashedString const&) const"}
+{"a":"7100032230","t":"plate","c":"actor::ComActor::EraseAction(actor::ActorHashedString const&)"}
+{"a":"7100032240","t":"plate","c":"actor::ComActorMotion::RemoveAnimation(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100032250","t":"plate","c":"actor::ComActor::SetScale(nn::util::Vector3f const&)"}
+{"a":"7100032260","t":"plate","c":"actor::ComActor::RegisterAction(actor::ActorHashedString const&, std::function<actor::ActionStatus (actor::ActionContext const&)> const&)"}
+{"a":"7100032270","t":"plate","c":"nn::bezel::WeakHandle<mg1407::Mg1407Player::ComDiveParam> nn::bezel::Entity::AddComponent<mg1407::Mg1407Player::ComDiveParam, mg1407::Mg1407Player*, (void*)0>(mg1407::Mg1407Player*&&)"}
+{"a":"7100032280","t":"plate","c":"std::bad_array_new_length::bad_array_new_length()"}
+{"a":"7100032290","t":"plate","c":"ca::kb::MiniRand::Rand()"}
+{"a":"71000322a0","t":"plate","c":"ca::ui::CaComUiUserName::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"71000322b0","t":"plate","c":"mg1407::Mg1407Player::~Mg1407Player()"}
+{"a":"71000322c0","t":"plate","c":"actor::ComActor::SetActionName(actor::ActorHashedString const&, bool)"}
+{"a":"71000322d0","t":"plate","c":"actor::ComActor::GetMotion()"}
+{"a":"71000322e0","t":"plate","c":"actor::ComActor::MoveLeverDirection(float)"}
+{"a":"71000322f0","t":"plate","c":"nn::bezel::WeakHandle<mg1407::Mg1407Player::ComDiveParam> bex::ComponentUtil::SafeCreate<mg1407::Mg1407Player::ComDiveParam, nn::bezel::HandlePtr<nn::bezel::Entity> const&, mg1407::Mg1407Player*>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, mg1407::Mg1407Player*&&)"}
+{"a":"7100032300","t":"plate","c":"nn::bezel::HandleSource<nn::bezel::Component>::Reset(nn::bezel::Component*)"}
+{"a":"7100032310","t":"plate","c":"nn::os::WaitLightEvent(nn::os::LightEventType*)"}
+{"a":"7100032320","t":"plate","c":"nn::os::SignalLightEvent(nn::os::LightEventType*)"}
+{"a":"7100032330","t":"plate","c":"mg1407::Mg1407Player::ComDiveParam::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100032340","t":"plate","c":"actor::ComActor::SetLeverVelocity(nn::util::Vector3f const&)"}
+{"a":"7100032350","t":"plate","c":"nn::bezel::detail::RcArena::Reserve()"}
+{"a":"7100032360","t":"plate","c":"mg1407::Mg1407Sequence::GetRank()"}
+{"a":"7100032370","t":"plate","c":"bex::ComHeading::SetTargetLookAtCamera(nn::bezel::WeakHandle<nn::bezel::Camera> const&)"}
+{"a":"7100032380","t":"plate","c":"ca::ui::CaComUiUserName::In()"}
+{"a":"7100032390","t":"plate","c":"ca::ui::CaComUiUserName::Out()"}
+{"a":"71000323a0","t":"plate","c":"mg1407::Scene::IsDbpComMiss()"}
+{"a":"71000323b0","t":"plate","c":"mg1407::Mg1407PlayerManager::Mg1407PlayerManager()"}
+{"a":"71000323c0","t":"plate","c":"mg1407::Scene::Scene()"}
+{"a":"71000323d0","t":"plate","c":"ca::kbm::MinigameScene::getStaticTypeinfo()"}
+{"a":"71000323e0","t":"plate","c":"bex::SceneParamBase::getStaticTypeinfo()"}
+{"a":"71000323f0","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Type const&, int, int, int)"}
+{"a":"7100032400","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Value const*, unsigned int, unsigned char)"}
+{"a":"7100032410","t":"plate","c":"ca::kbm::MinigameScene::MinigameScene()"}
+{"a":"7100032420","t":"plate","c":"bq::CharacterDataModule::LoadSceneNonPlayerCharacter(bq::NonPlayerCharacterID, bool, bool)"}
+{"a":"7100032430","t":"plate","c":"ca::kbm::MinigameScene::~MinigameScene()"}
+{"a":"7100032440","t":"plate","c":"mg1407::Scene::~Scene()"}
+{"a":"7100032450","t":"plate","c":"mg1407::Mg1407Sequence::Mg1407Sequence()"}
+{"a":"7100032460","t":"plate","c":"mg1407::Mg1407Sequence::Setup()"}
+{"a":"7100032470","t":"plate","c":"ca::kbm::MinigameScene::IsSequenceFirst() const"}
+{"a":"7100032480","t":"plate","c":"mg1407::Mg1407Sequence::Initialize()"}
+{"a":"7100032490","t":"plate","c":"mg1407::Mg1407Sequence::StartOpeningDemo()"}
+{"a":"71000324a0","t":"plate","c":"mg1407::Mg1407Sequence::InstInit()"}
+{"a":"71000324b0","t":"plate","c":"mg1407::Mg1407Sequence::DoGameInstInit()"}
+{"a":"71000324c0","t":"plate","c":"mg1407::Mg1407Sequence::IsSequenceEnd() const"}
+{"a":"71000324d0","t":"plate","c":"mg1407::Mg1407Sequence::SkipOpeningDemo()"}
+{"a":"71000324e0","t":"plate","c":"mg1407::Mg1407Sequence::PreStartTelop()"}
+{"a":"71000324f0","t":"plate","c":"mg1407::Mg1407Sequence::StartGame()"}
+{"a":"7100032500","t":"plate","c":"mg1407::Mg1407Sequence::StartFinish()"}
+{"a":"7100032510","t":"plate","c":"mg1407::Mg1407Sequence::StartEndingDemo()"}
+{"a":"7100032520","t":"plate","c":"mg1407::Mg1407Sequence::GetScore()"}
+{"a":"7100032530","t":"plate","c":"ca::kb::WorkArea::SetMinigameClearScore(int)"}
+{"a":"7100032540","t":"plate","c":"ca::kb::MgRankData::GetRank(int)"}
+{"a":"7100032550","t":"plate","c":"ca::kb::WorkArea::SetMinigameClearGrade(ca::kb::GameClearGrade, bool)"}
+{"a":"7100032560","t":"plate","c":"mg1407::Scene::DisableOpeningSkip()"}
+{"a":"7100032570","t":"plate","c":"bq::MinigameScene::SetGameOpeningSkipEnd()"}
+{"a":"7100032580","t":"plate","c":"mg1407::Scene::GetDbpSizeDelay(mg1407::BALL_SIZE, mg1407::BALL_SIZE)"}
+{"a":"7100032590","t":"plate","c":"mg1407::Scene::GetDbpPostBallSize(mg1407::BALL_SIZE)"}
+{"a":"71000325a0","t":"plate","c":"mg1407::Scene::GetDbpRoundBallNum(int)"}
+{"a":"71000325b0","t":"plate","c":"mg1407::Scene::GetDbpConsecutiveMin(mg1407::BALL_SIZE)"}
+{"a":"71000325c0","t":"plate","c":"mg1407::Scene::GetDbpConsecutiveMax(mg1407::BALL_SIZE)"}
+{"a":"71000325d0","t":"plate","c":"mg1407::Scene::GetDbpShootBallSpan(int)"}
+{"a":"71000325e0","t":"plate","c":"mg1407::Scene::GetDbpPreSpecialBallWait()"}
+{"a":"71000325f0","t":"plate","c":"mg1407::Scene::GetDbpPostSpecialBallWait()"}
+{"a":"7100032600","t":"plate","c":"mg1407::Scene::GetDbpSpecialBallSize()"}
+{"a":"7100032610","t":"plate","c":"mg1407::Scene::GetDbpSpecialBallNum(int)"}
+{"a":"7100032620","t":"plate","c":"mg1407::Scene::GetDbpGameTime()"}
+{"a":"7100032630","t":"plate","c":"mg1407::Mg1407Sequence::~Mg1407Sequence()"}
+{"a":"7100032640","t":"plate","c":"mg1407::Mg1407Sequence::Impl::Setup()"}
+{"a":"7100032650","t":"plate","c":"nn::bezel::WeakHandle<ca::kb::ui::UiMgResult> nn::bezel::Entity::AddComponent<ca::kb::ui::UiMgResult, bq::MinigameID, (void*)0>(bq::MinigameID&&)"}
+{"a":"7100032660","t":"plate","c":"nn::bezel::WeakHandle<ca::kb::ui::UiMgScoreRank> nn::bezel::Entity::AddComponent<ca::kb::ui::UiMgScoreRank, bq::MinigameID, (void*)0>(bq::MinigameID&&)"}
+{"a":"7100032670","t":"plate","c":"ca::kb::ui::UiMgScoreRank::SetPlace(bq::LytPlace)"}
+{"a":"7100032680","t":"plate","c":"ca::kb::ui::UiMgScoreRank::SetRecord(int)"}
+{"a":"7100032690","t":"plate","c":"mg1407::Mg1407EventManager::Initialize()"}
+{"a":"71000326a0","t":"plate","c":"mg1407::Mg1407Sequence::Impl::StartGame()"}
+{"a":"71000326b0","t":"plate","c":"ca::kb::ui::UiMgScoreRank::SetScore(int)"}
+{"a":"71000326c0","t":"plate","c":"ca::kb::ui::UiMgScoreRank::In()"}
+{"a":"71000326d0","t":"plate","c":"mg1407::Mg1407Sequence::Impl::~Impl()"}
+{"a":"71000326e0","t":"plate","c":"mg1407::Mg1407Sequence::Impl::on_ending_demo()"}
+{"a":"71000326f0","t":"plate","c":"mg1407::Mg1407Sequence::Impl::on_opening_demo()"}
+{"a":"7100032700","t":"plate","c":"mg1407::Mg1407Sequence::Impl::on_game()"}
+{"a":"7100032710","t":"plate","c":"bq::MgWipeModule::IsPlayingFadeAnim()"}
+{"a":"7100032720","t":"plate","c":"bq::MgWipeModule::FadeOut(bq::WipeModule::WipeType, float)"}
+{"a":"7100032730","t":"plate","c":"bq::WipeModule::GetLastUsedWipeType()"}
+{"a":"7100032740","t":"plate","c":"bq::MgWipeModule::FadeIn(bq::WipeModule::WipeType, float)"}
+{"a":"7100032750","t":"plate","c":"bex::Fiber::Sleep(float)"}
+{"a":"7100032760","t":"plate","c":"bq::MGSound::TryStartWhistle(bq::MGSound::WHISTLE_TYPE)"}
+{"a":"7100032770","t":"plate","c":"mg1407::Mg1407EventManager::Start()"}
+{"a":"7100032780","t":"plate","c":"ca::kb::WorkArea::IsFinishedMgClearGradeSync() const"}
+{"a":"7100032790","t":"plate","c":"ca::kb::ui::UiMgResult::SetScore(int)"}
+{"a":"71000327a0","t":"plate","c":"ca::kb::ui::UiMgResult::SetPosType(ca::kb::ui::UiMgResult::POS_TYPE)"}
+{"a":"71000327b0","t":"plate","c":"ca::kb::ui::UiMgResult::In()"}
+{"a":"71000327c0","t":"plate","c":"ca::kb::ui::UiMgResult::IsEnd()"}
+{"a":"71000327d0","t":"plate","c":"ca::kb::ui::UiMgResult::Out()"}
+{"a":"71000327e0","t":"plate","c":"ca::kb::ui::UiMgScoreRank::Out()"}
+{"a":"71000327f0","t":"plate","c":"ca::kbm::TryResultGradeJingle_Start()"}
+{"a":"7100032800","t":"plate","c":"ca::kb::MiniRand::RandRange(int, int)"}
+{"a":"7100032810","t":"plate","c":"mg1407::Mg1407EventManager::Shot()"}
+{"a":"7100032820","t":"plate","c":"ca::kb::ui::UiMgResult::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MinigameID)"}
+{"a":"7100032830","t":"plate","c":"ca::kb::ui::UiMgScoreRank::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MinigameID)"}
+{"a":"7100032860","t":"plate","c":"nn::bezel::Entity::HasTag(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71000647c5","t":"plate","c":"typeinfo name for std::length_error"}
+{"a":"71000647d6","t":"plate","c":"typeinfo name for std::logic_error"}
+{"a":"71000647e6","t":"plate","c":"typeinfo name for std::exception"}
+{"a":"71000647f3","t":"plate","c":"typeinfo name for std::out_of_range"}
+{"a":"7100064824","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::Create()::npc_tbl"}
+{"a":"710006483c","t":"plate","c":"mg1407::Mg1407AudienceManager::Impl::Create()::color_x_tbl"}
+{"a":"71000648a8","t":"plate","c":"actor::Constant::ActionName_Idle"}
+{"a":"71000648b8","t":"plate","c":"typeinfo name for std::bad_array_new_length"}
+{"a":"71000648d1","t":"plate","c":"typeinfo name for std::bad_alloc"}
+{"a":"71000648f0","t":"plate","c":"actor::Constant::ActionName_Win00"}
+{"a":"71000648f8","t":"plate","c":"actor::Constant::ActionName_Lose"}
+{"a":"710006f498","t":"plate","c":"vtable for mg1407::Mg1407BallManager"}
+{"a":"710006f500","t":"plate","c":"vtable for mg1407::Mg1407BallManager::Impl"}
+{"a":"710006f540","t":"plate","c":"typeinfo for std::exception"}
+{"a":"710006f550","t":"plate","c":"typeinfo for std::logic_error"}
+{"a":"710006f568","t":"plate","c":"typeinfo for std::length_error"}
+{"a":"710006f580","t":"plate","c":"vtable for std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#1}>, void (ca::kb::RPCArgumentsRecvPack&)>"}
+{"a":"710006f5c8","t":"plate","c":"vtable for std::__function::__func<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}, std::allocator<mg1407::Mg1407BallManager::Impl::Impl()::{lambda(ca::kb::RPCArgumentsRecvPack&)#2}>, void (ca::kb::RPCArgumentsRecvPack&)>"}
+{"a":"710006f610","t":"plate","c":"vtable for mg1407::Mg1407Ball"}
+{"a":"710006f638","t":"plate","c":"typeinfo for std::out_of_range"}
+{"a":"710006f650","t":"plate","c":"vtable for mg1407::Mg1407CameraManager"}
+{"a":"710006f6b8","t":"plate","c":"vtable for mg1407::Mg1407CameraManager::Impl"}
+{"a":"710006f6f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006f728","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::g_TypeDesc"}
+{"a":"710006f758","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006f788","t":"plate","c":"vtable for nn::bezel::StringViewHashPair"}
+{"a":"710006f7b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::g_TypeDesc"}
+{"a":"710006f7e0","t":"plate","c":"vtable for mg1407::Mg1407Param"}
+{"a":"710006f800","t":"plate","c":"vtable for mg1407::Mg1407Param::Impl"}
+{"a":"710006f820","t":"plate","c":"vtable for mg1407::Mg1407LayoutManager"}
+{"a":"710006f888","t":"plate","c":"vtable for mg1407::Mg1407LayoutManager::Impl"}
+{"a":"710006f8d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiTimer, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006f900","t":"plate","c":"vtable for mg1407::Mg1407PointLayout"}
+{"a":"710006f920","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiScore, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006f950","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComUiMGTelop, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006f980","t":"plate","c":"vtable for mg1407::Mg1407MapManager"}
+{"a":"710006f9e8","t":"plate","c":"vtable for mg1407::Mg1407MapManager::Impl"}
+{"a":"710006fa28","t":"plate","c":"vtable for std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"710006fa78","t":"plate","c":"VTT for std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"710006fa98","t":"plate","c":"construction vtable for std::ostream-in-std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"710006fae8","t":"plate","c":"vtable for std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"710006fb68","t":"plate","c":"vtable for mg1407::Mg1407Transform"}
+{"a":"710006fb88","t":"plate","c":"vtable for mg1407::Mg1407Server"}
+{"a":"710006fbb0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006fbe0","t":"plate","c":"vtable for mg1407::Mg1407Signboard"}
+{"a":"710006fc00","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006fc30","t":"plate","c":"vtable for mg1407::Mg1407Model"}
+{"a":"710006fc58","t":"plate","c":"vtable for mg1407::Mg1407Model::Impl"}
+{"a":"710006fc78","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006fca8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006fcd8","t":"plate","c":"vtable for mg1407::Mg1407AudienceManager"}
+{"a":"710006fd40","t":"plate","c":"vtable for mg1407::Mg1407AudienceManager::Impl"}
+{"a":"710006fd80","t":"plate","c":"vtable for mg1407::Mg1407AudienceInstance"}
+{"a":"710006fda8","t":"plate","c":"vtable for mg1407::Mg1407PlayerManager"}
+{"a":"710006fe10","t":"plate","c":"vtable for mg1407::Mg1407PlayerManager::Impl"}
+{"a":"710006fe50","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg1407::Mg1407Player::ComDiveParam, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006fe80","t":"plate","c":"typeinfo for std::bad_alloc"}
+{"a":"710006fe98","t":"plate","c":"typeinfo for std::bad_array_new_length"}
+{"a":"710006feb0","t":"plate","c":"vtable for mg1407::Mg1407Player"}
+{"a":"710006fed8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::ui::CaComUiUserName, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710006ff08","t":"plate","c":"actor::Constant::AnimationName_Idle"}
+{"a":"710006ff28","t":"plate","c":"vtable for std::__function::__func<actor::ActionStatus (*)(actor::ActionContext const&) noexcept, std::allocator<actor::ActionStatus (*)(actor::ActionContext const&) noexcept>, actor::ActionStatus (actor::ActionContext const&)>"}
+{"a":"710006ff70","t":"plate","c":"vtable for mg1407::Mg1407Player::ComDiveParam"}
+{"a":"7100070040","t":"plate","c":"vtable for mg1407::Scene"}
+{"a":"7100070390","t":"plate","c":"vtable for mg1407::Scene::Params"}
+{"a":"71000703c0","t":"plate","c":"vtable for mg1407::Mg1407Sequence"}
+{"a":"71000703e0","t":"plate","c":"vtable for mg1407::Mg1407Sequence::Impl"}
+{"a":"7100070420","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgScoreRank, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100070450","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<ca::kb::ui::UiMgResult, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100070480","t":"plate","c":"vtable for mg1407::Mg1407EventManager"}
+{"a":"7100074008","t":"plate","c":"mg1407::just_height"}
+{"a":"7100074018","t":"plate","c":"mg1407::Mg1407Server::CreateServer()::pick_ball_name"}
+{"a":"7100074030","t":"plate","c":"mg1407::Mg1407Player::Setup()::mot_name_tbl"}
+{"a":"7100074060","t":"plate","c":"mg1407::Scene::Symbol"}
+{"a":"7100074068","t":"plate","c":"mg1407::Scene::Params::Symbol"}
+{"a":"71000741d0","t":"plate","c":"nn::bezel::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000741d8","t":"plate","c":"guard variable for nn::bezel::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000741e0","t":"plate","c":"nn::bezel::ComParticleFx2Emitter::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000741e8","t":"plate","c":"guard variable for nn::bezel::ComParticleFx2Emitter::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000741f0","t":"plate","c":"nn::bezel::NetworkNplnModule::s_DetailModuleEntryInvoker"}
+{"a":"71000741f8","t":"plate","c":"guard variable for nn::bezel::NetworkNplnModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074200","t":"plate","c":"bex::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074208","t":"plate","c":"guard variable for bex::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074210","t":"plate","c":"nn::bezel::ComAttachment::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074218","t":"plate","c":"guard variable for nn::bezel::ComAttachment::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074220","t":"plate","c":"nn::bezel::ComHitCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074228","t":"plate","c":"guard variable for nn::bezel::ComHitCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074230","t":"plate","c":"nn::bezel::AudioModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074238","t":"plate","c":"guard variable for nn::bezel::AudioModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074240","t":"plate","c":"bex::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074248","t":"plate","c":"guard variable for bex::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074250","t":"plate","c":"bex::SaveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074258","t":"plate","c":"guard variable for bex::SaveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074260","t":"plate","c":"bq::ObjectList::s_DetailModuleEntryInvoker"}
+{"a":"7100074268","t":"plate","c":"guard variable for bq::ObjectList::s_DetailModuleEntryInvoker"}
+{"a":"7100074270","t":"plate","c":"nn::bezel::CoreSystem::s_DetailModuleEntryInvoker"}
+{"a":"7100074278","t":"plate","c":"guard variable for nn::bezel::CoreSystem::s_DetailModuleEntryInvoker"}
+{"a":"7100074280","t":"plate","c":"bex::HeapModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074288","t":"plate","c":"guard variable for bex::HeapModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074290","t":"plate","c":"nn::bezel::AccountModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074298","t":"plate","c":"guard variable for nn::bezel::AccountModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742a0","t":"plate","c":"nn::bezel::AnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742a8","t":"plate","c":"guard variable for nn::bezel::AnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742b0","t":"plate","c":"nn::bezel::AssetModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742b8","t":"plate","c":"guard variable for nn::bezel::AssetModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742c0","t":"plate","c":"nn::bezel::ClassicMapModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742c8","t":"plate","c":"guard variable for nn::bezel::ClassicMapModule::s_DetailModuleEntryInvoker"}
+{"a":"71000742d0","t":"plate","c":"nn::bezel::ComCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000742d8","t":"plate","c":"guard variable for nn::bezel::ComCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000742e0","t":"plate","c":"nn::bezel::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000742e8","t":"plate","c":"guard variable for nn::bezel::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000742f0","t":"plate","c":"nn::bezel::ComModelInstance::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000742f8","t":"plate","c":"guard variable for nn::bezel::ComModelInstance::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074300","t":"plate","c":"nn::bezel::ComTransform2d::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074308","t":"plate","c":"guard variable for nn::bezel::ComTransform2d::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074310","t":"plate","c":"nn::bezel::DefaultViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074318","t":"plate","c":"guard variable for nn::bezel::DefaultViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074320","t":"plate","c":"nn::bezel::DevConnectionModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074328","t":"plate","c":"guard variable for nn::bezel::DevConnectionModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074330","t":"plate","c":"nn::bezel::DevConnectorForToolsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074338","t":"plate","c":"guard variable for nn::bezel::DevConnectorForToolsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074340","t":"plate","c":"nn::bezel::DevHtcsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074348","t":"plate","c":"guard variable for nn::bezel::DevHtcsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074350","t":"plate","c":"nn::bezel::DevInterfaceModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074358","t":"plate","c":"guard variable for nn::bezel::DevInterfaceModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074360","t":"plate","c":"nn::bezel::DevIpcModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074368","t":"plate","c":"guard variable for nn::bezel::DevIpcModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074370","t":"plate","c":"nn::bezel::DevPrimitiveRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074378","t":"plate","c":"guard variable for nn::bezel::DevPrimitiveRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074380","t":"plate","c":"nn::bezel::DevVideoRecorderModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074388","t":"plate","c":"guard variable for nn::bezel::DevVideoRecorderModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074390","t":"plate","c":"nn::bezel::EntityDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074398","t":"plate","c":"guard variable for nn::bezel::EntityDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743a0","t":"plate","c":"nn::bezel::EntityModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743a8","t":"plate","c":"guard variable for nn::bezel::EntityModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743b0","t":"plate","c":"nn::bezel::ErrorViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743b8","t":"plate","c":"guard variable for nn::bezel::ErrorViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743c0","t":"plate","c":"nn::bezel::FileModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743c8","t":"plate","c":"guard variable for nn::bezel::FileModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743d0","t":"plate","c":"nn::bezel::FontModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743d8","t":"plate","c":"guard variable for nn::bezel::FontModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743e0","t":"plate","c":"nn::bezel::GraphicsCoreModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743e8","t":"plate","c":"guard variable for nn::bezel::GraphicsCoreModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743f0","t":"plate","c":"nn::bezel::GuiLayoutModule::s_DetailModuleEntryInvoker"}
+{"a":"71000743f8","t":"plate","c":"guard variable for nn::bezel::GuiLayoutModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074400","t":"plate","c":"nn::bezel::HidModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074408","t":"plate","c":"guard variable for nn::bezel::HidModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074410","t":"plate","c":"nn::bezel::ImguiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074418","t":"plate","c":"guard variable for nn::bezel::ImguiModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074420","t":"plate","c":"nn::bezel::JsonModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074428","t":"plate","c":"guard variable for nn::bezel::JsonModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074430","t":"plate","c":"nn::bezel::LineRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074438","t":"plate","c":"guard variable for nn::bezel::LineRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074440","t":"plate","c":"nn::bezel::LocalizeMessageModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074448","t":"plate","c":"guard variable for nn::bezel::LocalizeMessageModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074450","t":"plate","c":"nn::bezel::MemoryModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074458","t":"plate","c":"guard variable for nn::bezel::MemoryModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074460","t":"plate","c":"nn::bezel::ModelModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074468","t":"plate","c":"guard variable for nn::bezel::ModelModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074470","t":"plate","c":"nn::bezel::MovieModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074478","t":"plate","c":"guard variable for nn::bezel::MovieModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074480","t":"plate","c":"nn::bezel::MyPageAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074488","t":"plate","c":"guard variable for nn::bezel::MyPageAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074490","t":"plate","c":"nn::bezel::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074498","t":"plate","c":"guard variable for nn::bezel::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744a0","t":"plate","c":"nn::bezel::NetworkUtilModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744a8","t":"plate","c":"guard variable for nn::bezel::NetworkUtilModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744b0","t":"plate","c":"nn::bezel::ParticleFx2Module::s_DetailModuleEntryInvoker"}
+{"a":"71000744b8","t":"plate","c":"guard variable for nn::bezel::ParticleFx2Module::s_DetailModuleEntryInvoker"}
+{"a":"71000744c0","t":"plate","c":"nn::bezel::PerfDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744c8","t":"plate","c":"guard variable for nn::bezel::PerfDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744d0","t":"plate","c":"nn::bezel::PerfModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744d8","t":"plate","c":"guard variable for nn::bezel::PerfModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744e0","t":"plate","c":"nn::bezel::PhysicsModelModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744e8","t":"plate","c":"guard variable for nn::bezel::PhysicsModelModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744f0","t":"plate","c":"nn::bezel::PrefabModule::s_DetailModuleEntryInvoker"}
+{"a":"71000744f8","t":"plate","c":"guard variable for nn::bezel::PrefabModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074500","t":"plate","c":"nn::bezel::ProfanityFilterModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074508","t":"plate","c":"guard variable for nn::bezel::ProfanityFilterModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074510","t":"plate","c":"nn::bezel::RenderPipelineModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074518","t":"plate","c":"guard variable for nn::bezel::RenderPipelineModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074520","t":"plate","c":"nn::bezel::RttsAssetModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074528","t":"plate","c":"guard variable for nn::bezel::RttsAssetModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074530","t":"plate","c":"nn::bezel::RttsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074538","t":"plate","c":"guard variable for nn::bezel::RttsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074540","t":"plate","c":"nn::bezel::SaveDataModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074548","t":"plate","c":"guard variable for nn::bezel::SaveDataModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074550","t":"plate","c":"nn::bezel::ScriptModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074558","t":"plate","c":"guard variable for nn::bezel::ScriptModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074560","t":"plate","c":"nn::bezel::SoftwareKeyboardModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074568","t":"plate","c":"guard variable for nn::bezel::SoftwareKeyboardModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074570","t":"plate","c":"nn::bezel::WebAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074578","t":"plate","c":"guard variable for nn::bezel::WebAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074580","t":"plate","c":"bex::BexAnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074588","t":"plate","c":"guard variable for bex::BexAnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074590","t":"plate","c":"bex::ComAutomaticTeleport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074598","t":"plate","c":"guard variable for bex::ComAutomaticTeleport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745a0","t":"plate","c":"bex::ComEffect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745a8","t":"plate","c":"guard variable for bex::ComEffect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745b0","t":"plate","c":"bex::ComFiber::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745b8","t":"plate","c":"guard variable for bex::ComFiber::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745c0","t":"plate","c":"bex::ComFiberLite::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745c8","t":"plate","c":"guard variable for bex::ComFiberLite::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745d0","t":"plate","c":"bex::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745d8","t":"plate","c":"guard variable for bex::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745e0","t":"plate","c":"bex::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745e8","t":"plate","c":"guard variable for bex::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745f0","t":"plate","c":"bex::ComHeading::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000745f8","t":"plate","c":"guard variable for bex::ComHeading::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074600","t":"plate","c":"bex::DllModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074608","t":"plate","c":"guard variable for bex::DllModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074610","t":"plate","c":"bex::EffectModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074618","t":"plate","c":"guard variable for bex::EffectModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074620","t":"plate","c":"bex::FiberModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074628","t":"plate","c":"guard variable for bex::FiberModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074630","t":"plate","c":"bex::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074638","t":"plate","c":"guard variable for bex::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074640","t":"plate","c":"bex::InputModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074648","t":"plate","c":"guard variable for bex::InputModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074650","t":"plate","c":"bex::MainModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074658","t":"plate","c":"guard variable for bex::MainModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074660","t":"plate","c":"bex::PrimitiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074668","t":"plate","c":"guard variable for bex::PrimitiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074670","t":"plate","c":"bex::RandModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074678","t":"plate","c":"guard variable for bex::RandModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074680","t":"plate","c":"bex::SceneModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074688","t":"plate","c":"guard variable for bex::SceneModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074690","t":"plate","c":"bex::ToolModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074698","t":"plate","c":"guard variable for bex::ToolModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746a0","t":"plate","c":"bex::UiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746a8","t":"plate","c":"guard variable for bex::UiModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746b0","t":"plate","c":"bex::VibrationModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746b8","t":"plate","c":"guard variable for bex::VibrationModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746c0","t":"plate","c":"bex::gfx::RendererModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746c8","t":"plate","c":"guard variable for bex::gfx::RendererModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746d0","t":"plate","c":"bex::sound::ComActor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000746d8","t":"plate","c":"guard variable for bex::sound::ComActor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000746e0","t":"plate","c":"bex::sound::SoundModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746e8","t":"plate","c":"guard variable for bex::sound::SoundModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746f0","t":"plate","c":"actor::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"71000746f8","t":"plate","c":"guard variable for actor::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074700","t":"plate","c":"actor::ComActorSixAxisSensor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074708","t":"plate","c":"guard variable for actor::ComActorSixAxisSensor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074710","t":"plate","c":"actor::ComInvincibleExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074718","t":"plate","c":"guard variable for actor::ComInvincibleExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074720","t":"plate","c":"actor::ComStarExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074728","t":"plate","c":"guard variable for actor::ComStarExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074730","t":"plate","c":"actor::ComWetExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074738","t":"plate","c":"guard variable for actor::ComWetExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074740","t":"plate","c":"actor::RandomModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074748","t":"plate","c":"guard variable for actor::RandomModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074750","t":"plate","c":"bq::AccountMgrModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074758","t":"plate","c":"guard variable for bq::AccountMgrModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074760","t":"plate","c":"bq::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074768","t":"plate","c":"guard variable for bq::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074770","t":"plate","c":"bq::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074778","t":"plate","c":"guard variable for bq::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074780","t":"plate","c":"bq::CharacterDataModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074788","t":"plate","c":"guard variable for bq::CharacterDataModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074790","t":"plate","c":"bq::ComChainsOfWanwan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074798","t":"plate","c":"guard variable for bq::ComChainsOfWanwan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747a0","t":"plate","c":"bq::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747a8","t":"plate","c":"guard variable for bq::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747b0","t":"plate","c":"bq::ComModelInstanceCulling::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747b8","t":"plate","c":"guard variable for bq::ComModelInstanceCulling::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747c0","t":"plate","c":"bq::ComSplitScreen::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747c8","t":"plate","c":"guard variable for bq::ComSplitScreen::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747d0","t":"plate","c":"bq::ComUiCountUpTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747d8","t":"plate","c":"guard variable for bq::ComUiCountUpTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747e0","t":"plate","c":"bq::ComUiCourseRecord::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747e8","t":"plate","c":"guard variable for bq::ComUiCourseRecord::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747f0","t":"plate","c":"bq::ComUiDialogBox::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000747f8","t":"plate","c":"guard variable for bq::ComUiDialogBox::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074800","t":"plate","c":"bq::ComUiError::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074808","t":"plate","c":"guard variable for bq::ComUiError::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074810","t":"plate","c":"bq::ComUiGenericTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074818","t":"plate","c":"guard variable for bq::ComUiGenericTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074820","t":"plate","c":"bq::ComUiGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074828","t":"plate","c":"guard variable for bq::ComUiGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074830","t":"plate","c":"bq::ComUiGuide00::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074838","t":"plate","c":"guard variable for bq::ComUiGuide00::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074840","t":"plate","c":"bq::ComUiGuideBottomRight::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074848","t":"plate","c":"guard variable for bq::ComUiGuideBottomRight::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074850","t":"plate","c":"bq::ComUiGuideFixPlace::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074858","t":"plate","c":"guard variable for bq::ComUiGuideFixPlace::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074860","t":"plate","c":"bq::ComUiGuideSkip::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074868","t":"plate","c":"guard variable for bq::ComUiGuideSkip::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074870","t":"plate","c":"bq::ComUiMGTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074878","t":"plate","c":"guard variable for bq::ComUiMGTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074880","t":"plate","c":"bq::ComUiMessageWindow::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074888","t":"plate","c":"guard variable for bq::ComUiMessageWindow::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074890","t":"plate","c":"bq::ComUiNameStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074898","t":"plate","c":"guard variable for bq::ComUiNameStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748a0","t":"plate","c":"bq::ComUiPersonalTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748a8","t":"plate","c":"guard variable for bq::ComUiPersonalTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748b0","t":"plate","c":"bq::ComUiPopGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748b8","t":"plate","c":"guard variable for bq::ComUiPopGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748c0","t":"plate","c":"bq::ComUiRank::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748c8","t":"plate","c":"guard variable for bq::ComUiRank::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748d0","t":"plate","c":"bq::ComUiReentryTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748d8","t":"plate","c":"guard variable for bq::ComUiReentryTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748e0","t":"plate","c":"bq::ComUiScore::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748e8","t":"plate","c":"guard variable for bq::ComUiScore::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748f0","t":"plate","c":"bq::ComUiSpeed::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"71000748f8","t":"plate","c":"guard variable for bq::ComUiSpeed::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074900","t":"plate","c":"bq::ComUiStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074908","t":"plate","c":"guard variable for bq::ComUiStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074910","t":"plate","c":"bq::ComUiTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074918","t":"plate","c":"guard variable for bq::ComUiTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074920","t":"plate","c":"bq::ComUiUnlock::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074928","t":"plate","c":"guard variable for bq::ComUiUnlock::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074930","t":"plate","c":"bq::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074938","t":"plate","c":"guard variable for bq::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074940","t":"plate","c":"bq::GraphicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074948","t":"plate","c":"guard variable for bq::GraphicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074950","t":"plate","c":"bq::MGSystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074958","t":"plate","c":"guard variable for bq::MGSystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074960","t":"plate","c":"bq::PlayReportModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074968","t":"plate","c":"guard variable for bq::PlayReportModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074970","t":"plate","c":"bq::SystemCallBackModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074978","t":"plate","c":"guard variable for bq::SystemCallBackModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074980","t":"plate","c":"bq::SystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074988","t":"plate","c":"guard variable for bq::SystemModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074990","t":"plate","c":"bq::UiSharedTextureModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074998","t":"plate","c":"guard variable for bq::UiSharedTextureModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749a0","t":"plate","c":"bq::WipeModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749a8","t":"plate","c":"guard variable for bq::WipeModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749b0","t":"plate","c":"bq::WorkModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749b8","t":"plate","c":"guard variable for bq::WorkModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749c0","t":"plate","c":"bq::reward::RewardModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749c8","t":"plate","c":"guard variable for bq::reward::RewardModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749d0","t":"plate","c":"bq::achievement::AchievementModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749d8","t":"plate","c":"guard variable for bq::achievement::AchievementModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749e0","t":"plate","c":"bq::save::SaveDataMgr::s_DetailModuleEntryInvoker"}
+{"a":"71000749e8","t":"plate","c":"guard variable for bq::save::SaveDataMgr::s_DetailModuleEntryInvoker"}
+{"a":"71000749f0","t":"plate","c":"bq::flag::GameFlagModule::s_DetailModuleEntryInvoker"}
+{"a":"71000749f8","t":"plate","c":"guard variable for bq::flag::GameFlagModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074a00","t":"plate","c":"nn::bezel::ComGuiLayout::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a08","t":"plate","c":"guard variable for nn::bezel::ComGuiLayout::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a10","t":"plate","c":"nn::bezel::ComModel::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a18","t":"plate","c":"guard variable for nn::bezel::ComModel::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a20","t":"plate","c":"nn::bezel::PhysicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074a28","t":"plate","c":"guard variable for nn::bezel::PhysicsModule::s_DetailModuleEntryInvoker"}
+{"a":"7100074a30","t":"plate","c":"nn::bezel::ComCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a38","t":"plate","c":"guard variable for nn::bezel::ComCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a40","t":"plate","c":"nn::bezel::ComRigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a48","t":"plate","c":"guard variable for nn::bezel::ComRigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a50","t":"plate","c":"nn::bezel::ComAnimator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a58","t":"plate","c":"guard variable for nn::bezel::ComAnimator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a60","t":"plate","c":"nn::bezel::ComScript::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a68","t":"plate","c":"guard variable for nn::bezel::ComScript::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a70","t":"plate","c":"bq::MGResult::ComMGResultCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a78","t":"plate","c":"guard variable for bq::MGResult::ComMGResultCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a80","t":"plate","c":"bq::MGResult::ComMGResultDice::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a88","t":"plate","c":"guard variable for bq::MGResult::ComMGResultDice::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"7100074a90","t":"plate","c":"mg1407::Mg1407BallManager::Impl::libcanRPCHash_PointReport()::TMP_CANRPC_FUNC_HASH"}
+{"a":"7100074a98","t":"plate","c":"guard variable for mg1407::Mg1407BallManager::Impl::libcanRPCHash_PointReport()::TMP_CANRPC_FUNC_HASH"}
+{"a":"7100074aa0","t":"plate","c":"mg1407::Mg1407BallManager::Impl::libcanRPCHash_BallTouchReport()::TMP_CANRPC_FUNC_HASH"}
+{"a":"7100074aa8","t":"plate","c":"guard variable for mg1407::Mg1407BallManager::Impl::libcanRPCHash_BallTouchReport()::TMP_CANRPC_FUNC_HASH"}
+{"a":"7100074ab0","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407PlayerManager>::m_InstancePtr"}
+{"a":"7100074ab8","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407MapManager>::m_InstancePtr"}
+{"a":"7100074ac0","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407BallManager>::m_InstancePtr"}
+{"a":"7100074ac8","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407LayoutManager>::m_InstancePtr"}
+{"a":"7100074ad0","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407Sequence>::m_InstancePtr"}
+{"a":"7100074ad8","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407CameraManager>::m_InstancePtr"}
+{"a":"7100074ae0","t":"plate","c":"mg1407::Mg1407AudienceData::__ghsalwaysimport_g_Dummy_"}
+{"a":"7100074ae1","t":"plate","c":"mg1407::Mg1407AudienceInstanceData::__ghsalwaysimport_g_Dummy_"}
+{"a":"7100074ae2","t":"plate","c":"mg1407::Mg1407NpcData::__ghsalwaysimport_g_Dummy_"}
+{"a":"7100074ae8","t":"plate","c":"bq::SingletonTemplate<mg1407::Mg1407Param>::m_InstancePtr"}
+{"a":"7100078e40","t":"plate","c":"mg1407::Scene::sm_self_ptr"}
+{"a":"7100078e48","t":"plate","c":"bq::SingletonTemplate<bq::CharacterDataModule>::m_InstancePtr"}
+{"a":"7100078e50","t":"plate","c":"bq::SingletonTemplate<ca::kb::MgRankData>::m_InstancePtr"}
+{"a":"71000793f8","t":"plate","c":"bq::SingletonTemplate<bq::WipeModule>::m_InstancePtr"}
+{"a":"7100079400","t":"plate","c":"bq::SingletonTemplate<bq::MGSound>::m_InstancePtr"}
+{"a":"7100079408","t":"plate","c":"nn::bezel::detail::autogen::s_Initializer_mg1407"}
+{"a":"710007940c","t":"plate","c":"nn::bezel::detail::autogen::s_Initializer_sharedPCH"}
+{"a":"710007a000","t":"plate","c":"nn::bezel::FxTriggerModule::s_IsMainModule"}
+{"a":"710007c000","t":"plate","c":"nn::bezel::NetworkNplnModule::s_IsMainModule"}
+{"a":"710007d000","t":"plate","c":"bex::ArchiveModule::s_IsMainModule"}
+{"a":"710007e000","t":"plate","c":"nn::bezel::AudioModule::s_IsMainModule"}
+{"a":"710007f000","t":"plate","c":"bex::NetworkModule::s_IsMainModule"}
+{"a":"7100080000","t":"plate","c":"bex::SaveModule::s_IsMainModule"}
+{"a":"7100081000","t":"plate","c":"bq::ObjectList::s_IsMainModule"}
+{"a":"7100082000","t":"plate","c":"nn::bezel::CoreSystem::s_IsMainModule"}
+{"a":"7100083000","t":"plate","c":"bex::HeapModule::s_IsMainModule"}
+{"a":"7100084000","t":"plate","c":"nn::bezel::AccountModule::s_IsMainModule"}
+{"a":"7100085000","t":"plate","c":"nn::bezel::AnimationModule::s_IsMainModule"}
+{"a":"7100086000","t":"plate","c":"nn::bezel::AssetModule::s_IsMainModule"}
+{"a":"7100087000","t":"plate","c":"nn::bezel::ClassicMapModule::s_IsMainModule"}
+{"a":"7100088000","t":"plate","c":"nn::bezel::DefaultViewerModule::s_IsMainModule"}
+{"a":"7100089000","t":"plate","c":"nn::bezel::DevConnectionModule::s_IsMainModule"}
+{"a":"710008a000","t":"plate","c":"nn::bezel::DevConnectorForToolsModule::s_IsMainModule"}
+{"a":"710008b000","t":"plate","c":"nn::bezel::DevHtcsModule::s_IsMainModule"}
+{"a":"710008c000","t":"plate","c":"nn::bezel::DevInterfaceModule::s_IsMainModule"}
+{"a":"710008d000","t":"plate","c":"nn::bezel::DevIpcModule::s_IsMainModule"}
+{"a":"710008e000","t":"plate","c":"nn::bezel::DevPrimitiveRendererModule::s_IsMainModule"}
+{"a":"710008f000","t":"plate","c":"nn::bezel::DevVideoRecorderModule::s_IsMainModule"}
+{"a":"7100090000","t":"plate","c":"nn::bezel::EntityDevUiModule::s_IsMainModule"}
+{"a":"7100091000","t":"plate","c":"nn::bezel::EntityModule::s_IsMainModule"}
+{"a":"7100092000","t":"plate","c":"nn::bezel::ErrorViewerModule::s_IsMainModule"}
+{"a":"7100093000","t":"plate","c":"nn::bezel::FileModule::s_IsMainModule"}
+{"a":"7100094000","t":"plate","c":"nn::bezel::FontModule::s_IsMainModule"}
+{"a":"7100095000","t":"plate","c":"nn::bezel::GraphicsCoreModule::s_IsMainModule"}
+{"a":"7100096000","t":"plate","c":"nn::bezel::GuiLayoutModule::s_IsMainModule"}
+{"a":"7100097000","t":"plate","c":"nn::bezel::HidModule::s_IsMainModule"}
+{"a":"7100098000","t":"plate","c":"nn::bezel::ImguiModule::s_IsMainModule"}
+{"a":"7100099000","t":"plate","c":"nn::bezel::JsonModule::s_IsMainModule"}
+{"a":"710009a000","t":"plate","c":"nn::bezel::LineRendererModule::s_IsMainModule"}
+{"a":"710009b000","t":"plate","c":"nn::bezel::LocalizeMessageModule::s_IsMainModule"}
+{"a":"710009c000","t":"plate","c":"nn::bezel::MemoryModule::s_IsMainModule"}
+{"a":"710009d000","t":"plate","c":"nn::bezel::ModelModule::s_IsMainModule"}
+{"a":"710009e000","t":"plate","c":"nn::bezel::MovieModule::s_IsMainModule"}
+{"a":"710009f000","t":"plate","c":"nn::bezel::MyPageAppletModule::s_IsMainModule"}
+{"a":"71000a0000","t":"plate","c":"nn::bezel::NetworkModule::s_IsMainModule"}
+{"a":"71000a1000","t":"plate","c":"nn::bezel::NetworkUtilModule::s_IsMainModule"}
+{"a":"71000a2000","t":"plate","c":"nn::bezel::ParticleFx2Module::s_IsMainModule"}
+{"a":"71000a3000","t":"plate","c":"nn::bezel::PerfDevUiModule::s_IsMainModule"}
+{"a":"71000a4000","t":"plate","c":"nn::bezel::PerfModule::s_IsMainModule"}
+{"a":"71000a5000","t":"plate","c":"nn::bezel::PhysicsModelModule::s_IsMainModule"}
+{"a":"71000a6000","t":"plate","c":"nn::bezel::PrefabModule::s_IsMainModule"}
+{"a":"71000a7000","t":"plate","c":"nn::bezel::ProfanityFilterModule::s_IsMainModule"}
+{"a":"71000a8000","t":"plate","c":"nn::bezel::RenderPipelineModule::s_IsMainModule"}
+{"a":"71000a9000","t":"plate","c":"nn::bezel::RttsAssetModule::s_IsMainModule"}
+{"a":"71000aa000","t":"plate","c":"nn::bezel::RttsModule::s_IsMainModule"}
+{"a":"71000ab000","t":"plate","c":"nn::bezel::SaveDataModule::s_IsMainModule"}
+{"a":"71000ac000","t":"plate","c":"nn::bezel::ScriptModule::s_IsMainModule"}
+{"a":"71000ad000","t":"plate","c":"nn::bezel::SoftwareKeyboardModule::s_IsMainModule"}
+{"a":"71000ae000","t":"plate","c":"nn::bezel::WebAppletModule::s_IsMainModule"}
+{"a":"71000af000","t":"plate","c":"bex::BexAnimationModule::s_IsMainModule"}
+{"a":"71000b0000","t":"plate","c":"bex::DllModule::s_IsMainModule"}
+{"a":"71000b1000","t":"plate","c":"bex::EffectModule::s_IsMainModule"}
+{"a":"71000b2000","t":"plate","c":"bex::FiberModule::s_IsMainModule"}
+{"a":"71000b3000","t":"plate","c":"bex::FxTriggerModule::s_IsMainModule"}
+{"a":"71000b4000","t":"plate","c":"bex::InputModule::s_IsMainModule"}
+{"a":"71000b5000","t":"plate","c":"bex::MainModule::s_IsMainModule"}
+{"a":"71000b6000","t":"plate","c":"bex::PrimitiveModule::s_IsMainModule"}
+{"a":"71000b7000","t":"plate","c":"bex::RandModule::s_IsMainModule"}
+{"a":"71000b8000","t":"plate","c":"bex::SceneModule::s_IsMainModule"}
+{"a":"71000b9000","t":"plate","c":"bex::ToolModule::s_IsMainModule"}
+{"a":"71000ba000","t":"plate","c":"bex::UiModule::s_IsMainModule"}
+{"a":"71000bb000","t":"plate","c":"bex::VibrationModule::s_IsMainModule"}
+{"a":"71000bc000","t":"plate","c":"bex::gfx::RendererModule::s_IsMainModule"}
+{"a":"71000bd000","t":"plate","c":"bex::sound::SoundModule::s_IsMainModule"}
+{"a":"71000be000","t":"plate","c":"actor::ActorModule::s_IsMainModule"}
+{"a":"71000bf000","t":"plate","c":"actor::RandomModule::s_IsMainModule"}
+{"a":"71000c0000","t":"plate","c":"bq::AccountMgrModule::s_IsMainModule"}
+{"a":"71000c1000","t":"plate","c":"bq::ActorModule::s_IsMainModule"}
+{"a":"71000c2000","t":"plate","c":"bq::ArchiveModule::s_IsMainModule"}
+{"a":"71000c3000","t":"plate","c":"bq::CharacterDataModule::s_IsMainModule"}
+{"a":"71000c4000","t":"plate","c":"bq::FxTriggerModule::s_IsMainModule"}
+{"a":"71000c5000","t":"plate","c":"bq::GraphicsModule::s_IsMainModule"}
+{"a":"71000c6000","t":"plate","c":"bq::MGSystemModule::s_IsMainModule"}
+{"a":"71000c7000","t":"plate","c":"bq::PlayReportModule::s_IsMainModule"}
+{"a":"71000c8000","t":"plate","c":"bq::SystemCallBackModule::s_IsMainModule"}
+{"a":"71000c9000","t":"plate","c":"bq::SystemModule::s_IsMainModule"}
+{"a":"71000ca000","t":"plate","c":"bq::UiSharedTextureModule::s_IsMainModule"}
+{"a":"71000cb000","t":"plate","c":"bq::WipeModule::s_IsMainModule"}
+{"a":"71000cc000","t":"plate","c":"bq::WorkModule::s_IsMainModule"}
+{"a":"71000cd000","t":"plate","c":"bq::reward::RewardModule::s_IsMainModule"}
+{"a":"71000ce000","t":"plate","c":"bq::achievement::AchievementModule::s_IsMainModule"}
+{"a":"71000cf000","t":"plate","c":"bq::save::SaveDataMgr::s_IsMainModule"}
+{"a":"71000d0000","t":"plate","c":"bq::flag::GameFlagModule::s_IsMainModule"}
+{"a":"71000d1000","t":"plate","c":"nn::bezel::PhysicsModule::s_IsMainModule"}
+{"a":"71000de000","t":"plate","c":"nn::util::Vector3f::ConstantUnitX"}
+{"a":"71000df000","t":"plate","c":"nn::util::Vector3f::ConstantZero"}
+{"a":"71000e0000","t":"plate","c":"nn::util::Vector3f::ConstantUnitY"}
+{"a":"71000e7000","t":"plate","c":"std::length_error::~length_error()"}
+{"a":"71000ec000","t":"plate","c":"vtable for std::length_error"}
+{"a":"71000ec000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000f2000","t":"plate","c":"nn::util::detail::Float1Divided2Pi"}
+{"a":"71000f3000","t":"plate","c":"nn::util::detail::Float2Pi"}
+{"a":"71000f4000","t":"plate","c":"nn::util::detail::FloatPiDivided2"}
+{"a":"71000f5000","t":"plate","c":"nn::util::detail::FloatPi"}
+{"a":"71000f6000","t":"plate","c":"nn::util::detail::SinCoefficients"}
+{"a":"71000f7000","t":"plate","c":"nn::util::detail::CosCoefficients"}
+{"a":"71000fe000","t":"plate","c":"bex::sound::SoundModule::g_Module"}

@@ -1,0 +1,98 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/actor/ActionContext","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/ActorHashedString","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/AnimatinType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/actor/MotionArg","k":"struct","size":80,"pack":"off","align":"default","f":[{"o":0,"l":24,"t":"/byte[24]","n":"name","c":"std::string"},{"o":24,"l":32,"t":"/byte[32]","n":"nameHash","c":"StringViewHashPair{vt, ptr, len, hash}, FNV-1a 64"},{"o":56,"l":1,"t":"/byte","n":"forceRestart","c":"0 이면 같은 해시 재생 요청 무시"},{"o":57,"l":1,"t":"/byte","n":"randomStartFrame","c":"1 이면 시작 프레임 난수"},{"o":58,"l":1,"t":"/byte","n":"speedValid","c":"1 이면 슬롯 속도 = speed"},{"o":60,"l":4,"t":"/float","n":"startFrame"},{"o":64,"l":4,"t":"/float","n":"speed"},{"o":68,"l":4,"t":"/float","n":"blendTime","c":"초. −FLT_MAX = 기본(리스너가 0.1)"},{"o":72,"l":4,"t":"/int","n":"transitionType","c":"nn::bezel::AnimationTransitionType, 4 = 크로스페이드"},{"o":76,"l":1,"t":"/byte","n":"transitionDefaultsInitialized","c":"Play(name) 전이 기본값 래치(설명용 이름)"}],"desc":"SYNC_FROM main:/Demangler/actor/MotionArg\n[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.3"}
+{"p":"/Demangler/bex/Fiber","k":"struct","size":16,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"vtable","c":"0x71019d5390"},{"o":8,"l":8,"t":"/mpj/bex/FiberImpl *","n":"impl"}],"desc":"SYNC_FROM main:/Demangler/bex/Fiber\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.6"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/RendererModule/SceneType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/CharacterDataPath","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComMatter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiTimer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiTimer/UiTimerType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/GameWinLose","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MatterCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MatterType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/NonPlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/SceneBase","k":"struct","size":229,"pack":"off","align":"default","f":[{"o":16,"l":4,"t":"/uint","n":"pauseLevel","c":"bex::SceneBase, 기본 5"},{"o":56,"l":4,"t":"/int","n":"mainStep","c":"UpdateMain 단계"},{"o":60,"l":4,"t":"/int","n":"loadedStep","c":"OnLoaded 단계"},{"o":64,"l":24,"t":"/byte[24]","n":"flowFiber","c":"핸들 {ptr, node, gen}"},{"o":88,"l":4,"t":"/undefined4","n":"sceneKind","c":"아카이브 로드 분기"},{"o":96,"l":24,"t":"/byte[24]","n":"sceneRoot","c":"SceneRoot 엔티티 핸들"},{"o":192,"l":4,"t":"/int","n":"request","c":"−1 없음, 0 Exchange, 1 Call, 2 Return, 3 Reboot"},{"o":225,"l":1,"t":"/byte","n":"flowFiberFlag"},{"o":226,"l":1,"t":"/byte","n":"sessionEntry"},{"o":227,"l":1,"t":"/byte","n":"useFade","c":"UpdateMain 단계 2 FadeIn·단계 4 FadeOut 사용 여부. SetFadeEnable(false)로 끔"},{"o":228,"l":1,"t":"/byte","n":"firstBegin"}],"desc":"SYNC_FROM main:/Demangler/bq/SceneBase\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.10·5.2\n생성 @0x71002c9bd4. 크기 모름(마지막 필드 끝까지)\n\n[판독] 2026-10-11 / md: web/docs/engine/15_transition.md §1\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §4.1\n+0x50 weak handle gen(크기 미기재), +0xc8 std::string requestName(크기 미기재)은 필드로 넣지 않음. +0x38/+0x3c 의 크기는 인접 offset 기준"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/WipeModule/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/FLAG","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/ca/coin_athlon/CoinAthlonCourceScene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/KoopaSurvivalResultUI","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/KoopaSurvivalTelop","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/KoopaSurvivalTelop/KoopaSurvivalTelopType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/ca/coin_athlon/MinigameFiber","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/RemainingCount","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/Wipe","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/Wipe/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/ca/coin_athlon/Work2","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/ks/MinigameScene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/coin_athlon/ks/NetUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ca/ui/CaComUiUserName/ATTACH_TYPE","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg1303/Block","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/BlockEffect","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/BlockEffect2","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/CameraMan","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/CameraMan/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/ComMarker","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/ComMarker2","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Factory","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Koopa","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/NPLN_HOST_DATA","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Player","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/PlayerMan","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/PlayerMan/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Scene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Spike","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/StageMan","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/StageMan/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/Wall","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg1303/enGameSequence","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg1303/enNplnPlayerFlags","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg1303/enNplnPlayerHostStat","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg1303/enNplnPlayerStat","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/AnimationTransitionType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/HandlePtr\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/Material","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/MaterialHandle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/ModelCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/os/LightEventType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/MatrixRowMajor4x3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Quaternion","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector4f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/CustomArrayImm","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Value","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__base","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<actor::ActionStatus(*)(actor::ActionContext_const&)noexcept,std::allocator<actor::ActionStatus(*)(actor::ActionContext_const&)noexcept>,actor::ActionStatus(actor::ActionContext_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mpj/bex/FiberImpl","k":"struct","size":240,"pack":"off","align":"default","f":[{"o":8,"l":8,"t":"/Demangler/bex/Fiber *","n":"owner"},{"o":104,"l":8,"t":"/pointer","n":"stack"},{"o":112,"l":4,"t":"/uint","n":"stackSize"},{"o":116,"l":4,"t":"/int","n":"pauseLevel","c":"0~16, 기본 0"},{"o":120,"l":4,"t":"/int","n":"sequence"},{"o":124,"l":4,"t":"/int","n":"priority","c":"오름차순 안정 정렬"},{"o":128,"l":16,"t":"/byte[16]","n":"name","c":"HashedString"},{"o":144,"l":4,"t":"/float","n":"sleepTimer","c":"초, 음수 = 영원히"},{"o":148,"l":4,"t":"/int","n":"waitCount","c":"음수 = 영원히"},{"o":209,"l":1,"t":"/byte","n":"global"},{"o":210,"l":1,"t":"/byte","n":"started"},{"o":211,"l":1,"t":"/byte","n":"whileMode","c":"1 While, 0 Until"},{"o":213,"l":1,"t":"/byte","n":"stopped","c":"소멸 요청"},{"o":216,"l":8,"t":"/pointer","n":"ownerObject","c":"자동 삭제 대상"},{"o":224,"l":1,"t":"/byte","n":"autoDestroy"}],"desc":"SYNC_FROM main:/mpj/bex/FiberImpl\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.6\nbex::Fiber+8, 생성 FUN_710018d988\n넣지 않음: +0x10 nn::os::FiberType(크기 미기재, +0x30 bit2 = 완료), +0xA0~+0xC0 조건 std::function(크기 경계 불명확)"}
+{"p":"/nn/bezel/HandleSource<bq::SceneBase>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

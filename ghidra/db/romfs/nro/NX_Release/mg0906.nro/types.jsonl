@@ -1,0 +1,213 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/actor/ActionContext","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/ActorHashedString","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/AnimatinType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/actor/MotionArg","k":"struct","size":80,"pack":"off","align":"default","f":[{"o":0,"l":24,"t":"/byte[24]","n":"name","c":"std::string"},{"o":24,"l":32,"t":"/byte[32]","n":"nameHash","c":"StringViewHashPair{vt, ptr, len, hash}, FNV-1a 64"},{"o":56,"l":1,"t":"/byte","n":"forceRestart","c":"0 이면 같은 해시 재생 요청 무시"},{"o":57,"l":1,"t":"/byte","n":"randomStartFrame","c":"1 이면 시작 프레임 난수"},{"o":58,"l":1,"t":"/byte","n":"speedValid","c":"1 이면 슬롯 속도 = speed"},{"o":60,"l":4,"t":"/float","n":"startFrame"},{"o":64,"l":4,"t":"/float","n":"speed"},{"o":68,"l":4,"t":"/float","n":"blendTime","c":"초. −FLT_MAX = 기본(리스너가 0.1)"},{"o":72,"l":4,"t":"/int","n":"transitionType","c":"nn::bezel::AnimationTransitionType, 4 = 크로스페이드"},{"o":76,"l":1,"t":"/byte","n":"transitionDefaultsInitialized","c":"Play(name) 전이 기본값 래치(설명용 이름)"}],"desc":"SYNC_FROM main:/Demangler/actor/MotionArg\n[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.3"}
+{"p":"/Demangler/actor/SixAxisSensorKind","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/ComModelBuffer/DecalShadowIndex","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/ComModelBuffer/TextureType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/RendererModule/LayerVisibleId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/RendererModule/SceneType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/FadeTimePreset","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComMatter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComSplitScreen","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus/UiStatusMatchType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus/UiStatusPlaceType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiStatus/UiStatusType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/GameRank","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/GameWinLose","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MGResult/CameraType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MatterCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MatterType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MinigameScene","k":"struct","size":776,"pack":"off","align":"default","f":[{"o":528,"l":4,"t":"/int","n":"minigameId","c":"GameWork::GetMinigameID, 없으면 −1"},{"o":532,"l":4,"t":"/int","n":"flowStage","c":"MinigameFlow 단계(−1 → 초기화 1, 데모면 0)"},{"o":536,"l":2,"t":"/ushort","n":"flowSubState","c":"단계 안 하위 상태 0·1·2·99"},{"o":540,"l":4,"t":"/float","n":"waitSec","c":"종료 텔롭 뒤 대기 초(단계 11) / 재시작 카운터(단계 18)"},{"o":564,"l":4,"t":"/int","n":"startTelopType","c":"TelopType −1..4, 기본 0"},{"o":568,"l":4,"t":"/int","n":"finishTelopType","c":"기본 2"},{"o":576,"l":8,"t":"/pointer","n":"startTelop","c":"FUN_71002e44ac \"TelopUI\""},{"o":584,"l":8,"t":"/pointer","n":"startTelopUser","c":"IUserStartFinish*(종류 3·4)"},{"o":592,"l":8,"t":"/pointer","n":"finishTelop"},{"o":600,"l":8,"t":"/pointer","n":"finishTelopUser","c":"IUserStartFinish*"},{"o":608,"l":8,"t":"/pointer","n":"winDrawTelop","c":"CreateWinTelop/CreateDrawTelop"},{"o":616,"l":1,"t":"/byte","n":"openingSkipAllowed","c":"MGSetting OpeningSkip"},{"o":617,"l":1,"t":"/byte","n":"gameOpeningSkipEnable","c":"SetGameOpeningSkipEnable, 기본 1"},{"o":618,"l":1,"t":"/byte","n":"endOpeningSkipWait","c":"단계 4 에서 참이면 스킵 대기 하위상태 끝. writer 미확정"},{"o":619,"l":1,"t":"/byte","n":"openingSkipped","c":"IsOpeningSkip 반환"},{"o":624,"l":8,"t":"/pointer","n":"openingSkipUi","c":"\"Scene_OpeningSkipUI\" + ComUiGuideSkip"},{"o":632,"l":1,"t":"/byte","n":"endingChangeCut","c":"MGSetting EndingChangeCut"},{"o":640,"l":8,"t":"/pointer","n":"endTimer","c":"\"Scene_SystemMnigameEndTimerUI\" + ComUiTimer"},{"o":648,"l":8,"t":"/pointer","n":"statusFace","c":"\"Scene_StatusFaceUI\" + ComUiStatus"},{"o":656,"l":1,"t":"/byte","n":"isInst","c":"flag 0 = 조작 설명 화면 안 실행(P)"},{"o":660,"l":4,"t":"/int","n":"instRetryCount","c":"단계 18 에서 +1"},{"o":664,"l":8,"t":"/pointer","n":"mgResult","c":"MGResult*"},{"o":672,"l":4,"t":"/int","n":"endingStep","c":"엔딩 하위 단계 0~5"},{"o":680,"l":8,"t":"/pointer","n":"charaDemo","c":"캐릭터 데모 객체"},{"o":760,"l":1,"t":"/byte","n":"demoSkipped"},{"o":761,"l":1,"t":"/byte","n":"demoOwnWipe","c":"데모 쪽이 와이프를 직접 처리"},{"o":762,"l":1,"t":"/byte","n":"demoFadeIn","c":"데모 시작 때 페이드인, 기본 1"},{"o":764,"l":4,"t":"/int","n":"demoSubState","c":"캐릭터 데모 하위 상태 0~3"},{"o":768,"l":8,"t":"/pointer","n":"retryMenu","c":"UiRetryMenu*(PlayMode 1·9)"}],"desc":"SYNC_FROM main:/Demangler/bq/MinigameScene\n[판독] 2026-10-11 / md: web/docs/shell/minigame_scene.md §4.1\n크기 모름(마지막 필드 끝까지). 0x210 앞은 SceneBase"}
+{"p":"/Demangler/bq/MinigameScene/TelopType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/NonPlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerListSortBy","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/WipeModule/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/FLAG","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/AccelItem","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/AccelType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/AccelZone","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/Camera/ParamType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/CollisionMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CollisionMgr/TargetParam","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CollisionMgr/TargetType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/CourseObjectMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CourseObjectParam","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CourseObjectPlanet","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CourseObjectPlanet/Type","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/CourseObjectRock","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CourseObjectStarPiece","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/CourseObjectTree","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/EffectId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/InputDetectorJoyCon","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/JumpBoard","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/JumpBoardType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/ParamMgr","k":"struct","size":84,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"params","c":"Scene::Params*"},{"o":80,"l":4,"t":"/int","n":"advantagePlayerOrder","c":"어드밴티지 플레이어 순서(없으면 −1)"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §3.1·3.2·4.3\n상수 묶음 시작: +0x60 DirectionDemo, +0x88 DirectionOpening, +0xC0 DirectionEnding, +0x108 EventCameraCamera, +0x140 EventCameraRosetta, +0x180 UI — 묶음 타입 크기 미기재라 필드 제외"}
+{"p":"/Demangler/mg0906/Player","k":"struct","size":1664,"pack":"off","align":"default","f":[{"o":24,"l":8,"t":"/undefined8","n":"playerWork0","c":"PlayerWork 핸들"},{"o":32,"l":8,"t":"/undefined8","n":"playerWork1","c":"PlayerWork 핸들"},{"o":40,"l":8,"t":"/undefined8","n":"playerWork2","c":"PlayerWork 핸들"},{"o":96,"l":4,"t":"/float","n":"cpuInputX","c":"CPU 입력 x(GetInputVecX 가 CPU 면 이 값)"},{"o":100,"l":4,"t":"/float","n":"cpuPrevInputX","c":"CPU 입력 이전 값"},{"o":1056,"l":4,"t":"/int","n":"jumpType","c":"PlayerJump+0xB0, 1 self/2 중/3 대"},{"o":1120,"l":4,"t":"/int","n":"jumpState","c":"PlayerJump+0xF0, 0 없음/1 점프대 위/2 점프 중"},{"o":1124,"l":4,"t":"/float","n":"jumpHeight","c":"PlayerJump+0xF4"},{"o":1128,"l":4,"t":"/float","n":"jumpT","c":"PlayerJump+0xF8"},{"o":1132,"l":1,"t":"/bool","n":"jumpSucceeded","c":"PlayerJump+0xFC"},{"o":1172,"l":4,"t":"/int","n":"accelType","c":"PlayerSpeed+0x1C, 3=큰 가속 존"},{"o":1192,"l":4,"t":"/float","n":"turnSpeed","c":"PlayerSpeed+0x30"},{"o":1196,"l":4,"t":"/float","n":"accelPer","c":"PlayerSpeed+0x34"},{"o":1204,"l":4,"t":"/float","n":"speed","c":"PlayerSpeed+0x3C"},{"o":1208,"l":4,"t":"/float","n":"spinMoveSpeed","c":"PlayerSpeed+0x40 스핀 이동 속도"},{"o":1212,"l":4,"t":"/float","n":"extraMaxSpeed","c":"PlayerSpeed+0x44"},{"o":1216,"l":4,"t":"/float","n":"playerHitMoveSpeed","c":"PlayerSpeed+0x48 플레이어 충돌 이동 속도"},{"o":1220,"l":4,"t":"/float","n":"wallHitMoveSpeed","c":"PlayerSpeed+0x4C 벽 충돌 이동 속도"},{"o":1232,"l":4,"t":"/int","n":"orderNo","c":"순서 번호(UI 인덱스)"},{"o":1236,"l":4,"t":"/int","n":"rank","c":"현재 순위"},{"o":1240,"l":4,"t":"/int","n":"playerOrder","c":"플레이어 순서"},{"o":1244,"l":4,"t":"/uint","n":"statusBits","c":"bit0 벽, bit1 흙, bit2 코스 끝 도달, bit3 골 처리됨, bit5 벽 자동 모드"},{"o":1472,"l":16,"t":"/float[4]","n":"spinQuat","c":"스핀 회전 쿼터니언"},{"o":1648,"l":4,"t":"/float","n":"distance","c":"코스 거리"},{"o":1652,"l":4,"t":"/int","n":"state","c":"1 준비/2 레이스/3 골 연출/4 시간 끝 미골인/5 골 연출 끝"},{"o":1656,"l":4,"t":"/int","n":"moveState","c":"1 준비/2 보통 활주/3 스핀/4 점프"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §4.1·4.2\n크기 0x680(PlayerMgr 안 간격). 이름은 문서의 웹 권장명. 하위 객체 시작: +0x70 PlayerDirection, +0x360 PlayerInput(→InputDetectorJoyCon), +0x370 PlayerJump, +0x478 PlayerSpeed, +0x4D0 PlayerStatus, +0x570 Timer(\"Spinning\"/\"HitWall\"/\"GroundOffset\") — 하위 타입 크기 미기재라 내장 필드로 넣지 않음\n벡터 칸(+0x5E0 이동 벡터, +0x5F0 튕김 방향, +0x600 튕김 이동, +0x610 코스 상대 위치, +0x630 월드 위치, +0x640 코스 진행 방향)은 벡터 타입/길이 미기재라 제외. 정수/실수 구분은 사용(거리·속도 실수, 상태·종류 정수)에서 둠"}
+{"p":"/Demangler/mg0906/Player/Callbacks","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/PlayerDirection","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/PlayerDirection/OpaqueParam","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/PlayerJumpType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/PlayerMoveState","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/PlayerRay/CastRayArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/PlayerRay/HitCourseResult","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/PlayerRay/HitWallResult","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/PlayerStatus/StatusBit","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/PlayerTurnDirection","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/Rosetta","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/RosettaAccelItem","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/Scene","k":"struct","size":928,"pack":"off","align":"default","f":[{"o":784,"l":8,"t":"/pointer","n":"accelItemMgr","c":"AccelItemMgr"},{"o":792,"l":8,"t":"/pointer","n":"accelZoneMgr","c":"AccelZoneMgr"},{"o":800,"l":8,"t":"/pointer","n":"bgm","c":"Bgm"},{"o":808,"l":8,"t":"/pointer","n":"cameraMgr","c":"CameraMgr(Camera×4)"},{"o":824,"l":8,"t":"/pointer","n":"courseMgr","c":"CourseMgr"},{"o":832,"l":8,"t":"/pointer","n":"courseEnvironment","c":"CourseEnvironment"},{"o":848,"l":8,"t":"/pointer","n":"courseObjectMgr","c":"CourseObjectMgr(바위·별조각·나무·행성)"},{"o":856,"l":8,"t":"/pointer","n":"jumpBoardMgr","c":"JumpBoardMgr"},{"o":864,"l":8,"t":"/pointer","n":"paramMgr","c":"ParamMgr(싱글턴)"},{"o":872,"l":8,"t":"/pointer","n":"playerMgr","c":"PlayerMgr(Player×4)"},{"o":880,"l":8,"t":"/pointer","n":"rosetta","c":"Rosetta"},{"o":888,"l":8,"t":"/pointer","n":"sceneState","c":"SceneState"},{"o":896,"l":8,"t":"/pointer","n":"splitScreen","c":"SplitScreen"},{"o":904,"l":8,"t":"/pointer","n":"timer","c":"Timer(이름 키)"},{"o":912,"l":8,"t":"/pointer","n":"timerMgr","c":"TimerMgr"},{"o":920,"l":8,"t":"/pointer","n":"uiMgr","c":"UIMgr"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §3.1\nbq::MinigameScene 파생. 크기 미기재. 각 칸은 매니저 포인터로 둠(문서 표기 '+0x310 AccelItemMgr' 등)"}
+{"p":"/Demangler/mg0906/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/Accel","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/AccelZoneAndItem","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/AccelZoneLarge","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/Camera","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/CameraCourse","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/Com","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/ComLevel","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/ComTurn","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/Direction","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/DirectionDemo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/DirectionEnding","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/DirectionOpening","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/EventCamera","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/EventCameraCamera","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/EventCameraRosetta","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/Player","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/PlayerHit","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/PlayerJump","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/PlayerMove","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/PlayerMoveCourse","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/PlayerTurn","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/Rosetta","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/RosettaAccelItem","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneParams/UI","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SceneState/Demo","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/SceneState/Ending","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/SceneState/Opening","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/SeId","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0906/SnowCourse/CoursePart","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SpaceCourse","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SpaceCourse/CourseMotion","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SpaceCourse/CoursePart","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/SpaceCourse/TorchEffect","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0906/Timer/Param","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/AnimationSlotBlendMode","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/AnimationTransitionType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/CastRayArg","k":"struct","size":40,"pack":"off","align":"default","f":[{"o":0,"l":16,"t":"/float[4]","n":"origin","c":"물리 world 좌표"},{"o":16,"l":16,"t":"/float[4]","n":"direction","c":"단위 방향(래퍼가 정규화하지 않음)"},{"o":32,"l":4,"t":"/float","n":"distance","c":"최대 거리"},{"o":36,"l":4,"t":"/uint","n":"layerMask","c":"대상 레이어 비트마스크"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/CastRayArg\n[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·3.2·9.5·9.6\n[판독] 미포함: +0x28부터 제외 Entity weak handle, +0x40 All 정렬 플래그, +0x41(켜면 hit flags 0x423), +0x42(켜면 +0x80)"}
+{"p":"/Demangler/nn/bezel/CastResult","k":"struct","size":128,"pack":"off","align":"default","f":[{"o":0,"l":16,"t":"/float[4]","n":"position","c":"world 좌표"},{"o":16,"l":16,"t":"/float[4]","n":"normal","c":"world 좌표"},{"o":80,"l":4,"t":"/float","n":"distance","c":"SDK hit 거리 비트 복사"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/CastResult\n[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2·9.6\n[판독] 미포함(타입 미표기): +0x20 Collision weak handle, +0x38 Entity weak handle(세대 포함), +0x54 validity(0/2/4, 위치 먼저), +0x58 Shape weak handle(PxMaterial 소유 CollisionShape), +0x70 initialOverlap(distance≤0)"}
+{"p":"/Demangler/nn/bezel/EntityState","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/Function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/HandlePtr\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/JsonReader","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/Material","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/MaterialHandle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/WeakHandle\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/IFunction<void(nn::bezel::HandlePtr<nn::bezel::Entity>const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Quaternion","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/CustomArrayImm","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/CustomImm","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Value","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__base","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<actor::ActionStatus(*)(actor::ActionContext_const&)noexcept,std::allocator<actor::ActionStatus(*)(actor::ActionContext_const&)noexcept>,actor::ActionStatus(actor::ActionContext_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__less","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__wrap_iter","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/array","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/array<mg0906::Camera,4ul>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_array_new_length","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_function_call","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_optional_access","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/exception","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/iterator_traits<std::reverse_iterator<float*>>/difference_type","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/optional","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/out_of_range","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/reverse_iterator","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/string","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/AccelItemMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/AccelZoneMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/BezierCurve","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/Bgm","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/Camera","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/CameraMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/CharaIblTexture","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/Com","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/CourseEnvironment","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/CourseLocator","k":"struct","size":32,"pack":"off","align":"default","f":[{"o":24,"l":4,"t":"/float","n":"snowToSpaceDistance","c":"눈→우주 전환 거리(이 값보다 크면 우주 코스 파라미터)"},{"o":28,"l":4,"t":"/float","n":"courseEndDistance","c":"코스 끝 거리(이상이면 골 비트)"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §3.1·4.4·6.6\n[추정] 값은 JSON 경계 약 2410.2 / 5310.17. 점 stride 0x60. 크기 미기재"}
+{"p":"/mg0906/CourseMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/JumpBoardMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerBoard","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerEffect","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerFxTrigger","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerInput","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerJump","k":"struct","size":253,"pack":"off","align":"default","f":[{"o":176,"l":4,"t":"/int","n":"jumpType","c":"0 없음/1 self/2 중/3 대"},{"o":240,"l":4,"t":"/int","n":"jumpState","c":"0 없음/1 점프대 위/2 점프 중"},{"o":244,"l":4,"t":"/float","n":"jumpHeight","c":"Height·sin(π·t/Duration)"},{"o":248,"l":4,"t":"/float","n":"jumpT","c":"경과 시간"},{"o":252,"l":1,"t":"/bool","n":"jumpSucceeded","c":"성공 점프"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §4.2·6.5\nPlayer+0x370 에 내장. 크기 미기재"}
+{"p":"/mg0906/PlayerMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerRay","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerSound","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/PlayerSpeed","k":"struct","size":80,"pack":"off","align":"default","f":[{"o":28,"l":4,"t":"/int","n":"accelType","c":"1 존/2 아이템/3 큰 존"},{"o":48,"l":4,"t":"/float","n":"turnSpeed"},{"o":52,"l":4,"t":"/float","n":"accelPer"},{"o":60,"l":4,"t":"/float","n":"speed"},{"o":64,"l":4,"t":"/float","n":"spinMoveSpeed","c":"스핀 이동 속도"},{"o":68,"l":4,"t":"/float","n":"extraMaxSpeed"},{"o":72,"l":4,"t":"/float","n":"playerHitMoveSpeed","c":"플레이어 충돌 이동 속도"},{"o":76,"l":4,"t":"/float","n":"wallHitMoveSpeed","c":"벽 충돌 이동 속도"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §4.2·6.3\nPlayer+0x478 에 내장. 크기 미기재. [추정] accelType 4 = 오프닝 아이템(Direction 상수)"}
+{"p":"/mg0906/PlayerStatus","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/RosettaAccelItemMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/RosettaDemo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/RosettaOpening","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/SceneState","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/SnowCourse","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/SplitScreen","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/Timer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/TimerMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mg0906/UIMgr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mpj/mg0906/PlayerState","k":"enum","size":4,"v":[["Ready",1],["Racing",2],["GoalDirection",3],["TimeUpNotGoal",4],["Finished",5]],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0906.md §4.1\nPlayer+0x674 state. 1 준비(출발 전), 2 레이스 중, 3 골 연출 중(StartGoalDirection), 4 시간 내 골인 못 하고 게임 끝(OnGameEnd), 5 골 연출 끝"}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/std/array<mg0906::Player,4ul>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/optional<mg0906::CollisionMgr::TargetParam>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<int,std::allocator<int>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::AccelItem,std::allocator<mg0906::AccelItem>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::AccelZone,std::allocator<mg0906::AccelZone>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::CollisionMgr::TargetParam,std::allocator<mg0906::CollisionMgr::TargetParam>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::CourseObjectPlanet,std::allocator<mg0906::CourseObjectPlanet>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::CourseObjectRock,std::allocator<mg0906::CourseObjectRock>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::CourseObjectStarPiece,std::allocator<mg0906::CourseObjectStarPiece>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::CourseObjectTree,std::allocator<mg0906::CourseObjectTree>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::JumpBoard,std::allocator<mg0906::JumpBoard>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::PlayerDirection::OpaqueParam,std::allocator<mg0906::PlayerDirection::OpaqueParam>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::RosettaAccelItem,std::allocator<mg0906::RosettaAccelItem>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::SnowCourse::CoursePart,std::allocator<mg0906::SnowCourse::CoursePart>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::SpaceCourse::CourseMotion,std::allocator<mg0906::SpaceCourse::CourseMotion>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::SpaceCourse::CoursePart,std::allocator<mg0906::SpaceCourse::CoursePart>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::SpaceCourse::TorchEffect,std::allocator<mg0906::SpaceCourse::TorchEffect>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mg0906::Timer::Param,std::allocator<mg0906::Timer::Param>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<nn::bezel::HandlePtr<nn::bezel::ComModel>,std::allocator<nn::bezel::HandlePtr<nn::bezel::ComModel>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<nn::bezel::HandlePtr<nn::bezel::ComRigidBody>,std::allocator<nn::bezel::HandlePtr<nn::bezel::ComRigidBody>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<nn::bezel::HandlePtr<nn::bezel::Entity>,std::allocator<nn::bezel::HandlePtr<nn::bezel::Entity>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<nn::bezel::HandlePtr<nn::bezel::Texture>,std::allocator<nn::bezel::HandlePtr<nn::bezel::Texture>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::function<void()>,std::allocator<std::function<void()>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::optional<mg0906::CollisionMgr::TargetParam>,std::allocator<std::optional<mg0906::CollisionMgr::TargetParam>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

@@ -1,0 +1,403 @@
+{"a":"71006002c8","t":"plate","c":"nn::bezel::Collision::Enable()"}
+{"a":"71006002e8","t":"plate","c":"nn::bezel::Collision::Disable()"}
+{"a":"7100600304","t":"plate","c":"nn::bezel::Collision::GetPosition() const"}
+{"a":"7100600310","t":"plate","c":"nn::bezel::Collision::SetPosition(nn::util::Vector3f const&)"}
+{"a":"710060031c","t":"plate","c":"nn::bezel::Collision::GetRotation() const"}
+{"a":"7100600328","t":"plate","c":"nn::bezel::Collision::SetRotation(nn::util::Quaternion const&)"}
+{"a":"7100600334","t":"plate","c":"nn::bezel::Collision::GetTransform() const"}
+{"a":"710060034c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: Collision::SetTransform. →@0x7100601580→SDK actor 가상 +0xA0에 포즈 전달(Static)\n---\nnn::bezel::Collision::SetTransform(nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"7100600358","t":"plate","c":"nn::bezel::Collision::GetShapeAndTransform(nn::bezel::CollisionShape*, nn::util::Vector3f*, nn::util::Quaternion*) const"}
+{"a":"7100600364","t":"plate","c":"nn::bezel::Collision::SetCollisionLayer(int)"}
+{"a":"71006004ec","t":"plate","c":"nn::bezel::Collision::SetCollisionFlagsEnabled(unsigned int, bool)"}
+{"a":"71006006c0","t":"plate","c":"nn::bezel::Collision::SetDynamicFriction(float)"}
+{"a":"7100600760","t":"plate","c":"nn::bezel::Collision::SetStaticFriction(float)"}
+{"a":"7100600800","t":"plate","c":"nn::bezel::Collision::SetRestitution(float)"}
+{"a":"710060099c","t":"plate","c":"nn::bezel::Collision::GetCollisionLabel() const"}
+{"a":"7100600af8","t":"plate","c":"nn::bezel::Collision::Connect(nn::bezel::WeakHandle<nn::bezel::IMessageListener> const&)"}
+{"a":"7100600d84","t":"plate","c":"nn::bezel::Collision::GetName() const"}
+{"a":"7100600dd8","t":"plate","c":"nn::bezel::Collision::SetName(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100601580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: Collision.SetTransform @0x710060034c 다음 단계. SDK actor 가상 +0xA0에 포즈 전달"}
+{"a":"7100601a10","t":"plate","c":"nn::bezel::detail::CollisionMesh::~CollisionMesh()"}
+{"a":"710060262c","t":"plate","c":"nn::bezel::CollisionShape::CollisionShape()"}
+{"a":"7100602694","t":"plate","c":"nn::bezel::CollisionShape::~CollisionShape()"}
+{"a":"7100602718","t":"plate","c":"nn::bezel::CollisionShape::CollisionShape(nn::bezel::CollisionShapeType)"}
+{"a":"7100602b2c","t":"plate","c":"nn::bezel::CollisionShape::CreateSphere(float)"}
+{"a":"7100602c04","t":"plate","c":"nn::bezel::CollisionShape::SetSphere(float)"}
+{"a":"7100602e44","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1\n역할: CollisionShape::CreateCapsule(r,h). radius를 +0x40, halfHeight를 +0x44에 저장. h는 구 중심을 잇는 축 선분의 반길이\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: CreateCapsule\n---\nnn::bezel::CollisionShape::CreateCapsule(float, float)"}
+{"a":"7100602ed0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: CollisionShape::SetCapsule. 캡슐 radius → +0x40, halfHeight → +0x44.\n---\nnn::bezel::CollisionShape::SetCapsule(float, float)"}
+{"a":"7100602f58","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §1\n역할: CollisionShape::CreateBox. SetSourceBox 경로의 Box 생성, 인자(halfExtents)를 반으로 나누지 않음\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.4\n역할: CollisionShape::CreateBox. 반폭 값을 나누지 않고 저장\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.2\n역할: CollisionShape::CreateBox. 입력 크기를 그대로 저장(인자는 반폭) — mg0101 4.4 판독 재사용\n---\nnn::bezel::CollisionShape::CreateBox(nn::util::Vector3f const&)"}
+{"a":"7100602ff0","t":"plate","c":"nn::bezel::CollisionShape::SetBox(nn::util::Vector3f const&)"}
+{"a":"7100603090","t":"plate","c":"nn::bezel::CollisionShape::CreateComplex()"}
+{"a":"710060311c","t":"plate","c":"nn::bezel::CollisionShape::SetComplex()"}
+{"a":"71006031a0","t":"plate","c":"nn::bezel::CollisionShape::SetRuntimeConvexMesh(nn::bezel::RcSharedPtr<nn::bezel::PhysicsRuntimeConvexMesh>)"}
+{"a":"7100603260","t":"plate","c":"nn::bezel::CollisionShape::GetType() const"}
+{"a":"71006032c4","t":"plate","c":"nn::bezel::CollisionShape::SetLocalTranslation(nn::util::Vector3f const&)"}
+{"a":"71006032d8","t":"plate","c":"nn::bezel::CollisionShape::SetLocalRotation(nn::util::Quaternion const&)"}
+{"a":"71006032e0","t":"plate","c":"nn::bezel::CollisionShape::SetLocalTransform(nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"7100603504","t":"plate","c":"nn::bezel::CollisionShape::GetLocalTranslation() const"}
+{"a":"710060350c","t":"plate","c":"nn::bezel::CollisionShape::GetLocalRotation() const"}
+{"a":"7100603514","t":"plate","c":"nn::bezel::CollisionShape::GetSphereRadius() const"}
+{"a":"7100603534","t":"plate","c":"nn::bezel::CollisionShape::SetSphereRadius(float)"}
+{"a":"7100603554","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·3.3\n역할: CollisionShape::GetCapsuleRadius. +0x40 radius를 그대로 반환\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §4.5\n역할: CollisionShape::GetCapsuleRadius. SetSourceCapsule 끝점 입력 규약(h=|b−a|/2) 근거\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: CollisionShape::GetCapsuleRadius. +0x40.\n---\nnn::bezel::CollisionShape::GetCapsuleRadius() const"}
+{"a":"710060359c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·3.3\n역할: CollisionShape::GetCapsuleHalfHeight. +0x44 halfHeight를 그대로 반환(다시 반으로 나누지 않음)\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §4.5\n역할: CollisionShape::GetCapsuleHalfHeight. CreateCapsule(r,h)의 h는 반높이\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: CollisionShape::GetCapsuleHalfHeight. +0x44.\n---\nnn::bezel::CollisionShape::GetCapsuleHalfHeight() const"}
+{"a":"71006035e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §1·3.1\n역할: CollisionShape::GetBoxHalfExtents. 저장된 halfExtents를 그대로 반환\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.4\n역할: CollisionShape::GetBoxHalfExtents. 저장된 반폭을 그대로 반환\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §4.2\n역할: CollisionShape::GetBoxHalfExtents. CreateBox 입력을 그대로 반환(반폭)\n---\nnn::bezel::CollisionShape::GetBoxHalfExtents() const"}
+{"a":"71006036a0","t":"plate","c":"nn::bezel::CollisionShape::AddComplexChild(nn::bezel::CollisionShape)"}
+{"a":"7100603810","t":"plate","c":"nn::bezel::CollisionShape::AddComplexChild(nn::bezel::CollisionShape, nn::bezel::TrTransform const&)"}
+{"a":"710060448c","t":"plate","c":"nn::bezel::CollisionShape::CastRay(nn::bezel::CollisionShapeQueryResult*, int, nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&, nn::util::Vector3f const&, nn::util::Vector3f const&, float)"}
+{"a":"71006045f0","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·9.6\n역할: 형상→SDK geometry/포즈 변환\n캡슐 분기: 반각 π·0.5·0.5의 다항식 sin/cos, 축 (0,0,1) → Z축 +90° 쿼터니언과 곱해 엔진 Y축 캡슐을 SDK X축으로 변환\n[추정] 곱 순서는 캡슐 대칭이라 질의 결과에 무관\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §9.2\n역할: 질의 형상 SDK 변환. 캡슐은 engine Y축과 SDK X축을 구분(.apx capsuleX에는 quarter-turn을 더하지 않음)"}
+{"a":"7100604f98","t":"plate","c":"nn::bezel::CollisionShape::CastShape(nn::bezel::CollisionShapeQueryResult*, nn::bezel::CollisionShape const&, nn::util::Quaternion const&, nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&, nn::util::Vector3f const&, nn::util::Vector3f const&, float)"}
+{"a":"71006051f8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1\n역할: 질의 포즈/형상 로컬 포즈를 SDK 입력으로 변환(→@0x71006045f0). 로컬 중심과 회전을 버리지 않는다"}
+{"a":"71006052ac","t":"plate","c":"nn::bezel::CollisionShape::Overlap(nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&, nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"7100605378","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §14.12\n역할: CollisionShape::ComputePenetration. →@0x71006070e4→@0x71006072c8→@0x71012712a8로 형상 변환 후 SDK penetration dispatch\n여러 geometry 결과의 최소 depth를 선택. 임의 계단 높이 보정 없음\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: CollisionShape::ComputePenetration. functor @0x71006072c8 로 구성 geometry 를 순회한다.\n---\nnn::bezel::CollisionShape::ComputePenetration(nn::util::Vector3f*, float*, nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&, nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"7100606100","t":"plate","c":"nn::bezel::CollisionShape::Complex::~Complex()"}
+{"a":"71006070e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §14.12\n역할: penetration callback(@0x7100605378→이 함수→@0x71006072c8)"}
+{"a":"71006072c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §14.12\n역할: penetration geometry 변환(@0x71006070e4→이 함수→@0x71012712a8)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: ComputePenetration functor. PxGeometryQuery::computePenetration 이 성공한 구성 geometry 중 depth 가 가장 작은 것을 채택(동률은 먼저 처리한 것)."}
+{"a":"71006082e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: ComCollision 소멸. 모듈 목록 제거와 handle 세대 무효화"}
+{"a":"7100608448","t":"plate","c":"nn::bezel::ComCollision::IsEnabled() const"}
+{"a":"7100608450","t":"plate","c":"nn::bezel::ComCollision::SetEnabled(bool)"}
+{"a":"71006084c8","t":"plate","c":"nn::bezel::ComCollision::Teleport()"}
+{"a":"71006084d4","t":"plate","c":"nn::bezel::ComCollision::GetShapeAndTransform(nn::bezel::CollisionShape*, nn::util::Vector3f*, nn::util::Quaternion*) const"}
+{"a":"71006084dc","t":"plate","c":"nn::bezel::ComCollision::GetCollisionLayer() const"}
+{"a":"71006084e8","t":"plate","c":"nn::bezel::ComCollision::SetCollisionLayer(int)"}
+{"a":"71006084fc","t":"plate","c":"nn::bezel::ComCollision::SetCollisionFlags(unsigned int)"}
+{"a":"7100608504","t":"plate","c":"nn::bezel::ComCollision::SetCollisionFlagsEnabled(unsigned int, bool)"}
+{"a":"710060852c","t":"plate","c":"nn::bezel::ComCollision::SetDynamicFriction(float)"}
+{"a":"710060853c","t":"plate","c":"nn::bezel::ComCollision::SetStaticFriction(float)"}
+{"a":"710060854c","t":"plate","c":"nn::bezel::ComCollision::SetRestitution(float)"}
+{"a":"710060857c","t":"plate","c":"nn::bezel::ComCollision::SetCollisionLabel(unsigned int)"}
+{"a":"7100608584","t":"plate","c":"nn::bezel::ComCollision::GetPhysicsAttribute() const"}
+{"a":"710060858c","t":"plate","c":"nn::bezel::ComCollision::SetPhysicsAttribute(int)"}
+{"a":"71006085c0","t":"plate","c":"nn::bezel::ComCollision::GetCollision()"}
+{"a":"71006085dc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2\n역할: 물리 전 동기화에서 컴포넌트 가상 +0x70에 변경 표시 전달(@0x7100614ce0이 호출)"}
+{"a":"710060888c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2\n역할: ComCollision 수신. EN0A에서 컴포넌트+0x48=1(강체 변경 표시) 설정"}
+{"a":"7100608b18","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2\n역할: ComRigidBody::Create. 연결 초기에 Entity.GetTranslation/CalculateRotation→Collision.SetTransform 호출(기존 mgD_main_physics.c)\n---\nnn::bezel::ComRigidBody::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::HandlePtr<nn::bezel::RigidBody>&&)"}
+{"a":"7100608cac","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/minigame/mg1002.md §4.5\n역할: ComRigidBody::Create. RigidBodyCreateArg → PhysX 강체 생성\n대응: 형상 +0x40(태그 0 = PxSphereGeometry), 마찰 +0x90/+0x94 = createMaterial 앞 두 인자, 반발 +0x98 = 셋째 인자, 운동 종류 +0xB4 2 = createRigidDynamic, 질량 +0xBC → PxRigidBodyExt::setMassAndUpdateInertia\n[추정] +0xC0/+0xC4 = 셰이프 contactOffset/restOffset\n[미확정] 재질 combine 모드 인자(FUN_7100613da0/dc0 호출부)\n---\nnn::bezel::ComRigidBody::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::RigidBodyCreateArg const&)"}
+{"a":"710060938c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2\n역할: ComRigidBody 생성. 위치/회전 적용 플래그(+0x61/+0x62) 기본 1"}
+{"a":"7100609404","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: ComRigidBody 소멸. →ComCollision 소멸 @0x71006082e0"}
+{"a":"71006094a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: ComRigidBody::SetSyncScaleEnabled. ComRigidBody +0x60 스케일 동기화 옵션 활성화, geometry scale 경로 호출\n---\nnn::bezel::ComRigidBody::SetSyncScaleEnabled(bool)"}
+{"a":"71006094f4","t":"plate","c":"nn::bezel::ComRigidBody::GetShape() const"}
+{"a":"710060950c","t":"plate","c":"nn::bezel::ComRigidBody::SetShape(nn::bezel::CollisionShape&&)"}
+{"a":"7100609560","t":"plate","c":"nn::bezel::ComRigidBody::SetMotionType(nn::bezel::RigidBodyMotionType)"}
+{"a":"7100609574","t":"plate","c":"nn::bezel::ComRigidBody::IsKinematic() const"}
+{"a":"71006095c8","t":"plate","c":"nn::bezel::ComRigidBody::GetMass() const"}
+{"a":"71006095d0","t":"plate","c":"nn::bezel::ComRigidBody::SetMass(float)"}
+{"a":"71006095e0","t":"plate","c":"nn::bezel::ComRigidBody::SetDensity(float)"}
+{"a":"71006095e8","t":"plate","c":"nn::bezel::ComRigidBody::GetLinearVelocity() const"}
+{"a":"71006095f8","t":"plate","c":"nn::bezel::ComRigidBody::SetLinearVelocity(nn::util::Vector3f const&)"}
+{"a":"7100609600","t":"plate","c":"nn::bezel::ComRigidBody::GetAngularVelocity() const"}
+{"a":"7100609608","t":"plate","c":"nn::bezel::ComRigidBody::SetAngularVelocity(nn::util::Vector3f const&)"}
+{"a":"7100609628","t":"plate","c":"nn::bezel::ComRigidBody::SetLinearDamping(float)"}
+{"a":"7100609638","t":"plate","c":"nn::bezel::ComRigidBody::SetAngularDamping(float)"}
+{"a":"710060964c","t":"plate","c":"nn::bezel::ComRigidBody::SetCollisionDetectionMode(nn::bezel::CollisionDetectionMode)"}
+{"a":"7100609654","t":"plate","c":"nn::bezel::ComRigidBody::IsGravityEnabled() const"}
+{"a":"710060965c","t":"plate","c":"nn::bezel::ComRigidBody::SetGravityEnabled(bool)"}
+{"a":"710060966c","t":"plate","c":"nn::bezel::ComRigidBody::SetConstraintsOnAxis(unsigned int)"}
+{"a":"7100609674","t":"plate","c":"nn::bezel::ComRigidBody::ApplyForce(nn::util::Vector3f const&)"}
+{"a":"710060967c","t":"plate","c":"nn::bezel::ComRigidBody::ApplyForceAtPosition(nn::util::Vector3f const&, nn::util::Vector3f const&)"}
+{"a":"7100609684","t":"plate","c":"nn::bezel::ComRigidBody::ApplyImpulseForce(nn::util::Vector3f const&)"}
+{"a":"710060968c","t":"plate","c":"nn::bezel::ComRigidBody::ApplyTorque(nn::util::Vector3f const&)"}
+{"a":"7100609694","t":"plate","c":"nn::bezel::ComRigidBody::ApplyImpulseTorque(nn::util::Vector3f const&)"}
+{"a":"71006096b4","t":"plate","c":"nn::bezel::ComRigidBody::SetApplyRotationEnabled(bool)"}
+{"a":"71006096d8","t":"plate","c":"nn::bezel::ComRigidBody::GetRigidBody()"}
+{"a":"71006096f4","t":"plate","c":"nn::bezel::ComRigidBody::GetRigidBodyPtr()"}
+{"a":"7100609704","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: 강체 Unstage 가상 +0x60. →@0x710062dd4c"}
+{"a":"710060970c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2\n역할: ComRigidBody 가상 +0x68(EN0B Teleport). 현재 Entity 위치/회전을 즉시 강체에 설정\n분기: Dynamic만 선속도·각속도 0. Static/Kinematic은 reset 분기를 통과하지 않음"}
+{"a":"71006097b4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2·2.3\n역할: ComRigidBody 가상 +0x70(물리 전 포즈 동기화)\n분기: MotionType0 Static은 변경 표시가 있을 때만 Entity T/q→Collision.SetTransform @0x710060034c\n분기: MotionType1 Kinematic은 변경 여부와 관계없이 Entity T/q→@0x710062e8bc\n분기: MotionType2 Dynamic은 일반 포즈 동기화에서 T/q를 덮어쓰지 않음\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: SyncTransform dirty 뒤 물리 pose 반영"}
+{"a":"71006098c4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2\n역할: ComRigidBody 가상 +0x78. 물리 메시지 0x5F503106에서 물리→Entity 적용\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: Physics → Entity pose 반영"}
+{"a":"7100609a10","t":"plate","c":"nn::bezel::detail::VariantImpl::CtorDtor<nn::bezel::CollisionShape::Mesh, nn::bezel::CollisionShape::Complex, nn::bezel::CollisionShape::Collection, nn::bezel::CollisionShape::RuntimeConvexMesh, nn::bezel::CollisionShape::RuntimeTriangleMesh, nn::bezel::CollisionShape::RuntimeHeightField>::CopyConstruct(void*, void const*, unsigned char)"}
+{"a":"710060a004","t":"plate","c":"nn::bezel::ComTriggerVolume::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::TriggerVolumeCreateArg const&)"}
+{"a":"710060a704","t":"plate","c":"nn::bezel::ComTriggerVolume::GetTriggerVolume()"}
+{"a":"710060b450","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: ComPhysicalAnimation 생성 중 rigid 객체 열거"}
+{"a":"710060b540","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: 컬렉션 순회 — type 0x401(PhysxJointFlags)만 골라 +0x18 하위 16비트를 +0x10 조인트의 가상 +0x78 에 전달"}
+{"a":"710060ccf0","t":"plate","c":"nn::bezel::PhysicsConstraint::SetTransform(nn::bezel::TrTransform const&, nn::bezel::TrTransform const&)"}
+{"a":"710060ce54","t":"plate","c":"nn::bezel::PhysicsConstraint::SetTransform1(nn::bezel::TrTransform const&)"}
+{"a":"710060d768","t":"plate","c":"nn::bezel::PhysicsConstraint::SetCollisionEnabled(bool)"}
+{"a":"710060dfc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: D6 조인트 wrapper 등록"}
+{"a":"710060f890","t":"plate","c":"nn::bezel::PhysicsConstraintDistance::SetMaxDistance(float)"}
+{"a":"7100613f5c","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/engine/01_core.md §3.3\n역할: CoreSystem 타이밍 0x0F(FixUpdate)에 처리기를 등록하는 모듈 등록 함수\n[추정] 물리·컴포넌트 고정 갱신\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §3.2\n역할: PhysicsModule 갱신 등록자. PhysX 시뮬레이션을 CoreSystem 타이밍 0x0F(FixUpdate 서브스텝)에 등록(게임 코드 0x0E 뒤)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0912.md §3.6\n역할: PhysicsModule(SHARED [mgB]). PhysX 시뮬레이션은 장면 갱신(0x0E) 뒤 0x0F(FixUpdate 서브스텝)에서 돎"}
+{"a":"7100614624","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.4\n역할: 물리 콜백. substep 조건에 따라 동기화 mask 2 또는 3 사용\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §3.2\n역할: 0x0F Entity→Physics. Physics fixed update는 프레임의 fixed substep 수만큼 실행\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: 물리 0x0F Entity→Physics 처리기. (0x10 은 Physics→Entity)"}
+{"a":"7100614a30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: EN0C 등록(활성 Entity·컴포넌트 enabled 조건) → world 선택 @0x7100624480 → Stage 가상 +0x58"}
+{"a":"7100614ce0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.2·2.4\n역할: 물리 전 동기화. 등록된 컴포넌트 중 Entity tick mask가 맞는 것을 순회\n처리: @0x71006085dc→가상 +0x70에 변경 표시를 전달한 뒤 표시를 지운다(ComRigidBody 구현 @0x71006097b4)\n분기: pause gate @0x71009850cc가 CoreSystem+0x1678 pause level 비음수이면 동기화 순회와 world 갱신을 건너뛴다(dirty를 매 프레임 소비하지 않음)\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §3.2·8.2\n역할: 물리 전 포즈 동기화(EN0A 뒤). Query는 queue를 강제 flush하지 않는다\ncarry: 이 동기화 경로에서 접지 body의 이전/현재 변환 delta를 자동 carry하는 경로는 확인되지 않았다"}
+{"a":"710061509c","t":"plate","c":"nn::bezel::PhysicsModule::CreateRigidBody(nn::bezel::RigidBodyCreateArg const&)"}
+{"a":"7100615154","t":"plate","c":"nn::bezel::PhysicsModule::GetCurrentWorld()"}
+{"a":"7100615e84","t":"plate","c":"nn::bezel::PhysicsModule::CreateRuntimeConvexMesh(nn::bezel::PhysicsRuntimeConvexMeshCreateArg const&)"}
+{"a":"7100615f08","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1\n역할: 질의 world 선택(CastRay/CastShape 경로)"}
+{"a":"7100616094","t":"plate","c":"nn::bezel::PhysicsModule::EnableCollisionBetween(int, int)"}
+{"a":"7100616104","t":"plate","c":"nn::bezel::PhysicsModule::DisableCollisionBetween(int, int)"}
+{"a":"7100616180","t":"plate","c":"nn::bezel::PhysicsModule::DisableCollisionLayer(int)"}
+{"a":"71006162e8","t":"plate","c":"nn::bezel::PhysicsModule::ResetCollisionLayer()"}
+{"a":"71006163a0","t":"plate","c":"nn::bezel::PhysicsModule::SetCollisionLayerBitMask(int, unsigned int)"}
+{"a":"71006167e0","t":"plate","c":"nn::bezel::PhysicsModule::CreatePhysicsConstraintFixed(nn::bezel::HandlePtr<nn::bezel::Collision> const&, nn::bezel::HandlePtr<nn::bezel::Collision> const&)"}
+{"a":"7100616c30","t":"plate","c":"nn::bezel::PhysicsModule::CreatePhysicsConstraintDistance(nn::bezel::HandlePtr<nn::bezel::Collision> const&, nn::bezel::HandlePtr<nn::bezel::Collision> const&)"}
+{"a":"7100618298","t":"plate","c":"nn::bezel::PhysicsModule::GetGravity() const"}
+{"a":"71006182f8","t":"plate","c":"nn::bezel::PhysicsModule::SetGravity(nn::util::Vector3f const&)"}
+{"a":"71006183c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·9.5\n역할: PhysicsModule::CastRay. →world 선택 @0x7100615f08→PhysicsWorldExtension.CastRay @0x7100624fe8→SDK 가상 +0x2B8\n유효하지 않은 world는 정상적인 빈 hit 경로가 아니다. 방향 정규화 없음(호출자가 단위 방향 보장)\nhit flags 0x403, +0x41이면 0x423, +0x42이면 +0x80\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: CastRay(→ PhysicsWorldExtension 0x7100624fe8)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0203.md §2.1\n역할: CastRay — mg0203 충돌 접점으로 인용([11 §9.5] 참조)\n[미확정] mg0203 게임 형상·질의 지점\n---\nnn::bezel::PhysicsModule::CastRay(nn::bezel::CastResult*, nn::bezel::CastRayArg const&) const"}
+{"a":"7100618420","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2·9.5·9.6\n역할: PhysicsModule::CastRayAll. →@0x7100625110. +0x40이면 거리 정렬\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: CastRayAll(→ 0x7100624fe8)\n---\nnn::bezel::PhysicsModule::CastRayAll(nn::bezel::CastResult*, int, nn::bezel::CastRayArg const&) const"}
+{"a":"7100618490","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·9.5\n역할: PhysicsModule::CastShape. →@0x7100615f08→PhysicsWorldExtension.CastShape @0x71006252e0→SDK 가상 +0x2C0\n형상의 선형 이동 sweep(시작 quat만, 종료 quat·회전 궤적 없음). hit flags 0x403, +0xE1이면 0x603(MTD), +0xE2이면 +0x80\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: CastShape(→ 0x71006252e0)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0203.md §2.1\n역할: CastShape — mg0203 충돌 접점으로 인용([11 §9.5] 참조)\n[미확정] mg0203 게임 형상·질의 지점\n---\nnn::bezel::PhysicsModule::CastShape(nn::bezel::CastResult*, nn::bezel::CastShapeArg const&) const"}
+{"a":"71006184f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2·9.5·9.6\n역할: PhysicsModule::CastShapeAll. →@0x7100625480. +0xE0이면 정렬\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: CastShapeAll(→ 0x71006252e0)\n---\nnn::bezel::PhysicsModule::CastShapeAll(nn::bezel::CastResult*, int, nn::bezel::CastShapeArg const&) const"}
+{"a":"7100618560","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: PhysicsModule::Overlap. 내부 @0x71006256bc 로 이어진다.\n동작: 내부 128 touch 버퍼, callback @0x710062a910 이 요청된 4개까지 반환 순서로 복사. wrapper 자체 정렬/중복 제거 없음\n---\nnn::bezel::PhysicsModule::Overlap(nn::bezel::OverlapResult*, int, nn::bezel::OverlapArg const&) const"}
+{"a":"710061c768","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCharacterCollisionHit, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710061c77c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCharacterCollisionHit, true>::GetBaseTypeDesc()"}
+{"a":"710061c784","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCharacterCollisionHit, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710061c78c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCharacterCollisionHit, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710061c794","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCharacterCollisionHit, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100620e28","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionEntered, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620e3c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionEntered, true>::GetBaseTypeDesc()"}
+{"a":"7100620e44","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionEntered, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620e4c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionEntered, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100620e54","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionEntered, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100620e5c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionStay, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620e70","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionStay, true>::GetBaseTypeDesc()"}
+{"a":"7100620e78","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionStay, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620e80","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionStay, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100620e88","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionStay, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100620e90","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionLeft, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620ea4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionLeft, true>::GetBaseTypeDesc()"}
+{"a":"7100620eac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionLeft, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620eb4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionLeft, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100620ebc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamCollisionLeft, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100620ec4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerEntered, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620ed8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerEntered, true>::GetBaseTypeDesc()"}
+{"a":"7100620ee0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerEntered, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620ee8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerEntered, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100620ef0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerEntered, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100620ef8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerLeft, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620f0c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerLeft, true>::GetBaseTypeDesc()"}
+{"a":"7100620f14","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerLeft, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100620f1c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerLeft, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100620f24","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::MessageParamTriggerLeft, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100624480","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: world 선택(EN0C 등록 경로)"}
+{"a":"7100624eec","t":"plate","c":"nn::bezel::PhysicsWorldExtension::GetGravity() const"}
+{"a":"7100624f38","t":"plate","c":"nn::bezel::PhysicsWorldExtension::SetGravity(nn::util::Vector3f const&)"}
+{"a":"7100624fc0","t":"plate","c":"nn::bezel::PhysicsWorldExtension::SetCollisionLayerBitMask(int, unsigned int)"}
+{"a":"7100624fe8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·9.6\n역할: PhysicsWorldExtension::CastRay. SDK 가상 +0x2B8 호출\n처리: PxQueryFilterData flags 7, filter data 0, block 버퍼 거리 초기값 FLT_MAX. 제외 엔티티 weak handle이 무효(세대 불일치)면 0으로 넘김\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: WorldExtension ray 질의 — mask/exclude·distance/normal/handle/validity/initialOverlap\n---\nnn::bezel::PhysicsWorldExtension::CastRay(nn::bezel::CastResult*, nn::bezel::CastRayArg const&) const"}
+{"a":"7100625110","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §9.6\n역할: CastRayAll 본체\n처리: 스택에 touch 128건(0x80) PxHitBuffer, 필터 콜백 플래그 +0x14=0 → prefilter가 eTOUCH(단일 질의는 1→eBLOCK)\n처리: processTouches @0x7100625ef0가 hit마다 @0x710062c3bc로 CastResult(0x80 B)를 채우고 결과 수<인자 max일 때만 계속\n분기: RayArg +0x40이 켜져 있으면 @0x7100625f80(begin,end,2·⌊log2 n⌋) 정렬, 비교=CastResult+0x50 distance <\n반환: 결과 수\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §11.1·11.4\n역할: CastRayAll 내부. touch128·정렬·SDK축 완료 계약 근거"}
+{"a":"71006252e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.1·9.6\n역할: PhysicsWorldExtension::CastShape. SDK 가상 +0x2C0 호출\n처리: PxQueryFilterData flags 7, filter data 0, block 버퍼 거리 초기값 FLT_MAX. 제외 엔티티 weak handle이 무효면 0으로 넘김\n\n[미확정] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: WorldExtension shape sweep — 시작 pose/quat·shape localpose·mask/exclude·거리·initialOverlap\n[미확정] capsule 축/길이, All 정렬/동점\n---\nnn::bezel::PhysicsWorldExtension::CastShape(nn::bezel::CastResult*, nn::bezel::CastShapeArg const&) const"}
+{"a":"7100625480","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §9.6\n역할: CastShapeAll 본체\n처리: touch 128건 PxHitBuffer, prefilter eTOUCH. processTouches @0x710062a870가 hit마다 @0x710062c3bc로 CastResult를 채우고 결과 수<max일 때만 계속\n분기: ShapeArg +0xE0이 켜져 있으면 @0x7100625f80 정렬(비교 distance <). 반환: 결과 수\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §11.1·11.4\n역할: CastShapeAll 내부. touch128·정렬 완료 계약 근거"}
+{"a":"71006256bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: Overlap 내부 본체 (PhysicsModule::Overlap @0x7100618560 에서 호출, 128 touch 버퍼)."}
+{"a":"7100625eb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2\n역할: Ray callback. block hit가 있으면 공통 변환 @0x710062c3bc에 넘긴다"}
+{"a":"7100625ef0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §9.6\n역할: Ray All processTouches. hit마다 @0x710062c3bc로 CastResult 작성, 결과 수<max일 때만 계속"}
+{"a":"7100625f80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §9.6·9.9\n역할: libc++ std::sort introsort(CastResult+0x50 distance < 비교)\n구조: 경우 0~5, 30 이하 삽입 정렬, 1000 이상 sort5 중앙값, 깊이 소진 시 힙 정렬, 부분 삽입 정렬 8회 한도\n깊이 소진(힙 정렬) 경로는 디컴파일 줄 단위로 대조하지 않음"}
+{"a":"710062a834","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2\n역할: Sweep callback. block hit가 있으면 공통 변환 @0x710062c3bc에 넘긴다"}
+{"a":"710062a870","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §9.6\n역할: Shape All processTouches. hit마다 @0x710062c3bc로 CastResult 작성, 결과 수<max일 때만 계속"}
+{"a":"710062a910","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: Overlap touch callback. 요청된 개수(최대 4)까지 반환 순서로 복사."}
+{"a":"710062b360","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: type 0x401(1025) = PhysxJointFlags 등록 — 객체 0x20, +0x10 m_PxJoint 참조, +0x18 u32 m_Flags"}
+{"a":"710062b5e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: PhysxJointFlags 바이너리 독자 — 참조만 재배치"}
+{"a":"710062c3bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2·9.6\n역할: hit→CastResult(0x80 B) 공통 변환\n분기: actor→bezel Collision이 없으면 기록하지 않음\n쓰는 필드: +0x00 position, +0x10 normal(world), +0x20 Collision weak handle, +0x38 Entity weak handle, +0x50 distance(SDK hit 거리 비트 복사), +0x54 validity, +0x58 Shape weak handle, +0x70 initialOverlap=(distance≤0)\nvalidity: 위치 먼저. position 길이 NaN 또는 ePOSITION 없음→4, 아니면 normal NaN 또는 eNORMAL 없음→2, 아니면 0(OR 아님)\nShape: faceIndex=0xFFFFFFFF이면 getMaterials(…,1,0), 아니면 getMaterialFromInternalFaceIndex(faceIndex)의 PxMaterial 소유 CollisionShape\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.1·9.1\n역할: hit→CastResult 변환. position/normal/world, distance f32, validity 0/4/2, initialOverlap=(distance≤0), owner generation 보존\nCastResult의 body(+0x20)·entity(+0x38)·shape(+0x58)를 보존. shape는 hit face의 PxMaterial 소유 CollisionShape"}
+{"a":"710062c8b4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §3.2·9.6\n역할: 질의 prefilter\n처리: 셰이프 vtable +0xB0 = PxShape::getSimulationFilterData → word0=레이어, word2·word3=엔티티\n분기: 제외 Entity가 일치하면 0. 아니면 반환 -(mask >> (word0 & 31) & 1) & (block ? 2 : 1)\nlayer2와 mask4는 대응하지만 layer값을 mask로 그대로 쓰지 않는다\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: prefilter — 원본 mask=1<<layer, actor map 0x6(layer1·2)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §6.1\n역할: Overlap preFilter. 유효한 query owner ID 와 같은 shape 를 제외하고 (mask >> shapeLayer) & 1 을 검사."}
+{"a":"710062ce50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: RigidBody 생성. MotionType 0은 Static, 비0은 Dynamic actor 생성 후 1일 때 kinematic 플래그를 켠다. 2는 Dynamic(mg1002 호출과 일치)\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: motion 설정 — 0 Static/1 Kinematic/2 Dynamic\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0106.md §6.2\n역할: 강체 생성 분기. 운동종류0이면 정적 액터 생성 분기(기존 mgD_main_physics*.c 판독)"}
+{"a":"710062d018","t":"plate","c":"nn::bezel::RigidBody::SetMass(float)"}
+{"a":"710062d5d4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: RigidBody +0x274/+0x275를 다루는 함수. @0x71006097b4의 MotionType 분기와 연결"}
+{"a":"710062dc64","t":"plate","c":"nn::bezel::RigidBody::Stage(nn::bezel::WeakHandle<nn::bezel::PhysicsWorldExtension> const&)"}
+{"a":"710062dd4c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: 강체 Unstage 경로(@0x7100609704가 호출)"}
+{"a":"710062dd98","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: 변경 시 geometry scale 경로 호출(스케일 동기화 옵션)\n[미확정] 비균등/음수 스케일의 모든 형상 변환 규칙"}
+{"a":"710062df0c","t":"plate","c":"nn::bezel::RigidBody::GetShape() const"}
+{"a":"710062e2a4","t":"plate","c":"nn::bezel::RigidBody::SetMotionType(nn::bezel::RigidBodyMotionType)"}
+{"a":"710062e328","t":"plate","c":"nn::bezel::RigidBody::SetDensity(float)"}
+{"a":"710062e348","t":"plate","c":"nn::bezel::RigidBody::IsGravityEnabled() const"}
+{"a":"710062e380","t":"plate","c":"nn::bezel::RigidBody::SetGravityEnabled(bool)"}
+{"a":"710062e3a4","t":"plate","c":"nn::bezel::RigidBody::SetConstraintsOnAxis(unsigned int)"}
+{"a":"710062e61c","t":"plate","c":"nn::bezel::RigidBody::SetLinearDamping(float)"}
+{"a":"710062e650","t":"plate","c":"nn::bezel::RigidBody::SetAngularDamping(float)"}
+{"a":"710062e684","t":"plate","c":"nn::bezel::RigidBody::GetLinearVelocity() const"}
+{"a":"710062e76c","t":"plate","c":"nn::bezel::RigidBody::SetLinearVelocity(nn::util::Vector3f const&)"}
+{"a":"710062e7c4","t":"plate","c":"nn::bezel::RigidBody::GetAngularVelocity() const"}
+{"a":"710062e830","t":"plate","c":"nn::bezel::RigidBody::SetAngularVelocity(nn::util::Vector3f const&)"}
+{"a":"710062e8bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: collision transform 설정 경로(본 → 물리 포즈 전달)\n\n[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.3\n역할: Kinematic 포즈 적용. 충돌 활성 시 SDK 가상 +0x1F0 kinematic target 경로, 비활성 시 +0xA0 포즈 설정(다음 물리 갱신의 목표 포즈)\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n역할: Kinematic target"}
+{"a":"710062e92c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0911.md §6.8\n역할: PxRigidBody::addForce(…, eFORCE) 호출. 다음 시뮬레이션 스텝에서 Δv = F·dt_sim / m\n---\nnn::bezel::RigidBody::ApplyForce(nn::util::Vector3f const&)"}
+{"a":"710062ea6c","t":"plate","c":"nn::bezel::RigidBody::ApplyImpulseTorque(nn::util::Vector3f const&)"}
+{"a":"710062eab8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg1002.md §4.5\n역할: RigidBody::SetCollisionDetectionMode\n값 1: 스윕 CCD(eENABLE_CCD) 켬, speculative 끔\n---\nnn::bezel::RigidBody::SetCollisionDetectionMode(nn::bezel::CollisionDetectionMode)"}
+{"a":"7100630664","t":"plate","c":"nn::bezel::TriggerVolume::Stage(nn::bezel::WeakHandle<nn::bezel::PhysicsWorldExtension> const&)"}
+{"a":"71006378fc","t":"plate","c":"nn::bezel::PhysicsConstraint::SetTransform(nn::util::MatrixRowMajor4x3f const&, nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"71006490ac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCharacterCollision, false, nn::bezel::ComCollision>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71006490e4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCharacterCollision, false, nn::bezel::ComCollision>::GetBaseTypeDesc()"}
+{"a":"71006490f0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCharacterCollision, false, nn::bezel::ComCollision>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100649104","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCharacterCollision, false, nn::bezel::ComCollision>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710064910c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCharacterCollision, false, nn::bezel::ComCollision>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100649114","t":"plate","c":"nn::bezel::ComCharacterCollision::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::CharacterCollisionCreateArg const&)"}
+{"a":"71006499ec","t":"plate","c":"nn::bezel::ComCharacterCollision::SetOrigin(nn::bezel::CharacterCollisionOrigin)"}
+{"a":"71006499fc","t":"plate","c":"nn::bezel::ComCharacterCollision::SetOffsetTranslation(nn::util::Vector3f const&)"}
+{"a":"7100649cdc","t":"plate","c":"nn::bezel::ComCharacterCollision::MoveTo(nn::util::Vector3f const&)"}
+{"a":"7100693eb4","t":"plate","c":"nn::bezel::AnimationNodeCamera::Create(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006942b4","t":"plate","c":"nn::bezel::AnimationNodeCamera::GetAnimObj() const"}
+{"a":"7100694534","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::AnimationNodeCamera, false, nn::bezel::AnimationNodeClip>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710069459c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::AnimationNodeCamera, false, nn::bezel::AnimationNodeClip>::GetBaseTypeDesc()"}
+{"a":"71006945a8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::AnimationNodeCamera, false, nn::bezel::AnimationNodeClip>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71006945bc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::AnimationNodeCamera, false, nn::bezel::AnimationNodeClip>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71006945c4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::AnimationNodeCamera, false, nn::bezel::AnimationNodeClip>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71006945d0","t":"plate","c":"nn::bezel::AnimationNodeMaterial::Create(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006957c0","t":"plate","c":"nn::bezel::AnimationNodeShape::Create(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006963b0","t":"plate","c":"nn::bezel::AnimationNodeSkeletal::Create(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100696d10","t":"plate","c":"nn::bezel::AnimationNodeSkeletal::Peek(nn::bezel::HandlePtr<nn::bezel::SkeletonPose> const&, float)"}
+{"a":"7100696e68","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/05_ui_input.md §7.8\n역할: Skeletal 노드 SetFrame 경로 — +0x90 평가 플래그를 세우고 FrameCtrl 설정\n다음: @0x7100811884 에서 +0x60 변경 카운터 1 증가\n결과: 노드 교체 리스너/FTRG 재등록/first 초기화를 호출하지 않는다 → 같은 노드 수동 변경은 이전 이벤트 문맥 보존(§7.5 통과식)"}
+{"a":"7100696ea0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §6.6\n역할: FrameMax = node+0x78 frameController+8(endFrame) (노드 vtable 0x7101a04f60 +0xC8)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0508.md §3.4\n역할: 스켈레탈 애니 노드 vt+0xC8. 프레임 제어기 max 반환(AnimationNode::GetFrameMax 경로)"}
+{"a":"7100696fc8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §6.6\n역할: 스켈레탈 노드 진행 — 슬롯 진행량 × ModelModule::GetAnimationSpeed(@0x71006bc66c) 를 프레임 컨트롤러에 더함"}
+{"a":"71006a0f08","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.2\n역할: shape 전이 제한 설정 — shape 이름 조회 → 컴포넌트+0x28 stride 12 레코드 +4/+8 에 {min,max}"}
+{"a":"71006a0f1c","t":"pre","c":"shape 이름 조회 → 레코드 +4/+8 쓰기 (~0x71006a0f50)"}
+{"a":"71006a4e7c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.2\n역할: 본 전이 제한 {min,max} f32 쌍 설정 — 컴포넌트+0x28 본별 배열(stride 8)"}
+{"a":"71006a77f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.2\n역할: 본 전이 시간 소비\n식: D_bone = max(min, min(requestDuration, max))\n분기: D≤0 이면 이전 포즈 전이 기록을 만들지 않음; D>0·type≠0·D>elapsed(+0xF4) 이면 이전 포즈 기록 +0xE0/+0xE4 에 {D, elapsed}\n참고: no_transit 은 새 포즈 적용을 막는 마스크가 아니다"}
+{"a":"71006a7804","t":"pre","c":"D = max(min, min(requestDuration, max)) (~0x71006a782c)"}
+{"a":"71006a7830","t":"pre","c":"D>elapsed(+0xF4) 이면 {D, elapsed} → +0xE0/+0xE4 (~0x71006a7874)"}
+{"a":"71006ab2b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §3.1\n역할: ComModel::Create(FRES/BNTX)\n\n[판독] 2026-10-11 / md: web/docs/engine/render_unify.md §2.1\n역할: ComModel::Create. 모델·재질 변환([감사 §3.1]·[그래픽 §3·7] 재사용). renderer 통합과 분리된 계약.\n---\nnn::bezel::ComModel::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::ModelCreateArg const&)"}
+{"a":"71006ab3f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/lod.md §4.3\n역할: 모델 자원 연결.\n쓰는 필드: model+0x1D8 = 자원 wrapper\n호출: FUN_71006dcff8(wrapper) — Q(최대 Mesh 수) 계산과 runtimeModel 생성\n쓰는 필드: model+0x1E0 = runtimeModel (store @0x71006ab44c)"}
+{"a":"71006ab44c","t":"pre","c":"lod.md §4.3: model+0x1E0 = runtimeModel"}
+{"a":"71006ab554","t":"plate","c":"nn::bezel::ComModel::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"71006ab584","t":"plate","c":"nn::bezel::ComModel::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006abd48","t":"plate","c":"nn::bezel::ComModel::SetLocalTranslation(nn::util::Vector3f const&)"}
+{"a":"71006abdb8","t":"plate","c":"nn::bezel::ComModel::SetLocalTransform(nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"71006abe58","t":"plate","c":"nn::bezel::ComModel::SetRigLocalTransform(nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"71006ac0e0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §3.1\n역할: GetBoneSocket(캐릭터 §3)\n---\nnn::bezel::ComModel::GetBoneSocket(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006ad790","t":"plate","c":"nn::bezel::ComModel::_internalSetLocalScale(nn::util::Vector3f const&)"}
+{"a":"71006adaac","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §3.1\n역할: CalculateTransform(캐릭터 §3)\n\n[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: ComModel::CalculateTransform. Entity world와 모델 local(+0x80)을 합성해 모델 +0x40 결과를 만든다\n분기: 이미 계산한 generation이면 캐시 사용. 모델 flags +0x2c의 0x80 분기 있음\n분기: model+0x228이 있고 ModelModule 조회 @0x71006bde6c 결과 bit0가 0이면 local을 그대로 복사. SIMD로 반환한 합성 root가 world 계산에 전달\n---\nnn::bezel::ComModel::CalculateTransform()"}
+{"a":"71006ae498","t":"plate","c":"nn::bezel::ComModel::SetVisible(bool)"}
+{"a":"71006ae4d4","t":"plate","c":"nn::bezel::ComModel::IsBoneVisible(int) const"}
+{"a":"71006ae4f0","t":"plate","c":"nn::bezel::ComModel::SetBoneVisible(int, bool)"}
+{"a":"71006ae678","t":"plate","c":"nn::bezel::ComModel::_internalGetAssetData()"}
+{"a":"71006ae6f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/lod.md §7.2\n역할: 모델 변환·구 갱신 허용 검사.\n분기: 모델 flag+0x2C 의 bit7·bit8 과 ModelModule+0xE0==1 에 따라 공급자 +0x38(model) 반환 bit0 로 갱신 허용 여부 검사\n분기: 허용되지 않으면 이미 계산된 모델 변환·구 갱신을 건너뛴다.\n[미확정] 이 인터페이스가 카메라 컬링과 같은 검사인지, 모든 장면에서 쓰이는지, FsoSkipModelCalculationTarget_None/OutOfView/All 설정과의 연결"}
+{"a":"71006ae9c0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §7.1\n역할: 일반 모델 갱신(upload)\n조건: model+0x228==null 또는 instance+0x7c!=0\n순서: 필요 시 shape cache @0x71006b415c → SkeletonPose 존재 시 팔레트 업로드 @0x7100782e00 → shape 런타임 존재 시 Shape UBO·morph @0x7100771ac0 → 추가 frame/shape/instance 갱신 및 callback\npalette 쓰기가 morph보다 먼저여도 정점에 skin을 먼저 적용하는 뜻은 아님(GPU가 둘을 함께 읽음)"}
+{"a":"71006aeee0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/skinning.md §7.1\n역할: pose를 섞어 world/palette를 갱신하는 별도 경로. local scale 0.5 혼합과 rotation 혼합 @0x7100986938 호출\n[미확정] 프레임 의미와 선택 조건 전체"}
+{"a":"71006af498","t":"plate","c":"nn::bezel::ComModel::GetMaterialName(int) const"}
+{"a":"71006af53c","t":"plate","c":"nn::bezel::ComModel::FindBoneIndex(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71006af544","t":"plate","c":"nn::bezel::ComModel::GetBoneSocket(int)"}
+{"a":"71006afc0c","t":"plate","c":"nn::bezel::ComModel::CreateRuntimeShape(nn::bezel::CreateRuntimeShapeParam const&)"}
+{"a":"71006afe08","t":"plate","c":"nn::bezel::ComModel::SetupInstancing(int, bool)"}
+{"a":"71006afe4c","t":"plate","c":"nn::bezel::ComModel::AllocInstance()"}
+{"a":"71006afe8c","t":"plate","c":"nn::bezel::ComModel::FreeInstance(int)"}
+{"a":"71006b0050","t":"plate","c":"nn::bezel::ComModel::FindMaterial(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71006b05e4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Rigger 생성.\n쓰는 필드: enabled=1, UpdateTiming(+0x38)=0"}
+{"a":"71006b07dc","t":"plate","c":"nn::bezel::ComRigger::SetEnabled(bool)"}
+{"a":"71006b07e4","t":"plate","c":"nn::bezel::ComRigger::GetRootConstraint() const"}
+{"a":"71006b0808","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.1\n역할: Rigger Timing 덮어쓰기(RTTS @0x710070dea0에서 호출)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Rigger UpdateTiming 설정 (RTTS 속성 적용 @0x710070dea0 에서 호출)."}
+{"a":"71006b0b60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/11_moving_collision.md §2.1\n역할: Rigger 수신. UpdateTiming0이면 EN09, Timing1이면 AN03을 받는다. Timing0은 Animator+0x23C 조건으로 건너뛸 수 있다\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Rigger 메시지 처리.\n분기: timing0 이면 Entity 메시지 0x5F454E09, timing1 이면 애니 계산 완료 메시지 0x5F414E03 에서 @0x71006b0cc0 호출\n분기: timing0 경로는 같은 Entity 의 ComAnimator+0x23C 가 비영이면 건너뛴다."}
+{"a":"71006b0cc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Rigger 뼈 갱신 본체(메시지 처리 @0x71006b0b60 에서 호출).\n주의: 게임 Fiber 는 Entity 보다 앞이므로 판정에 쓰는 기존 뼈 transform 과 뒤의 애니/렌더 pose 를 같은 시점으로 합치지 않는다."}
+{"a":"71006b2170","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §4.3\n역할: 모델 skeleton 생성. →크기 조회 @0x71007823f8 → builder @0x71007824e0"}
+{"a":"71006b2458","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/shell/plaza_intro.md §10.3\n역할: materialInstance textureHandle[index]·sampler[index] 조회(환경 setter 경로)"}
+{"a":"71006b415c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §7.1\n역할: shape cache 처리(@0x71006ae9c0이 필요 시 호출)"}
+{"a":"71006b4170","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/lod.md §5.1·§6.2\n역할: LOD 화면 비율 계산 컨텍스트에 카메라 공통 입력(A,B,E)을 준비한다.\n입력: s0 = 정규화 viewport 높이 h(Viewport+0x1AC), 계산 컨텍스트, drawCamera, 0\n읽는 필드: Camera +0xA0..+0xAC 방향 4벡터(부호 반전해 n), +0xB0..+0xBC 위치 P, +0x1C8/+0x1CC 투영 bottom/top, +0x1D0 near, +0x1E0 투영 타입(3=orthographic)\n분기: 전역 nn::bezel::ModelModule(main @0x7101C3FFC0)+0xA0 byte != 0 이면 h=1 로 바꾼다.\n계산: H=(top-bottom)*0.5/h; E=dot(n,P); 투영 타입==3 이면 A=0,B=H; 아니면 A=H/near,B=0\n주의: h·near 에 epsilon clamp 없음. far 와 구의 화면 x/y 위치는 비교식에 들어가지 않음\n§6.2 결과: rho=R/(B+D*A) 는 h 에 비례. 대칭 perspective 에서 rho=R*h/(D*tan(f/2))"}
+{"a":"71006b41f0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/lod.md §5.3·§9\n역할: LOD 계산 컨텍스트 mode 와 문턱 배열 설정.\n입력: (ctx, mode, ratio, N, 0). ComModelBuffer 경로의 mode 인자는 항상 2(LodMode_ScreenRatio)\n동작: 컨텍스트 mode 를 쓰고 문턱 N 개를 복사, 남은 칸은 mode2 에서 0xFF7FFFFF(-FLT_MAX), 다른 mode 에서 +FLT_MAX 로 채워 총 12칸\n소비: 선택은 12개 엄격 비교 rho<T[i] 의 합. 중복·비정렬 문턱도 원값대로\n§9 호출자: 조사한 selector 의 두 설정 호출은 mode2\n[미확정] 12 를 넘는 설정의 안전성(확인한 컨테이너 배열은 1~4항목)"}
+{"a":"71006b4e5c","t":"plate","c":"nn::bezel::Material::GetShape(int) const"}
+{"a":"71006b4e90","t":"plate","c":"nn::bezel::Material::GetName() const"}
+{"a":"71006b4eb0","t":"plate","c":"nn::bezel::Material::FindParam(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006b4f30","t":"plate","c":"nn::bezel::Material::SetTexture(nn::util::basic_string_view<char, std::char_traits<char> >, nn::bezel::HandlePtr<nn::bezel::ITexture const> const&)"}
+{"a":"71006b5040","t":"plate","c":"nn::bezel::Material::FindSampler(int*, nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71006b51c0","t":"plate","c":"nn::bezel::Material::SetTexture(int, nn::bezel::HandlePtr<nn::bezel::ITexture const> const&)"}
+{"a":"71006b52b0","t":"plate","c":"nn::bezel::Material::ResetTexture(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006b562c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/lod.md §5.5\n역할: 재질 인스턴스를 그래픽 재질 레코드로 변환한다.\n소비: FUN_7100067150 이 그 레코드 +0xA0 의 bit13(0x2000)으로 LOD0 강제를 판단"}
+{"a":"71006b6ed0","t":"plate","c":"nn::bezel::MaterialHandle::MaterialHandle()"}
+{"a":"71006b6eec","t":"plate","c":"nn::bezel::MaterialHandle::MaterialHandle(nn::bezel::MaterialHandle const&)"}
+{"a":"71006b6f5c","t":"plate","c":"nn::bezel::MaterialHandle::Reset(nn::bezel::Material*)"}
+{"a":"71006b6fec","t":"plate","c":"nn::bezel::MaterialHandle::~MaterialHandle()"}
+{"a":"71006b7180","t":"plate","c":"nn::bezel::MaterialHandle::IsValid() const"}
+{"a":"71006b7190","t":"plate","c":"nn::bezel::MaterialHandle::Lock() const"}
+{"a":"71006b71bc","t":"plate","c":"nn::bezel::MaterialHandle::SafeLock() const"}
+{"a":"71006b71f8","t":"plate","c":"nn::bezel::MaterialHandle::Get() const"}
+{"a":"71006b7414","t":"plate","c":"nn::bezel::MaterialParam::TryGetInt4(std::array<int, 4ul>*) const"}
+{"a":"71006b7790","t":"plate","c":"nn::bezel::MaterialParam::TryGetVector3(nn::util::Vector3f*) const"}
+{"a":"71006b7834","t":"plate","c":"nn::bezel::MaterialParam::TryGetVector4(nn::util::Vector4f*) const"}
+{"a":"71006b7bcc","t":"plate","c":"nn::bezel::MaterialParam::GetFloat() const"}
+{"a":"71006b7de0","t":"plate","c":"nn::bezel::MaterialParam::GetVector3() const"}
+{"a":"71006b7e5c","t":"plate","c":"nn::bezel::MaterialParam::GetVector4() const"}
+{"a":"71006b8114","t":"plate","c":"nn::bezel::MaterialParam::GetTexSrt() const"}
+{"a":"71006b8188","t":"plate","c":"nn::bezel::MaterialParam::TrySetInt(int)"}
+{"a":"71006b8370","t":"plate","c":"nn::bezel::MaterialParam::TrySetInt4(std::array<int, 4ul> const&)"}
+{"a":"71006b86a4","t":"plate","c":"nn::bezel::MaterialParam::TrySetFloat(float)"}
+{"a":"71006b8b18","t":"plate","c":"nn::bezel::MaterialParam::TrySetVector3(nn::util::Vector3f const&)"}
+{"a":"71006b8cd4","t":"plate","c":"nn::bezel::MaterialParam::TrySetVector4(nn::util::Vector4f const&)"}
+{"a":"71006b97dc","t":"plate","c":"nn::bezel::MaterialParam::SetInt(int)"}
+{"a":"71006b97e0","t":"plate","c":"nn::bezel::MaterialParam::SetInt4(std::array<int, 4ul> const&)"}
+{"a":"71006b97e8","t":"plate","c":"nn::bezel::MaterialParam::SetFloat(float)"}
+{"a":"71006b98a0","t":"plate","c":"nn::bezel::MaterialParam::SetVector3(nn::util::Vector3f const&)"}
+{"a":"71006b98a4","t":"plate","c":"nn::bezel::MaterialParam::SetVector4(nn::util::Vector4f const&)"}
+{"a":"71006b98b0","t":"plate","c":"nn::bezel::MaterialParam::SetBool(bool)"}
+{"a":"71006b98b8","t":"plate","c":"nn::bezel::MaterialParam::SetTexSrt(nn::g3d::TexSrt const&)"}
+{"a":"71006b9c00","t":"plate","c":"nn::bezel::MaterialParam::Invalidate()"}
+{"a":"71006b9c18","t":"plate","c":"nn::bezel::MaterialParam::IsValid() const"}
+{"a":"71006bae80","t":"plate","c":"nn::bezel::ModelInstancingBuffer::_internalResetInstances()"}
+{"a":"71006bc21c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/01_core.md §3.3\n역할: CoreSystem 타이밍 0x0E에 처리기를 등록하는 모듈 등록 함수\n[미확정] 모듈 이름과 장면·파이버와의 상대 순서"}
+{"a":"71006bc664","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §6.6\n역할: ModelModule::SetAnimationSpeed — 전역 모델 애니 속도 변경(직접 호출 @0x7100718a60)\n---\nnn::bezel::ModelModule::SetAnimationSpeed(float)"}
+{"a":"71006bc66c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §6.6\n역할: ModelModule::GetAnimationSpeed = module+0x78\n---\nnn::bezel::ModelModule::GetAnimationSpeed() const"}
+{"a":"71006bc684","t":"plate","c":"nn::bezel::ModelModule::CreateMaterial(nn::bezel::MaterialCreateArg const&)"}
+{"a":"71006bc770","t":"plate","c":"nn::bezel::ModelModule::CreateRuntimeMesh()"}
+{"a":"71006bc9f4","t":"plate","c":"nn::bezel::ModelModule::GetShaderArchive(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"71006bca3c","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/lod.md §5.1\n역할: ModelModule+0xA0 byte setter. 인자의 bool 을 그대로 저장한다.\n소비: FUN_71006b4170 에서 != 0 이면 viewport 높이 h 를 1 로 바꾼다.\n호출자: 확인된 main 직접 호출자는 API bridge FUN_710071a224 @0x710071a2a0 1개\n[미확정] 게임 장면의 직접 활성 호출·공식 API 이름·목적"}
+{"a":"71006bcc80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/lod.md §5.1\n역할: nn::bezel::ModelModule 생성자.\n쓰는 필드: @0x71006bcce8 에서 +0xA0 byte(viewport 높이 h=1 override)를 0 으로 초기화"}
+{"a":"71006bcce8","t":"pre","c":"lod.md §5.1: ModelModule+0xA0 (h=1 override) = 0"}
+{"a":"71006bda60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Model 모듈의 0x0E 처리기. 본체는 ret(빈 함수).\n주의: Model 의 0x0E 를 뼈 갱신 완료로 해석하지 않는다. 실제 처리는 0x15/0x16/0x18."}
+{"a":"71006bda68","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Model 모듈의 0x15 처리기."}
+{"a":"71006bda80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Model 모듈의 0x16 처리기."}
+{"a":"71006bdac0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0122.md §3.5\n역할: Model 모듈의 0x18 처리기."}
+{"a":"71006bde6c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: ModelModule 조회. ComModel::CalculateTransform이 bit0로 local 복사 경로 선택"}
+{"a":"71006c0c6c","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §4.3\n역할: AnimationPassCamera 코드 생성 경로\n[추정] mg1801 은 이 경로로 만들며 +0x18=0, +0x19=1 기본값 그대로\n\n[미확정] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §4.1·부록C\n역할: code 경로 pass 생성(C 없음).\n[추정] ApplyAspectEnabled↔pass+0x18, ApplyNearAndFarEnabled↔pass+0x19 경로 후보. mg1801 default pass 가정은 U01.\n[미확정] U01: mg1801 default pass 호출 연결 확인 필요."}
+{"a":"71006c0d44","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §4.3\n역할: AnimationPassCamera 직렬화 생성 경로(\"Entity\" 속성)\n효과: +0x18/+0x19 기본값을 데이터로 덮어쓸 수 있음\n\n[미확정] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §4.1·부록C\n역할: serialized 경로 pass 생성(C 없음).\n[추정] ApplyAspectEnabled↔pass+0x18, ApplyNearAndFarEnabled↔pass+0x19 속성→byte 연결 후보.\n[미확정] U01: 속성→byte 연결 확인 필요."}
+{"a":"71006c0e5c","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §4.3\n역할: AnimationPassCamera 생성자(0x20 B)\n쓰는 필드: +0x00 vtable 0x7101a06600, +0x10 = 0, *(u16*)(this+0x18) = 0x100 → +0x18 = 0, +0x19 = 1\n+0x18: 1이면 애니 aspect 적용, 0이면 카메라 현재 종횡비 유지(기본 0)\n+0x19: 1이면 애니 near/far 적용, 0이면 카메라 현재 값(기본 1)\n[추정] +0x18=ApplyAspectEnabled, +0x19=ApplyNearAndFarEnabled (main 문자열과 이름↔오프셋 대응은 추정)\n\n[미확정] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §4.1·§11\n역할: pass 기본값 설정. pass+0x18 byte=0(aspect 유지), pass+0x19 byte=1(near/far 적용).\n[미확정] U01: 속성명 대응."}
+{"a":"71006c0fe0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §3.2·§4.3\n역할: AnimationPassCamera::Apply(this, entityHandle) — 애니메이션 처리 타이밍(09_character §3.2)에 카메라 애니 결과를 카메라에 적용하는 진입점\nvtable: 0x7101a06600 의 +0x50 슬롯\n동작: 엔티티에서 nn::bezel::ComCamera 를 찾아 FUN_71006c1120(this, ctx, -, 슬롯 노드 트리) 호출\nthis: AnimationPassCamera(0x20 B, 생성자 FUN_71006c0e5c)\n\n[미확정] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §1·§3·§6.6·§11\n역할: 카메라 애니 적용 흐름의 첫 단계. 대표 모션 노드 → CameraAnimObj 결과 → pass(0x71006c1120) → world view(0x7100849250) 순서(§3 애니).\n§1: 결과값의 가중 평균은 없고 대표 자식 선택에만 가중치를 쓴다.\n[미확정] §6.6·U02: AnimationPass.Apply/ComCamera.world 갱신 완료와 shake(0x71004e14dc) 적용의 실제 상대 순서는 확보되지 않음.\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §3.2\n역할: AnimationPassCamera(카메라 §3·6)\n\n[판독] 2026-10-11 / md: web/docs/engine/render_unify.md §2.1·7\n역할: AnimationPassCamera 계열(@0x71006c0fe0/0x71006c1120)의 기존 카메라 슬롯 적용. draw camera와 분리.\n카메라 수학은 20_camera_runtime 소유, [카메라 §3.2] 재사용."}
+{"a":"71006c1120","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §3.2·§4.1·§4.2·§4.3·§6.1\n역할: 카메라 애니 적용기. 슬롯 노드 트리를 따라가 선택된 CameraAnimObj 결과로 nn::bezel::Camera 투영과 ComCamera 애니 뷰를 설정\n입력: (this=AnimationPassCamera, ctx, -, 슬롯 노드 트리). 호출자 FUN_71006c0fe0(AnimationPassCamera::Apply)\n노드 분기: 종류 0(클립) = CameraAnimObj 평가(vt+0x18) → 결과 버퍼(§4.1) → 투영·뷰 설정\n노드 분기: 종류 1(묶음) = 자식을 차례로 모두 적용(뒤에 적용한 것이 덮어씀)\n노드 분기: 그 밖 = vt+0x40 이 돌려준 대표 자식 하나로 내려감(종류 2 최대 weight 0x710080b6d0, 종류 3 첫 자식 0x710080bd48, 종류 4·5·6 node+0x38 단일 자식 0x710080bc60)\npass 비트: node+8 의 비트 passIndex 가 꺼진 노드는 건너뜀\n혼합: 카메라 결과끼리 가중 평균하지 않음, 클립이 바뀌는 순간 보간 없음(§5.1)\n결과 버퍼(CameraAnimObj+0x48): +0x00 near, +0x04 far, +0x08 aspect, +0x0C fovy(라디안 전체 세로각, 정사영이면 화면 높이), +0x10 pos[3], +0x1C aim[3](Aim) / rot[3](EulerZXY 라디안), +0x28 twist(라디안, Aim만)\n읽는 pass 필드: +0x18 u8 — 1이면 애니 aspect, 0이면 카메라 현재 aspect 유지(기본 0)\n읽는 pass 필드: +0x19 u8 — 1이면 애니 near/far, 0이면 카메라 현재 near/far(기본 1)\n플래그(ResCameraAnim+4 u16) 0x400 Perspective: 1이면 Camera::SetProjectionPerspectiveFovy(fovy, aspect, near, far), 0이면 FUN_71008470ac(top=fovy/2, bottom=−fovy/2, left=−aspect·fovy/2, right=aspect·fovy/2, near, far)\n플래그 0x100 EulerZXY: 0이면 Aim 경로 FUN_71007758a4(pos, aim, twist), focus=|pos−aim| / 1이면 Euler 경로 FUN_7100775b90(pos, rot), focus=−1\n출력: ComCamera+0x40 애니 뷰 행렬, ComCamera+0x80 초점 거리 기록 후 ComCamera::_internalCalculateView(§6.3)\n의사코드: aspect = pass.applyAspect ? res.aspect : cam.aspect; [near,far] = pass.applyNearFar ? [res.near,res.far] : [cam.near,cam.far]\n의사코드: if (flags & 0x400) cam.setPerspectiveFovy(fovy,aspect,near,far) else cam.setOrtho(fovy/2,-fovy/2,-aspect*fovy/2,aspect*fovy/2,near,far)\n의사코드: if (!(flags & 0x100)) { view=lookAtTwist(pos,aim,twist); focus=length(pos-aim) } else { view=eulerZXY(pos,rot); focus=-1 }; comCamera.animView=view; comCamera.focus=focus; comCamera.calculateView()\n\n[미확정] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §1·§4.1·§6.1·§7.1·§9.1\n역할: 카메라 애니 pass 적용. CameraAnimObj 결과를 Camera 투영·뷰에 적용한다(원근/직교, Aim/twist/EulerZXY, aspect·near/far 적용 flag).\n읽는 결과(§4.1): CameraAnimObj+0x48 결과 버퍼 0x2C B — near+00, far+04, aspect+08, fovy+0C, pos+10(vec3), aim/rot+1C(vec3), twist+28.\n읽는 flag(§4.1): ResCameraAnim+4 — 0x0100=EulerZXY, 0x0400=Perspective; 해제하면 Aim/Orthographic.\n[추정] 나머지 flag: 0x0001=BakedCurve 이름, 0x0004=Looping (FSNB ResCameraAnim.Flags 해석).\n읽는 pass 필드(§4.1): pass+0x18 byte(기본0)=aspect 적용, pass+0x19 byte(기본1)=near/far 적용.\n계산식(§6.1): fovy는 원근이면 full vertical radians, 직교이면 화면 높이.\n계산식(§6.1): aspect = applyAspect ? res.aspect : camera.aspect; near/far = applyNearFar ? res값 : 현재값.\n계산식(§6.1): 원근 top=near*tan(fovy/2); 직교 top=fovy/2, bottom=−top, left=−aspect*top, right=aspect*top.\n§7.1: 라벨은 보간 없이 바뀐다. [추정] 기본 pass라면 저장 aspect를 적용하지 않는다(대표 노드 조건은 0x710080b6d0 와 함께).\n[미확정] U01: pass 속성명(ApplyAspectEnabled↔+18, ApplyNearAndFarEnabled↔+19)과 mg1801 default pass 경로.\n§9.1: 웹의 near=max(raw,0.3) 하한은 원본에 없다(원본은 raw near).\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §3.2\n역할: AnimationPassCamera(카메라 §3·6)\n\n[판독] 2026-10-11 / md: web/docs/engine/render_unify.md §2.1·7·9.2\n역할: AnimationPassCamera 계열(@0x71006c0fe0/0x71006c1120)의 기존 카메라 슬롯 적용. draw camera와 분리.\n§9.2 웹 계약: CameraState snapshot → writeThree, base 불변 snapshot 재사용([20_camera_runtime §9.3])."}
+{"a":"71006c3d98","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/lod.md §7.2\n역할: 모델 갱신.\n분기: 모듈의 직전 FSO 실행 상태 +0x9E 가 켜지면 우선순위 공급자 +0x28 준비 함수를 호출한다."}
+{"a":"71006c4930","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §7.1\n역할: 모델 upload worker. atomic으로 모델 배열 작업 번호를 확보\n분기: model+0x28!=0 && (model+0x2c & 1)!=0인 모델에 @0x71006ae9c0(model,slot) 호출(정점별 CPU skin 루프가 아님)"}
+{"a":"71006c82e8","t":"plate","c":"nn::bezel::HashedString::NnDetailBezelGetTypeDesc() const"}
+{"a":"71006c82f4","t":"plate","c":"nn::bezel::HashedString::NnDetailBezelGetThisPtr()"}
+{"a":"71006c82f8","t":"plate","c":"nn::bezel::HashedString::NnDetailBezelGetThisPtrConst() const"}
+{"a":"71006c82fc","t":"plate","c":"nn::bezel::HashedString::~HashedString()"}
+{"a":"71006c8300","t":"plate","c":"nn::bezel::HashedString::~HashedString()"}
+{"a":"71006c8304","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HashedString, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71006c8318","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HashedString, true>::GetBaseTypeDesc()"}
+{"a":"71006c8320","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HashedString, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71006c8328","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HashedString, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71006c8330","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::HashedString, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71006c88d4","t":"plate","c":"nn::bezel::RigConstraint::TransitionWeight(float, float)"}
+{"a":"71006c88f8","t":"plate","c":"nn::bezel::RigConstraint::SetWeight(float)"}
+{"a":"71006c8908","t":"plate","c":"nn::bezel::RigConstraint::GetChild(int) const"}
+{"a":"71006c8914","t":"plate","c":"nn::bezel::RigConstraint::GetChildCount() const"}
+{"a":"71006c974c","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::GetFootCount() const"}
+{"a":"71006c9768","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::GetFootParams(int) const"}
+{"a":"71006c9778","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::SetFootParams(int, nn::bezel::FootIkFootParams const&)"}
+{"a":"71006c9ad4","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::GetBodyTiltParams() const"}
+{"a":"71006c9adc","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::SetBodyTiltParams(nn::bezel::FootIkBodyTiltParams const&)"}
+{"a":"71006c9b48","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::SetSmoothingTime(float)"}
+{"a":"71006c9b58","t":"plate","c":"nn::bezel::RigConstraintFootIkBase::SetSmoothingLinearCoefficient(float)"}
+{"a":"71006d58d0","t":"plate","c":"nn::bezel::RuntimeMesh::AddVertexBuffer(void const*, unsigned long, int)"}
+{"a":"71006d5ad0","t":"plate","c":"nn::bezel::RuntimeMesh::SetIndexBuffer(void const*, unsigned long, int)"}
+{"a":"71006d5fd8","t":"plate","c":"nn::bezel::RuntimeMesh::SetVertexCount(unsigned int)"}
+{"a":"71006d5fe4","t":"plate","c":"nn::bezel::RuntimeMesh::SetIndexCount(int)"}
+{"a":"71006d5ff0","t":"plate","c":"nn::bezel::RuntimeMesh::SetBoundingBox(nn::g3d::Bounding const&)"}
+{"a":"71006d6008","t":"plate","c":"nn::bezel::RuntimeMesh::SetBoundingSphere(nn::g3d::Sphere const&)"}
+{"a":"71006d6020","t":"plate","c":"nn::bezel::RuntimeMesh::GetVertexBuffer(int) const"}
+{"a":"71006d6048","t":"plate","c":"nn::bezel::RuntimeMesh::GetVertexCount() const"}
+{"a":"71006d6614","t":"plate","c":"nn::bezel::ShaderArchive::GetResShaderArchive() const"}
+{"a":"71006d9ea8","t":"plate","c":"nn::bezel::Shape::SetMaterial(nn::bezel::MaterialHandle const&)"}
+{"a":"71006d9fc0","t":"plate","c":"nn::bezel::Shape::SetLocalTransform(nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"71006da43c","t":"plate","c":"nn::bezel::Shape::SetVisible(bool)"}
+{"a":"71006db430","t":"plate","c":"nn::bezel::detail::AssetShapeImpl::EnumerateVertexStateInfo() const"}
+{"a":"71006dcff8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/lod.md §4.3\n역할: FMDL 의 최대 Mesh 수 Q 를 구해 runtimeModel 을 만든다.\n읽는 필드: raw FMDL+0x6A u16 Shape 수, raw FMDL+0x28 Shape 배열(stride 0x60), raw Shape+0x5B u8 numMesh\n계산: Q = max(1, 모든 Shape 의 numMesh). 비가시 보조 Shape 도 순회에 포함\n쓰는 필드: build 인자+0x20 = Q\n호출: FUN_7100771100(runtimeModel, build 인자, ...)\n쓰는 필드: wrapper+0x10 = runtimeModel\n주의: Q 는 컨테이너 ratio 개수 N 이 아니다."}
+{"a":"71006dd334","t":"plate","c":"nn::bezel::SkeletonPose::GetBoneCount() const"}
+{"a":"71006dd340","t":"plate","c":"nn::bezel::SkeletonPose::FindBoneIndex(char const*) const"}
+{"a":"71006dd34c","t":"plate","c":"nn::bezel::SkeletonPose::FindBoneIndex(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71006dd3c0","t":"plate","c":"nn::bezel::SkeletonPose::GetBoneName(int) const"}
+{"a":"71006dd430","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.7\n역할: SkeletonPose::GetBoneParentIndex — 본 부모 인덱스 조회"}
+{"a":"71006dd520","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::CalculateWorldTransform(b)\n분기: Entity generation 또는 해당 본 dependency mask(+0x58)가 dirty와 겹치면 전체 world 계산. 범위 밖 본은 identity 반환\n[미확정] dependency mask의 생성 규칙\n---\nnn::bezel::SkeletonPose::CalculateWorldTransform(int)"}
+{"a":"71006dd630","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::GetWorldTransformCalculated. dirty 확인 없이 현재 world 배열에서 반환\n---\nnn::bezel::SkeletonPose::GetWorldTransformCalculated(int) const"}
+{"a":"71006dd6b4","t":"plate","c":"nn::bezel::SkeletonPose::GetLocalMtxRt(int) const"}
+{"a":"71006dd6f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::SetLocalMtxRt. 유효 본의 RT 64바이트 복사, local flags &=0xf0ffffff, dirty 설정\ndirty 설정: k=min(boneIndex,255), word=k>>6, bit=1ULL<<(k&63)(255 초과 본은 마지막 비트 공유)\n---\nnn::bezel::SkeletonPose::SetLocalMtxRt(int, nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"71006dd77c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::SetLocalTransformAsChanged. dirty 설정\ndirty 설정: k=min(boneIndex,255), word=k>>6, bit=1ULL<<(k&63)(255 초과 본은 마지막 비트 공유)\n---\nnn::bezel::SkeletonPose::SetLocalTransformAsChanged(int)"}
+{"a":"71006dd7bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::GetLocalScale. 범위 밖 결과는 (1,1,1)\n---\nnn::bezel::SkeletonPose::GetLocalScale(int) const"}
+{"a":"71006dd7f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::SetLocalScale. scale 벡터 저장, local flags &=0xf0ffffff, dirty 설정\ndirty 설정: k=min(boneIndex,255), word=k>>6, bit=1ULL<<(k&63)(255 초과 본은 마지막 비트 공유)\n---\nnn::bezel::SkeletonPose::SetLocalScale(int, nn::util::Vector3f const&)"}
+{"a":"71006dd8e0","t":"plate","c":"nn::bezel::SkeletonPose::GetBoneSocket(int) const"}
+{"a":"71006dd95c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §1.1·3.2\n역할: SkeletonPose::CalculateLocalTransform. RT의 basis 세 벡터에 각각 scale x/y/z를 곱하고 translation은 유지\n디컴파일의 16바이트 반환만 읽으면 전체 행렬을 놓친다(어셈블리로 확인)\n---\nnn::bezel::SkeletonPose::CalculateLocalTransform(int) const"}
+{"a":"71006dd97c","t":"pre","c":"~0x71006dd994: basis0*sx, basis1*sy, basis2*sz, translation 복사(skinning §3.2)"}
+{"a":"71006dda04","t":"plate","c":"nn::bezel::SkeletonPose::GetLocalMtxRtFromResource(int) const"}
+{"a":"71006ddd70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.1\n역할: SkeletonPose::GetModelSpaceTransformCalculatedFromResource. pose+0x70(리소스로부터 계산한 model-space 행렬 배열, 본당 64 B)을 반환\npose+0x70은 inverse bind 배열이 아니다(팔레트의 inverse bind는 별도 리소스 필드)\n---\nnn::bezel::SkeletonPose::GetModelSpaceTransformCalculatedFromResource(int) const"}
+{"a":"71006dddb0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::Calculate\n분기: generation 동일·dirty 모두 0이면 반환\n그 밖: ComModel::CalculateTransform @0x71006adaac → world scale-mode dispatcher @0x7100782db8 → model+0x2c |= 8 → dirty 네 word=0 → Entity generation 저장\n---\nnn::bezel::SkeletonPose::Calculate()"}
+{"a":"71006dde98","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::CalculateForce. 캐시 조건 없이 계산(Calculate와 같은 계산 호출)\n---\nnn::bezel::SkeletonPose::CalculateForce()"}
+{"a":"71006ddf00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.1·3.2\n역할: SkeletonPose::BeginPeek. local record 전체를 +0x78/+0x80 구간에 복사\n---\nnn::bezel::SkeletonPose::BeginPeek()"}
+{"a":"71006ddf90","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/skinning.md §3.2\n역할: SkeletonPose::EndPeek. local record 복원, 복원 후 dirty 네 word 모두 1\n---\nnn::bezel::SkeletonPose::EndPeek()"}
+{"a":"71006e06b0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/lod.md §9\n역할: LodMode enum 등록. None=0, Distance=1, ScreenRatio=2, Invalid=-1 등\n참조: Distance 문자열 0x710153DAF8 의 참조는 이 등록 함수 1개\n주의: 컨테이너 type(0/1)와 다른 열거형이다.\n[미확정] 다른 호출 방식·모듈의 거리 mode 활성과 문턱"}
+{"a":"71006e8040","t":"plate","c":"nn::bezel::AnimationMaskMaterial::Create(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"71006e84d8","t":"plate","c":"nn::bezel::AnimationMaskMaterial::SetMaterialEnabled(int, bool)"}
+{"a":"71006e8520","t":"plate","c":"nn::bezel::AnimationMaskMaterial::FindMaterialIdx(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71006e8780","t":"plate","c":"nn::bezel::AnimationMaskMaterial::GetMaterialCount() const"}
+{"a":"71006ebf30","t":"plate","c":"nn::bezel::AnimationMaskSkeleton::Create(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"71006ec3b0","t":"plate","c":"nn::bezel::AnimationMaskSkeleton::ClearSubTrees()"}
+{"a":"71006ec44c","t":"plate","c":"nn::bezel::AnimationMaskSkeleton::AddSubTree(int)"}
+{"a":"71006ec730","t":"plate","c":"nn::bezel::AnimationMaskSkeleton::RemoveSubTree(int)"}
+{"a":"71006ec880","t":"plate","c":"nn::bezel::AnimationMaskSkeleton::SetInversionEnabled(bool)"}
+{"a":"71006ec910","t":"plate","c":"nn::bezel::AnimationMaskSkeleton::FindBoneIdx(nn::util::basic_string_view<char, std::char_traits<char> >)"}

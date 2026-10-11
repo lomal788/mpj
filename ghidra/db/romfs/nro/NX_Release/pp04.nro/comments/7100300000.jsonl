@@ -1,0 +1,59 @@
+{"a":"7100300000","t":"plate","c":"sb::ModelBase::GetTransparency() const"}
+{"a":"7100301000","t":"plate","c":"sb::ModelBase::SetDitherTransparency(float)"}
+{"a":"7100302000","t":"plate","c":"sb::ModelBase::CreateInstancingModel(char const*, int)"}
+{"a":"7100303000","t":"plate","c":"sb::ModelBase::GetInstanceCount() const"}
+{"a":"7100304000","t":"plate","c":"sb::ModelBase::SetGeometryInstanceVisibility(int, bool)"}
+{"a":"7100305000","t":"plate","c":"sb::ModelBase::IsGeometryInstanceVisibility(int) const"}
+{"a":"7100306000","t":"plate","c":"sb::ModelBase::SetGeometryInstanceTransform(int, nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"7100307000","t":"plate","c":"sb::ModelBase::SetMaterialTexture(char const*, char const*, nn::bezel::HandlePtr<nn::bezel::ITexture const>)"}
+{"a":"7100308000","t":"plate","c":"sb::ModelBase::SetMaterialTexSrt(char const*, unsigned int, float, float, float, float, float)"}
+{"a":"7100309000","t":"plate","c":"sb::ModelBase::SetMaterialTexUVTransS(char const*, unsigned int, float)"}
+{"a":"710030a000","t":"plate","c":"sb::ModelBase::SetMaterialTexUVTransT(char const*, unsigned int, float)"}
+{"a":"710030b000","t":"plate","c":"sb::ModelBase::GetMaterialTexUVTransS(char const*, unsigned int)"}
+{"a":"710030c000","t":"plate","c":"sb::ModelBase::GetMaterialTexUVTransT(char const*, unsigned int)"}
+{"a":"710030d000","t":"plate","c":"sb::ModelBase::SetAnimList(bex::vector<std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > > const&)"}
+{"a":"710030e000","t":"plate","c":"sb::ModelBase::AddAnim(char const*)"}
+{"a":"710030f000","t":"plate","c":"sb::ModelBase::IsLooped(char const*)"}
+{"a":"7100310000","t":"plate","c":"sb::ModelBase::GetAnimFrameMax() const"}
+{"a":"7100311000","t":"plate","c":"sb::ModelBase::GetAnimFrameMax(char const*) const"}
+{"a":"7100312000","t":"plate","c":"sb::ModelBase::GetPlayingAnimName()"}
+{"a":"7100313000","t":"plate","c":"sb::ModelBase::PlayAnim(char const*, actor::MotionArg&)"}
+{"a":"7100314000","t":"plate","c":"sb::ModelBase::SlideAnim(char const*)"}
+{"a":"7100315000","t":"plate","c":"sb::ModelBase::SlideAnim(char const*, float, nn::bezel::AnimationTransitionType)"}
+{"a":"7100316000","t":"plate","c":"sb::ModelBase::EnqueuePlayAnim(char const*, nn::bezel::AnimationTransitionArg const&)"}
+{"a":"7100317000","t":"plate","c":"sb::ModelBase::ClearQueue()"}
+{"a":"7100318000","t":"plate","c":"sb::ModelBase::SetAnimSpeed(float)"}
+{"a":"7100319000","t":"plate","c":"sb::ModelBase::GetAnimSpeed() const"}
+{"a":"710031a000","t":"plate","c":"sb::ModelBase::SetAnimFrame(float)"}
+{"a":"710031b000","t":"plate","c":"sb::ModelBase::PlayAnim(char const*, char const*, float, nn::bezel::AnimationTransitionType)"}
+{"a":"710031c000","t":"plate","c":"sb::ModelBase::PlayAnim(char const*, char const*, actor::MotionArg&)"}
+{"a":"710031d000","t":"plate","c":"sb::ModelBase::StopAnim(char const*)"}
+{"a":"710031e000","t":"plate","c":"sb::ModelBase::IsPlaying() const"}
+{"a":"710031f000","t":"plate","c":"sb::ModelBase::IsPlaying(char const*) const"}
+{"a":"7100320000","t":"plate","c":"sb::ModelBase::GetPlayingAnimName() const"}
+{"a":"7100321000","t":"plate","c":"sb::ModelBase::SetMaterialParam(char const*, char const*, int)"}
+{"a":"7100322000","t":"plate","c":"sb::ModelBase::SetMaterialParam(char const*, char const*, float)"}
+{"a":"7100323000","t":"plate","c":"sb::ModelBase::SetMaterialParam(char const*, char const*, nn::util::Vector3f const&)"}
+{"a":"7100324000","t":"plate","c":"sb::ModelBase::SetMaterialParam(char const*, char const*, nn::util::Vector4f const&)"}
+{"a":"7100325000","t":"plate","c":"sb::ModelBase::GetBoneIndex(char const*) const"}
+{"a":"7100326000","t":"plate","c":"sb::ModelBase::IsBoneExist(char const*) const"}
+{"a":"7100327000","t":"plate","c":"sb::ModelBase::GetBoneRotationQuaternion(char const*)"}
+{"a":"7100328000","t":"plate","c":"sb::ModelBase::GetBoneRotationQuaternion(unsigned int)"}
+{"a":"7100329000","t":"plate","c":"sb::ModelBase::SetBoneLocalMatrix(char const*, nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"710032a000","t":"plate","c":"sb::ModelBase::SetBoneLocalMatrix(unsigned int, nn::util::MatrixRowMajor4x3f const&)"}
+{"a":"710032b000","t":"plate","c":"sb::ModelBase::GetBoneLocalMatrix(unsigned int)"}
+{"a":"710032c000","t":"plate","c":"sb::ModelBase::HookModel(nn::bezel::WeakHandle<sb::ModelBase> const&)"}
+{"a":"710032d000","t":"plate","c":"sb::ModelBase::HookModel(nn::bezel::WeakHandle<sb::ModelBase> const&, char const*)"}
+{"a":"710032e000","t":"plate","c":"sb::ModelBase::HookModel(nn::bezel::WeakHandle<sb::ModelBase> const&, char const*, bool, bool, bool)"}
+{"a":"710032f000","t":"plate","c":"sb::ModelBase::HookModel(nn::bezel::WeakHandle<nn::bezel::ComModel> const&, char const*, bool, bool, bool)"}
+{"a":"7100330000","t":"plate","c":"sb::ModelBase::RemoveHook()"}
+{"a":"7100331000","t":"plate","c":"sb::ModelBase::AttachFxTrigger(char const*)"}
+{"a":"7100332000","t":"plate","c":"sb::ModelBase::AddFxTriggerIgnoreKey(char const*)"}
+{"a":"7100333000","t":"plate","c":"sb::ModelBase::RemoveFxTriggerIgnoreKey(char const*)"}
+{"a":"7100334000","t":"plate","c":"sb::ModelBase::SetActorParam(nn::util::basic_string_view<char, std::char_traits<char> > const&, int)"}
+{"a":"7100335000","t":"plate","c":"sb::ModelBase::SetActorParam(nn::util::basic_string_view<char, std::char_traits<char> > const&, float)"}
+{"a":"7100336000","t":"plate","c":"sb::ModelBase::SetActorParam(nn::util::basic_string_view<char, std::char_traits<char> > const&, bool)"}
+{"a":"7100337000","t":"plate","c":"sb::ModelBase::SetActorParam(nn::util::basic_string_view<char, std::char_traits<char> > const&, char const*)"}
+{"a":"7100338000","t":"plate","c":"nn::bezel::Component::DestroyImpl()"}
+{"a":"7100339000","t":"plate","c":"nn::bezel::Component::GetDestroyableNodeImpl()"}
+{"a":"710033a000","t":"plate","c":"std::exception::what() const"}

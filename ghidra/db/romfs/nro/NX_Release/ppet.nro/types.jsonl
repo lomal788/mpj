@@ -1,0 +1,63 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/actor/AnimatinType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/Button","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PadID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/ComModelBuffer/DecalShadowIndex","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/ComModelBuffer/DecalShadowType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/RendererModule/SceneType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/Ducking","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/FadeTimePreset","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/Group","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/StopAllType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComSplitScreen","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUi","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiGuide00","k":"struct","size":128,"pack":"off","align":"default","f":[{"o":56,"l":4,"t":"/int","n":"state","c":"0 대기·1 in·2 idle·3 out·4 끝"},{"o":64,"l":4,"t":"/int","n":"alignment","c":"정렬 index 0~2, 기본1"},{"o":124,"l":4,"t":"/int","n":"count","c":"안내 칸 수 1~4, 기본1"}],"desc":"SYNC_FROM main:/Demangler/bq/ComUiGuide00\n[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.1\n+0x136 은 생성 0·In 1 로 쓰이나 소유 객체(Guide/레이아웃) 표기가 모호해 넣지 않음. layout+0x135=(count>1)"}
+{"p":"/Demangler/bq/ComUiGuide00/UiGuide00_ID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComUiGuide00/UiGuide00_Pos","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/NonPlayerCharacterID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/PlayerListSortBy","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/UiMessageWindowData/Type","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/FLAG","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/CreateEntityParams","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/GuiLayoutCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/HandlePtr\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/MovieCreateParams","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/RenderTargetCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/MatrixRowMajor4x3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Quaternion","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/Vector3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ppet/ModeSelect","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ppet/Scene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/ppet/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/sb/ComPataPataActor/FaceAnim","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/sb/ComPataPataActor/PpMotion","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/sb/Layout","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/sb/PataPataGameScene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/sb/PataPataGameScene/MapData","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/sb/PataPataGameScene/PataPataMode","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/sb/flag/FLAG","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

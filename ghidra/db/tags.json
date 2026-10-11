@@ -1,0 +1,147 @@
+{
+  "version": 2,
+  "note": "axis: status(함수당 하나, state=complete|partial|recheck) · system(함수당 하나) · exclude(진행도 분모 제외). 도구는 태그 이름이 아니라 axis·state 를 본다.",
+  "plate": {
+    "note": "plate 주석 규칙. head = 첫 줄 형식(상태 태그 plate:true 일 때 검사), doc = 문서 참조(그룹1 경로, 그룹2 절)",
+    "head": "^\\[(판독|추정|미확정)[^\\]]*\\] \\d{4}-\\d{2}-\\d{2}",
+    "head_example": "[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §6.1",
+    "doc": "md:\\s*([^\\s§/][^\\s§]*)(?:\\s*§\\s*([^\\s/]+))?"
+  },
+  "trivial": {
+    "maxSize": 32,
+    "maxCalls": 0
+  },
+  "tags": {
+    "ST_PARTIAL": {
+      "axis": "status",
+      "state": "partial",
+      "label": "부분",
+      "plate": true,
+      "desc": "일부 사실 확인. plate 주석 필수"
+    },
+    "ST_ANALYZED": {
+      "axis": "status",
+      "state": "complete",
+      "label": "완료",
+      "plate": true,
+      "desc": "모든 분기 이해, 호출 함수 역할·필드·상수 확인, 함수 안 미확정 없음. plate 주석 필수"
+    },
+    "ST_RECHECK": {
+      "axis": "status",
+      "state": "recheck",
+      "label": "재확인",
+      "desc": "모순이 생겨 다시 확인 필요. 완료에서 제외"
+    },
+    "SYS_CORE": {
+      "axis": "system",
+      "label": "코어",
+      "doc": "web/docs/engine/01_core.md",
+      "desc": "엔티티·컴포넌트·파이버·난수·수학·메모리"
+    },
+    "SYS_SCENE": {
+      "axis": "system",
+      "label": "장면·흐름",
+      "doc": "web/docs/engine/18_scene_work.md",
+      "desc": "장면 수명·전환·Work·모드 진행"
+    },
+    "SYS_ACTOR": {
+      "axis": "system",
+      "label": "액터",
+      "doc": "web/docs/engine/17_actor.md",
+      "desc": "ComActor·패드 해석·점프·조건·접지·NPC·CPU"
+    },
+    "SYS_CHARACTER": {
+      "axis": "system",
+      "label": "캐릭터",
+      "doc": "web/docs/engine/09_character.md",
+      "desc": "캐릭터 모델·표정·의상·캐릭터 데이터"
+    },
+    "SYS_ANIMATION": {
+      "axis": "system",
+      "label": "애니메이션",
+      "doc": "web/docs/engine/09_character.md",
+      "desc": "스켈레톤·포즈·모션·블렌드·IK"
+    },
+    "SYS_COLLISION": {
+      "axis": "system",
+      "label": "물리·충돌",
+      "doc": "web/docs/engine/11_moving_collision.md",
+      "desc": "충돌 질의·강체·물리 연결"
+    },
+    "SYS_CAMERA": {
+      "axis": "system",
+      "label": "카메라",
+      "doc": "web/docs/engine/20_camera_runtime.md",
+      "desc": "카메라·투영·FSNB·흔들림"
+    },
+    "SYS_RENDER": {
+      "axis": "system",
+      "label": "렌더링",
+      "doc": "web/docs/engine/03_graphics.md",
+      "desc": "모델·메시·텍스처·조명·그림자·렌더 패스·분할 화면·LOD"
+    },
+    "SYS_SHADER": {
+      "axis": "system",
+      "label": "셰이더·머티리얼",
+      "doc": "web/docs/engine/14_shader_graphs.md",
+      "desc": "셰이더·머티리얼 파라미터·유니폼"
+    },
+    "SYS_EFFECT": {
+      "axis": "system",
+      "label": "이펙트",
+      "doc": "web/docs/engine/08_effects.md",
+      "desc": "이펙트·파티클"
+    },
+    "SYS_UI": {
+      "axis": "system",
+      "label": "UI·레이아웃",
+      "doc": "web/docs/engine/05_ui_input.md",
+      "desc": "레이아웃·폰트·메시지·대화상자"
+    },
+    "SYS_INPUT": {
+      "axis": "system",
+      "label": "입력",
+      "doc": "web/docs/engine/19_motion_input.md",
+      "desc": "패드·체감 입력"
+    },
+    "SYS_SOUND": {
+      "axis": "system",
+      "label": "사운드·진동",
+      "doc": "web/docs/engine/04_sound.md",
+      "desc": "SE·BGM·음성·진동"
+    },
+    "SYS_NET": {
+      "axis": "system",
+      "label": "네트워크",
+      "doc": "web/docs/engine/12_online_sync.md",
+      "desc": "온라인·세션·동기화"
+    },
+    "SYS_SAVE": {
+      "axis": "system",
+      "label": "저장·보상",
+      "doc": "web/docs/engine/16_save.md",
+      "desc": "저장 데이터·보상·업적"
+    },
+    "SYS_ASSET": {
+      "axis": "system",
+      "label": "리소스·데이터",
+      "doc": "web/docs/engine/loader_manager.md",
+      "desc": "리소스 로더·아카이브·장면 데이터"
+    },
+    "SYS_GAME": {
+      "axis": "system",
+      "label": "게임 코드(main 안)",
+      "desc": "main 안의 게임 규칙·모드 코드(bq·ca·sb·wl)"
+    },
+    "EX_LIB": {
+      "axis": "exclude",
+      "label": "외부 라이브러리",
+      "desc": "nn SDK·표준 라이브러리·PhysX 등. 진행도 분모에서 제외"
+    },
+    "EX_DEBUG": {
+      "axis": "exclude",
+      "label": "디버그",
+      "desc": "디버그·개발 전용. 진행도 분모에서 제외"
+    }
+  }
+}

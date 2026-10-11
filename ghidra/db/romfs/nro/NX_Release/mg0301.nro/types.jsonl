@@ -1,0 +1,432 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Build","k":"funcdef","cc":"unknown","ret":"/Demangler/mg0301/MachineBuilder/Build","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_decltype_auto","k":"funcdef","cc":"unknown","ret":"/Demangler/decltype","params":[["","/Demangler/auto"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/actor/ActionContext","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/ActorHashedString","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/AnimatinType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/actor/MotionArg","k":"struct","size":80,"pack":"off","align":"default","f":[{"o":0,"l":24,"t":"/byte[24]","n":"name","c":"std::string"},{"o":24,"l":32,"t":"/byte[32]","n":"nameHash","c":"StringViewHashPair{vt, ptr, len, hash}, FNV-1a 64"},{"o":56,"l":1,"t":"/byte","n":"forceRestart","c":"0 이면 같은 해시 재생 요청 무시"},{"o":57,"l":1,"t":"/byte","n":"randomStartFrame","c":"1 이면 시작 프레임 난수"},{"o":58,"l":1,"t":"/byte","n":"speedValid","c":"1 이면 슬롯 속도 = speed"},{"o":60,"l":4,"t":"/float","n":"startFrame"},{"o":64,"l":4,"t":"/float","n":"speed"},{"o":68,"l":4,"t":"/float","n":"blendTime","c":"초. −FLT_MAX = 기본(리스너가 0.1)"},{"o":72,"l":4,"t":"/int","n":"transitionType","c":"nn::bezel::AnimationTransitionType, 4 = 크로스페이드"},{"o":76,"l":1,"t":"/byte","n":"transitionDefaultsInitialized","c":"Play(name) 전이 기본값 래치(설명용 이름)"}],"desc":"SYNC_FROM main:/Demangler/actor/MotionArg\n[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.3"}
+{"p":"/Demangler/auto","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/AnimationController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/CollisionRay","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/CollisionShape","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallbackParam_Audio","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallbackParam_Particle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallbackParam_UserTrigger","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallbackParam_Vibration","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallback_Audio","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallback_Particle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallback_UserTrigger","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/FxtCallback_Vibration","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/gfx/ComModelBuffer/TextureType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/map","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComMatter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUi","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiTimer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiTimer/UiTimerType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/GameWinLose","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/LytPlace","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MatterType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MinigameScene","k":"struct","size":776,"pack":"off","align":"default","f":[{"o":528,"l":4,"t":"/int","n":"minigameId","c":"GameWork::GetMinigameID, 없으면 −1"},{"o":532,"l":4,"t":"/int","n":"flowStage","c":"MinigameFlow 단계(−1 → 초기화 1, 데모면 0)"},{"o":536,"l":2,"t":"/ushort","n":"flowSubState","c":"단계 안 하위 상태 0·1·2·99"},{"o":540,"l":4,"t":"/float","n":"waitSec","c":"종료 텔롭 뒤 대기 초(단계 11) / 재시작 카운터(단계 18)"},{"o":564,"l":4,"t":"/int","n":"startTelopType","c":"TelopType −1..4, 기본 0"},{"o":568,"l":4,"t":"/int","n":"finishTelopType","c":"기본 2"},{"o":576,"l":8,"t":"/pointer","n":"startTelop","c":"FUN_71002e44ac \"TelopUI\""},{"o":584,"l":8,"t":"/pointer","n":"startTelopUser","c":"IUserStartFinish*(종류 3·4)"},{"o":592,"l":8,"t":"/pointer","n":"finishTelop"},{"o":600,"l":8,"t":"/pointer","n":"finishTelopUser","c":"IUserStartFinish*"},{"o":608,"l":8,"t":"/pointer","n":"winDrawTelop","c":"CreateWinTelop/CreateDrawTelop"},{"o":616,"l":1,"t":"/byte","n":"openingSkipAllowed","c":"MGSetting OpeningSkip"},{"o":617,"l":1,"t":"/byte","n":"gameOpeningSkipEnable","c":"SetGameOpeningSkipEnable, 기본 1"},{"o":618,"l":1,"t":"/byte","n":"endOpeningSkipWait","c":"단계 4 에서 참이면 스킵 대기 하위상태 끝. writer 미확정"},{"o":619,"l":1,"t":"/byte","n":"openingSkipped","c":"IsOpeningSkip 반환"},{"o":624,"l":8,"t":"/pointer","n":"openingSkipUi","c":"\"Scene_OpeningSkipUI\" + ComUiGuideSkip"},{"o":632,"l":1,"t":"/byte","n":"endingChangeCut","c":"MGSetting EndingChangeCut"},{"o":640,"l":8,"t":"/pointer","n":"endTimer","c":"\"Scene_SystemMnigameEndTimerUI\" + ComUiTimer"},{"o":648,"l":8,"t":"/pointer","n":"statusFace","c":"\"Scene_StatusFaceUI\" + ComUiStatus"},{"o":656,"l":1,"t":"/byte","n":"isInst","c":"flag 0 = 조작 설명 화면 안 실행(P)"},{"o":660,"l":4,"t":"/int","n":"instRetryCount","c":"단계 18 에서 +1"},{"o":664,"l":8,"t":"/pointer","n":"mgResult","c":"MGResult*"},{"o":672,"l":4,"t":"/int","n":"endingStep","c":"엔딩 하위 단계 0~5"},{"o":680,"l":8,"t":"/pointer","n":"charaDemo","c":"캐릭터 데모 객체"},{"o":760,"l":1,"t":"/byte","n":"demoSkipped"},{"o":761,"l":1,"t":"/byte","n":"demoOwnWipe","c":"데모 쪽이 와이프를 직접 처리"},{"o":762,"l":1,"t":"/byte","n":"demoFadeIn","c":"데모 시작 때 페이드인, 기본 1"},{"o":764,"l":4,"t":"/int","n":"demoSubState","c":"캐릭터 데모 하위 상태 0~3"},{"o":768,"l":8,"t":"/pointer","n":"retryMenu","c":"UiRetryMenu*(PlayMode 1·9)"}],"desc":"SYNC_FROM main:/Demangler/bq/MinigameScene\n[판독] 2026-10-11 / md: web/docs/shell/minigame_scene.md §4.1\n크기 모름(마지막 필드 끝까지). 0x210 앞은 SceneBase"}
+{"p":"/Demangler/bq/NonPlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerListSortBy","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/TeamID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/const/{lambda()#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/decltype","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/ActorForce","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Audience","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Audience/Command","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Audience/_Command","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/AudienceBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/AutonomousActor","k":"struct","size":184,"pack":"off","align":"default","f":[{"o":176,"l":4,"t":"/float","n":"elapsed","c":"F(elapsed+dt)"},{"o":180,"l":4,"t":"/float","n":"sleep","c":"SleepTime 결과, 감소 후 비교"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0301.md §4.4·6.4\nstate +0x80(1/2/3), actor +0x88, potential +0x98, stick +0xa8, 참가 인덱스 +0xb8: 타입 미기재라 필드로 넣지 않음\n크기 모름"}
+{"p":"/Demangler/mg0301/AutonomousMachine","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Commentary","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Commentary/PlayAnnihilation()/{lambda()#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Commentary/_Groves_Visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Commentary/_Mainpart_Visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/EscapeActor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/EscapeActor/Visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/EscapePlayer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Fade","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Fade/Finished(bool)/{lambda()#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Fade/Finished(bool)/{lambda()#2}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Fade/Finished(bool)/{lambda()#3}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/FieldForce","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Finish","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/FinishBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Machine","k":"struct","size":72,"pack":"off","align":"default","f":[{"o":64,"l":4,"t":"/float","n":"moveSpeed","c":"machine_speed 2.7"},{"o":68,"l":4,"t":"/float","n":"turnSpeed","c":"machine_speed 2.2 (rad/s)"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0301.md §4.4\n+0x30 이전 flag, +0x38 누적 flag(1 전진, 2 좌회전, 4 우회전, 8 승리 포즈): 폭·타입 미기재라 필드로 넣지 않음\n크기 모름(마지막 필드 끝까지)"}
+{"p":"/Demangler/mg0301/MachineBody","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MachineBody/Visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MachineBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MachineBuilder/Build","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/MachineForce","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MachineGloves","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MachineGloves/Visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MachinePlayer","k":"struct","size":140,"pack":"off","align":"default","f":[{"o":128,"l":4,"t":"/float","n":"inputParam","c":"CSV machine_input 열1(1.6). Run 경로 미사용"},{"o":132,"l":4,"t":"/float","n":"holdElapsed","c":".2로 초기화. hold&1이면 0, 아니면 min(F(e+dt),limit)"},{"o":136,"l":4,"t":"/float","n":"holdLimit","c":"CSV machine_input 열2(.2)"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/minigame/mg0301.md §4.4·6.2\n크기 모름(마지막 필드 끝까지)"}
+{"p":"/Demangler/mg0301/MachinePlayerBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Mainpart","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/MainpartBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/PotentialMethod","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Prologue","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/PrologueBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/SafetyAreaForce","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Scene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Scene/Notify(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda()#4}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#2}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#3}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#4}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#5}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#6}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/SequenceDirectorImpl/Build()/{lambda(auto:1)#7}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/Starter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Starter/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda()#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Starter/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda()#2}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/VirtualModel","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/Wall","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/World","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Autonomous","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_EscapeActor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_EscapeActor/_Component_Beated","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_LookAtController","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_AttackEffect","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Body","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Caterpillar","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Groves","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Groves_Observe_Define/_Interface_Parameter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Groves_Observe_Define/_Parameter_Attack","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Groves_Observe_Define/eEventID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/_Interface_Machine_HandleBar","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Parts","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Pedestal","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Machine_Rider","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Mainpart_Observe_Define/_Interface_Parameter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Mainpart_Observe_Define/_Parameter_Annihilation","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Mainpart_Observe_Define/_Parameter_Survivors","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_Interface_Mainpart_Observe_Define/eEventID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mg0301/_Interface_Npc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_WallImpl/_ShakeCollisionShape","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_WallImpl/_ShakeCollisionShape/_visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mg0301/_WallImpl/_SubstanceShape","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/Component","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/CreateEntityParams","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/EntityState","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/HandlePtr\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/Material","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/MaterialHandle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/Message","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/ModelCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/PlayFxTriggerResult","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/UniqueHandlePtr","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/os/LightEventType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Color4f","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/MatrixRowMajor4x3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Quaternion","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector2f","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/Vector3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector4f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Value","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__alternate<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__back_ref<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__back_ref_collate<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__back_ref_icase<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__begin_marked_subexpression<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__bracket_expression","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__bracket_expression<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__empty_non_own_state<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__empty_state<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__end_marked_subexpression<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__end_state<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__base","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<actor::ActionStatus(*)(actor::ActionContext_const&)noexcept,std::allocator<actor::ActionStatus(*)(actor::ActionContext_const&)noexcept>,actor::ActionStatus(actor::ActionContext_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Audience::Audience(wl::entity_const&,bq::NonPlayerCharacterID,wl::_Interface_Based_Model::_ArgBuilder)::{lambda()#1},std::allocator<mg0301::Audience::Audience(wl::entity_const&,bq::NonPlayerCharacterID,wl::_Interface_Based_Model::_ArgBuilder)::{lambda()#1}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Commentary::PlayAnnihilation()::{lambda()#1},std::allocator<mg0301::Commentary::PlayAnnihilation()::{lambda()#1}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Fade::Finished(bool)::{lambda()#1},std::allocator<mg0301::Fade::Finished(bool)::{lambda()#1}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Fade::Finished(bool)::{lambda()#2},std::allocator<mg0301::Fade::Finished(bool)::{lambda()#2}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Fade::Finished(bool)::{lambda()#3},std::allocator<mg0301::Fade::Finished(bool)::{lambda()#3}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda()#1},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda()#1}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda()#2},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda()#2}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda()#3},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda()#3}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda()#4},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda()#4}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#1},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#1}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#2},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#2}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#3},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#3}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#4},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#4}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#5},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#5}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#6},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#6}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#7},std::allocator<mg0301::SequenceDirectorImpl::Build()::{lambda(auto:1)#7}>,void(bex::FxtCallbackParam_UserTrigger_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::SequenceDirectorImpl::SequenceDirectorImpl(wl::entity_const&)::{lambda()#1},std::allocator<mg0301::SequenceDirectorImpl::SequenceDirectorImpl(wl::entity_const&)::{lambda()#1}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Starter::NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)::{lambda()#1},std::allocator<mg0301::Starter::NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)::{lambda()#1}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::Starter::NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)::{lambda()#2},std::allocator<mg0301::Starter::NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)::{lambda()#2}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::_Interface_Machine_Rider::_Interface_Machine_Rider(wl::entity_const&,wl::player_const&)::{lambda()#1},std::allocator<mg0301::_Interface_Machine_Rider::_Interface_Machine_Rider(wl::entity_const&,wl::player_const&)::{lambda()#1}>,void()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<mg0301::_Interface_Machine_Rider::_Interface_Machine_Rider(wl::entity_const&,wl::player_const&)::{lambda()#2},std::allocator<mg0301::_Interface_Machine_Rider::_Interface_Machine_Rider(wl::entity_const&,wl::player_const&)::{lambda()#2}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<wl::Actor::Actor(wl::entity_const&,std::shared_ptr<wl::Pad>const&)::{lambda()#1},std::allocator<wl::Actor::Actor(wl::entity_const&,std::shared_ptr<wl::Pad>const&)::{lambda()#1}>,bool()>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<wl::ComBoneVisibilityInherit::ComBoneVisibilityInherit(nn::bezel::HandlePtr<nn::bezel::Entity>const&)::{lambda(bool)#1},std::allocator<wl::ComBoneVisibilityInherit::ComBoneVisibilityInherit(nn::bezel::HandlePtr<nn::bezel::Entity>const&)::{lambda(bool)#1}>,void(bool)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<wl::_Interface_FxTrigger::_Interface_FxTrigger(wl::entity_const&)::{lambda(bex::FxtCallbackParam_Audio_const&)#1},std::allocator<wl::_Interface_FxTrigger::_Interface_FxTrigger(wl::entity_const&)::{lambda(bex::FxtCallbackParam_Audio_const&)#1}>,void(bex::FxtCallbackParam_Audio_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<wl::_Interface_FxTrigger::_Interface_FxTrigger(wl::entity_const&)::{lambda(bex::FxtCallbackParam_Particle_const&)#1},std::allocator<wl::_Interface_FxTrigger::_Interface_FxTrigger(wl::entity_const&)::{lambda(bex::FxtCallbackParam_Particle_const&)#1}>,void(bex::FxtCallbackParam_Particle_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__function/__func<wl::_Interface_FxTrigger::_Interface_FxTrigger(wl::entity_const&)::{lambda(bex::FxtCallbackParam_Vibration_const&)#1},std::allocator<wl::_Interface_FxTrigger::_Interface_FxTrigger(wl::entity_const&)::{lambda(bex::FxtCallbackParam_Vibration_const&)#1}>,void(bex::FxtCallbackParam_Vibration_const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__l_anchor_multiline<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__lookahead<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__loop<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__match_any<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__match_any_but_newline<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__match_char<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__match_char_collate<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__match_char_icase<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__optional_copy_assign_base","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__owns_one_state","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__owns_one_state<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__owns_two_states<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__r_anchor_multiline<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__repeat_one_loop<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::ActorForce*,std::shared_ptr<mg0301::ActorForce>::__shared_ptr_default_delete<mg0301::ActorForce,mg0301::ActorForce>,std::allocator<mg0301::ActorForce>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Audience*,std::shared_ptr<mg0301::Audience>::__shared_ptr_default_delete<mg0301::Audience,mg0301::Audience>,std::allocator<mg0301::Audience>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::AutonomousActor*,std::shared_ptr<mg0301::AutonomousActor>::__shared_ptr_default_delete<mg0301::AutonomousActor,mg0301::AutonomousActor>,std::allocator<mg0301::AutonomousActor>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::AutonomousMachine*,std::shared_ptr<mg0301::AutonomousMachine>::__shared_ptr_default_delete<mg0301::AutonomousMachine,mg0301::AutonomousMachine>,std::allocator<mg0301::AutonomousMachine>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Commentary*,std::shared_ptr<mg0301::Commentary>::__shared_ptr_default_delete<mg0301::Commentary,mg0301::Commentary>,std::allocator<mg0301::Commentary>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::EscapeActor*,std::shared_ptr<mg0301::EscapeActor>::__shared_ptr_default_delete<mg0301::EscapeActor,mg0301::EscapeActor>,std::allocator<mg0301::EscapeActor>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::EscapePlayer*,std::shared_ptr<mg0301::EscapePlayer>::__shared_ptr_default_delete<mg0301::EscapePlayer,mg0301::EscapePlayer>,std::allocator<mg0301::EscapePlayer>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Fade*,std::shared_ptr<mg0301::Fade>::__shared_ptr_default_delete<mg0301::Fade,mg0301::Fade>,std::allocator<mg0301::Fade>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::FieldForce*,std::shared_ptr<mg0301::FieldForce>::__shared_ptr_default_delete<mg0301::FieldForce,mg0301::FieldForce>,std::allocator<mg0301::FieldForce>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Finish*,std::shared_ptr<mg0301::Finish>::__shared_ptr_default_delete<mg0301::Finish,mg0301::Finish>,std::allocator<mg0301::Finish>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Machine*,std::shared_ptr<mg0301::Machine>::__shared_ptr_default_delete<mg0301::Machine,mg0301::Machine>,std::allocator<mg0301::Machine>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::MachineBody*,std::shared_ptr<mg0301::MachineBody>::__shared_ptr_default_delete<mg0301::MachineBody,mg0301::MachineBody>,std::allocator<mg0301::MachineBody>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::MachineForce*,std::shared_ptr<mg0301::MachineForce>::__shared_ptr_default_delete<mg0301::MachineForce,mg0301::MachineForce>,std::allocator<mg0301::MachineForce>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::MachineGloves*,std::shared_ptr<mg0301::MachineGloves>::__shared_ptr_default_delete<mg0301::MachineGloves,mg0301::MachineGloves>,std::allocator<mg0301::MachineGloves>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::MachinePlayer*,std::shared_ptr<mg0301::MachinePlayer>::__shared_ptr_default_delete<mg0301::MachinePlayer,mg0301::MachinePlayer>,std::allocator<mg0301::MachinePlayer>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Mainpart*,std::shared_ptr<mg0301::Mainpart>::__shared_ptr_default_delete<mg0301::Mainpart,mg0301::Mainpart>,std::allocator<mg0301::Mainpart>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::PotentialMethod*,std::shared_ptr<mg0301::PotentialMethod>::__shared_ptr_default_delete<mg0301::PotentialMethod,mg0301::PotentialMethod>,std::allocator<mg0301::PotentialMethod>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Prologue*,std::shared_ptr<mg0301::Prologue>::__shared_ptr_default_delete<mg0301::Prologue,mg0301::Prologue>,std::allocator<mg0301::Prologue>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::SafetyAreaForce*,std::shared_ptr<mg0301::SafetyAreaForce>::__shared_ptr_default_delete<mg0301::SafetyAreaForce,mg0301::SafetyAreaForce>,std::allocator<mg0301::SafetyAreaForce>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Starter*,std::shared_ptr<mg0301::Starter>::__shared_ptr_default_delete<mg0301::Starter,mg0301::Starter>,std::allocator<mg0301::Starter>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::VirtualModel*,std::shared_ptr<mg0301::VirtualModel>::__shared_ptr_default_delete<mg0301::VirtualModel,mg0301::VirtualModel>,std::allocator<mg0301::VirtualModel>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::Wall*,std::shared_ptr<mg0301::Wall>::__shared_ptr_default_delete<mg0301::Wall,mg0301::Wall>,std::allocator<mg0301::Wall>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::World*,std::shared_ptr<mg0301::World>::__shared_ptr_default_delete<mg0301::World,mg0301::World>,std::allocator<mg0301::World>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_Interface_Machine_AttackEffect*,std::shared_ptr<mg0301::_Interface_Machine_AttackEffect>::__shared_ptr_default_delete<mg0301::_Interface_Machine_AttackEffect,mg0301::_Interface_Machine_AttackEffect>,std::allocator<mg0301::_Interface_Machine_AttackEffect>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_Interface_Machine_Caterpillar*,std::shared_ptr<mg0301::_Interface_Machine_Caterpillar>::__shared_ptr_default_delete<mg0301::_Interface_Machine_Caterpillar,mg0301::_Interface_Machine_Caterpillar>,std::allocator<mg0301::_Interface_Machine_Caterpillar>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_Interface_Machine_HandleBar*,std::shared_ptr<mg0301::_Interface_Machine_HandleBar>::__shared_ptr_default_delete<mg0301::_Interface_Machine_HandleBar,mg0301::_Interface_Machine_HandleBar>,std::allocator<mg0301::_Interface_Machine_HandleBar>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_Interface_Machine_Pedestal*,std::shared_ptr<mg0301::_Interface_Machine_Pedestal>::__shared_ptr_default_delete<mg0301::_Interface_Machine_Pedestal,mg0301::_Interface_Machine_Pedestal>,std::allocator<mg0301::_Interface_Machine_Pedestal>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_Interface_Machine_Rider*,std::shared_ptr<mg0301::_Interface_Machine_Rider>::__shared_ptr_default_delete<mg0301::_Interface_Machine_Rider,mg0301::_Interface_Machine_Rider>,std::allocator<mg0301::_Interface_Machine_Rider>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_WallImpl*,std::shared_ptr<mg0301::_WallImpl>::__shared_ptr_default_delete<mg0301::_WallImpl,mg0301::_WallImpl>,std::allocator<mg0301::_WallImpl>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_WallImpl::_ShakeCollisionShape*,std::shared_ptr<mg0301::_WallImpl::_ShakeCollisionShape>::__shared_ptr_default_delete<mg0301::_WallImpl::_ShakeCollisionShape,mg0301::_WallImpl::_ShakeCollisionShape>,std::allocator<mg0301::_WallImpl::_ShakeCollisionShape>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mg0301::_WallImpl::_SubstanceShape*,std::shared_ptr<mg0301::_WallImpl::_SubstanceShape>::__shared_ptr_default_delete<mg0301::_WallImpl::_SubstanceShape,mg0301::_WallImpl::_SubstanceShape>,std::allocator<mg0301::_WallImpl::_SubstanceShape>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<nn::bezel::HandlePtr<nn::bezel::ITexture>*,wl::texture::reset(nn::bezel::HandlePtr<nn::bezel::ITexture>const&)::{lambda(auto:1*)#1},std::allocator<nn::bezel::HandlePtr<nn::bezel::ITexture>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<std::__empty_state<char>*,std::shared_ptr<std::__empty_state<char>>::__shared_ptr_default_delete<std::__empty_state<char>,std::__empty_state<char>>,std::allocator<std::__empty_state<char>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::Background::Parameter*,std::shared_ptr<wl::Background::Parameter>::__shared_ptr_default_delete<wl::Background::Parameter,wl::Background::Parameter>,std::allocator<wl::Background::Parameter>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::Background_AutoEvent*,std::shared_ptr<wl::Background_AutoEvent>::__shared_ptr_default_delete<wl::Background_AutoEvent,wl::Background_AutoEvent>,std::allocator<wl::Background_AutoEvent>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::Bone*,std::shared_ptr<wl::Bone>::__shared_ptr_default_delete<wl::Bone,wl::Bone>,std::allocator<wl::Bone>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::Camera*,std::default_delete<wl::Camera>,std::allocator<wl::Camera>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::CsvLabel*,std::shared_ptr<wl::CsvLabel>::__shared_ptr_default_delete<wl::CsvLabel,wl::CsvLabel>,std::allocator<wl::CsvLabel>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::LookAt*,std::shared_ptr<wl::LookAt>::__shared_ptr_default_delete<wl::LookAt,wl::LookAt>,std::allocator<wl::LookAt>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::MessageEvent_Distributor*,std::shared_ptr<wl::MessageEvent_Distributor>::__shared_ptr_default_delete<wl::MessageEvent_Distributor,wl::MessageEvent_Distributor>,std::allocator<wl::MessageEvent_Distributor>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::Model*,std::shared_ptr<wl::Model>::__shared_ptr_default_delete<wl::Model,wl::Model>,std::allocator<wl::Model>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::Pad*,std::shared_ptr<wl::Pad>::__shared_ptr_default_delete<wl::Pad,wl::Pad>,std::allocator<wl::Pad>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<wl::fiber::Adapter*,std::shared_ptr<wl::fiber::Adapter>::__shared_ptr_default_delete<wl::fiber::Adapter,wl::fiber::Adapter>,std::allocator<wl::fiber::Adapter>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_weak_count","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__state","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__state<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tree_const_iterator","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/__tree_end_node","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tree_iterator","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/__tree_node","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tree_node_base","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tuple_impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__word_boundary<char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__wrap_iter","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/back_insert_iterator","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/bad_array_new_length","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_function_call","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_optional_access","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/basic_string","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bitset","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/exception","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/initializer_list","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/integer_sequence","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/ios","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/ios_base/seekdir","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/istream","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/istream/sentry","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/istringstream","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/locale","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/locale/id","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/match_results","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/optional","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/out_of_range","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/pair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/pair<std::string,std::string>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/piecewise_construct_t","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/regex","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/regex_constants/error_type","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/regex_constants/match_flag_type","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/regex_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/regex_iterator<char_const*,char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/regex_iterator<std::__wrap_iter<char_const*>,char,std::regex_traits<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/shared_ptr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/streambuf","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/string","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/stringbuf","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/sub_match","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/tuple","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/type_info","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/unique_ptr","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/weak_ptr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Actor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/ActorSound","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Background","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Background/ChangeScene()/{lambda(auto:1&,auto:2_const&)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background/Visibility(std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>)/{lambda(auto:1&,auto:2_const&)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background/_cmd_execute(wl::entity_const&,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>const&)/{lambda(auto:1&,auto:2_const&)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background/_model_arg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Background/_motion_cmd_list(std::shared_ptr<wl::Model>const&,bex::vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>const&)/{lambda(auto:1)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Background_AutoEvent","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#2}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#3}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#4}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#5}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#6}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#7}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#8}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/Bone","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Camera","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/CollisionResult","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/ComBoneVisibilityInherit","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Csv","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/CsvLabel","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/ISceneObserver","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/ISceneParameter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/LookAt","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/MessageEvent_Distributor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/MessageEvent_Distributor/_component","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Model","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Pad","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/SceneResult_Builder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/UITimer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/Unique_Entity","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_Actor_Character_Based","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_Animation","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_Animation/slot","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_Based_Model","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_Based_Model/_ArgBuilder","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Fx_Callback_Audio","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Fx_Callback_Particle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Fx_Callback_User","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Fx_Callback_Vibration","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Interface_FxTrigger(wl::entity_const&)/{lambda(bex::FxtCallbackParam_Audio_const&)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Interface_FxTrigger(wl::entity_const&)/{lambda(bex::FxtCallbackParam_Particle_const&)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_FxTrigger/_Interface_FxTrigger(wl::entity_const&)/{lambda(bex::FxtCallbackParam_Vibration_const&)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_MessageEvent_Listener","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_MessageEvent_Listener/Parameter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/_Interface_MessageEvent_Listener/eEvent","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/const_visitable<mg0301::_Interface_Machine_Groves_Observe_Define::_Interface_Parameter,mg0301::_Interface_Machine_Groves_Observe_Define::_Parameter_Attack>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/const_visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/const_visitor<mg0301::_Interface_Machine_Groves_Observe_Define::_Parameter_Attack>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/const_visitor<mg0301::_Interface_Mainpart_Observe_Define::_Parameter_Annihilation>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/eSceneEventID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/effect","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/entity","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/fiber/Adapter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/fiber/IFiber","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/player","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/player_container","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/potential/IObject","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/potential/__innerCalculatorImpl<std::shared_ptr<wl::potential::IObject>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/texture","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/texture/reset(nn::bezel::HandlePtr<nn::bezel::ITexture>const&)/{lambda(auto:1*)#1}","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/wl/visitor","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/wl/visitor<mg0301::Wall>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<mg0301::_Interface_EscapeActor::_Component_Beated,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<wl::ComBoneVisibilityInherit,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<wl::MessageEvent_Distributor::_component,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<bex::FxtCallback_Audio>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<bex::FxtCallback_Particle>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<bex::FxtCallback_UserTrigger>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<bex::FxtCallback_Vibration>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/std/__optional_storage_base<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,false>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<std::function<void(bex::FxtCallbackParam_UserTrigger_const&)>>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<std::function<void(bex::FxtCallbackParam_UserTrigger_const&)>>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<std::function<void(bex::FxtCallbackParam_UserTrigger_const&)>>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::effect>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::effect>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::effect>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::sound>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::sound>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::sound>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::vibration>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::vibration>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::vector<wl::vibration>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bq::NonPlayerCharacterID>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bq::NonPlayerCharacterID>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bq::NonPlayerCharacterID>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,mg0301::_Interface_LookAtController::eType>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,mg0301::_Interface_LookAtController::eType>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,std::allocator<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,mg0301::_Interface_LookAtController::eType>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,wl::CsvLabel::_V>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,wl::CsvLabel::_V>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_map<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,wl::CsvLabel::_V>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<wl::eSceneEventID,int>,std::__map_value_compare<wl::eSceneEventID,std::__value_type<wl::eSceneEventID,int>,std::less<wl::eSceneEventID>,true>,bex::HeapModule::Allocator_map<std::__value_type<wl::eSceneEventID,int>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tuple_impl<std::__tuple_indices<0ul,1ul,2ul,3ul,4ul>,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,float,float,int>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/match_results<char_const*,std::allocator<std::sub_match<char_const*>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/match_results<std::__wrap_iter<char_const*>,std::allocator<std::sub_match<std::__wrap_iter<char_const*>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,mg0301::Audience::Command>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>const,bex::vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/regex_traits<char>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<bex::vector<std::shared_ptr<wl::Bone>>,bex::HeapModule::Allocator_vector<bex::vector<std::shared_ptr<wl::Bone>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::__state<char>,std::allocator<std::__state<char>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,bex::HeapModule::Allocator_vector<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::function<void()>,bex::HeapModule::Allocator_vector<std::function<void()>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::function<void(bex::FxtCallbackParam_UserTrigger_const&)>,bex::HeapModule::Allocator_vector<std::function<void(bex::FxtCallbackParam_UserTrigger_const&)>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::pair<int,std::weak_ptr<mg0301::_Interface_Shape>>,bex::HeapModule::Allocator_vector<std::pair<int,std::weak_ptr<mg0301::_Interface_Shape>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,mg0301::Audience::Command>,bex::HeapModule::Allocator_vector<std::pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,mg0301::Audience::Command>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,bex::HeapModule::Allocator_vector<std::pair<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::pair<std::string,std::string>,std::allocator<std::pair<std::string,std::string>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::pair<unsigned_long,char_const*>,std::allocator<std::pair<unsigned_long,char_const*>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::EscapePlayer>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::EscapePlayer>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::MachineGloves>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::MachineGloves>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::VirtualModel>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::VirtualModel>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::_Interface_Autonomous>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::_Interface_Autonomous>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::_Interface_EscapeActor>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::_Interface_EscapeActor>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::_Interface_Machine_Parts>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::_Interface_Machine_Parts>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mg0301::_WallImpl>,bex::HeapModule::Allocator_vector<std::shared_ptr<mg0301::_WallImpl>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<wl::fiber::IFiber>,bex::HeapModule::Allocator_vector<std::shared_ptr<wl::fiber::IFiber>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<wl::potential::IObject>,bex::HeapModule::Allocator_vector<std::shared_ptr<wl::potential::IObject>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::string,std::allocator<std::string>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::sub_match<char_const*>,std::allocator<std::sub_match<char_const*>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::weak_ptr<mg0301::_Interface_Machine_Groves_Observer>,bex::HeapModule::Allocator_vector<std::weak_ptr<mg0301::_Interface_Machine_Groves_Observer>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::weak_ptr<mg0301::_Interface_Mainpart_Observer>,bex::HeapModule::Allocator_vector<std::weak_ptr<mg0301::_Interface_Mainpart_Observer>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::weak_ptr<wl::ISceneObserver>,bex::HeapModule::Allocator_vector<std::weak_ptr<wl::ISceneObserver>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::weak_ptr<wl::_Interface_MessageEvent_Listener>,bex::HeapModule::Allocator_vector<std::weak_ptr<wl::_Interface_MessageEvent_Listener>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<wl::Background::_model_arg,bex::HeapModule::Allocator_vector<wl::Background::_model_arg>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<wl::effect,bex::HeapModule::Allocator_vector<wl::effect>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}
+{"p":"/wl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/Background/Background(wl::entity_const&,std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>const&)/{lambda(auto:1&,auto:2_const&)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/Background/ChangeScene()/{lambda(auto:1&,auto:2_const&)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/Background/Parameter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/Background/Visibility(std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>)/{lambda(auto:1&,auto:2_const&)#1}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/Background_AutoEvent/NotifyReceive(wl::eSceneEventID,wl::ISceneParameter_const&)/{lambda(auto:1,auto:2)#4}","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/ICollisionWorld<std::weak_ptr<mg0301::_Interface_Shape>,std::shared_ptr<mg0301::_Interface_Shape>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/Parameter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/wl/mg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}

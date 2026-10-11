@@ -1,0 +1,14 @@
+diff --git a/src/main/java/com/xebyte/headless/HeadlessProgramProvider.java b/src/main/java/com/xebyte/headless/HeadlessProgramProvider.java
+index fc383a3..29aed01 100644
+--- a/src/main/java/com/xebyte/headless/HeadlessProgramProvider.java
++++ b/src/main/java/com/xebyte/headless/HeadlessProgramProvider.java
+@@ -218,6 +218,9 @@ public class HeadlessProgramProvider extends ProjectProgramProvider {
+ 
+             if (project != null) {
+                 Msg.info(this, "Opened project: " + projectName + " from " + projectDir.getAbsolutePath());
++                com.xebyte.core.ConventionConfigLoader.LoadResult conv =
++                        com.xebyte.core.NamingPolicy.getInstance().refreshFromProjectRoot(projectDir.toPath());
++                Msg.info(this, "Convention config: " + (conv.loaded() ? conv.resolvedFrom() : "defaults"));
+                 return OpenProjectResult.ok(projectName, false, null, projectDir.getAbsolutePath());
+             }
+             Msg.error(this, "Failed to open project: " + projectPath);

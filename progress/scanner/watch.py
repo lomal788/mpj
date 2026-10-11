@@ -13,9 +13,15 @@ import time
 from urllib.parse import urlparse, parse_qs, unquote
 from common import APP, ROOT, read_json
 from build_progress import build, fingerprint
+import ghidra_db
 
 
 class Snapshot:
+    @property
+    def groups(self):
+        """모듈(그룹) → {name, deps…}. md 모드의 minigames 도 같은 모양으로 바꿔 준다."""
+        return self.progress.get("groups") or {k: {"name": v.get("name_ko", "")} for k, v in self.progress.get("minigames", {}).items()}
+
     def __init__(self, lazy=False):
         self.progress = read_json(APP / "data/progress.json")
         self.features = read_json(APP / "data/features.json")
@@ -120,7 +126,7 @@ class Snapshot:
             next_field = "module" if view == "module" else "category"
         elif view != "module" and "subgroup" not in fields:
             next_field = "subgroup"
-        elif view != "module" and selected and selected[0]["minigame"] and "subsystem" not in fields:
+        elif view != "module" and selected and selected[0].get("subsystem_level", selected[0].get("minigame")) and "subsystem" not in fields:
             next_field = "subsystem"
         elif len(selected) > self.config["leaf_limit"] and "module" not in fields:
             next_field = "module"
@@ -138,9 +144,11 @@ class Snapshot:
                 counts = Counter(x[mode] for x in group)
                 if next_field == "category":
                     name = self.categories[value]
-                elif next_field == "subgroup" and value in self.progress["minigames"]:
-                    game = self.progress["minigames"][value]
-                    name = f'{value} · {game.get("name_ko", "")}'
+                elif next_field == "subgroup" and value in self.groups:
+                    game = self.groups[value]
+                    name = f'{value} · {game.get("name", "")}'
+                    if game.get("deps"):
+                        name += f' · 의존 {game["deps_complete"]}/{game["deps"]}'
                 elif next_field == "bucket":
                     name = f'0x{int(value) * 0x10000:x}–{(int(value)+1)*0x10000-1:x}'
                 else:
@@ -160,6 +168,47 @@ class Snapshot:
             self.cache.clear()
         self.cache[key] = result
         return result
+
+
+class GhidraSnapshot(Snapshot):
+    """web/ghidra/db 를 직접 읽은 결과(ghidra_db.build)를 Snapshot 과 같은 모양으로 담는다."""
+
+    def __init__(self, data, cfg):
+        self.progress = data["progress"]
+        self.features = data["features"]
+        self.feature_by_id = {x["id"]: x for x in self.features}
+        self.unresolved = data["unresolved"]
+        self.issue_by_id = {x["id"]: x for x in self.unresolved}
+        self.documents = data["documents"]
+        self.config = cfg
+        self.categories = {c["id"]: c["name"] for c in self.progress["categories"]}
+        self.root = ghidra_db.ROOT
+        self.cache = {}
+        self._ready = threading.Event()
+        self._load_error = None
+        self._load_lock = threading.Lock()
+        self._loading = True
+        self.functions = data["functions"]
+        self.by_id = {x["id"]: x for x in self.functions}
+        self._ready.set()
+
+
+def watch_ghidra(server, stop):
+    cfg = ghidra_db.config()
+    current = server.snapshot.progress["fingerprint"]
+    while not stop.wait(cfg.get("poll_seconds", 3)):
+        try:
+            stamp = ghidra_db.stamp(cfg)
+            if stamp == current:
+                continue
+            server.watch_status.update(scanning=True, error=None)
+            cfg = ghidra_db.config()
+            server.snapshot = GhidraSnapshot(ghidra_db.build(cfg), cfg)
+            current = server.snapshot.progress["fingerprint"]
+            server.watch_status.update(scanning=False, last_scan=server.snapshot.progress["version"])
+        except Exception as error:
+            server.watch_status.update(scanning=False, error=str(error))
+            print(f"[watch] 오류: {error}", flush=True)
 
 
 class AppServer(ThreadingHTTPServer):
@@ -230,13 +279,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200, {"total": len(items), "items": items[offset:offset + 100]})
             if url.path == "/api/preview":
                 snap.ready()
-                target = (ROOT / query.get("path", "")).resolve()
+                root = getattr(snap, "root", ROOT)
+                target = (root / query.get("path", "")).resolve()
                 allowed = {x["path"] for x in snap.documents}
                 allowed.update(s["path"] for f in snap.functions for s in f["sources"])
                 allowed.update(x["path"] for x in snap.features if x.get("path"))
                 for f in snap.features:
                     allowed.update(x["path"] for x in f.get("tests", []))
-                if not target.is_relative_to(ROOT) or target.relative_to(ROOT).as_posix() not in allowed:
+                if not target.is_relative_to(root) or target.relative_to(root).as_posix() not in allowed:
                     return self.send(403, {"error": "스캔에서 확인된 읽기 전용 문서/소스만 미리 볼 수 있습니다"})
                 lineno = max(1, int(query.get("line", 1)))
                 begin = max(1, lineno - 12)
@@ -291,22 +341,31 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--no-watch", action="store_true")
+    parser.add_argument("--source", choices=["ghidra", "md"], default="ghidra",
+                        help="ghidra = web/ghidra/db 직접 읽기(기본), md = 기존 문서 스캔 결과(data/*.json)")
     args = parser.parse_args()
-    config = read_json(APP / "config/categories.json")
-    progress = read_json(APP / "data/progress.json", {})
-    if not progress:
-        print("저장된 스캔 데이터가 없습니다. 먼저 npm run scan을 실행하세요.", flush=True)
-        return
+    if args.source == "ghidra":
+        cfg = ghidra_db.config()
+        snapshot = GhidraSnapshot(ghidra_db.build(cfg), cfg)
+        p = snapshot.progress
+        print(f"web/ghidra/db: 프로그램 {p['modules']}개 · 함수 {len(snapshot.functions):,}개 · 대상 {p['stats']['functions']:,}개 · {p['scan_seconds']}s", flush=True)
+    else:
+        config = read_json(APP / "config/categories.json")
+        progress = read_json(APP / "data/progress.json", {})
+        if not progress:
+            print("저장된 스캔 데이터가 없습니다. 먼저 npm run scan을 실행하세요.", flush=True)
+            return
+        snapshot = None
     try:
         server = AppServer(("127.0.0.1", args.port), Handler)
     except OSError as error:
         print(f"포트 {args.port}가 이미 사용 중입니다. 기존 대시보드를 열거나 --port로 다른 포트를 지정하세요. ({error})", flush=True)
         return
-    server.snapshot = Snapshot(lazy=True)
+    server.snapshot = snapshot or Snapshot(lazy=True)
     server.watch_status = {"scanning": False, "watching": not args.no_watch, "error": None}
     stop = threading.Event()
     if not args.no_watch:
-        threading.Thread(target=watch, args=(server, stop), daemon=True).start()
+        threading.Thread(target=watch_ghidra if args.source == "ghidra" else watch, args=(server, stop), daemon=True).start()
     print(f"Local: http://127.0.0.1:{args.port}/", flush=True)
     try:
         server.serve_forever()

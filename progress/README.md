@@ -2,6 +2,20 @@
 
 원본 함수·분석 문서·웹 코드의 대응과 확인 근거를 탐색하는 독립 로컬 대시보드입니다. **TypeScript + esbuild + Apache ECharts + Python 표준 라이브러리**로 만들었습니다. React와 Vite를 사용하지 않습니다.
 
+## 데이터 소스
+
+**기본은 `web/ghidra/db`를 직접 읽는다**(`scanner/ghidra_db.py`, 설정 `config/ghidra.json`). md 스캔 없이 서버가 db를 읽어 메모리에서 집계하고, db 파일이 바뀌면(MCP 서버 저장 → 자동 내보내기) 다시 읽는다.
+
+| 항목 | 근거 |
+|---|---|
+| 분석 | `functions/*.tsv`의 `ST_ANALYZED`(완료)·`ST_PARTIAL`(부분)·`ST_RECHECK`(재확인) |
+| 분모 | 전체 함수 − 외부 라이브러리(`EX_LIB`·라이브러리 네임스페이스) − `EX_DEBUG` − thunk − 작은 함수 |
+| 영역 | main 엔진(`SYS_*`별) · 미니게임(모듈별) · 화면·모드 · 보드 |
+| 웹 구현 | 코드의 `@orig <모듈>:<주소> full\|partial\|approx` |
+| 문서 | plate 주석 첫 줄의 `md: <경로> §<절>` |
+
+기존 md 스캔 결과로 보려면 `npm run dev -- --source md` (먼저 `npm run scan`). 규칙 전체는 `web/docs/ghidra_가이드.md` §8.
+
 ## 실행
 
 PowerShell에서:

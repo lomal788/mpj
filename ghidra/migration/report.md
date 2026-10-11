@@ -1,0 +1,617 @@
+# 이전 결과
+
+- 기록 파일 0개 · 함수 5077개 반영(이름 15, 시그니처 49, 함수 안 주석 411, 새로 만든 함수 0) · 타입 350개 · 전역 데이터 369개
+- 문제 18건 · 충돌 583건
+
+## 문제
+
+- minigame_mg0122.jsonl:497 함수 없음 main:710052cbac — 710052ca30 함수 안쪽(경계가 다름)
+- engine_09_character.jsonl:112 함수 없음 main:710080ce30 — 710080cd70 함수 안쪽(경계가 다름)
+- engine_09_character.jsonl:113 함수 없음 main:710080d8cc — 710080d890 함수 안쪽(경계가 다름)
+- shell_plaza_intro.jsonl:2 함수 없음 op:7100001710 — 71000016d0 함수 안쪽(경계가 다름)
+- minigame_mg1806.jsonl:104 plate 첫 줄 형식 오류 (mg1806:710003ba60)
+- minigame_mg1806.jsonl:105 plate 첫 줄 형식 오류 (mg1806:710003ba70)
+- minigame_mg1806.jsonl:94 plate 첫 줄 형식 오류 (mg1806:710003ba80)
+- minigame_mg1806.jsonl:98 plate 첫 줄 형식 오류 (mg1806:710003bb40)
+- minigame_mg1806.jsonl:97 plate 첫 줄 형식 오류 (mg1806:710003bb78)
+- minigame_mg1806.jsonl:100 plate 첫 줄 형식 오류 (mg1806:710003bb88)
+- minigame_mg1806.jsonl:101 plate 첫 줄 형식 오류 (mg1806:710003bba4)
+- minigame_mg1806.jsonl:102 plate 첫 줄 형식 오류 (mg1806:710003bbb4)
+- minigame_mg1806.jsonl:103 plate 첫 줄 형식 오류 (mg1806:710003bbc4)
+- minigame_mg1806.jsonl:95 plate 첫 줄 형식 오류 (mg1806:710003bbd4)
+- minigame_mg1806.jsonl:96 plate 첫 줄 형식 오류 (mg1806:710003bbe0)
+- minigame_mg1806.jsonl:93 plate 첫 줄 형식 오류 (mg1806:7100042930)
+- minigame_mg1806.jsonl:92 plate 첫 줄 형식 오류 (mg1806:7100042e60)
+- minigame_mg1806.jsonl:106 plate 첫 줄 형식 오류 (mg1806:7100046190)
+
+## 충돌
+
+- mg1801 /mpj/mg1801/MapImpl → db에 같은 클래스가 있어 /Demangler/mg1801/MapImpl 로 옮겨 넣음
+- mg1801 /mpj/mg1801/Player → db에 같은 클래스가 있어 /Demangler/mg1801/Player 로 옮겨 넣음
+- menu00 /mpj/menu00/NetworkManager → db에 같은 클래스가 있어 /Demangler/menu00/NetworkManager 로 옮겨 넣음
+- matching00 /mpj/matching00/NetworkManager → db에 같은 클래스가 있어 /Demangler/matching00/NetworkManager 로 옮겨 넣음
+- menu01 /mpj/menu01/NetworkManager → db에 같은 클래스가 있어 /Demangler/menu01/NetworkManager 로 옮겨 넣음
+- menu01 /mpj/menu01/NetSessionListener → db에 같은 클래스가 있어 /Demangler/menu01/NetSessionListener 로 옮겨 넣음
+- mg1704 /mpj/mg1704/ComCameraShake → db에 같은 클래스가 있어 /Demangler/mg1704/ComCameraShake 로 옮겨 넣음
+- mg0116 /mpj/mg0116/Camera → db에 같은 클래스가 있어 /Demangler/mg0116/Camera 로 옮겨 넣음
+- mg0101 /mpj/mg0101/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0101/Scene/Params 로 옮겨 넣음
+- mg0101 /mpj/mg0101/MapMgr → db에 같은 클래스가 있어 /Demangler/mg0101/MapMgr 로 옮겨 넣음
+- mg0101 /mpj/mg0101/ComPlayer → db에 같은 클래스가 있어 /Demangler/mg0101/ComPlayer 로 옮겨 넣음
+- mg0101 /mpj/mg0101/ComAI → db에 같은 클래스가 있어 /Demangler/mg0101/ComAI 로 옮겨 넣음
+- mg0101 /mpj/mg0101/PlayerMgr → db에 같은 클래스가 있어 /Demangler/mg0101/PlayerMgr 로 옮겨 넣음
+- mg0101 /mpj/mg0101/ComRankMgr → db에 같은 클래스가 있어 /Demangler/mg0101/ComRankMgr 로 옮겨 넣음
+- mg0101 /mpj/mg0101/ComDestruction → db에 같은 클래스가 있어 /Demangler/mg0101/ComDestruction 로 옮겨 넣음
+- mg0101 /mpj/mg0101/ComPartsActivator → db에 같은 클래스가 있어 /Demangler/mg0101/ComPartsActivator 로 옮겨 넣음
+- mg0101 /mpj/mg0101/ComNaviGrid → db에 같은 클래스가 있어 /Demangler/mg0101/ComNaviGrid 로 옮겨 넣음
+- mg0101 /mpj/mg0101/BarNPC → db에 같은 클래스가 있어 /Demangler/mg0101/BarNPC 로 옮겨 넣음
+- mg0101 /mpj/mg0101/Scene → db에 같은 클래스가 있어 /Demangler/mg0101/Scene 로 옮겨 넣음
+- mg0102 /mpj/mg0102/GameMgr → db에 같은 클래스가 있어 /Demangler/mg0102/GameMgr 로 옮겨 넣음
+- mg0102 /mpj/mg0102/Players → db에 같은 클래스가 있어 /Demangler/mg0102/Players 로 옮겨 넣음
+- mg0102 /mpj/mg0102/Scene → db에 같은 클래스가 있어 /Demangler/mg0102/Scene 로 옮겨 넣음
+- mg0102 /mpj/mg0102/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0102/Scene/Params 로 옮겨 넣음
+- mg0107 /mpj/mg0107/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0107/Scene/Params 로 옮겨 넣음
+- mg0107 /mpj/mg0107/SandwitchManager → db에 같은 클래스가 있어 /Demangler/mg0107/SandwitchManager 로 옮겨 넣음
+- mg0107 /mpj/mg0107/SandwitchObject → db에 같은 클래스가 있어 /Demangler/mg0107/SandwitchObject 로 옮겨 넣음
+- mg0107 /mpj/mg0107/Interpolation → db에 같은 클래스가 있어 /Demangler/mg0107/Interpolation 로 옮겨 넣음
+- mg0107 /mpj/mg0107/Player → db에 같은 클래스가 있어 /Demangler/mg0107/Player 로 옮겨 넣음
+- mg0107 /mpj/mg0107/ComPlayer → db에 같은 클래스가 있어 /Demangler/mg0107/ComPlayer 로 옮겨 넣음
+- mg0107 /mpj/mg0107/ComAI → db에 같은 클래스가 있어 /Demangler/mg0107/ComAI 로 옮겨 넣음
+- mg0107 /mpj/mg0107/RankManager → db에 같은 클래스가 있어 /Demangler/mg0107/RankManager 로 옮겨 넣음
+- mg0107 /mpj/mg0107/GameManager → db에 같은 클래스가 있어 /Demangler/mg0107/GameManager 로 옮겨 넣음
+- mg0110 /mpj/mg0110/PlayerManagerComponent → db에 같은 클래스가 있어 /Demangler/mg0110/PlayerManagerComponent 로 옮겨 넣음
+- mg0110 /mpj/mg0110/SequenceMainpart → db에 같은 클래스가 있어 /Demangler/mg0110/SequenceMainpart 로 옮겨 넣음
+- mg0110 /mpj/mg0110/PlayerControl → db에 같은 클래스가 있어 /Demangler/mg0110/PlayerControl 로 옮겨 넣음
+- mg0110 /mpj/mg0110/Door → db에 같은 클래스가 있어 /Demangler/mg0110/Door 로 옮겨 넣음
+- mg0110 /mpj/mg0110/Key → db에 같은 클래스가 있어 /Demangler/mg0110/Key 로 옮겨 넣음
+- mg0110 /mpj/mg0110/ParameterStorage → db에 같은 클래스가 있어 /mg0110/ParameterStorage 로 옮겨 넣음
+- mg0110 /mpj/mg0110/util/IBLTextures → db에 같은 클래스가 있어 /Demangler/mg0110/util/IBLTextures 로 옮겨 넣음
+- mg0113 /mpj/mg0113/GameMgr → db에 같은 클래스가 있어 /Demangler/mg0113/GameMgr 로 옮겨 넣음
+- mg0113 /mpj/mg0113/Players → db에 같은 클래스가 있어 /Demangler/mg0113/Players 로 옮겨 넣음
+- mg0113 /mpj/mg0113/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0113/Scene/Params 로 옮겨 넣음
+- mg0113 /mpj/mg0113/Scene → db에 같은 클래스가 있어 /Demangler/mg0113/Scene 로 옮겨 넣음
+- mg0116 /mpj/mg0116/GameMgr → db에 같은 클래스가 있어 /Demangler/mg0116/GameMgr 로 옮겨 넣음
+- mg0116 /mpj/mg0116/GameParam → db에 같은 클래스가 있어 /Demangler/mg0116/GameParam 로 옮겨 넣음
+- mg0116 /mpj/mg0116/ComParam → db에 같은 클래스가 있어 /Demangler/mg0116/ComParam 로 옮겨 넣음
+- mg0116 /mpj/mg0116/Player → db에 같은 클래스가 있어 /Demangler/mg0116/Player 로 옮겨 넣음
+- mg0116 /mpj/mg0116/UiManager → db에 같은 클래스가 있어 /Demangler/mg0116/UiManager 로 옮겨 넣음
+- mg0116 /mpj/mg0116/Dossun → db에 같은 클래스가 있어 /Demangler/mg0116/Dossun 로 옮겨 넣음
+- mg0118 /mpj/mg0118/Timer → db에 같은 클래스가 있어 /mg0118/Timer 로 옮겨 넣음
+- mg0118 /mpj/mg0118/SixAxisPedalDetector → db에 같은 클래스가 있어 /Demangler/mg0118/SixAxisPedalDetector 로 옮겨 넣음
+- mg0118 /mpj/mg0118/Player → db에 같은 클래스가 있어 /Demangler/mg0118/Player 로 옮겨 넣음
+- mg0118 /mpj/mg0118/PlayerManager → db에 같은 클래스가 있어 /Demangler/mg0118/PlayerManager 로 옮겨 넣음
+- mg0118 /mpj/mg0118/ComputerAi → db에 같은 클래스가 있어 /Demangler/mg0118/ComputerAi 로 옮겨 넣음
+- mg0118 /mpj/mg0118/Scene → db에 같은 클래스가 있어 /Demangler/mg0118/Scene 로 옮겨 넣음
+- mg0118 /mpj/mg0118/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0118/Scene/Params 로 옮겨 넣음
+- mg0119 /mpj/mg0119/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0119/Scene/Params 로 옮겨 넣음
+- mg0119 /mpj/mg0119/Scene/AiParam_t → db에 같은 클래스가 있어 /mg0119/Scene/AiParam_t 로 옮겨 넣음
+- mg0119 /mpj/mg0119/ComBallCollision → db에 같은 클래스가 있어 /Demangler/mg0119/ComBallCollision 로 옮겨 넣음
+- mg0119 /mpj/mg0119/GameManager → db에 같은 클래스가 있어 /Demangler/mg0119/GameManager 로 옮겨 넣음
+- mg0119 /mpj/mg0119/Map → db에 같은 클래스가 있어 /Demangler/mg0119/Map 로 옮겨 넣음
+- mg0119 /mpj/mg0119/UiManager → db에 같은 클래스가 있어 /Demangler/mg0119/UiManager 로 옮겨 넣음
+- mg0119 /mpj/mg0119/ComAi → db에 같은 클래스가 있어 /Demangler/mg0119/ComAi 로 옮겨 넣음
+- mg0119 /mpj/mg0119/ComAi/ControlStateDefault → db에 같은 클래스가 있어 /Demangler/mg0119/ComAi/ControlStateDefault 로 옮겨 넣음
+- mg0119 /mpj/mg0119/AiInput → db에 같은 클래스가 있어 /Demangler/mg0119/AiInput 로 옮겨 넣음
+- mg0119 /mpj/mg0119/Scene → db에 같은 클래스가 있어 /Demangler/mg0119/Scene 로 옮겨 넣음
+- mg0122 /mpj/mg0122/Camera → db에 같은 클래스가 있어 /Demangler/mg0122/Camera 로 옮겨 넣음
+- mg0122 /mpj/mg0122/GimmickCaptureData → db에 같은 클래스가 있어 /Demangler/mg0122/GimmickCaptureData 로 옮겨 넣음
+- mg0122 /mpj/mg0122/NpcCaptureData → db에 같은 클래스가 있어 /Demangler/mg0122/NpcCaptureData 로 옮겨 넣음
+- mg0122 /mpj/mg0122/QuestionData → db에 같은 클래스가 있어 /Demangler/mg0122/QuestionData 로 옮겨 넣음
+- mg0122 /mpj/mg0122/QuestionMgr → db에 같은 클래스가 있어 /Demangler/mg0122/QuestionMgr 로 옮겨 넣음
+- mg0122 /mpj/mg0122/Player → db에 같은 클래스가 있어 /Demangler/mg0122/Player 로 옮겨 넣음
+- mg0122 /mpj/mg0122/PlayerMgr → db에 같은 클래스가 있어 /Demangler/mg0122/PlayerMgr 로 옮겨 넣음
+- mg0122 /mpj/mg0122/GameMgr → db에 같은 클래스가 있어 /Demangler/mg0122/GameMgr 로 옮겨 넣음
+- mg0122 /mpj/mg0122/GimmickObject → db에 같은 클래스가 있어 /Demangler/mg0122/GimmickObject 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Score → db에 같은 클래스가 있어 /Demangler/mg0203/Score 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Timer → db에 같은 클래스가 있어 /Demangler/mg0203/Timer 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Players → db에 같은 클래스가 있어 /Demangler/mg0203/Players 로 옮겨 넣음
+- mg0203 /mpj/mg0203/AI → db에 같은 클래스가 있어 /Demangler/mg0203/AI 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0203/Scene/Params 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Stage → db에 같은 클래스가 있어 /Demangler/mg0203/Stage 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Battan → db에 같은 클래스가 있어 /Demangler/mg0203/Battan 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Battan/BattanTumbleControl → db에 같은 클래스가 있어 /Demangler/mg0203/Battan/BattanTumbleControl 로 옮겨 넣음
+- mg0203 /mpj/mg0203/Scene → db에 같은 클래스가 있어 /Demangler/mg0203/Scene 로 옮겨 넣음
+- mg0301 /mpj/mg0301/MachinePlayer → db에 같은 클래스가 있어 /Demangler/mg0301/MachinePlayer 로 옮겨 넣음
+- mg0301 /mpj/mg0301/Machine → db에 같은 클래스가 있어 /Demangler/mg0301/Machine 로 옮겨 넣음
+- mg0301 /mpj/mg0301/AutonomousActor → db에 같은 클래스가 있어 /Demangler/mg0301/AutonomousActor 로 옮겨 넣음
+- mg0508 /mpj/Cutting/Vtx → db에 같은 클래스가 있어 /Demangler/Cutting/Vtx 로 옮겨 넣음
+- mg0906 /mpj/mg0906/Scene → db에 같은 클래스가 있어 /Demangler/mg0906/Scene 로 옮겨 넣음
+- mg0906 /mpj/mg0906/Player → db에 같은 클래스가 있어 /Demangler/mg0906/Player 로 옮겨 넣음
+- mg0906 /mpj/mg0906/PlayerJump → db에 같은 클래스가 있어 /mg0906/PlayerJump 로 옮겨 넣음
+- mg0906 /mpj/mg0906/PlayerSpeed → db에 같은 클래스가 있어 /mg0906/PlayerSpeed 로 옮겨 넣음
+- mg0906 /mpj/mg0906/CourseLocator → db에 같은 클래스가 있어 /mg0906/CourseLocator 로 옮겨 넣음
+- mg0906 /mpj/mg0906/ParamMgr → db에 같은 클래스가 있어 /Demangler/mg0906/ParamMgr 로 옮겨 넣음
+- mg0906 /mpj/mg0906/PlayerMoveState → db에 같은 클래스가 있어 /Demangler/mg0906/PlayerMoveState 로 옮겨 넣음
+- mg0911 /mpj/mg0911/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg0911/Scene/Params 로 옮겨 넣음
+- mg0911 /mpj/mg0911/BallBase → db에 같은 클래스가 있어 /Demangler/mg0911/BallBase 로 옮겨 넣음
+- mg0911 /mpj/mg0911/Player → db에 같은 클래스가 있어 /Demangler/mg0911/Player 로 옮겨 넣음
+- mg0911 /mpj/mg0911/GameMgr → db에 같은 클래스가 있어 /Demangler/mg0911/GameMgr 로 옮겨 넣음
+- mg0912 /mpj/mg0912/SceneParam → db에 같은 클래스가 있어 /Demangler/mg0912/SceneParam 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1802/Scene/Params 로 옮겨 넣음
+- mg1802 /mpj/mg1802/NOTE_INFO → db에 같은 클래스가 있어 /Demangler/mg1802/NOTE_INFO 로 옮겨 넣음
+- mg1802 /mpj/mg1802/HIT_STATUS → db에 같은 클래스가 있어 /Demangler/mg1802/HIT_STATUS 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Mg1802InfoManager/Impl → db에 같은 클래스가 있어 /Demangler/mg1802/Mg1802InfoManager/Impl 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Mg1802ParfaitManager/Impl/INGREDIENT → db에 같은 클래스가 있어 /Demangler/mg1802/Mg1802ParfaitManager/Impl/INGREDIENT 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Mg1802PlayerManager/Impl/PLAYER → db에 같은 클래스가 있어 /Demangler/mg1802/Mg1802PlayerManager/Impl/PLAYER 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Mg1802NpcModel → db에 같은 클래스가 있어 /Demangler/mg1802/Mg1802NpcModel 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Mg1802StageManager/Impl → db에 같은 클래스가 있어 /Demangler/mg1802/Mg1802StageManager/Impl 로 옮겨 넣음
+- mg1802 /mpj/mg1802/Mg1802Sequence/Impl → db에 같은 클래스가 있어 /Demangler/mg1802/Mg1802Sequence/Impl 로 옮겨 넣음
+- mg1802 /mpj/mg1802/INGREDIENT_TYPE → db에 같은 클래스가 있어 /Demangler/mg1802/INGREDIENT_TYPE 로 옮겨 넣음
+- mg1803 /mpj/mg1803/Scene → db에 같은 클래스가 있어 /Demangler/mg1803/Scene 로 옮겨 넣음
+- mg1803 /mpj/mg1803/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1803/Scene/Params 로 옮겨 넣음
+- mg1803 /mpj/mg1803/ObjsManImpl → db에 같은 클래스가 있어 /Demangler/mg1803/ObjsManImpl 로 옮겨 넣음
+- mg1803 /mpj/mg1803/Obj → db에 같은 클래스가 있어 /Demangler/mg1803/Obj 로 옮겨 넣음
+- mg1803 /mpj/mg1803/Player → db에 같은 클래스가 있어 /Demangler/mg1803/Player 로 옮겨 넣음
+- mg1803 /mpj/mg1803/Kusi → db에 같은 클래스가 있어 /Demangler/mg1803/Kusi 로 옮겨 넣음
+- mg1803 /mpj/mg1803/NpcManImpl → db에 같은 클래스가 있어 /Demangler/mg1803/NpcManImpl 로 옮겨 넣음
+- mg1803 /mpj/mg1803/npc/Mg1803NpcJugemu → db에 같은 클래스가 있어 /Demangler/mg1803/npc/Mg1803NpcJugemu 로 옮겨 넣음
+- mg1803 /mpj/mg1803/SlidePlate → db에 같은 클래스가 있어 /Demangler/mg1803/SlidePlate 로 옮겨 넣음
+- mg1804 /mpj/mg1804/Parts → db에 같은 클래스가 있어 /Demangler/mg1804/Parts 로 옮겨 넣음
+- mg1804 /mpj/mg1804/Player → db에 같은 클래스가 있어 /Demangler/mg1804/Player 로 옮겨 넣음
+- mg1804 /mpj/mg1804/Stage/Impl → db에 같은 클래스가 있어 /Demangler/mg1804/Stage/Impl 로 옮겨 넣음
+- mg1805 /mpj/mg1805/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1805/Scene/Params 로 옮겨 넣음
+- mg1805 /mpj/mg1805/ObjsManContent → db에 같은 클래스가 있어 /Demangler/mg1805/ObjsManContent 로 옮겨 넣음
+- mg1805 /mpj/mg1805/Obj → db에 같은 클래스가 있어 /Demangler/mg1805/Obj 로 옮겨 넣음
+- mg1805 /mpj/mg1805/Player → db에 같은 클래스가 있어 /Demangler/mg1805/Player 로 옮겨 넣음
+- mg1805 /mpj/mg1805/Player/PadDriver → db에 같은 클래스가 있어 /Demangler/mg1805/Player/PadDriver 로 옮겨 넣음
+- mg1805 /mpj/mg1805/JUDGE_INPUT_TYPE → db에 같은 클래스가 있어 /Demangler/mg1805/JUDGE_INPUT_TYPE 로 옮겨 넣음
+- mg1806 /mpj/mg1806/CHART_INFO → db에 같은 클래스가 있어 /Demangler/mg1806/CHART_INFO 로 옮겨 넣음
+- mg1806 /mpj/mg1806/Mg1806PlayerManager/Impl/PLAYER → db에 같은 클래스가 있어 /Demangler/mg1806/Mg1806PlayerManager/Impl/PLAYER 로 옮겨 넣음
+- mg1806 /mpj/mg1806/Mg1806PlayerManager/Impl → db에 같은 클래스가 있어 /Demangler/mg1806/Mg1806PlayerManager/Impl 로 옮겨 넣음
+- mg1806 /mpj/mg1806/Mg1806InfoManager/Impl → db에 같은 클래스가 있어 /Demangler/mg1806/Mg1806InfoManager/Impl 로 옮겨 넣음
+- mg1806 /mpj/mg1806/Mg1806Sequence/Impl → db에 같은 클래스가 있어 /Demangler/mg1806/Mg1806Sequence/Impl 로 옮겨 넣음
+- mg1806 /mpj/mg1806/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1806/Scene/Params 로 옮겨 넣음
+- mg1806 /mpj/mg1806/Scene → db에 같은 클래스가 있어 /Demangler/mg1806/Scene 로 옮겨 넣음
+- mg1806 /mpj/mg1806/ACTION_TYPE → db에 같은 클래스가 있어 /Demangler/mg1806/ACTION_TYPE 로 옮겨 넣음
+- mg1806 /mpj/mg1806/CHECK_TYPE → db에 같은 클래스가 있어 /Demangler/mg1806/CHECK_TYPE 로 옮겨 넣음
+- mg1807 /mpj/mg1807/NewBowlOne → db에 같은 클래스가 있어 /mg1807/NewBowlOne 로 옮겨 넣음
+- mg1807 /mpj/mg1807/ObjectManImpl → db에 같은 클래스가 있어 /Demangler/mg1807/ObjectManImpl 로 옮겨 넣음
+- mg1807 /mpj/mg1807/NotesMan → db에 같은 클래스가 있어 /Demangler/mg1807/NotesMan 로 옮겨 넣음
+- mg1807 /mpj/mg1807/Notes → db에 같은 클래스가 있어 /mg1807/Notes 로 옮겨 넣음
+- mg1807 /mpj/mg1807/Player → db에 같은 클래스가 있어 /mg1807/Player 로 옮겨 넣음
+- mg1807 /mpj/mg1807/Player/PadDriver → db에 같은 클래스가 있어 /Demangler/mg1807/Player/PadDriver 로 옮겨 넣음
+- mg1807 /mpj/mg1807/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1807/Scene/Params 로 옮겨 넣음
+- mg1808 /mpj/mg1808/Pancake → db에 같은 클래스가 있어 /Demangler/mg1808/Pancake 로 옮겨 넣음
+- mg1808 /mpj/mg1808/Player → db에 같은 클래스가 있어 /Demangler/mg1808/Player 로 옮겨 넣음
+- mg1808 /mpj/mg1808/FryingPan → db에 같은 클래스가 있어 /Demangler/mg1808/FryingPan 로 옮겨 넣음
+- mg1808 /mpj/mg1808/Scene → db에 같은 클래스가 있어 /Demangler/mg1808/Scene 로 옮겨 넣음
+- mg1808 /mpj/mg1808/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1808/Scene/Params 로 옮겨 넣음
+- mg1808 /mpj/mg1808/NpcMan/Impl → db에 같은 클래스가 있어 /Demangler/mg1808/NpcMan/Impl 로 옮겨 넣음
+- mg1808 /mpj/mg1808/ServerNpc → db에 같은 클래스가 있어 /Demangler/mg1808/ServerNpc 로 옮겨 넣음
+- mg1808 /mpj/mg1808/ReceiverNpc → db에 같은 클래스가 있어 /Demangler/mg1808/ReceiverNpc 로 옮겨 넣음
+- mg1808 /mpj/mg1808/ObjsMan/OBJ_ID → db에 같은 클래스가 있어 /Demangler/mg1808/ObjsMan/OBJ_ID 로 옮겨 넣음
+- mg1809 /mpj/mg1809/Parts → db에 같은 클래스가 있어 /Demangler/mg1809/Parts 로 옮겨 넣음
+- mg1809 /mpj/mg1809/Player → db에 같은 클래스가 있어 /Demangler/mg1809/Player 로 옮겨 넣음
+- mg1809 /mpj/mg1809/PlayerManager/Impl → db에 같은 클래스가 있어 /Demangler/mg1809/PlayerManager/Impl 로 옮겨 넣음
+- mg1809 /mpj/mg1809/Pack → db에 같은 클래스가 있어 /Demangler/mg1809/Pack 로 옮겨 넣음
+- mg1809 /mpj/mg1809/Stage/Impl → db에 같은 클래스가 있어 /Demangler/mg1809/Stage/Impl 로 옮겨 넣음
+- mg1810 /mpj/mg1810/Scene → db에 같은 클래스가 있어 /Demangler/mg1810/Scene 로 옮겨 넣음
+- mg1810 /mpj/mg1810/PlayerMan → db에 같은 클래스가 있어 /Demangler/mg1810/PlayerMan 로 옮겨 넣음
+- mg1810 /mpj/mg1810/Scene/Params → db에 같은 클래스가 있어 /Demangler/mg1810/Scene/Params 로 옮겨 넣음
+- mg1810 /mpj/mg1810/ObjsMan/Impl → db에 같은 클래스가 있어 /Demangler/mg1810/ObjsMan/Impl 로 옮겨 넣음
+- mg1810 /mpj/mg1810/Obj → db에 같은 클래스가 있어 /Demangler/mg1810/Obj 로 옮겨 넣음
+- mg1810 /mpj/mg1810/Player → db에 같은 클래스가 있어 /Demangler/mg1810/Player 로 옮겨 넣음
+- mg1810 /mpj/mg1810/StageMan/Impl → db에 같은 클래스가 있어 /Demangler/mg1810/StageMan/Impl 로 옮겨 넣음
+- mgInst /mpj/mgInst/MgInstUI/Impl → db에 같은 클래스가 있어 /Demangler/mgInst/MgInstUI/Impl 로 옮겨 넣음
+- mgm01 /mpj/mgm01/Scene → db에 같은 클래스가 있어 /Demangler/mgm01/Scene 로 옮겨 넣음
+- mgm01 /mpj/mgm01/Scene/MgData → db에 같은 클래스가 있어 /Demangler/mgm01/Scene/MgData 로 옮겨 넣음
+- mgmrs /mpj/mgmrs/Scene → db에 같은 클래스가 있어 /Demangler/mgmrs/Scene 로 옮겨 넣음
+- mgmet /mpj/mgmet/UiManager → db에 같은 클래스가 있어 /Demangler/mgmet/UiManager 로 옮겨 넣음
+- mgm02 /mpj/mgm02/SceneParamsGame → db에 같은 클래스가 있어 /Demangler/mgm02/SceneParamsGame 로 옮겨 넣음
+- mgm05 /mpj/mgm05/Scene → db에 같은 클래스가 있어 /Demangler/mgm05/Scene 로 옮겨 넣음
+- mgm06 /mpj/mgm06/BossRushCourseResult → db에 같은 클래스가 있어 /mgm06/BossRushCourseResult 로 옮겨 넣음
+- mgmet /mpj/mgmet/ComMgmetCamera → db에 같은 클래스가 있어 /Demangler/mgmet/ComMgmetCamera 로 옮겨 넣음
+- mgmet /mpj/mgmet/ComPlayer → db에 같은 클래스가 있어 /Demangler/mgmet/ComPlayer 로 옮겨 넣음
+- mgmet /mpj/mgmet/ComNpc → db에 같은 클래스가 있어 /Demangler/mgmet/ComNpc 로 옮겨 넣음
+- mgmet /mpj/mgmet/Scene → db에 같은 클래스가 있어 /Demangler/mgmet/Scene 로 옮겨 넣음
+- mgmet /mpj/mgmet/HowtoPlay/Impl → db에 같은 클래스가 있어 /Demangler/mgmet/HowtoPlay/Impl 로 옮겨 넣음
+- mgmet /mpj/mgmet/ActivityTitle/Impl → db에 같은 클래스가 있어 /Demangler/mgmet/ActivityTitle/Impl 로 옮겨 넣음
+- mgmet /mpj/mgmet/RuleConfigView/ConfigInfo → db에 같은 클래스가 있어 /mgmet/RuleConfigView/ConfigInfo 로 옮겨 넣음 (후보 ['/Demangler/mgmet/RuleConfigView/ConfigInfo', '/mgmet/RuleConfigView/ConfigInfo'])
+- mgmet /mpj/mgmet/RuleConfigView/Impl → db에 같은 클래스가 있어 /mgmet/RuleConfigView/Impl 로 옮겨 넣음
+- mgmet /mpj/mgmet/RuleConfigView/Impl/ButtonBase → db에 같은 클래스가 있어 /Demangler/mgmet/RuleConfigView/Impl/ButtonBase 로 옮겨 넣음
+- menu01 /mpj/menu01/ComUiMap → db에 같은 클래스가 있어 /Demangler/menu01/ComUiMap 로 옮겨 넣음
+- menu00 /mpj/menu00/ComUiNetMenu → db에 같은 클래스가 있어 /Demangler/menu00/ComUiNetMenu 로 옮겨 넣음
+- menu00 /mpj/menu00/ComUiNetMenuRoomType → db에 같은 클래스가 있어 /Demangler/menu00/ComUiNetMenuRoomType 로 옮겨 넣음
+- menu00 /mpj/menu00/ComUiNetSessionList → db에 같은 클래스가 있어 /Demangler/menu00/ComUiNetSessionList 로 옮겨 넣음
+- menu00 /mpj/menu00/ComUiNetSessionInfo → db에 같은 클래스가 있어 /Demangler/menu00/ComUiNetSessionInfo 로 옮겨 넣음
+- menu00 /mpj/menu00/ComUiNetLobbySessionStatus → db에 같은 클래스가 있어 /Demangler/menu00/ComUiNetLobbySessionStatus 로 옮겨 넣음
+- matching00 /mpj/matching00/Scene/Params → db에 같은 클래스가 있어 /Demangler/matching00/Scene/Params 로 옮겨 넣음
+- menu01 /mpj/menu01/SequenceStartBd → db에 같은 클래스가 있어 /Demangler/menu01/SequenceStartBd 로 옮겨 넣음
+- menu01 /mpj/menu01/ComUiBdSettingMember → db에 같은 클래스가 있어 /Demangler/menu01/ComUiBdSettingMember 로 옮겨 넣음
+- menu01 /mpj/menu01/ComUiBdCheckRule → db에 같은 클래스가 있어 /Demangler/menu01/ComUiBdCheckRule 로 옮겨 넣음
+- menu01 /mpj/menu01/ComUiBdSettingRule → db에 같은 클래스가 있어 /Demangler/menu01/ComUiBdSettingRule 로 옮겨 넣음
+- menu00 /mpj/menu00/ComMenuCamera → db에 같은 클래스가 있어 /Demangler/menu00/ComMenuCamera 로 옮겨 넣음
+- main:7100004df0 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- main:7100004df0 시스템 다름 {'SYS_CORE': 1, 'SYS_ACTOR': 1} → 동수라 넣지 않음
+- main:7100006670 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- main:7100008b8c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100008c0c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710000ecd0 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- main:710001178c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100013500 시스템 다름 {'SYS_INPUT': 1, 'SYS_ACTOR': 1} → 동수라 넣지 않음
+- main:710001454c 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- main:71000149e8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710001c558 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710001c568 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710001e0b4 시스템 다름 {'SYS_INPUT': 2, 'SYS_ACTOR': 1} → 많은 쪽 SYS_INPUT
+- main:710001e54c 시스템 다름 {'SYS_ACTOR': 6, 'SYS_INPUT': 2} → 많은 쪽 SYS_ACTOR
+- main:710001e74c 시스템 다름 {'SYS_ACTOR': 6, 'SYS_INPUT': 2} → 많은 쪽 SYS_ACTOR
+- main:710001e8b8 시스템 다름 {'SYS_INPUT': 1, 'SYS_ACTOR': 1} → 동수라 넣지 않음
+- main:710001eac4 시스템 다름 {'SYS_ACTOR': 6, 'SYS_INPUT': 2} → 많은 쪽 SYS_ACTOR
+- main:7100022110 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71000237f8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100024094 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710002a624 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71000374a0 시스템 다름 {'SYS_ACTOR': 1, 'SYS_ASSET': 1} → 동수라 넣지 않음
+- main:71000375d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71000375d0 시스템 다름 {'SYS_ACTOR': 1, 'SYS_ASSET': 1} → 동수라 넣지 않음
+- main:710003f820 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710003f878 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710003f8d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100040cc0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71000413d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71000415ac 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71000415e4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710010d224 시스템 다름 {'SYS_EFFECT': 2, 'SYS_INPUT': 1} → 많은 쪽 SYS_EFFECT
+- main:710011c334 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710013c440 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710013c894 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710018ddb0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710018f400 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100190c70 시스템 다름 {'SYS_INPUT': 2, 'SYS_CORE': 1} → 많은 쪽 SYS_INPUT
+- main:7100191168 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001931c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100193ec8 시스템 다름 {'SYS_CORE': 1, 'SYS_INPUT': 1} → 동수라 넣지 않음
+- main:710019581c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100196670 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001968a4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001968a4 시스템 다름 {'SYS_CORE': 2, 'SYS_SCENE': 1} → 많은 쪽 SYS_CORE
+- main:71001a2cc8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001c7a00 시스템 다름 {'SYS_SCENE': 2, 'SYS_NET': 1} → 많은 쪽 SYS_SCENE
+- main:71001c94cc 시스템 다름 {'SYS_SCENE': 2, 'SYS_NET': 2} → 동수라 넣지 않음
+- main:71001c9ffc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001c9ffc 시스템 다름 {'SYS_ASSET': 1, 'SYS_SCENE': 1} → 동수라 넣지 않음
+- main:71001d493c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001d4a50 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001d4b60 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001d665c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001d8d30 시스템 다름 {'SYS_EFFECT': 1, 'SYS_CHARACTER': 1} → 동수라 넣지 않음
+- main:71001f00d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f0440 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f0440 시스템 다름 {'SYS_SCENE': 2, 'SYS_GAME': 1} → 많은 쪽 SYS_SCENE
+- main:71001f0448 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f0460 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f0460 시스템 다름 {'SYS_SCENE': 5, 'SYS_GAME': 1} → 많은 쪽 SYS_SCENE
+- main:71001f0518 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f0ea4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f1930 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f1930 시스템 다름 {'SYS_SCENE': 1, 'SYS_GAME': 1} → 동수라 넣지 않음
+- main:71001f1c60 시스템 다름 {'SYS_SCENE': 2, 'SYS_GAME': 1} → 많은 쪽 SYS_SCENE
+- main:71001f1e20 시스템 다름 {'SYS_SCENE': 3, 'SYS_GAME': 2} → 많은 쪽 SYS_SCENE
+- main:71001f271c 시스템 다름 {'SYS_SCENE': 3, 'SYS_UI': 1, 'SYS_GAME': 1} → 많은 쪽 SYS_SCENE
+- main:71001f2a24 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f2a24 시스템 다름 {'SYS_SCENE': 3, 'SYS_UI': 1} → 많은 쪽 SYS_SCENE
+- main:71001f2a64 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f2a64 시스템 다름 {'SYS_SCENE': 3, 'SYS_UI': 1} → 많은 쪽 SYS_SCENE
+- main:71001f2a80 시스템 다름 {'SYS_SCENE': 5, 'SYS_UI': 1} → 많은 쪽 SYS_SCENE
+- main:71001f3120 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f39e0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71001f3be0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710020792c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100207c38 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100208b80 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100208b80 시스템 다름 {'SYS_UI': 3, 'SYS_INPUT': 1} → 많은 쪽 SYS_UI
+- main:7100209234 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100209234 시스템 다름 {'SYS_UI': 3, 'SYS_INPUT': 1} → 많은 쪽 SYS_UI
+- main:71002093d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710020c8d4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100217640 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100217640 시스템 다름 {'SYS_UI': 1, 'SYS_INPUT': 1} → 동수라 넣지 않음
+- main:71002177d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002177d0 시스템 다름 {'SYS_UI': 1, 'SYS_INPUT': 1} → 동수라 넣지 않음
+- main:7100217840 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100217840 시스템 다름 {'SYS_UI': 1, 'SYS_INPUT': 1} → 동수라 넣지 않음
+- main:710021d71c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710021d724 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710021d72c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710021d734 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710021d77c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710021d810 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710022eafc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710022eb8c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710022eb94 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710022eba8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710022ebf8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710022ee20 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710023ff64 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100240168 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100240424 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710029c710 시스템 다름 {'SYS_SCENE': 2, 'SYS_UI': 1} → 많은 쪽 SYS_SCENE
+- main:710029c940 시스템 다름 {'SYS_SCENE': 2, 'SYS_UI': 1} → 많은 쪽 SYS_SCENE
+- main:710029e4fc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710029f6b0 시스템 다름 {'SYS_SCENE': 1, 'SYS_NET': 1} → 동수라 넣지 않음
+- main:71002a01b0 시스템 다름 {'SYS_UI': 1, 'SYS_INPUT': 1} → 동수라 넣지 않음
+- main:71002af940 시스템 다름 {'SYS_CHARACTER': 4, 'SYS_CORE': 1, 'SYS_CAMERA': 1} → 많은 쪽 SYS_CHARACTER
+- main:71002afff4 시스템 다름 {'SYS_CHARACTER': 1, 'SYS_ACTOR': 1} → 동수라 넣지 않음
+- main:71002b0094 시스템 다름 {'SYS_CHARACTER': 1, 'SYS_ACTOR': 1} → 동수라 넣지 않음
+- main:71002b03d0 시스템 다름 {'SYS_CHARACTER': 1, 'SYS_ACTOR': 1} → 동수라 넣지 않음
+- main:71002ca780 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002cafc8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002cb064 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002d16fc 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- main:71002d16fc 시스템 다름 {'SYS_NET': 3, 'SYS_SCENE': 1} → 많은 쪽 SYS_NET
+- main:71002db9f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e0500 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e0548 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e14c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e14e8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e16c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e17f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e1818 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e1864 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e1b14 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e1c68 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e1c68 시스템 다름 {'SYS_SCENE': 3, 'SYS_SAVE': 1} → 많은 쪽 SYS_SCENE
+- main:71002e1e8c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e2020 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e34d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e5540 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002e7d90 시스템 다름 {'SYS_SCENE': 2, 'SYS_UI': 1} → 많은 쪽 SYS_SCENE
+- main:71002e8390 시스템 다름 {'SYS_UI': 1, 'SYS_SCENE': 1} → 동수라 넣지 않음
+- main:71002ed480 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002ee230 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71002ee230 시스템 다름 {'SYS_UI': 1, 'SYS_SCENE': 1} → 동수라 넣지 않음
+- main:71002ee410 시스템 다름 {'SYS_ANIMATION': 2, 'SYS_GAME': 1} → 많은 쪽 SYS_ANIMATION
+- main:71002f0290 시스템 다름 {'SYS_GAME': 1, 'SYS_SCENE': 1} → 동수라 넣지 않음
+- main:7100310cdc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100311710 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100316f38 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100318030 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71003188c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71003197d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71003197d0 시스템 다름 {'SYS_UI': 4, 'SYS_INPUT': 2} → 많은 쪽 SYS_UI
+- main:7100319a80 시스템 다름 {'SYS_INPUT': 1, 'SYS_UI': 1} → 동수라 넣지 않음
+- main:7100319e78 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710031e660 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710031f2d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710031fe30 시스템 다름 {'SYS_UI': 2, 'SYS_SOUND': 1} → 많은 쪽 SYS_UI
+- main:7100339360 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710033a1e0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710033b540 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710033c3f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710033e9f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710033eeb0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100344a00 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71003476a4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100347ad0 시스템 다름 {'SYS_SCENE': 1, 'SYS_UI': 1} → 동수라 넣지 않음
+- main:7100360970 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71003649cc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100364d68 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100365358 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100365410 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710036589c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100365adc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100366540 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100366718 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100425ce0 시스템 다름 {'SYS_GAME': 2, 'SYS_SOUND': 1} → 많은 쪽 SYS_GAME
+- main:7100425d70 시스템 다름 {'SYS_GAME': 1, 'SYS_SOUND': 1} → 동수라 넣지 않음
+- main:7100425d90 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100425d90 시스템 다름 {'SYS_GAME': 3, 'SYS_SOUND': 1} → 많은 쪽 SYS_GAME
+- main:7100425df0 시스템 다름 {'SYS_GAME': 1, 'SYS_SOUND': 1} → 동수라 넣지 않음
+- main:7100425e60 시스템 다름 {'SYS_GAME': 1, 'SYS_SOUND': 1} → 동수라 넣지 않음
+- main:7100427d50 시스템 다름 {'SYS_GAME': 2, 'SYS_SCENE': 1} → 많은 쪽 SYS_GAME
+- main:7100428720 시스템 다름 {'SYS_GAME': 3, 'SYS_SCENE': 1} → 많은 쪽 SYS_GAME
+- main:710042a6b8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710042b780 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710042ca10 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710042d1a0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710042d1a0 시스템 다름 {'SYS_RENDER': 2, 'SYS_GAME': 1} → 많은 쪽 SYS_RENDER
+- main:710042d4ac 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71004361c4 시스템 다름 {'SYS_UI': 2, 'SYS_GAME': 1} → 많은 쪽 SYS_UI
+- main:7100436558 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100436590 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710043ce38 시스템 다름 {'SYS_EFFECT': 1, 'SYS_UI': 1} → 동수라 넣지 않음
+- main:7100441990 시스템 다름 {'SYS_GAME': 4, 'SYS_SOUND': 1} → 많은 쪽 SYS_GAME
+- main:71004421a0 시스템 다름 {'SYS_GAME': 2, 'SYS_SOUND': 1} → 많은 쪽 SYS_GAME
+- main:7100443340 시스템 다름 {'SYS_GAME': 7, 'SYS_SCENE': 1} → 많은 쪽 SYS_GAME
+- main:7100445ae8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100445ae8 시스템 다름 {'SYS_GAME': 3, 'SYS_SCENE': 3} → 동수라 넣지 않음
+- main:7100447030 시스템 다름 {'SYS_GAME': 2, 'SYS_SCENE': 1} → 많은 쪽 SYS_GAME
+- main:7100447a90 시스템 다름 {'SYS_GAME': 2, 'SYS_SOUND': 1} → 많은 쪽 SYS_GAME
+- main:71005f0cec 시스템 다름 {'SYS_EFFECT': 2, 'SYS_INPUT': 1} → 많은 쪽 SYS_EFFECT
+- main:71005f3ccc 시스템 다름 {'SYS_EFFECT': 2, 'SYS_ANIMATION': 1} → 많은 쪽 SYS_EFFECT
+- main:7100603554 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710060359c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100613f5c 시스템 다름 {'SYS_COLLISION': 2, 'SYS_CORE': 1} → 많은 쪽 SYS_COLLISION
+- main:7100625110 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100625480 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710062c3bc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710062c8b4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100696ea0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71006c1120 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710073e904 시스템 다름 {'SYS_RENDER': 1, 'SYS_EFFECT': 1} → 동수라 넣지 않음
+- main:7100771dfc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100771ee0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100771fdc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100774350 시스템 다름 {'SYS_CAMERA': 1, 'SYS_ANIMATION': 1} → 동수라 넣지 않음
+- main:71007743e0 시스템 다름 {'SYS_CAMERA': 1, 'SYS_ANIMATION': 1} → 동수라 넣지 않음
+- main:71007758a4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100775b90 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100778020 시스템 다름 {'SYS_ANIMATION': 1, 'SYS_RENDER': 1} → 동수라 넣지 않음
+- main:7100782e00 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71007dc1a4 시스템 다름 {'SYS_CORE': 1, 'SYS_INPUT': 1} → 동수라 넣지 않음
+- main:71007eeba8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710080b6d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710080bc60 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710080bd48 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710080c858 시스템 다름 {'SYS_CORE': 1, 'SYS_ANIMATION': 1} → 동수라 넣지 않음
+- main:710080cd70 시스템 다름 {'SYS_ANIMATION': 4, 'SYS_CORE': 2} → 많은 쪽 SYS_ANIMATION
+- main:710080cf00 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710080d120 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71008135f4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100849250 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:710084b4a0 시스템 다름 {'SYS_CAMERA': 2, 'SYS_CORE': 1} → 많은 쪽 SYS_CAMERA
+- main:710088848c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7100893030 시스템 다름 {'SYS_CORE': 1, 'SYS_COLLISION': 1} → 동수라 넣지 않음
+- main:7100899450 시스템 다름 {'SYS_CORE': 4, 'SYS_ACTOR': 1} → 많은 쪽 SYS_CORE
+- main:7100984a58 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71009850ac 시스템 다름 {'SYS_CORE': 1, 'SYS_SCENE': 1} → 동수라 넣지 않음
+- main:7100987af8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:71013fe25c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main:7101413818 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- matching00:7100003db4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- matching00:7100004ab0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- matching00:71000107d8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- matching00:7100010a00 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- matching00:7100012c10 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu00:710002d3ec 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu00:71000382f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu00:710005c780 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu00:7100060a40 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu00:7100061360 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu00:71000923c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu01:710002fcac 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu01:71000a4f58 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- menu01:71000a55c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0101:7100004580 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0101:7100004b50 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0101:710001104c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0101:7100012ba0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0101:71000201b0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0101:7100023860 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0106:710001c8c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0106:710001d100 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0107:71000122d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0107:7100017730 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0116:7100004930 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0116:7100004c9c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0116:710000ffb0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0116:71000105a4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:7100018844 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:7100018c34 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:710001a36c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:710001acc4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:710001ae9c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:710001bfd0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0118:7100022b5c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0119:7100008280 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0119:710000b21c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0119:710001c100 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0122:710001b1c8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0122:710001fe1c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0122:7100056204 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0508:7100009bb8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0508:710000da00 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0911:7100063530 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710001b758 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710001d090 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:7100021ba0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710004e1f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:71000594e0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710005dba4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:71000618c4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:71000646c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:71000695c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:71000698d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710006c0f0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710006ca50 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg0912:710006ccc4 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- mg0912:710006e9d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1002:710000ba44 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1002:71000136bc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1801:71000044d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1801:710000cd10 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1801:710000d130 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1801:710000d2b8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1801:710000e914 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1801:7100010a90 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- mg1802:710000e710 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1802:710000f2d4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1803:710000f4c0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1804:710000ee70 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1805:710000e5e8 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1806:710000e2e0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1806:71000110d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1807:7100014a78 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1808:710001ec5c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mg1810:7100023ffc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgm01:7100015f5c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgm01:710001bbf0 상태 다름 ['ST_PARTIAL', 'ST_RECHECK'] → ST_RECHECK
+- mgmet:71000475b4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:710005b0d0 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:7100065a78 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:7100065e9c 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:710007efdc 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:710007f338 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:710007f530 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- mgmet:7100080770 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- rc_stage01:710002c5f4 상태 다름 ['ST_ANALYZED', 'ST_PARTIAL'] → ST_ANALYZED
+- main /Demangler/bq/ComUiDialogBox +0x4c 필드 이름 다름 defaultCursor / defaultChoice → 먼저 것 (shell_online.jsonl:78)
+- main /Demangler/bq/SceneBase +0xe3 필드 이름 다름 useFade / fadeEnable → 먼저 것 (engine_15_transition.jsonl:17)
+- main /Demangler/bq/SceneBase +0x40 필드가 겹침 [('0x40', 24, 'flowFiber')] / (flowFiberPtr, 8) → 먼저 것 (engine_18_scene_work.jsonl:242)
+- main /Demangler/bq/SceneBase +0x48 필드가 겹침 [('0x40', 24, 'flowFiber')] / (flowFiberNode, 8) → 먼저 것 (engine_18_scene_work.jsonl:242)
+- main /Demangler/bq/SceneBase +0xc0 필드 이름 다름 request / requestKind → 먼저 것 (engine_18_scene_work.jsonl:242)
+- main /Demangler/bq/SceneBase +0xe3 필드 타입 다름 /byte / /bool → 먼저 것 (engine_18_scene_work.jsonl:242)
+- main /Demangler/bq/SplitScreenParam +0x0 필드 이름 다름 layerId / id → 먼저 것 (engine_render_unify.jsonl:108)
+- main /Demangler/bq/SplitScreenParam +0xc 필드 이름 다름 width / w → 먼저 것 (engine_render_unify.jsonl:108)
+- main /Demangler/bq/SplitScreenParam +0x10 필드 이름 다름 height / h → 먼저 것 (engine_render_unify.jsonl:108)
+- main /Demangler/ca/rm/RmGameWork 시스템 다름 ['SYS_GAME', 'SYS_SCENE'] → 넣지 않음
+- main /Demangler/ca/rm/RmGameWork +0x1c 필드 이름 다름 inRhythmCooking / field_1C → 먼저 것 (engine_07_camera_lighting.jsonl:107)
+- main /Demangler/ca/rm/RmGameWork +0x6c3 필드 이름 다름 resultModeCaptureEnable / resultCaptureEnable → 먼저 것 (minigame_rc_stage01.jsonl:56)
+- main /Demangler/ca/rm/RmMgSceneBase 시스템 다름 ['SYS_GAME', 'SYS_SCENE'] → 넣지 않음
+- main /Demangler/ca/rm/RmMgSceneBase +0x370 필드 이름 다름 stage / exitStep → 먼저 것 (engine_07_camera_lighting.jsonl:108)
+- main /Demangler/ca/rm/RmMgSceneBase/Data +0x0 필드 이름 다름 row / index → 먼저 것 (minigame_mg1801.jsonl:131)
+- main /Demangler/wl/util/ComponentCameraShaking +0x60 필드가 겹침 [('0x60', 12, 'savedBase')] / (savedBase, 16) → 먼저 것 (engine_20_camera_runtime.jsonl:120)
+- main /Demangler/wl/util/ComponentCameraShaking +0x80 필드가 겹침 [('0x80', 12, 'vStart')] / (vector80, 16) → 먼저 것 (engine_20_camera_runtime.jsonl:120)
+- main /Demangler/wl/util/ComponentCameraShaking +0x90 필드가 겹침 [('0x90', 12, 'vTarget')] / (vector90, 16) → 먼저 것 (engine_20_camera_runtime.jsonl:120)
+- main /actor/ComActor +0x2d8 필드 이름 다름 groundFastTurnSpeed / groundTurnFastSpeed → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x2dc 필드 이름 다름 groundFastTurnThreshold / groundTurnFastThreshold → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x2e4 필드 이름 다름 airFastTurnSpeed / airTurnFastSpeed → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x2e8 필드 이름 다름 airFastTurnThreshold / airTurnFastThreshold → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x2ec 필드 이름 다름 leverRunThreshold / leverDepthThreshold → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x304 필드 이름 다름 airMaxSpeed / airHorizontalMax → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x308 필드 이름 다름 fallMaxSpeed / fallSpeedMax → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x328 필드 이름 다름 jumpInitialSpeed / jumpSpeed → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x334 필드 이름 다름 jumpHoldSeconds / holdTime → 먼저 것 (minigame_mg0912.jsonl:96)
+- main /actor/ComActor +0x2d8 필드 이름 다름 groundFastTurnSpeed / fastTurnSpeed → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActor +0x2dc 필드 이름 다름 groundFastTurnThreshold / fastTurnThresholdDeg → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActor +0x2e0 필드 이름 다름 airTurnSpeed / airTurnSpeed0 → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActor +0x2e4 필드 이름 다름 airFastTurnSpeed / airTurnSpeed1 → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActor +0x2e8 필드 이름 다름 airFastTurnThreshold / airTurnThreshold → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActor +0x2ec 필드 이름 다름 leverRunThreshold / runLeverThreshold → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActor +0x2fc 필드 이름 다름 airAcceleration / airAccel → 먼저 것 (shell_plaza_3d.jsonl:70)
+- main /actor/ComActorAutoInterpolation +0x60 필드 이름 다름 positionActive / posActive → 먼저 것 (shell_plaza_3d.jsonl:71)
+- main /actor/ComActorAutoInterpolation +0x61 필드 이름 다름 rotationActive / rotActive → 먼저 것 (shell_plaza_3d.jsonl:71)
+- main /bex/NetworkGameScene 시스템 다름 ['SYS_NET', 'SYS_SCENE'] → 넣지 않음
+- main /bq/PlayerWork +0x48 필드 이름 다름 characterId / characterID → 먼저 것 (engine_18_scene_work.jsonl:238)
+- main /bq/PlayerWork +0x48 필드 이름 다름 characterId / characterID → 먼저 것 (shell_mgm01_freeplay.jsonl:157)
+- main /bq/WorkModule +0x3d04 필드 이름 다름 unk_3d04 / field_0x3d04 → 먼저 것 (engine_18_scene_work.jsonl:241)
+- main /bq/WorkModule +0x3d28 필드 이름 다름 unk_3d28 / field_0x3d28 → 먼저 것 (engine_18_scene_work.jsonl:241)
+- main /mpj/ResAnimCurve +0x8 필드 이름 다름 keys / coeffs → 먼저 것 (engine_20_camera_runtime.jsonl:121)
+- main /nn/bezel/Camera +0x1e0 필드 이름 다름 projectionType / type → 먼저 것 (engine_20_camera_runtime.jsonl:118)
+- main /nn/bezel/Camera +0x2f8 필드 이름 다름 focusDistance / focus → 먼저 것 (engine_20_camera_runtime.jsonl:118)
+- main /nn/bezel/Camera +0x1c8 필드 이름 다름 bottom / projBottom → 먼저 것 (engine_lod.jsonl:112)
+- main /nn/bezel/Camera +0x1cc 필드 이름 다름 top / projTop → 먼저 것 (engine_lod.jsonl:112)
+- main /nn/bezel/Camera +0x1d0 필드 이름 다름 near / nearClip → 먼저 것 (engine_lod.jsonl:112)
+- main /nn/bezel/ComCamera +0x20 필드 이름 다름 ownerEntity / owner → 먼저 것 (engine_20_camera_runtime.jsonl:119)
+- main /nn/bezel/ComCamera +0x40 필드 이름 다름 animViewMatrix / animView → 먼저 것 (engine_20_camera_runtime.jsonl:119)
+- main /nn/bezel/ComCamera +0x80 필드 이름 다름 animFocusDistance / animFocus → 먼저 것 (engine_20_camera_runtime.jsonl:119)
+- main /nn/bezel/Viewport 시스템 다름 ['SYS_CAMERA', 'SYS_RENDER'] → 넣지 않음
+- rc_stage01 /Demangler/rc_stage01/Sequence/Impl +0x328 필드가 겹침 [('0x310', 36, 'fireworksSeFrame')] / (modeWork, 8) → 먼저 것 (minigame_rc_stage01.jsonl:35)
+- main:71015d76a4 데이터 이름 다름 ['None', 'g_UiPlaceTable'] → 마지막 사용
+- main:71015d840c 데이터 이름 다름 ['MinigameModeSceneNameTable', 'None', 'g_MinigameModeSceneNameTable'] → 마지막 사용
+- main:71015d8dc4 데이터 이름 다름 ['BEAT_SCALE', 'None'] → 마지막 사용
+- main:71015d8eb0 데이터 이름 다름 ['BEATS_PER_BAR', 'None'] → 마지막 사용
+- main:71019f1aa8 데이터 이름 다름 ['CMN_EFFECT_ID', 'None'] → 마지막 사용
+- main:7101c0b438 데이터 이름 다름 ['None', 'g_FiberModuleToken'] → 마지막 사용
+- main:7101c0c420 데이터 이름 다름 ['None', 'g_BootConfig'] → 마지막 사용
+- main:7101c0e508 데이터 이름 다름 ['None', 'g_SceneModuleToken'] → 마지막 사용
+- main:7101c25840 데이터 이름 다름 ['None', 'g_MinigameModeSceneBgmHandle'] → 마지막 사용
+- main:7101c405f8 데이터 이름 다름 ['None', 'g_FrndTwoPi'] → 마지막 사용
+- main:7101c45478 데이터 이름 다름 ['None', 'g_CoreSystem'] → 마지막 사용
+- mgmet:71000e3658 데이터 이름 다름 ['None', 'g_MgmetNextModeTable'] → 마지막 사용
+
+## 새로 만든 함수(자동 분석이 놓친 시작 주소)
+
+
+## 자리표시로 만든 타입(참조만 있고 정의 없음)
+

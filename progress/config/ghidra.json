@@ -1,0 +1,197 @@
+{
+  "note": "web/ghidra/db 를 읽는 진행도 설정. 프로젝트마다 다른 것은 모두 여기 둔다. 태그 이름·상태는 tags 파일(axis·state)에서 읽는다.",
+  "title": "MPJ",
+  "root": "../../..",
+  "db": "web/ghidra/db",
+  "tags": "web/ghidra/db/tags.json",
+  "code": [
+    "web/script"
+  ],
+  "orig_marker": "@orig",
+  "poll_seconds": 3,
+  "leaf_limit": 2500,
+  "trivial": {
+    "maxSize": 32,
+    "maxCalls": 0
+  },
+  "lib_pattern": "^(std|__gnu_cxx|__cxxabiv1|__cxxabiv2|rtti|nlib|fmt|physx)(::|$)|^nn::(?!bezel)",
+  "areas": [
+    {
+      "id": "engine",
+      "name": "엔진",
+      "modules": [
+        "main"
+      ],
+      "classify": "system"
+    },
+    {
+      "id": "minigame",
+      "name": "미니게임",
+      "pattern": "^mg\\d{4}$",
+      "classify": "stage",
+      "names": {
+        "file": "analysis/minigame_catalog.tsv",
+        "key": "code",
+        "name": "name_ko"
+      }
+    },
+    {
+      "id": "board",
+      "name": "보드",
+      "pattern": "^bd\\d+$",
+      "classify": "none"
+    },
+    {
+      "id": "shell",
+      "name": "화면·모드",
+      "pattern": ".*",
+      "classify": "none"
+    }
+  ],
+  "system": {
+    "patterns": [
+      {
+        "tag": "SYS_SHADER",
+        "pattern": "Shader|Bnsh|Material|Uniform|ShadingModel"
+      },
+      {
+        "tag": "SYS_COLLISION",
+        "pattern": "Collision|Collider|Physics|RigidBody|HitShape|physx|Ground|Raycast|Contact|Gravity"
+      },
+      {
+        "tag": "SYS_CAMERA",
+        "pattern": "Camera"
+      },
+      {
+        "tag": "SYS_EFFECT",
+        "pattern": "Effect|Fx|vfx|Particle|Emitter"
+      },
+      {
+        "tag": "SYS_UI",
+        "pattern": "Ui[A-Z]|::ui|Gui|Layout|Hud|HUD|ui2d|Font|MessageWindow|Dialog|Telop|Menu|Cursor"
+      },
+      {
+        "tag": "SYS_INPUT",
+        "pattern": "Input|Hid|::Pad|Pad[A-Z]|Controller|SixAxis|Gyro|Npad"
+      },
+      {
+        "tag": "SYS_SOUND",
+        "pattern": "Sound|Audio|Bgm|Voice|atk|::Se[A-Z]|Vibration"
+      },
+      {
+        "tag": "SYS_NET",
+        "pattern": "Network|::Net|Session|pia|Matching|Lobby|Sync|Transfer|Friend"
+      },
+      {
+        "tag": "SYS_ANIMATION",
+        "pattern": "Anim|Skeleton|Pose|Motion|Rig|Ik|Bone|Blend"
+      },
+      {
+        "tag": "SYS_CHARACTER",
+        "pattern": "Character|Chara[A-Z]|Face|Costume|Dress|Avatar"
+      },
+      {
+        "tag": "SYS_ACTOR",
+        "pattern": "Actor|Player|Npc|NPC|Heading|Matter|ComAI|Cpu"
+      },
+      {
+        "tag": "SYS_RENDER",
+        "pattern": "Render|Graphics|::gfx|gfx::|Viewport|ModelBuffer|ComModel|RuntimeMesh|Mesh|Texture|Light|Shadow|Posteffect|PostEffect|g3d|LineRenderer|Draw|Lod|Impostor|Primitive|Model"
+      },
+      {
+        "tag": "SYS_SAVE",
+        "pattern": "save|Save|reward|achievement|PlayReport|Record"
+      },
+      {
+        "tag": "SYS_SCENE",
+        "pattern": "Scene|Sequence|Mode|Work|Flow|Fiber|Event|Timer|State"
+      },
+      {
+        "tag": "SYS_ASSET",
+        "pattern": "Resource|Asset|Archive|Json|Bea|Loader|Movie|MapPath|Rtts|Table"
+      },
+      {
+        "tag": "SYS_CORE",
+        "pattern": "Entity|Component|Module|Allocator|Memory|Heap|Thread|Hash|Property|Handle|String|Math|Vector|Matrix|Quat|Rand|Message|Listener|Util|Container|Array|List"
+      },
+      {
+        "tag": "SYS_GAME",
+        "pattern": "^(ca|sb|wl|bq)::"
+      }
+    ],
+    "unclassified": "미분류",
+    "estimate": {
+      "calls": false,
+      "rounds": 2,
+      "minVotes": 2,
+      "minShare": 0.75,
+      "address": true,
+      "addressGap": "0x8000",
+      "note": "이름 가리기 시험(2026-10-11, main 1,095개): 주소 이웃 97% 정확, 호출 관계 63~74% → 호출 추정은 끔"
+    }
+  },
+  "stage": {
+    "stages": [
+      {
+        "id": "boilerplate",
+        "name": "엔진 등록(자동 생성)",
+        "pattern": "getStaticTypeinfo|NnDetailBezel|getPropertyList|createInstance|deleteInstance|getInstanceTypeinfo|_internal|DummySymbolLink|GetSymbol|DestroyComponentImpl|GetTypeDesc"
+      },
+      {
+        "id": "cleanup",
+        "name": "정리",
+        "pattern": "^~|Cleanup|Destroy|Delete|Release|Finalize|Dispose|Terminate"
+      },
+      {
+        "id": "start",
+        "name": "시작·준비",
+        "pattern": "Setup|SetUp|Initiali[sz]e|^Init|Create|Prepare|Build|Entry|Start|Opening|Load|Construct|Reset"
+      },
+      {
+        "id": "end",
+        "name": "종료·결과",
+        "pattern": "End|Ending|Finish|Result|Winner|Rank|Judge|Goal|Exit|Stop|Score|Clear|Over"
+      },
+      {
+        "id": "main",
+        "name": "진행",
+        "pattern": "Update|Main|Run|Play|Step|Tick|Proc|Move|Calc|Exec|Control|Action|Attack|Jump|Hit"
+      },
+      {
+        "id": "message",
+        "name": "메시지·이벤트",
+        "pattern": "Receive|Notify|Message|Ticket|Event|Callback|operator\\(\\)|Listener|Signal"
+      },
+      {
+        "id": "access",
+        "name": "접근자",
+        "pattern": "^(Get|Set|Is|Has|Can|get|set|is)[A-Z_]"
+      }
+    ],
+    "other": "기타 로직",
+    "constructor": "start",
+    "unnamed": "이름 없음(FUN_)"
+  },
+  "dependencies": {
+    "note": "thunk 이름으로 다른 모듈 함수를 찾는다(외부 접두어를 떼고 네임스페이스::이름 일치)",
+    "external_prefix": "<EXTERNAL>::",
+    "target_areas": [
+      "engine"
+    ],
+    "source_areas": [
+      "minigame",
+      "board",
+      "shell"
+    ]
+  },
+  "types": {
+    "kinds": [
+      "struct",
+      "union",
+      "enum"
+    ],
+    "exclude_pattern": "^/[^/]+\\.h/|^/Demangler/(std|__gnu_cxx|__cxxabiv1|rtti|!_anon_funcs_|nlib|fmt|physx)(/|$)|^/(Demangler/)?nn/(?!bezel)|^/(std|__gnu_cxx|rtti)/",
+    "default_field": "^(field|field_0x|_?unk|padding|undefined)[_0-9a-fA-Fx]*$",
+    "note": "상태: 설명(description)의 ST_* 우선, 없으면 이름 있는 필드 ≥1 → 부분, 없으면 미분석. 분야: 설명의 SYS_* 우선, 없으면 경로에 엔진 패턴"
+  }
+}

@@ -1,0 +1,1390 @@
+{"a":"71000035b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §3.1\n역할: mg0101::CameraMgr 생성자 — 카메라 엔티티 생성\n동작: mg1801 과 같은 순서 — CreateSceneEntity(\"Camera\") → AddComponent<bq::ComMatter>(MatterType 1) → GraphicsLayer::SetCamera(기본 레이어, ComCamera::GetCamera()) → motion.AddAnimation → Play\n\n[판독] 2026-10-11 / md: web/docs/engine/10_split_screen.md §1\n역할: mg0101::CameraMgr::CameraMgr — Camera 하나를 기본 GraphicsLayer 에 연결, op0/op1/game/result 전환.\n분할: VS4 여도 4분할을 적용하지 않는다(단일 카메라).\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 layer; op0/op1/game/result; game 4750f, 카메라 frame 이 게임 시계.\n주의: 문서 §7.2 는 mg0101 0x71000035b0/0x7100003d70/0x7100004094 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.2·6.1\n역할: CameraMgr 생성자. 엔티티 \"Camera\"에 ComMatter(MatterType 1), 기본 그래픽 레이어 카메라로 지정\n애니 op0/op1/result와 코스별 game(mg0101_cam_game, _game_b, _game_c) 등록\n---\nmg0101::CameraMgr::CameraMgr()"}
+{"a":"7100003b40","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
+{"a":"7100003d1c","t":"plate","c":"mg0101::CameraMgr::~CameraMgr()"}
+{"a":"7100003d48","t":"plate","c":"mg0101::CameraMgr::~CameraMgr()"}
+{"a":"7100003d70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §5.2\n역할: mg0101::CameraMgr::Play — 카메라 슬롯 클립 재생 래퍼(CameraMgr 래퍼 범위 @0x7100003d70~0x7100004094 시작)\n래퍼 목록(범위 전체): Play(ANIM), Play(ANIM, float), GetAnimSpeed/SetAnimSpeed, GetFrame/GetFrameMax/SetFrame, IsAnim = !IsFinished\n수명: 슬롯이 프레임 0 부터 진행(속도 1 = 60Hz 한 프레임에 클립 1프레임), 루프 플래그가 없으면 FrameCount 에서 멈추고 IsFinished 가 참\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 layer; op0/op1/game/result; game 4750f, 카메라 frame 이 게임 시계.\n주의: 문서 §7.2 는 mg0101 0x71000035b0/0x7100003d70/0x7100004094 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n---\nmg0101::CameraMgr::Play(mg0101::CameraMgr::ANIM)"}
+{"a":"7100003e70","t":"plate","c":"mg0101::CameraMgr::Play(mg0101::CameraMgr::ANIM, float)"}
+{"a":"7100003f5c","t":"plate","c":"mg0101::CameraMgr::IsAnim() const"}
+{"a":"7100003fa4","t":"plate","c":"mg0101::CameraMgr::GetAnimSpeed()"}
+{"a":"7100003fe0","t":"plate","c":"mg0101::CameraMgr::SetAnimSpeed(float)"}
+{"a":"710000401c","t":"plate","c":"mg0101::CameraMgr::GetFrame() const"}
+{"a":"7100004058","t":"plate","c":"mg0101::CameraMgr::GetFrameMax() const"}
+{"a":"7100004094","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/07_camera_lighting.md §5.2\n역할: mg0101::CameraMgr::SetFrame — 카메라 슬롯 프레임 설정 래퍼(CameraMgr 래퍼 범위 @0x7100003d70~0x7100004094 끝)\n\n[판독] 2026-10-11 / md: web/docs/engine/20_camera_runtime.md §7.2\n역할(게임 카메라 요약): 단일 layer; op0/op1/game/result; game 4750f, 카메라 frame 이 게임 시계.\n주의: 문서 §7.2 는 mg0101 0x71000035b0/0x7100003d70/0x7100004094 를 묶어 게임 요약만 적음 — 개별 함수 분담은 문서에 없음.\n---\nmg0101::CameraMgr::SetFrame(float)"}
+{"a":"71000040d0","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetTypeDesc() const"}
+{"a":"71000040dc","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtr()"}
+{"a":"71000040e0","t":"plate","c":"nn::bezel::StringViewHashPair::NnDetailBezelGetThisPtrConst() const"}
+{"a":"71000040e4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000040f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::GetBaseTypeDesc()"}
+{"a":"7100004100","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100004108","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100004110","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100004118","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType&&)"}
+{"a":"710000429c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000042bc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71000042c8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000042dc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000042e4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000042ec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100004300","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::GetBaseTypeDesc()"}
+{"a":"7100004308","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100004310","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100004318","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100004320","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100004340","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000434c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100004360","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100004368","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100004370","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100004390","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000439c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000043b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000043b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100004460","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.6\n역할: ComAI 생성자. +0x28 active = 0, +0x60 replanTimer = 0, +0x98 틱 = 0, +0x9C stuckCount = 0, +0xA0 stuckLimit = 10, +0xA4 waitCount = 0, +0xA8 waitLimit = 0, +0xB0 holdPos = 0\n---\nmg0101::ComAI::ComAI(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, nn::bezel::WeakHandle<mg0101::ComNaviGrid> const&)"}
+{"a":"7100004520","t":"plate","c":"mg0101::ComAI::Start()"}
+{"a":"710000456c","t":"plate","c":"mg0101::ComAI::Stop()"}
+{"a":"7100004580","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: CPU 방향 계산(StepAI의 overlay stick)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\n역할: ComAI::CalcDirection (디스어셈블리)\n의사코드:\n  prevR = barR; barR = GetBarPosition(camFrame, R)  // 스태거 상태도 갱신\n  if (waitCount >= 1) { waitCount++\n    if (old waitCount >= waitLimit && path 있음) { u = normalize(path[0] - holdPos) * (1,0,0,0); if |((barR.x - 2.5) - holdPos.x) * u.x| > 1.0 : waitCount = 0 }\n    d = holdPos - pos; return |d| < 0.3 ? 0 : d }\n  if (barR.x - prevR.x > -0.02) {  // 앞 벽이 다가오지 않음\n    if (stuckCount >= 1) { stuckCount = 0; stuckLimit = SyncRandRange(10, 20) }\n    while (path 있음) { d = path[0] - pos; d.y = 0\n      if (path[1] 있음) { s = normalize(path[1]-path[0]); t = dot(-d, s); if (t <= 0.1 && |d - s*t| < 0.5) { path.shift(); continue } }\n      if (|d| >= 0.3) break-to-target; path.shift() }\n    if (path 비었음) return 0\n    target: if (pos.x > barR.x - 2.5) { waitCount = 1; waitLimit = SyncRandRange(10, 30); holdPos = pos }\n            else if (pos.x > cam.worldX + 9) { waitCount = 1; waitLimit = SyncRandRange(20, 80); holdPos = pos }\n    return d\n  } else {  // 앞 벽이 0.02 넘게 다가옴 → 후퇴\n    if (history 비었음) return 0; if (++stuckCount < stuckLimit) return 0\n    for (k = n-1; k >= 1; k--) { d = history[k] - pos; d.y = 0; if (|d| >= 0.3) return d; history.resize(k) }\n    return 0 }\n상수: 0.02, 2.5, 9.0, 0.3, 0.5, 0.1, 0.25, 10, 12개(0xC0 B)\n---\nmg0101::ComAI::CalcDirection()"}
+{"a":"7100004740","t":"pre","c":"~0x7100004860 경유점 버리기: t<=0.1 && |d-s*t|<0.5 이면 거리와 무관하게 shift, 실패해야 |d|<0.3 검사"}
+{"a":"7100004a00","t":"plate","c":"mg0101::CameraMgr::GetCamera() const"}
+{"a":"7100004b08","t":"plate","c":"mg0101::ComAI::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100004b50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: CPU 경로 갱신\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.3\n역할: mg0101 ComAI::Update. NaviGrid/ComAI 전략은 NRO 소유, 공용 actor에는 overlay packet 처리만\n\n[판독] 2026-10-11 / md: web/docs/engine/common_system_audit.md §2\n감사 근거(§2 CPU 전략): mg0101 AI — NRO 고유 전략\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\n역할: ComAI::Update (매 틱, active일 때)\n의사코드:\n  tick++; if (tick % 10 == 0) 현재 위치를 history 끝에 추가(마지막 점과 0.25 이하로 가까우면 생략), 12개 넘으면 앞을 버림\n  replanTimer -= dt\n  if (replanTimer > 0 && (comLevel < 2 || path 비어 있지 않음)) return\n  path = NaviGrid 있으면 Route(현재 위치) else [현재 위치 + (0,0,-1)]\n  replanTimer = SyncRandRangeF(lo, hi)  // comLevel <=0: 3.5~5.5, 1: 1.8~2.5, 2: 0.1~0.7, >=3: 0.05~0.3\n10틱 판정식: madd 0xCCCCCCCD, +0x19999998, ror 1, <= 0x19999998\n---\nmg0101::ComAI::Update()"}
+{"a":"7100004f9c","t":"plate","c":"non-virtual thunk to mg0101::ComAI::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100004fdc","t":"plate","c":"mg0101::ComAI::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100004fe8","t":"plate","c":"mg0101::ComAI::NnDetailBezelGetThisPtr()"}
+{"a":"7100004fec","t":"plate","c":"mg0101::ComAI::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100004ff0","t":"plate","c":"mg0101::ComAI::~ComAI()"}
+{"a":"71000050f0","t":"plate","c":"mg0101::ComAI::~ComAI()"}
+{"a":"71000051f0","t":"plate","c":"bq::ComponentTemplate<mg0101::ComAI, nn::bezel::Component>::DestroyComponentImpl()"}
+{"a":"7100005230","t":"plate","c":"mg0101::ComAI::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"7100005240","t":"plate","c":"mg0101::ComAI::_internalGetComponentNameHashImpl() const"}
+{"a":"7100005254","t":"plate","c":"mg0101::ComAI::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"710000525c","t":"plate","c":"non-virtual thunk to mg0101::ComAI::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100005268","t":"plate","c":"non-virtual thunk to mg0101::ComAI::NnDetailBezelGetThisPtr()"}
+{"a":"7100005270","t":"plate","c":"non-virtual thunk to mg0101::ComAI::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100005280","t":"plate","c":"non-virtual thunk to mg0101::ComAI::~ComAI()"}
+{"a":"7100005380","t":"plate","c":"non-virtual thunk to mg0101::ComAI::~ComAI()"}
+{"a":"7100005490","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComAI, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000054b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComAI, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71000054bc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComAI, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000054d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComAI, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000054d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComAI, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000054e0","t":"plate","c":"nn::bezel::HandleSource<nn::bezel::Component>::Reset(nn::bezel::Component*)"}
+{"a":"7100005870","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.6\n역할: ComDestruction 생성자(뒤 벽 HitShape, 부서진 모델 이름, iv, delay)\niv 파괴 모델이면 별도 애니 슬롯에 floor_invisible 클립 재생\n---\nmg0101::ComDestruction::ComDestruction(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char const*, bool, float)"}
+{"a":"7100005ea0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*, (void*)0>(char const*&&)"}
+{"a":"7100006080","t":"plate","c":"nn::bezel::HandlePtr<nn::bezel::ComModel> nn::bezel::Entity::SafeGet<nn::bezel::ComModel>()"}
+{"a":"7100006170","t":"plate","c":"nn::bezel::HandlePtr<actor::ComActorMotion> nn::bezel::Entity::SafeGet<actor::ComActorMotion>()"}
+{"a":"7100006260","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.6\n역할: ComDestruction::ReceiveMessageImpl (메시지 0x5F454E00마다, 디스어셈블리로 분기 확인)\n의사코드:\n  if (locked(+0x71)) { 부서진 모델 엔티티의 ComModel.SetVisible(false); return }\n  if (intact(+0x70)) { wall = 뒤 벽 HitShape(위치 ActorHitShape+0x160..+0x16C); floorX = 엔티티 x\n    if (floorX < wall.x + 5.0 && 바닥 충돌 유효) {\n      if (CollisionShape::Overlap(wall 모양 @(wall.x+0.5, wall.y-3.0, wall.z) 회전 항등, 바닥 RigidBody 모양 @그 자세)) {\n        원래 모델 숨김; 부서진 엔티티 Activate·표시·break 애니 재생; if (delay <= 0) 충돌 해제; intact = 0 } } }\n  else { if (delay > 0) { delay -= dt; if (delay <= 0) 바닥 RigidBody.Disable() }\n    if (부서진 모델 애니 끝) 자기 엔티티 파괴(가상 +0x28) }\n양의 destroyDelay는 겹침 성공 틱에는 줄지 않고 다음 틱부터 뺀다\n파괴는 CameraDestructFrames 이후(locked = 0)에만\n---\nmg0101::ComDestruction::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"71000067d4","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::RigidBody> nn::bezel::WeakHandle<nn::bezel::Collision>::Cast<nn::bezel::RigidBody>() const"}
+{"a":"71000068ac","t":"plate","c":"nn::bezel::CollisionShape::CollisionShape(nn::bezel::CollisionShape const&)"}
+{"a":"710000695c","t":"plate","c":"non-virtual thunk to mg0101::ComDestruction::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100006964","t":"plate","c":"mg0101::ComDestruction::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100006970","t":"plate","c":"mg0101::ComDestruction::NnDetailBezelGetThisPtr()"}
+{"a":"7100006974","t":"plate","c":"mg0101::ComDestruction::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100006980","t":"plate","c":"nn::bezel::Component::~Component()"}
+{"a":"7100006a50","t":"plate","c":"mg0101::ComDestruction::~ComDestruction()"}
+{"a":"7100006b20","t":"plate","c":"bq::ComponentTemplate<mg0101::ComDestruction, nn::bezel::Component>::DestroyComponentImpl()"}
+{"a":"7100006b60","t":"plate","c":"mg0101::ComDestruction::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"7100006b70","t":"plate","c":"mg0101::ComDestruction::_internalGetComponentNameHashImpl() const"}
+{"a":"7100006b84","t":"plate","c":"mg0101::ComDestruction::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"7100006b8c","t":"plate","c":"non-virtual thunk to mg0101::ComDestruction::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100006b98","t":"plate","c":"non-virtual thunk to mg0101::ComDestruction::NnDetailBezelGetThisPtr()"}
+{"a":"7100006ba0","t":"plate","c":"non-virtual thunk to mg0101::ComDestruction::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100006bb0","t":"plate","c":"non-virtual thunk to mg0101::ComDestruction::~ComDestruction()"}
+{"a":"7100006c80","t":"plate","c":"non-virtual thunk to mg0101::ComDestruction::~ComDestruction()"}
+{"a":"7100006d50","t":"plate","c":"nn::bezel::detail::VariantImpl::CtorDtor<nn::bezel::CollisionShape::Mesh, nn::bezel::CollisionShape::Complex, nn::bezel::CollisionShape::Collection, nn::bezel::CollisionShape::RuntimeConvexMesh, nn::bezel::CollisionShape::RuntimeTriangleMesh, nn::bezel::CollisionShape::RuntimeHeightField>::CopyConstruct(void*, void const*, unsigned char)"}
+{"a":"7100007090","t":"plate","c":"nn::bezel::detail::VariantImpl::CtorDtor<nn::bezel::CollisionShape::RuntimeConvexMesh, nn::bezel::CollisionShape::RuntimeTriangleMesh, nn::bezel::CollisionShape::RuntimeHeightField>::CopyConstruct(void*, void const*, unsigned char)"}
+{"a":"7100007184","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100007198","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::GetBaseTypeDesc()"}
+{"a":"71000071a0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000071a8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000071b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000071b8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComDestruction, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000071d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComDestruction, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71000071e4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComDestruction, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000071f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComDestruction, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100007200","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComDestruction, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000721c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCollision, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000723c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCollision, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100007248","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCollision, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000725c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCollision, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100007264","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCollision, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100007270","t":"plate","c":"nn::bezel::EntityForEachCommand nn::bezel::Entity::ForEachComponentWithBreakImpl<nn::bezel::ComCollision>(nn::bezel::EntityForEachRange, nn::bezel::EntityState, nn::bezel::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), 48ul, 16ul> const&)"}
+{"a":"7100007420","t":"plate","c":"nn::bezel::detail::FunctionOperationsHelper<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void> >::destructor(nn::util::IFunction<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)>*)"}
+{"a":"7100007424","t":"plate","c":"nn::bezel::detail::FunctionOperationsHelper<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void> >::copier(void*, unsigned long, unsigned long, nn::util::IFunction<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)> const*)"}
+{"a":"7100007484","t":"plate","c":"nn::bezel::detail::FunctionOperationsHelper<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void> >::mover(void*, unsigned long, unsigned long, nn::util::IFunction<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)>*)"}
+{"a":"71000074e4","t":"plate","c":"nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void>::TEMPNAMEPLACEHOLDERVALUE(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&) const"}
+{"a":"7100007514","t":"plate","c":"nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void>::~Function()"}
+{"a":"7100007518","t":"plate","c":"nn::util::IFunction<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)>::~IFunction()"}
+{"a":"710000751c","t":"plate","c":"nn::util::IFunction<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)>::~IFunction()"}
+{"a":"7100007520","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
+{"a":"71000076b8","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&&)"}
+{"a":"710000784c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000786c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100007878","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000788c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100007894","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000789c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::RigidBody, false, nn::bezel::Collision>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000078d4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::RigidBody, false, nn::bezel::Collision>::GetBaseTypeDesc()"}
+{"a":"71000078e0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::RigidBody, false, nn::bezel::Collision>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000078f4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::RigidBody, false, nn::bezel::Collision>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000078fc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::RigidBody, false, nn::bezel::Collision>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100007904","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Collision, false, nn::bezel::IBasis>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100007924","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Collision, false, nn::bezel::IBasis>::GetBaseTypeDesc()"}
+{"a":"7100007930","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Collision, false, nn::bezel::IBasis>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100007944","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Collision, false, nn::bezel::IBasis>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000794c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Collision, false, nn::bezel::IBasis>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100007960","t":"plate","c":"mg0101::ComNaviGrid::ComNaviGrid(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const*)"}
+{"a":"7100007c48","t":"plate","c":"mg0101::ComNaviGrid::Start()"}
+{"a":"7100007c54","t":"plate","c":"mg0101::ComNaviGrid::Stop()"}
+{"a":"7100007c60","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\n역할: ComNaviGrid::Route(pos, path). A*\n이웃 8방향 [(1,1),(1,-1),(1,0),(0,1),(0,-1),(-1,0),(-1,1),(-1,-1)], 비용 [√2,√2,1,1,1,1,√2,√2]\n대각선은 두 직교 칸이 모두 1일 때만\n휴리스틱: 정수 칸 유클리드 거리\n목표는 Target()이 고르며, 이미 0.2 이내면 다시 찾지 않는다\n---\nmg0101::ComNaviGrid::Route(nn::util::Vector3f const&, bex::vector<nn::util::Vector3f>&)"}
+{"a":"71000083b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\n역할: ComNaviGrid::Target\nmaxCol부터 왼쪽으로 열 1..199만 탐색(0 제외). 걷기 가능 칸이 있는 첫 열에서 행 0..9 순서로 후보를 모은다. 없으면 (0,0,0) 반환, 난수 소비 없음\n현재 행 = trunc(pos.z+5). w = F((다음 열 같은 행도 1 ? 2 : 1) / ((행-현재 행)²+1)), 다음 열 존재도 검사. 합은 행 순서 f32 누적\n후보가 하나여도 SyncRandF 1회. t = F(sum×rand) 후 t < w[i](엄격)이면 선택, 아니면 t = F(t-w[i])로 다음 후보. 끝까지 실패하면 첫 후보\n반환 = (열+0.5-100, 0, 행+0.5-5)\n---\nmg0101::ComNaviGrid::Target(nn::util::Vector3f const&)"}
+{"a":"7100008760","t":"plate","c":"std::list<mg0101::ComNaviGrid::Node*, bex::HeapModule::Allocator_list<mg0101::ComNaviGrid::Node*> >::resize(unsigned long)"}
+{"a":"71000089f0","t":"plate","c":"std::list<mg0101::ComNaviGrid::Node*, bex::HeapModule::Allocator_list<mg0101::ComNaviGrid::Node*> >::remove(mg0101::ComNaviGrid::Node* const&)"}
+{"a":"7100008c10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\n역할: ComNaviGrid::ReceiveMessageImpl 틱. 200×10 칸, 1칸 = 1.0, x ∈ [-100,100), z ∈ [-5,5)\nminCol = trunc(뒤 Wall 엔티티 x - 0.5 + 100), maxCol = trunc(cam.worldX + 10 + 100). 벽 x는 HitShape 소유 엔티티 현재 이동값(GetBarPosition 추가 호출 없음)\nminCol 미만 열은 전부 -1(막힘)\nminCol..maxCol+5 중 미검사(0) 칸이 있는 첫 열의 남은 0칸 전부만 검사: 다섯 레이가 모두 맞으면 1, 첫 실패에서 중단하고 -1\n이미 1/-1인 칸은 재검사하지 않음(발판 파괴 뒤에도 캐시 남을 수 있음)\n다섯 레이: 칸 중심 p = (열+0.5-100, 0.5, 행+0.5-5)에서 중심 → (-0.5,0,-0.5) → (-0.5,0,+0.5) → (+0.5,0,-0.5) → (+0.5,0,+0.5), 방향 (0,-1,0), 길이 1.0, 레이어 비트마스크 4(CastRayArg+0x20/+0x24)\n생성 때 첫 25열(x < -75)은 1로 채운다\n---\nmg0101::ComNaviGrid::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100008e80","t":"pre","c":"~0x7100009100 다섯 레이 CastRay: 오프셋 상수 @0x710004fc50/4fc30/4fc40/4fcf0/4fcc0, 방향 @0x710004fca0, 길이 1.0, 마스크 4"}
+{"a":"7100009168","t":"plate","c":"non-virtual thunk to mg0101::ComNaviGrid::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100009170","t":"plate","c":"mg0101::ComNaviGrid::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000917c","t":"plate","c":"mg0101::ComNaviGrid::NnDetailBezelGetThisPtr()"}
+{"a":"7100009180","t":"plate","c":"mg0101::ComNaviGrid::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100009190","t":"plate","c":"mg0101::ComNaviGrid::~ComNaviGrid()"}
+{"a":"71000092e0","t":"plate","c":"mg0101::ComNaviGrid::~ComNaviGrid()"}
+{"a":"7100009304","t":"plate","c":"bq::ComponentTemplate<mg0101::ComNaviGrid, nn::bezel::Component>::DestroyComponentImpl()"}
+{"a":"7100009344","t":"plate","c":"mg0101::ComNaviGrid::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"7100009354","t":"plate","c":"mg0101::ComNaviGrid::_internalGetComponentNameHashImpl() const"}
+{"a":"7100009368","t":"plate","c":"mg0101::ComNaviGrid::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"7100009370","t":"plate","c":"non-virtual thunk to mg0101::ComNaviGrid::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000937c","t":"plate","c":"non-virtual thunk to mg0101::ComNaviGrid::NnDetailBezelGetThisPtr()"}
+{"a":"7100009384","t":"plate","c":"non-virtual thunk to mg0101::ComNaviGrid::NnDetailBezelGetThisPtrConst() const"}
+{"a":"710000938c","t":"plate","c":"non-virtual thunk to mg0101::ComNaviGrid::~ComNaviGrid()"}
+{"a":"7100009394","t":"plate","c":"non-virtual thunk to mg0101::ComNaviGrid::~ComNaviGrid()"}
+{"a":"71000093bc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComNaviGrid, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000093dc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComNaviGrid, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"71000093e8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComNaviGrid, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"71000093fc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComNaviGrid, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100009404","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComNaviGrid, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100009800","t":"plate","c":"mg0101::ComPartsActivator::ComPartsActivator(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100009c80","t":"plate","c":"mg0101::ComPartsActivator::ReceiveMessageMSeq(nn::bezel::Message const&)"}
+{"a":"7100009f0c","t":"plate","c":"mg0101::ComPartsActivator::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100009f18","t":"plate","c":"mg0101::ComPartsActivator::NnDetailBezelGetThisPtr()"}
+{"a":"7100009f1c","t":"plate","c":"mg0101::ComPartsActivator::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100009f20","t":"plate","c":"mg0101::ComPartsActivator::~ComPartsActivator()"}
+{"a":"710000a010","t":"plate","c":"mg0101::ComPartsActivator::~ComPartsActivator()"}
+{"a":"710000a100","t":"plate","c":"bex::ComponentMultiSequence<mg0101::ComPartsActivator, bex::ComMultiSequence>::DestroyComponentImpl()"}
+{"a":"710000a140","t":"plate","c":"mg0101::ComPartsActivator::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"710000a150","t":"plate","c":"mg0101::ComPartsActivator::_internalGetComponentNameHashImpl() const"}
+{"a":"710000a164","t":"plate","c":"mg0101::ComPartsActivator::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"710000a16c","t":"plate","c":"non-virtual thunk to mg0101::ComPartsActivator::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000a178","t":"plate","c":"non-virtual thunk to mg0101::ComPartsActivator::NnDetailBezelGetThisPtr()"}
+{"a":"710000a180","t":"plate","c":"non-virtual thunk to mg0101::ComPartsActivator::NnDetailBezelGetThisPtrConst() const"}
+{"a":"710000a190","t":"plate","c":"non-virtual thunk to mg0101::ComPartsActivator::~ComPartsActivator()"}
+{"a":"710000a280","t":"plate","c":"non-virtual thunk to mg0101::ComPartsActivator::~ComPartsActivator()"}
+{"a":"710000a380","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPartsActivator, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000a3a0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPartsActivator, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000a3ac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPartsActivator, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000a3c0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPartsActivator, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000a3c8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPartsActivator, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000a48c","t":"plate","c":"nn::util::IFunction<void (nn::bezel::HandlePtr<nn::bezel::Entity> const&)>::~IFunction()"}
+{"a":"710000a4b8","t":"plate","c":"nn::util::IFunction<void (nn::bezel::HandlePtr<nn::bezel::Entity> const&)>::~IFunction()"}
+{"a":"710000a4c0","t":"plate","c":"void std::vector<nn::bezel::HandlePtr<nn::bezel::Entity>, bex::HeapModule::Allocator_vector<nn::bezel::HandlePtr<nn::bezel::Entity> > >::__push_back_slow_path<nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"710000b5a0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.5\n역할: ComPlayer 생성자. +0x28 playerId = 인자, +0x2C goalFrame = 0, +0x30 fallFrame = 0, +0x40 startPos = 0, +0x50 started = 0, +0x54 카운터 = 180\n---\nmg0101::ComPlayer::ComPlayer(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID)"}
+{"a":"710000b720","t":"plate","c":"mg0101::ComPlayer::Start()"}
+{"a":"710000b840","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: CPU 스텝\n분기: PlayerType1일 때 ComAI::CalcDirection(0x7100004580)을 overlay stick으로 넣고 ComAI::Update(0x7100004b50)가 경로 갱신\n주의: host/IsLocal로 CPU 실행자를 제한하는 분기 없음\n\n[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §6.6\n역할: mg0101 ComPlayer::StepAI. CalcDirection×3→길이1 제한→SetOverlayStick\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\n역할: ComPlayer::StepAI\nCPU(GetPlayerType()==1)이면 d = ComAI::CalcDirection() × 3, |d| > 1이면 정규화, ComActorPad::SetOverlayStick(d.x, -d.z)\n§4.5 +0x54 카운터: 0이 아니면 -1\n---\nmg0101::ComPlayer::StepAI()"}
+{"a":"710000bb40","t":"plate","c":"mg0101::ComPlayer::GetDrenched()"}
+{"a":"710000be20","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0101 ComPlayer::ReceiveMessageImpl. $Fall 감시는 게임 경로\n\n[추정] 2026-10-11 / md: web/docs/minigame/mg0101.md §5.1\n역할: ComPlayer::ReceiveMessageImpl (Entity 갱신 메시지 0x5F454E00)\n분기: 대기(started=0) → Start()에서 달리기\n분기: !IsGrounded && 현재 액션 == \"$Fall\"(0x3D4AB1051E44067A) → Fall(): fallFrame = FrameCount, 입력 끔, SE \"SQ_SE_MG0101_PC_FAL\", 그림자 끔, 지면검사 끔\n분기: 지면검사 꺼진 동안 y < -1.0 → 지면검사 켬 → IsGrounded면 착수: 속도 0, NOP 액션, FxTrigger, SE \"SQ_SE_MG0101_PC_LND_WAT\"\n분기: fallFrame == 0 && x >= 90.0 → goalFrame = FrameCount → 매 틱 Goaled(): 결과 위치까지 스틱 오버레이로 걷기(거리 <= 0.2면 회전 요청·입력 끔)\n분기: Scene+0x39c(결과 단계)가 켜지면 판정 멈춤\nUpdateActorParam: x가 [-90, 90] 안이면 FxTrigger 실수 3개 (0, 1, 0.5), 밖이면 (1, 0, 0)\n[추정] 위 값은 먼지·물 효과 전환\n---\nmg0101::ComPlayer::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"710000c120","t":"plate","c":"mg0101::ComPlayer::Fall()"}
+{"a":"710000c440","t":"plate","c":"mg0101::ComPlayer::Falled()"}
+{"a":"710000c7e0","t":"plate","c":"mg0101::ComPlayer::Goaled()"}
+{"a":"710000cd50","t":"plate","c":"mg0101::ComPlayer::UpdateActorParam()"}
+{"a":"710000cf1c","t":"plate","c":"non-virtual thunk to mg0101::ComPlayer::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"710000cf30","t":"plate","c":"mg0101::ComPlayer::GetGoalStandPos() const"}
+{"a":"710000d0e8","t":"plate","c":"mg0101::ComPlayer::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000d0f4","t":"plate","c":"mg0101::ComPlayer::NnDetailBezelGetThisPtr()"}
+{"a":"710000d0f8","t":"plate","c":"mg0101::ComPlayer::NnDetailBezelGetThisPtrConst() const"}
+{"a":"710000d100","t":"plate","c":"mg0101::ComPlayer::~ComPlayer()"}
+{"a":"710000d1d0","t":"plate","c":"bq::ComponentTemplate<mg0101::ComPlayer, nn::bezel::Component>::DestroyComponentImpl()"}
+{"a":"710000d210","t":"plate","c":"mg0101::ComPlayer::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"710000d220","t":"plate","c":"mg0101::ComPlayer::_internalGetComponentNameHashImpl() const"}
+{"a":"710000d234","t":"plate","c":"mg0101::ComPlayer::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"710000d23c","t":"plate","c":"non-virtual thunk to mg0101::ComPlayer::NnDetailBezelGetTypeDesc() const"}
+{"a":"710000d248","t":"plate","c":"non-virtual thunk to mg0101::ComPlayer::NnDetailBezelGetThisPtr()"}
+{"a":"710000d250","t":"plate","c":"non-virtual thunk to mg0101::ComPlayer::NnDetailBezelGetThisPtrConst() const"}
+{"a":"710000d260","t":"plate","c":"non-virtual thunk to mg0101::ComPlayer::~ComPlayer()"}
+{"a":"710000d330","t":"plate","c":"non-virtual thunk to mg0101::ComPlayer::~ComPlayer()"}
+{"a":"710000d400","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPlayer, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d420","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPlayer, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d42c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPlayer, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d440","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPlayer, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d448","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPlayer, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d450","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTrigger, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d470","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTrigger, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d47c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTrigger, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d490","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTrigger, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d498","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTrigger, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d4a0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d4c0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d4cc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d4e0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d4e8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d4f0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWetExpression, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d510","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWetExpression, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d51c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWetExpression, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d530","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWetExpression, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d538","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWetExpression, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d540","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::sound::ComActor, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d560","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::sound::ComActor, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d56c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::sound::ComActor, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d580","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::sound::ComActor, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d588","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::sound::ComActor, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d590","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d5b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d5bc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d5d0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d5d8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d5e0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorPad, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d600","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorPad, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"710000d60c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorPad, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710000d620","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorPad, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710000d628","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorPad, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710000d630","t":"plate","c":"mg0101::BarData::getStaticTypeinfo()"}
+{"a":"710000d70c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.3\n역할: BarData::getPropertyList. 필드 {f32 frameL, f32 posL, f32 frameR, f32 posR} (0x10 B)\n---\nmg0101::BarData::getPropertyList()"}
+{"a":"710000d824","t":"plate","c":"mg0101::BarData::createInstance()"}
+{"a":"710000d840","t":"plate","c":"mg0101::BarData::deleteInstance(void*)"}
+{"a":"710000d84c","t":"plate","c":"rtti::Struct::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"710000d850","t":"plate","c":"rtti::Struct::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"710000d860","t":"plate","c":"mg0101::Bar::Bar(int)"}
+{"a":"710000dd80","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
+{"a":"710000def0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [39], (void*)0>(char const (&) [39])"}
+{"a":"710000e0d0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComFxTriggerListener> nn::bezel::Entity::AddComponent<bq::ComFxTriggerListener, , (void*)0>()"}
+{"a":"710000e2b0","t":"plate","c":"nn::bezel::WeakHandle<bex::ComFxTriggerCallbackListener> nn::bezel::Entity::AddComponent<bex::ComFxTriggerCallbackListener, , (void*)0>()"}
+{"a":"710000e490","t":"plate","c":"mg0101::Bar::~Bar()"}
+{"a":"710000e4ec","t":"plate","c":"mg0101::Bar::~Bar()"}
+{"a":"710000e510","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.3\n역할: Bar::PlayAnim(op). op 재생 때 Bar0을 (-98, 0, -2.7)에 둔다(상수 0xC2C40000)\n§4.1 Params.CameraSpeedScale을 PlayAnim(2)에서 쓴다\n---\nmg0101::Bar::PlayAnim(mg0101::Bar::ANIM)"}
+{"a":"710000e7b8","t":"plate","c":"mg0101::Bar::SetAnimSpeed(float)"}
+{"a":"710000e7f4","t":"plate","c":"mg0101::Bar::SetAnimFrame(float)"}
+{"a":"710000e830","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.4\n역할: MapMgr 생성자. +0x08 courseType = -1, +0xC8/+0xCC 이전 위치 L/R = 0, +0xD0/+0xD4 이전 변화량 L/R = 0\n---\nmg0101::MapMgr::MapMgr()"}
+{"a":"710000e900","t":"plate","c":"mg0101::MapMgr::~MapMgr()"}
+{"a":"710000ea60","t":"plate","c":"mg0101::MapMgr::~MapMgr()"}
+{"a":"710000ea84","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.2\n역할: MapMgr::Init\ncourseType = SyncRandMod(6) (mov w1,#6) → MapMgr+0x08 (0..5)\n호출: CreateEnv, CreateBG(→ LoadMapData, Bar 0~3, Wall0/1 충돌, 강·절벽·잎 등), CreateFloors, InitLimit\n---\nmg0101::MapMgr::Init()"}
+{"a":"710000ead0","t":"plate","c":"mg0101::MapMgr::DecideCourseType()"}
+{"a":"710000eb10","t":"plate","c":"mg0101::MapMgr::CreateEnv()"}
+{"a":"710000f050","t":"plate","c":"mg0101::MapMgr::CreateBG()"}
+{"a":"7100010eb0","t":"plate","c":"mg0101::MapMgr::CreateFloors()"}
+{"a":"710001104c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0101 MapMgr::InitLimit. Wall source box·WorldCollisionLimit clamp는 게임 경로\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.4\n역할: MapMgr::InitLimit. 장면 루트에 ComWorldCollisionLimit::SetupShape\nAABB min (-100,-1000,-10), max (300,5,10) (bex::CollisionShape +0/+0x10, +0x50 형태 태그 = 8)\n---\nmg0101::MapMgr::InitLimit()"}
+{"a":"71000110f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.1\n역할: MapMgr::LoadMapData. database.json을 연 뒤 선택된 barPatternA/B/C 배열만 DeserializeRTTI<BarData>로 읽어 MapMgr+0x50 vector에 넣는다\nparam(courseStart/cameraStart/cameraEnd)은 적용하지 않는다. NRO의 JSON 접근은 이 경로와 BarData 필드 역직렬화뿐\n---\nmg0101::MapMgr::LoadMapData()"}
+{"a":"71000111c0","t":"plate","c":"bool bq::DataBaseJsonReader::DeserializeRTTI<mg0101::BarData>(char const*, bex::vector<mg0101::BarData>&)"}
+{"a":"7100011380","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [30], (void*)0>(char const (&) [30])"}
+{"a":"7100011560","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [36], (void*)0>(char const (&) [36])"}
+{"a":"7100011740","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [31], (void*)0>(char const (&) [31])"}
+{"a":"7100011920","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [37], (void*)0>(char const (&) [37])"}
+{"a":"7100011b00","t":"plate","c":"nn::bezel::WeakHandle<actor::ComActorCollision> nn::bezel::Entity::AddComponent<actor::ComActorCollision, , (void*)0>()"}
+{"a":"7100011dc0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [34], (void*)0>(char const (&) [34])"}
+{"a":"7100011fa0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [35], (void*)0>(char const (&) [35])"}
+{"a":"7100012180","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [33], (void*)0>(char const (&) [33])"}
+{"a":"7100012360","t":"plate","c":"mg0101::MapMgr::GetFieldBoneSocket(char const*)"}
+{"a":"7100012490","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComAttachment> nn::bezel::Entity::AddComponent<nn::bezel::ComAttachment, , (void*)0>()"}
+{"a":"7100012680","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [38], (void*)0>(char const (&) [38])"}
+{"a":"7100012860","t":"plate","c":"mg0101::MapMgr::GetFieldBoneWorldTransformCalculated(char const*)"}
+{"a":"71000129c0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*&, (void*)0>(char const*&)"}
+{"a":"7100012ba0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/13_asset_converter.md §5.2\n역할: mg0101::MapMgr::CreateFloorParts — 코스 발판 생성. CreateBG 와 함께 게임 장면 배치의 근거(mg0101.md §6.6·§7)\n배치 근거: 원본 미니게임에는 MapStructure.json 이 없고 장면 엔티티는 게임 코드(SyncedSetupGame·MapImpl·CreateBG)가 경로로 만든다 — 변환기 게임 표 SCENES[id] 의 근거 함수로 쓰임\nspawn: 코스 a0 의 뼈 pos_(iv_)?<t>NN 마다 floor_<t> 모델(뼈 이름 정규식의 t·iv 묶음으로 모델 이름을 만듦)\n분기: iv 가 붙은 뼈면 floor_invisible.fvbb(뼈 보임 애니) 적용 — §14: iv 발판은 parts 가 숨고 floor 면만 보임\n관련 배치(행 전체, CreateBG 쪽 포함): base fld0~5·river·cliff·palm·leaf·statue·sunbeams·water_fall·lever·plants_op\n카메라·충돌(행 전체): cam_op0 → cam_game, 충돌 fld0_col·cource_a0_col\n§13 사용자 확인: 코스는 a0(표 첫 칸)로 고정, 원본은 매 판 코스 선택\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.6\n역할: MapMgr::CreateFloorParts(boneName)\n의사코드:\n  if !boneName.startsWith(\"pos_\") return\n  iv = !isDigit(boneName[5]); type = iv ? boneName[7] : boneName[4]  // \"pos_a03\", \"pos_iv_d02\"\n  entity = CreateSceneEntity(boneName)\n  if type >= 'p': LoadNbmap(\"mg/mg0101/map/mg0101_parts_%c_col.nbmap\")\n  model = \"mg/mg0101/model/mg0101_floor_%c.fmdb\"; 위치·회전 = 코스 pos 모델 뼈 월드 행렬\n  AddTag(\"parts\")\n  if iv: 애니 \"mg/mg0101/model/mg0101_floor_invisible\"(fvbb) 재생\n  if type in 'p'..'t': delay = type in {q,s,t} ? Params.DestroyDelayQST : Params.DestroyDelayPR\n    AddComponent ComDestruction(뒤 벽 HitShape, \"mg/mg0101/model/mg0101_floor_break_%c\", iv, delay); AddTag(\"destruction\")\n---\nmg0101::MapMgr::CreateFloorParts(char const*, int, nn::bezel::HandlePtr<nn::bezel::SkeletonPose> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&)"}
+{"a":"71000131d0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComDestruction> nn::bezel::Entity::AddComponent<mg0101::ComDestruction, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&, (void*)0>(nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&)"}
+{"a":"71000133b0","t":"plate","c":"nn::bezel::WeakHandle<actor::ComWorldCollisionLimit> nn::bezel::Entity::AddComponent<actor::ComWorldCollisionLimit, , (void*)0>()"}
+{"a":"7100013580","t":"plate","c":"mg0101::MapMgr::PlayAnim(mg0101::MapMgr::ANIM)"}
+{"a":"7100014790","t":"plate","c":"mg0101::MapMgr::SetEndingAsset()"}
+{"a":"7100014e70","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [43], (void*)0>(char const (&) [43])"}
+{"a":"7100015050","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.2\n역할: MapMgr::GetBarPosition(f, side) (디스어셈블리). side 0 = 뒤(L), 1 = 앞(R), f = 카메라 프레임. 반환 x 하나\n의사코드:\n  [fk, pk] = side == 0 ? [frameL, posL] : [frameR, posR]; sideOff = side == 0 ? -1.5 : 1.5\n  viewTx = camera.view[3].x (Camera+0x70)\n  pf = d[0][fk], p = d[0][pk]\n  if (pf >= f) { if (pf != 0) return Params.FrontStartX (-55.5); return F(sideOff + F(p - viewTx)) }\n  for (i = 1; i < max(n, 2); i++) { fi = d[i][fk]; if (fi <= 0) continue; pi = d[i][pk]\n    if (fi < f) { pf = fi; p = pi; continue }\n    t = F(F(f - pf) / F(fi - pf)); np = fmadd(F(pi - p), t, p)\n    delta = F(np - prevPos[side]); prev = prevDelta[side]; prevPos[side] = np\n    if ((delta != 0 && prev == 0) || (delta < 0 && prev > 0) || (delta > 0 && prev < 0)) { arg = delta > 0 ? side == 0 : side != 0; NPC[2*side].Stagger(arg); NPC[2*side+1].Stagger(arg) }\n    else if (delta == 0 && prev != 0) { arg = prev <= 0 ? side == 0 : side != 0; NPC[2*side].Stagger(arg); NPC[2*side+1].Stagger(arg) }\n    prevDelta[side] = delta; return F(sideOff + F(np - viewTx)) }\n  return F(sideOff + F(p - viewTx))  // 마지막 키 이후(상태 갱신 없음)\n쓰는 필드: MapMgr+0xC8/+0xCC prevPos, +0xD0/+0xD4 prevDelta\n0 나누기 없음(fi >= f > pf)\n[추정] Camera+0x70 = view 이동 x = -카메라 x (§6.3)\n§8 ComAI::Start·CalcDirection도 R을 다시 불러 상태가 갱신된다\n---\nmg0101::MapMgr::GetBarPosition(mg0101::BarSide, nn::util::Vector3f&, float)"}
+{"a":"7100015530","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.2\n역할: MapMgr::UpdateBar\nxL = GetBarPosition(f, 0); Bar0.pos = (xL, 0, -2.7); Bar1.pos = (xL, 0, 3.5)\nWall0.pos = (Bar0 모델 뼈 \"log\"의 월드 x, 0, 0)\nxR = GetBarPosition(f, 1); Bar2.pos = (xR, 0, -2.7); Bar3.pos = (xR, 0, 3.5)\nWall1.pos = (Bar2 뼈 \"log\" 월드 x, 0, 0)\nz 오프셋 상수 @0x710004fc00 = (0,0,-2.7), @0x710004fbd0 = (0,0,3.5)\n---\nmg0101::MapMgr::UpdateBar()"}
+{"a":"7100015a2c","t":"plate","c":"mg0101::MapMgr::GetBarActorHitShape()"}
+{"a":"7100015a40","t":"plate","c":"mg0101::MapMgr::FindFieldBoneIndex(char const*)"}
+{"a":"7100015b60","t":"plate","c":"mg0101::MapMgr::DeleteOPEntity()"}
+{"a":"7100015bbc","t":"plate","c":"mg0101::MapMgr::SetBarAnimSpeed(float)"}
+{"a":"7100015ca0","t":"plate","c":"mg0101::MapMgr::SetBarAnimFrame(float)"}
+{"a":"7100015d84","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"7100015e08","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"7100015e94","t":"plate","c":"virtual thunk to std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"7100015f20","t":"plate","c":"virtual thunk to std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"7100015fb4","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_stringbuf()"}
+{"a":"7100015ff4","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_stringbuf()"}
+{"a":"710001603c","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::seekoff(long long, std::ios_base::seekdir, unsigned int)"}
+{"a":"7100016168","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::underflow()"}
+{"a":"71000161b8","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::pbackfail(int)"}
+{"a":"7100016224","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::overflow(int)"}
+{"a":"7100016408","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::push_back(char)"}
+{"a":"710001653c","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(unsigned long, char)"}
+{"a":"71000166d0","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::str() const"}
+{"a":"7100016914","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [39]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [39])"}
+{"a":"7100016aa4","t":"plate","c":"nn::bezel::WeakHandle<bq::ComFxTriggerListener> bex::ComponentUtil::SafeCreate<bq::ComFxTriggerListener, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100016ba4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComFxTriggerListener, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100016bc4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComFxTriggerListener, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100016bd0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComFxTriggerListener, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100016be4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComFxTriggerListener, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100016bec","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComFxTriggerListener, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100016bf4","t":"plate","c":"nn::bezel::WeakHandle<bex::ComFxTriggerCallbackListener> bex::ComponentUtil::SafeCreate<bex::ComFxTriggerCallbackListener, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100016d6c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTriggerCallbackListener, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100016d8c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTriggerCallbackListener, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100016d98","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTriggerCallbackListener, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100016dac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTriggerCallbackListener, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100016db4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTriggerCallbackListener, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000170dc","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [30]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [30])"}
+{"a":"710001726c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [36]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [36])"}
+{"a":"71000173fc","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [31]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [31])"}
+{"a":"710001758c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [37]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [37])"}
+{"a":"710001771c","t":"plate","c":"std::__shared_ptr_pointer<mg0101::Bar*, std::shared_ptr<mg0101::Bar>::__shared_ptr_default_delete<mg0101::Bar, mg0101::Bar>, std::allocator<mg0101::Bar> >::~__shared_ptr_pointer()"}
+{"a":"7100017740","t":"plate","c":"std::__shared_ptr_pointer<mg0101::Bar*, std::shared_ptr<mg0101::Bar>::__shared_ptr_default_delete<mg0101::Bar, mg0101::Bar>, std::allocator<mg0101::Bar> >::__on_zero_shared()"}
+{"a":"7100017758","t":"plate","c":"std::__shared_ptr_pointer<mg0101::Bar*, std::shared_ptr<mg0101::Bar>::__shared_ptr_default_delete<mg0101::Bar, mg0101::Bar>, std::allocator<mg0101::Bar> >::__on_zero_shared_weak()"}
+{"a":"710001775c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorCollision, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710001777c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorCollision, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100017788","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorCollision, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"710001779c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorCollision, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"71000177a4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorCollision, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"71000177ac","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [34]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [34])"}
+{"a":"710001793c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [35]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [35])"}
+{"a":"7100017acc","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [33]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [33])"}
+{"a":"7100017c5c","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::insert(unsigned long, char const*, unsigned long)"}
+{"a":"7100017f00","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100017f20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100017f2c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100017f40","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100017f48","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100017f50","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [38]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [38])"}
+{"a":"71000180e0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&)"}
+{"a":"7100018274","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComDestruction> bex::ComponentUtil::SafeCreate<mg0101::ComDestruction, nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&)"}
+{"a":"7100018404","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWorldCollisionLimit, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100018424","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWorldCollisionLimit, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100018430","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWorldCollisionLimit, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100018444","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWorldCollisionLimit, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"710001844c","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWorldCollisionLimit, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710001867c","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [43]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [43])"}
+{"a":"71000189f0","t":"plate","c":"mg0101::AddHeyho(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::bezel::WeakHandle<nn::bezel::Entity> const&, char const*)"}
+{"a":"7100018d00","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID, (void*)0>(bq::NonPlayerCharacterID&&)"}
+{"a":"7100018ee0","t":"plate","c":"mg0101::BarNPC::BarNPC(int)"}
+{"a":"71000196cc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::UpdateFrame. +0x10 → +0x18 → +0x14 → +0x0C 순서로 양수 타이머만 dt 감소(독립 if 네 개)\n앞 셋 만료는 Idle, 마지막(+0x0C) 만료는 JoyIdle\nIdle이 새 +0x0C를 설정하면 같은 호출에서 그 값도 dt를 한 번 뺀다\n---\nmg0101::BarNPC::UpdateFrame()"}
+{"a":"71000197a0","t":"plate","c":"mg0101::BarNPC::UpdateWait(float&)"}
+{"a":"71000197f4","t":"plate","c":"mg0101::BarNPC::UpdateIdle()"}
+{"a":"7100019844","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::Idle. 대기 모션(시작 프레임 랜덤 플래그), +0x0C = SyncRandRangeF(NpcIdleDurationMin 3.0, Max 5.0)\n---\nmg0101::BarNPC::Idle()"}
+{"a":"7100019988","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::JoyIdle. 모션 joy_idle, +0x14 = FrameMax × SyncRandRange(2,3) / 60\nSyncRandRange(2,3)는 hi-lo < 2라 소비 없음, 값 2\n---\nmg0101::BarNPC::JoyIdle()"}
+{"a":"7100019adc","t":"plate","c":"mg0101::BarNPC::OPAnim()"}
+{"a":"7100019b64","t":"plate","c":"mg0101::BarNPC::OPAnimSkip()"}
+{"a":"7100019c40","t":"plate","c":"actor::MotionArg::AnimationName(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100019d70","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::Attack. 공격 모션, +0x10 = FrameMax/60, 나머지 타이머 0\n---\nmg0101::BarNPC::Attack()"}
+{"a":"7100019e34","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::Joy(b)\n분기 true: SyncRandMod(2)==0 ? \"joy\" : \"bye\", +0x14 = FrameMax×3/60, +0x18/+0x0C = 0\n분기 false: 현재 joy/bye면 즉시 반환. 아니면 \"frolic\", +0x14 = FrameMax×2/60, +0x18/+0x0C = 0\n---\nmg0101::BarNPC::Joy(bool)"}
+{"a":"710001a0bc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::Stagger(b). +0x14 > 0이면 무시. b ? \"stagger_b\" : \"stagger_f\", +0x18 = FrameMax/60 × 0.8\n---\nmg0101::BarNPC::Stagger(bool)"}
+{"a":"710001a238","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: BarNPC::Finish. Idle 후 +0x0C = 0 (SyncRandRangeF 1회)\n---\nmg0101::BarNPC::Finish()"}
+{"a":"710001a260","t":"plate","c":"mg0101::NPCMgr::NPCMgr()"}
+{"a":"710001a750","t":"plate","c":"mg0101::NPCMgr::SetEndingAsset()"}
+{"a":"710001aee0","t":"plate","c":"mg0101::NPCMgr::~NPCMgr()"}
+{"a":"710001b030","t":"plate","c":"mg0101::NPCMgr::~NPCMgr()"}
+{"a":"710001b060","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: NPCMgr::PlayAnim(n)\n분기 0: 레버 엔티티 +0x48, lever\n분기 1: 뒤 벽 NPC0·1, op\n분기 2: 뒤 벽 NPC0·1, OPAnimSkip\n분기 3: 결과 레버 lever; 관중 +0x60+i·0x18(i=0..6), +0x108, +0x120 에 SyncRandRange(0,3) 9회 → joy0/joy1/joy2(@0x710005a248), 시작 프레임 랜덤 플래그\n분기 0·1·2는 동기 난수 소비 없음\n---\nmg0101::NPCMgr::PlayAnim(mg0101::NPCMgr::ANIM)"}
+{"a":"710001b834","t":"plate","c":"mg0101::NPCMgr::UpdateBarNpc()"}
+{"a":"710001b86c","t":"plate","c":"mg0101::NPCMgr::GetNearestBarNpc(nn::util::Vector3f const&)"}
+{"a":"710001b8f4","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: NPCMgr::ForEachNearestBarNpc. 네 NPC까지 거리 제곱을 비교해 한 명 선택(동거리면 낮은 인덱스)\n콜백 호출 NPC0→1→2→3, 선택된 한 명만 첫 콜백, 나머지는 둘째 콜백\n---\nmg0101::NPCMgr::ForEachNearestBarNpc(nn::util::Vector3f const&, std::function<void (int, nn::bezel::HandlePtr<nn::bezel::Entity>)> const&, std::function<void (int, nn::bezel::HandlePtr<nn::bezel::Entity>)> const&)"}
+{"a":"710001bd38","t":"plate","c":"mg0101::NPCMgr::GetNearestBarNpc(nn::util::Vector3f const&, float)"}
+{"a":"710001bf40","t":"plate","c":"mg0101::NPCMgr::OnGameStartBefore()"}
+{"a":"710001c3c0","t":"plate","c":"mg0101::NPCMgr::FxWallSpark()"}
+{"a":"710001c560","t":"plate","c":"mg0101::NPCMgr::FxRearFall()"}
+{"a":"710001c7c4","t":"plate","c":"mg0101::BarNPC::~BarNPC()"}
+{"a":"710001c7c8","t":"plate","c":"mg0101::BarNPC::~BarNPC()"}
+{"a":"710001c7cc","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&&)"}
+{"a":"710001c94c","t":"plate","c":"std::__shared_ptr_pointer<mg0101::BarNPC*, std::shared_ptr<mg0101::BarNPC>::__shared_ptr_default_delete<mg0101::BarNPC, mg0101::BarNPC>, std::allocator<mg0101::BarNPC> >::~__shared_ptr_pointer()"}
+{"a":"710001c970","t":"plate","c":"std::__shared_ptr_pointer<mg0101::BarNPC*, std::shared_ptr<mg0101::BarNPC>::__shared_ptr_default_delete<mg0101::BarNPC, mg0101::BarNPC>, std::allocator<mg0101::BarNPC> >::__on_zero_shared()"}
+{"a":"710001c988","t":"plate","c":"std::__shared_ptr_pointer<mg0101::BarNPC*, std::shared_ptr<mg0101::BarNPC>::__shared_ptr_default_delete<mg0101::BarNPC, mg0101::BarNPC>, std::allocator<mg0101::BarNPC> >::__on_zero_shared_weak()"}
+{"a":"710001cac0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.5\n역할: PlayerMgr 생성자(플레이어·AI·NaviGrid)\n시작 위치 (-92, 0, 3 - 2i), i = 0..3\nCallAction(NOP,true) 뒤 EraseAction(Punch/Kick/Jump/HipDrop)으로 네 입력 액션 제거(ActionName_* @0x710004fe80..4fe98, GOT @0x710005bc00..5bc18)\n충돌 레이어 4·5 테스트 끔(SetCollisionLayerTestEnable(4,false)/(5,false))\n애니 maze_idle00, co_surprise00, co_lookout00, co_run_away00_r, JumpB → co_wriggle02, Idle → mg_idle00\n§8 NOP·입력 끔\n---\nmg0101::PlayerMgr::PlayerMgr()"}
+{"a":"710001d008","t":"eol","c":"SetCollisionLayerTestEnable(4,false)"}
+{"a":"710001d048","t":"eol","c":"SetCollisionLayerTestEnable(5,false)"}
+{"a":"710001d5f0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComNaviGrid> nn::bezel::Entity::AddComponent<mg0101::ComNaviGrid, nn::bezel::WeakHandle<actor::ActorHitShape>*&, (void*)0>(nn::bezel::WeakHandle<actor::ActorHitShape>*&)"}
+{"a":"710001d7d0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID, bq::MatterType, (void*)0>(bex::PlayerID&&, bq::MatterType&&)"}
+{"a":"710001d9b0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPlayer> nn::bezel::Entity::AddComponent<mg0101::ComPlayer, bex::PlayerID, (void*)0>(bex::PlayerID&&)"}
+{"a":"710001db90","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComAI> nn::bezel::Entity::AddComponent<mg0101::ComAI, bex::PlayerID, nn::bezel::HandlePtr<mg0101::ComNaviGrid>, (void*)0>(bex::PlayerID&&, nn::bezel::HandlePtr<mg0101::ComNaviGrid>&&)"}
+{"a":"710001dd6c","t":"plate","c":"mg0101::PlayerMgr::~PlayerMgr()"}
+{"a":"710001dd7c","t":"plate","c":"mg0101::PlayerMgr::~PlayerMgr()"}
+{"a":"710001dda0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.4\n역할: PlayerMgr::PlayMotion(motion, blend). 네 명 모두에게 같은 모션 요청\n둘째 인자 = 블렌드 프레임 수 (MotionArg+0x44 = 인자/60 초)\n---\nmg0101::PlayerMgr::PlayMotion(nn::bezel::StringViewHashPair const&, int)"}
+{"a":"710001dfa0","t":"plate","c":"mg0101::PlayerMgr::ResetHeading()"}
+{"a":"710001e2f0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §5.2\n역할: PlayerMgr::MainProc. 4명 모두 처리 끝(낙하·골인)이면 참\n낙하자가 생기면 ForEachNearestBarNpc로 가장 가까운 NPC 한 명에 Joy(true), 나머지 세 명에 Joy(false) (람다 @0x7100020b50/20c30)\nPlayerMgr+0x80+i 가 이후 중복 처리를 막는다\n살아 있는 플레이어는 가장 가까운 BarNPC를 바라본다(ComHeading::SetTargetLookAtEntity)\n---\nmg0101::PlayerMgr::MainProc()"}
+{"a":"710001e660","t":"plate","c":"mg0101::PlayerMgr::GetExistGoal()"}
+{"a":"710001ea70","t":"plate","c":"mg0101::PlayerMgr::PlaySurpriseVoiseTriggerOnLivingPlayers()"}
+{"a":"710001eca4","t":"plate","c":"mg0101::PlayerMgr::FxWallSpark()"}
+{"a":"710001eca8","t":"plate","c":"mg0101::PlayerMgr::FxWallGoal()"}
+{"a":"710001ecb0","t":"plate","c":"mg0101::PlayerMgr::OnGameStartBefore()"}
+{"a":"710001f120","t":"plate","c":"mg0101::PlayerMgr::PlaceOPPosition()"}
+{"a":"710001f300","t":"plate","c":"mg0101::PlayerMgr::OP_Earthquake()"}
+{"a":"710001f540","t":"plate","c":"mg0101::PlayerMgr::OnMainProcStandBy()"}
+{"a":"710001f8f0","t":"plate","c":"mg0101::PlayerMgr::OnGameOpeningSkip()"}
+{"a":"710001fce0","t":"plate","c":"mg0101::PlayerMgr::OnResult()"}
+{"a":"71000201b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: 결과를 GameWork에 기록\n동작: 로컬 RankMgr 결과를 PlayerID별 PlayerWork::SetMinigameRank/WinLose에 쓴 뒤 MGResult 플레이어 설정\n주의: station host 조건 없이 전 플레이어 결과를 작성\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.8\n역할: PlayerMgr::SetResultToGameWork\nSetMinigameRank(rank)\nSetMinigameWinLose(rank == 0 ? 1 : (1등 목록이 비었으면 2, 아니면 0))\n끝까지 낙하·골인하지 않은 플레이어는 rank -1 그대로 저장(마지막 생존자 1위 배정 없음)\n---\nmg0101::PlayerMgr::SetResultToGameWork()"}
+{"a":"71000203c4","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComNaviGrid> bex::ComponentUtil::SafeCreate<mg0101::ComNaviGrid, nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape>*&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape>*&)"}
+{"a":"7100020544","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&&, bq::MatterType&&)"}
+{"a":"7100020788","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPlayer> bex::ComponentUtil::SafeCreate<mg0101::ComPlayer, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&&)"}
+{"a":"7100020910","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComAI> bex::ComponentUtil::SafeCreate<mg0101::ComAI, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, nn::bezel::HandlePtr<mg0101::ComNaviGrid> >(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&&, nn::bezel::HandlePtr<mg0101::ComNaviGrid>&&)"}
+{"a":"7100020ab4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComHeading, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100020ad4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComHeading, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100020ae0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComHeading, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100020af4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComHeading, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100020afc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComHeading, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100020b50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: PlayerMgr::MainProc의 람다(가장 가까운 NPC용). BarNPC::Joy(true)"}
+{"a":"7100020c30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n역할: PlayerMgr::MainProc의 람다(나머지 NPC용). BarNPC::Joy(false)"}
+{"a":"7100020cd0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComPhysicalAnimation, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100020cf0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComPhysicalAnimation, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100020cfc","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComPhysicalAnimation, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100020d10","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComPhysicalAnimation, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100020d18","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComPhysicalAnimation, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"7100020d20","t":"plate","c":"mg0101::ComRankMgr::ComRankMgr(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100020e30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.8\n역할: ComRankMgr::ReceiveMessageImpl (매 틱 순위 확정)\n의사코드:\n  goals = [], falls = []\n  for (p of PlayerMgr 순서 0..3) { if (rank[p.id] != -1) continue; if (p.goalFrame != 0) goals.push(p.id); else if (p.fallFrame > 0) falls.push(p.id) }\n  for (id of goals) { rank[id] = 0; UIMgr.SetRank(id, 0) }\n  if (falls.length) { r = falls.length == 4 ? 3 : (count(rank, -1) - falls.length) + count(rank, 0); for (id of falls) { rank[id] = r; UIMgr.SetRank(id, r) } }\n골인은 모두 1위(0), 같은 틱 낙하자는 같은 순위, 4명 동시 낙하는 전원 3\n---\nmg0101::ComRankMgr::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"71000212b0","t":"plate","c":"non-virtual thunk to mg0101::ComRankMgr::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"71000212b8","t":"plate","c":"mg0101::ComRankMgr::GetGameRank()"}
+{"a":"71000212c0","t":"plate","c":"mg0101::RankMgr::RankMgr()"}
+{"a":"7100021380","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComRankMgr> nn::bezel::Entity::AddComponent<mg0101::ComRankMgr, , (void*)0>()"}
+{"a":"710002155c","t":"plate","c":"mg0101::RankMgr::~RankMgr()"}
+{"a":"7100021588","t":"plate","c":"mg0101::RankMgr::~RankMgr()"}
+{"a":"71000215b0","t":"plate","c":"mg0101::RankMgr::GetGameRank()"}
+{"a":"7100021690","t":"plate","c":"mg0101::RankMgr::Get1stPlayers()"}
+{"a":"7100021ad0","t":"plate","c":"mg0101::ComRankMgr::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100021adc","t":"plate","c":"mg0101::ComRankMgr::NnDetailBezelGetThisPtr()"}
+{"a":"7100021ae0","t":"plate","c":"mg0101::ComRankMgr::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100021af0","t":"plate","c":"mg0101::ComRankMgr::~ComRankMgr()"}
+{"a":"7100021be0","t":"plate","c":"mg0101::ComRankMgr::~ComRankMgr()"}
+{"a":"7100021cd0","t":"plate","c":"bq::ComponentTemplate<mg0101::ComRankMgr, nn::bezel::Component>::DestroyComponentImpl()"}
+{"a":"7100021d10","t":"plate","c":"mg0101::ComRankMgr::_internalGetTickMessageBitFlagSetImpl() const"}
+{"a":"7100021d20","t":"plate","c":"mg0101::ComRankMgr::_internalGetComponentNameHashImpl() const"}
+{"a":"7100021d34","t":"plate","c":"mg0101::ComRankMgr::_internalGetReceiveMessagePriorityImpl() const"}
+{"a":"7100021d3c","t":"plate","c":"non-virtual thunk to mg0101::ComRankMgr::NnDetailBezelGetTypeDesc() const"}
+{"a":"7100021d48","t":"plate","c":"non-virtual thunk to mg0101::ComRankMgr::NnDetailBezelGetThisPtr()"}
+{"a":"7100021d50","t":"plate","c":"non-virtual thunk to mg0101::ComRankMgr::NnDetailBezelGetThisPtrConst() const"}
+{"a":"7100021d60","t":"plate","c":"non-virtual thunk to mg0101::ComRankMgr::~ComRankMgr()"}
+{"a":"7100021e50","t":"plate","c":"non-virtual thunk to mg0101::ComRankMgr::~ComRankMgr()"}
+{"a":"7100021f64","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComRankMgr, false, nn::bezel::Component>::IsDerivedFrom(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100021f84","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComRankMgr, false, nn::bezel::Component>::GetBaseTypeDesc()"}
+{"a":"7100021f90","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComRankMgr, false, nn::bezel::Component>::GetNextBaseTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100021fa4","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComRankMgr, false, nn::bezel::Component>::CastTo(nn::bezel::detail::TypeDesc const*, void*)"}
+{"a":"7100021fac","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComRankMgr, false, nn::bezel::Component>::CastToConst(nn::bezel::detail::TypeDesc const*, void const*)"}
+{"a":"710002210c","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComRankMgr> bex::ComponentUtil::SafeCreate<mg0101::ComRankMgr, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100022298","t":"plate","c":"mg0101::Scene::DummySymbolLink(bool)"}
+{"a":"71000222e0","t":"plate","c":"mg0101::Scene::getStaticTypeinfo()"}
+{"a":"71000223bc","t":"plate","c":"mg0101::Scene::getPropertyList()"}
+{"a":"710002241c","t":"plate","c":"mg0101::Scene::createInstance()"}
+{"a":"7100022448","t":"plate","c":"mg0101::Scene::deleteInstance(void*)"}
+{"a":"710002245c","t":"plate","c":"rtti::Class::checkGuiProperty(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"7100022460","t":"plate","c":"rtti::Class::createGuiProperty(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"7100022464","t":"plate","c":"mg0101::Scene::Params::getStaticTypeinfo()"}
+{"a":"7100022540","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.1\n역할: Scene::Params::getPropertyList (0x48 B). 프로퍼티 이름·타입·편집 범위 등록(표 §4.1)\n---\nmg0101::Scene::Params::getPropertyList()"}
+{"a":"71000228b0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.1\n역할: Scene::Params::createInstance. 기본값 기록(표 §4.1)\nNRO에는 별도 Params 파일 역직렬화 호출이 없다\n---\nmg0101::Scene::Params::createInstance()"}
+{"a":"710002293c","t":"plate","c":"mg0101::Scene::Params::deleteInstance(void*)"}
+{"a":"7100022950","t":"plate","c":"mg0101::Scene::Scene()"}
+{"a":"71000229f0","t":"plate","c":"mg0101::Scene::~Scene()"}
+{"a":"7100022aec","t":"plate","c":"mg0101::Scene::~Scene()"}
+{"a":"7100022b10","t":"plate","c":"mg0101::Scene::SetupGame()"}
+{"a":"7100022b14","t":"plate","c":"[추정] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.2\n역할: Scene::SyncedSetupGame. 순서가 곧 동기 난수 소비 순서\n호출 1: MapMgr::MapMgr → MapMgr::Init\n호출 2: CameraMgr::CameraMgr\n호출 3: NPCMgr, RankMgr, UIMgr 생성\n호출 4: 엔티티 \"PartsActivator\" + ComPartsActivator\n호출 5: PlayerMgr::PlayerMgr(플레이어·AI·NaviGrid)\n호출 6: SoundModule::Play(\"SM_BGM_MG0101\"), Play(\"SQ_AMB_MG0101\")\n[추정] 핸들 저장 Scene+0x328(BGM으로 보임), +0x310\n분기 7: bq::flag::Check(0)가 거짓이면 오프닝 파이버(FiberLite, 람다 → OpeningProc)를 Scene+0x340에 만든다\n---\nmg0101::Scene::SyncedSetupGame()"}
+{"a":"7100022e20","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPartsActivator> nn::bezel::Entity::AddComponent<mg0101::ComPartsActivator, , (void*)0>()"}
+{"a":"7100022ffc","t":"plate","c":"mg0101::Scene::CleanupGame()"}
+{"a":"71000230c8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnGameOpening. 오프닝 파이버가 끝나면 지우고 참\n---\nmg0101::Scene::OnGameOpening()"}
+{"a":"7100023118","t":"plate","c":"mg0101::Scene::OnGameFirstFade()"}
+{"a":"7100023120","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnGameOpeningSkip. 단계 Scene+0x398\n분기 0: BGM 정지, Map 애니 4, 카메라 op1(속도 = FrameMax로 즉시 끝), NPC 애니 2, 바닥 FxTrigger, 파이버 삭제\n분기 1: Map 애니 5, PlayerMgr::OnGameOpeningSkip, 대기 모션\n---\nmg0101::Scene::OnGameOpeningSkip()"}
+{"a":"7100023340","t":"plate","c":"mg0101::Scene::OnGameInstInit()"}
+{"a":"710002334c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnGameStartBefore. PlayerMgr::OnGameStartBefore(플레이어 Idle, 시선 초기화), NPCMgr::OnGameStartBefore\n---\nmg0101::Scene::OnGameStartBefore()"}
+{"a":"7100023380","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnGameStartAfter. 플래그 Scene+0x39d/0x39e = 0, 본편 파이버(람다 → MainProc)를 Scene+0x348에 만든다\n---\nmg0101::Scene::OnGameStartAfter()"}
+{"a":"7100023454","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnGameMain. 본편 파이버 완료 또는 0x39d면 참. 그때 BGM을 Stop_Time(0.2) 한 번(0x39e)\n---\nmg0101::Scene::OnGameMain()"}
+{"a":"7100023508","t":"plate","c":"mg0101::Scene::OnGameEndingBefore()"}
+{"a":"7100023510","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnGameEnding. 파이버 정리\n---\nmg0101::Scene::OnGameEnding()"}
+{"a":"7100023560","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.4\n역할: Scene::OpeningProc. 카메라 프레임을 기다리는 파이버(Wait() = 다음 프레임)\n의사코드:\n  PlaceOPPosition; Camera.Play(op0); Map.PlayAnim(1)\n  wait camFrame >= 190 → SE \"SQ_SE_MG0101_OP_CAM_PAN\"\n  wait camFrame >= 230 → Map.PlayAnim(2); NPC.PlayAnim(0)\n  wait camera 끝 → ResetHeading; NPC.PlayAnim(1); Camera.Play(op1); Map.PlayAnim(6); SE \"SQ_SE_MG0101_OP_ERTHQAKE\"; OP_Earthquake; PlayMotion(\"co_lookout00\", 0)\n  wait 120 → PlayMotion(\"co_surprise00\", 4); wait 134 → Map.PlayAnim(3)\n  wait 170 → PlayMotion(\"co_run_away00_r\", 0); wait 230 → PlayMotion(\"maze_idle00\", 16)\n  wait camera 끝\nPlayMotion 둘째 인자는 블렌드 프레임 수(4·16은 재생 시작 프레임이 아님)\n---\nmg0101::Scene::OpeningProc()"}
+{"a":"7100023860","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/17_actor.md §8.4\n역할: mg0101 Scene::MainProc. MainProc 파이버가 컴포넌트 tick보다 앞\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.5\n역할: Scene::MainProc 본편 파이버. 디컴파일 goto를 플래그 3개(bVar4/5/6 = attacked/staggered/surprised) 의미로 다시 씀, 같은 프레임 순서는 원본 그대로\n의사코드:\n  PartsActivator.activate = destroy = 1 (ComPartsActivator+0x50 = 0x0101)\n  PlayerMgr.OnMainProcStandBy()  // NaviGrid Start, 각 플레이어 SetMotionIdle·ComPlayer::Start·ComAI::Start\n  Map.PlayAnim(0); Camera.Play(game); Camera.SetAnimSpeed(Params.CameraSpeedScale)\n  Map.UpdateBar(); NPC 4명 Idle()  // Idle마다 SyncRandRangeF 1회\n  while (camera 재생 중):\n    if !attacked && camFrame > Params.CameraDestructFrames[courseType % 3]: ForEachTaggedEntities(\"destruction\") → ComDestruction+0x71 = 0; NPC 4명 Attack(); attacked = true\n    if !staggered && camFrame > Params.NpcAttackStaggerFrame: r = SyncRandMod(2); NPC0.Stagger(r==0); NPC1.Stagger(r!=0); staggered = true\n    if !surprised && camFrame > Params.PcSurpriseFxTriggerFrame: PlaySurpriseVoiseTriggerOnLivingPlayers(); surprised = true\n    NPCMgr.UpdateBarNpc()\n    if PlayerMgr.MainProc(): Scene+0x39d = 1; break  // 전원 낙하 또는 골인\n    if camFrame > 540: Map.DeleteOPEntity()\n    Map.UpdateBar(); Fiber.Wait()\n  NPC 4명 Finish(); Map.DeleteOPEntity()\n  if PlayerMgr.GetExistGoal(): while camera 재생 중: UpdateBarNpc; UpdateBar; Wait\n  BGM Stop_Time(0.2); Scene+0x39e = 1\n  t = 0; do { UpdateBarNpc; UpdateBar; Wait; t += GetDeltaTime() } while (t < 1.0)\n  Scene+0x39d = 1\ncamFrame = CameraMgr::GetFrame = ComActorMotion::GetFrame (f32), 비교는 모두 > (엄격)\n---\nmg0101::Scene::MainProc()"}
+{"a":"710002435c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §5\n역할: OnEndingInit → PlayerMgr::SetResultToGameWork(0x71000201b0)\n\n[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnEndingInit\n호출: PlayerMgr::SetResultToGameWork, MGResult::SetPlayer ×4(PlayerMgr+0x08..0x60 엔티티), SetModel(MapMgr+0x138)\n호출: 결과 람다 FUN_7100024d10 등록\n---\nmg0101::Scene::OnEndingInit(nn::bezel::WeakHandle<bq::MGResult>)"}
+{"a":"7100024688","t":"plate","c":"mg0101::Scene::getInstanceTypeinfo() const"}
+{"a":"7100024764","t":"plate","c":"mg0101::Scene::GetSymbol() const"}
+{"a":"7100024774","t":"plate","c":"bex::SceneBase::GetTickElapsed(bex::SceneTickCount) const"}
+{"a":"710002477c","t":"plate","c":"bex::SceneBase::GetHandle() const"}
+{"a":"7100024798","t":"plate","c":"bex::GameScene::OnCleanupProcessing()"}
+{"a":"710002479c","t":"plate","c":"bex::NetworkGameScene::OnSyncEnd()"}
+{"a":"71000247a0","t":"plate","c":"bq::MinigameScene::OnGameSequenceBefore()"}
+{"a":"71000247a4","t":"plate","c":"bq::MinigameScene::OnGameSequenceAfter()"}
+{"a":"71000247a8","t":"plate","c":"bq::MinigameScene::OnThreeMinTimerEnd()"}
+{"a":"71000247ac","t":"plate","c":"bq::MinigameScene::OnGameInit()"}
+{"a":"71000247b4","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoStart()"}
+{"a":"71000247bc","t":"plate","c":"bq::MinigameScene::OnCharaGameDemo()"}
+{"a":"71000247c4","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoSkipStart()"}
+{"a":"71000247c8","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoSkipEnd()"}
+{"a":"71000247cc","t":"plate","c":"bq::MinigameScene::OnCharaGameDemoEnd()"}
+{"a":"71000247d4","t":"plate","c":"bq::MinigameScene::OnGameStartTelopBefore()"}
+{"a":"71000247dc","t":"plate","c":"bq::MinigameScene::OnGameStart()"}
+{"a":"71000247e4","t":"plate","c":"bq::MinigameScene::OnGameEnd()"}
+{"a":"71000247ec","t":"plate","c":"bq::MinigameScene::OnGameFinish()"}
+{"a":"71000247f4","t":"plate","c":"bq::MinigameScene::OnGameFinishAfter()"}
+{"a":"71000247fc","t":"plate","c":"bq::MinigameScene::OnGameEndingFade()"}
+{"a":"7100024804","t":"plate","c":"bq::MinigameScene::OnGameEndingChangeCut()"}
+{"a":"710002480c","t":"plate","c":"mg0101::Scene::OnGameEndingAfter()"}
+{"a":"7100024814","t":"plate","c":"bq::MinigameScene::OnGameEndingSkip()"}
+{"a":"710002481c","t":"plate","c":"bq::MinigameScene::OnGameLastFade()"}
+{"a":"7100024824","t":"plate","c":"bq::MinigameScene::OnGameExit()"}
+{"a":"710002482c","t":"plate","c":"mg0101::Scene::Params::~Params()"}
+{"a":"7100024830","t":"plate","c":"mg0101::Scene::Params::getInstanceTypeinfo() const"}
+{"a":"710002490c","t":"plate","c":"mg0101::Scene::Params::GetSymbol() const"}
+{"a":"710002491c","t":"plate","c":"rtti::Class::~Class()"}
+{"a":"7100024920","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPartsActivator> bex::ComponentUtil::SafeCreate<mg0101::ComPartsActivator, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100024d10","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.3\n역할: OnEndingInit 결과 람다. Scene+0x39c = 1, 결과 에셋·애니 7/3, PlayerMgr::OnResult"}
+{"a":"7100025040","t":"plate","c":"mg0101::UIMgr::UIMgr()"}
+{"a":"7100025078","t":"plate","c":"mg0101::UIMgr::~UIMgr()"}
+{"a":"7100025088","t":"plate","c":"mg0101::UIMgr::~UIMgr()"}
+{"a":"71000250ac","t":"plate","c":"mg0101::UIMgr::SetRank(bex::PlayerID, bq::GameRank)"}
+{"a":"71000250f0","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_mg0101()"}
+{"a":"7100025100","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_mg0101()"}
+{"a":"7100025110","t":"plate","c":"nn::bezel::detail::autogen::RegisterGeneratedBindCodes_sharedPCH()"}
+{"a":"7100025120","t":"plate","c":"nn::bezel::detail::autogen::SuppressDeadStrip_sharedPCH()"}
+{"a":"7100025160","t":"plate","c":"nn::ro::ProtectRelro(void const*, void const*, void const*, void const*, void const*)"}
+{"a":"71000251a0","t":"plate","c":"bq::SceneBase::CreateSceneEntity(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000251b0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::MatterType, (void*)0>(bq::MatterType&&)"}
+{"a":"71000251c0","t":"plate","c":"nn::bezel::GraphicsCoreModule::GetDefaultGraphicsLayer()"}
+{"a":"71000251d0","t":"plate","c":"nn::bezel::ComCamera::GetCamera() const"}
+{"a":"71000251e0","t":"plate","c":"nn::bezel::GraphicsLayer::SetCamera(nn::bezel::WeakHandle<nn::bezel::Camera> const&)"}
+{"a":"71000251f0","t":"plate","c":"nn::diag::detail::AbortImpl()"}
+{"a":"7100025200","t":"plate","c":"actor::ComActorMotion::AddAnimation(nn::bezel::StringViewHashPair const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool, actor::AnimatinType, bool, bool)"}
+{"a":"7100025220","t":"plate","c":"std::terminate()"}
+{"a":"7100025230","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType&&)"}
+{"a":"7100025240","t":"plate","c":"nn::bezel::Entity::_internalCheckComponentValidity(nn::bezel::HandlePtr<nn::bezel::Component> const&)"}
+{"a":"7100025250","t":"plate","c":"nn::bezel::Entity::AddComponentImpl(nn::bezel::HandlePtr<nn::bezel::Component> const&)"}
+{"a":"7100025260","t":"plate","c":"mg0101::CameraMgr::~CameraMgr()"}
+{"a":"7100025270","t":"plate","c":"operator delete(void*)"}
+{"a":"7100025280","t":"plate","c":"mg0101::CameraMgr::Play(mg0101::CameraMgr::ANIM)"}
+{"a":"7100025290","t":"plate","c":"actor::ComActorMotion::Play(nn::bezel::StringViewHashPair const&)"}
+{"a":"71000252a0","t":"plate","c":"mg0101::CameraMgr::Play(mg0101::CameraMgr::ANIM, float)"}
+{"a":"71000252b0","t":"plate","c":"actor::ComActorMotion::Play(nn::bezel::StringViewHashPair const&, float, nn::bezel::AnimationTransitionType)"}
+{"a":"71000252c0","t":"plate","c":"mg0101::CameraMgr::IsAnim() const"}
+{"a":"71000252d0","t":"plate","c":"actor::ComActorMotion::IsFinished() const"}
+{"a":"71000252e0","t":"plate","c":"actor::ComActorMotion::GetSpeed() const"}
+{"a":"71000252f0","t":"plate","c":"mg0101::CameraMgr::SetAnimSpeed(float)"}
+{"a":"7100025300","t":"plate","c":"actor::ComActorMotion::SetSpeed(float)"}
+{"a":"7100025310","t":"plate","c":"mg0101::CameraMgr::GetFrame() const"}
+{"a":"7100025320","t":"plate","c":"actor::ComActorMotion::GetFrame() const"}
+{"a":"7100025330","t":"plate","c":"mg0101::CameraMgr::GetFrameMax() const"}
+{"a":"7100025340","t":"plate","c":"actor::ComActorMotion::GetFrameMax() const"}
+{"a":"7100025350","t":"plate","c":"actor::ComActorMotion::SetFrame(float)"}
+{"a":"7100025360","t":"plate","c":"operator new(unsigned long, unsigned long, bex::HeapModule::HeapID)"}
+{"a":"7100025370","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::MatterType, bool)"}
+{"a":"7100025380","t":"plate","c":"mg0101::CameraMgr::CameraMgr()"}
+{"a":"7100025390","t":"plate","c":"nn::bezel::HandleSource<nn::bezel::Component>::Reset(nn::bezel::Component*)"}
+{"a":"71000253a0","t":"plate","c":"mg0101::ComAI::Start()"}
+{"a":"71000253b0","t":"plate","c":"mg0101::MapMgr::GetBarPosition(mg0101::BarSide, nn::util::Vector3f&, float)"}
+{"a":"71000253c0","t":"plate","c":"mg0101::ComAI::Stop()"}
+{"a":"71000253d0","t":"plate","c":"mg0101::ComAI::CalcDirection()"}
+{"a":"71000253e0","t":"plate","c":"nn::bezel::Entity::GetTranslation() const"}
+{"a":"71000253f0","t":"plate","c":"bex::RandModule::SyncRandRange(unsigned int, unsigned int)"}
+{"a":"7100025410","t":"plate","c":"mg0101::CameraMgr::GetCamera() const"}
+{"a":"7100025420","t":"plate","c":"mg0101::ComAI::Update()"}
+{"a":"7100025430","t":"plate","c":"bq::WorkModule::GetPlayers()"}
+{"a":"7100025440","t":"plate","c":"bq::PlayerWorkHolder::FindFromPlayerID(bex::PlayerID) const"}
+{"a":"7100025450","t":"plate","c":"bq::PlayerWork::GetComLevel() const"}
+{"a":"7100025460","t":"plate","c":"bex::MainModule::GetDeltaTime()"}
+{"a":"7100025470","t":"plate","c":"mg0101::ComNaviGrid::Route(nn::util::Vector3f const&, bex::vector<nn::util::Vector3f>&)"}
+{"a":"7100025480","t":"plate","c":"bex::HeapModule::Alloc(bex::HeapModule::HeapID, unsigned long, int, char const*, int, char const*, char const*)"}
+{"a":"7100025490","t":"plate","c":"bex::HeapModule::Free(void*)"}
+{"a":"71000254a0","t":"plate","c":"bex::RandModule::SyncRandRangeF(float, float)"}
+{"a":"71000254b0","t":"plate","c":"nn::os::WaitLightEvent(nn::os::LightEventType*)"}
+{"a":"71000254c0","t":"plate","c":"nn::os::SignalLightEvent(nn::os::LightEventType*)"}
+{"a":"71000254d0","t":"plate","c":"nn::bezel::detail::RcArena::Reserve()"}
+{"a":"7100025520","t":"plate","c":"std::logic_error::logic_error(char const*)"}
+{"a":"7100025530","t":"plate","c":"mg0101::ComAI::ComAI(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, nn::bezel::WeakHandle<mg0101::ComNaviGrid> const&)"}
+{"a":"7100025540","t":"plate","c":"nn::bezel::EntityForEachCommand nn::bezel::Entity::ForEachComponentWithBreakImpl<nn::bezel::ComCollision>(nn::bezel::EntityForEachRange, nn::bezel::EntityState, nn::bezel::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), 48ul, 16ul> const&)"}
+{"a":"7100025550","t":"plate","c":"nn::bezel::detail::alternativeMemoryDealloc(void*)"}
+{"a":"7100025560","t":"plate","c":"nn::bezel::Entity::GetParent()"}
+{"a":"7100025570","t":"plate","c":"nn::bezel::EntityModule::CreateEntity(nn::bezel::CreateEntityParams const&)"}
+{"a":"7100025590","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(char const*, unsigned long)"}
+{"a":"71000255a0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*, (void*)0>(char const*&&)"}
+{"a":"71000255b0","t":"plate","c":"nn::bezel::ComModel::SetVisible(bool)"}
+{"a":"71000255c0","t":"plate","c":"actor::ComActorMotion::AddAnimationSlot(nn::bezel::StringViewHashPair const&)"}
+{"a":"71000255d0","t":"plate","c":"actor::ActorAnimationSlot::Play(nn::bezel::StringViewHashPair const&)"}
+{"a":"71000255e0","t":"plate","c":"nn::bezel::Entity::SetParent(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"71000255f0","t":"plate","c":"nn::bezel::Entity::SetTranslation(nn::util::Vector3f const&)"}
+{"a":"7100025600","t":"plate","c":"nn::bezel::ComModel::_internalSetLocalScale(nn::util::Vector3f const&)"}
+{"a":"7100025610","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&&)"}
+{"a":"7100025620","t":"plate","c":"nn::bezel::HandlePtr<nn::bezel::ComModel> nn::bezel::Entity::SafeGet<nn::bezel::ComModel>()"}
+{"a":"7100025630","t":"plate","c":"nn::bezel::HandlePtr<actor::ComActorMotion> nn::bezel::Entity::SafeGet<actor::ComActorMotion>()"}
+{"a":"7100025640","t":"plate","c":"mg0101::ComDestruction::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100025650","t":"plate","c":"nn::bezel::ComCollision::GetCollision()"}
+{"a":"7100025660","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::RigidBody> nn::bezel::WeakHandle<nn::bezel::Collision>::Cast<nn::bezel::RigidBody>() const"}
+{"a":"7100025670","t":"plate","c":"nn::bezel::Collision::GetPosition() const"}
+{"a":"7100025680","t":"plate","c":"nn::bezel::Collision::GetRotation() const"}
+{"a":"7100025690","t":"plate","c":"nn::bezel::RigidBody::GetShape() const"}
+{"a":"71000256a0","t":"plate","c":"nn::bezel::CollisionShape::CollisionShape(nn::bezel::CollisionShape const&)"}
+{"a":"71000256b0","t":"plate","c":"nn::bezel::CollisionShape::Overlap(nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&, nn::bezel::CollisionShape const&, nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"71000256c0","t":"plate","c":"nn::bezel::Entity::Activate()"}
+{"a":"71000256d0","t":"plate","c":"nn::bezel::Collision::Disable()"}
+{"a":"71000256e0","t":"plate","c":"nn::bezel::CollisionShape::~CollisionShape()"}
+{"a":"71000256f0","t":"plate","c":"nn::bezel::detail::VariantImpl::CtorDtor<nn::bezel::CollisionShape::Mesh, nn::bezel::CollisionShape::Complex, nn::bezel::CollisionShape::Collection, nn::bezel::CollisionShape::RuntimeConvexMesh, nn::bezel::CollisionShape::RuntimeTriangleMesh, nn::bezel::CollisionShape::RuntimeHeightField>::CopyConstruct(void*, void const*, unsigned char)"}
+{"a":"7100025700","t":"plate","c":"nn::bezel::detail::VariantImpl::CtorDtor<nn::bezel::CollisionShape::RuntimeConvexMesh, nn::bezel::CollisionShape::RuntimeTriangleMesh, nn::bezel::CollisionShape::RuntimeHeightField>::CopyConstruct(void*, void const*, unsigned char)"}
+{"a":"7100025710","t":"plate","c":"nn::bezel::detail::AllocateSupporter::Allocate(unsigned long, unsigned long)"}
+{"a":"7100025720","t":"plate","c":"nn::bezel::detail::AllocateSupporter::Deallocate(void*)"}
+{"a":"7100025730","t":"plate","c":"nn::bezel::detail::alternativeAlignmentMemoryAlloc(unsigned long, unsigned long)"}
+{"a":"7100025740","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool)"}
+{"a":"7100025750","t":"plate","c":"mg0101::ComDestruction::ComDestruction(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char const*, bool, float)"}
+{"a":"7100025760","t":"plate","c":"mg0101::ComNaviGrid::Start()"}
+{"a":"7100025770","t":"plate","c":"mg0101::ComNaviGrid::Target(nn::util::Vector3f const&)"}
+{"a":"7100025780","t":"plate","c":"std::list<mg0101::ComNaviGrid::Node*, bex::HeapModule::Allocator_list<mg0101::ComNaviGrid::Node*> >::resize(unsigned long)"}
+{"a":"7100025790","t":"plate","c":"std::list<mg0101::ComNaviGrid::Node*, bex::HeapModule::Allocator_list<mg0101::ComNaviGrid::Node*> >::remove(mg0101::ComNaviGrid::Node* const&)"}
+{"a":"71000257a0","t":"plate","c":"bex::RandModule::SyncRandF()"}
+{"a":"71000257b0","t":"plate","c":"mg0101::ComNaviGrid::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"71000257c0","t":"plate","c":"nn::bezel::PhysicsModule::CastRay(nn::bezel::CastResult*, nn::bezel::CastRayArg const&) const"}
+{"a":"71000257d0","t":"plate","c":"mg0101::ComNaviGrid::~ComNaviGrid()"}
+{"a":"71000257f0","t":"plate","c":"mg0101::ComNaviGrid::ComNaviGrid(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const*)"}
+{"a":"7100025800","t":"plate","c":"bex::ComMultiSequence::ComMultiSequence(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100025810","t":"plate","c":"nn::bezel::EntityModule::ForEachTaggedEntities(nn::util::basic_string_view<char, std::char_traits<char> >, nn::bezel::Function<void (nn::bezel::HandlePtr<nn::bezel::Entity> const&), 48ul, 16ul> const&)"}
+{"a":"7100025820","t":"plate","c":"nn::bezel::Entity::Deactivate()"}
+{"a":"7100025830","t":"plate","c":"bex::Scene::GetCurrentGfxSceneType()"}
+{"a":"7100025840","t":"plate","c":"bex::gfx::RendererModule::GetScene(bex::gfx::RendererModule::SceneType) const"}
+{"a":"7100025850","t":"plate","c":"bex::gfx::Scene::GetGraphicsLayer(int)"}
+{"a":"7100025860","t":"plate","c":"nn::bezel::GraphicsLayer::GetCamera()"}
+{"a":"7100025870","t":"plate","c":"void std::vector<nn::bezel::HandlePtr<nn::bezel::Entity>, bex::HeapModule::Allocator_vector<nn::bezel::HandlePtr<nn::bezel::Entity> > >::__push_back_slow_path<nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100025880","t":"plate","c":"mg0101::ComPartsActivator::ComPartsActivator(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100025890","t":"plate","c":"bex::ComFxTrigger::SetEnum(nn::util::basic_string_view<char, std::char_traits<char> > const&, nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"71000258a0","t":"plate","c":"mg0101::ComPlayer::Start()"}
+{"a":"71000258b0","t":"plate","c":"actor::ComActor::SetInputControlEnabled(bool)"}
+{"a":"71000258c0","t":"plate","c":"actor::ComActor::CallAction(actor::ActorHashedString const&, bool)"}
+{"a":"71000258d0","t":"plate","c":"mg0101::ComPlayer::StepAI()"}
+{"a":"71000258e0","t":"plate","c":"actor::ComActorPad::SetOverlayEnabled(bool)"}
+{"a":"71000258f0","t":"plate","c":"bq::PlayerWork::GetPlayerType() const"}
+{"a":"7100025900","t":"plate","c":"actor::ComActorPad::SetOverlayStick(nn::util::Vector3f const&)"}
+{"a":"7100025910","t":"plate","c":"actor::Util::SetUpEnvWetExpression(nn::bezel::WeakHandle<nn::bezel::ComModel>, bool)"}
+{"a":"7100025920","t":"plate","c":"actor::ComWetExpression::Start()"}
+{"a":"7100025930","t":"plate","c":"mg0101::ComPlayer::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"7100025940","t":"plate","c":"actor::ComActorMotion::IsEqualsCurrentAnimation(nn::bezel::StringViewHashPair const&) const"}
+{"a":"7100025950","t":"plate","c":"actor::ComActorMotion::SetInterruptFunction(std::function<bool (actor::MotionArg&, nn::bezel::HandlePtr<actor::ActorAnimationSlot> const&)> const&)"}
+{"a":"7100025960","t":"plate","c":"mg0101::ComPlayer::Falled()"}
+{"a":"7100025970","t":"plate","c":"actor::ComActor::IsGrounded() const"}
+{"a":"7100025980","t":"plate","c":"mg0101::ComPlayer::Fall()"}
+{"a":"7100025990","t":"plate","c":"mg0101::ComPlayer::Goaled()"}
+{"a":"71000259a0","t":"plate","c":"bex::MainModule::GetFrameCount()"}
+{"a":"71000259b0","t":"plate","c":"mg0101::ComPlayer::UpdateActorParam()"}
+{"a":"71000259c0","t":"plate","c":"bex::sound::ComActor::Play(char const*, float, int, nn::util::Vector3f const&)"}
+{"a":"71000259d0","t":"plate","c":"bex::gfx::ComModelBuffer::SetDecalShadowEnable(bool)"}
+{"a":"71000259e0","t":"plate","c":"actor::ComActor::GetCollision()"}
+{"a":"71000259f0","t":"plate","c":"actor::ComActor::SetGroundedCheckEnabled(bool)"}
+{"a":"7100025a00","t":"plate","c":"actor::ComActor::IsGroundedCheckEnabled() const"}
+{"a":"7100025a10","t":"plate","c":"actor::Velocity::ResetValue()"}
+{"a":"7100025a20","t":"plate","c":"bex::ComFxTrigger::Play(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100025a30","t":"plate","c":"mg0101::ComPlayer::GetGoalStandPos() const"}
+{"a":"7100025a40","t":"plate","c":"actor::ComActor::RequestRotation(nn::util::Quaternion const&)"}
+{"a":"7100025a50","t":"plate","c":"bex::ComFxTrigger::SetFloat(nn::util::basic_string_view<char, std::char_traits<char> > const&, float)"}
+{"a":"7100025a60","t":"plate","c":"nn::bezel::ComModel::GetBoneSocket(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100025a70","t":"plate","c":"mg0101::ComPlayer::ComPlayer(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID)"}
+{"a":"7100025a80","t":"plate","c":"rtti::Typeinfo::getRootTypeinfo()"}
+{"a":"7100025a90","t":"plate","c":"rtti::Typeinfo::Typeinfo(rtti::Typeinfo*, char const*, char const*, rtti::Property const* (*)(), void* (*)(), void (*)(void*), unsigned int, unsigned int, void (*)(void*, rtti::Property const&, rtti::PropertyList&), bool (*)(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int))"}
+{"a":"7100025aa0","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Type const&)"}
+{"a":"7100025ab0","t":"plate","c":"rtti::Property::Property()"}
+{"a":"7100025ac0","t":"plate","c":"operator new(unsigned long)"}
+{"a":"7100025ad0","t":"plate","c":"rtti::Typeinfo::checkGuiPropDefault(void*, rtti::Property const&, rtti::PropertyList&)"}
+{"a":"7100025ae0","t":"plate","c":"rtti::Typeinfo::createGuiPropDefault(void*, rtti::Property const&, rtti::Typeinfo const&, unsigned int)"}
+{"a":"7100025af0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> > bex::to_string<int>(int)"}
+{"a":"7100025b00","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [39], (void*)0>(char const (&) [39])"}
+{"a":"7100025b10","t":"plate","c":"nn::bezel::WeakHandle<bq::ComFxTriggerListener> nn::bezel::Entity::AddComponent<bq::ComFxTriggerListener, , (void*)0>()"}
+{"a":"7100025b20","t":"plate","c":"nn::bezel::WeakHandle<bex::ComFxTriggerCallbackListener> nn::bezel::Entity::AddComponent<bex::ComFxTriggerCallbackListener, , (void*)0>()"}
+{"a":"7100025b30","t":"plate","c":"bex::ComFxTriggerCallbackListener::SetFunction(std::function<void (bex::FxtCallbackParam_Particle const&)> const&)"}
+{"a":"7100025b40","t":"plate","c":"bex::ComFxTriggerCallbackListener::SetFunction(std::function<void (bex::FxtCallbackParam_Audio const&)> const&)"}
+{"a":"7100025b50","t":"plate","c":"std::ios_base::init(void*)"}
+{"a":"7100025b60","t":"plate","c":"std::streambuf::streambuf()"}
+{"a":"7100025b70","t":"plate","c":"std::ostream::TEMPNAMEPLACEHOLDERVALUE(int)"}
+{"a":"7100025b80","t":"plate","c":"std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::str() const"}
+{"a":"7100025b90","t":"plate","c":"std::streambuf::~streambuf()"}
+{"a":"7100025ba0","t":"plate","c":"std::ostream::~ostream()"}
+{"a":"7100025bb0","t":"plate","c":"std::ios::~ios()"}
+{"a":"7100025bc0","t":"plate","c":"std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::~basic_ostringstream()"}
+{"a":"7100025bd0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [39]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [39])"}
+{"a":"7100025be0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComFxTriggerListener> bex::ComponentUtil::SafeCreate<bq::ComFxTriggerListener, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100025bf0","t":"plate","c":"nn::bezel::WeakHandle<bex::ComFxTriggerCallbackListener> bex::ComponentUtil::SafeCreate<bex::ComFxTriggerCallbackListener, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100025c00","t":"plate","c":"mg0101::Bar::~Bar()"}
+{"a":"7100025c10","t":"plate","c":"mg0101::Bar::PlayAnim(mg0101::Bar::ANIM)"}
+{"a":"7100025c20","t":"plate","c":"std::__shared_weak_count::__release_weak()"}
+{"a":"7100025c30","t":"plate","c":"mg0101::MapMgr::~MapMgr()"}
+{"a":"7100025c40","t":"plate","c":"mg0101::MapMgr::Init()"}
+{"a":"7100025c50","t":"plate","c":"bex::RandModule::SyncRandMod(unsigned int)"}
+{"a":"7100025c60","t":"plate","c":"mg0101::MapMgr::CreateEnv()"}
+{"a":"7100025c70","t":"plate","c":"mg0101::MapMgr::CreateBG()"}
+{"a":"7100025c80","t":"plate","c":"mg0101::MapMgr::CreateFloors()"}
+{"a":"7100025c90","t":"plate","c":"mg0101::MapMgr::InitLimit()"}
+{"a":"7100025ca0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [30], (void*)0>(char const (&) [30])"}
+{"a":"7100025cb0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [36], (void*)0>(char const (&) [36])"}
+{"a":"7100025cc0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [31], (void*)0>(char const (&) [31])"}
+{"a":"7100025cd0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [37], (void*)0>(char const (&) [37])"}
+{"a":"7100025ce0","t":"plate","c":"mg0101::MapMgr::LoadMapData()"}
+{"a":"7100025cf0","t":"plate","c":"mg0101::Bar::Bar(int)"}
+{"a":"7100025d00","t":"plate","c":"std::to_string(int)"}
+{"a":"7100025d10","t":"plate","c":"std::string::append(char const*, unsigned long)"}
+{"a":"7100025d20","t":"plate","c":"nn::bezel::WeakHandle<actor::ComActorCollision> nn::bezel::Entity::AddComponent<actor::ComActorCollision, , (void*)0>()"}
+{"a":"7100025d30","t":"plate","c":"actor::ComActorCollision::CreateShape(actor::ActorHitShapeCreateArg const&)"}
+{"a":"7100025d40","t":"plate","c":"actor::ActorHitShape::SetSourceBox(nn::util::Vector3f const&, nn::util::Vector3f const&, nn::util::Quaternion const&)"}
+{"a":"7100025d50","t":"plate","c":"actor::ActorHitShapeCreateArg::SetCollisionLayer(int)"}
+{"a":"7100025d60","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [34], (void*)0>(char const (&) [34])"}
+{"a":"7100025d70","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [35], (void*)0>(char const (&) [35])"}
+{"a":"7100025d80","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [33], (void*)0>(char const (&) [33])"}
+{"a":"7100025d90","t":"plate","c":"bq::ComMatter::GetModel()"}
+{"a":"7100025da0","t":"plate","c":"actor::Util::LoadNbmap(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::util::basic_string_view<char, std::char_traits<char> > const&, bool)"}
+{"a":"7100025db0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::insert(unsigned long, char const*, unsigned long)"}
+{"a":"7100025dc0","t":"plate","c":"mg0101::MapMgr::GetFieldBoneSocket(char const*)"}
+{"a":"7100025dd0","t":"plate","c":"nn::bezel::WeakHandle<nn::bezel::ComAttachment> nn::bezel::Entity::AddComponent<nn::bezel::ComAttachment, , (void*)0>()"}
+{"a":"7100025de0","t":"plate","c":"nn::bezel::ComAttachment::SetTarget(nn::bezel::WeakHandle<nn::bezel::ISocket> const&)"}
+{"a":"7100025df0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [38], (void*)0>(char const (&) [38])"}
+{"a":"7100025e00","t":"plate","c":"nn::bezel::Entity::SetScale(nn::util::Vector3f const&)"}
+{"a":"7100025e10","t":"plate","c":"mg0101::MapMgr::GetFieldBoneWorldTransformCalculated(char const*)"}
+{"a":"7100025e20","t":"plate","c":"nn::bezel::Entity::SetRotation(nn::util::Quaternion const&)"}
+{"a":"7100025e30","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const*&, (void*)0>(char const*&)"}
+{"a":"7100025e40","t":"plate","c":"bq::ComMatter::SafeGetModel()"}
+{"a":"7100025e50","t":"plate","c":"nn::bezel::SkeletonPose::GetBoneCount() const"}
+{"a":"7100025e60","t":"plate","c":"nn::bezel::SkeletonPose::GetBoneName(int) const"}
+{"a":"7100025e70","t":"plate","c":"mg0101::MapMgr::CreateFloorParts(char const*, int, nn::bezel::HandlePtr<nn::bezel::SkeletonPose> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&)"}
+{"a":"7100025e80","t":"plate","c":"nn::bezel::WeakHandle<actor::ComWorldCollisionLimit> nn::bezel::Entity::AddComponent<actor::ComWorldCollisionLimit, , (void*)0>()"}
+{"a":"7100025e90","t":"plate","c":"actor::ComWorldCollisionLimit::SetupShape(bex::CollisionShape const&)"}
+{"a":"7100025ea0","t":"plate","c":"nn::bezel::JsonReader::JsonReader()"}
+{"a":"7100025eb0","t":"plate","c":"bq::DataBaseJsonReader::ParseFromAsset(char const*, bool)"}
+{"a":"7100025ec0","t":"plate","c":"bool bq::DataBaseJsonReader::DeserializeRTTI<mg0101::BarData>(char const*, bex::vector<mg0101::BarData>&)"}
+{"a":"7100025ed0","t":"plate","c":"bq::DataBaseJsonReader::~DataBaseJsonReader()"}
+{"a":"7100025ee0","t":"plate","c":"nn::bezel::JsonReader::BeginArray(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100025ef0","t":"plate","c":"nn::bezel::JsonReader::GetArraySize() const"}
+{"a":"7100025f00","t":"plate","c":"nn::bezel::JsonReader::EndArray()"}
+{"a":"7100025f10","t":"plate","c":"bq::DataBaseJsonReader::DeserializeRTTI_(int, void*, rtti::Typeinfo const&)"}
+{"a":"7100025f20","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [30]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [30])"}
+{"a":"7100025f30","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [36]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [36])"}
+{"a":"7100025f40","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [31]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [31])"}
+{"a":"7100025f50","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [37]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [37])"}
+{"a":"7100025f60","t":"plate","c":"actor::ComActorCollision::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, actor::ActorCollisionCreateArg const&, nn::bezel::HandlePtr<actor::ActorWorld> const&)"}
+{"a":"7100025f70","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [34]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [34])"}
+{"a":"7100025f80","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [35]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [35])"}
+{"a":"7100025f90","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [33]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [33])"}
+{"a":"7100025fa0","t":"plate","c":"nn::bezel::ComAttachment::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100025fb0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [38]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [38])"}
+{"a":"7100025fc0","t":"plate","c":"mg0101::MapMgr::FindFieldBoneIndex(char const*)"}
+{"a":"7100025fd0","t":"plate","c":"nn::bezel::SkeletonPose::CalculateWorldTransform(int)"}
+{"a":"7100025fe0","t":"plate","c":"nn::bezel::SkeletonPose::GetWorldTransformCalculated(int) const"}
+{"a":"7100025ff0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const*&)"}
+{"a":"7100026020","t":"plate","c":"nn::bezel::Entity::AddTag(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100026030","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComDestruction> nn::bezel::Entity::AddComponent<mg0101::ComDestruction, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&, (void*)0>(nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&)"}
+{"a":"7100026040","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComDestruction> bex::ComponentUtil::SafeCreate<mg0101::ComDestruction, nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape> const&, char (&) [64], bool&, float&)"}
+{"a":"7100026050","t":"plate","c":"actor::ComWorldCollisionLimit::Create(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::HandlePtr<actor::ActorWorld> const&)"}
+{"a":"7100026060","t":"plate","c":"mg0101::MapMgr::PlayAnim(mg0101::MapMgr::ANIM)"}
+{"a":"7100026070","t":"plate","c":"mg0101::MapMgr::SetEndingAsset()"}
+{"a":"7100026080","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, char const (&) [43], (void*)0>(char const (&) [43])"}
+{"a":"7100026090","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [43]>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, char const (&) [43])"}
+{"a":"71000260a0","t":"plate","c":"mg0101::BarNPC::Stagger(bool)"}
+{"a":"71000260b0","t":"plate","c":"mg0101::MapMgr::UpdateBar()"}
+{"a":"71000260c0","t":"plate","c":"nn::bezel::SkeletonPose::FindBoneIndex(char const*) const"}
+{"a":"71000260d0","t":"plate","c":"mg0101::MapMgr::GetBarActorHitShape()"}
+{"a":"71000260e0","t":"plate","c":"mg0101::MapMgr::DeleteOPEntity()"}
+{"a":"71000260f0","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::push_back(char)"}
+{"a":"7100026100","t":"plate","c":"std::basic_string<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >::append(unsigned long, char)"}
+{"a":"7100026120","t":"plate","c":"bq::ComFxTriggerListener::ComFxTriggerListener(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100026130","t":"plate","c":"bex::ComFxTriggerCallbackListener::ComFxTriggerCallbackListener(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100026150","t":"plate","c":"mg0101::PlayerMgr::FxWallGoal()"}
+{"a":"7100026160","t":"plate","c":"mg0101::PlayerMgr::FxWallSpark()"}
+{"a":"7100026170","t":"plate","c":"mg0101::NPCMgr::FxWallSpark()"}
+{"a":"7100026180","t":"plate","c":"mg0101::NPCMgr::FxRearFall()"}
+{"a":"7100026190","t":"plate","c":"std::__shared_weak_count::~__shared_weak_count()"}
+{"a":"71000261a0","t":"plate","c":"mg0101::MapMgr::MapMgr()"}
+{"a":"71000261b0","t":"plate","c":"mg0101::AddHeyho(nn::bezel::WeakHandle<nn::bezel::Entity> const&, nn::bezel::WeakHandle<nn::bezel::Entity> const&, char const*)"}
+{"a":"71000261c0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bq::NonPlayerCharacterID, (void*)0>(bq::NonPlayerCharacterID&&)"}
+{"a":"71000261d0","t":"plate","c":"nn::bezel::ComModel::FindMaterial(nn::util::basic_string_view<char, std::char_traits<char> >) const"}
+{"a":"71000261e0","t":"plate","c":"nn::bezel::MaterialHandle::MaterialHandle()"}
+{"a":"71000261f0","t":"plate","c":"nn::bezel::MaterialHandle::Reset(nn::bezel::Material*)"}
+{"a":"7100026200","t":"plate","c":"nn::bezel::MaterialHandle::SafeLock() const"}
+{"a":"7100026210","t":"plate","c":"nn::bezel::MaterialHandle::~MaterialHandle()"}
+{"a":"7100026220","t":"plate","c":"nn::bezel::Material::FindParam(nn::util::basic_string_view<char, std::char_traits<char> >)"}
+{"a":"7100026230","t":"plate","c":"nn::bezel::MaterialParam::GetVector4() const"}
+{"a":"7100026240","t":"plate","c":"nn::bezel::MaterialParam::SetVector4(nn::util::Vector4f const&)"}
+{"a":"7100026250","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID&&)"}
+{"a":"7100026260","t":"plate","c":"bq::ComMatter::AddHeading()"}
+{"a":"7100026270","t":"plate","c":"mg0101::BarNPC::UpdateFrame()"}
+{"a":"7100026280","t":"plate","c":"mg0101::BarNPC::Idle()"}
+{"a":"7100026290","t":"plate","c":"mg0101::BarNPC::JoyIdle()"}
+{"a":"71000262a0","t":"plate","c":"actor::MotionArg::AnimationName(nn::bezel::StringViewHashPair const&)"}
+{"a":"71000262b0","t":"plate","c":"actor::ComActorMotion::Play(actor::MotionArg const&)"}
+{"a":"71000262c0","t":"plate","c":"mg0101::BarNPC::OPAnimSkip()"}
+{"a":"71000262d0","t":"plate","c":"mg0101::BarNPC::Attack()"}
+{"a":"71000262e0","t":"plate","c":"mg0101::BarNPC::Joy(bool)"}
+{"a":"71000262f0","t":"plate","c":"mg0101::BarNPC::Finish()"}
+{"a":"7100026300","t":"plate","c":"mg0101::BarNPC::BarNPC(int)"}
+{"a":"7100026310","t":"plate","c":"mg0101::NPCMgr::SetEndingAsset()"}
+{"a":"7100026320","t":"plate","c":"std::string::insert(unsigned long, char const*)"}
+{"a":"7100026330","t":"plate","c":"mg0101::NPCMgr::~NPCMgr()"}
+{"a":"7100026340","t":"plate","c":"mg0101::NPCMgr::PlayAnim(mg0101::NPCMgr::ANIM)"}
+{"a":"7100026350","t":"plate","c":"mg0101::NPCMgr::UpdateBarNpc()"}
+{"a":"7100026360","t":"plate","c":"mg0101::NPCMgr::GetNearestBarNpc(nn::util::Vector3f const&)"}
+{"a":"7100026370","t":"plate","c":"mg0101::NPCMgr::ForEachNearestBarNpc(nn::util::Vector3f const&, std::function<void (int, nn::bezel::HandlePtr<nn::bezel::Entity>)> const&, std::function<void (int, nn::bezel::HandlePtr<nn::bezel::Entity>)> const&)"}
+{"a":"7100026380","t":"plate","c":"mg0101::NPCMgr::OnGameStartBefore()"}
+{"a":"7100026390","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bq::NonPlayerCharacterID)"}
+{"a":"71000263a0","t":"plate","c":"mg0101::NPCMgr::NPCMgr()"}
+{"a":"71000263b0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComNaviGrid> nn::bezel::Entity::AddComponent<mg0101::ComNaviGrid, nn::bezel::WeakHandle<actor::ActorHitShape>*&, (void*)0>(nn::bezel::WeakHandle<actor::ActorHitShape>*&)"}
+{"a":"71000263c0","t":"plate","c":"bq::PlayerWorkHolder::GetPlayerList(bq::PlayerListSortBy) const"}
+{"a":"71000263d0","t":"plate","c":"bq::PlayerWork::GetPlayerID() const"}
+{"a":"71000263e0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> nn::bezel::Entity::AddComponent<bq::ComMatter, bex::PlayerID, bq::MatterType, (void*)0>(bex::PlayerID&&, bq::MatterType&&)"}
+{"a":"71000263f0","t":"plate","c":"actor::ComActor::EraseAction(actor::ActorHashedString const&)"}
+{"a":"7100026400","t":"plate","c":"actor::ComActorCollision::SetCollisionLayerTestEnabled(int, bool)"}
+{"a":"7100026410","t":"plate","c":"actor::ComActor::GetMotion()"}
+{"a":"7100026420","t":"plate","c":"actor::ComActorMotion::RemoveAnimation(nn::bezel::StringViewHashPair const&)"}
+{"a":"7100026430","t":"plate","c":"bq::flag::Check(bq::flag::FLAG)"}
+{"a":"7100026440","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPlayer> nn::bezel::Entity::AddComponent<mg0101::ComPlayer, bex::PlayerID, (void*)0>(bex::PlayerID&&)"}
+{"a":"7100026450","t":"plate","c":"bq::ComMatter::SafeGetHeading()"}
+{"a":"7100026460","t":"plate","c":"bex::ComHeading::SetTargetLookAtEntity(nn::bezel::WeakHandle<nn::bezel::Entity> const&, int)"}
+{"a":"7100026470","t":"plate","c":"bq::ComMatter::AddComWetExpression()"}
+{"a":"7100026480","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComAI> nn::bezel::Entity::AddComponent<mg0101::ComAI, bex::PlayerID, nn::bezel::HandlePtr<mg0101::ComNaviGrid>, (void*)0>(bex::PlayerID&&, nn::bezel::HandlePtr<mg0101::ComNaviGrid>&&)"}
+{"a":"7100026490","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComNaviGrid> bex::ComponentUtil::SafeCreate<mg0101::ComNaviGrid, nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape>*&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, nn::bezel::WeakHandle<actor::ActorHitShape>*&)"}
+{"a":"71000264a0","t":"plate","c":"nn::bezel::WeakHandle<bq::ComMatter> bex::ComponentUtil::SafeCreate<bq::ComMatter, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, bq::MatterType>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&&, bq::MatterType&&)"}
+{"a":"71000264b0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPlayer> bex::ComponentUtil::SafeCreate<mg0101::ComPlayer, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&&)"}
+{"a":"71000264c0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComAI> bex::ComponentUtil::SafeCreate<mg0101::ComAI, nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, nn::bezel::HandlePtr<mg0101::ComNaviGrid> >(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID&&, nn::bezel::HandlePtr<mg0101::ComNaviGrid>&&)"}
+{"a":"71000264d0","t":"plate","c":"mg0101::PlayerMgr::~PlayerMgr()"}
+{"a":"71000264e0","t":"plate","c":"mg0101::PlayerMgr::PlayMotion(nn::bezel::StringViewHashPair const&, int)"}
+{"a":"71000264f0","t":"plate","c":"mg0101::PlayerMgr::ResetHeading()"}
+{"a":"7100026500","t":"plate","c":"bex::ComHeading::SetTargetNone()"}
+{"a":"7100026510","t":"plate","c":"mg0101::PlayerMgr::MainProc()"}
+{"a":"7100026520","t":"plate","c":"bex::ComHeading::SetTargetLookAtEntity(nn::bezel::WeakHandle<nn::bezel::Entity> const&)"}
+{"a":"7100026530","t":"plate","c":"mg0101::PlayerMgr::GetExistGoal()"}
+{"a":"7100026540","t":"plate","c":"mg0101::PlayerMgr::PlaySurpriseVoiseTriggerOnLivingPlayers()"}
+{"a":"7100026550","t":"plate","c":"mg0101::PlayerMgr::OnGameStartBefore()"}
+{"a":"7100026560","t":"plate","c":"nn::bezel::Entity::_internalRemoveComponentByTypeDesc(nn::bezel::detail::TypeDesc const*)"}
+{"a":"7100026570","t":"plate","c":"mg0101::PlayerMgr::PlaceOPPosition()"}
+{"a":"7100026580","t":"plate","c":"mg0101::PlayerMgr::OP_Earthquake()"}
+{"a":"7100026590","t":"plate","c":"bq::ComMatter::SafeGetFxTrigger()"}
+{"a":"71000265a0","t":"plate","c":"nn::bezel::ComPhysicalAnimation::RequestTeleport()"}
+{"a":"71000265b0","t":"plate","c":"mg0101::PlayerMgr::OnMainProcStandBy()"}
+{"a":"71000265c0","t":"plate","c":"actor::ComActor::SetMotionIdle()"}
+{"a":"71000265d0","t":"plate","c":"mg0101::PlayerMgr::OnGameOpeningSkip()"}
+{"a":"71000265e0","t":"plate","c":"mg0101::PlayerMgr::OnResult()"}
+{"a":"71000265f0","t":"plate","c":"mg0101::RankMgr::GetGameRank()"}
+{"a":"7100026600","t":"plate","c":"actor::ComActor::SetGroundedTestEnabled(bool)"}
+{"a":"7100026610","t":"plate","c":"actor::ComActor::GetModel()"}
+{"a":"7100026620","t":"plate","c":"bex::ComFxTrigger::Stop(nn::util::basic_string_view<char, std::char_traits<char> > const&)"}
+{"a":"7100026630","t":"plate","c":"mg0101::PlayerMgr::SetResultToGameWork()"}
+{"a":"7100026640","t":"plate","c":"mg0101::RankMgr::Get1stPlayers()"}
+{"a":"7100026650","t":"plate","c":"bq::PlayerWork::SetMinigameWinLose(bq::GameWinLose)"}
+{"a":"7100026660","t":"plate","c":"bq::PlayerWork::SetMinigameRank(bq::GameRank)"}
+{"a":"7100026670","t":"plate","c":"bq::ComMatter::ComMatter(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bex::PlayerID, bq::MatterType)"}
+{"a":"7100026680","t":"plate","c":"actor::ActorAnimationSlot::GetCurrentAnimation() const"}
+{"a":"7100026690","t":"plate","c":"mg0101::PlayerMgr::PlayerMgr()"}
+{"a":"71000266a0","t":"plate","c":"mg0101::ComRankMgr::ReceiveMessageImpl(nn::bezel::Message const&)"}
+{"a":"71000266b0","t":"plate","c":"mg0101::UIMgr::SetRank(bex::PlayerID, bq::GameRank)"}
+{"a":"71000266c0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComRankMgr> nn::bezel::Entity::AddComponent<mg0101::ComRankMgr, , (void*)0>()"}
+{"a":"71000266d0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComRankMgr> bex::ComponentUtil::SafeCreate<mg0101::ComRankMgr, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"71000266e0","t":"plate","c":"mg0101::RankMgr::~RankMgr()"}
+{"a":"71000266f0","t":"plate","c":"mg0101::ComRankMgr::ComRankMgr(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"7100026700","t":"plate","c":"mg0101::RankMgr::RankMgr()"}
+{"a":"7100026710","t":"plate","c":"mg0101::Scene::Scene()"}
+{"a":"7100026720","t":"plate","c":"bq::MinigameScene::getStaticTypeinfo()"}
+{"a":"7100026730","t":"plate","c":"bex::SceneParamBase::getStaticTypeinfo()"}
+{"a":"7100026740","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, rtti::Type const&, int, int, int)"}
+{"a":"7100026750","t":"plate","c":"rtti::Property::Property(char const*, char const*, unsigned int, void*, unsigned int, rtti::Type const&, int, int, int)"}
+{"a":"7100026760","t":"plate","c":"bq::MinigameScene::MinigameScene()"}
+{"a":"7100026770","t":"plate","c":"bq::CharacterDataModule::LoadSceneNonPlayerCharacter(bq::NonPlayerCharacterID, bool, bool)"}
+{"a":"7100026780","t":"plate","c":"bq::MinigameScene::~MinigameScene()"}
+{"a":"7100026790","t":"plate","c":"mg0101::Scene::~Scene()"}
+{"a":"71000267a0","t":"plate","c":"mg0101::UIMgr::UIMgr()"}
+{"a":"71000267b0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPartsActivator> nn::bezel::Entity::AddComponent<mg0101::ComPartsActivator, , (void*)0>()"}
+{"a":"71000267c0","t":"plate","c":"bex::sound::SoundModule::Play(char const*, float, char const*)"}
+{"a":"71000267d0","t":"plate","c":"bex::FiberLite::FiberLite(std::function<void ()> const&, int, bool)"}
+{"a":"71000267e0","t":"plate","c":"nn::bezel::WeakHandle<mg0101::ComPartsActivator> bex::ComponentUtil::SafeCreate<mg0101::ComPartsActivator, nn::bezel::HandlePtr<nn::bezel::Entity> const&>(nn::bezel::HandlePtr<nn::bezel::Entity> const&)"}
+{"a":"71000267f0","t":"plate","c":"bex::Fiber::IsCompleted() const"}
+{"a":"7100026800","t":"plate","c":"bex::sound::SoundHandle::Stop()"}
+{"a":"7100026810","t":"plate","c":"bex::sound::SoundHandle::Stop_Time(float)"}
+{"a":"7100026820","t":"plate","c":"mg0101::Scene::OpeningProc()"}
+{"a":"7100026830","t":"plate","c":"bex::Fiber::Wait()"}
+{"a":"7100026840","t":"plate","c":"mg0101::Scene::MainProc()"}
+{"a":"7100026850","t":"plate","c":"bq::MGResult::SetPlayer(bex::PlayerID, nn::bezel::WeakHandle<nn::bezel::Entity>)"}
+{"a":"7100026860","t":"plate","c":"bq::MGResult::SetModel(nn::bezel::WeakHandle<nn::bezel::Entity>)"}
+{"a":"7100026870","t":"plate","c":"bq::MGResult::ResultSetupFunction(std::function<void ()> const&)"}
+{"a":"7100026880","t":"plate","c":"mg0101::UIMgr::~UIMgr()"}
+{"a":"7100026890","t":"plate","c":"bq::MGMgr::SetPlayerRank(bex::PlayerID, bq::GameRank, bool)"}
+{"a":"710004fbd0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.2\nVector (0,0,3.5): Bar1/Bar3 z 오프셋"}
+{"a":"710004fc00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.2\nVector (0,0,-2.7): Bar0/Bar2 z 오프셋"}
+{"a":"710004fc30","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\nComNaviGrid 다섯 레이 칸 오프셋 상수 벡터 중 하나(@0x710004fc50/4fc30/4fc40/4fcf0/4fcc0). 오프셋 순서 중심 → (-0.5,0,-0.5) → (-0.5,0,+0.5) → (+0.5,0,-0.5) → (+0.5,0,+0.5)\n[미확정] 주소별 1:1 대응은 문서가 명시하지 않음"}
+{"a":"710004fc40","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\nComNaviGrid 다섯 레이 칸 오프셋 상수 벡터 중 하나(@0x710004fc50/4fc30/4fc40/4fcf0/4fcc0). 오프셋 순서 중심 → (-0.5,0,-0.5) → (-0.5,0,+0.5) → (+0.5,0,-0.5) → (+0.5,0,+0.5)\n[미확정] 주소별 1:1 대응은 문서가 명시하지 않음"}
+{"a":"710004fc50","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\nComNaviGrid 다섯 레이 칸 오프셋 상수 벡터 중 하나(@0x710004fc50/4fc30/4fc40/4fcf0/4fcc0). 오프셋 순서 중심 → (-0.5,0,-0.5) → (-0.5,0,+0.5) → (+0.5,0,-0.5) → (+0.5,0,+0.5)\n[미확정] 주소별 1:1 대응은 문서가 명시하지 않음"}
+{"a":"710004fca0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\nComNaviGrid 레이 방향 (0,-1,0)"}
+{"a":"710004fcc0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\nComNaviGrid 다섯 레이 칸 오프셋 상수 벡터 중 하나(@0x710004fc50/4fc30/4fc40/4fcf0/4fcc0). 오프셋 순서 중심 → (-0.5,0,-0.5) → (-0.5,0,+0.5) → (+0.5,0,-0.5) → (+0.5,0,+0.5)\n[미확정] 주소별 1:1 대응은 문서가 명시하지 않음"}
+{"a":"710004fcf0","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.9\nComNaviGrid 다섯 레이 칸 오프셋 상수 벡터 중 하나(@0x710004fc50/4fc30/4fc40/4fcf0/4fcc0). 오프셋 순서 중심 → (-0.5,0,-0.5) → (-0.5,0,+0.5) → (+0.5,0,-0.5) → (+0.5,0,+0.5)\n[미확정] 주소별 1:1 대응은 문서가 명시하지 않음"}
+{"a":"710004fd10","t":"plate","c":"typeinfo name for std::length_error"}
+{"a":"710004fd21","t":"plate","c":"typeinfo name for std::logic_error"}
+{"a":"710004fd31","t":"plate","c":"typeinfo name for std::exception"}
+{"a":"710004fdd8","t":"plate","c":"actor::Constant::ActionName_Idle"}
+{"a":"710004fde0","t":"plate","c":"actor::Constant::ActionName_NOP"}
+{"a":"710004fe28","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\ncourseType(0..5) → 바 패턴 표: barPatternA, B, C, A, B, C"}
+{"a":"710004fe40","t":"plate","c":"typeinfo name for std::out_of_range"}
+{"a":"710004fe54","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\n벽 애니 접미 표(인덱스 type-1, 범위 밖 _a): _a, _b, _c"}
+{"a":"710004fe68","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\n통나무 벽 Bar 0~3 애니 접미 [\"_rear\",\"_rear\",\"_front\",\"_front\"] (mg0101_log_wall00 + 코스 접미 + 이 값)"}
+{"a":"710004fe80","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.5\nActionName_* 표 @0x710004fe80..4fe98: Punch/Kick/Jump/HipDrop (PlayerMgr 생성자가 EraseAction)"}
+{"a":"710004fe88","t":"plate","c":"actor::Constant::ActionName_Kick"}
+{"a":"710004fe90","t":"plate","c":"actor::Constant::ActionName_Jump"}
+{"a":"710004fe98","t":"plate","c":"actor::Constant::ActionName_HipDrop"}
+{"a":"71000594a8","t":"plate","c":"vtable for mg0101::CameraMgr"}
+{"a":"71000594c8","t":"plate","c":"vtable for nn::bezel::StringViewHashPair"}
+{"a":"71000594f0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::StringViewHashPair, true>::g_TypeDesc"}
+{"a":"7100059520","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComMatter, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059550","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Component, false>::g_TypeDesc"}
+{"a":"7100059580","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCamera, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"71000595b0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorMotion, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"71000595e0","t":"plate","c":"vtable for mg0101::ComAI"}
+{"a":"7100059690","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComAI, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"71000596c0","t":"plate","c":"typeinfo for std::exception"}
+{"a":"71000596d0","t":"plate","c":"typeinfo for std::logic_error"}
+{"a":"71000596e8","t":"plate","c":"typeinfo for std::length_error"}
+{"a":"7100059700","t":"plate","c":"vtable for mg0101::ComDestruction"}
+{"a":"71000597f0","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::IBasis, false>::g_TypeDesc"}
+{"a":"7100059820","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComDestruction, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059850","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComCollision, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059880","t":"plate","c":"nn::bezel::detail::FunctionOperationsHelper<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void> >::s_Operations"}
+{"a":"71000598a8","t":"plate","c":"vtable for nn::util::detail::Function<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&), actor::Util::FindChildrenComponent<nn::bezel::ComCollision>(nn::bezel::HandlePtr<nn::bezel::Entity> const&, bool)::{lambda(nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)#1}, void>"}
+{"a":"71000598d0","t":"plate","c":"vtable for nn::util::IFunction<nn::bezel::EntityForEachCommand (nn::bezel::HandlePtr<nn::bezel::ComCollision> const&)>"}
+{"a":"71000598f8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComModel, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059928","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::RigidBody, false, nn::bezel::Collision>::g_TypeDesc"}
+{"a":"7100059958","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::Collision, false, nn::bezel::IBasis>::g_TypeDesc"}
+{"a":"7100059988","t":"plate","c":"vtable for mg0101::ComNaviGrid"}
+{"a":"7100059a38","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComNaviGrid, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059a68","t":"plate","c":"vtable for mg0101::ComPartsActivator"}
+{"a":"7100059b20","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPartsActivator, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059ba0","t":"plate","c":"vtable for nn::util::IFunction<void (nn::bezel::HandlePtr<nn::bezel::Entity> const&)>"}
+{"a":"7100059bc8","t":"plate","c":"vtable for mg0101::ComPlayer"}
+{"a":"7100059c98","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComPlayer, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059cc8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTrigger, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059cf8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActor, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059d28","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWetExpression, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059d58","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::sound::ComActor, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059d88","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::gfx::ComModelBuffer, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059db8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorPad, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"7100059de8","t":"plate","c":"vtable for mg0101::Bar"}
+{"a":"7100059e08","t":"plate","c":"vtable for mg0101::MapMgr"}
+{"a":"7100059e28","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\ncourseType(0..5) → 발판 배치 모델 표: cource_a0_pos, b0_pos, c0_pos, a1_pos, b1_pos, c1_pos"}
+{"a":"7100059e58","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\ncourseType(0..5) → 코스 충돌 표: cource_a0_col.nbmap, b0, c0, a1, b1, c1"}
+{"a":"7100059ea8","t":"plate","c":"vtable for std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"7100059ef8","t":"plate","c":"VTT for std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"7100059f18","t":"plate","c":"construction vtable for std::ostream-in-std::basic_ostringstream<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"7100059f68","t":"plate","c":"vtable for std::basic_stringbuf<char, std::char_traits<char>, bex::HeapModule::Allocator_string<char> >"}
+{"a":"7100059fe8","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bq::ComFxTriggerListener, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a018","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComFxTriggerCallbackListener, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a0d8","t":"plate","c":"vtable for std::__shared_ptr_pointer<mg0101::Bar*, std::shared_ptr<mg0101::Bar>::__shared_ptr_default_delete<mg0101::Bar, mg0101::Bar>, std::allocator<mg0101::Bar> >"}
+{"a":"710005a110","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComActorCollision, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a140","t":"plate","c":"typeinfo for std::out_of_range"}
+{"a":"710005a158","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComAttachment, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a188","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<actor::ComWorldCollisionLimit, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a208","t":"plate","c":"vtable for mg0101::BarNPC"}
+{"a":"710005a228","t":"plate","c":"vtable for mg0101::NPCMgr"}
+{"a":"710005a248","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.7\n결과 관중 모션 표 joy0/joy1/joy2 (NPCMgr::PlayAnim(3), SyncRandRange(0,3) 인덱스)"}
+{"a":"710005a260","t":"plate","c":"vtable for std::__shared_ptr_pointer<mg0101::BarNPC*, std::shared_ptr<mg0101::BarNPC>::__shared_ptr_default_delete<mg0101::BarNPC, mg0101::BarNPC>, std::allocator<mg0101::BarNPC> >"}
+{"a":"710005a2e0","t":"plate","c":"vtable for mg0101::PlayerMgr"}
+{"a":"710005a380","t":"plate","c":"actor::Constant::AnimationName_JumpB"}
+{"a":"710005a3a0","t":"plate","c":"actor::Constant::AnimationName_Idle"}
+{"a":"710005a3c0","t":"plate","c":"actor::Constant::AnimationName_Walk"}
+{"a":"710005a448","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<bex::ComHeading, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a508","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<nn::bezel::ComPhysicalAnimation, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a538","t":"plate","c":"vtable for mg0101::ComRankMgr"}
+{"a":"710005a5e8","t":"plate","c":"vtable for mg0101::RankMgr"}
+{"a":"710005a608","t":"plate","c":"nn::bezel::detail::StaticTypeDesc<mg0101::ComRankMgr, false, nn::bezel::Component>::g_TypeDesc"}
+{"a":"710005a638","t":"plate","c":"vtable for mg0101::Scene"}
+{"a":"710005a8e8","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.4\nStringViewHashPair 모션 이름 \"maze_idle00\" (PlayerMgr::PlayMotion 인자)"}
+{"a":"710005a908","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.4\nStringViewHashPair 모션 이름 \"co_lookout00\" (PlayerMgr::PlayMotion 인자)"}
+{"a":"710005a928","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.4\nStringViewHashPair 모션 이름 \"co_surprise00\" (PlayerMgr::PlayMotion 인자)"}
+{"a":"710005a948","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §3.4\nStringViewHashPair 모션 이름 \"co_run_away00_r\" (PlayerMgr::PlayMotion 인자)"}
+{"a":"710005a968","t":"plate","c":"vtable for mg0101::Scene::Params"}
+{"a":"710005aac0","t":"plate","c":"vtable for mg0101::UIMgr"}
+{"a":"710005bc00","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §6.5\nActionName_* GOT @0x710005bc00..5bc18 (Punch/Kick/Jump/HipDrop)"}
+{"a":"710005d008","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\n카메라 애니 이름 ANIM_NAMES = [\"game\",\"op0\",\"op1\",\"result\"]"}
+{"a":"710005d030","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/minigame/mg0101.md §4.2\nBAR_BITE_INTERVAL = 24.0\n동적 심볼 표 외의 사용처 없음(게임 틱 간격에 적용하지 않음)"}
+{"a":"710005d038","t":"plate","c":"mg0101::Scene::Symbol"}
+{"a":"710005d040","t":"plate","c":"mg0101::Scene::Params::Symbol"}
+{"a":"710005d180","t":"plate","c":"nn::bezel::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d188","t":"plate","c":"guard variable for nn::bezel::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d190","t":"plate","c":"nn::bezel::ComParticleFx2Emitter::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d198","t":"plate","c":"guard variable for nn::bezel::ComParticleFx2Emitter::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d1a0","t":"plate","c":"nn::bezel::NetworkNplnModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1a8","t":"plate","c":"guard variable for nn::bezel::NetworkNplnModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1b0","t":"plate","c":"bex::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1b8","t":"plate","c":"guard variable for bex::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1c0","t":"plate","c":"nn::bezel::ComAttachment::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d1c8","t":"plate","c":"guard variable for nn::bezel::ComAttachment::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d1d0","t":"plate","c":"nn::bezel::ComHitCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d1d8","t":"plate","c":"guard variable for nn::bezel::ComHitCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d1e0","t":"plate","c":"nn::bezel::AudioModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1e8","t":"plate","c":"guard variable for nn::bezel::AudioModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1f0","t":"plate","c":"bex::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d1f8","t":"plate","c":"guard variable for bex::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d200","t":"plate","c":"bex::SaveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d208","t":"plate","c":"guard variable for bex::SaveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d210","t":"plate","c":"bq::ObjectList::s_DetailModuleEntryInvoker"}
+{"a":"710005d218","t":"plate","c":"guard variable for bq::ObjectList::s_DetailModuleEntryInvoker"}
+{"a":"710005d220","t":"plate","c":"nn::bezel::CoreSystem::s_DetailModuleEntryInvoker"}
+{"a":"710005d228","t":"plate","c":"guard variable for nn::bezel::CoreSystem::s_DetailModuleEntryInvoker"}
+{"a":"710005d230","t":"plate","c":"bex::HeapModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d238","t":"plate","c":"guard variable for bex::HeapModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d240","t":"plate","c":"nn::bezel::AccountModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d248","t":"plate","c":"guard variable for nn::bezel::AccountModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d250","t":"plate","c":"nn::bezel::AnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d258","t":"plate","c":"guard variable for nn::bezel::AnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d260","t":"plate","c":"nn::bezel::AssetModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d268","t":"plate","c":"guard variable for nn::bezel::AssetModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d270","t":"plate","c":"nn::bezel::ClassicMapModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d278","t":"plate","c":"guard variable for nn::bezel::ClassicMapModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d280","t":"plate","c":"nn::bezel::ComCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d288","t":"plate","c":"guard variable for nn::bezel::ComCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d290","t":"plate","c":"nn::bezel::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d298","t":"plate","c":"guard variable for nn::bezel::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d2a0","t":"plate","c":"nn::bezel::ComModelInstance::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d2a8","t":"plate","c":"guard variable for nn::bezel::ComModelInstance::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d2b0","t":"plate","c":"nn::bezel::ComTransform2d::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d2b8","t":"plate","c":"guard variable for nn::bezel::ComTransform2d::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d2c0","t":"plate","c":"nn::bezel::DefaultViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2c8","t":"plate","c":"guard variable for nn::bezel::DefaultViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2d0","t":"plate","c":"nn::bezel::DevConnectionModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2d8","t":"plate","c":"guard variable for nn::bezel::DevConnectionModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2e0","t":"plate","c":"nn::bezel::DevConnectorForToolsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2e8","t":"plate","c":"guard variable for nn::bezel::DevConnectorForToolsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2f0","t":"plate","c":"nn::bezel::DevHtcsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d2f8","t":"plate","c":"guard variable for nn::bezel::DevHtcsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d300","t":"plate","c":"nn::bezel::DevInterfaceModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d308","t":"plate","c":"guard variable for nn::bezel::DevInterfaceModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d310","t":"plate","c":"nn::bezel::DevIpcModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d318","t":"plate","c":"guard variable for nn::bezel::DevIpcModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d320","t":"plate","c":"nn::bezel::DevPrimitiveRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d328","t":"plate","c":"guard variable for nn::bezel::DevPrimitiveRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d330","t":"plate","c":"nn::bezel::DevVideoRecorderModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d338","t":"plate","c":"guard variable for nn::bezel::DevVideoRecorderModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d340","t":"plate","c":"nn::bezel::EntityDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d348","t":"plate","c":"guard variable for nn::bezel::EntityDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d350","t":"plate","c":"nn::bezel::EntityModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d358","t":"plate","c":"guard variable for nn::bezel::EntityModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d360","t":"plate","c":"nn::bezel::ErrorViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d368","t":"plate","c":"guard variable for nn::bezel::ErrorViewerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d370","t":"plate","c":"nn::bezel::FileModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d378","t":"plate","c":"guard variable for nn::bezel::FileModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d380","t":"plate","c":"nn::bezel::FontModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d388","t":"plate","c":"guard variable for nn::bezel::FontModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d390","t":"plate","c":"nn::bezel::GraphicsCoreModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d398","t":"plate","c":"guard variable for nn::bezel::GraphicsCoreModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3a0","t":"plate","c":"nn::bezel::GuiLayoutModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3a8","t":"plate","c":"guard variable for nn::bezel::GuiLayoutModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3b0","t":"plate","c":"nn::bezel::HidModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3b8","t":"plate","c":"guard variable for nn::bezel::HidModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3c0","t":"plate","c":"nn::bezel::ImguiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3c8","t":"plate","c":"guard variable for nn::bezel::ImguiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3d0","t":"plate","c":"nn::bezel::JsonModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3d8","t":"plate","c":"guard variable for nn::bezel::JsonModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3e0","t":"plate","c":"nn::bezel::LineRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3e8","t":"plate","c":"guard variable for nn::bezel::LineRendererModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3f0","t":"plate","c":"nn::bezel::LocalizeMessageModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d3f8","t":"plate","c":"guard variable for nn::bezel::LocalizeMessageModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d400","t":"plate","c":"nn::bezel::MemoryModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d408","t":"plate","c":"guard variable for nn::bezel::MemoryModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d410","t":"plate","c":"nn::bezel::ModelModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d418","t":"plate","c":"guard variable for nn::bezel::ModelModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d420","t":"plate","c":"nn::bezel::MovieModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d428","t":"plate","c":"guard variable for nn::bezel::MovieModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d430","t":"plate","c":"nn::bezel::MyPageAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d438","t":"plate","c":"guard variable for nn::bezel::MyPageAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d440","t":"plate","c":"nn::bezel::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d448","t":"plate","c":"guard variable for nn::bezel::NetworkModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d450","t":"plate","c":"nn::bezel::NetworkUtilModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d458","t":"plate","c":"guard variable for nn::bezel::NetworkUtilModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d460","t":"plate","c":"nn::bezel::ParticleFx2Module::s_DetailModuleEntryInvoker"}
+{"a":"710005d468","t":"plate","c":"guard variable for nn::bezel::ParticleFx2Module::s_DetailModuleEntryInvoker"}
+{"a":"710005d470","t":"plate","c":"nn::bezel::PerfDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d478","t":"plate","c":"guard variable for nn::bezel::PerfDevUiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d480","t":"plate","c":"nn::bezel::PerfModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d488","t":"plate","c":"guard variable for nn::bezel::PerfModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d490","t":"plate","c":"nn::bezel::PhysicsModelModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d498","t":"plate","c":"guard variable for nn::bezel::PhysicsModelModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4a0","t":"plate","c":"nn::bezel::PrefabModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4a8","t":"plate","c":"guard variable for nn::bezel::PrefabModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4b0","t":"plate","c":"nn::bezel::ProfanityFilterModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4b8","t":"plate","c":"guard variable for nn::bezel::ProfanityFilterModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4c0","t":"plate","c":"nn::bezel::RenderPipelineModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4c8","t":"plate","c":"guard variable for nn::bezel::RenderPipelineModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4d0","t":"plate","c":"nn::bezel::RttsAssetModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4d8","t":"plate","c":"guard variable for nn::bezel::RttsAssetModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4e0","t":"plate","c":"nn::bezel::RttsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4e8","t":"plate","c":"guard variable for nn::bezel::RttsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4f0","t":"plate","c":"nn::bezel::SaveDataModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d4f8","t":"plate","c":"guard variable for nn::bezel::SaveDataModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d500","t":"plate","c":"nn::bezel::ScriptModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d508","t":"plate","c":"guard variable for nn::bezel::ScriptModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d510","t":"plate","c":"nn::bezel::SoftwareKeyboardModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d518","t":"plate","c":"guard variable for nn::bezel::SoftwareKeyboardModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d520","t":"plate","c":"nn::bezel::WebAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d528","t":"plate","c":"guard variable for nn::bezel::WebAppletModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d530","t":"plate","c":"bex::BexAnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d538","t":"plate","c":"guard variable for bex::BexAnimationModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d540","t":"plate","c":"bex::ComAutomaticTeleport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d548","t":"plate","c":"guard variable for bex::ComAutomaticTeleport::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d550","t":"plate","c":"bex::ComEffect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d558","t":"plate","c":"guard variable for bex::ComEffect::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d560","t":"plate","c":"bex::ComFiber::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d568","t":"plate","c":"guard variable for bex::ComFiber::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d570","t":"plate","c":"bex::ComFiberLite::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d578","t":"plate","c":"guard variable for bex::ComFiberLite::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d580","t":"plate","c":"bex::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d588","t":"plate","c":"guard variable for bex::ComFxTrigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d590","t":"plate","c":"bex::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d598","t":"plate","c":"guard variable for bex::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d5a0","t":"plate","c":"bex::ComHeading::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d5a8","t":"plate","c":"guard variable for bex::ComHeading::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d5b0","t":"plate","c":"bex::DllModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5b8","t":"plate","c":"guard variable for bex::DllModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5c0","t":"plate","c":"bex::EffectModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5c8","t":"plate","c":"guard variable for bex::EffectModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5d0","t":"plate","c":"bex::FiberModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5d8","t":"plate","c":"guard variable for bex::FiberModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5e0","t":"plate","c":"bex::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5e8","t":"plate","c":"guard variable for bex::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5f0","t":"plate","c":"bex::InputModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d5f8","t":"plate","c":"guard variable for bex::InputModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d600","t":"plate","c":"bex::MainModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d608","t":"plate","c":"guard variable for bex::MainModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d610","t":"plate","c":"bex::PrimitiveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d618","t":"plate","c":"guard variable for bex::PrimitiveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d620","t":"plate","c":"bex::RandModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d628","t":"plate","c":"guard variable for bex::RandModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d630","t":"plate","c":"bex::SceneModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d638","t":"plate","c":"guard variable for bex::SceneModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d640","t":"plate","c":"bex::ToolModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d648","t":"plate","c":"guard variable for bex::ToolModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d650","t":"plate","c":"bex::UiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d658","t":"plate","c":"guard variable for bex::UiModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d660","t":"plate","c":"bex::VibrationModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d668","t":"plate","c":"guard variable for bex::VibrationModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d670","t":"plate","c":"bex::gfx::RendererModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d678","t":"plate","c":"guard variable for bex::gfx::RendererModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d680","t":"plate","c":"bex::sound::ComActor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d688","t":"plate","c":"guard variable for bex::sound::ComActor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d690","t":"plate","c":"bex::sound::SoundModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d698","t":"plate","c":"guard variable for bex::sound::SoundModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d6a0","t":"plate","c":"actor::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d6a8","t":"plate","c":"guard variable for actor::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d6b0","t":"plate","c":"actor::ComActorSixAxisSensor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6b8","t":"plate","c":"guard variable for actor::ComActorSixAxisSensor::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6c0","t":"plate","c":"actor::ComInvincibleExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6c8","t":"plate","c":"guard variable for actor::ComInvincibleExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6d0","t":"plate","c":"actor::ComStarExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6d8","t":"plate","c":"guard variable for actor::ComStarExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6e0","t":"plate","c":"actor::ComWetExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6e8","t":"plate","c":"guard variable for actor::ComWetExpression::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d6f0","t":"plate","c":"actor::RandomModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d6f8","t":"plate","c":"guard variable for actor::RandomModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d700","t":"plate","c":"bq::AccountMgrModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d708","t":"plate","c":"guard variable for bq::AccountMgrModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d710","t":"plate","c":"bq::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d718","t":"plate","c":"guard variable for bq::ActorModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d720","t":"plate","c":"bq::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d728","t":"plate","c":"guard variable for bq::ArchiveModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d730","t":"plate","c":"bq::CharacterDataModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d738","t":"plate","c":"guard variable for bq::CharacterDataModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d740","t":"plate","c":"bq::ComChainsOfWanwan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d748","t":"plate","c":"guard variable for bq::ComChainsOfWanwan::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d750","t":"plate","c":"bq::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d758","t":"plate","c":"guard variable for bq::ComGuiLayoutText::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d760","t":"plate","c":"bq::ComModelInstanceCulling::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d768","t":"plate","c":"guard variable for bq::ComModelInstanceCulling::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d770","t":"plate","c":"bq::ComSplitScreen::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d778","t":"plate","c":"guard variable for bq::ComSplitScreen::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d780","t":"plate","c":"bq::ComUiCountUpTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d788","t":"plate","c":"guard variable for bq::ComUiCountUpTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d790","t":"plate","c":"bq::ComUiCourseRecord::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d798","t":"plate","c":"guard variable for bq::ComUiCourseRecord::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7a0","t":"plate","c":"bq::ComUiDialogBox::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7a8","t":"plate","c":"guard variable for bq::ComUiDialogBox::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7b0","t":"plate","c":"bq::ComUiError::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7b8","t":"plate","c":"guard variable for bq::ComUiError::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7c0","t":"plate","c":"bq::ComUiGenericTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7c8","t":"plate","c":"guard variable for bq::ComUiGenericTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7d0","t":"plate","c":"bq::ComUiGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7d8","t":"plate","c":"guard variable for bq::ComUiGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7e0","t":"plate","c":"bq::ComUiGuide00::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7e8","t":"plate","c":"guard variable for bq::ComUiGuide00::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7f0","t":"plate","c":"bq::ComUiGuideBottomRight::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d7f8","t":"plate","c":"guard variable for bq::ComUiGuideBottomRight::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d800","t":"plate","c":"bq::ComUiGuideFixPlace::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d808","t":"plate","c":"guard variable for bq::ComUiGuideFixPlace::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d810","t":"plate","c":"bq::ComUiGuideSkip::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d818","t":"plate","c":"guard variable for bq::ComUiGuideSkip::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d820","t":"plate","c":"bq::ComUiMGTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d828","t":"plate","c":"guard variable for bq::ComUiMGTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d830","t":"plate","c":"bq::ComUiMessageWindow::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d838","t":"plate","c":"guard variable for bq::ComUiMessageWindow::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d840","t":"plate","c":"bq::ComUiNameStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d848","t":"plate","c":"guard variable for bq::ComUiNameStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d850","t":"plate","c":"bq::ComUiPersonalTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d858","t":"plate","c":"guard variable for bq::ComUiPersonalTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d860","t":"plate","c":"bq::ComUiPopGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d868","t":"plate","c":"guard variable for bq::ComUiPopGuide::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d870","t":"plate","c":"bq::ComUiRank::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d878","t":"plate","c":"guard variable for bq::ComUiRank::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d880","t":"plate","c":"bq::ComUiReentryTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d888","t":"plate","c":"guard variable for bq::ComUiReentryTelop::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d890","t":"plate","c":"bq::ComUiScore::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d898","t":"plate","c":"guard variable for bq::ComUiScore::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8a0","t":"plate","c":"bq::ComUiSpeed::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8a8","t":"plate","c":"guard variable for bq::ComUiSpeed::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8b0","t":"plate","c":"bq::ComUiStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8b8","t":"plate","c":"guard variable for bq::ComUiStatus::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8c0","t":"plate","c":"bq::ComUiTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8c8","t":"plate","c":"guard variable for bq::ComUiTimer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8d0","t":"plate","c":"bq::ComUiUnlock::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8d8","t":"plate","c":"guard variable for bq::ComUiUnlock::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d8e0","t":"plate","c":"bq::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d8e8","t":"plate","c":"guard variable for bq::FxTriggerModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d8f0","t":"plate","c":"bq::GraphicsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d8f8","t":"plate","c":"guard variable for bq::GraphicsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d900","t":"plate","c":"bq::MGSystemModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d908","t":"plate","c":"guard variable for bq::MGSystemModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d910","t":"plate","c":"bq::PlayReportModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d918","t":"plate","c":"guard variable for bq::PlayReportModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d920","t":"plate","c":"bq::SystemCallBackModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d928","t":"plate","c":"guard variable for bq::SystemCallBackModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d930","t":"plate","c":"bq::SystemModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d938","t":"plate","c":"guard variable for bq::SystemModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d940","t":"plate","c":"bq::UiSharedTextureModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d948","t":"plate","c":"guard variable for bq::UiSharedTextureModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d950","t":"plate","c":"bq::WipeModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d958","t":"plate","c":"guard variable for bq::WipeModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d960","t":"plate","c":"bq::WorkModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d968","t":"plate","c":"guard variable for bq::WorkModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d970","t":"plate","c":"bq::reward::RewardModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d978","t":"plate","c":"guard variable for bq::reward::RewardModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d980","t":"plate","c":"bq::achievement::AchievementModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d988","t":"plate","c":"guard variable for bq::achievement::AchievementModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d990","t":"plate","c":"bq::save::SaveDataMgr::s_DetailModuleEntryInvoker"}
+{"a":"710005d998","t":"plate","c":"guard variable for bq::save::SaveDataMgr::s_DetailModuleEntryInvoker"}
+{"a":"710005d9a0","t":"plate","c":"bq::flag::GameFlagModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d9a8","t":"plate","c":"guard variable for bq::flag::GameFlagModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d9b0","t":"plate","c":"nn::bezel::ComGuiLayout::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9b8","t":"plate","c":"guard variable for nn::bezel::ComGuiLayout::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9c0","t":"plate","c":"nn::bezel::ComModel::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9c8","t":"plate","c":"guard variable for nn::bezel::ComModel::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9d0","t":"plate","c":"nn::bezel::PhysicsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d9d8","t":"plate","c":"guard variable for nn::bezel::PhysicsModule::s_DetailModuleEntryInvoker"}
+{"a":"710005d9e0","t":"plate","c":"nn::bezel::ComCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9e8","t":"plate","c":"guard variable for nn::bezel::ComCollision::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9f0","t":"plate","c":"nn::bezel::ComRigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005d9f8","t":"plate","c":"guard variable for nn::bezel::ComRigger::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da00","t":"plate","c":"nn::bezel::ComAnimator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da08","t":"plate","c":"guard variable for nn::bezel::ComAnimator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da10","t":"plate","c":"nn::bezel::ComScript::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da18","t":"plate","c":"guard variable for nn::bezel::ComScript::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da20","t":"plate","c":"bq::MGResult::ComMGResultCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da28","t":"plate","c":"guard variable for bq::MGResult::ComMGResultCamera::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da30","t":"plate","c":"bq::MGResult::ComMGResultDice::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da38","t":"plate","c":"guard variable for bq::MGResult::ComMGResultDice::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da40","t":"plate","c":"bq::SingletonTemplate<mg0101::CameraMgr>::m_InstancePtr"}
+{"a":"710005da48","t":"plate","c":"bq::SingletonTemplate<mg0101::MapMgr>::m_InstancePtr"}
+{"a":"710005da50","t":"plate","c":"mg0101::ComAI::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da58","t":"plate","c":"guard variable for mg0101::ComAI::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da60","t":"plate","c":"mg0101::ComNaviGrid::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da68","t":"plate","c":"guard variable for mg0101::ComNaviGrid::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da70","t":"plate","c":"bq::SingletonTemplate<bq::WorkModule>::m_InstancePtr"}
+{"a":"710005da78","t":"plate","c":"mg0101::ComDestruction::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da80","t":"plate","c":"guard variable for mg0101::ComDestruction::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da88","t":"plate","c":"mg0101::ComPartsActivator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da90","t":"plate","c":"guard variable for mg0101::ComPartsActivator::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005da98","t":"plate","c":"mg0101::ComPlayer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005daa0","t":"plate","c":"guard variable for mg0101::ComPlayer::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005daa8","t":"plate","c":"mg0101::BarData::__ghsalwaysimport_g_Dummy_"}
+{"a":"710005dab0","t":"plate","c":"bq::SingletonTemplate<mg0101::NPCMgr>::m_InstancePtr"}
+{"a":"710005dab8","t":"plate","c":"bq::SingletonTemplate<mg0101::PlayerMgr>::m_InstancePtr"}
+{"a":"710005dfb0","t":"plate","c":"mg0101::ComRankMgr::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005dfb8","t":"plate","c":"guard variable for mg0101::ComRankMgr::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005dfc0","t":"plate","c":"nn::bezel::ComPhysicalAnimation::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005dfc8","t":"plate","c":"guard variable for nn::bezel::ComPhysicalAnimation::NnBezelDetailTickMessageBitFlagSet"}
+{"a":"710005dfd0","t":"plate","c":"bq::SingletonTemplate<mg0101::RankMgr>::m_InstancePtr"}
+{"a":"710005dfd8","t":"plate","c":"bq::SingletonTemplate<mg0101::UIMgr>::m_InstancePtr"}
+{"a":"710005dfe0","t":"plate","c":"mg0101::Scene::__ghsalwaysimport_g_Dummy_"}
+{"a":"710005dfe1","t":"plate","c":"mg0101::Scene::Params::__ghsalwaysimport_g_Dummy_"}
+{"a":"710005dfe8","t":"plate","c":"mg0101::Scene::s_scene"}
+{"a":"710005dff0","t":"plate","c":"bq::SingletonTemplate<bq::CharacterDataModule>::m_InstancePtr"}
+{"a":"7100063000","t":"plate","c":"nn::bezel::FxTriggerModule::s_IsMainModule"}
+{"a":"7100065000","t":"plate","c":"nn::bezel::NetworkNplnModule::s_IsMainModule"}
+{"a":"7100066000","t":"plate","c":"bex::ArchiveModule::s_IsMainModule"}
+{"a":"7100067000","t":"plate","c":"nn::bezel::AudioModule::s_IsMainModule"}
+{"a":"7100068000","t":"plate","c":"bex::NetworkModule::s_IsMainModule"}
+{"a":"7100069000","t":"plate","c":"bex::SaveModule::s_IsMainModule"}
+{"a":"710006a000","t":"plate","c":"bq::ObjectList::s_IsMainModule"}
+{"a":"710006b000","t":"plate","c":"nn::bezel::CoreSystem::s_IsMainModule"}
+{"a":"710006c000","t":"plate","c":"bex::HeapModule::s_IsMainModule"}
+{"a":"710006d000","t":"plate","c":"nn::bezel::AccountModule::s_IsMainModule"}
+{"a":"710006e000","t":"plate","c":"nn::bezel::AnimationModule::s_IsMainModule"}
+{"a":"710006f000","t":"plate","c":"nn::bezel::AssetModule::s_IsMainModule"}
+{"a":"7100070000","t":"plate","c":"nn::bezel::ClassicMapModule::s_IsMainModule"}
+{"a":"7100071000","t":"plate","c":"nn::bezel::DefaultViewerModule::s_IsMainModule"}
+{"a":"7100072000","t":"plate","c":"nn::bezel::DevConnectionModule::s_IsMainModule"}
+{"a":"7100073000","t":"plate","c":"nn::bezel::DevConnectorForToolsModule::s_IsMainModule"}
+{"a":"7100074000","t":"plate","c":"nn::bezel::DevHtcsModule::s_IsMainModule"}
+{"a":"7100075000","t":"plate","c":"nn::bezel::DevInterfaceModule::s_IsMainModule"}
+{"a":"7100076000","t":"plate","c":"nn::bezel::DevIpcModule::s_IsMainModule"}
+{"a":"7100077000","t":"plate","c":"nn::bezel::DevPrimitiveRendererModule::s_IsMainModule"}
+{"a":"7100078000","t":"plate","c":"nn::bezel::DevVideoRecorderModule::s_IsMainModule"}
+{"a":"7100079000","t":"plate","c":"nn::bezel::EntityDevUiModule::s_IsMainModule"}
+{"a":"710007a000","t":"plate","c":"nn::bezel::EntityModule::s_IsMainModule"}
+{"a":"710007b000","t":"plate","c":"nn::bezel::ErrorViewerModule::s_IsMainModule"}
+{"a":"710007c000","t":"plate","c":"nn::bezel::FileModule::s_IsMainModule"}
+{"a":"710007d000","t":"plate","c":"nn::bezel::FontModule::s_IsMainModule"}
+{"a":"710007e000","t":"plate","c":"nn::bezel::GraphicsCoreModule::s_IsMainModule"}
+{"a":"710007f000","t":"plate","c":"nn::bezel::GuiLayoutModule::s_IsMainModule"}
+{"a":"7100080000","t":"plate","c":"nn::bezel::HidModule::s_IsMainModule"}
+{"a":"7100081000","t":"plate","c":"nn::bezel::ImguiModule::s_IsMainModule"}
+{"a":"7100082000","t":"plate","c":"nn::bezel::JsonModule::s_IsMainModule"}
+{"a":"7100083000","t":"plate","c":"nn::bezel::LineRendererModule::s_IsMainModule"}
+{"a":"7100084000","t":"plate","c":"nn::bezel::LocalizeMessageModule::s_IsMainModule"}
+{"a":"7100085000","t":"plate","c":"nn::bezel::MemoryModule::s_IsMainModule"}
+{"a":"7100086000","t":"plate","c":"nn::bezel::ModelModule::s_IsMainModule"}
+{"a":"7100087000","t":"plate","c":"nn::bezel::MovieModule::s_IsMainModule"}
+{"a":"7100088000","t":"plate","c":"nn::bezel::MyPageAppletModule::s_IsMainModule"}
+{"a":"7100089000","t":"plate","c":"nn::bezel::NetworkModule::s_IsMainModule"}
+{"a":"710008a000","t":"plate","c":"nn::bezel::NetworkUtilModule::s_IsMainModule"}
+{"a":"710008b000","t":"plate","c":"nn::bezel::ParticleFx2Module::s_IsMainModule"}
+{"a":"710008c000","t":"plate","c":"nn::bezel::PerfDevUiModule::s_IsMainModule"}
+{"a":"710008d000","t":"plate","c":"nn::bezel::PerfModule::s_IsMainModule"}
+{"a":"710008e000","t":"plate","c":"nn::bezel::PhysicsModelModule::s_IsMainModule"}
+{"a":"710008f000","t":"plate","c":"nn::bezel::PrefabModule::s_IsMainModule"}
+{"a":"7100090000","t":"plate","c":"nn::bezel::ProfanityFilterModule::s_IsMainModule"}
+{"a":"7100091000","t":"plate","c":"nn::bezel::RenderPipelineModule::s_IsMainModule"}
+{"a":"7100092000","t":"plate","c":"nn::bezel::RttsAssetModule::s_IsMainModule"}
+{"a":"7100093000","t":"plate","c":"nn::bezel::RttsModule::s_IsMainModule"}
+{"a":"7100094000","t":"plate","c":"nn::bezel::SaveDataModule::s_IsMainModule"}
+{"a":"7100095000","t":"plate","c":"nn::bezel::ScriptModule::s_IsMainModule"}
+{"a":"7100096000","t":"plate","c":"nn::bezel::SoftwareKeyboardModule::s_IsMainModule"}
+{"a":"7100097000","t":"plate","c":"nn::bezel::WebAppletModule::s_IsMainModule"}
+{"a":"7100098000","t":"plate","c":"bex::BexAnimationModule::s_IsMainModule"}
+{"a":"7100099000","t":"plate","c":"bex::DllModule::s_IsMainModule"}
+{"a":"710009a000","t":"plate","c":"bex::EffectModule::s_IsMainModule"}
+{"a":"710009b000","t":"plate","c":"bex::FiberModule::s_IsMainModule"}
+{"a":"710009c000","t":"plate","c":"bex::FxTriggerModule::s_IsMainModule"}
+{"a":"710009d000","t":"plate","c":"bex::InputModule::s_IsMainModule"}
+{"a":"710009e000","t":"plate","c":"bex::MainModule::s_IsMainModule"}
+{"a":"710009f000","t":"plate","c":"bex::PrimitiveModule::s_IsMainModule"}
+{"a":"71000a0000","t":"plate","c":"bex::RandModule::s_IsMainModule"}
+{"a":"71000a1000","t":"plate","c":"bex::SceneModule::s_IsMainModule"}
+{"a":"71000a2000","t":"plate","c":"bex::ToolModule::s_IsMainModule"}
+{"a":"71000a3000","t":"plate","c":"bex::UiModule::s_IsMainModule"}
+{"a":"71000a4000","t":"plate","c":"bex::VibrationModule::s_IsMainModule"}
+{"a":"71000a5000","t":"plate","c":"bex::gfx::RendererModule::s_IsMainModule"}
+{"a":"71000a6000","t":"plate","c":"bex::sound::SoundModule::s_IsMainModule"}
+{"a":"71000a7000","t":"plate","c":"actor::ActorModule::s_IsMainModule"}
+{"a":"71000a8000","t":"plate","c":"actor::RandomModule::s_IsMainModule"}
+{"a":"71000a9000","t":"plate","c":"bq::AccountMgrModule::s_IsMainModule"}
+{"a":"71000aa000","t":"plate","c":"bq::ActorModule::s_IsMainModule"}
+{"a":"71000ab000","t":"plate","c":"bq::ArchiveModule::s_IsMainModule"}
+{"a":"71000ac000","t":"plate","c":"bq::CharacterDataModule::s_IsMainModule"}
+{"a":"71000ad000","t":"plate","c":"bq::FxTriggerModule::s_IsMainModule"}
+{"a":"71000ae000","t":"plate","c":"bq::GraphicsModule::s_IsMainModule"}
+{"a":"71000af000","t":"plate","c":"bq::MGSystemModule::s_IsMainModule"}
+{"a":"71000b0000","t":"plate","c":"bq::PlayReportModule::s_IsMainModule"}
+{"a":"71000b1000","t":"plate","c":"bq::SystemCallBackModule::s_IsMainModule"}
+{"a":"71000b2000","t":"plate","c":"bq::SystemModule::s_IsMainModule"}
+{"a":"71000b3000","t":"plate","c":"bq::UiSharedTextureModule::s_IsMainModule"}
+{"a":"71000b4000","t":"plate","c":"bq::WipeModule::s_IsMainModule"}
+{"a":"71000b5000","t":"plate","c":"bq::WorkModule::s_IsMainModule"}
+{"a":"71000b6000","t":"plate","c":"bq::reward::RewardModule::s_IsMainModule"}
+{"a":"71000b7000","t":"plate","c":"bq::achievement::AchievementModule::s_IsMainModule"}
+{"a":"71000b8000","t":"plate","c":"bq::save::SaveDataMgr::s_IsMainModule"}
+{"a":"71000b9000","t":"plate","c":"bq::flag::GameFlagModule::s_IsMainModule"}
+{"a":"71000ba000","t":"plate","c":"nn::bezel::PhysicsModule::s_IsMainModule"}
+{"a":"71000bc000","t":"plate","c":"nn::bezel::GraphicsCoreModule::g_Module"}
+{"a":"71000d2000","t":"plate","c":"vtable for nn::bezel::Component"}
+{"a":"71000d2000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000d3000","t":"plate","c":"nn::util::Vector3f::ConstantZero"}
+{"a":"71000d5000","t":"plate","c":"bex::RandModule::g_Module"}
+{"a":"71000df000","t":"plate","c":"nn::bezel::detail::RcArena::g_pInstance"}
+{"a":"71000e4000","t":"plate","c":"std::length_error::~length_error()"}
+{"a":"71000e9000","t":"plate","c":"vtable for std::length_error"}
+{"a":"71000e9000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000ea000","t":"plate","c":"nn::bezel::Component::DestroyImpl()"}
+{"a":"71000eb000","t":"plate","c":"nn::bezel::Component::GetDestroyableNodeImpl()"}
+{"a":"71000ec000","t":"plate","c":"vtable for __cxxabiv1::__class_type_info"}
+{"a":"71000ec000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000ed000","t":"plate","c":"vtable for __cxxabiv1::__si_class_type_info"}
+{"a":"71000ed000","t":"eol","c":"WARNING: Unable to apply demangled Address Table"}
+{"a":"71000f0000","t":"plate","c":"nn::bezel::EntityModule::g_Module"}
+{"a":"71000fd000","t":"plate","c":"nn::util::Quaternion::ConstantIdentity"}

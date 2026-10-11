@@ -1,0 +1,7 @@
+{"a":"7100faf560","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §4.2\n역할: 제한된 transport 재송신. transport +0x13e==2일 때 0x7100fb4fa0 호출\n[미확정] 상태값 의미"}
+{"a":"7100fb09fc","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.3\n역할: transport 송신 경로 중간(→ 0x7100fb4300)"}
+{"a":"7100fb166c","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.3\n역할: transport 전송 길이 한도(Pia 버퍼 크기보다 더 제한)"}
+{"a":"7100fb4180","t":"plate","c":"[판독] 2026-10-11 / md: web/docs/engine/12_online_sync.md §4.2\n역할: queue 항목 재송신(→ 0x7100fb4300 wrapper type3)"}
+{"a":"7100fb4300","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §3.3·4.2\n역할: 9 B transport wrapper를 붙여 virtual +0x88/+0x90으로 송신\n형식: +0 type:u8, +1 sequence:u16 BE, +3 인자8:u16 BE, +5 bodyLen:u16 BE, +7 인자7:u16 BE\n주의: wrapper type과 Pia 본문 type은 다른 번호 공간\n[미확정] 인자7/8 의미, 외부 UDP/IP envelope·ACK/retry 정책"}
+{"a":"7100fb4fa0","t":"plate","c":"[미확정] 2026-10-11 / md: web/docs/engine/12_online_sync.md §4.2\n역할: 재송신 queue 처리\n분기: peer +0x93==3, queue stride 0x59c의 marker +0x59b==0 항목을 0x7100fb4180 → 0x7100fb4300으로 wrapper type3 재송신 후 marker 1\n[미확정] 상태값 의미. 정상 frame 누락 재전송·재접속으로 확대하지 않음"}
+{"a":"7100fc7c94","t":"plate","c":"nn::pia::Result::TEMPNAMEPLACEHOLDERVALUE(nn::pia::Result const&)"}

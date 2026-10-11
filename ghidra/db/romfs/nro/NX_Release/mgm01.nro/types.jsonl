@@ -1,0 +1,93 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/bex/FiberLite","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/Ducking","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/FadeTimePreset","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/Group","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ArchiveModule/Category","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComMatter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiDialogBox/UiDialogBoxTextType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComUiGuide00","k":"struct","size":128,"pack":"off","align":"default","f":[{"o":56,"l":4,"t":"/int","n":"state","c":"0 대기·1 in·2 idle·3 out·4 끝"},{"o":64,"l":4,"t":"/int","n":"alignment","c":"정렬 index 0~2, 기본1"},{"o":124,"l":4,"t":"/int","n":"count","c":"안내 칸 수 1~4, 기본1"}],"desc":"SYNC_FROM main:/Demangler/bq/ComUiGuide00\n[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.1\n+0x136 은 생성 0·In 1 로 쓰이나 소유 객체(Guide/레이아웃) 표기가 모호해 넣지 않음. layout+0x135=(count>1)"}
+{"p":"/Demangler/bq/ComUiGuide00/UiGuide00_ID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComUiGuide00/UiGuide00_Pos","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComUiScrollBar","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/DataBaseJsonReader","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/GameRule","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/GameStage","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MatterType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MinigameID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MinigameModeID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MinigameModeScene","k":"struct","size":324,"pack":"off","align":"default","f":[{"o":232,"l":8,"t":"/pointer","n":"uiPauseEnableFiber","c":"FiberLite*"},{"o":240,"l":24,"t":"/byte[24]","n":"messageWindowEntity","c":"WeakHandle<Entity> \"MessageWindow\""},{"o":264,"l":4,"t":"/int","n":"messageState","c":"−1 만듦, 0 문구 준비됨"},{"o":272,"l":8,"t":"/pointer","n":"dailyPackBegin","c":"데일리 팩 목록 begin(항목 smart pointer stride 0x10)"},{"o":280,"l":8,"t":"/pointer","n":"dailyPackEnd","c":"데일리 팩 목록 end"},{"o":296,"l":8,"t":"/pointer","n":"dailyComboBegin","c":"데일리 조합 목록 begin(stride 0x10)"},{"o":304,"l":8,"t":"/pointer","n":"dailyComboEnd","c":"데일리 조합 목록 end"},{"o":320,"l":4,"t":"/int","n":"minigameModeId"}],"desc":"SYNC_FROM main:/Demangler/bq/MinigameModeScene\n[판독] 2026-10-11 / md: web/docs/shell/mgm_common.md §4.3\n+0x108 reader 미확정. 전체 크기 미확정.\n\n[판독] 2026-10-11 / md: web/docs/shell/mgm_modes.md §4.1\nmain @0x7100361e00/@0x7100362860/@0x7100362bcc 에서 관찰. 전체 크기 미확정."}
+{"p":"/Demangler/bq/MinigameModeScene/MGM_BGM_KIND","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MinigameModeWork/EntranceStartPoint","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/NonPlayerCharacterID","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/PlayerList","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/RecordMode","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/RhythmMode","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/UiGameControllerConfig","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/WipeModule/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/achievement/ID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/FLAG","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/GameFlag","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/mgm/ComMinigameModeActionRequestPerformer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/mgm/ComUiMinigameModeLayoutCommon","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/mgm/ComUiMinigameModeWindowCommon","k":"struct","size":132,"pack":"off","align":"default","f":[{"o":56,"l":1,"t":"/byte","n":"opening","c":"in 재생 중"},{"o":57,"l":1,"t":"/byte","n":"closing","c":"out 진행 중(다음 In 까지 1)"},{"o":64,"l":8,"t":"/pointer","n":"windowAnime","c":"char*[3] {in, idle, out}"},{"o":72,"l":24,"t":"/byte[24]","n":"animeSets","c":"vector<MenuAnime>(0x60 B 씩), 0번 = 기본"},{"o":96,"l":24,"t":"/byte[24]","n":"grid","c":"vector<vector<Item>>, 행 0x18 B, Item 0x28 B"},{"o":120,"l":1,"t":"/byte","n":"wrap"},{"o":121,"l":1,"t":"/byte","n":"checkEnable"},{"o":124,"l":4,"t":"/int","n":"cursorCol","c":"−1 없음"},{"o":128,"l":4,"t":"/int","n":"cursorRow","c":"−1 없음"}],"desc":"SYNC_FROM main:/Demangler/bq/mgm/ComUiMinigameModeWindowCommon\n[판독] 2026-10-11 / md: web/docs/shell/mgm_common.md §4.1\n필드 이름은 [웹 이름]. ComUiBase 파생. 전체 크기 미확정."}
+{"p":"/Demangler/bq/mgm/ComUiMinigameModeWindowCommon/MenuAnime","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/reward/RewardMode","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mgm01/Scene","k":"struct","size":9928,"pack":"off","align":"default","f":[{"o":528,"l":4,"t":"/int","n":"filterEnum","c":"−1"},{"o":532,"l":4,"t":"/int","n":"filterIndex","c":"−1"},{"o":536,"l":24,"t":"/byte[24]","n":"mgJsonData","c":"vector<MgJsonData>"},{"o":560,"l":24,"t":"/byte[24]","n":"mgData","c":"vector<MgData>, 152 slots"},{"o":584,"l":24,"t":"/byte[24]","n":"filterSource","c":"필터 원형 vector"},{"o":608,"l":24,"t":"/byte[24]","n":"filterView","c":"표시용 vector"},{"o":632,"l":4,"t":"/int","n":"selectedMinigameId","c":"−1"},{"o":636,"l":4,"t":"/int","n":"teamSelect"},{"o":640,"l":1,"t":"/byte","n":"endless"},{"o":641,"l":1,"t":"/byte","n":"resume"},{"o":644,"l":4,"t":"/int","n":"cpu"},{"o":648,"l":4,"t":"/int","n":"rhythmDifficulty"},{"o":656,"l":8,"t":"/pointer","n":"motionFiber"},{"o":664,"l":8,"t":"/pointer","n":"newIconFiber"},{"o":672,"l":1,"t":"/byte","n":"newObserveStart"},{"o":673,"l":1,"t":"/byte","n":"newObserveStop"},{"o":676,"l":4,"t":"/int","n":"newObserveId","c":"−1"},{"o":680,"l":4,"t":"/int","n":"newObserveIndex"},{"o":684,"l":4,"t":"/int","n":"humanNumCache","c":"1"},{"o":688,"l":24,"t":"/byte[24]","n":"mgRecords","c":"vector<MgRecord shared handle>"},{"o":1584,"l":8,"t":"/pointer","n":"announceFiber"},{"o":1592,"l":1,"t":"/byte","n":"announceSkip"},{"o":1624,"l":2688,"t":"/byte[2688]","n":"listItems","c":"112 UI item handle, stride 0x18"},{"o":9712,"l":4,"t":"/int","n":"lastListType","c":"−1"},{"o":9792,"l":4,"t":"/int","n":"historyScroll"},{"o":9824,"l":8,"t":"/pointer","n":"teamOrderData","c":"TeamOrderData*"},{"o":9832,"l":4,"t":"/int","n":"settingCursor"},{"o":9836,"l":1,"t":"/byte","n":"favoriteDirty"},{"o":9840,"l":4,"t":"/int","n":"workTeam"},{"o":9844,"l":4,"t":"/int","n":"workCpu"},{"o":9848,"l":4,"t":"/int","n":"workMode"},{"o":9852,"l":4,"t":"/int","n":"workRhythm"},{"o":9856,"l":4,"t":"/int","n":"modeRulePane","c":"−1 hidden"},{"o":9860,"l":4,"t":"/int","n":"cpuRulePane","c":"−1 hidden"},{"o":9864,"l":4,"t":"/int","n":"rhythmRulePane","c":"−1 hidden"},{"o":9920,"l":4,"t":"/int","n":"nextFlowState"},{"o":9924,"l":4,"t":"/int","n":"prevFlowState"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §4.1\n필드 이름은 의미 설명용(정식 멤버명 아님). +0x300 ARP scratch·+0x10d8 잠금 안내·+0x25f8/+0x2610/+0x2628 승패 표·+0x26a8 guide handle 은 크기 미기재로 필드에서 뺌."}
+{"p":"/Demangler/mgm01/Scene/ArpListRange","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mgm01/Scene/MgData","k":"struct","size":32,"pack":"off","align":"default","f":[{"o":0,"l":1,"t":"/byte","n":"available"},{"o":8,"l":8,"t":"/pointer","n":"json","c":"MgJsonData*"},{"o":16,"l":4,"t":"/int","n":"id"},{"o":20,"l":4,"t":"/int","n":"lockReason","c":"−1 이면 unlocked"},{"o":24,"l":4,"t":"/int","n":"recordKind"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §4.2"}
+{"p":"/Demangler/mgm01/Scene/MgFilterContainer","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mgm01/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/mgm01/Scene/eLockType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/mgm01/Scene/eMgFilter","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/AnimationTransitionType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/GameControllerStyle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/JsonReader","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector2f","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/Vector3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector4f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<mgm01::Scene::MGRecord*,std::shared_ptr<mgm01::Scene::MGRecord>::__shared_ptr_default_delete<mgm01::Scene::MGRecord,mgm01::Scene::MGRecord>,std::allocator<mgm01::Scene::MGRecord>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_weak_count","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/bad_function_call","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/exception","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/function","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/shared_ptr","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/type_info","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/vector","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/mpj/mgm01/MgRecord","k":"struct","size":52,"pack":"off","align":"default","f":[{"o":0,"l":32,"t":"/char[32]","n":"mgName"},{"o":32,"l":4,"t":"/undefined4","n":"stage"},{"o":36,"l":4,"t":"/undefined4","n":"mode"},{"o":40,"l":4,"t":"/undefined4","n":"format"},{"o":44,"l":4,"t":"/undefined4","n":"sortOrder"},{"o":48,"l":4,"t":"/undefined4","n":"initialRecord"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §4.2"}
+{"p":"/mpj/mgm01/Scene/MgFilterJsonData","k":"struct","size":68,"pack":"off","align":"default","f":[{"o":0,"l":16,"t":"/char[16]","n":"filterName"},{"o":16,"l":4,"t":"/int","n":"sortIdx"},{"o":20,"l":48,"t":"/char[48]","n":"labelName"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §4.2"}
+{"p":"/mpj/mgm01/Scene/MgJsonData","k":"struct","size":72,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"mgName"},{"o":8,"l":52,"t":"/int[13]","n":"genre","c":"장르 13개 column"},{"o":60,"l":4,"t":"/undefined4","n":"setLock"},{"o":64,"l":4,"t":"/undefined4","n":"soloPlayOnly"},{"o":68,"l":4,"t":"/undefined4","n":"offlinePlayOnly"}],"desc":"ST_PARTIAL\n[판독] 2026-10-11 / md: web/docs/shell/mgm01_freeplay.md §4.2"}
+{"p":"/nn/bezel/ComGuiLayout","k":"struct","size":416,"pack":"off","align":"default","f":[{"o":304,"l":4,"t":"/int","n":"renderPassId","c":"SetRenderPassId 저장값. 생성 시 −1 뒤 config+0x24 복사"},{"o":328,"l":8,"t":"/undefined8","n":"renderTargetRef_148","c":"SetRenderTarget의 RT 참조"},{"o":336,"l":8,"t":"/undefined8","n":"renderTargetRef_150","c":"SetRenderTarget의 RT 참조"},{"o":352,"l":64,"t":"/byte[64]","n":"uiProjection","c":"UI 투영 저장(+0x160..0x19f), RT 크기로 구성"}],"desc":"SYNC_FROM main:/nn/bezel/ComGuiLayout\n[판독] 2026-10-11 / md: web/docs/engine/render_unify.md §3.3·4·7.2\n+0x134: callback 통지 gate(FUN_710079f570, 길이 미기재). pass ID 증거 아님.\n+0x48/+0x50/+0x58: FUN_710079e96c가 extension weak handle pointer/node/generation 저장(대상 객체가 layout인지 문서에 명시되지 않아 필드로 넣지 않음).\n[미확정] renderPassId −1 sentinel 의미·pre-post/post/TopMost 대응."}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/std/vector<mgm01::Scene::MgData_const*,bex::HeapModule::Allocator_vector<mgm01::Scene::MgData_const*>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<mgm01::Scene::MgFilterContainer,bex::HeapModule::Allocator_vector<mgm01::Scene::MgFilterContainer>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<std::shared_ptr<mgm01::Scene::MGRecord>,bex::HeapModule::Allocator_vector<std::shared_ptr<mgm01::Scene::MGRecord>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/stdarg.h/__gnuc_va_list","k":"typedef","t":"/void *","desc":"pointer to void"}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

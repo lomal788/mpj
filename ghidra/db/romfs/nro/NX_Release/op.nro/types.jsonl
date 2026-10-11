@@ -1,0 +1,152 @@
+{"p":"/Demangler/!_anon_funcs_/_func_Property_ptr","k":"funcdef","cc":"unknown","ret":"/Demangler/rtti/Property *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_bool_void_ptr_Property_ptr_Typeinfo_ptr_uint","k":"funcdef","cc":"unknown","ret":"/bool","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/Typeinfo *"],["","/uint"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_ptr","k":"funcdef","cc":"unknown","ret":"/void *","params":[],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/!_anon_funcs_/_func_void_void_ptr_Property_ptr_PropertyList_ptr","k":"funcdef","cc":"unknown","ret":"/void","params":[["","/void *"],["","/Demangler/rtti/Property *"],["","/Demangler/rtti/PropertyList *"]],"varargs":false,"noreturn":false,"desc":"Function Signature Data Type"}
+{"p":"/Demangler/actor/ActorCollisionCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/actor/ActorHitShapeCreateArg","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/actor/AnimatinType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/actor/MotionArg","k":"struct","size":80,"pack":"off","align":"default","f":[{"o":0,"l":24,"t":"/byte[24]","n":"name","c":"std::string"},{"o":24,"l":32,"t":"/byte[32]","n":"nameHash","c":"StringViewHashPair{vt, ptr, len, hash}, FNV-1a 64"},{"o":56,"l":1,"t":"/byte","n":"forceRestart","c":"0 이면 같은 해시 재생 요청 무시"},{"o":57,"l":1,"t":"/byte","n":"randomStartFrame","c":"1 이면 시작 프레임 난수"},{"o":58,"l":1,"t":"/byte","n":"speedValid","c":"1 이면 슬롯 속도 = speed"},{"o":60,"l":4,"t":"/float","n":"startFrame"},{"o":64,"l":4,"t":"/float","n":"speed"},{"o":68,"l":4,"t":"/float","n":"blendTime","c":"초. −FLT_MAX = 기본(리스너가 0.1)"},{"o":72,"l":4,"t":"/int","n":"transitionType","c":"nn::bezel::AnimationTransitionType, 4 = 크로스페이드"},{"o":76,"l":1,"t":"/byte","n":"transitionDefaultsInitialized","c":"Play(name) 전이 기본값 래치(설명용 이름)"}],"desc":"SYNC_FROM main:/Demangler/actor/MotionArg\n[판독] 2026-10-11 / md: web/docs/engine/09_character.md §4.3"}
+{"p":"/Demangler/bex/HeapModule/HeapID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/NetworkGameScene/SyncCond","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/PlayerID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/SceneTickCount","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/sound/Group","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bex/vector","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComMatter","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUi","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiBase","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComUiGuide00","k":"struct","size":128,"pack":"off","align":"default","f":[{"o":56,"l":4,"t":"/int","n":"state","c":"0 대기·1 in·2 idle·3 out·4 끝"},{"o":64,"l":4,"t":"/int","n":"alignment","c":"정렬 index 0~2, 기본1"},{"o":124,"l":4,"t":"/int","n":"count","c":"안내 칸 수 1~4, 기본1"}],"desc":"SYNC_FROM main:/Demangler/bq/ComUiGuide00\n[판독] 2026-10-11 / md: web/docs/engine/ui_parts_catalog.md §6.1\n+0x136 은 생성 0·In 1 로 쓰이나 소유 객체(Guide/레이아웃) 표기가 모호해 넣지 않음. layout+0x135=(count>1)"}
+{"p":"/Demangler/bq/ComUiGuide00/UiGuide00_Pos","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ComUiMessageWindow","k":"struct","size":1312,"pack":"off","align":"default","f":[{"o":40,"l":4,"t":"/int","n":"state","c":"−1 쉼, 0 열기, 1 페이지, 2 끝(창 남음), 3 닫기"},{"o":44,"l":4,"t":"/int","n":"sub","c":"상태 안 하위 단계"},{"o":56,"l":16,"t":"/byte[16]","n":"layoutEntity","c":"WeakHandle<Entity> 현재 창 레이아웃 엔티티(ComUi)"},{"o":128,"l":4,"t":"/int","n":"windowType","c":"0 Normal, 1 NormalSmall, 2 Name, 3 NoneChara, 4 Talking, 5 Announce, 6 Subtitle, 7 Model"},{"o":184,"l":4,"t":"/int","n":"owner","c":"넘김 입력 플레이어 한 명(−1 = 목록 +0x88 사용)"},{"o":188,"l":4,"t":"/int","n":"talkSkipPlayer","c":"−1 이 아니면 페이지 시작 때 owner 를 이 값으로"},{"o":192,"l":4,"t":"/int","n":"pcId","c":"화자 PC 번호"},{"o":196,"l":4,"t":"/int","n":"npcId","c":"화자 NPC 번호"},{"o":200,"l":4,"t":"/uint","n":"nextMask","c":"넘김·스킵 버튼 마스크, 기본 0x1(A)"},{"o":204,"l":4,"t":"/int","n":"place","c":"배치 0..8, 9 = Default, −1 없음"},{"o":224,"l":12,"t":"/float[3]","n":"absPos","c":"절대 위치(0 이 아니면 덮어씀)"},{"o":240,"l":12,"t":"/float[3]","n":"pageOffset","c":"페이지 오프셋(ATR OffsetX/Y)"},{"o":256,"l":12,"t":"/float[3]","n":"userOffset","c":"SetOffset 값"},{"o":304,"l":8,"t":"/pointer","n":"text","c":"글자 표시 객체(본문·그림자)"},{"o":1064,"l":4,"t":"/int","n":"page","c":"현재 페이지 번호"},{"o":1072,"l":4,"t":"/uint","n":"choiceCount","c":"선택지 수(≤4)"},{"o":1076,"l":4,"t":"/int","n":"choiceCursor","c":"선택지 커서"},{"o":1084,"l":4,"t":"/int","n":"initialChoice","c":"기본 커서(직접 대입, dialog_box.md 6.3)"},{"o":1284,"l":1,"t":"/byte","n":"padDisabled","c":"패드 입력 막음"},{"o":1285,"l":1,"t":"/byte","n":"noNextWait","c":"넘김 대기 안 함(DisableNextKeyWait)"},{"o":1286,"l":1,"t":"/byte","n":"nextRequested","c":"RequestNextMessage 요청"},{"o":1287,"l":1,"t":"/byte","n":"skipRequested","c":"RequestNextMessage(b) 스킵 요청"},{"o":1288,"l":1,"t":"/byte","n":"nextInputWait","c":"IsNextInputWait"},{"o":1290,"l":1,"t":"/byte","n":"isOut","c":"IsOut"},{"o":1291,"l":1,"t":"/byte","n":"choice","c":"선택지 페이지"},{"o":1299,"l":1,"t":"/byte","n":"freshOpen","c":"새로 열림(첫 페이지 보이스 판단)"},{"o":1302,"l":1,"t":"/byte","n":"arrowWhenDisabled","c":"패드 막혀도 화살표 보이기"},{"o":1304,"l":4,"t":"/float","n":"inputLock","c":"페이지 시작 때 0.2"},{"o":1308,"l":4,"t":"/float","n":"comTimer","c":"페이지 시작 때 0.6667"}],"desc":"SYNC_FROM main:/Demangler/bq/ComUiMessageWindow\n[판독] 2026-10-11 / md: web/docs/shell/message_window.md §4.1·6.2\n필드는 4.1 표 [판독]. +0x43c 는 dialog_box.md 6.3 어셈블리(str w19,[x0,#0x43c])로 확정된 기본 커서.\n넣지 않은 것: +0x88..0x98 owners vector, +0x140..0x148 pages vector(0x30 B 요소) — 표에 범위만 있고 크기·형식 미기재.\n글로만: +0x136 레이아웃 보이기, +0x42c 페이지 점프 요청, +0x438 선택 결과, +0x440 COM 목표 칸([미확정] writer), +0x448 안내 결과, +0x509 빨리 감기 조건, +0x50d 선택형 원천, +0x50e 안내 버튼, +0x510 끝에 창 남김([추정] SetManualClose), +0x511 로컬 사람 소유자 있음, +0x514 빨리 감기 막음, +0x515 선택지 취소 가능, +0x534/+0x538 Model 대기 모션 타이머, +0x760 넘김 콜백, +0x790 닫힘 콜백 — 형식 미기재.\n[미확정] +0x509·+0x510·+0x514 의 설정 함수."}
+{"p":"/Demangler/bq/ComponentTemplate<op::ComBalloon,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComponentTemplate<op::ComNPC,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComponentTemplate<op::ComPC,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/ComponentTemplate<op::ComPos,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/DataBaseJsonReader","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/LytPlace","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/MatterCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MatterType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/bq/MenuReturnCode","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/NonPlayerCharacterID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/ObjectID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/PlayerCharacterID","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneBase","k":"struct","size":229,"pack":"off","align":"default","f":[{"o":16,"l":4,"t":"/uint","n":"pauseLevel","c":"bex::SceneBase, 기본 5"},{"o":56,"l":4,"t":"/int","n":"mainStep","c":"UpdateMain 단계"},{"o":60,"l":4,"t":"/int","n":"loadedStep","c":"OnLoaded 단계"},{"o":64,"l":24,"t":"/byte[24]","n":"flowFiber","c":"핸들 {ptr, node, gen}"},{"o":88,"l":4,"t":"/undefined4","n":"sceneKind","c":"아카이브 로드 분기"},{"o":96,"l":24,"t":"/byte[24]","n":"sceneRoot","c":"SceneRoot 엔티티 핸들"},{"o":192,"l":4,"t":"/int","n":"request","c":"−1 없음, 0 Exchange, 1 Call, 2 Return, 3 Reboot"},{"o":225,"l":1,"t":"/byte","n":"flowFiberFlag"},{"o":226,"l":1,"t":"/byte","n":"sessionEntry"},{"o":227,"l":1,"t":"/byte","n":"useFade","c":"UpdateMain 단계 2 FadeIn·단계 4 FadeOut 사용 여부. SetFadeEnable(false)로 끔"},{"o":228,"l":1,"t":"/byte","n":"firstBegin"}],"desc":"SYNC_FROM main:/Demangler/bq/SceneBase\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.10·5.2\n생성 @0x71002c9bd4. 크기 모름(마지막 필드 끝까지)\n\n[판독] 2026-10-11 / md: web/docs/engine/15_transition.md §1\n\n[판독] 2026-10-11 / md: web/docs/engine/18_scene_work.md §4.1\n+0x50 weak handle gen(크기 미기재), +0xc8 std::string requestName(크기 미기재)은 필드로 넣지 않음. +0x38/+0x3c 의 크기는 인접 offset 기준"}
+{"p":"/Demangler/bq/SceneBase/ModuleTiming","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/SceneCategory","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/WipeModule/WipeType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/bq/flag/GameFlag","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/AnimationTransitionArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/AnimationTransitionType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/AttachmentSrt","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/Component","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/CreateEntityParams","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/EntityForEachCommand","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/EntityForEachRange","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/EntityState","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/Function","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/GameControllerFlags","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/GameControllerStyle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/HandlePtr","k":"struct","size":24,"pack":"off","align":"default","f":[{"o":0,"l":8,"t":"/pointer","n":"ptr"},{"o":8,"l":8,"t":"/pointer","n":"node","c":"RcArena 노드, word0 상위 32비트 = 세대"},{"o":16,"l":4,"t":"/uint","n":"gen"}],"desc":"SYNC_FROM main:/Demangler/nn/bezel/HandlePtr\n[판독] 2026-10-11 / md: web/docs/engine/01_core.md §4.11\n유효 조건 node != 0 && gen == (u32)(node->word0 >> 32) && ptr != 0. 대상이 사라지면 세대 +1"}
+{"p":"/Demangler/nn/bezel/HandleSource<op::Sequence>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/JsonReader","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/Material","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/MaterialHandle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/MaterialParam","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/Message","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/ModelCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/MovieCreateParams","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/PauseLevel","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/RenderTargetCreateArg","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/StringViewHashPair","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/UniqueHandlePtr<nn::bezel::RenderTarget>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/bezel/WeakHandle","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/bezel/detail/TypeDesc","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/g3d/TexSrt","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/os/LightEventType","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/ui2d/Size","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Color4f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Float2","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/IFunction","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/IFunction<nn::bezel::EntityForEachCommand(nn::bezel::HandlePtr<bex::gfx::ComDirectionalLight>const&)>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/MatrixRowMajor4x3f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Quaternion","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/Vector3f","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/nn/util/Vector4f","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/basic_string_view","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/nn/util/detail/Function<nn::bezel::EntityForEachCommand(nn::bezel::HandlePtr<bex::gfx::ComDirectionalLight>const&),actor::Util::FindChildrenComponent<bex::gfx::ComDirectionalLight>(nn::bezel::HandlePtr<nn::bezel::Entity>const&,bool)::{lambda(nn::bezel::HandlePtr<bex::gfx::ComDirectionalLight>const&)#1},void>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/BalloonManager00","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/BalloonManager01","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/CameraManager","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/CharacterData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/CharacterData/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/CharacterManager","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/CharacterPosManager","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComBalloon","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComBalloonChara","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComCamera","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComListener","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComNPC","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComPC","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComPos","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComUiTitle","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ComUiTitleGuide","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/MapManager00","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/MapManager00/MapModel","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/MapManager00/MapStructureParam","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/ModelBase","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/Scene","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/Scene/Params","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/Sequence","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/SoundData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/SoundData/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/SoundData/SoundDataType","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/op/SoundManager","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/TitleCharacterData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/TitleCharacterData/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/UiData","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/UiData/Impl","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/op/UiManager","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Class","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Property","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/PropertyList","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Type","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Typeinfo","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/rtti/Value","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__bit_iterator","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/__shared_ptr_pointer<bex::vector<op::JsonOpCharacterData>*,std::shared_ptr<bex::vector<op::JsonOpCharacterData>>::__shared_ptr_default_delete<bex::vector<op::JsonOpCharacterData>,bex::vector<op::JsonOpCharacterData>>,std::allocator<bex::vector<op::JsonOpCharacterData>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<bex::vector<op::JsonOpSoundData>*,std::shared_ptr<bex::vector<op::JsonOpSoundData>>::__shared_ptr_default_delete<bex::vector<op::JsonOpSoundData>,bex::vector<op::JsonOpSoundData>>,std::allocator<bex::vector<op::JsonOpSoundData>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<bex::vector<op::JsonOpTitleCharacterData>*,std::shared_ptr<bex::vector<op::JsonOpTitleCharacterData>>::__shared_ptr_default_delete<bex::vector<op::JsonOpTitleCharacterData>,bex::vector<op::JsonOpTitleCharacterData>>,std::allocator<bex::vector<op::JsonOpTitleCharacterData>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<bex::vector<op::JsonOpUiMessageData>*,std::shared_ptr<bex::vector<op::JsonOpUiMessageData>>::__shared_ptr_default_delete<bex::vector<op::JsonOpUiMessageData>,bex::vector<op::JsonOpUiMessageData>>,std::allocator<bex::vector<op::JsonOpUiMessageData>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_ptr_pointer<bex::vector<op::JsonOpUiTitleData>*,std::shared_ptr<bex::vector<op::JsonOpUiTitleData>>::__shared_ptr_default_delete<bex::vector<op::JsonOpUiTitleData>,bex::vector<op::JsonOpUiTitleData>>,std::allocator<bex::vector<op::JsonOpUiTitleData>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__shared_weak_count","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tree_end_node","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tree_iterator","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/__tree_node","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/__tree_node_base","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/basic_string","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/enable_if<__is_cpp17_forward_iterator<std::__bit_iterator<std::vector<bool,bex::HeapModule::Allocator_vector<bool>>,false,0ul>>::value,void>/type","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/Demangler/std/length_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/logic_error","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/out_of_range","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/piecewise_construct_t","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/tuple","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/type_info","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Structure"}
+{"p":"/Demangler/std/unique_ptr","k":"typedef","t":"/undefined","desc":"Undefined Byte"}
+{"p":"/bex/ComponentUtil","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<op::ComBalloonChara,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<op::ComCamera,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<op::ComListener,nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/bq/ComponentTemplate<op::ComUiTitleGuide,bq::ComUiBase>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/Entity","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<nn::bezel::Component>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/nn/bezel/HandleSource<op::ModelBase>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/ossl_typ.h/EVP_PKEY_CTX","k":"typedef","t":"/ossl_typ.h/evp_pkey_ctx_st"}
+{"p":"/ossl_typ.h/evp_pkey_ctx_st","k":"struct","size":0,"pack":"default","align":"default","f":[]}
+{"p":"/std/__tree<std::__value_type<bq::NonPlayerCharacterID,nn::bezel::WeakHandle<nn::bezel::Entity>>,std::__map_value_compare<bq::NonPlayerCharacterID,std::__value_type<bq::NonPlayerCharacterID,nn::bezel::WeakHandle<nn::bezel::Entity>>,std::less<bq::NonPlayerCharacterID>,true>,bex::HeapModule::Allocator_multimap<std::__value_type<bq::NonPlayerCharacterID,nn::bezel::WeakHandle<nn::bezel::Entity>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<bq::PlayerCharacterID,nn::bezel::WeakHandle<nn::bezel::Entity>>,std::__map_value_compare<bq::PlayerCharacterID,std::__value_type<bq::PlayerCharacterID,nn::bezel::WeakHandle<nn::bezel::Entity>>,std::less<bq::PlayerCharacterID>,true>,bex::HeapModule::Allocator_multimap<std::__value_type<bq::PlayerCharacterID,nn::bezel::WeakHandle<nn::bezel::Entity>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,nn::bezel::WeakHandle<bex::sound::SoundHandle>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,nn::bezel::WeakHandle<bex::sound::SoundHandle>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,bex::HeapModule::Allocator_multimap<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,nn::bezel::WeakHandle<bex::sound::SoundHandle>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/__tree<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::unique_ptr<op::MapManager00::MapModel,std::default_delete<op::MapManager00::MapModel>>>,std::__map_value_compare<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::unique_ptr<op::MapManager00::MapModel,std::default_delete<op::MapManager00::MapModel>>>,std::less<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>>,true>,std::allocator<std::__value_type<std::basic_string<char,std::char_traits<char>,bex::HeapModule::Allocator_string<char>>,std::unique_ptr<op::MapManager00::MapModel,std::default_delete<op::MapManager00::MapModel>>>>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/std/vector<bool,bex::HeapModule::Allocator_vector<bool>>","k":"struct","size":0,"pack":"off","align":"default","f":[],"desc":"PlaceHolder Class Structure"}
+{"p":"/stddef.h/size_t","k":"typedef","t":"/ulong","desc":"Unsigned Long Integer (compiler-specific size)"}

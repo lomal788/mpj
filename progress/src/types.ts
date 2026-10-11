@@ -11,8 +11,10 @@ export interface Stats {
 export interface Category extends Stats {id: string; name: string}
 export interface Progress {
   version: string; stats: Stats; categories: Category[]; documents: number; linked_documents: number;
-  modules: number; identified_minigames: number; scan_seconds: number; cache_hits: number; cache_misses: number;
-  denominators: Record<string, string>; minigames: Record<string, {name_ko: string}>;
+  modules: number; identified_minigames?: number; scan_seconds: number; cache_hits: number; cache_misses: number;
+  denominators: Record<string, string>; minigames?: Record<string, {name_ko: string}>;
+  groups?: Record<string, {name: string; deps?: number; deps_complete?: number}>;
+  source?: 'ghidra' | 'md'; title?: string; labels?: Record<Mode, Record<string, string>>; cards?: [string, number, string, boolean][];
   audit: {inventory_matches: boolean; indexes: {module: string; unique: number}[]; unmapped_sources: unknown[]};
 }
 export interface Link {path: string; line?: number; reason?: string; confidence?: number; heading?: string; excerpt?: string; state?: string; document?: string}

@@ -15,7 +15,7 @@ const escape = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, x => 
 const number = (value: number | undefined) => (value ?? 0).toLocaleString('ko-KR');
 const percent = (n: number | null | undefined) => n == null ? '—' : `${n.toFixed(1)}%`;
 const colors: Record<Status, string> = {complete:'#92d263',partial:'#bfa355',none:'#344238',candidate:'#4e8aae',pending:'#b67257',tested:'#61a6c5',verified:'#9b77c9'};
-const labels: Record<Mode, Record<string, string>> = {
+let labels: Record<Mode, Record<string, string>> = {
   analysis: {complete:'분석 완료',partial:'부분 판독',none:'미분석',candidate:'문서 연결',pending:'판정 대기'},
   implementation: {complete:'완료 근거 확인',partial:'부분 구현 근거',none:'대응 미확인',candidate:'관련 코드 후보',pending:'판정 대기'},
   verification: {verified:'원본 비교 검증',tested:'자동 테스트 통과',none:'미검증'}
@@ -46,6 +46,10 @@ async function api<T>(route: string, query: Record<string,string> = {}): Promise
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? `HTTP ${response.status}`);
   return data as T;
+}
+
+function groups(): Record<string,{name:string}> {
+  return progress.groups ?? Object.fromEntries(Object.entries(progress.minigames ?? {}).map(([k,v]) => [k,{name:v.name_ko}]));
 }
 
 function toast(message: string) {
@@ -82,7 +86,7 @@ function renderModes() {
 
 function renderProgress() {
   const s = progress.stats;
-  const statistics: [string,number,string,boolean][] = [
+  const statistics: [string,number,string,boolean][] = progress.cards ?? [
     ['전체 원본 함수',s.functions,`${progress.modules}개 모듈 · 중복 제거`,true],
     ['분석 문서 연결',s.document_linked,`${progress.linked_documents}개 문서 연결`,false],
     ['분석 완료',s.analysis.complete ?? 0,`전체 함수 중 ${percent(s.analysis_percent)}`,true],
@@ -109,8 +113,8 @@ function renderDenominator() {
   const c = progress.categories.find(x => x.id === category);
   const stats: Stats = c ?? progress.stats;
   const numerator = mode === 'analysis' ? stats.analysis.complete ?? 0 : mode === 'implementation' ? stats.implementation.complete ?? 0 : stats.verification.verified ?? 0;
-  const denominator = mode === 'analysis' ? stats.functions : stats.features;
-  $('#denominator').innerHTML = `<strong>${escape(c?.name ?? '전체')} ${modeNames[mode]} 근거 확인: ${number(numerator)} / ${number(denominator)} ${mode==='analysis'?'함수':'식별 항목'}</strong> · ${percent(denominator ? numerator/denominator*100 : null)}<br>${escape(progress.denominators[mode])}${mode==='analysis'?' · 자동 문서 연결과 부분 판독은 완료에 포함하지 않습니다.':' · 게임 전체 구현률을 뜻하지 않습니다. 대응 미확인은 미구현 확정이 아니며, 완료 0은 완료 근거 미확보입니다.'}`;
+  const denominator = mode === 'analysis' || progress.source === 'ghidra' ? stats.functions : stats.features;
+  $('#denominator').innerHTML = `<strong>${escape(c?.name ?? '전체')} ${modeNames[mode]} 근거 확인: ${number(numerator)} / ${number(denominator)} ${mode==='analysis'?'함수':'식별 항목'}</strong> · ${percent(denominator ? numerator/denominator*100 : null)}<br>${escape(progress.denominators[mode])}${progress.source==='ghidra'?'':mode==='analysis'?' · 자동 문서 연결과 부분 판독은 완료에 포함하지 않습니다.':' · 게임 전체 구현률을 뜻하지 않습니다. 대응 미확인은 미구현 확정이 아니며, 완료 0은 완료 근거 미확보입니다.'}`;
 }
 
 function renderBreadcrumbs() {
@@ -228,8 +232,9 @@ async function navigateToFunction(id:string) {
   if(view==='module'){scope.push(['module',f.module]);scopeNames.push(f.module);}
   else{
     scope.push(['category',f.category],['subgroup',f.subgroup]);
-    scopeNames.push(progress.categories.find(c=>c.id===f.category)?.name??f.category,progress.minigames[f.subgroup]?`${f.subgroup} · ${progress.minigames[f.subgroup].name_ko}`:f.subgroup);
-    if(progress.minigames[f.subgroup]){scope.push(['subsystem',f.subsystem]);scopeNames.push(f.subsystem);}
+    const g=groups()[f.subgroup];
+    scopeNames.push(progress.categories.find(c=>c.id===f.category)?.name??f.category,g?`${f.subgroup} · ${g.name}`:f.subgroup);
+    if(g){scope.push(['subsystem',f.subsystem]);scopeNames.push(f.subsystem);}
   }
   $('#search-results').hidden=true;
   await renderTree();await showFunction(id);
@@ -264,7 +269,10 @@ async function renderLedger() {
 async function refresh() {
   if(updating)return;updating=true;
   try {
-    progress=await api<Progress>('progress');renderProgress();await renderTree();await renderLedger();
+    progress=await api<Progress>('progress');
+    if(progress.labels){labels=progress.labels;renderModes();}
+    if(progress.title){document.title=progress.title;$('#brand-name').textContent=progress.title;}
+    renderProgress();await renderTree();await renderLedger();
     if(selectedId)await showFunction(selectedId);
   }catch(error){toast(String(error));}finally{updating=false;}
 }
